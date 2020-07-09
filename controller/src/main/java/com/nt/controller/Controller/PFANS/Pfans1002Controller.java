@@ -55,11 +55,11 @@ public class Pfans1002Controller {
         return ApiResult.success(ticketsService.selectById2(business_id));
     }
     @RequestMapping(value = "/selectById3", method = {RequestMethod.GET})
-    public ApiResult selectById3(String business_id, HttpServletRequest request) throws Exception {
-        if(business_id==null){
+    public ApiResult selectById3(String offshore_id, HttpServletRequest request) throws Exception {
+        if(offshore_id==null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(offshoreservice.selectById3(business_id));
+        return ApiResult.success(businessService.selectById3(offshore_id));
     }
     @RequestMapping(value = "/selectById4", method = {RequestMethod.GET})
     public ApiResult selectById4(String business_id, HttpServletRequest request) throws Exception {

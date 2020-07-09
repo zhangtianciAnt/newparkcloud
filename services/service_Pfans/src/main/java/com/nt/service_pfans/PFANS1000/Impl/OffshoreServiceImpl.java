@@ -40,13 +40,4 @@ public class OffshoreServiceImpl implements OffshoreService {
         offshore.setOffshore_id(UUID.randomUUID().toString());
         offshoreMapper.insert(offshore);
     }
-
-    //add-ws-7/7-禅道153
-    @Override
-    public List<Offshore>  selectById3(String business_id) throws Exception {
-        Offshore offshore = new Offshore();
-        offshore.setBusiness_id(business_id);
-        return offshoreMapper.select(offshore);
-    }
-    //add-ws-7/7-禅道153
 }

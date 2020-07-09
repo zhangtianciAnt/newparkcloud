@@ -353,4 +353,13 @@ public class Business extends BaseModel {
      */
     @Column(name = "BUSINESS_NUMBER")
     private String business_number;
+
+
+    //add-ws-7/7-禅道153
+    /**
+     *面谈外键
+     */
+    @Column(name = "OFFSHORE_ID")
+    private String offshore_id;
+    //add-ws-7/7-禅道153
 }

@@ -14,8 +14,4 @@ public interface OffshoreService {
     public void insert(Offshore offshore, TokenModel tokenModel)throws  Exception;
 
     public void updateOffshore(Offshore offshore, TokenModel tokenModel)throws  Exception;
-
-    //add-ws-7/7-禅道153
-    List<Offshore> selectById3(String business_id) throws Exception;
-    //add-ws-7/7-禅道153
 }

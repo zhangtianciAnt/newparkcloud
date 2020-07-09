@@ -37,6 +37,15 @@ public class BusinessServiceImpl implements BusinessService {
         return businessMapper.getBuse();
     }
 
+    //add-ws-7/7-禅道153
+    @Override
+    public List<Business>  selectById3(String offshore_id) throws Exception {
+        Business business = new Business();
+        business.setOffshore_id(offshore_id);
+        return businessMapper.select(business);
+    }
+    //add-ws-7/7-禅道153
+
     @Override
     public BusinessVo selectById(String businessid) throws Exception {
         BusinessVo busVo = new BusinessVo();

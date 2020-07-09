@@ -14,6 +14,11 @@ public interface BusinessService {
 
     List<Business> getBuse() throws Exception;
 
+
+    //add-ws-7/7-禅道153
+    List<Business> selectById3(String offshore_id) throws Exception;
+    //add-ws-7/7-禅道153
+
     public BusinessVo selectById(String businessid) throws Exception;
 
     public void insertBusinessVo(BusinessVo businessvo, TokenModel tokenModel)throws Exception;
