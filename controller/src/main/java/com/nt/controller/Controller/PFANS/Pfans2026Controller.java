@@ -2,11 +2,13 @@ package com.nt.controller.Controller.PFANS;
 
 import cn.hutool.core.io.FileUtil;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
 import com.nt.dao_Pfans.PFANS2000.Staffexitproce;
 import com.nt.dao_Pfans.PFANS2000.Vo.StaffexitprocedureVo;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
+import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_pfans.PFANS2000.StaffexitprocedureService;
 import com.nt.utils.*;
@@ -32,6 +34,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/staffexitprocedure")
 public class Pfans2026Controller {
 
+    @Autowired
+    private ToDoNoticeService toDoNoticeService;
     @Autowired
     private StaffexitprocedureService staffexitprocedureService;
     @Autowired
@@ -158,6 +162,15 @@ public class Pfans2026Controller {
         return ApiResult.success(staffexitprocedureService.selectById2(staffexitproceid));
     }
 
+
+    @RequestMapping(value = "/get3", method = {RequestMethod.GET})
+    public ApiResult list(String userid,HttpServletRequest request) throws Exception {
+        if(userid==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(toDoNoticeService.list2(userid));
+    }
+
     @RequestMapping(value = "/update2", method = {RequestMethod.POST})
     public ApiResult update2(@RequestBody StaffexitprocedureVo staffexitprocedureVo, HttpServletRequest request) throws Exception {
         if(staffexitprocedureVo==null){
@@ -180,6 +193,7 @@ public class Pfans2026Controller {
         staffexitprocedureService.insert2(staffexitprocedureVo,tokenModel);
         return ApiResult.success();
     }
+
 
     /**
      * 打印

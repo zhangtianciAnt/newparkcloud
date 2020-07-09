@@ -12,6 +12,8 @@ public interface ToDoNoticeService {
 
     List<ToDoNotice> list(ToDoNotice todonotice) throws Exception;
 
+    List<ToDoNotice> list2(String userid) throws Exception;
+
     List<ToDoNotice> getDataList(String status)throws Exception;
     //保存消息
     void save(ToDoNotice toDoNotice) throws Exception;

@@ -49,6 +49,13 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
     }
 
     @Override
+    public List<ToDoNotice> list2(String userid) throws Exception {
+        ToDoNotice todonotice = new ToDoNotice();
+        todonotice.setOwner(userid);
+        return todoNoticeMapper.select(todonotice);
+    }
+
+    @Override
     public List<ToDoNotice> getDataList(String status) throws Exception {
         String STATUS = status;
         List<ToDoNotice> todonotice = todoNoticeMapper.getDataList(STATUS);
