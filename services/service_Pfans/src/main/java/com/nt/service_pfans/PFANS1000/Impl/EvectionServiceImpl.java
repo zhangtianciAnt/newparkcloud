@@ -843,7 +843,10 @@ public class EvectionServiceImpl implements EvectionService {
 
         String month1 = String.format("%2d", month).replace(" ", "0");
         String day1 = String.format("%2d", day).replace(" ", "0");
-        invoiceNo = "WY" + year + month1 + day1 + no;
+        //报销编号变更  add_fjl 禅道任务261
+//        invoiceNo = "WY" + year + month1 + day1 + no;
+        invoiceNo = "C" + year + month1 + day1 + no;
+        //报销编号变更  add_fjl 禅道任务261
 
         String evectionid = UUID.randomUUID().toString();
         Evection evection = new Evection();
