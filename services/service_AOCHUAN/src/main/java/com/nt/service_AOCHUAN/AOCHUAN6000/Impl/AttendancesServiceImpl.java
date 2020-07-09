@@ -680,7 +680,7 @@ public class AttendancesServiceImpl implements AttendancesService {
 
 
     //自动获取企业微信打卡记录
-    @Scheduled(cron = "* * 1 * * ?")
+    @Scheduled(cron = "0 0 1 * * ?")
     public ApiResult getautocheckindata() throws Exception {
 
         try {
