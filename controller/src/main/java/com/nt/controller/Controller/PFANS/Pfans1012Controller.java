@@ -73,9 +73,13 @@ public class Pfans1012Controller {
     @RequestMapping(value = "/exportjs", method = {RequestMethod.GET})
     public void exportjs(String publicexpenseid, HttpServletRequest request, HttpServletResponse response) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
+        //add-ws-7/9-禅道任务248
         PublicExpenseVo pubvo = publicExpenseService.selectById(publicexpenseid);
-//        Map<String, Object> list = publicExpenseService.exportjs(publicexpenseid, request);
-
+        Map<String, Object> listsum = publicExpenseService.exportjs(publicexpenseid, request);
+        List<TrafficDetails> trafficlist = (List<TrafficDetails>) listsum.getOrDefault("交通费", new ArrayList<>());
+        List<PurchaseDetails> purchasedetailslist = (List<PurchaseDetails>) listsum.getOrDefault("采购费", new ArrayList<>());
+        List<OtherDetails> otherDetailslist = (List<OtherDetails>) listsum.getOrDefault("其他费用", new ArrayList<>());
+        //add-ws-7/9-禅道任务248
         String trr = "";
         int sum1 = 0;
         //交通费的预算编码
@@ -495,10 +499,13 @@ public class Pfans1012Controller {
         }
 
         //add-ws-6/29-禅道任务173
-        List<PurchaseDetails> PurchasedetailsList = pubvo.getPurchasedetails();
-        PurchasedetailsList = PurchasedetailsList.stream().filter(item -> (!item.getRmb().equals("0")) || (!item.getForeigncurrency().equals("0"))).collect(Collectors.toList());
-        List<OtherDetails> OtherDetailsList = pubvo.getOtherdetails();
-        OtherDetailsList = OtherDetailsList.stream().filter(item -> (!item.getRmb().equals("0")) || (!item.getForeigncurrency().equals("0"))).collect(Collectors.toList());
+//        List<PurchaseDetails> PurchasedetailsList = pubvo.getPurchasedetails();
+        trafficlist = trafficlist.stream().filter(item -> (!item.getRmb().equals("0.00"))).collect(Collectors.toList());
+        purchasedetailslist = purchasedetailslist.stream().filter(item -> (!item.getRmb().equals("0.00")) ).collect(Collectors.toList());
+        otherDetailslist = otherDetailslist.stream().filter(item -> (!item.getRmb().equals("0.00"))).collect(Collectors.toList());
+//        PurchasedetailsList = PurchasedetailsList.stream().filter(item -> (!item.getRmb().equals("0")) || (!item.getForeigncurrency().equals("0"))).collect(Collectors.toList());
+//        List<OtherDetails> OtherDetailsList = pubvo.getOtherdetails();
+//        OtherDetailsList = OtherDetailsList.stream().filter(item -> (!item.getRmb().equals("0")) || (!item.getForeigncurrency().equals("0"))).collect(Collectors.toList());
         //add-ws-6/29-禅道任务173
         data.put("username", username);
         data.put("currenctsum", currenctsum);
@@ -512,9 +519,9 @@ public class Pfans1012Controller {
         data.put("trr", trr);
         data.put("tro", tro);
         data.put("pub", pubvo.getPublicexpense());
-        data.put("tra", pubvo.getTrafficdetails());
-        data.put("pur", PurchasedetailsList);
-        data.put("otd", OtherDetailsList);
+        data.put("tra", trafficlist);
+        data.put("pur", purchasedetailslist);
+        data.put("otd", otherDetailslist);
 
         if (bd7.intValue() >= 20000) {
             if (pubvo.getTrafficdetails().size() > 0) {
