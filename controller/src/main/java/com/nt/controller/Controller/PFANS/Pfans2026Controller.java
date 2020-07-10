@@ -8,8 +8,9 @@ import com.nt.dao_Pfans.PFANS2000.Staffexitproce;
 import com.nt.dao_Pfans.PFANS2000.Vo.StaffexitprocedureVo;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
-import com.nt.service_Org.ToDoNoticeService;
+import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_WorkFlow.WorkflowServices;
+import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS2000.StaffexitprocedureService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -35,7 +36,9 @@ import java.util.stream.Collectors;
 public class Pfans2026Controller {
 
     @Autowired
-    private ToDoNoticeService toDoNoticeService;
+    private WorkflowinstanceMapper workflowinstanceMapper;
+
+
     @Autowired
     private StaffexitprocedureService staffexitprocedureService;
     @Autowired
@@ -168,7 +171,11 @@ public class Pfans2026Controller {
         if(userid==null){
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(toDoNoticeService.list2(userid));
+        Workflowinstance workflowinstance = new Workflowinstance();
+        workflowinstance.setOwner(userid);
+        List<Workflowinstance> Workflowinstancelist = workflowinstanceMapper.select(workflowinstance);
+        Workflowinstancelist = Workflowinstancelist.stream().filter(item -> (!item.getStatus().equals("4"))).collect(Collectors.toList());
+        return ApiResult.success(Workflowinstancelist);
     }
 
     @RequestMapping(value = "/update2", method = {RequestMethod.POST})
