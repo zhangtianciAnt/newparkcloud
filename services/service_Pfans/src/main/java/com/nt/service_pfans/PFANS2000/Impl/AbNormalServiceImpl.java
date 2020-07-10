@@ -1380,6 +1380,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                         } else {
                             time += Double.valueOf(abNormalList.get(a).getLengthtime());
                         }
+                        
                         //DB包含新建，取新建的时间长度
                     } else if (odate.compareTo(st.format(abNormalList.get(a).getOccurrencedate())) >= 0
                             && fdate.compareTo(st.format(abNormalList.get(a).getFinisheddate())) <= 0) {
