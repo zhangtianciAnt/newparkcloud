@@ -183,5 +183,17 @@ public class AppointmentCar extends BaseModel {
     @Column(name = "REFUSEREASON")
     private String refusereason;
 
+    /**
+     * 取消行程
+     */
+    @Column(name = "TRIP")
+    private String trip;
+
+    /**
+     * 取消行程理由
+     */
+    @Column(name = "TRIPREASON")
+    private String tripreason;
+
 
 }
