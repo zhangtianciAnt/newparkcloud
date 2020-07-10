@@ -180,7 +180,9 @@ public class WagesServiceImpl implements WagesService {
 
     @Override
     public List<Wages> getWagecompany() throws Exception {
-        return wagesMapper.getWagecompany();
+        List<Wages>  Wageslist = new ArrayList<>();
+        Wageslist = wagesMapper.getWagecompany();
+        return Wageslist;
     }
 
     @Override
