@@ -5,7 +5,7 @@
     <select id="getNowMon" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance">
         select *
         from attendance
-        where attendancetim LIKE "%"#{attendancetim}"%"
+        where attendancetim LIKE #{attendancetim}"%"
         <if test="owners != null and owners.size() > 0 ">
             and
             names in

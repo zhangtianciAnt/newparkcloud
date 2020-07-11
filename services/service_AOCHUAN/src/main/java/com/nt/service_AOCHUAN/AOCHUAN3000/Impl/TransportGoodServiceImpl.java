@@ -121,10 +121,12 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 //        transportGood.setCasnum(arr[2]);
         transportGoodMapper.updateByPrimaryKeySelective(transportGood);
         String id = transportGood.getTransportgood_id();
-        DeleteSonTable(id);
-        InsertSonTable(transportGood, id);
-        if (transportGood.isNotice()) {
-            ToDoNotice(tokenModel, transportGood);
+        if(StringUtils.isNoneEmpty(id)){
+            DeleteSonTable(id);
+            InsertSonTable(transportGood, id);
+            if (transportGood.isNotice()) {
+                ToDoNotice(tokenModel, transportGood);
+            }
         }
         ToDoNoticeFinance(tokenModel, transportGood);
     }
@@ -147,7 +149,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     @Override
     public void delete(String id) throws Exception {
         transportGoodMapper.deleteByPrimaryKey(id);
-        DeleteSonTable(id);
+        //DeleteSonTable(id);
     }
 
     private String[] getMergeField(List<Saledetails> saledetails) {

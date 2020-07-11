@@ -138,7 +138,7 @@ public class AOCHUAN6004Controller {
                 }
                 EWxBaseResponse jsob = new EWxBaseResponse();
                 jsob = EWxUserApi.inData(access_token, 1, startTime, endTime, strList);
-                attendanceService.getCheckInData(jsob);
+                attendanceService.getAutoCheckInData(jsob);
                 return ApiResult.success("成功");
 //              return ApiResult.success(ewechatService.ewxLogin(access_token));
             } else {
