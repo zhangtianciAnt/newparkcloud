@@ -477,13 +477,13 @@ public class Pfans1012Controller {
                     if (ite.getCode().equals(pubvo.getOtherdetails().get(0).getCurrency())) {
                         currenct = ite.getValue3();
                         int mountsum = sum + sum1;
-                        currenctsum = currenct + String.valueOf(mountsum);
+                        currenctsum = String.valueOf(mountsum);
                     }
                 }else if(!pubvo.getPurchasedetails().get(0).getForeigncurrency().equals("0") ){
                     if (ite.getCode().equals(pubvo.getPurchasedetails().get(0).getCurrency())) {
                         currenct = ite.getValue3();
                         int mountsum = sum + sum1;
-                        currenctsum = currenct + String.valueOf(mountsum);
+                        currenctsum = String.valueOf(mountsum);
                     }
                 }
             }
@@ -511,6 +511,7 @@ public class Pfans1012Controller {
 //        OtherDetailsList = OtherDetailsList.stream().filter(item -> (!item.getRmb().equals("0")) || (!item.getForeigncurrency().equals("0"))).collect(Collectors.toList());
         //add-ws-6/29-禅道任务173
         data.put("username", username);
+        data.put("currenct", currenct);
         data.put("currenctsum", currenctsum);
         data.put("wfList1", wfList1);
         data.put("wfList2", wfList2);
