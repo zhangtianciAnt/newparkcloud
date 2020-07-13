@@ -250,7 +250,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
     }
 
     @Override
-    public void methodAttendance_b(Calendar cal) throws Exception {
+    public void methodAttendance_b(Calendar cal,String customer_userid) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
         SimpleDateFormat sdf1 = new SimpleDateFormat("HH:mm");
         SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");
@@ -323,7 +323,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             List<Attendance> attendancelist = new ArrayList<Attendance>();
 
             Query query_userid = new Query();
-            List<CustomerInfo> customerInfoList = mongoTemplate.findAll(CustomerInfo.class);
+            //upd ccm 20200708
+            //List<CustomerInfo> customerInfoList = mongoTemplate.findAll(CustomerInfo.class);
+            List<CustomerInfo> customerInfoList = mongoTemplate.find(new Query(Criteria.where("userid").is(customer_userid)), CustomerInfo.class);
+            //upd ccm 20200708
+
             for (CustomerInfo customerInfo : customerInfoList) {
                 try {
                     TokenModel tokenModel = new TokenModel();
@@ -915,7 +919,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ad.setAnnualrest(strlengthtime);
                                                 //}
                                             } else if (ab.getErrortype().equals("PR013006")) {//代休-周末
-                                                if (ab.getStatus().equals("7")) {
+//                                                if (ab.getStatus().equals("7")) {
                                                     if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
                                                         if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
                                                             strlengthtime = df.format(Double.valueOf(workinghours));
@@ -930,9 +934,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                         ad.setDaixiu(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
                                                     }
                                                     ad.setDaixiu(strlengthtime);
-                                                }
+//                                                }
                                             } else if (ab.getErrortype().equals("PR013007")) {//代休-特殊
-                                                if (ab.getStatus().equals("7")) {
+//                                                if (ab.getStatus().equals("7")) {
                                                     if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
                                                         if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
                                                             strlengthtime = df.format(Double.valueOf(workinghours));
@@ -944,7 +948,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                         i = i + 1;
                                                     }
                                                     ad.setDaixiu(strlengthtime);
-                                                }
+//                                                }
                                             } else if (ab.getErrortype().equals("PR013008")) {//事休
                                                 if (ad.getCompassionateleave() != null && !ad.getCompassionateleave().isEmpty()) {
                                                     if (Double.valueOf(ad.getCompassionateleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
@@ -960,7 +964,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ad.setCompassionateleave(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(compassionateleave)) * Double.valueOf(compassionateleave) + Double.valueOf(compassionateleave)));
                                                 }
                                             } else if (ab.getErrortype().equals("PR013009")) {//短期病休
-                                                if (ab.getStatus().equals("7")) {
+//                                                if (ab.getStatus().equals("7")) {
                                                     if (ad.getShortsickleave() != null && !ad.getShortsickleave().isEmpty()) {
                                                         //前一年病假满足30天
                                                         if (sumSick + Double.valueOf(ad.getShortsickleave()) + Double.valueOf(strlengthtime) > 240 && Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave()) > 0) {
@@ -983,9 +987,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                             ad.setShortsickleave(df.format(Double.valueOf(strlengthtime)));
                                                         }
                                                     }
-                                                }
+//                                                }
                                             } else if (ab.getErrortype().equals("PR013012") || ab.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
-                                                if (ab.getStatus().equals("7")) {
+//                                                if (ab.getStatus().equals("7")) {
                                                     if (ad.getNursingleave() != null && !ad.getNursingleave().isEmpty()) {
                                                         if (Double.valueOf(ad.getNursingleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
                                                             strlengthtime = df.format(Double.valueOf(workinghours));
@@ -994,7 +998,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                         }
                                                     }
                                                     ad.setNursingleave(strlengthtime);
-                                                }
+//                                                }
                                             } else if (ab.getErrortype().equals("PR013014") || ab.getErrortype().equals("PR013019")) {
                                                 //家长会假//其他休暇
                                                 if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
@@ -1014,7 +1018,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     || ab.getErrortype().equals("PR013021") || ab.getErrortype().equals("PR013018")
                                                     || ab.getErrortype().equals("PR013020")) {
                                                 //婚假 //丧假 //妊娠檢查休暇 //流产假 //计划生育手术假// 労災休暇//工伤
-                                                if (ab.getStatus().equals("7")) {
+//                                                if (ab.getStatus().equals("7")) {
                                                     if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
                                                         if (Double.valueOf(ad.getWelfare()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
                                                             strlengthtime = df.format(Double.valueOf(workinghours));
@@ -1027,15 +1031,15 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     } else {
                                                         ad.setWelfare(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
                                                     }
-                                                }
+//                                                }
                                             } else if (ab.getErrortype().equals("PR013022")) {//加餐，哺乳假
-                                                if (ab.getStatus().equals("7")) {
+//                                                if (ab.getStatus().equals("7")) {
                                                     if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
                                                         ad.setWelfare(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getWelfare())));
                                                     } else {
                                                         ad.setWelfare(df.format(Double.valueOf(strlengthtime)));
                                                     }
-                                                }
+//                                                }
                                             }
                                         }
                                     } else {
@@ -1576,7 +1580,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 ad.setAnnualrest(strlengthtime);
                                             //}
                                         } else if (ab.getErrortype().equals("PR013006")) {//代休-周末
-                                            if (ab.getStatus().equals("7")) {
+//                                            if (ab.getStatus().equals("7")) {
                                                 if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
                                                     if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
                                                         strlengthtime = df.format(Double.valueOf(workinghours));
@@ -1591,9 +1595,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ad.setDaixiu(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
                                                 }
                                                 ad.setDaixiu(strlengthtime);
-                                            }
+//                                            }
                                         } else if (ab.getErrortype().equals("PR013007")) {//代休-特殊
-                                            if (ab.getStatus().equals("7")) {
+//                                            if (ab.getStatus().equals("7")) {
                                                 if (ad.getDaixiu() != null && !ad.getDaixiu().isEmpty()) {
                                                     if (Double.valueOf(ad.getDaixiu()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
                                                         strlengthtime = df.format(Double.valueOf(workinghours));
@@ -1602,7 +1606,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     }
                                                 }
                                                 ad.setDaixiu(strlengthtime);
-                                            }
+//                                            }
                                         } else if (ab.getErrortype().equals("PR013008")) {//事休
                                             if (ad.getCompassionateleave() != null && !ad.getCompassionateleave().isEmpty()) {
                                                 if (Double.valueOf(ad.getCompassionateleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
@@ -1618,7 +1622,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 ad.setCompassionateleave(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
                                             }
                                         } else if (ab.getErrortype().equals("PR013009")) {//短期病休
-                                            if (ab.getStatus().equals("7")) {
+//                                            if (ab.getStatus().equals("7")) {
                                                 if (ad.getShortsickleave() != null && !ad.getShortsickleave().isEmpty()) {
                                                     //前一年病假满足30天
                                                     if (sumSick + Double.valueOf(ad.getShortsickleave()) + Double.valueOf(strlengthtime) > 240 && Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave()) > 0) {
@@ -1641,11 +1645,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                         ad.setShortsickleave(df.format(Double.valueOf(strlengthtime)));
                                                     }
                                                 }
-                                            }
+//                                            }
 
                                         } else if (ab.getErrortype().equals("PR013012") || ab.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
                                             //産休（女）//産休看護休暇（男）
-                                            if (ab.getStatus().equals("7")) {
+//                                            if (ab.getStatus().equals("7")) {
                                                 if (ad.getNursingleave() != null && !ad.getNursingleave().isEmpty()) {
                                                     if (Double.valueOf(ad.getNursingleave()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
                                                         strlengthtime = df.format(Double.valueOf(workinghours));
@@ -1654,7 +1658,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     }
                                                 }
                                                 ad.setNursingleave(strlengthtime);
-                                            }
+//                                            }
                                         } else if (ab.getErrortype().equals("PR013014") || ab.getErrortype().equals("PR013019")) {
                                             //家长会假//其他休暇
 
@@ -1675,7 +1679,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 || ab.getErrortype().equals("PR013021") || ab.getErrortype().equals("PR013018")
                                                 || ab.getErrortype().equals("PR013020")) {
                                             //婚假 //丧假 //妊娠檢查休暇 //流产假 //计划生育手术假// 労災休暇//工伤
-                                            if (ab.getStatus().equals("7")) {
+//                                            if (ab.getStatus().equals("7")) {
                                                 if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
                                                     if (Double.valueOf(ad.getWelfare()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
                                                         strlengthtime = df.format(Double.valueOf(workinghours));
@@ -1688,15 +1692,15 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 } else {
                                                     ad.setWelfare(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
                                                 }
-                                            }
+//                                            }
                                         } else if (ab.getErrortype().equals("PR013022")) {//加餐，哺乳假
-                                            if (ab.getStatus().equals("7")) {
+//                                            if (ab.getStatus().equals("7")) {
                                                 if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
                                                     ad.setWelfare(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getWelfare())));
                                                 } else {
                                                     ad.setWelfare(df.format(Double.valueOf(strlengthtime)));
                                                 }
-                                            }
+//                                            }
                                         }
                                     }
                                 } else {
@@ -1741,7 +1745,6 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             ad.setAbsenteeism(null);
                                         } else {
                                             ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leave)));
-                                            //ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
                                             ad.setAbsenteeism(null);
                                         }
                                     }

@@ -51,6 +51,9 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Autowired
     private AnnualLeaveService annualLeaveService;
 
+    @Autowired
+    private PunchcardRecordService punchcardRecordService;
+
     @Override
     public List<AbNormal> list(AbNormal abNormal) throws Exception {
         return abNormalMapper.select(abNormal);
@@ -918,6 +921,52 @@ public class AbNormalServiceImpl implements AbNormalService {
 //        }
 
         abNormalMapper.updateByPrimaryKey(abNormal);
+        //add ccm 2020708 异常实时反应
+        if(abNormal.getStatus().equals("4"))
+        {
+            if(abNormal.getOccurrencedate() == abNormal.getFinisheddate())
+            {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(abNormal.getOccurrencedate());
+                punchcardRecordService.methodAttendance_b(cal,abNormal.getUser_id());
+            }
+            else
+            {
+                Calendar calStart = Calendar.getInstance();
+                calStart.setTime(abNormal.getOccurrencedate());
+                Calendar calend = Calendar.getInstance();
+                calend.setTime(abNormal.getFinisheddate());
+                for(Calendar item = calStart;item.compareTo(calend) <= 0;item.add(Calendar.DAY_OF_MONTH,1))
+                {
+                    punchcardRecordService.methodAttendance_b(item,abNormal.getUser_id());
+                }
+            }
+
+        }
+
+        if(abNormal.getStatus().equals("7"))
+        {
+            if(abNormal.getReoccurrencedate() == abNormal.getRefinisheddate())
+            {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(abNormal.getReoccurrencedate());
+                punchcardRecordService.methodAttendance_b(cal,abNormal.getUser_id());
+            }
+            else
+            {
+                Calendar calStart = Calendar.getInstance();
+                calStart.setTime(abNormal.getReoccurrencedate());
+                Calendar calend = Calendar.getInstance();
+                calend.setTime(abNormal.getRefinisheddate());
+                for(Calendar item = calStart;item.compareTo(calend) <= 0;item.add(Calendar.DAY_OF_MONTH,1))
+                {
+                    punchcardRecordService.methodAttendance_b(item,abNormal.getUser_id());
+                }
+            }
+        }
+
+        //add ccm 2020708 异常实时反应
+
     }
 
     @Override
@@ -1380,7 +1429,6 @@ public class AbNormalServiceImpl implements AbNormalService {
                         } else {
                             time += Double.valueOf(abNormalList.get(a).getLengthtime());
                         }
-                        
                         //DB包含新建，取新建的时间长度
                     } else if (odate.compareTo(st.format(abNormalList.get(a).getOccurrencedate())) >= 0
                             && fdate.compareTo(st.format(abNormalList.get(a).getFinisheddate())) <= 0) {
