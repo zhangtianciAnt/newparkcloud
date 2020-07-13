@@ -500,9 +500,12 @@ public class Pfans1012Controller {
 
         //add-ws-6/29-禅道任务173
 //        List<PurchaseDetails> PurchasedetailsList = pubvo.getPurchasedetails();
+
         trafficlist = trafficlist.stream().filter(item -> (!item.getRmb().equals("0.00"))).collect(Collectors.toList());
-        purchasedetailslist = purchasedetailslist.stream().filter(item -> (!item.getRmb().equals("0.00")) ).collect(Collectors.toList());
-        otherDetailslist = otherDetailslist.stream().filter(item -> (!item.getRmb().equals("0.00"))).collect(Collectors.toList());
+        purchasedetailslist = purchasedetailslist.stream().filter(item -> (!item.getRmb().equals("0.00"))||(!item.getForeigncurrency().equals("0.00")) ).collect(Collectors.toList());
+        otherDetailslist = otherDetailslist.stream().filter(item -> (!item.getRmb().equals("0.00"))||(!item.getForeigncurrency().equals("0.00"))).collect(Collectors.toList());
+
+
 //        PurchasedetailsList = PurchasedetailsList.stream().filter(item -> (!item.getRmb().equals("0")) || (!item.getForeigncurrency().equals("0"))).collect(Collectors.toList());
 //        List<OtherDetails> OtherDetailsList = pubvo.getOtherdetails();
 //        OtherDetailsList = OtherDetailsList.stream().filter(item -> (!item.getRmb().equals("0")) || (!item.getForeigncurrency().equals("0"))).collect(Collectors.toList());
