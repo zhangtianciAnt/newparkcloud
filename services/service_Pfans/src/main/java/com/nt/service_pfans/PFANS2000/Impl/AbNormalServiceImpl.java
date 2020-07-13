@@ -100,14 +100,6 @@ public class AbNormalServiceImpl implements AbNormalService {
         //add ccm 2020708 异常实时反应
         if(abNormal.getStatus().equals("4"))
         {
-            if(abNormal.getOccurrencedate() == abNormal.getFinisheddate())
-            {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(abNormal.getOccurrencedate());
-                punchcardRecordService.methodAttendance_b(cal,abNormal.getUser_id());
-            }
-            else
-            {
                 Calendar calStart = Calendar.getInstance();
                 calStart.setTime(abNormal.getOccurrencedate());
                 Calendar calend = Calendar.getInstance();
@@ -116,20 +108,10 @@ public class AbNormalServiceImpl implements AbNormalService {
                 {
                     punchcardRecordService.methodAttendance_b(item,abNormal.getUser_id());
                 }
-            }
-
         }
 
         if(abNormal.getStatus().equals("7"))
         {
-            if(abNormal.getReoccurrencedate() == abNormal.getRefinisheddate())
-            {
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(abNormal.getReoccurrencedate());
-                punchcardRecordService.methodAttendance_b(cal,abNormal.getUser_id());
-            }
-            else
-            {
                 Calendar calStart = Calendar.getInstance();
                 calStart.setTime(abNormal.getReoccurrencedate());
                 Calendar calend = Calendar.getInstance();
@@ -138,7 +120,6 @@ public class AbNormalServiceImpl implements AbNormalService {
                 {
                     punchcardRecordService.methodAttendance_b(item,abNormal.getUser_id());
                 }
-            }
         }
 
         //add ccm 2020708 异常实时反应
