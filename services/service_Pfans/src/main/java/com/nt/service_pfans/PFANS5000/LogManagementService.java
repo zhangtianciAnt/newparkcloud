@@ -25,7 +25,7 @@ public interface LogManagementService {
 
     public List<LogManagement> getCheckList(LogManagement logmanagemenr) throws Exception;
 
-    public List<Projectsystem> CheckList(Projectsystem projectsystem) throws Exception;
+    public List<Projectsystem> CheckList(Projectsystem projectsystem,TokenModel tokenModel) throws Exception;
 
     public List<LogManagement> gettlist() throws Exception;
 

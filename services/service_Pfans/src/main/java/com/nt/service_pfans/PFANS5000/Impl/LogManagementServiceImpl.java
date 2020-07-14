@@ -119,8 +119,10 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
-    public List<Projectsystem> CheckList(Projectsystem projectsystem) throws Exception {
-        return projectsystemMapper.select(projectsystem);
+    public List<Projectsystem> CheckList(Projectsystem projectsystem,TokenModel tokenModel) throws Exception {
+        projectsystem.setName(tokenModel.getUserId());
+        List<Projectsystem> projectsystemlist = projectsystemMapper.select(projectsystem);
+        return projectsystemlist;
     }
 
     @Override

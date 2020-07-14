@@ -202,7 +202,7 @@ public class Pfans5008Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(logmanagementService.CheckList(projectsystem));
+        return ApiResult.success(logmanagementService.CheckList(projectsystem,tokenModel));
     }
 
 
