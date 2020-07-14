@@ -14,7 +14,7 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName(autoResultMap = true)    // 数据解密时必须
+//@TableName(autoResultMap = true)    // 数据解密时必须
 @Table(name = "overtime")
 
 public class Overtime extends BaseModel {
@@ -97,7 +97,7 @@ public class Overtime extends BaseModel {
     /**
      * 加班事由
      */
-    @ColumnType(typeHandler = AESEncryptHandler.class)
+    //@ColumnType(typeHandler = AESEncryptHandler.class)(加密)
     @Column(name = "CAUSE")
     private String cause;
 

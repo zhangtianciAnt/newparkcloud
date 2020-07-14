@@ -13,9 +13,9 @@ import java.util.Map;
 
 public interface PublicExpenseService {
     List<PublicExpense> get(PublicExpense publicExpense) throws Exception;
-
-//    Map<String, Object> exportjs(String publicexpenseid, HttpServletRequest request) throws Exception;
-
+//add-ws-7/9-禅道任务248
+    Map<String, Object> exportjs(String publicexpenseid, HttpServletRequest request) throws Exception;
+    //add-ws-7/9-禅道任务248
     List<PublicExpense> getpublicelist(String publicexpenseid) throws Exception;
 
     void insert(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception;

@@ -581,9 +581,15 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         calend  .set(Calendar.DAY_OF_MONTH, maxCurrentMonthDay);
 
         for(Calendar item = calStart;item.compareTo(calend) <= 0;item.add(Calendar.DAY_OF_MONTH,1)){
-            punchcardRecordService.methodAttendance_b(item);
+            //add ccm 20200708 异常实时反应
+            Query query_userid = new Query();
+            List<CustomerInfo> customerInfoList = mongoTemplate.findAll(CustomerInfo.class);
+            for (CustomerInfo customerInfo : customerInfoList)
+            {
+                punchcardRecordService.methodAttendance_b(item,customerInfo.getUserid());
+            }
+            //add ccm 20200708 异常实时反应
         }
-
     }
 
     //系统服务--取当天打卡记录//正式时间每天下午4点45分执行  GBB add
@@ -1491,10 +1497,17 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         Calendar calend = Calendar.getInstance();
         calend.setTime(new Date());
         int maxCurrentMonthDay=calend.getActualMaximum(Calendar.DAY_OF_MONTH);
-        calend  .set(Calendar.DAY_OF_MONTH, maxCurrentMonthDay);
+        calend.set(Calendar.DAY_OF_MONTH, maxCurrentMonthDay);
 
         for(Calendar item = calStart;item.compareTo(calend) <= 0;item.add(Calendar.DAY_OF_MONTH,1)){
-            punchcardRecordService.methodAttendance_b(item);
+            //add ccm 20200708 异常实时反应
+            Query query_userid = new Query();
+            List<CustomerInfo> customerInfoList = mongoTemplate.findAll(CustomerInfo.class);
+            for (CustomerInfo customerInfo : customerInfoList)
+            {
+                punchcardRecordService.methodAttendance_b(item,customerInfo.getUserid());
+            }
+            //add ccm 20200708 异常实时反应
         }
 
     }

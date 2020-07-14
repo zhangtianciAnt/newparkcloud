@@ -514,7 +514,7 @@
 
     <select id="getWagecompany" resultType="com.nt.dao_Pfans.PFANS2000.Wages" parameterType="string">
         select
-            wages.CREATEON,#时间
+            DATE_FORMAT(wages.createon,'%Y-%m') as createonym,#时间
             count(*) as user_id,#人数
             ROUND(SUM(taxestotal + total3),2) as totalwages,#工资总额
             ROUND(SUM(taxestotal),2) as taxestotal,#纳税工资总额(小计1+2)/纳税工资总额
@@ -540,8 +540,8 @@
         left join otherfive
         on otherfive.GIVING_ID = wages.GIVING_ID
         and otherfive.USER_ID = wages.USER_ID
-        group by DATE_FORMAT(wages.CREATEON,'%Y-%m')
-        order by wages.CREATEON
+        group by DATE_FORMAT(wages.createon,'%Y-%m')
+        order by DATE_FORMAT(wages.createon,'%Y-%m')
     </select>
 
 </mapper>

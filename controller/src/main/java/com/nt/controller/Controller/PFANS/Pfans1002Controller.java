@@ -54,6 +54,15 @@ public class Pfans1002Controller {
         }
         return ApiResult.success(ticketsService.selectById2(business_id));
     }
+    //add-ws-7/10-禅道247
+    @RequestMapping(value = "/list", method = {RequestMethod.POST})
+    public ApiResult list(@RequestBody BusinessVo businessVo, HttpServletRequest request) throws Exception {
+        if (businessVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(businessService.list(businessVo));
+    }
+    //add-ws-7/10-禅道247
     @RequestMapping(value = "/selectById3", method = {RequestMethod.GET})
     public ApiResult selectById3(String offshore_id, HttpServletRequest request) throws Exception {
         if(offshore_id==null){

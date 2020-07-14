@@ -3,6 +3,7 @@ package com.nt.controller.Controller.PFANS;
 import cn.hutool.core.io.FileUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.EvectionVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TravelCostVo;
@@ -232,9 +233,52 @@ public class Pfans1013Controller {
         StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
         startWorkflowVo.setDataId(evevo.getEvection().getEvectionid());
         List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
+        // add-ws-7/10-禅道249
+        Query query7 = new Query();
+        String  roles = "";
+        String check =  "";
+        query7.addCriteria(Criteria.where("_id").is(useridcheck));
+        UserAccount userAccount = mongoTemplate.findOne(query7, UserAccount.class);
+        if (userAccount != null) {
+            if(userAccount.getRoles().size() > 0){
+                for(int i = 0;i<userAccount.getRoles().size();i++){
+                    roles = roles +  userAccount.getRoles().get(i).getDescription();
+                }
+                if(roles.indexOf("总经理")!= -1) {
+                    check  = "总经理";
+                }
+            }
+        }
+        // add-ws-7/10-禅道249
         //upd-ws-6/17-禅道101
         //upd-ws-6/29-禅道175问提修改
-        if (useridcheck.equals("5e78b2264e3b194874180f35") || useridcheck.equals("5e78b2574e3b194874181099")) {
+        if(check.equals("总经理")){
+            if (wfList.size() > 0) {
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList1 = customerInfo.getUserinfo().getCustomername();
+                    wfList1 = sign.startGraphics2D(wfList1);
+                }
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList2 = customerInfo.getUserinfo().getCustomername();
+                    wfList2 = sign.startGraphics2D(wfList2);
+                }
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList3 = customerInfo.getUserinfo().getCustomername();
+                    wfList3 = sign.startGraphics2D(wfList3);
+                }
+
+            }
+            //upd-ws-6/29-禅道175问提修改
+        } else if (useridcheck.equals("5e78b2264e3b194874180f35") || useridcheck.equals("5e78b2574e3b194874181099")) {
             //upd-ws-6/29-禅道175问提修改
             if (wfList.size() > 0) {
                 query = new Query();
@@ -496,7 +540,7 @@ public class Pfans1013Controller {
 
         //upd-ws-6/17-禅道101
         //upd-ws-6/29-禅道175问提修改
-        if (useridcheck.equals("5e78b2264e3b194874180f35") || useridcheck.equals("5e78b2574e3b194874181099")) {
+        if (useridcheck.equals("5e78b2264e3b194874180f35") || useridcheck.equals("5e78b2574e3b194874181099")|| (check.equals("总经理"))) {
             //upd-ws-6/29-禅道175问提修改
             if (evevo.getEvection().getType().equals("0")) {
                 ExcelOutPutUtil.OutPutPdf("境内出差旅费精算书", "newjingneijingsuanshu.xls", data, response);

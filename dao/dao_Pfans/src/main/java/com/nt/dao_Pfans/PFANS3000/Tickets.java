@@ -205,4 +205,12 @@ public class Tickets extends BaseModel {
      */
     @Column(name = "REFUSEREASON")
     private String refusereason;
+
+    //add-ws-7/7-禅道247
+    /**
+     * 出差申请名称
+     */
+    @Column(name = "BUSINESSNAME")
+    private String businessname;
+    //add-ws-7/7-禅道247
 }

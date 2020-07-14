@@ -305,4 +305,7 @@ public class Wages extends BaseModel {
 
     @Column(name = "ROWINDEX")
     private Integer rowindex;               // 顺序
+
+    @Column(name = "CREATEONYM")
+    private String createonym;               // 创建年月
 }
