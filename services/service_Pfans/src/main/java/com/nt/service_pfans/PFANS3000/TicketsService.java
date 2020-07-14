@@ -28,4 +28,7 @@ public interface TicketsService {
     //add-ws-7/7-禅道153
     List<Tickets> selectById2(String business_id) throws Exception;
     //add-ws-7/7-禅道153
+    //add-ws-7/14-禅道247
+    public TicketsVo selectByIdchange(String ticket_id) throws Exception;
+    //add-ws-7/14-禅道247
 }
