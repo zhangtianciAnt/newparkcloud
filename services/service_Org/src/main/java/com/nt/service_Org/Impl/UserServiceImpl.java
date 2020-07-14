@@ -290,7 +290,7 @@ public class UserServiceImpl implements UserService {
                 List<CustomerInfo.Personal> cupList = customerInfo.getUserinfo().getGridData();
                 //去除Invalid date的数据
                 if (cupList != null && cupList.size() > 0) {
-                    cupList = cupList.stream().filter(item1 -> (!item1.getDate().equals("Invalid date") || item1.getDate() != null)).collect(Collectors.toList());
+                    cupList = cupList.stream().filter(item1 -> (!item1.getDate().equals("Invalid date") && item1.getDate() != null)).collect(Collectors.toList());
                     if (cupList != null && cupList.size() > 0) {
                         cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                     }
@@ -2027,7 +2027,7 @@ public class UserServiceImpl implements UserService {
                         List<CustomerInfo.Personal> perList = customerInfoList.get(0).getUserinfo().getGridData();
                         if (perList != null) {
                             //去除  null 的数据
-                            perList = perList.stream().filter(item1 -> (!item1.getDate().equals("Invalid date") || item1.getDate() != null)).collect(Collectors.toList());
+                            perList = perList.stream().filter(item1 -> (!item1.getDate().equals("Invalid date") && item1.getDate() != null)).collect(Collectors.toList());
                         }
                         perList = perList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate)).collect(Collectors.toList());
                         int i = 0;
