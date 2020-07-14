@@ -472,5 +472,24 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     public static boolean isEmail(String email) {
         return Pattern.matches(REGEX_EMAIL, email);
     }
+
+    public static boolean isBase64Encode(String value){
+        if(value == null || value.length() == 0){
+            return false;
+        }
+        if(value.length() % 4 != 0){
+            return false;
+        }
+        char[] chrs = value.toCharArray();
+        for(char chr:chrs){
+            if((chr >= 'a' && chr <='z') || (chr >= 'A' && chr <= 'Z') || (chr>='0' && chr <='9') ||
+                    chr == '+' || chr == '/' || chr == '='){
+                continue;
+            }else{
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
