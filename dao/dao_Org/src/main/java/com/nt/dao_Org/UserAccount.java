@@ -1,15 +1,21 @@
 package com.nt.dao_Org;
 
 
+import cn.hutool.core.codec.Base64;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.nt.dao_Auth.Role;
+import com.nt.utils.AESEncryptHandler;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import tk.mybatis.mapper.annotation.ColumnType;
 
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -39,6 +45,18 @@ public class UserAccount extends BaseModel {
      */
     private String userid;
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        if(!StringUtils.isBase64Encode(password)){
+            this.password = Base64.encode(password);
+        }else{
+            this.password = password;
+        }
+    }
+
     /**
      * 账号
      */
@@ -63,5 +81,6 @@ public class UserAccount extends BaseModel {
      * 系统角色
      */
     private List<Role> roles;
+
 
 }

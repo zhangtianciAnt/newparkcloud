@@ -1,5 +1,6 @@
 package com.nt.dao_Org.Vo;
 
+import cn.hutool.core.codec.Base64;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,6 +25,15 @@ public class UserAccountVo extends BaseModel {
      * 原密码 CHANGEPASSWORD
      */
     private String password;
+
+    public void setPassword(String password) {
+        this.password = Base64.encode(password);
+    }
+
+    public void setNewpsw(String newpsw) {
+        this.newpsw = newpsw;
+    }
+
     /**
      * 新密码 NEWPSW
      */

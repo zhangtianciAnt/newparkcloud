@@ -102,5 +102,13 @@ public class Pfans3001Controller {
         }
         return ApiResult.success(ticketsService.selectById(tickets_id));
     }
-
+    //add-ws-7/14-禅道247
+    @RequestMapping(value = "selectByIdchange", method = {RequestMethod.GET})
+    public ApiResult selectByIdchange(String tickets_id, HttpServletRequest request) throws Exception {
+        if (tickets_id == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(ticketsService.selectByIdchange(tickets_id));
+    }
+    //add-ws-7/14-禅道247
 }

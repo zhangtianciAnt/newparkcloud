@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
         //根据条件检索数据
         Query query = new Query();
         query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
-        query.addCriteria(Criteria.where("password").is(new String(decoder.decode(userAccount.getPassword()), "UTF-8")));
+        query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
         query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
         List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
 
@@ -290,7 +290,7 @@ public class UserServiceImpl implements UserService {
                 List<CustomerInfo.Personal> cupList = customerInfo.getUserinfo().getGridData();
                 //去除Invalid date的数据
                 if (cupList != null && cupList.size() > 0) {
-                    cupList = cupList.stream().filter(item1 -> (!item1.getDate().equals("Invalid date") || item1.getDate() != null)).collect(Collectors.toList());
+                    cupList = cupList.stream().filter(item1 -> (!item1.getDate().equals("Invalid date") && item1.getDate() != null)).collect(Collectors.toList());
                     if (cupList != null && cupList.size() > 0) {
                         cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                     }
@@ -1271,9 +1271,9 @@ public class UserServiceImpl implements UserService {
                     userinfo.setTransfercompany(item.get("转职公司").toString());
                 }
                 //        zy-7/6-禅道207/231任务 start
-                //离职时间
-                if (item.get("离职时间") != null) {
-                    userinfo.setResignation_date(item.get("离职时间").toString());
+                //退职日
+                if (item.get("退职日") != null) {
+                    userinfo.setResignation_date(item.get("退职日").toString());
                 }
                 //        zy-7/6-禅道207/231任务 end
                 //退职理由
@@ -1780,9 +1780,9 @@ public class UserServiceImpl implements UserService {
                         customerInfoList.get(0).getUserinfo().setTransfercompany(item.get("转职公司●").toString());
                     }
                     //        zy-7/6-禅道207/231任务 start
-                    //离职时间
-                    if (item.get("离职时间●") != null) {
-                        customerInfoList.get(0).getUserinfo().setResignation_date(item.get("离职时间●").toString());
+                    //退职日
+                    if (item.get("退职日●") != null) {
+                        customerInfoList.get(0).getUserinfo().setResignation_date(item.get("退职日●").toString());
                     }
                     //        zy-7/6-禅道207/231任务 end
                     //退职理由
@@ -2027,7 +2027,7 @@ public class UserServiceImpl implements UserService {
                         List<CustomerInfo.Personal> perList = customerInfoList.get(0).getUserinfo().getGridData();
                         if (perList != null) {
                             //去除  null 的数据
-                            perList = perList.stream().filter(item1 -> (!item1.getDate().equals("Invalid date") || item1.getDate() != null)).collect(Collectors.toList());
+                            perList = perList.stream().filter(item1 -> (!item1.getDate().equals("Invalid date") && item1.getDate() != null)).collect(Collectors.toList());
                         }
                         perList = perList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate)).collect(Collectors.toList());
                         int i = 0;
@@ -2057,6 +2057,12 @@ public class UserServiceImpl implements UserService {
                         if (addflg == 0) {
                             cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
                             cupList.add(personal);
+                            if (item.get("现职责工资●") != null) {
+                                customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
+                            }
+                            if (item.get("现基本工资●") != null) {
+                                customerInfoList.get(0).getUserinfo().setBasic(item.get("现基本工资●").toString());
+                            }
                         } else {
                             cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
                         }

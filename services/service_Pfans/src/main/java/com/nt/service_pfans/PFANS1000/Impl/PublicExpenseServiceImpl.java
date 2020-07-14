@@ -701,12 +701,12 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         }
 
         // 付款方式为网上银行付款，个人账户，转账支票做以下处理
-        if ("PJ004001".equals(publicExpense.getPaymentmethod()) || "PJ004002".equals(publicExpense.getPaymentmethod()) || "PJ004003".equals(publicExpense.getPaymentmethod())) {
+//        if ("PJ004001".equals(publicExpense.getPaymentmethod()) || "PJ004002".equals(publicExpense.getPaymentmethod()) || "PJ004003".equals(publicExpense.getPaymentmethod())) {
             TotalCost totalCost = new TotalCost();
             totalCost.setPublicexpenseid(spublicexpenseid);
             totalCostMapper.delete(totalCost);
             saveTotalCostList(invoiceNo, invoicelist, trafficlist, purchaselist, otherlist, publicExpenseVo, tokenModel, spublicexpenseid);
-        }
+//        }
     }
 
     //按id查询
