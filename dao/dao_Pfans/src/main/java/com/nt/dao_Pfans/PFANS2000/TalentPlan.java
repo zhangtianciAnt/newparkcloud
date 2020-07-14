@@ -179,4 +179,10 @@ public class TalentPlan extends BaseModel {
     @Column(name = "YEAR")
     private String year;
 
+    /**
+     * 完成状态
+     */
+    @Column(name = "FINISHSTATUS")
+    private String finishstatus;
+
 }
