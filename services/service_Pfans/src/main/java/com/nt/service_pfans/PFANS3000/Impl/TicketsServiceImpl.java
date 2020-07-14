@@ -98,7 +98,22 @@ public class TicketsServiceImpl implements TicketsService {
             }
         }
     }
-
+    //add-ws-7/14-禅道247
+    @Override
+    public TicketsVo selectByIdchange(String ticket_id) throws Exception {
+        TicketsVo ticketsVo = new TicketsVo();
+        TokenModel tokenModel = new TokenModel();
+        Tickets tickets2 =new Tickets();
+        tickets2.setTickets_id(ticket_id);
+        List<Tickets> ticketslist  = ticketsMapper.select(tickets2);
+        Tickets tickets =new Tickets();
+        BeanUtils.copyProperties(ticketslist.get(0), tickets);
+        tickets.preUpdate(tokenModel);
+        tickets.setAcceptstatus("3");
+        ticketsMapper.updateByPrimaryKey(tickets);
+        return ticketsVo;
+    }
+    //add-ws-7/14-禅道247
     @Override
     public TicketsVo selectById(String ticket_id) throws Exception {
         TicketsVo ticketsVo = new TicketsVo();

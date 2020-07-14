@@ -177,16 +177,19 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
                 username = customerInfo2.getUserinfo().getCustomername();
             }
             //薪资担当代办
-            ToDoNotice toDoNotice3 = new ToDoNotice();
-            toDoNotice3.setTitle("【" + username + "将于" + date + "日离职，请悉知】");
-            toDoNotice3.setInitiator(Userid);
-            toDoNotice3.setContent("您的离职申请已审批通过！");
-            toDoNotice3.setDataid(staffexitprocedureVo.getStaffexitprocedure().getStaffexitprocedure_id());
-            toDoNotice3.setUrl("/PFANS2026FormView");
-            toDoNotice3.setWorkflowurl("/PFANS2026View");
-            toDoNotice3.preInsert(tokenModel);
-            toDoNotice3.setOwner("5e78b2034e3b194874180e37");
-            toDoNoticeService.save(toDoNotice3);
+            List<MembersVo> rolelist = roleService.getMembers("5e7863668f43163084351139");
+            if (rolelist.size() > 0) {
+                ToDoNotice toDoNotice3 = new ToDoNotice();
+                toDoNotice3.setTitle("【" + username + "将于" + date + "日离职，请悉知】");
+                toDoNotice3.setInitiator(Userid);
+                toDoNotice3.setContent("您的离职申请已审批通过！");
+                toDoNotice3.setDataid(staffexitprocedureVo.getStaffexitprocedure().getStaffexitprocedure_id());
+                toDoNotice3.setUrl("/PFANS2026FormView");
+                toDoNotice3.setWorkflowurl("/PFANS2026View");
+                toDoNotice3.preInsert(tokenModel);
+                toDoNotice3.setOwner(rolelist.get(0).getUserid());
+                toDoNoticeService.save(toDoNotice3);
+            }
 
             //发起人创建代办
             ToDoNotice toDoNotice = new ToDoNotice();

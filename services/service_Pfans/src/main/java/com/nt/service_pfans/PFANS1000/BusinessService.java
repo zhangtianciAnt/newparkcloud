@@ -13,8 +13,9 @@ public interface BusinessService {
     List<Business> get(Business business) throws Exception;
 
     List<Business> getBuse() throws Exception;
-
-
+    //add-ws-7/10-禅道247
+    List<Business> list(BusinessVo businessVo) throws Exception;
+    //add-ws-7/10-禅道247
     //add-ws-7/7-禅道153
     List<Business> selectById3(String offshore_id) throws Exception;
     //add-ws-7/7-禅道153

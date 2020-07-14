@@ -164,12 +164,112 @@
             c.OWNER as OWNER,
             c.GROUP_ID as group_id,
             pp.contractno as contractno
+        from `companyprojects` c
+             left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
+            (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation
+            where
+        <![CDATA[ ESTIMATEDSTARTTIME <= curdate() and ESTIMATEDENDTIME >= curdate() ]]> group by COMPANYPROJECTS_ID )) s
+        on c
+           .
+           `COMPANYPROJECTS_ID` =
+           s
+           .
+           `COMPANYPROJECTS_ID`
+           and
+           s
+           .
+           status =
+           '0'
+
+        left
+           join (
+          SELECT
+	p.COMPANYPROJECTS_ID,
+	GROUP_CONCAT( CONCAT_WS( '-', p.CONTRACT, p.CLAIMTYPE ) SEPARATOR ',' ) contractno,
+	max( IFNULL( a.EXTENSIONDATE, substring( a.CLAIMDATETIME, 14, 10 ) ) ) AS etime
+FROM
+	projectcontract p
+	INNER JOIN contractapplication a ON a.contractnumber = p.CONTRACT
+	AND a.STATUS = '0'
+	AND p.STATUS = '0'
+GROUP BY
+	p.COMPANYPROJECTS_ID
+            )
+           pp
+           on
+           pp
+           .
+           COMPANYPROJECTS_ID =
+           c
+           .
+           `COMPANYPROJECTS_ID`
+           inner
+           JOIN
+            (
+           select
+           *
+           from
+           Projectsystem
+           where
+           Projectsystem
+           .
+           name =
+           #{user})
+           Projectsystem
+           on
+           Projectsystem
+           .
+           companyprojects_id =
+           c
+           .
+           companyprojects_id
+        where (c.`STATUS` = '4' or c.`STATUS` = '5' or c.`STATUS` = '6')
+
+    </select>
+    <select id="getListPL4" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
+        select
+            c.`COMPANYPROJECTS_ID`,
+            c.`PROJECT_NAME`   as PROJECT_NAME,
+            c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
+            c.`NUMBERS`        as NUMBERS,
+            s.`PHASE`          as phase,
+            s.`PRODUCTSTATUS`  as productstatus,
+            pp.contractno as contractno,
+        <![CDATA[ case
+                when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
+                when s.`COMPANYPROJECTS_ID` != "" then '1'
+                ELSE '' END    as phasestatus,
+            s.`ESTIMATEDWORK`  as estimatedwork,
+            s.`ACTUALWORK`     as actualwork,
+        <![CDATA[ case
+                when pp.COMPANYPROJECTS_ID = "" ]]> then '2'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && (curdate() < s.estimatedstarttime || curdate() > pp.etime) ]]>   then '3'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && DATE_ADD(curdate(), interval 10 DAY ) >= pp.etime ]]>   then '0'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= s.estimatedstarttime && curdate() <= pp.etime ]]>   then '1'
+                else "" end       contractstatus,
+            c.`STATUS`         as status,
+            c.`COMPANYPROJECTS_ID`,
+            c.ENTRUST          as ENTRUST,
+            c.WORK
+            as
+            WORK,
+            c
+            .
+            LEADERID as
+            LEADERID,
+            c
+            .
+            FIELD as
+            FIELD,
+            c.OWNER as OWNER,
+            c.GROUP_ID as group_id,
+            pp.contractno as contractno
         from (
         select * from companyprojects
         where COMPANYPROJECTS_ID in (
         select projectsystem.COMPANYPROJECTS_ID from projectsystem
         where
-        POSITION in ('PL','pl','Pl','pL')
+        UPPER(POSITION) = 'PL'
         and name = #{user}
         and REPLACE(EXITTIME,'-','')  >= DATE_FORMAT(SYSDATE(),'%Y%m%d')
         GROUP BY projectsystem.COMPANYPROJECTS_ID)
@@ -297,7 +397,131 @@ GROUP BY
         order by c.`CREATEON` desc
 
     </select>
+    <select id="getListPL2" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
+        select
+        c.`COMPANYPROJECTS_ID`,
+        c.`PROJECT_NAME` as PROJECT_NAME,
+        c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
+        c.`NUMBERS` as NUMBERS,
+        s.`PHASE` as phase,
+        s.`PRODUCTSTATUS` as productstatus,
+        <![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
+        when s.`COMPANYPROJECTS_ID` != "" then '1'
+        ELSE '' END as phasestatus,
+        s.`ESTIMATEDWORK` as estimatedwork,
+        s.`ACTUALWORK` as actualwork,
+        <![CDATA[ case when pp.COMPANYPROJECTS_ID = "" ]]> then '2'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && (curdate() < s.estimatedstarttime || curdate() > pp.etime) ]]>
+        then '3'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && DATE_ADD(curdate(),interval 10 DAY ) >= pp.etime ]]>   then '0'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= s.estimatedstarttime && curdate() <= pp.etime ]]>
+        then '1'
+        else "" end contractstatus,
+        c.`STATUS` as status,
+        c.`COMPANYPROJECTS_ID`,
+        c.ENTRUST as ENTRUST,
+        c.WORK as WORK,
+        c.LEADERID as LEADERID,
+        c.FIELD as FIELD,
+        c.OWNER as OWNER,
+        c.`STARTDATE` as startdate,
+        c.`ENDDATE` as enddate,
+        c.`ENDTIME` as endtime,
+        c.GROUP_ID as group_id
+        from (
+        select * from companyprojects
+        where COMPANYPROJECTS_ID in (
+        select projectsystem.COMPANYPROJECTS_ID from projectsystem
+        where
+        UPPER(POSITION) = 'PL'
+        and name = #{user}
+        and REPLACE(EXITTIME,'-','')  >= DATE_FORMAT(SYSDATE(),'%Y%m%d')
+        GROUP BY projectsystem.COMPANYPROJECTS_ID)
+        ) c
+        left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
+        (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation
+        where
+        <![CDATA[ ESTIMATEDSTARTTIME <= curdate() and ESTIMATEDENDTIME >= curdate() ]]> group by COMPANYPROJECTS_ID )) s
+        on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
+        and s.status = '0'
+        left join (
+        select p.COMPANYPROJECTS_ID,
+        max(IFNULL(a.EXTENSIONDATE,substring(a.CLAIMDATETIME,14,10))) as etime
+        from projectcontract p
+        inner join contractapplication a
+        on a.contractnumber = p.CONTRACT
+        and a.status = '0' and p.status = '0'
+        group by p.COMPANYPROJECTS_ID
+        ) pp
+        on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
+        where (c.`STATUS` = '4' or c.`STATUS` = '7' or c.`STATUS` = '8')
+        order by c.`CREATEON` desc
 
+    </select>
+
+    <select id="getListPL3" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
+        select
+        c.`COMPANYPROJECTS_ID`,
+        c.`PROJECT_NAME` as PROJECT_NAME,
+        c.`PROJECT_NAMEJP` as PROJECT_NAMEJP,
+        c.`NUMBERS` as NUMBERS,
+        c.`STARTDATE` as STARTDATE,
+        c.`ENDDATE` as ENDDATE,
+        c.`ENDTIME` as ENDTIME,
+        s.`PHASE` as phase,
+        s.`PRODUCTSTATUS` as productstatus,
+        <![CDATA[ case when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
+        when s.`COMPANYPROJECTS_ID` != "" then '1'
+        ELSE '' END as phasestatus,
+        s.`ESTIMATEDWORK` as estimatedwork,
+        s.`ACTUALWORK` as actualwork,
+        <![CDATA[ case when pp.COMPANYPROJECTS_ID = "" ]]> then '2'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && (curdate() < s.estimatedstarttime || curdate() > pp.etime) ]]>
+        then '3'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && DATE_ADD(curdate(),interval 10 DAY ) >= pp.etime ]]>   then '0'
+        <![CDATA[ when pp.COMPANYPROJECTS_ID != "" && curdate() >= s.estimatedstarttime && curdate() <= pp.etime ]]>
+        then '1'
+        else "" end contractstatus,
+        c.`STATUS` as status,
+        c.`COMPANYPROJECTS_ID`,
+        c.ENTRUST as ENTRUST,
+        c.WORK as WORK,
+        c.LEADERID as LEADERID,
+        c.FIELD as FIELD,
+        c.OWNER as OWNER,
+        c.`STARTDATE` as startdate,
+        c.`ENDDATE` as enddate,
+        c.`ENDTIME` as endtime,
+        c.GROUP_ID as group_id
+        from (select * from companyprojects
+        where COMPANYPROJECTS_ID in (
+        select projectsystem.COMPANYPROJECTS_ID from projectsystem
+        where
+        UPPER(POSITION) = 'PL'
+        and name = #{user}
+        and REPLACE(EXITTIME,'-','')  >= DATE_FORMAT(SYSDATE(),'%Y%m%d')
+        GROUP BY projectsystem.COMPANYPROJECTS_ID)
+        ) c
+        left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
+        (select COMPANYPROJECTS_ID,max(estimatedstarttime),max(PHASE),max(rowindex)from stageinformation
+        where
+        <![CDATA[ ESTIMATEDSTARTTIME <= curdate() and ESTIMATEDENDTIME >= curdate() ]]> group by COMPANYPROJECTS_ID )) s
+        on c.`COMPANYPROJECTS_ID` = s.`COMPANYPROJECTS_ID`
+        and s.status = '0'
+        left join (
+        select p.COMPANYPROJECTS_ID,
+        max(IFNULL(a.EXTENSIONDATE,substring(a.CLAIMDATETIME,14,10))) as etime
+        from projectcontract p
+        inner join contractapplication a
+        on a.contractnumber = p.CONTRACT
+        and a.status = '0' and p.status = '0'
+        group by p.COMPANYPROJECTS_ID
+        ) pp
+        on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
+        where (c.`STATUS` = '9')
+        order by c.`CREATEON` desc
+
+    </select>
     <select id="getList3" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
         select
         c.`COMPANYPROJECTS_ID`,
