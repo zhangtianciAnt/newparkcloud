@@ -326,7 +326,10 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             expatriatesinfor.setAccount(userAccount.get_id());
         }
         //add ccm 20200605
-
+        if(expatriatesinfor.getGroup_id() == null || expatriatesinfor.getGroup_id().equals(""))
+        {
+            expatriatesinfor.setGroup_id(expatriatesinfor.getInterviewdep());
+        }
         expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
         if (expatriatesinfor.getWhetherentry().equals("BP006001") && !expatriatesinfor.getGroup_id().equals("")) {
             Priceset priceset = new Priceset();
@@ -438,6 +441,10 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         expatriatesinfor.preInsert(tokenModel);
         expatriatesinfor.setExpatriatesinfor_id(UUID.randomUUID().toString());
         expatriatesinfor.setExits("1");
+        if(expatriatesinfor.getGroup_id() == null || expatriatesinfor.getGroup_id().equals(""))
+        {
+            expatriatesinfor.setGroup_id(expatriatesinfor.getInterviewdep());
+        }
         expatriatesinforMapper.insert(expatriatesinfor);
     }
 
@@ -743,11 +750,23 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     if(customerInfoList.size()>0)
                                     {
                                         expatriatesinfor.setInterviewdep(customerInfoList.get(0).getUserinfo().getGroupid());
+                                        if(expatriatesinfor.getGroup_id() == null || expatriatesinfor.getGroup_id().equals(""))
+                                        {
+                                            expatriatesinfor.setGroup_id(customerInfoList.get(0).getUserinfo().getGroupid());
+                                        }
                                     }
                                     else
                                     {
                                         expatriatesinfor.setInterviewdep(interviewdep);
+                                        if(expatriatesinfor.getGroup_id() == null || expatriatesinfor.getGroup_id().equals(""))
+                                        {
+                                            expatriatesinfor.setGroup_id(interviewdep);
+                                        }
                                     }
+                                }
+                                else
+                                {
+                                    throw new LogicalException("第" + i + "行的面试部门不能为空，请确认。");
                                 }
                             }
                             if(value.size()>16)
