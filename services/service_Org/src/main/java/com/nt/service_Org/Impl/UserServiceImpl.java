@@ -1271,9 +1271,9 @@ public class UserServiceImpl implements UserService {
                     userinfo.setTransfercompany(item.get("转职公司").toString());
                 }
                 //        zy-7/6-禅道207/231任务 start
-                //离职时间
-                if (item.get("离职时间") != null) {
-                    userinfo.setResignation_date(item.get("离职时间").toString());
+                //退职日
+                if (item.get("退职日") != null) {
+                    userinfo.setResignation_date(item.get("退职日").toString());
                 }
                 //        zy-7/6-禅道207/231任务 end
                 //退职理由
@@ -1780,9 +1780,9 @@ public class UserServiceImpl implements UserService {
                         customerInfoList.get(0).getUserinfo().setTransfercompany(item.get("转职公司●").toString());
                     }
                     //        zy-7/6-禅道207/231任务 start
-                    //离职时间
-                    if (item.get("离职时间●") != null) {
-                        customerInfoList.get(0).getUserinfo().setResignation_date(item.get("离职时间●").toString());
+                    //退职日
+                    if (item.get("退职日●") != null) {
+                        customerInfoList.get(0).getUserinfo().setResignation_date(item.get("退职日●").toString());
                     }
                     //        zy-7/6-禅道207/231任务 end
                     //退职理由
