@@ -478,7 +478,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             model.add("学历");
             model.add("联系方式");
             model.add("毕业年");
-            model.add("供应商名称");
+            model.add("供应商中文名称");
             model.add("Rn");
             model.add("邮箱地址");
             model.add("group");
