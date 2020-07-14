@@ -2257,11 +2257,25 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     }
 
     @Override
-    public List<CompanyProjectsVo2> getList2(String flag,List<String> ownerList) throws Exception {
+    public List<CompanyProjectsVo2> getList2(String flag, List<String> ownerList, String owner) throws Exception {
         if ("0".equals(flag)) {
-            return companyprojectsMapper.getList2(ownerList);
+            List<CompanyProjectsVo2> list2 = companyprojectsMapper.getList2(ownerList);
+            List<CompanyProjectsVo2> list3 = companyprojectsMapper.getListPL2(owner);
+            for (CompanyProjectsVo2 item : list3) {
+                if (list2.stream().filter(item2 -> item2.getCompanyprojects_id().equals(item.getCompanyprojects_id())).count() == 0) {
+                    list2.add(item);
+                }
+            }
+            return list2;
         } else {
-            return companyprojectsMapper.getList3(ownerList);
+            List<CompanyProjectsVo2> list3 = companyprojectsMapper.getList3(ownerList);
+            List<CompanyProjectsVo2> list4 = companyprojectsMapper.getListPL3(owner);
+            for (CompanyProjectsVo2 item : list4) {
+                if (list3.stream().filter(item2 -> item2.getCompanyprojects_id().equals(item.getCompanyprojects_id())).count() == 0) {
+                    list3.add(item);
+                }
+            }
+            return list3;
         }
     }
 
