@@ -2057,6 +2057,12 @@ public class UserServiceImpl implements UserService {
                         if (addflg == 0) {
                             cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
                             cupList.add(personal);
+                            if (item.get("现职责工资●") != null) {
+                                customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
+                            }
+                            if (item.get("现基本工资●") != null) {
+                                customerInfoList.get(0).getUserinfo().setBasic(item.get("现基本工资●").toString());
+                            }
                         } else {
                             cupList.addAll(customerInfoList.get(0).getUserinfo().getGridData());
                         }
