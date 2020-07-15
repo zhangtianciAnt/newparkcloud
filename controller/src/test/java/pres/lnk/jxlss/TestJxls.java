@@ -7,6 +7,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.UserAccount;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.Impl.AnnualLeaveServiceImpl;
 //import com.nt.utils.Excel2Pdf;
@@ -50,7 +51,7 @@ public class TestJxls {
     @Before
     public void init() {
 
-        String host = "124.93.4.170";
+        String host = "192.168.0.137";
         int port = 27017;
         String userName = "pfansroot";
         String password = "password1!";
@@ -91,9 +92,13 @@ public class TestJxls {
 //        ArrayList<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
 //        String i = "" ;
 //        for(Map<String,Object> item :readAll) {
-//            Query query = new Query();
-//            query.addCriteria(Criteria.where("userinfo.groupname").is("住空間・業務空間開発グループ"));
-//            List<CustomerInfo> customerInfos = template.find(query, CustomerInfo.class);
+            Query query = new Query();
+            query.addCriteria(Criteria.where("status").is("0"));
+            List<UserAccount> customerInfos = template.find(query, UserAccount.class);
+            for(UserAccount item:customerInfos){
+                item.setPassword(item.getPassword());
+                template.save(item);
+            }
 //            if(customerInfos.size() > 0) {
 //
 //            }
@@ -199,7 +204,7 @@ public class TestJxls {
 //        String path = "D:/仮出金.xls";
 //        new jacob2pdf().excel2Pdf("D:/仮出金.xls", "D:/仮出金.pdf");
 
-        sign.startGraphics2D("张建");
+//        sign.startGraphics2D("张建");
 
     }
 
