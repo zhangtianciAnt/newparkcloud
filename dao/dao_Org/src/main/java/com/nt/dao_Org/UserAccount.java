@@ -46,11 +46,11 @@ public class UserAccount extends BaseModel {
     private String userid;
 
     public String getPassword() {
-        if(StringUtils.isBase64Encode(password)) {
-            return Base64.decode(password).toString();
-        }else{
+//        if(StringUtils.isBase64Encode(password)) {
+//            return Base64.decodeStr(password);
+//        }else{
             return password;
-        }
+//        }
 
     }
 
