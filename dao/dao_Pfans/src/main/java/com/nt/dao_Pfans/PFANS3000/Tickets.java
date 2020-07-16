@@ -206,6 +206,18 @@ public class Tickets extends BaseModel {
     @Column(name = "REFUSEREASON")
     private String refusereason;
 
+    /**
+     * 精算金额
+     */
+    @Column(name = "ACTUARIALAMOUNT")
+    private String actuarialamount;
+
+    /**
+     * 精算金额
+     */
+    @Column(name = "FINSHTIME")
+    private Date finshtime;
+
     //add-ws-7/7-禅道247
     /**
      * 出差申请名称
