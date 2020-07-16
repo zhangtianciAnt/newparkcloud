@@ -9,11 +9,13 @@ import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS5000.Projectsystem;
+import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
+import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
 import com.nt.service_pfans.PFANS5000.mapper.PersonalProjectsMapper;
 import com.nt.service_pfans.PFANS5000.mapper.ProjectsystemMapper;
@@ -67,6 +69,9 @@ public class LogManagementServiceImpl implements LogManagementService {
     private PersonalProjectsMapper personalprojectsMapper;
 
     @Autowired
+    private CompanyProjectsMapper companyprojectsMapper;
+
+    @Autowired
     private MongoTemplate mongoTemplate;
 
     @Autowired
@@ -106,6 +111,15 @@ public class LogManagementServiceImpl implements LogManagementService {
         return logmanagementmapper.select(logmanagement);
     }
 
+    //add_fjl_0716_添加PL权限的人查看日志一览  start
+    @Override
+    public List<LogManagement> getDataListPL(TokenModel tokenModel) throws Exception {
+        String owner = tokenModel.getUserId();
+        List<LogManagement> list2 = logmanagementmapper.getListPLlogman(owner);
+        return list2;
+    }
+
+    //add_fjl_0716_添加PL权限的人查看日志一览  end
     @Override
     public List<LogManagement> getLogDataList(LogManagement logmanagement, String startDate, String endDate) throws Exception {
         return logmanagementmapper.selectByDate(logmanagement.getOwners(), startDate, endDate);

@@ -504,7 +504,7 @@ public class Pfans1013Controller {
         }
 
         trafficlist = trafficlist.stream().filter(item -> (!item.getRmb().equals("0.00"))).collect(Collectors.toList());
-        accommodationlist = accommodationlist.stream().filter(item -> (!item.getRmb().equals("0.00")) ).collect(Collectors.toList());
+        List<AccommodationDetails> accommlist = accommodationlist.stream().filter(item -> (!item.getRmb().equals("0.00"))).collect(Collectors.toList());
         otherDetailslist = otherDetailslist.stream().filter(item -> (!item.getRmb().equals("0.00"))).collect(Collectors.toList());
         String ccc = "外币兑换";
         List<Dictionary> dictionaryL = dictionaryService.getForSelect("PJ119");
@@ -534,8 +534,8 @@ public class Pfans1013Controller {
         data.put("cur", evevo.getCurrencyexchanges());
         data.put("ccc", ccc);
         data.put("tra", trafficlist);
-//        data.put("add", AccommodationList);
-        data.put("acc", accommodationlist);
+        data.put("adl", accommodationlist);
+        data.put("acc", accommlist);
         data.put("other", otherDetailslist);
 
         //upd-ws-6/17-禅道101

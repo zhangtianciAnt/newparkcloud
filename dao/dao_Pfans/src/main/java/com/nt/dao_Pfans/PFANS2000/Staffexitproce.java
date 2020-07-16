@@ -52,6 +52,10 @@ public class Staffexitproce extends BaseModel {
     private String starank;
     private String checkedgm;
     private String checkedcenter;
+    private String userdata;
+    private String userworkfolw;
+    private String remarkdata;
+    private String remarkworkfolw;
 //    private Date newhope_exit_date;
 //    private String newreason;
 }

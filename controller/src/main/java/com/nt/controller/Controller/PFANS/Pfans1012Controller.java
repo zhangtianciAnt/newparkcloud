@@ -286,7 +286,7 @@ public class Pfans1012Controller {
                             wfList3 = "";
                         } else {
                             query = new Query();
-                            query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                            query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
                             customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                             if (customerInfo != null) {
                                 wfList3 = customerInfo.getUserinfo().getCustomername();
@@ -295,7 +295,7 @@ public class Pfans1012Controller {
                         }
                     } else {
                         query = new Query();
-                        query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                        query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
                         customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                         if (customerInfo != null) {
                             wfList3 = customerInfo.getUserinfo().getCustomername();
@@ -307,7 +307,7 @@ public class Pfans1012Controller {
                             wfList4 = "";
                         } else {
                             query = new Query();
-                            query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                            query.addCriteria(Criteria.where("userid").is(wfList.get(4).getUserId()));
                             customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                             if (customerInfo != null) {
                                 wfList4 = customerInfo.getUserinfo().getCustomername();
@@ -316,7 +316,7 @@ public class Pfans1012Controller {
                         }
                     } else {
                         query = new Query();
-                        query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                        query.addCriteria(Criteria.where("userid").is(wfList.get(4).getUserId()));
                         customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                         if (customerInfo != null) {
                             wfList4 = customerInfo.getUserinfo().getCustomername();
