@@ -2253,7 +2253,10 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
     @Override
     public List<CompanyProjectsVo2> getSiteList4(CompanyProjects companyProjects) throws Exception {
-        return companyprojectsMapper.getList4(companyProjects.getOwner());
+        //add_fjl_去重
+        List<CompanyProjectsVo2> rst = companyprojectsMapper.getList4(companyProjects.getOwner());
+        rst = rst.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(t -> t.getCompanyprojects_id()))), ArrayList::new));
+        return rst;
     }
 
     @Override
