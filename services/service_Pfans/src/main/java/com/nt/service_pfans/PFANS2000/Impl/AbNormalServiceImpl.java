@@ -112,14 +112,36 @@ public class AbNormalServiceImpl implements AbNormalService {
 
         if(abNormal.getStatus().equals("7"))
         {
-                Calendar calStart = Calendar.getInstance();
-                calStart.setTime(abNormal.getReoccurrencedate());
-                Calendar calend = Calendar.getInstance();
-                calend.setTime(abNormal.getRefinisheddate());
+            List<Date> Longlist = new ArrayList<Date>();
+            SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");
+
+            Calendar calStart = Calendar.getInstance();
+            calStart.setTime(abNormal.getOccurrencedate());
+            Longlist.add(sf1ymd.parse(sf1ymd.format(calStart.getTime())));
+
+            Calendar calend = Calendar.getInstance();
+            calend.setTime(abNormal.getFinisheddate());
+            Longlist.add(sf1ymd.parse(sf1ymd.format(calend.getTime())));
+
+            Calendar calReStart = Calendar.getInstance();
+            calReStart.setTime(abNormal.getReoccurrencedate());
+            Longlist.add(sf1ymd.parse(sf1ymd.format(calReStart.getTime())));
+
+            Calendar calReend = Calendar.getInstance();
+            calReend.setTime(abNormal.getRefinisheddate());
+            Longlist.add(sf1ymd.parse(sf1ymd.format(calReend.getTime())));
+
+            Collections.sort(Longlist);
+            if(Longlist.size() == 4)
+            {
+                calStart.setTime(Longlist.get(0));
+                calend.setTime(Longlist.get(3));
                 for(Calendar item = calStart;item.compareTo(calend) <= 0;item.add(Calendar.DAY_OF_MONTH,1))
                 {
                     punchcardRecordService.methodAttendance_b(item,abNormal.getUser_id());
                 }
+            }
+
         }
 
         //add ccm 2020708 异常实时反应
