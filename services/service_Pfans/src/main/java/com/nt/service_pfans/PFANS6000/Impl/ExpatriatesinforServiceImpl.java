@@ -331,7 +331,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             expatriatesinfor.setGroup_id(expatriatesinfor.getInterviewdep());
         }
         expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
-        if (expatriatesinfor.getWhetherentry().equals("BP006001") && !expatriatesinfor.getGroup_id().equals("")) {
+        if (expatriatesinfor.getWhetherentry().equals("BP006001") && !expatriatesinfor.getGroup_id().equals("") && expatriatesinfor.getGroup_id() !=null) {
             Priceset priceset = new Priceset();
             priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
             //priceset.setGroupid(expatriatesinfor.getGroup_id());
@@ -636,7 +636,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                 }
                                 else
                                 {
-                                    expatriatesinfor.setSuppliername(suppliername);
+                                    throw new LogicalException("第" + i + "行的供应商名称不存在，请确认。");
                                 }
                             }
                             if(value.size()>8)
@@ -678,8 +678,12 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     }
                                     else
                                     {
-                                        expatriatesinfor.setGroup_id(groupName);
+                                        throw new LogicalException("第" + i + "行的group名称不存在，请确认。");
                                     }
+                                }
+                                else
+                                {
+                                    throw new LogicalException("第" + i + "行的group名称不能为空，请确认。");
                                 }
                             }
                             if(value.size()>11)
