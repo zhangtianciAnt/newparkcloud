@@ -21,6 +21,10 @@ public interface LogManagementService {
 
     public List<LogManagement> getDataList(LogManagement logmanagemenr) throws Exception;
 
+    //add_fjl_0716_添加PL权限的人查看日志一览  start
+    public List<LogManagement> getDataListPL(TokenModel tokenModel) throws Exception;
+    //add_fjl_0716_添加PL权限的人查看日志一览  end
+
     public List<LogManagement> getLogDataList(LogManagement logmanagemenr,String startDate,String endDate) throws Exception;
 
     public List<LogManagement> getCheckList(LogManagement logmanagemenr) throws Exception;
