@@ -168,6 +168,14 @@ public class Pfans5008Controller {
         LogManagement logmanagement = new LogManagement();
         logmanagement.setOwners(tokenModel.getOwnerList());
         List<LogManagement> list = logmanagementService.getDataList(logmanagement);
+        //add_fjl_0716_添加PL权限的人查看日志一览  start
+        List<LogManagement> list1 = logmanagementService.getDataListPL(tokenModel);
+        for (LogManagement item : list1) {
+            if (list.stream().filter(item2 -> item2.getProject_id().equals(item.getProject_id())).count() == 0) {
+                list.add(item);
+            }
+        }
+        //add_fjl_0716_添加PL权限的人查看日志一览  end
         list = list.stream().filter(item -> DateUtil.format(item.getLog_date(),"yyyy/MM").equals(
                 DateUtil.format(conditon.getLog_date(),"yyyy/MM")
         )).collect(Collectors.toList());

@@ -15,6 +15,18 @@
         where HAS_PROJECT = '02';
     </select>
 
+    <select id="getListPLlogman" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
+        SELECT * FROM logmanagement WHERE PROJECT_ID IN (
+        select companyprojects.COMPANYPROJECTS_ID from companyprojects
+                where COMPANYPROJECTS_ID in (
+                select projectsystem.COMPANYPROJECTS_ID from projectsystem
+                where
+                UPPER(POSITION) = 'PL'
+                and name = #{owner}
+                and REPLACE(EXITTIME,'-','')  >= DATE_FORMAT(SYSDATE(),'%Y%m%d')
+                GROUP BY projectsystem.COMPANYPROJECTS_ID))
+    </select>
+
     <select id="selectByDate" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
 
         select *

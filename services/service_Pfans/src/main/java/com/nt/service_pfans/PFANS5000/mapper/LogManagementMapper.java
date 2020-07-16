@@ -13,6 +13,10 @@ import java.util.List;
 public interface LogManagementMapper extends MyMapper<LogManagement> {
     List<LogManagement> gettlist();
 
+    //add_fjl_0716_添加PL权限的人查看日志一览  start
+    List<LogManagement> getListPLlogman(@Param("owner") String owner);
+    //add_fjl_0716_添加PL权限的人查看日志一览  end
+
     List<LogManagement> selectByDate(@Param("owners")List<String> owners,@Param("startDate")String startDate,@Param("endDate")String endDate);
 
     List<LogmanagementConfirmVo> getProjectList(@Param("owners")List<String> owners,@Param("userid")String userid);
