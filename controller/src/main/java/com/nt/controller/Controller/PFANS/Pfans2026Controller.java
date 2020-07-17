@@ -1,14 +1,20 @@
 package com.nt.controller.Controller.PFANS;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
+import com.nt.dao_Org.UserAccount;
+import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
 import com.nt.dao_Pfans.PFANS2000.Staffexitproce;
 import com.nt.dao_Pfans.PFANS2000.Vo.StaffexitprocedureVo;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
 import com.nt.dao_Workflow.Workflowinstance;
+import com.nt.service_Org.OrgTreeService;
+import com.nt.service_Org.UserService;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS2000.StaffexitprocedureService;
@@ -23,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
@@ -38,6 +45,11 @@ public class Pfans2026Controller {
     @Autowired
     private WorkflowinstanceMapper workflowinstanceMapper;
 
+    @Autowired
+    private OrgTreeService orgTreeService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private StaffexitprocedureService staffexitprocedureService;
@@ -55,7 +67,7 @@ public class Pfans2026Controller {
         StaffexitprocedureVo StaList = staffexitprocedureService.selectById(staffexitprocedureVo.getStaffexitprocedure().getStaffexitprocedure_id());
         Map<String, Object> data = new HashMap<>();
         Query query = new Query();
-
+        String userid = StaList.getStaffexitprocedure().getUser_id();
         query.addCriteria(Criteria.where("userid").is(StaList.getStaffexitprocedure().getUser_id()));
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
         if (customerInfo != null) {
@@ -65,16 +77,98 @@ public class Pfans2026Controller {
             StaList.getStaffexitprocedure().setTeam_id(customerInfo.getUserinfo().getTeamname());
         }
 
+        String wfList1 = "";
+        String wfList2 = "";
+        String wfList3 = "";
+        String wfList4 = "";
+        String ro = "";
+        int flgroles = 0;//区分flg = 0 ？正式社员 ：（领导）
+        Query query8 = new Query();
+        query8.addCriteria(Criteria.where("_id").is(userid));
+        UserAccount userAccount = mongoTemplate.findOne(query8, UserAccount.class);
+        if (userAccount != null) {
+            if(userAccount.getRoles().size() > 0){
+                for(int i = 0;i<userAccount.getRoles().size();i++){
+                    ro = ro +  userAccount.getRoles().get(i).getDescription();
+                }
+                if (ro.indexOf("总经理") != -1) {
+                    flgroles = 1;
+                } else if (ro.toUpperCase().indexOf("CENTER") != -1) {
+                    flgroles = 2;
+                } else if (ro.toUpperCase().indexOf("GM") != -1) {
+                    flgroles = 3;
+                } else if (ro.toUpperCase().indexOf("TL") != -1) {
+                    flgroles = 4;
+                }
+            }
+        }
+        StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
+        startWorkflowVo.setDataId(StaList.getStaffexitprocedure().getStaffexitprocedure_id());
+        List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
+        if (wfList.size() > 0) {
+            Query query2 = new Query();
+            query2.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+            CustomerInfo customerInfo2 = mongoTemplate.findOne(query2, CustomerInfo.class);
+            if (customerInfo2 != null) {
+                wfList1 = customerInfo2.getUserinfo().getCustomername();
+                wfList1 = sign.startGraphics2D(wfList1);
+            }
+            if (flgroles == 0) {
+                Query query3 = new Query();
+                query3.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                CustomerInfo customerInfo3 = mongoTemplate.findOne(query3, CustomerInfo.class);
+                if (customerInfo3 != null) {
+                    wfList2 = customerInfo3.getUserinfo().getCustomername();
+                    wfList2 = sign.startGraphics2D(wfList2);
+                }
+                Query query4 = new Query();
+                query4.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                CustomerInfo customerInfo4 = mongoTemplate.findOne(query4, CustomerInfo.class);
+                if (customerInfo4 != null) {
+                    wfList3 = customerInfo4.getUserinfo().getCustomername();
+                    wfList3 = sign.startGraphics2D(wfList3);
+                }
+            } else if (flgroles == 4) {
+                Query query5 = new Query();
+                query5.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                CustomerInfo customerInfo5 = mongoTemplate.findOne(query5, CustomerInfo.class);
+                if (customerInfo5 != null) {
+                    wfList3 = customerInfo5.getUserinfo().getCustomername();
+                    wfList3 = sign.startGraphics2D(wfList3);
+                }
+                Query query6 = new Query();
+                query6.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                CustomerInfo customerInfo6 = mongoTemplate.findOne(query6, CustomerInfo.class);
+                if (customerInfo6 != null) {
+                    wfList4 = customerInfo.getUserinfo().getCustomername();
+                    wfList4 = sign.startGraphics2D(wfList4);
+                }
+            } else if (flgroles == 3) {
+                Query query7 = new Query();
+                query7.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                CustomerInfo customerInfo7 = mongoTemplate.findOne(query7, CustomerInfo.class);
+                if (customerInfo7 != null) {
+                    wfList4 = customerInfo7.getUserinfo().getCustomername();
+                    wfList4 = sign.startGraphics2D(wfList4);
+                }
+            }
+        }
         data.put("sta", StaList.getStaffexitprocedure());
+        data.put("wfList4", wfList4);
+        data.put("wfList3", wfList3);
+        data.put("wfList2", wfList2);
+        data.put("wfList1", wfList1);
         ExcelOutPutUtil.OutPutPdf("劳动者离职者报告", "lizhibaogao.xls", data, response);
+        ExcelOutPutUtil.deleteDir("E:\\PFANS\\image");
     }
+
     /*
      * 列表查看
      * */
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
-    public ApiResult get(String type,HttpServletRequest request) throws Exception {
+    public ApiResult get(String type, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        Staffexitprocedure staffexitprocedure=new Staffexitprocedure();
+        Staffexitprocedure staffexitprocedure = new Staffexitprocedure();
         staffexitprocedure.setOwners(tokenModel.getOwnerList());
         List<Staffexitprocedure> StaList = staffexitprocedureService.get(staffexitprocedure);
         StaList = StaList.stream().filter(item -> (item.getType().equals(type))).collect(Collectors.toList());
@@ -111,47 +205,49 @@ public class Pfans2026Controller {
         return ApiResult.success();
     }
 //add-ws-6/16-禅道106
+
     /**
      * 查看
      */
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
     public ApiResult selectById(String staffexitprocedureid, HttpServletRequest request) throws Exception {
-        if(staffexitprocedureid==null){
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        if (staffexitprocedureid == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(staffexitprocedureService.selectById(staffexitprocedureid));
     }
+
     /**
-     *
      * 修改z
      */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody StaffexitprocedureVo staffexitprocedureVo, HttpServletRequest request) throws Exception {
-        if(staffexitprocedureVo==null){
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        if (staffexitprocedureVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel=tokenService.getToken(request);
-        staffexitprocedureService.update(staffexitprocedureVo,tokenModel);
+        TokenModel tokenModel = tokenService.getToken(request);
+        staffexitprocedureService.update(staffexitprocedureVo, tokenModel);
         return ApiResult.success();
 
     }
+
     /**
      * 新建
      */
-    @RequestMapping(value = "insert", method = { RequestMethod.POST })
-    public ApiResult insert(@RequestBody StaffexitprocedureVo staffexitprocedureVo, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "insert", method = {RequestMethod.POST})
+    public ApiResult insert(@RequestBody StaffexitprocedureVo staffexitprocedureVo, HttpServletRequest request) throws Exception {
         if (staffexitprocedureVo == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        staffexitprocedureService.insert(staffexitprocedureVo,tokenModel);
+        staffexitprocedureService.insert(staffexitprocedureVo, tokenModel);
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/get2", method = {RequestMethod.GET})
-    public ApiResult get2(String type,HttpServletRequest request) throws Exception {
+    public ApiResult get2(String type, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        Staffexitproce staffexitproce=new Staffexitproce();
+        Staffexitproce staffexitproce = new Staffexitproce();
         staffexitproce.setOwners(tokenModel.getOwnerList());
         List<Staffexitproce> StaList = staffexitprocedureService.get2(staffexitproce);
         return ApiResult.success(StaList);
@@ -159,17 +255,17 @@ public class Pfans2026Controller {
 
     @RequestMapping(value = "/selectById2", method = {RequestMethod.GET})
     public ApiResult selectById2(String staffexitproceid, HttpServletRequest request) throws Exception {
-        if(staffexitproceid==null){
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        if (staffexitproceid == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(staffexitprocedureService.selectById2(staffexitproceid));
     }
 
 
     @RequestMapping(value = "/get3", method = {RequestMethod.GET})
-    public ApiResult list(String userid,HttpServletRequest request) throws Exception {
-        if(userid==null){
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+    public ApiResult list(String userid, HttpServletRequest request) throws Exception {
+        if (userid == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         Workflowinstance workflowinstance = new Workflowinstance();
         workflowinstance.setOwner(userid);
@@ -180,24 +276,25 @@ public class Pfans2026Controller {
 
     @RequestMapping(value = "/update2", method = {RequestMethod.POST})
     public ApiResult update2(@RequestBody StaffexitprocedureVo staffexitprocedureVo, HttpServletRequest request) throws Exception {
-        if(staffexitprocedureVo==null){
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        if (staffexitprocedureVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel=tokenService.getToken(request);
-        staffexitprocedureService.update2(staffexitprocedureVo,tokenModel);
+        TokenModel tokenModel = tokenService.getToken(request);
+        staffexitprocedureService.update2(staffexitprocedureVo, tokenModel);
         return ApiResult.success();
 
     }
+
     /**
      * 新建
      */
-    @RequestMapping(value = "insert2", method = { RequestMethod.POST })
-    public ApiResult insert2(@RequestBody StaffexitprocedureVo staffexitprocedureVo, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "insert2", method = {RequestMethod.POST})
+    public ApiResult insert2(@RequestBody StaffexitprocedureVo staffexitprocedureVo, HttpServletRequest request) throws Exception {
         if (staffexitprocedureVo == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        staffexitprocedureService.insert2(staffexitprocedureVo,tokenModel);
+        staffexitprocedureService.insert2(staffexitprocedureVo, tokenModel);
         return ApiResult.success();
     }
 
