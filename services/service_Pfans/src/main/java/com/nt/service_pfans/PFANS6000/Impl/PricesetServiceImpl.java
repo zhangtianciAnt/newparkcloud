@@ -77,6 +77,7 @@ public class PricesetServiceImpl implements PricesetService {
                         List<Priceset> p = pl.stream().filter(pli -> (expatriatesinforItem.getGroup_id().equals(pli.getGroup_id()))).collect(Collectors.toList());
                         if(p.size() ==0)
                         {
+
                             //查询履历
                             List<ExpatriatesinforDetail> expatriatesinforDetails =new ArrayList<>();
                             //画面传过来的月份
@@ -85,13 +86,24 @@ public class PricesetServiceImpl implements PricesetService {
                             {
                                 for(ExpatriatesinforDetail eDetail:expatriatesinforDetails)
                                 {
-                                    Priceset priceset = new Priceset();
-                                    priceset.setGroup_id(eDetail.getGroup_id());
-                                    priceset.setUser_id(eDetail.getExpatriatesinfor_id());
-                                    priceset.setUsername(expatriatesinforItem.getExpname());
-                                    priceset.setGraduation(expatriatesinforItem.getGraduation_year());
-                                    priceset.setCompany(expatriatesinforItem.getSuppliername());
-                                    a.getDetail().add(priceset);
+                                    Priceset pr = new Priceset();
+                                    pr.setUser_id(eDetail.getExpatriatesinfor_id());
+                                    pr.setGroup_id(eDetail.getGroup_id());
+                                    pr.setUsername(expatriatesinforItem.getExpname());
+                                    pr.setGraduation(expatriatesinforItem.getGraduation_year());
+                                    pr.setCompany(expatriatesinforItem.getSuppliername());
+                                    List<Priceset> prlist = a.getDetail().stream().filter(pli -> (pr.getGroup_id().equals(pli.getGroup_id()) && pr.getUser_id().equals(pli.getUser_id()))).collect(Collectors.toList());
+                                    prlist = prlist.stream().filter(pli -> (pr.getUsername().equals(pli.getUsername()))).collect(Collectors.toList());
+                                    if(prlist.size() == 0)
+                                    {
+                                        Priceset priceset = new Priceset();
+                                        priceset.setGroup_id(eDetail.getGroup_id());
+                                        priceset.setUser_id(eDetail.getExpatriatesinfor_id());
+                                        priceset.setUsername(expatriatesinforItem.getExpname());
+                                        priceset.setGraduation(expatriatesinforItem.getGraduation_year());
+                                        priceset.setCompany(expatriatesinforItem.getSuppliername());
+                                        a.getDetail().add(priceset);
+                                    }
                                 }
                             }
                         }
