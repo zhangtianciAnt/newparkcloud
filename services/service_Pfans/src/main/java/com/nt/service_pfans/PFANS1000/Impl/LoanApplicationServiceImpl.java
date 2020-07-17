@@ -26,6 +26,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     @Override
     public List<LoanApplication> getLoanApplication(LoanApplication loanapplication) {
+        int canafvermoney = 0;
         List<LoanApplication> loanApplicationList = loanapplicationMapper.select(loanapplication);
         for (LoanApplication loanApplication : loanApplicationList) {
             PublicExpense publicExpense = new PublicExpense();
@@ -38,6 +39,10 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     } else {
                         loanApplication.setCanafver("0");
                     }
+                    for(int i = 0; i < publicExpenseList.size(); i ++){
+                        canafvermoney += Integer.parseInt(publicExpenseList.get(i).getMoneys());
+                    }
+                    loanApplication.setCanafvermoney(canafvermoney);
                     loanapplicationMapper.updateByPrimaryKeySelective(loanApplication);
                 }
             }

@@ -187,4 +187,9 @@ public class LoanApplication extends BaseModel {
      */
     @Column(name = "CANAFVER")
     private String canafver;
+    /**
+     * 核销金额
+     */
+    @Column(name = "CANAFVERMONEY")
+    private Integer canafvermoney;
 }
