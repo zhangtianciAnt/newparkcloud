@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -69,6 +70,31 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    //系统服务——add_fjl_0717  退场的第二天，账号不可登录  start
+    @Scheduled(cron = "0 10 0 * * ?")
+    public void updExpatriatesinforStatus() throws Exception {
+        SimpleDateFormat st = new SimpleDateFormat("yyyyMMdd");
+        int re = Integer.parseInt(st.format(new Date()));
+        List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.getExpatriatesinforexit();
+        if (expatriatesinforList.size() > 0) {
+            for (Expatriatesinfor ex : expatriatesinforList) {
+                if (ex.getExitime() != null) {
+                    if (re > Integer.parseInt(st.format(ex.getExitime()))) {
+                        Query query = new Query();
+                        query.addCriteria(Criteria.where("_id").is(ex.getAccount()));
+                        query.addCriteria(Criteria.where("status").is("0"));
+                        UserAccount usount = mongoTemplate.findOne(query, UserAccount.class);
+                        if (usount != null) {
+                            usount.setStatus("1");
+                            mongoTemplate.save(usount);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    //系统服务——add_fjl_0717  退场的第二天，账号不可登录  end
 
     @Override
     public List<Expatriatesinfor> getexpatriatesinfor(Expatriatesinfor expatriatesinfor) throws Exception {
