@@ -122,7 +122,7 @@ public class Pfans1006Controller {
             List<Dictionary> curList1 = dictionaryService.getForSelect("PG019");
             for (Dictionary item : curList1) {
                 if (item.getCode().equals(loanApplication.getCurrencychoice())) {
-                    loanApplication.setCurrencychoice(item.getValue1());
+                    loanApplication.setCurrencychoice(item.getValue3());
                 }
             }
             //预算单位
