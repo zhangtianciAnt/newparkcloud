@@ -32,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -69,6 +70,31 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    //系统服务——add_fjl_0717  退场的第二天，账号不可登录  start
+    @Scheduled(cron = "0 10 0 * * ?")
+    public void updExpatriatesinforStatus() throws Exception {
+        SimpleDateFormat st = new SimpleDateFormat("yyyyMMdd");
+        int re = Integer.parseInt(st.format(new Date()));
+        List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.getExpatriatesinforexit();
+        if (expatriatesinforList.size() > 0) {
+            for (Expatriatesinfor ex : expatriatesinforList) {
+                if (ex.getExitime() != null) {
+                    if (re > Integer.parseInt(st.format(ex.getExitime()))) {
+                        Query query = new Query();
+                        query.addCriteria(Criteria.where("_id").is(ex.getAccount()));
+                        query.addCriteria(Criteria.where("status").is("0"));
+                        UserAccount usount = mongoTemplate.findOne(query, UserAccount.class);
+                        if (usount != null) {
+                            usount.setStatus("1");
+                            mongoTemplate.save(usount);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    //系统服务——add_fjl_0717  退场的第二天，账号不可登录  end
 
     @Override
     public List<Expatriatesinfor> getexpatriatesinfor(Expatriatesinfor expatriatesinfor) throws Exception {
@@ -134,6 +160,19 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
     @Override
     public void updateinforApply(Expatriatesinfor expatriatesinfor, TokenModel tokenModel) throws Exception {
+        //add ccm 0717 单价人名和员工信息名字不一致
+        Priceset pri = new Priceset();
+        pri.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
+        List<Priceset> priexpnameList = pricesetMapper.select(pri);
+        if(priexpnameList.size() > 0)
+        {
+            for(Priceset pr: priexpnameList)
+            {
+                pr.setUsername(expatriatesinfor.getExpname());
+                pricesetMapper.updateByPrimaryKey(pr);
+            }
+        }
+        //add ccm 0717 单价人名和员工信息名字不一致
         expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
     }
     @Override
@@ -330,7 +369,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         {
             expatriatesinfor.setGroup_id(expatriatesinfor.getInterviewdep());
         }
-        expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
+        expatriatesinforMapper.updateByPrimaryKey(expatriatesinfor);
         if (expatriatesinfor.getWhetherentry().equals("BP006001") && !expatriatesinfor.getGroup_id().equals("") && expatriatesinfor.getGroup_id() !=null) {
             Priceset priceset = new Priceset();
             priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
