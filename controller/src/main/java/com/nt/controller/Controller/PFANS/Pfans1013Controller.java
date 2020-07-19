@@ -5,6 +5,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Pfans.PFANS1000.*;
+import com.nt.dao_Pfans.PFANS1000.Vo.BusinessVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.EvectionVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TravelCostVo;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
@@ -59,6 +60,9 @@ public class Pfans1013Controller {
     public void exportjs(String evectionid, HttpServletRequest request, HttpServletResponse response) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         EvectionVo evevo = evectionService.selectById(evectionid);
+        //add_fjl_0717 添加出差申请编号  start
+        BusinessVo business = businessService.selectById(evevo.getEvection().getBusiness_id());
+        //add_fjl_0717 添加出差申请编号  end
         Map<String, Object> list = evectionService.exportjs(evectionid, request);
         List<TrafficDetails> trafficlist = (List<TrafficDetails>) list.getOrDefault("交通费", new ArrayList<>());
         List<AccommodationDetails> accommodationlist = (List<AccommodationDetails>) list.getOrDefault("住宿费", new ArrayList<>());
@@ -531,6 +535,7 @@ public class Pfans1013Controller {
         data.put("traflg", traflg);
         data.put("sumrmb", sumrmb);
         data.put("eve", evevo.getEvection());
+        data.put("busn", business.getBusiness().getBusiness_number());//出差申请编号
         data.put("cur", evevo.getCurrencyexchanges());
         data.put("ccc", ccc);
         data.put("tra", trafficlist);

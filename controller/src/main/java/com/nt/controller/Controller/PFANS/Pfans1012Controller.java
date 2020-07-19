@@ -236,6 +236,7 @@ public class Pfans1012Controller {
             loanapplication.setLoanapplication_id(pubvo.getPublicexpense().getLoan());
             List<LoanApplication> list = loanapplicationMapper.select(loanapplication);
             if (list.size() > 0) {
+                pubvo.getPublicexpense().setJudgement_name(list.get(0).getLoanapno());
                 if(list.get(0).getPaymentmethod().equals("PJ015002")){
                     if(list.get(0).getUser_name()!=null){
                         query.addCriteria(Criteria.where("userid").is(list.get(0).getUser_name()));
