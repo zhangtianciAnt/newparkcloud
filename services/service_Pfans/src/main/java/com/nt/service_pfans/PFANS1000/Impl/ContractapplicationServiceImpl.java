@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.ToDoNotice;
@@ -670,25 +671,30 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             List<Contractnumbercount> conList = contractnumbercountList.stream().filter(item -> Integer.parseInt(st.format(item.getClaimdate())) <= Integer.parseInt(st.format(new Date()))).collect(Collectors.toList());
             if (conList.size() > 0) {
                 for (Contractnumbercount cq : conList) {
-//                    Contractapplication contractapplication = new Contractapplication();
-//                    contractapplication.setContractnumber(cq.getContractnumber());
-//                    List<Contractapplication> clist = contractapplicationMapper.select(contractapplication);
-                    //请求担当
-                    List<MembersVo> rolelist = roleService.getMembers("5ef193129729aa04e0f9ea0d");
-                    if (rolelist.size() > 0) {
-                        for (MembersVo rt : rolelist) {
-                            //发起人创建代办
-                            ToDoNotice toDoNotice = new ToDoNotice();
-                            List<String> params = new ArrayList<String>();
-                            toDoNotice.setTitle("您有一个【" + cq.getContractnumber() + "】" + cq.getClaimtype() + "请求书待处理");
-                            toDoNotice.setInitiator(cq.getCreateby());
-                            toDoNotice.setContent("您有一个【" + cq.getContractnumber() + "】" + cq.getClaimtype() + "请求书待处理");
-                            toDoNotice.setDataid(cq.getContractnumber());
-                            toDoNotice.setUrl("/PFANS1026FormView");
-                            toDoNotice.setWorkflowurl("/PFANS1026View");
-                            toDoNotice.preInsert(tokenModel);
-                            toDoNotice.setOwner(rt.getUserid());
-                            toDoNoticeService.save(toDoNotice);
+                    Contractapplication contractapplication = new Contractapplication();
+                    contractapplication.setContractnumber(cq.getContractnumber());
+                    List<Contractapplication> clist = contractapplicationMapper.select(contractapplication);
+                    if (clist.size() > 0) {
+                        //请求担当
+                        List<MembersVo> rolelist = roleService.getMembers("5ef193129729aa04e0f9ea0d");
+                        if (rolelist.size() > 0) {
+                            for (MembersVo rt : rolelist) {
+                                //发起人创建代办
+                                ToDoNotice toDoNotice = new ToDoNotice();
+                                List<String> params = new ArrayList<String>();
+                                toDoNotice.setTitle("您有一个【" + cq.getContractnumber() + "】" + cq.getClaimtype() + "请求书待处理");
+                                toDoNotice.setInitiator(cq.getCreateby());
+                                toDoNotice.setContent("您有一个【" + cq.getContractnumber() + "】" + cq.getClaimtype() + "请求书待处理");
+                                toDoNotice.setDataid(cq.getContractnumber());
+                                toDoNotice.setUrl("/PFANS1026FormView");
+                                toDoNotice.setWorkflowurl("/PFANS1026View");
+//                            toDoNotice.preInsert(tokenModel);
+                                toDoNotice.setCreateby(clist.get(0).getCreateby());
+                                toDoNotice.setCreateon(new Date());
+                                toDoNotice.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                                toDoNotice.setOwner(rt.getUserid());
+                                toDoNoticeService.save(toDoNotice);
+                            }
                         }
                     }
                 }
@@ -697,25 +703,30 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             List<Contractnumbercount> conList1 = contractnumbercountList.stream().filter(item -> Integer.parseInt(st.format(item.getDeliverydate())) <= Integer.parseInt(st.format(new Date()))).collect(Collectors.toList());
             if (conList1.size() > 0) {
                 for (Contractnumbercount cN : conList1) {
-//                    Contractapplication contractapplication = new Contractapplication();
-//                    contractapplication.setContractnumber(cN.getContractnumber());
-//                    List<Contractapplication> clist = contractapplicationMapper.select(contractapplication);
-                    //纳品担当
-                    List<MembersVo> rolelist = roleService.getMembers("5ef193069729aa04e0f9ea0c");
-                    if (rolelist.size() > 0) {
-                        for (MembersVo rt : rolelist) {
-                            //发起人创建代办
-                            ToDoNotice toDoNotice = new ToDoNotice();
-                            List<String> params = new ArrayList<String>();
-                            toDoNotice.setTitle("您有一个【" + cN.getContractnumber() + "】" + cN.getClaimtype() + "纳品书待处理");
-                            toDoNotice.setInitiator(cN.getCreateby());
-                            toDoNotice.setContent("您有一个【" + cN.getContractnumber() + "】" + cN.getClaimtype() + "纳品书待处理");
-                            toDoNotice.setDataid(cN.getContractnumber());
-                            toDoNotice.setUrl("/PFANS1026FormView");
-                            toDoNotice.setWorkflowurl("/PFANS1026View");
-                            toDoNotice.preInsert(tokenModel);
-                            toDoNotice.setOwner(rt.getUserid());
-                            toDoNoticeService.save(toDoNotice);
+                    Contractapplication contractapplication = new Contractapplication();
+                    contractapplication.setContractnumber(cN.getContractnumber());
+                    List<Contractapplication> clist1 = contractapplicationMapper.select(contractapplication);
+                    if (clist1.size() > 0) {
+                        //纳品担当
+                        List<MembersVo> rolelist = roleService.getMembers("5ef193069729aa04e0f9ea0c");
+                        if (rolelist.size() > 0) {
+                            for (MembersVo rt : rolelist) {
+                                //发起人创建代办
+                                ToDoNotice toDoNotice = new ToDoNotice();
+                                List<String> params = new ArrayList<String>();
+                                toDoNotice.setTitle("您有一个【" + cN.getContractnumber() + "】" + cN.getClaimtype() + "纳品书待处理");
+                                toDoNotice.setInitiator(cN.getCreateby());
+                                toDoNotice.setContent("您有一个【" + cN.getContractnumber() + "】" + cN.getClaimtype() + "纳品书待处理");
+                                toDoNotice.setDataid(cN.getContractnumber());
+                                toDoNotice.setUrl("/PFANS1026FormView");
+                                toDoNotice.setWorkflowurl("/PFANS1026View");
+//                                toDoNotice.preInsert(tokenModel);
+                                toDoNotice.setCreateby(clist1.get(0).getCreateby());
+                                toDoNotice.setCreateon(new Date());
+                                toDoNotice.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                                toDoNotice.setOwner(rt.getUserid());
+                                toDoNoticeService.save(toDoNotice);
+                            }
                         }
                     }
                 }
