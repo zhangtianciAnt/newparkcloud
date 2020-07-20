@@ -96,6 +96,12 @@ public class AuthController {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/getattendanceByuser",method={RequestMethod.GET})
+    public ApiResult getattendanceByuser(String userid,HttpServletRequest request) throws Exception {
+        annualLeaveService.getattendanceByuser(userid);
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "/selectattendance",method={RequestMethod.GET})
     public ApiResult selectattendance(HttpServletRequest request) throws Exception {
         annualLeaveService.selectattendance();

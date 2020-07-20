@@ -58,4 +58,8 @@ public interface WorkflowServices {
 	public List<WorkflowLogDetailVo> ViewWorkflow2(StartWorkflowVo startWorkflowVo,String locale) throws Exception;
 
 	public List<Workflowinstance> allWorkFlowIns(String menuUrl) throws Exception;
+
+	//ccm 20200713 离职 获取离职人员离职月的考勤审批情况
+	public List<Workflowinstance> oneWorkFlowIns(String menuUrl,String dataid) throws Exception;
+	//ccm 20200713 离职 获取离职人员离职月的考勤审批情况
 }

@@ -115,4 +115,73 @@ GROUP BY
             </foreach>
         </if>
     </update>
+
+    <select id="selectResignationAll" parameterType="com.nt.dao_Pfans.PFANS2000.Attendance" resultType="com.nt.dao_Pfans.PFANS2000.Attendance">
+        select *
+        from
+        (
+            select
+             a.attendance_id  as attendance_id
+            ,a.center_id  as    center_id
+            ,a.group_id  as     group_id
+            ,a.team_id  as      team_id
+            ,a.years  as        years
+            ,a.months  as       months
+            ,a.user_id  as      user_id
+            ,a.dates  as        dates
+            ,a.normal  as       normal
+            ,a.actual  as       actual
+            ,a.shortsickleave  as shortsickleave
+            ,a.longsickleave  as  longsickleave
+            ,a.compassionateleave as compassionateleave
+            ,a.annualrest       as annualrest
+            ,a.daixiu           as daixiu
+            ,a.nursingleave     as nursingleave
+            ,a.welfare          as welfare
+            ,a.absenteeism      as absenteeism
+            ,a.recognitionstate as recognitionstate
+            ,a.tshortsickleave  as tshortsickleave
+            ,a.tlongsickleave   as tlongsickleave
+            ,a.tcompassionateleave as tcompassionateleave
+            ,a.tabsenteeism as tabsenteeism
+            ,a.status as status
+            ,'0' as tenantid
+            from attendance a
+            where a.USER_ID=#{user_id} and a.MONTHS=#{months} and a.YEARS =#{years} and a.RECOGNITIONSTATE = '1'
+
+            union all
+
+            select
+             ar.attendance_id  as attendance_id
+            ,ar.center_id  as    center_id
+            ,ar.group_id  as     group_id
+            ,ar.team_id  as      team_id
+            ,ar.years  as        years
+            ,ar.months  as       months
+            ,ar.user_id  as      user_id
+            ,ar.dates  as        dates
+            ,ar.normal  as       normal
+            ,ar.actual  as       actual
+            ,ar.shortsickleave  as shortsickleave
+            ,ar.longsickleave  as  longsickleave
+            ,ar.compassionateleave as compassionateleave
+            ,ar.annualrest       as annualrest
+            ,ar.daixiu           as daixiu
+            ,ar.nursingleave     as nursingleave
+            ,ar.welfare          as welfare
+            ,ar.absenteeism      as absenteeism
+            ,ar.recognitionstate as recognitionstate
+            ,ar.tshortsickleave  as tshortsickleave
+            ,ar.tlongsickleave   as tlongsickleave
+            ,ar.tcompassionateleave as tcompassionateleave
+            ,ar.tabsenteeism as tabsenteeism
+            ,ar.status as status
+            ,'1' as tenantid
+            from attendance_resignation ar
+            where ar.USER_ID=#{user_id} and ar.MONTHS=#{months} and ar.YEARS=#{years}
+        ) b
+        order by b.dates,b.tenantid
+
+    </select>
+
 </mapper>

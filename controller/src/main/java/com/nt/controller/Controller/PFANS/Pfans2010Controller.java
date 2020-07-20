@@ -57,6 +57,26 @@ public class Pfans2010Controller {
         return ApiResult.success(attendanceService.getAttendancelist1(attendance));
     }
 
+    //获取离职考勤对比
+    @RequestMapping(value = "/getAttendancelistCompared", method = {RequestMethod.POST})
+    public ApiResult getAttendancelistCompared(@RequestBody Attendance attendance, HttpServletRequest request) throws Exception {
+        if (attendance == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        attendance.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        return ApiResult.success(attendanceService.getAttendancelistCompared(attendance));
+    }
+    @RequestMapping(value = "/disclickUpdateStates", method = {RequestMethod.POST})
+    public ApiResult disclickUpdateStates(@RequestBody Attendance attendance, HttpServletRequest request) throws Exception {
+        if (attendance == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        attendanceService.disclickUpdateStates(attendance, tokenModel);
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody AttendanceVo attendancevo, HttpServletRequest request) throws Exception {
         if (attendancevo == null) {
