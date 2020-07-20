@@ -401,6 +401,26 @@ public class WorkflowServicesImpl implements WorkflowServices {
         return rst;
     }
 
+    //ccm 20200713 离职 获取离职人员离职月的考勤审批情况
+    @Override
+    public List<Workflowinstance> oneWorkFlowIns(String menuUrl,String dataid) throws Exception {
+        Workflowinstance con = new Workflowinstance();
+        if (StrUtil.isNotBlank(menuUrl)) {
+            con.setFormid(menuUrl);
+        }
+        if (StrUtil.isNotBlank(dataid)) {
+            con.setDataid(dataid);
+        }
+        List<Workflowinstance> rst = workflowinstanceMapper.select(con);
+        for (Workflowinstance item : rst) {
+            item.setStatus(workResultConvert(item.getStatus(), ""));
+        }
+
+        return rst;
+    }
+    //ccm 20200713 离职 获取离职人员离职月的考勤审批情况
+
+
     private String stepResultConvert(String code, String locale) {
         switch (code) {
             case "1":

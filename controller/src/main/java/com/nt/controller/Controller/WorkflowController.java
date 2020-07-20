@@ -189,4 +189,12 @@ public class WorkflowController {
 
         return ApiResult.success(workflowServices.allWorkFlowIns(menuUrl));
     }
+
+    //ccm 20200713 离职 获取离职人员离职月的考勤审批情况
+    @RequestMapping(value = "/oneWorkFlowIns",method={RequestMethod.GET})
+    public ApiResult oneWorkFlowIns(String menuUrl,String dataid,HttpServletRequest request) throws Exception {
+
+        return ApiResult.success(workflowServices.oneWorkFlowIns(menuUrl,dataid));
+    }
+    //ccm 20200713 离职 获取离职人员离职月的考勤审批情况
 }

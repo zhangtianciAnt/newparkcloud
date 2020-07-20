@@ -16,6 +16,10 @@ public interface AttendanceService {
     //考勤使用
     List<Attendance> getAttendancelist1(Attendance attendance) throws Exception;
 
+    //获取离职考勤对比
+    List<Attendance> getAttendancelistCompared(Attendance attendance) throws Exception;
+    void disclickUpdateStates(Attendance attendance, TokenModel tokenModel) throws Exception;
+
     void update(AttendanceVo attendancevo, TokenModel tokenModel) throws Exception;
 
     //add_fjl_05/13   --添加审批正常结束后，自动变成承认状态

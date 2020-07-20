@@ -2,15 +2,21 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Pfans.PFANS2000.Attendance;
 import com.nt.dao_Pfans.PFANS2000.Vo.AttendanceVo;
+import com.nt.dao_Workflow.Workflowinstance;
+import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
+import com.nt.service_WorkFlow.mapper.WorkflownodeinstanceMapper;
 import com.nt.service_pfans.PFANS2000.AttendanceService;
+import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
 import com.nt.service_pfans.PFANS2000.mapper.AttendanceMapper;
+import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.nt.utils.dao.TokenModel;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +25,15 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Autowired
     private AttendanceMapper attendanceMapper;
+
+    @Autowired
+    private WorkflowinstanceMapper workflowinstanceMapper;
+
+    @Autowired
+    private WorkflownodeinstanceMapper workflownodeinstanceMapper;
+
+    @Autowired
+    private PunchcardRecordService punchcardRecordService;
 
     @Override
     public List<Attendance> getlist(Attendance attendance) throws Exception {
@@ -53,10 +68,35 @@ public class AttendanceServiceImpl implements AttendanceService {
         return attendancelist;
     }
 
+    //获取离职考勤对比
+    @Override
+    public List<Attendance> getAttendancelistCompared(Attendance attendance) throws Exception {
+
+        List<Attendance> attendancelist = attendanceMapper.selectResignationAll(attendance.getUser_id(),attendance.getYears(),attendance.getMonths());
+        return attendancelist;
+    }
+    @Override
+    public void disclickUpdateStates(Attendance attendance, TokenModel tokenModel) throws Exception {
+        Workflowinstance ws = new Workflowinstance();
+        ws.setDataid(attendance.getUser_id()+","+attendance.getYears()+","+attendance.getMonths());
+        ws.setStatus("4");
+        List<Workflowinstance> wslist = workflowinstanceMapper.select(ws);
+        if(wslist.size()>0)
+        {
+            wslist.get(0).setStatus("2");
+            wslist.get(0).setModifyby(tokenModel.getUserId());
+            wslist.get(0).setModifyon(new Date());
+            workflowinstanceMapper.updateByPrimaryKey(wslist.get(0));
+        }
+        //变成未承认
+        attendance.preUpdate(tokenModel);
+        attendanceMapper.updStatus1(attendance.getUser_id(), attendance.getYears(), attendance.getMonths());
+    }
+
 
     @Override
     public void update(AttendanceVo attendancevo, TokenModel tokenModel) throws Exception {
-        List<Attendance> attendancelist =attendancevo.getAttendance();
+        List<Attendance> attendancelist = attendancevo.getAttendance();
         attendanceMapper.updStatusre(tokenModel.getUserId(),attendancelist);
     }
 
