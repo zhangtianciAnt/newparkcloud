@@ -358,7 +358,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                                 if (accountn != null) {
                                     List<Role> stringLis = new ArrayList<>();
                                     stringLis = accountn.getRoles();
-                                    stringLis = stringLis.stream().filter(item -> !item.get_id().equals("5efe9877d526bf1c94d2b7ce")).collect(Collectors.toList());
+                                    stringLis = stringLis.stream().filter(item -> !item.get_id().equals("5f101f889729aa2a0c824c97")).collect(Collectors.toList());
                                     accountn.setRoles(stringLis);
                                     mongoTemplate.save(accountn);
                                 }
@@ -373,7 +373,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                                 UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
                                 //添加PL权限
                                 if (account != null) {
-                                    role.set_id("5efe9877d526bf1c94d2b7ce");
+                                    role.set_id("5f101f889729aa2a0c824c97");
                                     role.setRolename("PL权限");
                                     role.setDescription("PL权限");
                                     role.setDefaultrole("true");
@@ -408,7 +408,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                                     if (account != null) {
                                         List<Role> stringList = new ArrayList<>();
                                         stringList = account.getRoles();
-                                        stringList = stringList.stream().filter(item -> !item.get_id().equals("5efe9877d526bf1c94d2b7ce")).collect(Collectors.toList());
+                                        stringList = stringList.stream().filter(item -> !item.get_id().equals("5f101f889729aa2a0c824c97")).collect(Collectors.toList());
                                         account.setRoles(stringList);
                                         mongoTemplate.save(account);
                                     }
@@ -1209,7 +1209,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                                 if (account != null) {
                                     List<Role> stringList = new ArrayList<>();
                                     stringList = account.getRoles();
-                                    stringList = stringList.stream().filter(item -> !item.get_id().equals("5efe9877d526bf1c94d2b7ce")).collect(Collectors.toList());
+                                    stringList = stringList.stream().filter(item -> !item.get_id().equals("5f101f889729aa2a0c824c97")).collect(Collectors.toList());
                                     account.setRoles(stringList);
                                     mongoTemplate.save(account);
                                 }
@@ -1226,7 +1226,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                                 if (account != null) {
                                     List<Role> stringList = new ArrayList<>();
                                     stringList = account.getRoles();
-                                    stringList = stringList.stream().filter(item -> !item.get_id().equals("5efe9877d526bf1c94d2b7ce")).collect(Collectors.toList());
+                                    stringList = stringList.stream().filter(item -> !item.get_id().equals("5f101f889729aa2a0c824c97")).collect(Collectors.toList());
                                     account.setRoles(stringList);
                                     mongoTemplate.save(account);
                                 }
