@@ -66,6 +66,7 @@ public class PolicyContractServiceImpl implements PolicyContractService {
             policy.setStatus(status);
             policycontractmapper.insertSelective(policy);
         }
+
         String policycontract_id = policy.getPolicycontract_id();
         PolicyContractDetails policycontractdetails = new PolicyContractDetails();
         policycontractdetails.setPolicycontract_id(policycontract_id);

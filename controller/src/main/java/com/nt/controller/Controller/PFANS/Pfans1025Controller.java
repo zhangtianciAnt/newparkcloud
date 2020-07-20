@@ -264,6 +264,7 @@ public class Pfans1025Controller {
                 } else {
                     policycontractlist2 = policycontractlist3;
                 }
+
             } else if (policycontractlist.get(0).getCycle().equals("2")) {
                 if ((10 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 12) || (1 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 3)) {
                     policycontractlist2 = policycontractlist;

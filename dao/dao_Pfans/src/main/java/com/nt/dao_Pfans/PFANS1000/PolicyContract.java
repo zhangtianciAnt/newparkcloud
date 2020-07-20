@@ -107,6 +107,7 @@ public class PolicyContract extends BaseModel {
     @Column(name = "SUMMONET")
     private String summonet;
 
+
     /**
      * 觉书信息
      */

@@ -23,6 +23,7 @@ public class PolicyContractDetails extends BaseModel {
     @Column(name = "POLICYCONTRACTDETAILS_ID")
     private String policycontractdetails_id;
 
+
     /**
      * 外键
      */

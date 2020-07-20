@@ -166,4 +166,5 @@ public class Award extends BaseModel {
     private String policycontract_id;
     // add-ws-7/17-禅道116任务
 
+
 }

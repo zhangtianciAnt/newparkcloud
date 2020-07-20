@@ -59,6 +59,7 @@ public class Pfans1045Controller {
         return ApiResult.success(policycontractservice.One(policycontract.getPolicycontract_id()));
     }
 
+
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult updatePolicyContract(@RequestBody PolicyContractVo policycontractvo, HttpServletRequest request) throws Exception {
         if (policycontractvo == null) {
