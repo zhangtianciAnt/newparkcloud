@@ -82,26 +82,26 @@ public class Pfans2026Controller {
         String wfList3 = "";
         String wfList4 = "";
         String ro = "";
-        int flgroles = 0;//区分flg = 0 ？正式社员 ：（领导）
-        Query query8 = new Query();
-        query8.addCriteria(Criteria.where("_id").is(userid));
-        UserAccount userAccount = mongoTemplate.findOne(query8, UserAccount.class);
-        if (userAccount != null) {
-            if(userAccount.getRoles().size() > 0){
-                for(int i = 0;i<userAccount.getRoles().size();i++){
-                    ro = ro +  userAccount.getRoles().get(i).getDescription();
-                }
-                if (ro.indexOf("总经理") != -1) {
-                    flgroles = 1;
-                } else if (ro.toUpperCase().indexOf("CENTER") != -1) {
-                    flgroles = 2;
-                } else if (ro.toUpperCase().indexOf("GM") != -1) {
-                    flgroles = 3;
-                } else if (ro.toUpperCase().indexOf("TL") != -1) {
-                    flgroles = 4;
-                }
-            }
-        }
+//        int flgroles = 0;//区分flg = 0 ？正式社员 ：（领导）
+//        Query query8 = new Query();
+//        query8.addCriteria(Criteria.where("_id").is(userid));
+//        UserAccount userAccount = mongoTemplate.findOne(query8, UserAccount.class);
+//        if (userAccount != null) {
+//            if(userAccount.getRoles().size() > 0){
+//                for(int i = 0;i<userAccount.getRoles().size();i++){
+//                    ro = ro +  userAccount.getRoles().get(i).getDescription();
+//                }
+//                if (ro.indexOf("总经理") != -1) {
+//                    flgroles = 1;
+//                } else if (ro.toUpperCase().indexOf("CENTER") != -1) {
+//                    flgroles = 2;
+//                } else if (ro.toUpperCase().indexOf("GM") != -1) {
+//                    flgroles = 3;
+//                } else if (ro.toUpperCase().indexOf("TL") != -1) {
+//                    flgroles = 4;
+//                }
+//            }
+//        }
         StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
         startWorkflowVo.setDataId(StaList.getStaffexitprocedure().getStaffexitprocedure_id());
         List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
@@ -113,45 +113,110 @@ public class Pfans2026Controller {
                 wfList1 = customerInfo2.getUserinfo().getCustomername();
                 wfList1 = sign.startGraphics2D(wfList1);
             }
-            if (flgroles == 0) {
-                Query query3 = new Query();
-                query3.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
-                CustomerInfo customerInfo3 = mongoTemplate.findOne(query3, CustomerInfo.class);
-                if (customerInfo3 != null) {
-                    wfList2 = customerInfo3.getUserinfo().getCustomername();
+
+            if (wfList.get(3).getRemark() != null) {
+                if (wfList.get(3).getRemark().equals("系统自动跳过")) {
+                    wfList2 = "";
+                } else {
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        wfList2 = customerInfo.getUserinfo().getCustomername();
+                        wfList2 = sign.startGraphics2D(wfList2);
+                    }
+                }
+            } else {
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList2 = customerInfo.getUserinfo().getCustomername();
                     wfList2 = sign.startGraphics2D(wfList2);
                 }
-                Query query4 = new Query();
-                query4.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
-                CustomerInfo customerInfo4 = mongoTemplate.findOne(query4, CustomerInfo.class);
-                if (customerInfo4 != null) {
-                    wfList3 = customerInfo4.getUserinfo().getCustomername();
+            }
+
+            if (wfList.get(2).getRemark() != null) {
+                if (wfList.get(2).getRemark().equals("系统自动跳过")) {
+                    wfList3 = "";
+                } else {
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        wfList3 = customerInfo.getUserinfo().getCustomername();
+                        wfList3 = sign.startGraphics2D(wfList3);
+                    }
+                }
+            } else {
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList3 = customerInfo.getUserinfo().getCustomername();
                     wfList3 = sign.startGraphics2D(wfList3);
                 }
-            } else if (flgroles == 4) {
-                Query query5 = new Query();
-                query5.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
-                CustomerInfo customerInfo5 = mongoTemplate.findOne(query5, CustomerInfo.class);
-                if (customerInfo5 != null) {
-                    wfList3 = customerInfo5.getUserinfo().getCustomername();
-                    wfList3 = sign.startGraphics2D(wfList3);
+            }
+            if (wfList.get(1).getRemark() != null) {
+                if (wfList.get(1).getRemark().equals("系统自动跳过")) {
+                    wfList4 = "";
+                } else {
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        wfList4 = customerInfo.getUserinfo().getCustomername();
+                        wfList4 = sign.startGraphics2D(wfList4);
+                    }
                 }
-                Query query6 = new Query();
-                query6.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
-                CustomerInfo customerInfo6 = mongoTemplate.findOne(query6, CustomerInfo.class);
-                if (customerInfo6 != null) {
+            } else {
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
                     wfList4 = customerInfo.getUserinfo().getCustomername();
                     wfList4 = sign.startGraphics2D(wfList4);
                 }
-            } else if (flgroles == 3) {
-                Query query7 = new Query();
-                query7.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
-                CustomerInfo customerInfo7 = mongoTemplate.findOne(query7, CustomerInfo.class);
-                if (customerInfo7 != null) {
-                    wfList4 = customerInfo7.getUserinfo().getCustomername();
-                    wfList4 = sign.startGraphics2D(wfList4);
-                }
             }
+//            if (flgroles == 0) {
+//                Query query3 = new Query();
+//                query3.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+//                CustomerInfo customerInfo3 = mongoTemplate.findOne(query3, CustomerInfo.class);
+//                if (customerInfo3 != null) {
+//                    wfList2 = customerInfo3.getUserinfo().getCustomername();
+//                    wfList2 = sign.startGraphics2D(wfList2);
+//                }
+//                Query query4 = new Query();
+//                query4.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+//                CustomerInfo customerInfo4 = mongoTemplate.findOne(query4, CustomerInfo.class);
+//                if (customerInfo4 != null) {
+//                    wfList3 = customerInfo4.getUserinfo().getCustomername();
+//                    wfList3 = sign.startGraphics2D(wfList3);
+//                }
+//            } else if (flgroles == 4) {
+//                Query query5 = new Query();
+//                query5.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+//                CustomerInfo customerInfo5 = mongoTemplate.findOne(query5, CustomerInfo.class);
+//                if (customerInfo5 != null) {
+//                    wfList3 = customerInfo5.getUserinfo().getCustomername();
+//                    wfList3 = sign.startGraphics2D(wfList3);
+//                }
+//                Query query6 = new Query();
+//                query6.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+//                CustomerInfo customerInfo6 = mongoTemplate.findOne(query6, CustomerInfo.class);
+//                if (customerInfo6 != null) {
+//                    wfList4 = customerInfo.getUserinfo().getCustomername();
+//                    wfList4 = sign.startGraphics2D(wfList4);
+//                }
+//            } else if (flgroles == 3) {
+//                Query query7 = new Query();
+//                query7.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+//                CustomerInfo customerInfo7 = mongoTemplate.findOne(query7, CustomerInfo.class);
+//                if (customerInfo7 != null) {
+//                    wfList4 = customerInfo7.getUserinfo().getCustomername();
+//                    wfList4 = sign.startGraphics2D(wfList4);
+//                }
+//            }
         }
         data.put("sta", StaList.getStaffexitprocedure());
         data.put("wfList4", wfList4);

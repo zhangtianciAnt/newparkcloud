@@ -410,32 +410,43 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
             toDoNotice.setOwner(staffexitprocedureVo.getStaffexitprocedure().getUser_id());
             toDoNoticeService.save(toDoNotice);
 
-//            String user = "";
-//            if (wfList.get(4).getRemark() != null) {
-//                if (wfList.get(4).getRemark().equals("系统自动跳过")) {
-//                    Query query2 = new Query();
-//                    query2.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
-//                    CustomerInfo customerInfo = mongoTemplate.findOne(query2, CustomerInfo.class);
-//                    if (customerInfo != null) {
-//                        user = wfList.get(3).getUserId();
-//                    }
-//                } else if (wfList.get(5).getRemark().equals("系统自动跳过")) {
-//                    Query query2 = new Query();
-//                    query2.addCriteria(Criteria.where("userid").is(wfList.get(4).getUserId()));
-//                    CustomerInfo customerInfo = mongoTemplate.findOne(query2, CustomerInfo.class);
-//                    if (customerInfo != null) {
-//                        user = wfList.get(4).getUserId();
-//                    }
-//                } else {
-//                    Query query2 = new Query();
-//                    query2.addCriteria(Criteria.where("userid").is(wfList.get(5).getUserId()));
-//                    CustomerInfo customerInfo = mongoTemplate.findOne(query2, CustomerInfo.class);
-//                    if (customerInfo != null) {
-//                        user = wfList.get(5).getUserId();
-//                    }
-//                }
-//            }
-            //发起人创建代办
+            String user = "";
+            if (wfList.get(3).getRemark() != null) {
+                if (wfList.get(3).getRemark().equals("系统自动跳过")) {
+                    if (wfList.get(2).getRemark().equals("系统自动跳过")) {
+                        if (wfList.get(1).getRemark().equals("系统自动跳过")) {
+                            Query query2 = new Query();
+                            query2.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                            CustomerInfo customerInfo = mongoTemplate.findOne(query2, CustomerInfo.class);
+                            if (customerInfo != null) {
+                                user = wfList.get(1).getUserId();
+                            }
+                        } else {
+                            Query query2 = new Query();
+                            query2.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                            CustomerInfo customerInfo = mongoTemplate.findOne(query2, CustomerInfo.class);
+                            if (customerInfo != null) {
+                                user = wfList.get(1).getUserId();
+                            }
+                        }
+                    } else {
+                        Query query2 = new Query();
+                        query2.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                        CustomerInfo customerInfo = mongoTemplate.findOne(query2, CustomerInfo.class);
+                        if (customerInfo != null) {
+                            user = wfList.get(2).getUserId();
+                        }
+                    }
+                } else {
+                    Query query2 = new Query();
+                    query2.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query2, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        user = wfList.get(3).getUserId();
+                    }
+                }
+            }
+
             ToDoNotice toDoNotice2 = new ToDoNotice();
             toDoNotice2.setTitle("【" + username + "离职审批已通过，请填写退职者调书】");
             toDoNotice2.setInitiator(Userid);
@@ -444,7 +455,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
             toDoNotice2.setUrl("/PFANS2026FormView");
             toDoNotice2.setWorkflowurl("/PFANS2026View");
             toDoNotice2.preInsert(tokenModel);
-            toDoNotice2.setOwner(wfList.get(2).getUserId());
+            toDoNotice2.setOwner(user);
             toDoNoticeService.save(toDoNotice2);
         }
 
