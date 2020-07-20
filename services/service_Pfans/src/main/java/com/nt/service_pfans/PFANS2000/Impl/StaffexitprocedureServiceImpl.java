@@ -473,7 +473,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
 
     //进行数据权限和审批权限交接
     @Scheduled(cron = "0 05 0 * * ?")
-    public void getdataExittime(HttpServletRequest request) throws Exception {
+    public void getdataExittime() throws Exception {
         SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
         String month2 = sd.format(new Date());
         Date currdate = sd.parse(month2);
@@ -481,7 +481,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         calendar.setTime(currdate);
         calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1);
         String month1 = sd.format(calendar.getTime());
-        TokenModel tokenModel = tokenService.getToken(request);
+//        TokenModel tokenModel = tokenService.getToken(HttpServletRequest);
         Staffexitproce Staffexitproce = new Staffexitproce();
         List<Staffexitproce> Staffexitprocelist = staffexitproceMapper.select(Staffexitproce);
         Staffexitprocelist = Staffexitprocelist.stream().filter(item -> (item.getStatus().equals("4"))).collect(Collectors.toList());
@@ -493,8 +493,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
                 condition.setStatus(AuthConstants.TODO_STATUS_TODO);
                 List<ToDoNotice> ToDoNoticelist = todoNoticeMapper.select(condition);
                 for (ToDoNotice todono : ToDoNoticelist) {
-                    todono.preUpdate(tokenModel);
-                    todono.setStatus(AuthConstants.TODO_STATUS_DONE);
+                    todono.setModifyon(new Date());
                     todono.setOwner(list.getUserdata());
                     todoNoticeMapper.updateByPrimaryKeySelective(todono);
                 }
@@ -502,8 +501,8 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
                 workflownodeinstance.setItemid(list.getUser_id());
                 List<Workflownodeinstance> workflownodeinstancelist = workflownodeinstanceMapper.select(workflownodeinstance);
                 for (Workflownodeinstance worklist : workflownodeinstancelist) {
-                    worklist.preUpdate(tokenModel);
                     worklist.setItemid(list.getUserdata());
+                    worklist.setModifyon(new Date());
                     workflownodeinstanceMapper.updateByPrimaryKeySelective(worklist);
                 }
                 //数据权限交接
