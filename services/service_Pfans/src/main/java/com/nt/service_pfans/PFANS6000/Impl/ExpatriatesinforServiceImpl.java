@@ -173,7 +173,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             }
         }
         //add ccm 0717 单价人名和员工信息名字不一致
-        expatriatesinforMapper.updateByPrimaryKeySelective(expatriatesinfor);
+        expatriatesinforMapper.updateByPrimaryKey(expatriatesinfor);
     }
     @Override
     public void crAccount(List<Expatriatesinfor> expatriatesinfor, TokenModel tokenModel) throws Exception {
