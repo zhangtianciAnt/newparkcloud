@@ -21,13 +21,15 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/award")
 public class Pfans1025Controller {
     @Autowired
     private AwardService awardService;
-
+    @Autowired
+    private PolicyContractMapper policycontractmapper;
     @Autowired
     private PetitionMapper petitionMapper;
 
@@ -232,6 +234,73 @@ public class Pfans1025Controller {
         return ApiResult.success(awardService.get(award));
     }
 
+    // add-ws-7/14-禅道144任务
+    @RequestMapping(value = "/get2", method = {RequestMethod.GET})
+    public ApiResult get2(Award award, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        List<Award> Awardlist = awardMapper.selectAll();
+        Awardlist = Awardlist.stream().filter(item -> (item.getMaketype().equals("7"))).collect(Collectors.toList());
+        return ApiResult.success(Awardlist);
+    }
+
+    @RequestMapping(value = "/checkby", method = {RequestMethod.POST})
+    public ApiResult checkby(@RequestBody AwardVo awardvo, HttpServletRequest request) throws Exception {
+        if (awardvo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        SimpleDateFormat sf = new SimpleDateFormat("MM");
+        List<PolicyContract> policycontractlist2 = new ArrayList<>();
+        Date draftingdate = awardvo.getAward().getDraftingdate();
+        PolicyContract policycontract = new PolicyContract();
+        policycontract.setPolicycontract_id(awardvo.getAward().getPolicycontract_id());
+        List<PolicyContract> policycontractlist = policycontractmapper.select(policycontract);
+        List<PolicyContract> policycontractlist3 = policycontractmapper.selectAll();
+        if (policycontractlist.size() > 0) {
+            if (policycontractlist.get(0).getCycle().equals("0")) {
+                policycontractlist2 = policycontractlist;
+            } else if (policycontractlist.get(0).getCycle().equals("1")) {
+                if (4 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 9) {
+                    policycontractlist2 = policycontractlist;
+                } else {
+                    policycontractlist2 = policycontractlist3;
+                }
+            } else if (policycontractlist.get(0).getCycle().equals("2")) {
+                if ((10 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 12) || (1 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 3)) {
+                    policycontractlist2 = policycontractlist;
+                } else {
+                    policycontractlist2 = policycontractlist3;
+                }
+            } else if (policycontractlist.get(0).getCycle().equals("3")) {
+                if (4 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 6) {
+                    policycontractlist2 = policycontractlist;
+                } else {
+                    policycontractlist2 = policycontractlist3;
+                }
+            } else if (policycontractlist.get(0).getCycle().equals("4")) {
+                if (7 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 9) {
+                    policycontractlist2 = policycontractlist;
+                } else {
+                    policycontractlist2 = policycontractlist3;
+                }
+            } else if (policycontractlist.get(0).getCycle().equals("5")) {
+                if (9 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 12) {
+                    policycontractlist2 = policycontractlist;
+                } else {
+                    policycontractlist2 = policycontractlist3;
+                }
+            } else if (policycontractlist.get(0).getCycle().equals("6")) {
+                if (1 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 3) {
+                    policycontractlist2 = policycontractlist;
+                } else {
+                    policycontractlist2 = policycontractlist3;
+                }
+            }
+
+        }
+        return ApiResult.success(policycontractlist2);
+    }
+
+    // add-ws-7/14-禅道144任务
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
     public ApiResult selectById(String award_id, HttpServletRequest request) throws Exception {
         if (award_id == null) {
@@ -250,6 +319,7 @@ public class Pfans1025Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(awardService.One(award));
     }
+
     @RequestMapping(value = "/selectList", method = {RequestMethod.POST})
     public ApiResult selectList(@RequestBody Award award, HttpServletRequest request) throws Exception {
         if (award == null) {
