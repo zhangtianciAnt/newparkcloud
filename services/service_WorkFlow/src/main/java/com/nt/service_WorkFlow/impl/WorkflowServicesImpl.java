@@ -586,6 +586,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
             }
         } else {
             userId = currentOrg.getUser();
+
+            if (nodeName.toUpperCase().contains("二次上司")){
+                OrgTree upOrgs = upCurrentOrg(orgs, orgId);
+                if (upOrgs != null) {
+                    userId = upOrgs.getUser();
+                }
+            }
         }
 //
 //        if(userId == null || StrUtil.isEmpty(userId)){
