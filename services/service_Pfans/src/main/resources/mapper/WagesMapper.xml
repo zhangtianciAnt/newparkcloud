@@ -347,6 +347,7 @@
         @GRSHBX := round( ( @YLBXGR + @YILIAOBXGR + @SYBXGR ), 2 ) AS SOCIALINSURANCE,#个人社会保险(専項控除)
         @GJJ := round( ( ACCUMULATION * base.DIC_GJJGRFD ), 2 ) AS ACCUMULATIONFUND,#个人住房公积金(専項控除)
         @GRHJ := round( ( @GRSHBX + @GJJ ), 2 ) AS DISCIPLINARYCONTROL,#个人社会保险费+公积金(専項控除)合计
+        base.DISCIPLINARY_TOTAL,#専項控除累計
         @ZXKCLJ := round(base.DISCIPLINARY_TOTAL + @GRHJ,2) AS THISMONTHTERM,#専項控除累計（当月まで）
         @ADDITIONAL_TOTAL := (
         IF
@@ -372,6 +373,8 @@
         @OTHERFOUR_TOTAL := round(base.OTHERFOUR_TOTAL,2) AS OTHER4,#其他4公司负担社保（24元）
         @OTHERFIVE_TOTAL := round(base.OTHERFIVE_TOTAL,2) AS OTHER5,#其他5（保険：福祉）
         @DYYKGZ := round( ( @GZZE + @ZFGJJYNSJE + @OTHERFOUR_TOTAL + @OTHERFIVE_TOTAL ), 2 ) AS SHOULDWAGES,#当月応発工資（工资总额(纳税+免税)+只納税）
+        base.COMPREHENSIVE_YEARSTOTAL12,#総合収入累計
+        base.DIC_LJYNSSDECS,#累计应纳税所得额参数
         @YEARSTOTAL12 := round(base.COMPREHENSIVE_YEARSTOTAL12 + @DYYKGZ,2) AS SHOULDCUMULATIVE,#累計応発工資（当月含）
         @LJYNSSDE := (
         IF
@@ -389,6 +392,22 @@
         )
         )
         ) AS SHOULDPAYTAXES,#累計应纳税所得额
+        base.DIC_0JE,
+        base.DIC_1JE,
+        base.DIC_0SL,
+        base.DIC_1SL,
+        base.DIC_2SL,
+        base.DIC_3SL,
+        base.DIC_4SL,
+        base.DIC_5SL,
+        base.DIC_6SL,
+        base.DIC_0SSKC,
+        base.DIC_1SSKC,
+        base.DIC_2SSKC,
+        base.DIC_3SSKC,
+        base.DIC_4SSKC,
+        base.DIC_5SSKC,
+        base.DIC_6SSKC,
         @BYYKJSDS := (
         CASE
 

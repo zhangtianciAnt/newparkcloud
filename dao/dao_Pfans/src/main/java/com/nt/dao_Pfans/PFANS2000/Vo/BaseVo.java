@@ -151,8 +151,45 @@ public class BaseVo {
 
     private String disciplinarycontrol;
 
-    private String thismonthterm;
+    private String disciplinary_total;
 
+    private String comprehensive_yearstotal12;
+
+    private String dic_ljynssdecs;
+
+    private String dic_0je;
+
+    private String dic_1je;
+
+    private String dic_0sl;
+
+    private String dic_1sl;
+
+    private String dic_2sl;
+
+    private String dic_3sl;
+
+    private String dic_4sl;
+
+    private String dic_5sl;
+
+    private String dic_6sl;
+
+    private String dic_0sskc;
+
+    private String dic_1sskc;
+
+    private String dic_2sskc;
+
+    private String dic_3sskc;
+
+    private String dic_4sskc;
+
+    private String dic_5sskc;
+
+    private String dic_6sskc;
+
+    private String thismonthterm;
 
     private String thismonthadditional;
 

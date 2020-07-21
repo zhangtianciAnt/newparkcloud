@@ -216,6 +216,63 @@ public class Wages extends BaseModel {
     @Column(name = "DISCIPLINARYCONTROL")
     private String disciplinarycontrol;     // 个人社会保险费+公积金(専項控除)合计
 
+    @Column(name = "DISCIPLINARY_TOTAL")
+    private String disciplinary_total;     //専項控除累計
+
+    @Column(name = "COMPREHENSIVE_YEARSTOTAL12")
+    private String comprehensive_yearstotal12;     //総合収入累計
+
+    @Column(name = "DIC_LJYNSSDECS")
+    private String dic_ljynssdecs;     //累计应纳税所得额参数
+
+    @Column(name = "DIC_0JE")
+    private String dic_0je;     //全年综合收入适用税率1
+
+    @Column(name = "DIC_1JE")
+    private String dic_1je;     //全年综合收入适用税率2
+
+    @Column(name = "DIC_0SL")
+    private String dic_0sl;     //全年综合收入适用税率1
+
+    @Column(name = "DIC_1SL")
+    private String dic_1sl;     //全年综合收入适用税率2
+
+    @Column(name = "DIC_2SL")
+    private String dic_2sl;     //全年综合收入适用税率3
+
+    @Column(name = "DIC_3SL")
+    private String dic_3sl;     //全年综合收入适用税率4
+
+    @Column(name = "DIC_4SL")
+    private String dic_4sl;     //全年综合收入适用税率5
+
+    @Column(name = "DIC_5SL")
+    private String dic_5sl;     //全年综合收入适用税率6
+
+    @Column(name = "DIC_6SL")
+    private String dic_6sl;     //全年综合收入适用税率7
+
+    @Column(name = "DIC_0SSKC")
+    private String dic_0sskc;     //全年综合收入适用税率1
+
+    @Column(name = "DIC_1SSKC")
+    private String dic_1sskc;     //全年综合收入适用税率2
+
+    @Column(name = "DIC_2SSKC")
+    private String dic_2sskc;     //全年综合收入适用税率3
+
+    @Column(name = "DIC_3SSKC")
+    private String dic_3sskc;     //全年综合收入适用税率4
+
+    @Column(name = "DIC_4SSKC")
+    private String dic_4sskc;     //全年综合收入适用税率5
+
+    @Column(name = "DIC_5SSKC")
+    private String dic_5sskc;     //全年综合收入适用税率6
+
+    @Column(name = "DIC_6SSKC")
+    private String dic_6sskc;     //全年综合收入适用税率7
+
     @Column(name = "THISMONTHTERM")
     private String thismonthterm;           // 専項控除累計（当月まで）
 
