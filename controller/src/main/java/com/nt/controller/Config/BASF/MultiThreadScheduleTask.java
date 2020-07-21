@@ -20,6 +20,7 @@ import com.nt.service_SQL.SqlUserInfoServices;
 import com.nt.service_SQL.sqlMapper.BasfUserInfoMapper;
 import com.nt.service_SQL.sqlMapper.SqlUserInfoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -103,17 +104,18 @@ public class MultiThreadScheduleTask {
     // WebSocketVow
     private WebSocketVo webSocketVo = new WebSocketVo();
 
-    String Url = "localhost:5557/";
-//    String Url = "192.168.0.183:5557/";
+    @Value("${sqlSerer.ip}")
+    private String Url;
+
     public JSONArray returnpostlist(String urlstr) {
 
         String url = Url + urlstr;
         HashMap<String, Object> paramMap = new HashMap<>();
-        JSONObject jsonObject =JSONObject.parseObject(HttpUtil.post(url, paramMap));
+        JSONObject jsonObject = JSONObject.parseObject(HttpUtil.post(url, paramMap));
         return (JSONArray) jsonObject.get("data");
     }
 
-    public JSONArray returngetlist(String urlstr,String id) throws Exception {
+    public JSONArray returngetlist(String urlstr, String id) throws Exception {
 //        String url = Url + urlstr;
 //        HashMap<String, Object> paramMap = new HashMap<>();
 //        paramMap.put("selectapbid", id);
@@ -125,31 +127,24 @@ public class MultiThreadScheduleTask {
         paramMap.put("selectapbid", id);
         JSONObject jsonObject = new JSONObject();
         Switchnotifications switchnotifications = new Switchnotifications();
-        try{
-            jsonObject =JSONObject.parseObject(HttpUtil.get(url, paramMap));
-            if(jsonObject.get("code").equals(-1)){
+        try {
+            jsonObject = JSONObject.parseObject(HttpUtil.get(url, paramMap));
+            if (jsonObject.get("code").equals(-1)) {
                 switchnotifications.setContent("门禁系统网络异常！");
                 List<Switchnotifications> switchnotificationsList = switchnotificationsServices.list(switchnotifications);
-                if(switchnotificationsList.size()>0)
-                {
+                if (switchnotificationsList.size() > 0) {
 
-                }
-                else
-                {
+                } else {
                     switchnotifications.setContent("门禁系统网络异常！");
                     switchnotificationsServices.create(switchnotifications);
                 }
             }
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             switchnotifications.setContent("门禁系统连接被拒绝！");
             List<Switchnotifications> switchnotificationsList = switchnotificationsServices.list(switchnotifications);
-            if(switchnotificationsList.size()>0)
-            {
+            if (switchnotificationsList.size() > 0) {
 
-            }
-            else
-            {
+            } else {
                 switchnotifications.setContent("门禁系统连接被拒绝！");
                 switchnotificationsServices.create(switchnotifications);
             }
@@ -170,7 +165,7 @@ public class MultiThreadScheduleTask {
     @Scheduled(fixedDelay = 30000)
     public void selectUsersCount() throws Exception {
 
-        Map<String,String> departmentInfoList=new HashMap<>();
+        Map<String, String> departmentInfoList = new HashMap<>();
 //        List departlist = sqlUserInfoMapper.selectdepartment();
 //        List apblist = sqlUserInfoMapper.selectapbcardholder();
         JSONArray departarray = returnpostlist("userInfo/selectdepartment");
@@ -180,9 +175,9 @@ public class MultiThreadScheduleTask {
         List<SqlAPBCardHolder> apblist = JSONObject.parseArray(apbarray.toJSONString(), SqlAPBCardHolder.class);
 
         List<PersonnelPermissions> personnelPermissionsList = personnelPermissionsServices.list();
-        String companystaff="";
-        String supplier="";
-        String foreignworkers="";
+        String companystaff = "";
+        String supplier = "";
+        String foreignworkers = "";
 
         // 查询员工人数
         int YG = 0;
@@ -196,30 +191,30 @@ public class MultiThreadScheduleTask {
         if (apblist.size() > 0) {
             if (departlist.size() > 0) {
                 for (int i = 0; i < departlist.size(); i++) {
-                    departmentInfoList.put(((SqlViewDepartment) departlist.get(i)).getRecnum(),((SqlViewDepartment) departlist.get(i)).getDepartmentpeid());
+                    departmentInfoList.put(((SqlViewDepartment) departlist.get(i)).getRecnum(), ((SqlViewDepartment) departlist.get(i)).getDepartmentpeid());
                 }
             }
             if (personnelPermissionsList.size() > 0) {
                 for (int i = 0; i < personnelPermissionsList.size(); i++) {
-                    if("class1".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())){
-                        if("".equals(companystaff)){
-                            companystaff=((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        }else{
-                            companystaff=companystaff+","+((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                    if ("class1".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
+                        if ("".equals(companystaff)) {
+                            companystaff = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                        } else {
+                            companystaff = companystaff + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
                         }
                     }
-                    if("class2".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())){
-                        if("".equals(foreignworkers)){
-                            foreignworkers=((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        }else{
-                            foreignworkers=foreignworkers+","+((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                    if ("class2".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
+                        if ("".equals(foreignworkers)) {
+                            foreignworkers = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                        } else {
+                            foreignworkers = foreignworkers + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
                         }
                     }
-                    if("class3".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())){
-                        if("".equals(supplier)){
-                            supplier=((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        }else{
-                            supplier=supplier+","+((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                    if ("class3".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
+                        if ("".equals(supplier)) {
+                            supplier = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                        } else {
+                            supplier = supplier + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
                         }
                     }
                 }
@@ -230,26 +225,26 @@ public class MultiThreadScheduleTask {
 
             for (int i = 0; i < apblist.size(); i++) {
                 String departmentID = ((SqlAPBCardHolder) apblist.get(i)).getDepartmentid();
-                for (int j = 1; j<10; j++) {
+                for (int j = 1; j < 10; j++) {
                     if ("-1".equals(departmentInfoList.get(departmentID))) {
-                        for(int z = 0; z<companystaffList.size(); z++) {
-                            if(companystaffList.get(z).equals(departmentID)){
+                        for (int z = 0; z < companystaffList.size(); z++) {
+                            if (companystaffList.get(z).equals(departmentID)) {
                                 YG += 1;
                             }
                         }
-                        for(int z = 0; z<supplierList.size(); z++) {
-                            if(supplierList.get(z).equals(departmentID)){
+                        for (int z = 0; z < supplierList.size(); z++) {
+                            if (supplierList.get(z).equals(departmentID)) {
                                 CBS += 1;
                             }
                         }
-                        for(int z = 0; z<foreignworkersList.size(); z++) {
-                            if(foreignworkersList.get(z).equals(departmentID)){
+                        for (int z = 0; z < foreignworkersList.size(); z++) {
+                            if (foreignworkersList.get(z).equals(departmentID)) {
                                 FK += 1;
                             }
                         }
-                        j=10;
-                    }else {
-                        departmentID=departmentInfoList.get(departmentID);
+                        j = 10;
+                    } else {
+                        departmentID = departmentInfoList.get(departmentID);
                     }
                 }
             }
@@ -278,50 +273,50 @@ public class MultiThreadScheduleTask {
 //        List<SqlAPBCardHolder> userCnt = basfUserInfoMapper.selectDeviceUsersCnt();
         JSONArray userCntarray = returnpostlist("userInfo/selectDeviceUsersCnt");
         List<SqlAPBCardHolder> userCnt = JSONObject.parseArray(userCntarray.toJSONString(), SqlAPBCardHolder.class);
-        List<SqlAPBCardHolder> userCntLast =new ArrayList<>();
-        String lastName="";
+        List<SqlAPBCardHolder> userCntLast = new ArrayList<>();
+        String lastName = "";
         if (userCnt.size() > 0) {
-            int j=-1;
+            int j = -1;
             for (int i = 0; i < userCnt.size(); i++) {
-                if(userCnt.get(i).getApbname().contains("（内）")){
+                if (userCnt.get(i).getApbname().contains("（内）")) {
                     SqlAPBCardHolder tempApb = new SqlAPBCardHolder();
-                    if(i != 0){
-                        if(1!=userCnt.get(i-1).getApbflg()){
+                    if (i != 0) {
+                        if (1 != userCnt.get(i - 1).getApbflg()) {
                             userCntLast.get(j).setApbflg(1);
                             userCntLast.get(j).setOutCnt(0);
                         }
                     }
 
-                    String[] strs=userCnt.get(i).getApbname().split("（内）");
+                    String[] strs = userCnt.get(i).getApbname().split("（内）");
                     tempApb.setApbid(userCnt.get(i).getApbid());
-                    tempApb.setApbname(strs[0]+"装置");
+                    tempApb.setApbname(strs[0] + "装置");
                     tempApb.setCnt(userCnt.get(i).getCnt());
 
                     userCnt.get(i).setApbflg(0);
-                    userCnt.get(i).setApbname(strs[0]+"装置");
+                    userCnt.get(i).setApbname(strs[0] + "装置");
                     userCntLast.add(userCnt.get(i));
-                    j=j+1;
-                    lastName=userCnt.get(i).getApbname();
+                    j = j + 1;
+                    lastName = userCnt.get(i).getApbname();
 
-                    if(i==userCnt.size()-1){
+                    if (i == userCnt.size() - 1) {
                         userCntLast.get(j).setOutCnt(0);
                     }
                 }
 
-                if(userCnt.get(i).getApbname().contains("（外）")){
-                    String[] strs=userCnt.get(i).getApbname().split("（外）");
+                if (userCnt.get(i).getApbname().contains("（外）")) {
+                    String[] strs = userCnt.get(i).getApbname().split("（外）");
                     SqlAPBCardHolder tempApb = new SqlAPBCardHolder();
-                    if(i==0 || !lastName.equals(strs[0]+"装置")){
+                    if (i == 0 || !lastName.equals(strs[0] + "装置")) {
                         tempApb.setCnt(0);
-                        tempApb.setApbname(strs[0]+"装置");
+                        tempApb.setApbname(strs[0] + "装置");
                         tempApb.setApbid(userCnt.get(i).getApbid());
                         userCntLast.add(tempApb);
-                        j=j+1;
+                        j = j + 1;
                     }
                     userCnt.get(i).setApbflg(1);
-                    userCnt.get(i).setApbname(strs[0]+"装置");
+                    userCnt.get(i).setApbname(strs[0] + "装置");
                     userCntLast.get(j).setOutCnt(userCnt.get(i).getCnt());
-                    lastName=userCnt.get(i).getApbname();
+                    lastName = userCnt.get(i).getApbname();
                 }
             }
         }
@@ -494,7 +489,7 @@ public class MultiThreadScheduleTask {
 //        JSONArray apbcardarray = returnpostlist("userInfo/selectapbcard");
 //        List<SqlAPBCardHolder> selectapbcardList = JSONObject.parseArray(apbcardarray.toJSONString(), SqlAPBCardHolder.class);
 
-        Map<String,String> departmentInfoList=new HashMap<>();
+        Map<String, String> departmentInfoList = new HashMap<>();
 //        List departlist = sqlUserInfoMapper.selectdepartment();
 //        List apblist = sqlUserInfoMapper.selectapbcardholder();
         List resultlist = new ArrayList();
@@ -505,37 +500,37 @@ public class MultiThreadScheduleTask {
         List<SqlAPBCardHolder> apblist = JSONObject.parseArray(apbarray.toJSONString(), SqlAPBCardHolder.class);
 
         List<PersonnelPermissions> personnelPermissionsList = personnelPermissionsServices.list();
-        String companystaff="";
-        String supplier="";
-        String foreignworkers="";
+        String companystaff = "";
+        String supplier = "";
+        String foreignworkers = "";
 
         if (apblist.size() > 0) {
             if (departlist.size() > 0) {
                 for (int i = 0; i < departlist.size(); i++) {
-                    departmentInfoList.put(((SqlViewDepartment) departlist.get(i)).getRecnum(),((SqlViewDepartment) departlist.get(i)).getDepartmentpeid());
+                    departmentInfoList.put(((SqlViewDepartment) departlist.get(i)).getRecnum(), ((SqlViewDepartment) departlist.get(i)).getDepartmentpeid());
                 }
             }
             if (personnelPermissionsList.size() > 0) {
                 for (int i = 0; i < personnelPermissionsList.size(); i++) {
-                    if("class1".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())){
-                        if("".equals(companystaff)){
-                            companystaff=((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        }else{
-                            companystaff=companystaff+","+((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                    if ("class1".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
+                        if ("".equals(companystaff)) {
+                            companystaff = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                        } else {
+                            companystaff = companystaff + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
                         }
                     }
-                    if("class2".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())){
-                        if("".equals(foreignworkers)){
-                            foreignworkers=((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        }else{
-                            foreignworkers=foreignworkers+","+((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                    if ("class2".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
+                        if ("".equals(foreignworkers)) {
+                            foreignworkers = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                        } else {
+                            foreignworkers = foreignworkers + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
                         }
                     }
-                    if("class3".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())){
-                        if("".equals(supplier)){
-                            supplier=((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        }else{
-                            supplier=supplier+","+((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                    if ("class3".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
+                        if ("".equals(supplier)) {
+                            supplier = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+                        } else {
+                            supplier = supplier + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
                         }
                     }
                 }
@@ -546,29 +541,29 @@ public class MultiThreadScheduleTask {
 
             for (int i = 0; i < apblist.size(); i++) {
                 String departmentID = ((SqlAPBCardHolder) apblist.get(i)).getDepartmentid();
-                for (int j = 1; j<10; j++) {
+                for (int j = 1; j < 10; j++) {
                     if ("-1".equals(departmentInfoList.get(departmentID))) {
-                        for(int z = 0; z<companystaffList.size(); z++) {
-                            if(companystaffList.get(z).equals(departmentID)){
+                        for (int z = 0; z < companystaffList.size(); z++) {
+                            if (companystaffList.get(z).equals(departmentID)) {
                                 ((SqlAPBCardHolder) apblist.get(i)).setUsertype("员工");
                                 resultlist.add(apblist.get(i));
                             }
                         }
-                        for(int z = 0; z<supplierList.size(); z++) {
-                            if(supplierList.get(z).equals(departmentID)){
+                        for (int z = 0; z < supplierList.size(); z++) {
+                            if (supplierList.get(z).equals(departmentID)) {
                                 ((SqlAPBCardHolder) apblist.get(i)).setUsertype("承包商");
                                 resultlist.add(apblist.get(i));
                             }
                         }
-                        for(int z = 0; z<foreignworkersList.size(); z++) {
-                            if(foreignworkersList.get(z).equals(departmentID)){
+                        for (int z = 0; z < foreignworkersList.size(); z++) {
+                            if (foreignworkersList.get(z).equals(departmentID)) {
                                 ((SqlAPBCardHolder) apblist.get(i)).setUsertype("访客");
                                 resultlist.add(apblist.get(i));
                             }
                         }
-                        j=10;
-                    }else {
-                        departmentID=departmentInfoList.get(departmentID);
+                        j = 10;
+                    } else {
+                        departmentID = departmentInfoList.get(departmentID);
                     }
                 }
             }
@@ -700,7 +695,7 @@ public class MultiThreadScheduleTask {
 //                if (deviceinformationList.get(i).getDeviceno() == departlist.get(j).getApbid()) {
 //            List<SqlAPBCardHolder> departlist = sqlUserInfoMapper.selectapbid(deviceinformationList.get(i).getDeviceno());
 
-            JSONArray departarray = returngetlist("userInfo/selectapbid",deviceinformationList.get(i).getDeviceno());
+            JSONArray departarray = returngetlist("userInfo/selectapbid", deviceinformationList.get(i).getDeviceno());
             List<SqlViewDepartment> departlist = JSONObject.parseArray(departarray.toJSONString(), SqlViewDepartment.class);
 
             if (departlist.size() > 0) {
@@ -717,7 +712,7 @@ public class MultiThreadScheduleTask {
 
     @Async
     @Scheduled(fixedDelay = 30000)
-    public void BASF90620_GetRoadClosed() throws Exception{
+    public void BASF90620_GetRoadClosed() throws Exception {
         //道路占用/临时封闭区域列表
         webSocketVo.setRoadClosed(applicationServices.roadClosed());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
@@ -725,7 +720,7 @@ public class MultiThreadScheduleTask {
 
     @Async
     @Scheduled(fixedDelay = 30000)
-    public void SENDEMAIL_Listswitch() throws Exception{
+    public void SENDEMAIL_Listswitch() throws Exception {
         //主备服务通知表
         Switchnotifications switchnotifications = new Switchnotifications();
         webSocketVo.setSwitchList(switchnotificationsServices.list(switchnotifications));
