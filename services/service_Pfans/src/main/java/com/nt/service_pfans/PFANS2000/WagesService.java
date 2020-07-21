@@ -32,6 +32,9 @@ public interface WagesService {
 
     List<Wages> getWagecompany() throws Exception;
 
+    //获取离职人员工资
+    List<Wages> getWagesByResign(String user_id) throws Exception;
+
 }
 
 
