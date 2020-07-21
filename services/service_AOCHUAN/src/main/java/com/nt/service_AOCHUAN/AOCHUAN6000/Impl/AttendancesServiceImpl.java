@@ -281,6 +281,7 @@ public class AttendancesServiceImpl implements AttendancesService {
     @Override
     public List<Attendance> getNowMons(String attendancetim, List<String> ownerList) throws Exception {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
         List<Attendance> attendanceList = attendanceMapper.getNowMon(attendancetim, ownerList);
         for (Attendance att : attendanceList) {
             Vacation vacation = new Vacation();//异常申请表
