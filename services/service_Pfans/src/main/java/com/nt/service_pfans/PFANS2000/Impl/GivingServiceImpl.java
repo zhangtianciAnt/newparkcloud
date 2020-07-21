@@ -372,7 +372,7 @@ public class GivingServiceImpl implements GivingService {
                         otherOne.setVacation(days.toString());
                         double intLengthtime = Double.valueOf(abNor.getLengthtime()) / 8;
                         String strLengthtime = String.valueOf(intLengthtime);
-                        long beginMillisecond = notNull(beginTime).equals("0") ? (long) 0 : format.parse(beginTime).getTime();
+                        long beginMillisecond = notNull(beginTime).equals("0") ? (long) 0 : format.parse(beginTime.replace("/", "-")).getTime();
                         if (beginMillisecond >= endMillisecond) {
                             otherOne.setHandsupport(days.toString());
                         } else {
@@ -595,7 +595,7 @@ public class GivingServiceImpl implements GivingService {
         Calendar calResignationDate = Calendar.getInstance();
         if (!StringUtils.isEmpty(userinfo.getResignation_date())) {
             if (userinfo.getResignation_date().indexOf("Z") < 0) {
-                userinfo.setResignation_date(formatStringDate(userinfo.getResignation_date()));
+                userinfo.setResignation_date(formatStringDate(userinfo.getResignation_date().substring(0,10)));
             }
             calResignationDate.setTime(sf.parse(userinfo.getResignation_date().replace("Z", " UTC")));
         } else {
@@ -2276,7 +2276,7 @@ public class GivingServiceImpl implements GivingService {
                 // 退职日
                 String resignationDate = customerInfo.getUserinfo().getResignation_date();
                 if (resignationDate.indexOf("Z") < 0) {
-                    resignationDate = formatStringDate(resignationDate);
+                    resignationDate = formatStringDate(resignationDate.substring(0,10));
                 }
                 retire.setRetiredate(sfUTC.parse(resignationDate.replace("Z", " UTC")));
                 // 当月基本工资
@@ -2340,5 +2340,20 @@ public class GivingServiceImpl implements GivingService {
         date = date.replace("/", "-");
         date = date.concat("T00:00:00.000Z");
         return date;
+    }
+
+    @Override
+    public void updatestate(String givingid, TokenModel tokenModel) throws Exception {
+        Wages wages = new Wages();
+        wages.setGiving_id(givingid);
+        wages.setGrantstatus("1");
+        wages.preUpdate(tokenModel);
+        wagesMapper.updateByPrimaryKeySelective(wages);
+
+        Giving giving = new Giving();
+        giving.setGiving_id(givingid);
+        giving.setGrantstatus("1");
+        giving.preUpdate(tokenModel);
+        givingMapper.updateByPrimaryKeySelective(giving);
     }
 }

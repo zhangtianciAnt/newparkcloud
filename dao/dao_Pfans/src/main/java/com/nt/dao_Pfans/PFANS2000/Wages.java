@@ -365,4 +365,7 @@ public class Wages extends BaseModel {
 
     @Column(name = "CREATEONYM")
     private String createonym;               // 创建年月
+
+    @Column(name = "GRANTSTATUS")
+    private String grantstatus;         //工资发放状态
 }

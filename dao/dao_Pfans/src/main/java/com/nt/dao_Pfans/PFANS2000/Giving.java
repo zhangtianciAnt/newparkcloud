@@ -34,4 +34,7 @@ public class Giving extends BaseModel {
     @Column(name = "MONTHS")
     private String months;
 
+    @Column(name = "GRANTSTATUS")
+    private String grantstatus;  //工资发放状态
+
 }
