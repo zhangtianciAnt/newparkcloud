@@ -3158,8 +3158,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     avgannual = 0d;
                 }
                 ra = String.valueOf(avgannual - finishAnnuel);
-                DecimalFormat df = new DecimalFormat("######0.0");
-                ra = df.format(df.parse(ra));
+                //DecimalFormat df = new DecimalFormat("######0.0");
+                //ra = df.format(df.parse(ra));
+                ra = ra.substring(0,ra.indexOf("."));
         }
         if(Double.valueOf(ra) < 0)
         {
