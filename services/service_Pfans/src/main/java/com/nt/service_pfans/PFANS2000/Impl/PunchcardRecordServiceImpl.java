@@ -552,55 +552,60 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             //ccm 20200713 离职月考勤数据实际计算
                             if(sfy.parse(Convert.toStr(sfy.format(Convert.toDate(resignationdate)))).getTime() == sfy.parse(sfy.format(cal.getTime())).getTime())
                             {
-                                //查询离职人员离职月的实际考勤
-                                AttendanceResignation as = new AttendanceResignation();
-                                as.setUser_id(customerInfo.getUserid());
-                                as.setDates(sf1ymd.parse(sf1ymd.format(cal.getTime())));
-                                List<AttendanceResignation> asList = attendanceResignationMapper.select(as);
-                                if(asList.size() > 0)
+                                Calendar c = Calendar.getInstance();
+                                c.setTime(new Date());
+                                if(sf1ymd.parse(sf1ymd.format(cal.getTime())).getTime() < sf1ymd.parse(sf1ymd.format(c.getTime())).getTime())
                                 {
-                                    asList.get(0).setNormal("0");
-                                    asList.get(0).setActual(null);
-                                    asList.get(0).setOrdinaryindustry(null);
-                                    asList.get(0).setWeekendindustry(null);
-                                    asList.get(0).setStatutoryresidue(null);
-                                    asList.get(0).setAnnualrestday(null);
-                                    asList.get(0).setSpecialday(null);
-                                    asList.get(0).setYouthday(null);
-                                    asList.get(0).setWomensday(null);
-                                    asList.get(0).setShortsickleave(null);
-                                    asList.get(0).setLongsickleave(null);
-                                    asList.get(0).setCompassionateleave(null);
-                                    asList.get(0).setAnnualrest(null);
-                                    asList.get(0).setDaixiu(null);
-                                    asList.get(0).setNursingleave(null);
-                                    asList.get(0).setWelfare(null);
-                                    asList.get(0).setAbsenteeism(null);
-                                    asList.get(0).setTshortsickleave(null);
-                                    asList.get(0).setTlongsickleave(null);
-                                    asList.get(0).setTabsenteeism(null);
-                                    tokenModel.setUserId(asList.get(0).getUser_id());
-                                    tokenModel.setExpireDate(new Date());
-                                    saveAttendance_resignation(asList.get(0), "0", tokenModel);
-                                    //离职考勤实际计算
-                                    attendanceResignationSHIJI(asList.get(0),cal);
-                                }
-                                else
-                                {
-                                    as.setNormal("0");
-                                    as.setAbsenteeism("0");
-                                    as.setCenter_id(customerInfo.getUserinfo().getCentername());
-                                    as.setGroup_id(customerInfo.getUserinfo().getGroupname());
-                                    as.setTeam_id(customerInfo.getUserinfo().getTeamname());
-                                    as.setAttendanceid(UUID.randomUUID().toString());
-                                    as.setYears(DateUtil.format(as.getDates(), "YYYY").toString());
-                                    as.setMonths(DateUtil.format(as.getDates(), "MM").toString());
-                                    as.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
-                                    tokenModel.setUserId(as.getUser_id());
-                                    tokenModel.setExpireDate(new Date());
-                                    saveAttendance_resignation(as, "1", tokenModel);
-                                    //离职考勤实际计算
-                                    attendanceResignationSHIJI(as,cal);
+                                    //查询离职人员离职月的实际考勤
+                                    AttendanceResignation as = new AttendanceResignation();
+                                    as.setUser_id(customerInfo.getUserid());
+                                    as.setDates(sf1ymd.parse(sf1ymd.format(cal.getTime())));
+                                    List<AttendanceResignation> asList = attendanceResignationMapper.select(as);
+                                    if(asList.size() > 0)
+                                    {
+                                        asList.get(0).setNormal("0");
+                                        asList.get(0).setActual(null);
+                                        asList.get(0).setOrdinaryindustry(null);
+                                        asList.get(0).setWeekendindustry(null);
+                                        asList.get(0).setStatutoryresidue(null);
+                                        asList.get(0).setAnnualrestday(null);
+                                        asList.get(0).setSpecialday(null);
+                                        asList.get(0).setYouthday(null);
+                                        asList.get(0).setWomensday(null);
+                                        asList.get(0).setShortsickleave(null);
+                                        asList.get(0).setLongsickleave(null);
+                                        asList.get(0).setCompassionateleave(null);
+                                        asList.get(0).setAnnualrest(null);
+                                        asList.get(0).setDaixiu(null);
+                                        asList.get(0).setNursingleave(null);
+                                        asList.get(0).setWelfare(null);
+                                        asList.get(0).setAbsenteeism(null);
+                                        asList.get(0).setTshortsickleave(null);
+                                        asList.get(0).setTlongsickleave(null);
+                                        asList.get(0).setTabsenteeism(null);
+                                        tokenModel.setUserId(asList.get(0).getUser_id());
+                                        tokenModel.setExpireDate(new Date());
+                                        saveAttendance_resignation(asList.get(0), "0", tokenModel);
+                                        //离职考勤实际计算
+                                        attendanceResignationSHIJI(asList.get(0),cal);
+                                    }
+                                    else
+                                    {
+                                        as.setNormal("0");
+                                        as.setAbsenteeism("0");
+                                        as.setCenter_id(customerInfo.getUserinfo().getCentername());
+                                        as.setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                        as.setTeam_id(customerInfo.getUserinfo().getTeamname());
+                                        as.setAttendanceid(UUID.randomUUID().toString());
+                                        as.setYears(DateUtil.format(as.getDates(), "YYYY").toString());
+                                        as.setMonths(DateUtil.format(as.getDates(), "MM").toString());
+                                        as.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
+                                        tokenModel.setUserId(as.getUser_id());
+                                        tokenModel.setExpireDate(new Date());
+                                        saveAttendance_resignation(as, "1", tokenModel);
+                                        //离职考勤实际计算
+                                        attendanceResignationSHIJI(as,cal);
+                                    }
                                 }
                             }
                             //ccm 20200713 离职月考勤数据实际计算
