@@ -158,4 +158,13 @@ public class Award extends BaseModel {
     @Column(name = "UPLOADFILE")
     private String uploadfile;
 
+    // add-ws-7/17-禅道116任务
+    /**
+     * 方针合同关联
+     */
+    @Column(name = "POLICYCONTRACT_ID")
+    private String policycontract_id;
+    // add-ws-7/17-禅道116任务
+
+
 }

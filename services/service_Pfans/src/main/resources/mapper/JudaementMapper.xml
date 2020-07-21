@@ -42,7 +42,7 @@ select JUDGEMENT_ID as judgementid,
        STATUS,
        TENANTID,
        ROWINDEX
-       from judgement where `STATUS` = '4' and CREATEON>DATE_SUB(CURDATE(), INTERVAL 3 MONTH) ORDER BY CREATEON DESC
+       from judgement where `STATUS` = '4' ORDER BY CREATEON DESC
     </select>
 </mapper>
 
