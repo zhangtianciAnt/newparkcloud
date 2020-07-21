@@ -140,20 +140,24 @@ public class WagesServiceImpl implements WagesService {
 
     @Override
     public List<Wages> wagesList(Wages wages) throws Exception {
+        //已经发放的工资
+        wages.setGrantstatus("1");
         List<Wages> listw = wagesMapper.select(wages);
-        for (Wages wages1 : listw) {
-            if (wages1.getGiving_id() != null) {
-                Giving giving = new Giving();
-                giving.setGiving_id(wages1.getGiving_id());
-                List<Giving> givingList = givingMapper.select(giving);
-                for (Giving giving1 : givingList) {
-                    if (wages1.getGiving_id().equals(giving1.getGiving_id())) {
-                        wages1.setGiving_id(giving1.getMonths());
-                    }
-                }
-
-            }
-        }
+        //gbb 0721 无用代码 start
+//        for (Wages wages1 : listw) {
+//            if (wages1.getGiving_id() != null) {
+//                Giving giving = new Giving();
+//                giving.setGiving_id(wages1.getGiving_id());
+//                List<Giving> givingList = givingMapper.select(giving);
+//                for (Giving giving1 : givingList) {
+//                    if (wages1.getGiving_id().equals(giving1.getGiving_id())) {
+//                        wages1.setGiving_id(giving1.getMonths());
+//                    }
+//                }
+//
+//            }
+//        }
+        //gbb 0721 无用代码 end
         return listw;
     }
 

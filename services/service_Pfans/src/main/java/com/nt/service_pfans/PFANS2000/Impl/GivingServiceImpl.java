@@ -2342,14 +2342,18 @@ public class GivingServiceImpl implements GivingService {
         return date;
     }
 
+    /**
+     * 修改发放状态 gbb 0722 add
+     *
+     * @param givingid
+     * @return
+     */
     @Override
     public void updatestate(String givingid, TokenModel tokenModel) throws Exception {
-        Wages wages = new Wages();
-        wages.setGiving_id(givingid);
-        wages.setGrantstatus("1");
-        wages.preUpdate(tokenModel);
-        wagesMapper.updateByPrimaryKeySelective(wages);
+        //工资表
+        wagesMapper.updateWages(givingid,tokenModel.getUserId());
 
+        //給与計算表
         Giving giving = new Giving();
         giving.setGiving_id(givingid);
         giving.setGrantstatus("1");
