@@ -23,6 +23,7 @@ import com.nt.service_Org.mapper.TodoNoticeMapper;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_WorkFlow.mapper.WorkflownodeinstanceMapper;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.service_pfans.PFANS3000.mapper.*;
 import com.nt.service_pfans.PFANS4000.mapper.*;
@@ -283,6 +284,9 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private AnnualLeaveService annualLeaveService;
 
     //列表查询
     @Override
@@ -1446,7 +1450,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         }
     }
 
-    public void updateRetireDate(StaffexitprocedureVo staffexitprocedureVo) {
+    public void updateRetireDate(StaffexitprocedureVo staffexitprocedureVo) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Query query3 = new Query();
         query3.addCriteria(Criteria.where("userid").is(staffexitprocedureVo.getStaffexitprocedure().getUser_id()));
@@ -1455,6 +1459,9 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
             customerInfo2.getUserinfo().setResignation_date(sdf.format(staffexitprocedureVo.getStaffexitprocedure().getHope_exit_date()));
         }
         mongoTemplate.save(customerInfo2);
+        //add ccm 0721 更新离职日时，更新考勤数据
+        annualLeaveService.getattendanceByuser(staffexitprocedureVo.getStaffexitprocedure().getUser_id());
+        //add ccm 0721 更新离职日时，更新考勤数据
     }
 
     private void updateAnnualDays(StaffexitprocedureVo staffexitprocedureVo) throws Exception {
