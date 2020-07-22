@@ -166,5 +166,14 @@ public class Award extends BaseModel {
     private String policycontract_id;
     // add-ws-7/17-禅道116任务
 
+    //add-ws-7/20-禅道任务342
+    @Column(name = "SEALSTATUS")
+    private String sealstatus;
+    @Column(name = "STATUSPUBLIC")
+    private String statuspublic;
 
+    //印章ID
+    @Column(name = "SEALID")
+    private String sealid;
+    //add-ws-7/20-禅道任务342
 }

@@ -267,15 +267,20 @@ public class UserServiceImpl implements UserService {
 
 //AD域重复check
         Query queryAD = new Query();
-        if (!StringUtils.isNullOrEmpty(userInfo.getJobnumber())) {
-            queryAD.addCriteria(Criteria.where("userinfo.jobnumber").is(userInfo.getJobnumber()));
-            List<CustomerInfo> qcCode = mongoTemplate.find(queryAD, CustomerInfo.class);
-            if (qcCode.size() == 0 || qcCode.get(0).getUserid().equals(customerInfo.getUserid())) {
-                flg3 = 1;
-            } else {
-                throw new LogicalException("卡号重复");
+        if(!userInfo.getJobnumber().equals("00000")){
+            if (!StringUtils.isNullOrEmpty(userInfo.getJobnumber())) {
+                queryAD.addCriteria(Criteria.where("userinfo.jobnumber").is(userInfo.getJobnumber()));
+                List<CustomerInfo> qcCode = mongoTemplate.find(queryAD, CustomerInfo.class);
+                if (qcCode.size() == 0 || qcCode.get(0).getUserid().equals(customerInfo.getUserid())) {
+                    flg3 = 1;
+                } else {
+                    throw new LogicalException("卡号重复");
+                }
             }
+        }else{
+            flg3 = 1;
         }
+
         if (flg1 == 1 && flg2 == 1 && flg3 == 1 && flg4 == 1) {
             mongoTemplate.save(userAccount);
             Query query = new Query();

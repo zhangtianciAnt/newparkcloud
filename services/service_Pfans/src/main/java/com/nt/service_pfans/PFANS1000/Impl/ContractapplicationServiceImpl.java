@@ -575,7 +575,19 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //決裁書作成(委託)
                 else if (rowindex.equals("7")) {
-
+                    Award award3 = new Award();
+                    award3.setContractnumber(contractnumber);
+                    List<Award> awardlist = AwardMapper.select(award3);
+                    if (awardlist.size() > 0) {
+                        for (Award pe : awardlist) {
+                            if (!StringUtils.isNullOrEmpty(pe.getSealstatus())) {
+                                throw new LogicalException("委托决裁书正在印章中，不可更新！");
+                            }
+                        }
+                    }
+                    contractnumbercount = new Contractnumbercount();
+                    contractnumbercount.setContractnumber(contractnumber);
+                    List<Contractnumbercount> countLi = contractnumbercountMapper.select(contractnumbercount);
                     Award award2 = new Award();
                     award2.setContractnumber(contractnumber);
 //                    award2.setOwner(tokenModel.getUserId());
@@ -597,6 +609,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             //add-ws-7/1-禅道152任务
                             awardlist2 = io.getAward_id();
                             //add-ws-7/1-禅道152任
+                            io.setStatuspublic("0");
                             io.setContracttype(contractapp.getContracttype());
                             io.setCustojapanese(contractapp.getCustojapanese());
                             io.setCustochinese(contractapp.getCustochinese());
@@ -606,7 +619,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             io.setPjnamechinese(contractapp.getConchinese());
                             io.setPjnamejapanese(contractapp.getConjapanese());
                             io.setClaimdatetime(contractapp.getContractdate());
-                            io.setDeliverydate(contractapp.getDeliverydate());
+                            io.setDeliverydate(countLi.get(0).getDeliverydate());
                             io.setCurrencyposition(contractapp.getCurrencyposition());
                             io.setClaimamount(contractapp.getClaimamount());
                             io.setUser_id(contractapp.getUser_id());
@@ -623,6 +636,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         //add-ws-7/1-禅道152任
                         award.setContractnumber(contractnumber);
                         //13
+                        award.setStatuspublic("0");
                         award.setContracttype(contractapp.getContracttype());
                         award.setCustojapanese(contractapp.getCustojapanese());
                         award.setCustochinese(contractapp.getCustochinese());
@@ -632,7 +646,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         award.setPjnamechinese(contractapp.getConchinese());
                         award.setPjnamejapanese(contractapp.getConjapanese());
                         award.setClaimdatetime(contractapp.getContractdate());
-                        award.setDeliverydate(contractapp.getDeliverydate());
+                        award.setDeliverydate(countLi.get(0).getDeliverydate());
                         award.setCurrencyposition(contractapp.getCurrencyposition());
                         award.setClaimamount(contractapp.getClaimamount());
                         award.setUser_id(contractapp.getUser_id());
