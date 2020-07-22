@@ -1460,6 +1460,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         if (customerInfo2 != null) {
             customerInfo2.getUserinfo().setResignation_date(String.valueOf(staffexitprocedureVo.getStaffexitprocedure().getHope_exit_date()));
         }
+        
         mongoTemplate.save(customerInfo2);
         //add ccm 0721 更新离职日时，更新考勤数据
         annualLeaveService.getattendanceByuser(staffexitprocedureVo.getStaffexitprocedure().getUser_id());
