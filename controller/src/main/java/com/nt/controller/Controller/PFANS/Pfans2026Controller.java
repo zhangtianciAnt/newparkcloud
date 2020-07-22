@@ -87,9 +87,9 @@ public class Pfans2026Controller {
         query8.addCriteria(Criteria.where("_id").is(userid));
         UserAccount userAccount = mongoTemplate.findOne(query8, UserAccount.class);
         if (userAccount != null) {
-            if(userAccount.getRoles().size() > 0){
-                for(int i = 0;i<userAccount.getRoles().size();i++){
-                    ro = ro +  userAccount.getRoles().get(i).getDescription();
+            if (userAccount.getRoles().size() > 0) {
+                for (int i = 0; i < userAccount.getRoles().size(); i++) {
+                    ro = ro + userAccount.getRoles().get(i).getDescription();
                 }
                 if (ro.indexOf("总经理") != -1) {
                     flgroles = 1;
@@ -270,7 +270,7 @@ public class Pfans2026Controller {
         Workflowinstance workflowinstance = new Workflowinstance();
         workflowinstance.setOwner(userid);
         List<Workflowinstance> Workflowinstancelist = workflowinstanceMapper.select(workflowinstance);
-        Workflowinstancelist = Workflowinstancelist.stream().filter(item -> (!item.getStatus().equals("4"))).collect(Collectors.toList());
+        Workflowinstancelist = Workflowinstancelist.stream().filter(item -> (item.getStatus().equals("0") || item.getStatus().equals("2"))).collect(Collectors.toList());
         return ApiResult.success(Workflowinstancelist);
     }
 
