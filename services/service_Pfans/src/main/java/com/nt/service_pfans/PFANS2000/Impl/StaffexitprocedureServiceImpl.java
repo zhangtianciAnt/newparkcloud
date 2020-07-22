@@ -1456,12 +1456,16 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
     }
 
     public void updateRetireDate(StaffexitprocedureVo staffexitprocedureVo) throws Exception {
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = staffexitprocedureVo.getStaffexitprocedure().getHope_exit_date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);//设置起时间
+        cal.add(Calendar.DATE, -1);//减1天
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Query query3 = new Query();
         query3.addCriteria(Criteria.where("userid").is(staffexitprocedureVo.getStaffexitprocedure().getUser_id()));
         CustomerInfo customerInfo2 = mongoTemplate.findOne(query3, CustomerInfo.class);
         if (customerInfo2 != null) {
-            customerInfo2.getUserinfo().setResignation_date(String.valueOf(staffexitprocedureVo.getStaffexitprocedure().getHope_exit_date()));
+            customerInfo2.getUserinfo().setResignation_date(sdf.format(cal.getTime()));
         }
 
         mongoTemplate.save(customerInfo2);
