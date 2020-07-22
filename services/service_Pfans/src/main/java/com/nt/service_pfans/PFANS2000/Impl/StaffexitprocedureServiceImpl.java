@@ -5,6 +5,7 @@ import com.nt.dao_Auth.Role;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.ToDoNotice;
+import com.nt.dao_Workflow.*;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS3000.*;
 import com.nt.dao_Pfans.PFANS4000.*;
@@ -21,6 +22,7 @@ import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.dao_Workflow.Workflownodeinstance;
 import com.nt.service_Org.mapper.TodoNoticeMapper;
 import com.nt.service_WorkFlow.WorkflowServices;
+import com.nt.service_WorkFlow.mapper.WorkflownodeMapper;
 import com.nt.service_WorkFlow.mapper.WorkflownodeinstanceMapper;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
@@ -60,6 +62,8 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class StaffexitprocedureServiceImpl implements StaffexitprocedureService {
+    @Autowired
+    private WorkflownodeMapper workflownodeMapper;
     @Autowired
     private ContractapplicationMapper contractapplicationMapper;
     @Autowired
@@ -490,7 +494,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         List<Staffexitproce> Staffexitprocelist = staffexitproceMapper.select(Staffexitproce);
         Staffexitprocelist = Staffexitprocelist.stream().filter(item -> (item.getStatus().equals("4"))).collect(Collectors.toList());
         for (Staffexitproce list : Staffexitprocelist) {
-            if (Integer.valueOf(month1) < Integer.valueOf(sd.format(list.getResignation_date())) && Integer.valueOf(sd.format(list.getResignation_date())) < Integer.valueOf(month2)) {
+            if (Integer.valueOf(month1) <= Integer.valueOf(sd.format(list.getResignation_date())) && Integer.valueOf(sd.format(list.getResignation_date())) <= Integer.valueOf(month2)) {
                 //审批权限交接
                 ToDoNotice condition = new ToDoNotice();
                 condition.setOwner(list.getUser_id());
@@ -499,7 +503,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
                 for (ToDoNotice todono : ToDoNoticelist) {
                     todono.setModifyon(new Date());
                     todono.setOwner(list.getUserdata());
-                    todoNoticeMapper.updateByPrimaryKeySelective(todono);
+                    todoNoticeMapper.updateByPrimaryKey(todono);
                 }
                 Workflownodeinstance workflownodeinstance = new Workflownodeinstance();
                 workflownodeinstance.setItemid(list.getUser_id());
@@ -507,8 +511,17 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
                 for (Workflownodeinstance worklist : workflownodeinstancelist) {
                     worklist.setItemid(list.getUserdata());
                     worklist.setModifyon(new Date());
-                    workflownodeinstanceMapper.updateByPrimaryKeySelective(worklist);
+                    workflownodeinstanceMapper.updateByPrimaryKey(worklist);
                 }
+                Workflownode workflownode = new Workflownode();
+                workflownode.setItemid(list.getUser_id());
+                List<Workflownode> workflownodelist = workflownodeMapper.select(workflownode);
+                for (Workflownode workflowlist : workflownodelist) {
+                    workflowlist.setItemid(list.getUserdata());
+                    workflowlist.setModifyon(new Date());
+                    workflownodeMapper.updateByPrimaryKey(workflowlist);
+                }
+
                 //数据权限交接
                 //印章管理
                 Seal seal = new Seal();
@@ -629,14 +642,14 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
                     themeinformapper.updateByPrimaryKey(list13);
                 }
                 //PL成本结转表
-                Pltab pltab = new Pltab();
-                pltab.setOwner(list.getUser_id());
-                List<Pltab> pltablist = pltabMapper.select(pltab);
-                for (Pltab list14 : pltablist) {
-                    list14.setModifyon(new Date());
-                    list14.setOwner(list.getUserdata());
-                    pltabMapper.updateByPrimaryKey(list14);
-                }
+//                Pltab pltab = new Pltab();
+//                pltab.setOwner(list.getUser_id());
+//                List<Pltab> pltablist = pltabMapper.select(pltab);
+//                for (Pltab list14 : pltablist) {
+//                    list14.setModifyon(new Date());
+//                    list14.setOwner(list.getUserdata());
+//                    pltabMapper.updateByPrimaryKey(list14);
+//                }
                 //PL成本结转表
                 CostCarryForward costcarry = new CostCarryForward();
                 costcarry.setOwner(list.getUser_id());
