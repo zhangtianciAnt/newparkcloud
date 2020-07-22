@@ -47,6 +47,7 @@ public class WagesController {
     //获取离职人员工资
     @RequestMapping(value = "/getWagesByResign", method = {RequestMethod.GET})
     public ApiResult getWagesByResign(HttpServletRequest request, @RequestParam String user_id) throws Exception {
-        return new ApiResult(wagesService.getWagesByResign(user_id));
+        TokenModel tokenModel = tokenService.getToken(request);
+        return new ApiResult(wagesService.getWagesByResign(user_id,tokenModel));
     }
 }

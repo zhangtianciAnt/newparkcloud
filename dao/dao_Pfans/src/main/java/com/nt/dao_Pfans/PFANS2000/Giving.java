@@ -37,4 +37,7 @@ public class Giving extends BaseModel {
     @Column(name = "GRANTSTATUS")
     private String grantstatus;  //工资发放状态
 
+    @Column(name = "USER_ID")
+    private String user_id;  //离职相关
+
 }

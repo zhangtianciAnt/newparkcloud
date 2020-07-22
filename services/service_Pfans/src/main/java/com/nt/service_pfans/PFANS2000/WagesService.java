@@ -1,8 +1,7 @@
 package com.nt.service_pfans.PFANS2000;
 
-import com.nt.dao_Pfans.PFANS2000.Bonussend;
+import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.BaseVo;
-import com.nt.dao_Pfans.PFANS2000.Wages;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -33,7 +32,23 @@ public interface WagesService {
     List<Wages> getWagecompany() throws Exception;
 
     //获取离职人员工资
-    List<Wages> getWagesByResign(String user_id) throws Exception;
+    List<Wages> getWagesByResign(String user_id,TokenModel tokenModel) throws Exception;
+
+    Wages getwages(String strFlg,TokenModel tokenModel)throws Exception;
+
+    void insertBase(String  givingid,TokenModel tokenModel)throws Exception;
+
+    void insertOtherOne(String  givingid,TokenModel tokenModel)throws Exception;
+
+    void insertOtherTwo(String  givingid,TokenModel tokenModel)throws Exception;
+
+    void insertLackattendance(String strFlg,String  givingid,TokenModel tokenModel)throws Exception;
+
+    void insertResidual(String  strFlg,String  givingid,TokenModel tokenModel)throws Exception;
+
+    void insertContrast(String  givingid,TokenModel tokenModel)throws Exception;
+
+    void deletewages(String strTemp,List<Giving> givinglist)throws Exception;
 
 }
 

@@ -13,13 +13,13 @@ public interface WagesMapper extends MyMapper<Wages> {
 
     void updateWages(@Param("givingId") String givingId,@Param("user_id") String user_id);
 
-    List<Wages> lastWages(@Param("year") int year, @Param("month") int month);
+    List<Wages> lastWages(@Param("year") int year, @Param("month") int month, @Param("userid") String userid);
 
-    List<String> lastMonthWage(@Param("year") int year, @Param("month") int month);
+    List<String> lastMonthWage(@Param("year") int year, @Param("month") int month, @Param("userid") String userid);
 
 //    List<Wages> getWageList(Wages wages);
 
-    List<Wages> getWagesByGivingId(@Param("givingId") String givingId);
+    List<Wages> getWagesByGivingId(@Param("givingId") String givingId,@Param("userid") String userid);
 
     List<Wages> getWagesdepartment(@Param("dates") String givingId);
 

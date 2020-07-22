@@ -25,5 +25,6 @@ public interface AttendanceMapper extends MyMapper<Attendance> {
 
     //ccm 20200713 离职考勤对比  查询 更新 插入
     List<Attendance> selectResignationAll(@Param("user_id") String user_id, @Param("years") String years, @Param("months") String months);
+    List<Attendance> selectResignation(@Param("user_id") String user_id, @Param("years") String years, @Param("months") String months);
     //ccm 20200713 离职考勤对比  查询 更新 插入
 }

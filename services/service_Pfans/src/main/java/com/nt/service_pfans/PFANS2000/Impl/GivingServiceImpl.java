@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.alibaba.druid.sql.visitor.functions.Isnull;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.*;
@@ -266,7 +267,7 @@ public class GivingServiceImpl implements GivingService {
         if (wagesList.size() > 0) {
             givingVo.setWagesList(wagesList.stream().sorted(Comparator.comparing(Wages::getUser_id)).collect(Collectors.toList()));
         } else {
-            givingVo.setWagesList(wagesMapper.getWagesByGivingId(giving_id));
+            givingVo.setWagesList(wagesMapper.getWagesByGivingId(giving_id,""));
         }
         return givingVo;
         // zqu end
@@ -907,7 +908,7 @@ public class GivingServiceImpl implements GivingService {
         // 生成工资单的时候重新调用init方法获取最新的人员信息 By Skaixx
         init();
         //获取上月工资
-        lastwages = wagesMapper.lastWages(Integer.parseInt(DateUtil.format(new Date(), "yyyy")), Integer.parseInt(DateUtil.format(new Date(), "M")) - 1);
+        lastwages = wagesMapper.lastWages(Integer.parseInt(DateUtil.format(new Date(), "yyyy")), Integer.parseInt(DateUtil.format(new Date(), "M")) - 1,"");
         // 时间格式
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMM");
         String strTemp = sf1.format(new Date());
@@ -1003,8 +1004,14 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public List<Giving> getDataList(Giving giving) throws Exception {
-
-        return givingMapper.select(giving);
+        List<Giving> GivingListnew = new ArrayList<>();
+        List<Giving> GivingList = givingMapper.select(giving);
+        for(Giving gi : GivingList){
+            if(com.mysql.jdbc.StringUtils.isNullOrEmpty(gi.getUser_id())){
+                GivingListnew.add(gi);
+            }
+        }
+        return GivingListnew;
     }
 
     @Override
@@ -2093,7 +2100,7 @@ public class GivingServiceImpl implements GivingService {
             }
         }
         // 抽取上月发工资的人员
-        List<String> userids = wagesMapper.lastMonthWage(thisMonthDate.get(Calendar.YEAR), Integer.parseInt(getMouth(sfChina.format(lastMonthDate.getTime()))));
+        List<String> userids = wagesMapper.lastMonthWage(thisMonthDate.get(Calendar.YEAR), Integer.parseInt(getMouth(sfChina.format(lastMonthDate.getTime()))),"");
         if (customerInfos.size() > 0) {
             for (CustomerInfo customerInfo : customerInfos) {
                 // 退职日非空的情况（该员工的給料和补助在退职处理中计算）

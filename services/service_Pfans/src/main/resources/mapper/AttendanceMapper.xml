@@ -184,4 +184,10 @@ GROUP BY
 
     </select>
 
+    <select id="selectResignation" parameterType="com.nt.dao_Pfans.PFANS2000.Attendance" resultType="com.nt.dao_Pfans.PFANS2000.Attendance">
+        select *
+        from attendance_resignation
+        where USER_ID=#{user_id} and MONTHS=#{months} and YEARS=#{years}
+    </select>
+
 </mapper>
