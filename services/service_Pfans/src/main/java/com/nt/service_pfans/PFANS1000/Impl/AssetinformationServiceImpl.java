@@ -1,9 +1,11 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Assets.Assets;
 import com.nt.dao_Pfans.PFANS1000.Assetinformation;
 import com.nt.dao_Pfans.PFANS1000.Scrapdetails;
 import com.nt.dao_Pfans.PFANS1000.Salesdetails;
 import com.nt.dao_Pfans.PFANS1000.Vo.AssetinformationVo;
+import com.nt.service_Assets.mapper.AssetsMapper;
 import com.nt.service_pfans.PFANS1000.AssetinformationService;
 import com.nt.service_pfans.PFANS1000.mapper.AssetinformationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ScrapdetailsMapper;
@@ -25,6 +27,9 @@ public class AssetinformationServiceImpl implements AssetinformationService {
 
     @Autowired
     private AssetinformationMapper assetinformationMapper;
+
+    @Autowired
+    private AssetsMapper assetsMapper;
 
     @Autowired
     private ScrapdetailsMapper scrapdetailsMapper;
@@ -79,6 +84,15 @@ public class AssetinformationServiceImpl implements AssetinformationService {
                 scrapdetails.setAssetinformationid(sassetinformationid);
                 scrapdetails.setRowindex(rowindex);
                 scrapdetailsMapper.insertSelective(scrapdetails);
+                if(assetinformation.getStatus().equals("4")){
+                    Assets assets = new Assets();
+                    assets.setBarcode(scrapdetails.getSettagnumber());
+                    List<Assets> assetsList = assetsMapper.select(assets);
+                    for(Assets ast : assetsList){
+                        ast.setAssetstatus("PA003002");
+                        assetsMapper.updateByPrimaryKeySelective(ast);
+                    }
+                }
             }
         }
         if (salesdetailslist != null) {

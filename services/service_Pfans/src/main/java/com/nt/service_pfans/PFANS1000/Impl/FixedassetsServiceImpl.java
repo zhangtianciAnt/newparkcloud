@@ -1,6 +1,8 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Assets.Assets;
 import com.nt.dao_Pfans.PFANS1000.Fixedassets;
+import com.nt.service_Assets.mapper.AssetsMapper;
 import com.nt.service_pfans.PFANS1000.FixedassetsService;
 import com.nt.service_pfans.PFANS1000.mapper.FixedassetsMapper;
 import com.nt.utils.dao.TokenModel;
@@ -18,6 +20,9 @@ public class FixedassetsServiceImpl  implements FixedassetsService {
     @Autowired
     private FixedassetsMapper fixedassetsMapper;
 
+    @Autowired
+    private AssetsMapper assetsMapper;
+
     @Override
     public List<Fixedassets> getFixedassets(Fixedassets fixedassets) {
         return fixedassetsMapper.select(fixedassets);
@@ -31,6 +36,15 @@ public class FixedassetsServiceImpl  implements FixedassetsService {
     @Override
     public void updateFixedassets(Fixedassets fixedassets, TokenModel tokenModel) throws Exception {
         fixedassets.preUpdate(tokenModel);
+        if(fixedassets.getStatus().equals("4")){
+            Assets assets = new Assets();
+            assets.setBarcode(fixedassets.getRfid());
+            List<Assets> assetsList = assetsMapper.select(assets);
+            for(Assets ast : assetsList){
+                ast.setStockstatus("PA002001");
+                assetsMapper.updateByPrimaryKeySelective(ast);
+            }
+        }
         fixedassetsMapper.updateByPrimaryKey(fixedassets);
     }
 
