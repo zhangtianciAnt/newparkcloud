@@ -459,6 +459,9 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
 //        }
 //        if(staffexitprocedureVo.getStaffexitprocedure().getStage().equals("1") && staffexitprocedureVo.getStaffexitprocedure().getStatus().equals("4")) {
         BeanUtils.copyProperties(staffexitprocedureVo.getStaffexitprocedure(), staffexitprocedure);
+        if (staffexitprocedure.getStatus().equals("4")) {
+            staffexitprocedure.setNewhope_exit_date(staffexitprocedure.getHope_exit_date());
+        }
         staffexitprocedure.preUpdate(tokenModel);
         staffexitprocedureMapper.updateByPrimaryKey(staffexitprocedure);
         String staffexitprocedureid = staffexitprocedure.getStaffexitprocedure_id();
@@ -1460,7 +1463,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         if (customerInfo2 != null) {
             customerInfo2.getUserinfo().setResignation_date(String.valueOf(staffexitprocedureVo.getStaffexitprocedure().getHope_exit_date()));
         }
-        
+
         mongoTemplate.save(customerInfo2);
         //add ccm 0721 更新离职日时，更新考勤数据
         annualLeaveService.getattendanceByuser(staffexitprocedureVo.getStaffexitprocedure().getUser_id());
