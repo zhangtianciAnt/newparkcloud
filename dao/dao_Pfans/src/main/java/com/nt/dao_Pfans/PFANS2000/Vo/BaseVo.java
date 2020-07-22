@@ -48,9 +48,17 @@ public class BaseVo {
 
     private String pension;
 
+    private String yanglaojs;     // 養老保険基数
+
+    private String shiyejs;     // 失業保険基数
+
+    private String gongshangjs;     // 工傷保険基数
 
     private String medical;
 
+    private String yiliaojs;     // 医療保険基数
+
+    private String shengyujs;     // 生育保険基数
 
     private String accumulation;
 

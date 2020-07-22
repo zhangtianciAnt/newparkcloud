@@ -375,4 +375,8 @@ public class Business extends BaseModel {
     @Column(name = "REMARK")
     private String remark;
     //add-ws-7/7-禅道247
+
+    //地域名称
+    @Column(name = "REGIONNAME")
+    private String regionname;
 }

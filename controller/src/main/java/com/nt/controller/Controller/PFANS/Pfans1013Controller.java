@@ -212,6 +212,10 @@ public class Pfans1013Controller {
                 evevo.getEvection().setPlace(item.getValue1());
             }
         }
+        //如果出差地域是‘其他’，赋地域名称的值 add_fjl
+        if (evevo.getEvection().getPlace().equals("其他")) {
+            evevo.getEvection().setPlace(evevo.getEvection().getRegionname());
+        }
 //        }
         Query query = new Query();
         String userim = "";

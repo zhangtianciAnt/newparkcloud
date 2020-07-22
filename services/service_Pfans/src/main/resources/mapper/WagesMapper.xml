@@ -563,4 +563,12 @@
         order by DATE_FORMAT(wages.createon,'%Y-%m')
     </select>
 
+    <select id="updateWages">
+        update wages
+        set grantstatus = '1'
+        ,MODIFYBY = #{user_id}
+        ,MODIFYON = NOW()
+        where giving_id = #{givingId}
+    </select>
+
 </mapper>

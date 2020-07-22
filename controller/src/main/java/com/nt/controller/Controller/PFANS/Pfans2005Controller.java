@@ -75,9 +75,6 @@ public class Pfans2005Controller {
         return ApiResult.success(givingService.getDataList(giving));
     }
 
-
-
-
     @RequestMapping(value = "/deleteothertwo", method = {RequestMethod.POST})
     public ApiResult deleteothertwo(@RequestBody OtherTwo othertwo, HttpServletRequest request) throws Exception {
         if (othertwo == null) {
@@ -231,5 +228,12 @@ public class Pfans2005Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(givingService.thisMonthLacktimeChange(givingVo));
+    }
+
+    @RequestMapping(value = "/updatestate", method = {RequestMethod.GET})
+    public ApiResult updatestate(String givingid,HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        givingService.updatestate(givingid,tokenModel);
+        return ApiResult.success();
     }
 }

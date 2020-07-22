@@ -35,6 +35,8 @@ public interface GivingService {
 
     // 本月欠勤数据变更时，重新计算欠勤费合计
     Lackattendance thisMonthLacktimeChange(GivingVo givingVo) throws Exception;
+
+    void updatestate(String  givingid,TokenModel tokenModel)throws Exception;
 }
 
 

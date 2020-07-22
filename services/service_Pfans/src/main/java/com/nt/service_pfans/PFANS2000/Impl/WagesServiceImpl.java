@@ -140,20 +140,24 @@ public class WagesServiceImpl implements WagesService {
 
     @Override
     public List<Wages> wagesList(Wages wages) throws Exception {
+        //已经发放的工资
+        wages.setGrantstatus("1");
         List<Wages> listw = wagesMapper.select(wages);
-        for (Wages wages1 : listw) {
-            if (wages1.getGiving_id() != null) {
-                Giving giving = new Giving();
-                giving.setGiving_id(wages1.getGiving_id());
-                List<Giving> givingList = givingMapper.select(giving);
-                for (Giving giving1 : givingList) {
-                    if (wages1.getGiving_id().equals(giving1.getGiving_id())) {
-                        wages1.setGiving_id(giving1.getMonths());
-                    }
-                }
-
-            }
-        }
+        //gbb 0721 无用代码 start
+//        for (Wages wages1 : listw) {
+//            if (wages1.getGiving_id() != null) {
+//                Giving giving = new Giving();
+//                giving.setGiving_id(wages1.getGiving_id());
+//                List<Giving> givingList = givingMapper.select(giving);
+//                for (Giving giving1 : givingList) {
+//                    if (wages1.getGiving_id().equals(giving1.getGiving_id())) {
+//                        wages1.setGiving_id(giving1.getMonths());
+//                    }
+//                }
+//
+//            }
+//        }
+        //gbb 0721 无用代码 end
         return listw;
     }
 
@@ -197,5 +201,33 @@ public class WagesServiceImpl implements WagesService {
             wage.preInsert(tokenModel);
         }
         return wagesMapper.insertListAllCols(wages);
+    }
+
+    //获取离职人员工资
+    @Override
+    public List<Wages> getWagesByResign(String user_id) throws Exception {
+        List<Wages> wagesList = new ArrayList<>();
+
+        //region 预计工資
+        Wages wagesEstimate = new Wages();
+        wagesEstimate.setUser_id(user_id);
+        wagesEstimate.setGiving_id("b7ad4fe7-a63a-4f2f-9e8a-41c8ecddfd10");
+        List<Wages> wagesEstimateList = wagesMapper.select(wagesEstimate);
+        if(wagesEstimateList.size() > 0){
+            wagesList.add(wagesEstimateList.get(0));
+        }
+        //endregion
+
+        //region 实际工資
+        Wages wagesActual = new Wages();
+        wagesActual.setUser_id(user_id);
+        wagesActual.setGiving_id("b7ad4fe7-a63a-4f2f-9e8a-41c8ecddfd10");
+        List<Wages> wagesActualList = wagesMapper.select(wagesEstimate);
+        if(wagesActualList.size() > 0){
+            wagesList.add(wagesActualList.get(0));
+        }
+        //endregion
+
+        return wagesList;
     }
 }

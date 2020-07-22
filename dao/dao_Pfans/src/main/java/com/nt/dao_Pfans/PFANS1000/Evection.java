@@ -207,5 +207,9 @@ public class Evection extends BaseModel {
     @Column(name = "ARRIVENIGHT")
     private String arrivenight;
 
+    //地域名称
+    @Column(name = "REGIONNAME")
+    private String regionname;
+
 
 }
