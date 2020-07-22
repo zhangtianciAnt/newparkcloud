@@ -177,4 +177,8 @@ public class PublicExpense extends BaseModel {
 
     @Column(name = "TORMB")
     private String tormb;
+
+    //add fjl   供应商/社员名称
+    @Column(name = "ACCENAME")
+    private String accename;
 }

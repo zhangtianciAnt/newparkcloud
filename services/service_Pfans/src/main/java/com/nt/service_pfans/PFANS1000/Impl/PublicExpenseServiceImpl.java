@@ -1,13 +1,17 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TotalCostVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Pfans.PFANS5000.StageInformation;
+import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.utils.LogicalException;
@@ -36,6 +40,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Transactional(rollbackFor = Exception.class)
 public class PublicExpenseServiceImpl implements PublicExpenseService {
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private ToDoNoticeService toDoNoticeService;
+    @Autowired
+    private AwardMapper awardMapper;
 
     @Autowired
     private PublicExpenseMapper publicExpenseMapper;
@@ -555,7 +565,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     taxList.add(taxCost);
                     // 税拔
                     setProperty(detail, inputType, lineCost);
-                    float diff = getFloatValue(lineRate) + getFloatValue(lineCost) - money;
+                    float diff = money / (1 + rate) + money / (1 + rate) * rate - money;
                     if (diff != 0) {
                         TotalCost padding = new TotalCost();
                         padding.setLineamount(diff + "");
@@ -630,8 +640,41 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     public void update(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception {
         PublicExpense publicExpense = new PublicExpense();
         BeanUtils.copyProperties(publicExpenseVo.getPublicexpense(), publicExpense);
+        //add-ws-7/20-禅道任务342
+        String status = publicExpense.getStatus();
+        String judgement = publicExpense.getJudgement();
+        //add-ws-7/20-禅道任务342
         publicExpense.preUpdate(tokenModel);
         publicExpenseMapper.updateByPrimaryKey(publicExpense);
+        //add-ws-7/20-禅道任务342
+        String[] ts = judgement.split(",");
+        if (ts.length > 0) {
+            for (int i = 0; i < ts.length; i++) {
+                Award award = new Award();
+                award.setAward_id(ts[i]);
+                Award awa = awardMapper.selectByPrimaryKey(award);
+                if (awa != null) {
+                    awa.setStatuspublic(status);
+                    awardMapper.updateByPrimaryKey(awa);
+                }
+                if(status.equals("4")){
+                    List<MembersVo> rolelist = roleService.getMembers("5e78633d8f43163084351138");
+                    if (rolelist.size() > 0) {
+                        ToDoNotice toDoNotice3 = new ToDoNotice();
+                        toDoNotice3.setTitle("【" +awa.getContractnumber() + "】发起得精算申请已成功");
+                        toDoNotice3.setInitiator(awa.getUser_id());
+                        toDoNotice3.setContent("流程结束。可进行线下支付");
+                        toDoNotice3.setDataid(awa.getContractnumber());
+                        toDoNotice3.setUrl("/PFANS1025FormView");
+                        toDoNotice3.setWorkflowurl("/PFANS1025FormView");
+                        toDoNotice3.preInsert(tokenModel);
+                        toDoNotice3.setOwner(rolelist.get(0).getUserid());
+                        toDoNoticeService.save(toDoNotice3);
+                    }
+                }
+            }
+        }
+        //add-ws-7/20-禅道任务342
         String spublicexpenseid = publicExpense.getPublicexpenseid();
         String invoiceNo = publicExpense.getInvoiceno();
         TrafficDetails traffic = new TrafficDetails();
@@ -702,10 +745,10 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 
         // 付款方式为网上银行付款，个人账户，转账支票做以下处理
 //        if ("PJ004001".equals(publicExpense.getPaymentmethod()) || "PJ004002".equals(publicExpense.getPaymentmethod()) || "PJ004003".equals(publicExpense.getPaymentmethod())) {
-            TotalCost totalCost = new TotalCost();
-            totalCost.setPublicexpenseid(spublicexpenseid);
-            totalCostMapper.delete(totalCost);
-            saveTotalCostList(invoiceNo, invoicelist, trafficlist, purchaselist, otherlist, publicExpenseVo, tokenModel, spublicexpenseid);
+        TotalCost totalCost = new TotalCost();
+        totalCost.setPublicexpenseid(spublicexpenseid);
+        totalCostMapper.delete(totalCost);
+        saveTotalCostList(invoiceNo, invoicelist, trafficlist, purchaselist, otherlist, publicExpenseVo, tokenModel, spublicexpenseid);
 //        }
     }
 

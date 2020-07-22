@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import cn.hutool.core.io.FileUtil;
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.UserAccount;
@@ -213,7 +214,7 @@ public class Pfans1013Controller {
             }
         }
         //如果出差地域是‘其他’，赋地域名称的值 add_fjl
-        if (evevo.getEvection().getPlace().equals("其他")) {
+        if (!StringUtils.isNullOrEmpty(evevo.getEvection().getRegionname())) {
             evevo.getEvection().setPlace(evevo.getEvection().getRegionname());
         }
 //        }
