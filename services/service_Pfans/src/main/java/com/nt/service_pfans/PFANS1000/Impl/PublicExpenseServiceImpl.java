@@ -555,7 +555,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     taxList.add(taxCost);
                     // 税拔
                     setProperty(detail, inputType, lineCost);
-                    float diff = getFloatValue(lineRate) + getFloatValue(lineCost) - money;
+                    float diff = money / (1 + rate) + money / (1 + rate) * rate - money;
                     if (diff != 0) {
                         TotalCost padding = new TotalCost();
                         padding.setLineamount(diff + "");
