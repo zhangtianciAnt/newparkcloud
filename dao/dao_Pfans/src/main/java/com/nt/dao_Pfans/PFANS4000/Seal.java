@@ -68,5 +68,9 @@ public class Seal extends BaseModel {
     //书类ID
     @Column(name = "BOOKID ")
     private String bookid;
-
+    //add-ws-7/20-禅道任务342
+    //决裁ID
+    @Column(name = "AWARDID ")
+    private String awardid;
+    //add-ws-7/20-禅道任务342
 }

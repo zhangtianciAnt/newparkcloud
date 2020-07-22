@@ -2,22 +2,23 @@ package com.nt.service_pfans.PFANS4000.Impl;
 
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
-import com.nt.dao_Pfans.PFANS1000.Napalm;
-import com.nt.dao_Pfans.PFANS1000.Petition;
+import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS4000.Seal;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
-import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
-import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
-import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
-import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
+import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS4000.SealService;
 import com.nt.service_pfans.PFANS4000.mapper.SealMapper;
 import com.nt.utils.dao.TokenModel;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,11 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class SealServiceImpl implements SealService {
     @Autowired
+    private MongoTemplate mongoTemplate;
+    @Autowired
     private SealMapper sealMapper;
+    @Autowired
+    private AwardMapper awardMapper;
     @Autowired
     private PetitionMapper ptitionMapper;
     @Autowired
@@ -45,10 +50,12 @@ public class SealServiceImpl implements SealService {
     private ToDoNoticeService toDoNoticeService;
     @Autowired
     private ContractapplicationMapper contractapplicationMapper;
+
     @Override
     public List<Seal> list(Seal seal) throws Exception {
         return sealMapper.select(seal);
     }
+
     @Override
     public void insert(Seal seal, TokenModel tokenModel) throws Exception {
         seal.preInsert(tokenModel);
@@ -86,6 +93,16 @@ public class SealServiceImpl implements SealService {
                             napalmMapper.updateByPrimaryKey(np);
                         }
                     }
+                } else if (boksplit[0].equals("7")) {//委托决裁
+                    for (int a = 1; a < boksplit.length; a++) {
+                        Award aw = awardMapper.selectByPrimaryKey(boksplit[a]);
+                        if (aw != null) {
+                            aw.setSealstatus("1");
+                            aw.setSealid(se.getSealid());
+                            aw.preUpdate(tokenModel);
+                            awardMapper.updateByPrimaryKey(aw);
+                        }
+                    }
                 }
             }
         }
@@ -109,6 +126,15 @@ public class SealServiceImpl implements SealService {
                             pt.setSealstatus("2");
                             pt.preUpdate(tokenModel);
                             ptitionMapper.updateByPrimaryKey(pt);
+                        }
+                    }
+                } else if (boksplit[0].equals("7")) {//委托决裁
+                    for (int a = 1; a < boksplit.length; a++) {
+                        Award aw = awardMapper.selectByPrimaryKey(boksplit[a]);
+                        if (aw != null) {
+                            aw.setSealstatus("2");
+                            aw.preUpdate(tokenModel);
+                            awardMapper.updateByPrimaryKey(aw);
                         }
                     }
                 } else if (boksplit[0].equals("5")) {//纳品书
@@ -160,24 +186,54 @@ public class SealServiceImpl implements SealService {
                             countLi.get(0).setDeliveryconditionqh("HT009003");
                             contractnumbercountMapper.updateByPrimaryKeySelective(countLi.get(0));
                         }
-                    }
-                    if (countLi.get(0).getClaimconditionqh().equals("HT011003") && countLi.get(0).getDeliveryconditionqh().equals("HT009003")) {
-                        //向财务部长（角色）发送待办
-                        List<MembersVo> rolelist = roleService.getMembers("5e7861948f43163084351132");
+                    } else if (bktype.equals("7")) {
+//                        book = "委托决裁";
+                        Award award = awardMapper.selectByPrimaryKey(ls[i]);
+                        if (award != null) {
+                            award.setSealstatus("3");
+                            award.preUpdate(tokenModel);
+                            awardMapper.updateByPrimaryKey(award);
+                            //更新状况为完了
+                            Contractnumbercount pp = new Contractnumbercount();
+                            pp.setContractnumber(award.getContractnumber());
+                            countLi = contractnumbercountMapper.select(pp);
+                            countLi.get(0).setDeliveryconditionqh("HT009003");
+                            contractnumbercountMapper.updateByPrimaryKeySelective(countLi.get(0));
+                        }
+                        //外注代办
+                        List<MembersVo> rolelist = roleService.getMembers("5e78633d8f43163084351138");
                         if (rolelist.size() > 0) {
-                            for (MembersVo rt : rolelist) {
-                                //发起人创建代办
-                                ToDoNotice toDoNotice = new ToDoNotice();
-                                List<String> params = new ArrayList<String>();
-                                toDoNotice.setTitle(countLi.get(0).getContractnumber() + countLi.get(0).getClaimtype() + "作成完毕，可进行资金回收确认");
-                                toDoNotice.setInitiator(seal.getUserid());
-                                toDoNotice.setContent(countLi.get(0).getContractnumber() + countLi.get(0).getClaimtype() + "作成完毕，可进行资金回收确认");
-                                toDoNotice.setDataid(countLi.get(0).getContractnumber()); //合同是按照合同编号查询
-                                toDoNotice.setUrl("/PFANS1026FormView");
-                                toDoNotice.setWorkflowurl("/PFANS1026View");
-                                toDoNotice.preInsert(tokenModel);
-                                toDoNotice.setOwner(rt.getUserid());
-                                toDoNoticeService.save(toDoNotice);
+                            ToDoNotice toDoNotice3 = new ToDoNotice();
+                            toDoNotice3.setTitle("【" + countLi.get(0).getContractnumber() + "】发起得印章申请已成功");
+                            toDoNotice3.setInitiator(seal.getUserid());
+                            toDoNotice3.setContent("委托决裁发起得印章申请已成功！");
+                            toDoNotice3.setDataid(award.getAward_id());
+                            toDoNotice3.setUrl("/PFANS1025FormView");
+                            toDoNotice3.setWorkflowurl("/PFANS1025FormView");
+                            toDoNotice3.preInsert(tokenModel);
+                            toDoNotice3.setOwner(rolelist.get(0).getUserid());
+                            toDoNoticeService.save(toDoNotice3);
+                        }
+                    }
+                    if (countLi.get(0).getClaimconditionqh() != null && countLi.get(0).getClaimconditionqh() != "") {
+                        if (countLi.get(0).getClaimconditionqh().equals("HT011003") && countLi.get(0).getDeliveryconditionqh().equals("HT009003")) {
+                            //向财务部长（角色）发送待办
+                            List<MembersVo> rolelist = roleService.getMembers("5e7861948f43163084351132");
+                            if (rolelist.size() > 0) {
+                                for (MembersVo rt : rolelist) {
+                                    //发起人创建代办
+                                    ToDoNotice toDoNotice = new ToDoNotice();
+                                    List<String> params = new ArrayList<String>();
+                                    toDoNotice.setTitle(countLi.get(0).getContractnumber() + countLi.get(0).getClaimtype() + "作成完毕，可进行资金回收确认");
+                                    toDoNotice.setInitiator(seal.getUserid());
+                                    toDoNotice.setContent(countLi.get(0).getContractnumber() + countLi.get(0).getClaimtype() + "作成完毕，可进行资金回收确认");
+                                    toDoNotice.setDataid(countLi.get(0).getContractnumber()); //合同是按照合同编号查询
+                                    toDoNotice.setUrl("/PFANS1026FormView");
+                                    toDoNotice.setWorkflowurl("/PFANS1026View");
+                                    toDoNotice.preInsert(tokenModel);
+                                    toDoNotice.setOwner(rt.getUserid());
+                                    toDoNoticeService.save(toDoNotice);
+                                }
                             }
                         }
                     }
@@ -186,6 +242,8 @@ public class SealServiceImpl implements SealService {
         }
         //add_fjl_添加合同回款相关  end
     }
+
+    //add-ws-7/20-禅道任务342
     @Override
     public Seal One(String sealid) throws Exception {
         return sealMapper.selectByPrimaryKey(sealid);
