@@ -262,7 +262,12 @@ public class WagesServiceImpl implements WagesService {
             wage.setCreateonym(DateUtil.format(new Date(), "YYYY-MM"));
             wage.preInsert(tokenModel);
         }
-        return wagesMapper.insertListAllCols(wages);
+        wagesMapper.insertListAllCols(wages);
+        Giving giving = new Giving();
+        giving.setGiving_id(wages.get(0).getGiving_id());
+        giving.setStatus(wages.get(0).getStatus());
+        giving.preUpdate(tokenModel);
+        return givingMapper.updateByPrimaryKeySelective(giving);
     }
 
     //获取离职人员工资
