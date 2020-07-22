@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.*;
@@ -391,7 +392,7 @@ public class EvectionServiceImpl implements EvectionService {
             needMergeList.addAll(accommodationdetailslist);
             needMergeList.addAll(otherDetailslist);
         }
-        mergeResult = mergeDetailList(needMergeList, specialMap, currencyexchangeList);
+        mergeResult = mergeDetailList(needMergeList, specialMap, invoicelist);
         //add-ws-5/12-汇税收益与汇税损失问题对应
         newmergeResult = newmergeDetailList(needMergeList, specialMap, currencyexchangeList);
         //add-ws-5/12-汇税收益与汇税损失问题对应
@@ -441,9 +442,15 @@ public class EvectionServiceImpl implements EvectionService {
                 insertInfo.setVendorcode(evectionVo.getEvection().getPersonalcode());//个人编号
                 insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
                 //发票说明
-                if (insertInfo.getRemarks() != "" && insertInfo.getRemarks() != null) {
-                    insertInfo.setRemarks(userName + accountCodeMap.getOrDefault(insertInfo.getRemarks(), ""));
+                //add_fjl_添加发票说明的专票场合判断
+                if (!StringUtils.isNullOrEmpty(insertInfo.getRemarks())) {
+                    if (insertInfo.getRemarks().contains("专票")) {
+                        insertInfo.setRemarks(userName + insertInfo.getRemarks());
+                    } else {
+                        insertInfo.setRemarks(userName + accountCodeMap.getOrDefault(insertInfo.getRemarks(), ""));
+                    }
                 }
+                //add_fjl_添加发票说明的专票场合判断
 
                 insertInfo.setInvoicenumber(invoiceNo);
                 travelcostmapper.insertSelective(insertInfo);
@@ -560,7 +567,7 @@ public class EvectionServiceImpl implements EvectionService {
      * @param detailList
      * @return resultMap
      */
-    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, Float> specialMap, List<Currencyexchange> currencyexchangeList) throws Exception {
+    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, Float> specialMap, List<Invoice> invoicelist) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         if (detailList.size() <= 0) {
             throw new LogicalException("明细不能为空");
@@ -600,54 +607,64 @@ public class EvectionServiceImpl implements EvectionService {
             // 发票No
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
             float money = getPropertyFloat(detail, "rmb");
-            float taxes = getPropertyFloat(detail, "taxes");
+//            float taxes = getPropertyFloat(detail, "taxes");
             float moneysum = getPropertyFloat(detail, "subsidies");
             totalTax = totalTax + money + moneysum;
             String getRmb = getProperty(detail, "rmb");
             String gettaxes = getProperty(detail, "taxes");
             String redirictchheck = getProperty(detail, "redirict");
             // 如果是专票，处理税
+            //updfjl_0722  添加增值税明细数据  start
             if (specialMap.containsKey(keyNo) && Float.parseFloat(gettaxes) > 0) {
-                List<TravelCost> taxList = (List<TravelCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
-                resultMap.put(TAX_KEY, taxList);
-                float rate = specialMap.get(keyNo);
-                TravelCost taxCost = new TravelCost();
-                // 税拔
-                String lineCost = FNUM.format(money - taxes);
-                // 税金
-                String lineRate = FNUM.format(taxes);
-                if (money > 0) {
-                    // 税
-                    //add-ws-4/22-税金不为0存2302-00-01A0
-                    if (!lineRate.equals("0")) {
-                        taxCost.setSubjectnumber("2302-00-01A0");
-                    } else {
-                        taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
-                    }
-                    //add-ws-4/22-税金不为0存2302-00-01A0
-                    taxCost.setLineamount(lineRate);
-                    taxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
-                    //发票说明
-                    taxCost.setRemarks(getProperty(detail, "accountcode"));
-                    taxCost.setCurrency("CNY");
-                    taxList.add(taxCost);
-                    // 税拔
-                    setProperty(detail, "rmb", lineCost);
-                    float diff = getFloatValue(lineRate) + getFloatValue(lineCost) - money;
-                    if (diff != 0) {
-                        TravelCost padding = new TravelCost();
-                        padding.setLineamount(diff + "");
-                        padding.setBudgetcoding(getProperty(detail, "budgetcoding"));
-                        padding.setSubjectnumber(getProperty(detail, "subjectnumber"));
-                        //发票说明
-                        padding.setRemarks(getProperty(detail, "accountcode"));
-                        padding.setCurrency("CNY");
-                        List<TravelCost> paddingList = (List<TravelCost>) resultMap.getOrDefault(PADDING_KEY, new ArrayList<>());
-                        paddingList.add(padding);
-                        resultMap.put(PADDING_KEY, paddingList);
+                float taxes = 0;
+                float taxesSUM = 0;
+                if (invoicelist.size() > 0) {
+                    for (Invoice inv : invoicelist) {
+                        taxes = Float.parseFloat(inv.getFacetax());
+                        List<TravelCost> taxList = (List<TravelCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
+                        resultMap.put(TAX_KEY, taxList);
+                        float rate = specialMap.get(keyNo);
+                        TravelCost taxCost = new TravelCost();
+                        taxesSUM += taxes;
+                        // 税拔
+                        String lineCost = FNUM.format(money - taxesSUM);
+                        // 税金
+                        String lineRate = FNUM.format(taxes);
+                        if (money > 0) {
+                            // 税
+                            //add-ws-4/22-税金不为0存2302-00-01A0
+                            if (!lineRate.equals("0")) {
+                                taxCost.setSubjectnumber("2302-00-01A0");
+                            } else {
+                                taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
+                            }
+                            //add-ws-4/22-税金不为0存2302-00-01A0
+                            taxCost.setLineamount(lineRate);
+                            taxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
+                            //发票说明
+                            taxCost.setRemarks(getProperty(inv, "invoicenumber"));
+                            taxCost.setCurrency("CNY");
+                            taxList.add(taxCost);
+                            // 税拔
+                            setProperty(detail, "rmb", lineCost);
+                            float diff = taxesSUM + getFloatValue(lineCost) - money;
+                            if (diff != 0) {
+                                TravelCost padding = new TravelCost();
+                                padding.setLineamount(diff + "");
+                                padding.setBudgetcoding(getProperty(detail, "budgetcoding"));
+                                padding.setSubjectnumber(getProperty(detail, "subjectnumber"));
+                                //发票说明
+                                padding.setRemarks(getProperty(detail, "accountcode"));
+                                padding.setCurrency("CNY");
+                                List<TravelCost> paddingList = (List<TravelCost>) resultMap.getOrDefault(PADDING_KEY, new ArrayList<>());
+                                paddingList.add(padding);
+                                resultMap.put(PADDING_KEY, paddingList);
+                            }
+                        }
                     }
                 }
             }
+            //upd_fjl_0722  添加增值税明细数据  end
 
             //add-ws-5/13-获取当前人是否直属部门后台导出csv使用
             List<Dictionary> dictionaryL = dictionaryService.getForSelect("PJ119");
