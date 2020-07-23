@@ -10,8 +10,10 @@
         USER_ID  user_id,
         APPLICATION_DATE applicationdate,
         ERROR_TYPE errortype,
-        OCCURRENCE_DATE occurrencedate,
-        FINISHED_DATE finisheddate,
+        case when status = '7' then re_occurrence_date
+        else occurrence_date end occurrencedate,
+        case when status = '7' then re_finished_date
+        else finished_date end finisheddate,
         PERIOD_START  periodstart,
         PERIOD_END  periodend,
         CAUSE  cause,
@@ -20,15 +22,10 @@
         LENGTHTIME lengthtime,
         HOSPITAL hospital,
         EDATE edate,
-
         ENCLOSUREEXPLAIN enclosureexplain
         from abnormal
-        where abnormal.occurrence_date &lt;= #{now}
-        and abnormal.FINISHED_DATE &gt;= #{now}
-        or (YEAR(abnormal.occurrence_date) = YEAR(NOW())
-        and MONTH(abnormal.occurrence_date) = MONTH(NOW()))
-        or (YEAR(abnormal.FINISHED_DATE) = YEAR(NOW())
-        and MONTH(abnormal.FINISHED_DATE) = MONTH(NOW()))
+        where status >= 4
+		and error_type in ('PR013012','PR013012')
     </select>
     <select id="selectAbNormalThisYear" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
         select
