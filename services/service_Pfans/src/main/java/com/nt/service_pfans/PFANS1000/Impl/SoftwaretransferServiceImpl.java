@@ -1,9 +1,11 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Assets.Assets;
 import com.nt.dao_Pfans.PFANS1000.Softwaretransfer;
 import com.nt.dao_Pfans.PFANS1000.Notification;
 import com.nt.dao_Pfans.PFANS1000.Vo.SoftwaretransferVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.SoftwaretransferVo2;
+import com.nt.service_Assets.mapper.AssetsMapper;
 import com.nt.service_pfans.PFANS1000.SoftwaretransferService;
 import com.nt.service_pfans.PFANS1000.mapper.SoftwaretransferMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NotificationMapper;
@@ -25,6 +27,8 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
     @Autowired
     private SoftwaretransferMapper softwaretransferMapper;
     @Autowired
+    private AssetsMapper assetsMapper;
+    @Autowired
     private NotificationMapper notificationMapper;
 
 //    @Override
@@ -34,7 +38,7 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
 
     @Override
     public  List<SoftwaretransferVo2> getSoftwaretransfer(Softwaretransfer softwaretransfer) throws Exception {
-        return softwaretransferMapper.getSoftware(softwaretransfer.getOwner());
+        return softwaretransferMapper.getSoftware(softwaretransfer.getOwners());
     }
 
     @Override
@@ -70,6 +74,17 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
                 notification.setSoftwaretransferid(ssoftwaretransferid);
                 notification.setRowindex(rowindex);
                 notificationMapper.insertSelective(notification);
+                if(softwaretransfer.getStatus().equals("4")){
+                    Assets assets = new Assets();
+                    assets.setBarcode(notification.getManagement());
+                    List<Assets> assetsList = assetsMapper.select(assets);
+                    for(Assets ast : assetsList){
+                        ast.setOwner(notification.getEafter());
+                        ast.setPsdcdreturnconfirmation(notification.getEafter());
+                        ast.setUsedepartment(softwaretransfer.getTubegroup_id());
+                        assetsMapper.updateByPrimaryKeySelective(ast);
+                    }
+                }
             }
         }
     }
