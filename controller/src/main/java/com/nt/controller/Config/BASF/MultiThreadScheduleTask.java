@@ -32,6 +32,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.TextMessage;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 /**
@@ -96,8 +97,11 @@ public class MultiThreadScheduleTask {
     @Autowired
     private SwitchnotificationsServices switchnotificationsServices;
 
-    @Autowired
+    @Resource
     private DeviceinformationMapper deviceinformationMapper;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     // websocket消息推送
     private WebSocket ws = new WebSocket();
@@ -151,6 +155,26 @@ public class MultiThreadScheduleTask {
         }
 
         return (JSONArray) jsonObject.get("data");
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void getGps() throws Exception {
+        // TODO: 2020/7/22 获取所有GPS盒子imei和key（key是鉴权码），循环调用获取GPS，都调用结束，推送前台
+        Map<String, Object> map = new HashMap<>();
+        map.put("imei", "868500025879859");
+        map.put("key", "0F4137ED1502B5045D6083AA258B5C42");
+        JSONObject jsonObject = (JSONObject) JSONObject.parseObject(restTemplate.getForObject("http://58.61.160.60:97/api/car/getlastinfo", String.class, map));
+        System.out.println(jsonObject.toString());
+    }
+
+    private HttpEntity<String> getResponse(Map<String, Object> requestMap) {
+        HttpHeaders headers = new HttpHeaders();
+        MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+        headers.setContentType(type);
+//        headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+        HttpEntity<String> formEntity = new HttpEntity<String>(JSONObject.toJSONString(requestMap), headers);
+        return formEntity;
     }
 
     /**
@@ -416,7 +440,7 @@ public class MultiThreadScheduleTask {
      * @Param
      **/
     @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 10000)
     public void BASF90600_GetQueryVehiclesRegularlyInfo() throws Exception {
         // 定时查询车辆信息表（出场时间为空的数据）
         webSocketVo.setQueryVehiclesRegularlyInfoList(vehicleinformationServices.getQueryVehiclesRegularlyInfo());

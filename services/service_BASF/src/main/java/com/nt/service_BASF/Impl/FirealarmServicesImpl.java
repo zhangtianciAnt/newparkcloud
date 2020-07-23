@@ -60,7 +60,7 @@ public class FirealarmServicesImpl implements FirealarmServices {
 
     //获取报警单列表
     @Override
-    public List<Firealarm> list(Firealarm firealarm) throws Exception{
+    public List<Firealarm> list(Firealarm firealarm) throws Exception {
         return firealarmMapper.select(firealarm);
     }
 
@@ -77,10 +77,10 @@ public class FirealarmServicesImpl implements FirealarmServices {
     @Override
     public String insert(Firealarm firealarm, TokenModel tokenModel) throws Exception {
 
-        Firealarm firealarm1 =new Firealarm();
+        Firealarm firealarm1 = new Firealarm();
         String yyMMdd = new SimpleDateFormat("yyMMdd").format(new Date()).toString();
         int a = firealarmMapper.selectCount(firealarm1);
-        String countno =new DecimalFormat("00").format(a+1);
+        String countno = new DecimalFormat("00").format(a + 1);
         String typec = null;
 //        switch (firealarm.getTypacc()){
 //            case "BC013001": typec = "FAS";//火灾事故
@@ -93,11 +93,12 @@ public class FirealarmServicesImpl implements FirealarmServices {
 //                break;
 //        }
 
-            typec = "FAS";
+        typec = "FAS";
 
-        firealarm.setFirealarmno(yyMMdd+typec+countno);
-
-        firealarm.preInsert(tokenModel);
+        firealarm.setFirealarmno(yyMMdd + typec + countno);
+        if (tokenModel != null) {
+            firealarm.preInsert(tokenModel);
+        }
         String ccid = UUID.randomUUID().toString();
         firealarm.setFirealarmid(ccid);
         firealarm.setCompletesta("0");
@@ -149,10 +150,10 @@ public class FirealarmServicesImpl implements FirealarmServices {
     public void update(Firealarm firealarm, TokenModel tokenModel) throws Exception {
         firealarm.preUpdate(tokenModel);
         //当处于报警单处于完成或者误报状态时，解除地图报警
-        if("1".equals(firealarm.getCompletesta())||"1".equals(firealarm.getMisinformation())){
-            Deviceinformation deviceinformation=deviceinformationMapper.selectByPrimaryKey(firealarm.getDeviceinformationid());
-            if(deviceinformation!=null){
-                mapBox_mapLevelServices.remarkSet(deviceinformation.getMapid(),false,tokenModel);
+        if ("1".equals(firealarm.getCompletesta()) || "1".equals(firealarm.getMisinformation())) {
+            Deviceinformation deviceinformation = deviceinformationMapper.selectByPrimaryKey(firealarm.getDeviceinformationid());
+            if (deviceinformation != null) {
+                mapBox_mapLevelServices.remarkSet(deviceinformation.getMapid(), false, tokenModel);
             }
         }
         firealarmMapper.updateByPrimaryKeySelective(firealarm);
@@ -170,17 +171,17 @@ public class FirealarmServicesImpl implements FirealarmServices {
     public List<FireAlarmStatisticsVo> getFireAlarmStatistics() throws Exception {
         //获取当前月天数
         Calendar aCalendar = Calendar.getInstance(Locale.CHINA);
-        int daySum=aCalendar.getActualMaximum(Calendar.DATE);
+        int daySum = aCalendar.getActualMaximum(Calendar.DATE);
         //获取当月数据
-        List<FireAlarmStatisticsVo> fireAlarmStatisticsVos=firealarmMapper.getFireAlarmStatistics();
+        List<FireAlarmStatisticsVo> fireAlarmStatisticsVos = firealarmMapper.getFireAlarmStatistics();
         //构建vo
-        List<FireAlarmStatisticsVo> buildVo=new ArrayList<>();
-        for(int i=0;i<daySum;i++){
-            FireAlarmStatisticsVo f=new FireAlarmStatisticsVo();
-            f.setDate(String.valueOf(i+1));
+        List<FireAlarmStatisticsVo> buildVo = new ArrayList<>();
+        for (int i = 0; i < daySum; i++) {
+            FireAlarmStatisticsVo f = new FireAlarmStatisticsVo();
+            f.setDate(String.valueOf(i + 1));
             f.setCnt(0);
-            for(FireAlarmStatisticsVo a:fireAlarmStatisticsVos){
-                if(a.getDate().equals(String.valueOf(i+1))){
+            for (FireAlarmStatisticsVo a : fireAlarmStatisticsVos) {
+                if (a.getDate().equals(String.valueOf(i + 1))) {
                     f.setCnt(a.getCnt());
                 }
             }

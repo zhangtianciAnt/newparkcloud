@@ -161,25 +161,29 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
     // region 根据传来的mapid更改remark(false设置为0；true设置为1)
     @Override
     public void remarkSet(List<String> mapidList, boolean zeroOrOne, TokenModel tokenModel) throws Exception {
-        for(String mapid:mapidList){
-            remarkSet(mapid,zeroOrOne,tokenModel);
+        for (String mapid : mapidList) {
+            remarkSet(mapid, zeroOrOne, tokenModel);
         }
     }
 
     @Override
     public void remarkSet(String mapid, boolean zeroOrOne, TokenModel tokenModel) throws Exception {
         MapBox_MapLevel mapBox_mapLevel = mapBox_mapLevelMapper.selectByPrimaryKey(mapid);
-        if(mapBox_mapLevel!=null){
+        if (mapBox_mapLevel != null) {
             mapBox_mapLevel.setRemark(zeroOrOne == true ? "1" : "0");
-            mapBox_mapLevel.preUpdate(tokenModel);
+            if (tokenModel != null) {
+                mapBox_mapLevel.preUpdate(tokenModel);
+            }
             mapBox_mapLevelMapper.updateByPrimaryKeySelective(mapBox_mapLevel);
-            String[] parentidList=mapBox_mapLevel.getCascids().split("/");
-            if(parentidList.length>=2){
-                for(int i=1;i<parentidList.length;i++){
-                    MapBox_MapLevel mapBox_mapLevel1=mapBox_mapLevelMapper.selectByPrimaryKey(parentidList[i]);
-                    if(mapBox_mapLevel1!=null){
+            String[] parentidList = mapBox_mapLevel.getCascids().split("/");
+            if (parentidList.length >= 2) {
+                for (int i = 1; i < parentidList.length; i++) {
+                    MapBox_MapLevel mapBox_mapLevel1 = mapBox_mapLevelMapper.selectByPrimaryKey(parentidList[i]);
+                    if (mapBox_mapLevel1 != null) {
                         mapBox_mapLevel1.setRemark(zeroOrOne == true ? "1" : "0");
-                        mapBox_mapLevel1.preUpdate(tokenModel);
+                        if (tokenModel != null) {
+                            mapBox_mapLevel1.preUpdate(tokenModel);
+                        }
                         mapBox_mapLevelMapper.updateByPrimaryKeySelective(mapBox_mapLevel1);
                     }
                 }
