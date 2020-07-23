@@ -517,11 +517,14 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             }
             // 行合并
             float money = getPropertyFloat(detail, inputType);
+            float taxes = getPropertyFloat(detail, "taxes");
             Object mergeObject = resultMap.get(mergeKey);
             if (mergeObject != null) {
                 // 发现可以合并数据
                 float newMoney = getPropertyFloat(mergeObject, inputType) + money;
+                float oldMoneysum = getPropertyFloat(mergeObject, "taxes") + taxes;
                 setProperty(mergeObject, inputType, newMoney + "");
+                setProperty(mergeObject, "taxes", oldMoneysum + "");
             } else {
                 resultMap.put(mergeKey, detail);
             }
@@ -534,6 +537,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
             float money = getPropertyFloat(detail, "rmb");
             float moneysum = getPropertyFloat(detail, "foreigncurrency");
+            float gettaxes = getPropertyFloat(detail, "taxes");
             totalTax = totalTax + money + moneysum;
             String getRmb = getProperty(detail, "rmb");
             // 如果是专票，处理税
@@ -546,7 +550,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 // 税拔
                 String lineCost = FNUM.format(money / (1 + rate));
                 // 税金
-                String lineRate = FNUM.format((money / (1 + rate)) * rate);
+                String lineRate = FNUM.format(gettaxes);
                 if (money > 0) {
                     // 税
                     //add-ws-4/22-税金不为0存2302-00-01A0
