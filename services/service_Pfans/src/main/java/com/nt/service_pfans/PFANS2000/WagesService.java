@@ -25,7 +25,7 @@ public interface WagesService {
      */
     List<Wages> getWagesByGivingId(String givingId) throws Exception;
 
-    int insertWages(List<Wages> wages, TokenModel tokenModel) throws Exception;
+    void insertWages(List<Wages> wages, TokenModel tokenModel) throws Exception;
 
     List<Wages> getWagesdepartment(String dates) throws Exception;
 
