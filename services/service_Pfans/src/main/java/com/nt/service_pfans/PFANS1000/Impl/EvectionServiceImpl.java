@@ -680,7 +680,7 @@ public class EvectionServiceImpl implements EvectionService {
                 newtaxCost.setLineamount(df1.format(moneysum));
                 newtaxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
                 //发票说明
-                newtaxCost.setRemarks(getProperty(detail, "accountcode"));
+                newtaxCost.setRemarks("PJ119005");
                 newtaxCost.setCurrency("CNY");
                 oldtaxList.add(newtaxCost);
             } else if (redirictchheck.equals("1")) {
@@ -691,7 +691,7 @@ public class EvectionServiceImpl implements EvectionService {
                 newtaxCost.setLineamount(df1.format(moneysum));
                 newtaxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
                 //发票说明
-                newtaxCost.setRemarks(getProperty(detail, "accountcode"));
+                newtaxCost.setRemarks("PJ132005");
                 newtaxCost.setCurrency("CNY");
                 oldtaxList.add(newtaxCost);
             }
