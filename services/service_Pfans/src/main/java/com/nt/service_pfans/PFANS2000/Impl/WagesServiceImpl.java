@@ -251,23 +251,32 @@ public class WagesServiceImpl implements WagesService {
     }
 
     @Override
-    public int insertWages(List<Wages> wages, TokenModel tokenModel) throws Exception {
-        // 先删除当月数据，再插入
-        Wages del_wage = new Wages();
-        del_wage.setGiving_id(wages.get(0).getGiving_id());
-        wagesMapper.delete(del_wage);
-
-        for (Wages wage : wages) {
-            wage.setWages_id(UUID.randomUUID().toString());
-            wage.setCreateonym(DateUtil.format(new Date(), "YYYY-MM"));
-            wage.preInsert(tokenModel);
+    public void insertWages(List<Wages> wages, TokenModel tokenModel) throws Exception {
+        String status = wages.get(0).getStatus();
+        if(status.equals("0") || status.equals("2")){
+            // 先删除当月数据，再插入
+            Wages del_wage = new Wages();
+            del_wage.setGiving_id(wages.get(0).getGiving_id());
+            wagesMapper.delete(del_wage);
+            for (Wages wage : wages) {
+                wage.setWages_id(UUID.randomUUID().toString());
+                wage.setCreateonym(DateUtil.format(new Date(), "YYYY-MM"));
+                wage.preInsert(tokenModel);
+            }
+            wagesMapper.insertListAllCols(wages);
         }
-        wagesMapper.insertListAllCols(wages);
-        Giving giving = new Giving();
-        giving.setGiving_id(wages.get(0).getGiving_id());
-        giving.setStatus(wages.get(0).getStatus());
-        giving.preUpdate(tokenModel);
-        return givingMapper.updateByPrimaryKeySelective(giving);
+        // add 0723 工资计算添加审批 start
+        if(!status.equals("0")){
+            Giving giving = new Giving();
+            giving.setGiving_id(wages.get(0).getGiving_id());
+            giving.setStatus(status);
+            if(status.equals("X")){
+                giving.setStatus("0");
+            }
+            giving.preUpdate(tokenModel);
+            givingMapper.updateByPrimaryKeySelective(giving);
+        }
+        // add 0723 工资计算添加审批 start
     }
 
     //获取离职人员工资

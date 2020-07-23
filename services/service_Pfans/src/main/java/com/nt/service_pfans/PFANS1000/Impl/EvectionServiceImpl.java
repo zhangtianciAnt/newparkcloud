@@ -628,6 +628,7 @@ public class EvectionServiceImpl implements EvectionService {
                         taxesSUM += taxes;
                         // 税拔
                         String lineCost = FNUM.format(money - taxesSUM);
+                        String lineCostNo = FNUM.format(money - taxes);
                         // 税金
                         String lineRate = FNUM.format(taxes);
                         if (money > 0) {
@@ -647,7 +648,7 @@ public class EvectionServiceImpl implements EvectionService {
                             taxList.add(taxCost);
                             // 税拔
                             setProperty(detail, "rmb", lineCost);
-                            float diff = taxesSUM + getFloatValue(lineCost) - money;
+                            float diff = taxes + getFloatValue(lineCostNo) - money;
                             if (diff != 0) {
                                 TravelCost padding = new TravelCost();
                                 padding.setLineamount(diff + "");
@@ -679,7 +680,7 @@ public class EvectionServiceImpl implements EvectionService {
                 newtaxCost.setLineamount(df1.format(moneysum));
                 newtaxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
                 //发票说明
-                newtaxCost.setRemarks(getProperty(detail, "accountcode"));
+                newtaxCost.setRemarks("PJ119005");
                 newtaxCost.setCurrency("CNY");
                 oldtaxList.add(newtaxCost);
             } else if (redirictchheck.equals("1")) {
@@ -690,7 +691,7 @@ public class EvectionServiceImpl implements EvectionService {
                 newtaxCost.setLineamount(df1.format(moneysum));
                 newtaxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
                 //发票说明
-                newtaxCost.setRemarks(getProperty(detail, "accountcode"));
+                newtaxCost.setRemarks("PJ132005");
                 newtaxCost.setCurrency("CNY");
                 oldtaxList.add(newtaxCost);
             }
