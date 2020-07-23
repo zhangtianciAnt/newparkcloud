@@ -1461,11 +1461,13 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         cal.setTime(date);//设置起时间
         cal.add(Calendar.DATE, -1);//减1天
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String aaa = "T16:00:00.000Z";
+        String resignation_date = sdf.format(cal.getTime()) + aaa;
         Query query3 = new Query();
         query3.addCriteria(Criteria.where("userid").is(staffexitprocedureVo.getStaffexitprocedure().getUser_id()));
         CustomerInfo customerInfo2 = mongoTemplate.findOne(query3, CustomerInfo.class);
         if (customerInfo2 != null) {
-            customerInfo2.getUserinfo().setResignation_date(sdf.format(cal.getTime()));
+            customerInfo2.getUserinfo().setResignation_date(resignation_date);
         }
 
         mongoTemplate.save(customerInfo2);
