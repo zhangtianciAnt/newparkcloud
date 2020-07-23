@@ -131,6 +131,13 @@ GROUP BY
             ,a.dates  as        dates
             ,a.normal  as       normal
             ,a.actual  as       actual
+            ,a.ordinaryindustry as ordinaryindustry
+            ,a.weekendindustry as weekendindustry
+            ,a.statutoryresidue as statutoryresidue
+            ,a.annualrestday as annualrestday
+            ,a.specialday as specialday
+            ,a.youthday as youthday
+            ,a.womensday as womensday
             ,a.shortsickleave  as shortsickleave
             ,a.longsickleave  as  longsickleave
             ,a.compassionateleave as compassionateleave
@@ -162,6 +169,13 @@ GROUP BY
             ,ar.dates  as        dates
             ,ar.normal  as       normal
             ,ar.actual  as       actual
+            ,ar.ordinaryindustry as ordinaryindustry
+            ,ar.weekendindustry as weekendindustry
+            ,ar.statutoryresidue as statutoryresidue
+            ,ar.annualrestday as annualrestday
+            ,ar.specialday as specialday
+            ,ar.youthday as youthday
+            ,ar.womensday as womensday
             ,ar.shortsickleave  as shortsickleave
             ,ar.longsickleave  as  longsickleave
             ,ar.compassionateleave as compassionateleave
