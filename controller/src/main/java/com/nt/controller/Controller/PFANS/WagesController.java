@@ -29,7 +29,8 @@ public class WagesController {
     @RequestMapping(value = "/insertWages", method = {RequestMethod.POST})
     public ApiResult insertWages(HttpServletRequest request, @RequestBody List<Wages> wagesList) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return new ApiResult(wagesService.insertWages(wagesList, tokenModel));
+        wagesService.insertWages(wagesList, tokenModel);
+        return ApiResult.success();
     }
     //获取工资部门集计
     @RequestMapping(value = "/getWagesdepartment", method = {RequestMethod.GET})
