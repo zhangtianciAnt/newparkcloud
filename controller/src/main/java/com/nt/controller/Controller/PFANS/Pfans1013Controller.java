@@ -287,7 +287,7 @@ public class Pfans1013Controller {
 
             }
             //upd-ws-6/29-禅道175问提修改
-        } else if (useridcheck.equals("5e78b2264e3b194874180f35") || useridcheck.equals("5e78b2574e3b194874181099")) {
+        } else if (useridcheck.equals("5e78b2264e3b194874180f35")) {
             //upd-ws-6/29-禅道175问提修改
             if (wfList.size() > 0) {
                 query = new Query();
@@ -329,20 +329,8 @@ public class Pfans1013Controller {
                     wfList2 = customerInfo.getUserinfo().getCustomername();
                     wfList2 = sign.startGraphics2D(wfList2);
                 }
-                //upd-ws-禅道102
-                if (wfList.get(2).getRemark() != null) {
-                    if (wfList.get(2).getRemark().equals("系统自动跳过")) {
-                        wfList3 = "";
-                    } else {
-                        query = new Query();
-                        query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
-                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                        if (customerInfo != null) {
-                            wfList3 = customerInfo.getUserinfo().getCustomername();
-                            wfList3 = sign.startGraphics2D(wfList3);
-                        }
-                    }
-                }else{
+                //add_fjl_0723  添加是否有二次上司的判断  start
+                if (wfList.size() > 4 && wfList.get(4).getUserId().equals(useridcheck)) {
                     query = new Query();
                     query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
                     customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -350,20 +338,6 @@ public class Pfans1013Controller {
                         wfList3 = customerInfo.getUserinfo().getCustomername();
                         wfList3 = sign.startGraphics2D(wfList3);
                     }
-                }
-                if (wfList.get(3).getRemark() != null) {
-                    if (wfList.get(3).getRemark().equals("系统自动跳过")) {
-                        wfList4 = "";
-                    } else {
-                        query = new Query();
-                        query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
-                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                        if (customerInfo != null) {
-                            wfList4 = customerInfo.getUserinfo().getCustomername();
-                            wfList4 = sign.startGraphics2D(wfList4);
-                        }
-                    }
-                }else{
                     query = new Query();
                     query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
                     customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -371,8 +345,62 @@ public class Pfans1013Controller {
                         wfList4 = customerInfo.getUserinfo().getCustomername();
                         wfList4 = sign.startGraphics2D(wfList4);
                     }
+                } else {//二次上司为空的场合
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        wfList4 = customerInfo.getUserinfo().getCustomername();
+                        wfList4 = sign.startGraphics2D(wfList4);
+                    }
                 }
+                //add_fjl_0723  添加是否有二次上司的判断  end
+                //del_fjl_0723   start
                 //upd-ws-禅道102
+//                if (wfList.get(2).getRemark() != null) {
+//                    if (wfList.get(2).getRemark().equals("系统自动跳过")) {
+//                        wfList3 = "";
+//                    } else {
+//                        query = new Query();
+//                        query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+//                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                        if (customerInfo != null) {
+//                            wfList3 = customerInfo.getUserinfo().getCustomername();
+//                            wfList3 = sign.startGraphics2D(wfList3);
+//                        }
+//                    }
+//                }else{
+//                    query = new Query();
+//                    query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+//                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                    if (customerInfo != null) {
+//                        wfList3 = customerInfo.getUserinfo().getCustomername();
+//                        wfList3 = sign.startGraphics2D(wfList3);
+//                    }
+//                }
+//                if (wfList.get(3).getRemark() != null) {
+//                    if (wfList.get(3).getRemark().equals("系统自动跳过")) {
+//                        wfList4 = "";
+//                    } else {
+//                        query = new Query();
+//                        query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+//                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                        if (customerInfo != null) {
+//                            wfList4 = customerInfo.getUserinfo().getCustomername();
+//                            wfList4 = sign.startGraphics2D(wfList4);
+//                        }
+//                    }
+//                }else{
+//                    query = new Query();
+//                    query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+//                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                    if (customerInfo != null) {
+//                        wfList4 = customerInfo.getUserinfo().getCustomername();
+//                        wfList4 = sign.startGraphics2D(wfList4);
+//                    }
+//                }
+                //upd-ws-禅道102
+                //del_fjl_0723   end
             }
         }
         //upd-ws-6/17-禅道101
@@ -550,7 +578,7 @@ public class Pfans1013Controller {
 
         //upd-ws-6/17-禅道101
         //upd-ws-6/29-禅道175问提修改
-        if (useridcheck.equals("5e78b2264e3b194874180f35") || useridcheck.equals("5e78b2574e3b194874181099")|| (check.equals("总经理"))) {
+        if (useridcheck.equals("5e78b2264e3b194874180f35") || (check.equals("总经理"))) {
             //upd-ws-6/29-禅道175问提修改
             if (evevo.getEvection().getType().equals("0")) {
                 ExcelOutPutUtil.OutPutPdf("境内出差旅费精算书", "newjingneijingsuanshu.xls", data, response);

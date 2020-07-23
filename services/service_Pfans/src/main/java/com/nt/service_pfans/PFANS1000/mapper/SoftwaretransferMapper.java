@@ -9,5 +9,5 @@ import java.util.List;
 
 
 public interface SoftwaretransferMapper extends MyMapper<Softwaretransfer>{
-    List<SoftwaretransferVo2> getSoftware(@Param("user") String user);
+    List<SoftwaretransferVo2> getSoftware(@Param("userIdList") List<String> userIdList);
 }
