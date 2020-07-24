@@ -6,10 +6,12 @@ import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS2000.RecruitJudgement;
 import com.nt.service_Auth.RoleService;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS2000.RecruitJudgementService;
 import com.nt.service_pfans.PFANS2000.mapper.RecruitJudgementMapper;
@@ -39,6 +41,9 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
 
     @Autowired
     private ToDoNoticeService toDoNoticeService;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @Autowired
     private RoleService roleService;
@@ -140,6 +145,21 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
                 info.setBirthday(formatter.format(recruitJudgement.getBirthday()));
                 info.setEnterday(formatter.format(recruitJudgement.getEntrytime()));
                 info.setRank(recruitJudgement.getLevel());
+
+                // region add gbb 0724 职级联动职责工资
+                Dictionary dictionary = new Dictionary();
+                dictionary.setCode(recruitJudgement.getLevel());
+                List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                if (dictionaryList.size() > 0) {
+                    dictionary = new Dictionary();
+                    dictionary.setCode(dictionaryList.get(0).getCode());
+                    List<Dictionary> diclist = dictionaryService.getDictionaryList(dictionary);
+                    if (diclist.size() > 0) {
+                        info.setDuty(diclist.get(0).getValue3());
+                    }
+                }
+                // endregion add gbb 0724 职级联动职责工资
+
                 info.setBasic(String.valueOf(recruitJudgement.getGiving()));
                 info.setAdfield(userAccount.getAccount());
                 query = new Query();
