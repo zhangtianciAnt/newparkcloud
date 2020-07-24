@@ -19,8 +19,11 @@ import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -37,6 +40,7 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 @Service
+@Slf4j
 public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Autowired
@@ -205,7 +209,16 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     private void DeleteSonTable(String id) {
         Saledetails saledetails = new Saledetails();
         saledetails.setTransportgood_id(id);
-        saledetailsMapper.delete(saledetails);
+        int all = saledetailsMapper.selectCount(saledetails);
+        int delete = saledetailsMapper.delete(saledetails);
+        log.info("-------------正在删除saledetails--------------");
+        log.info("走货id：" + id);
+        log.info("该走货相关saledetails数据共有：" + all + "条");
+        log.info("删除"+ delete + "个");
+        log.info("--------------删除结束-------------------------");
+        if(delete > 100){
+            log.info("----------该走货数据异常，走货id："+ id + "-----------");
+        }
         Receivablesrecord receivablesrecord = new Receivablesrecord();
         receivablesrecord.setTransportgood_id(id);
         receivablesrecordMapper.delete(receivablesrecord);
