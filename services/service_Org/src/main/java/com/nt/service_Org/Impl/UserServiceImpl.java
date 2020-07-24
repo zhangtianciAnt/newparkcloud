@@ -1394,6 +1394,28 @@ public class UserServiceImpl implements UserService {
                     personal.setDuty(item.get("现职责工资").toString());
                     userinfo.setDuty(item.get("现职责工资").toString());
                 }
+                else{
+                    //add gbb 0724 等级联动职责工资 start
+                    if (item.get("Rank") != null) {
+                        String rank = item.get("Rank").toString();
+                        if (rank != null) {
+                            Dictionary dictionary = new Dictionary();
+                            dictionary.setValue1(rank.trim());
+                            dictionary.setPcode("PR021");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if (dictionaryList.size() > 0) {
+                                dictionary = new Dictionary();
+                                dictionary.setCode(dictionaryList.get(0).getCode());
+                                List<Dictionary> diclist = dictionaryService.getDictionary(dictionary);
+                                if (diclist.size() > 0) {
+                                    //现职责工资
+                                    userinfo.setDuty(diclist.get(0).getValue3());
+                                }
+                            }
+                        }
+                    }
+                    //add gbb 0724 等级联动职责工资 end
+                }
                 //給料変更日
                 if (item.get("給料変更日") != null && item.get("給料変更日").toString().length() >= 10) {
 //                        personal.setDate(item.get("給料変更日").toString());
@@ -1973,6 +1995,24 @@ public class UserServiceImpl implements UserService {
                     if (item.get("现职责工资●") != null) {
                         personal.setDuty(item.get("现职责工资●").toString());
 //                            customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
+                    }
+                    else{
+                        //add gbb 0724 等级联动职责工资 start
+                        if (item.get("Rank●") != null) {
+                            Dictionary dictionary = new Dictionary();
+                            dictionary.setValue1(item.get("Rank●").toString());
+                            dictionary.setPcode("PR021");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if (dictionaryList.size() > 0) {
+                                dictionary = new Dictionary();
+                                dictionary.setCode(dictionaryList.get(0).getCode());
+                                List<Dictionary> diclist = dictionaryService.getDictionaryList(dictionary);
+                                if (diclist.size() > 0) {
+                                    customerInfoList.get(0).getUserinfo().setDuty(diclist.get(0).getValue3());
+                                }
+                            }
+                        }
+                        //add gbb 0724 等级联动职责工资 end
                     }
                     if (item.get("給料変更日●") != null && item.get("給料変更日●").toString().length() >= 10) {
 //                            personal.setDate(item.get("給料変更日●").toString());
