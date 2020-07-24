@@ -192,4 +192,18 @@ public class LoanApplication extends BaseModel {
      */
     @Column(name = "CANAFVERMONEY")
     private Integer canafvermoney;
+
+    //add ccm 0724
+    //决裁类型
+    @Column(name = "JUDGEMENTS_TYPE")
+    private String judgements_type;
+
+    //决裁摘要
+    @Column(name = "REMARKSDETAIL")
+    private String remarksdetail;
+
+    //决裁金额
+    @Column(name = "JUDGEMENTS_MONEYS")
+    private String judgements_moneys;
+    //add ccm 0724
 }
