@@ -18,4 +18,6 @@ public interface CasgiftApplyService {
 
     public List<CasgiftApply> getCasgiftApplyList(CasgiftApply casgiftapply, HttpServletRequest request) throws Exception;
 
+    public void updateCasgiftApplyList(List<CasgiftApply> casgiftapply, TokenModel tokenModel) throws Exception;
+
 }

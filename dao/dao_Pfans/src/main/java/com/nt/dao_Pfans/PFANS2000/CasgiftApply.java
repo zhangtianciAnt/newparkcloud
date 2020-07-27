@@ -139,4 +139,8 @@ public class CasgiftApply extends BaseModel {
     //奖金发放状态
     @Column(name = "MONEYSTATUS")
     private String moneystatus;
+
+    //发放日期
+    @Column(name = "RELEASEDATE")
+    private String releasedate;
 }
