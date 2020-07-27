@@ -125,9 +125,9 @@ public class Pfans1006Controller {
             }
             //预算单位
             List<Dictionary> curList2 = dictionaryService.getForSelect("JY002");
-            for (Dictionary item : curList1) {
-                if (item.getCode().equals(loanApplication.getCurrencychoice())) {
-                    loanApplication.setBudgetunit(item.getValue1() + "_" + item.getValue2());
+            for (Dictionary item : curList2) {
+                if (item.getCode().equals(loanApplication.getBudgetunit())) {
+                    loanApplication.setBudgetunit(item.getValue2() + "_" + item.getValue3());
                 }
             }
             //获取审批节点的负责人
@@ -214,7 +214,7 @@ public class Pfans1006Controller {
             data.put("userim", userim);
             data.put("loan", loanApplication);
 
-            ExcelOutPutUtil.OutPutPdf("暂借款申请单", "zanjiekuanshenqingdan.xls", data, response);
+            ExcelOutPutUtil.OutPutPdf("暂借款申请单", "zanjiekuan.xls", data, response);
 
             ExcelOutPutUtil.deleteDir("E:\\PFANS\\image");
         }
