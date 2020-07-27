@@ -104,6 +104,17 @@ public class SealServiceImpl implements SealService {
                         }
                     }
                 }
+                else if (boksplit[0].equals("9")) {//其他契约决裁
+                    for (int a = 1; a < boksplit.length; a++) {
+                        Award aw = awardMapper.selectByPrimaryKey(boksplit[a]);
+                        if (aw != null) {
+                            aw.setSealstatus("1");
+                            aw.setSealid(se.getSealid());
+                            aw.preUpdate(tokenModel);
+                            awardMapper.updateByPrimaryKey(aw);
+                        }
+                    }
+                }
             }
         }
         return se;
@@ -144,6 +155,16 @@ public class SealServiceImpl implements SealService {
                             np.setSealstatus("2");
                             np.preUpdate(tokenModel);
                             napalmMapper.updateByPrimaryKey(np);
+                        }
+                    }
+                }
+                else if (boksplit[0].equals("9")) {//其他决裁
+                    for (int a = 1; a < boksplit.length; a++) {
+                        Award aw = awardMapper.selectByPrimaryKey(boksplit[a]);
+                        if (aw != null) {
+                            aw.setSealstatus("2");
+                            aw.preUpdate(tokenModel);
+                            awardMapper.updateByPrimaryKey(aw);
                         }
                     }
                 }
@@ -213,6 +234,35 @@ public class SealServiceImpl implements SealService {
                             toDoNotice3.preInsert(tokenModel);
                             toDoNotice3.setOwner(rolelist.get(0).getUserid());
                             toDoNoticeService.save(toDoNotice3);
+                        }
+                    } else if (bktype.equals("9")) {
+//                        book = "其他决裁";
+                        Award award = awardMapper.selectByPrimaryKey(ls[i]);
+                        if (award != null) {
+                            award.setSealstatus("3");
+                            award.preUpdate(tokenModel);
+                            awardMapper.updateByPrimaryKey(award);
+                            //更新状况为完了
+//                            Contractnumbercount pp = new Contractnumbercount();
+//                            pp.setContractnumber(award.getContractnumber());
+//                            countLi = contractnumbercountMapper.select(pp);
+//                            countLi.get(0).setDeliveryconditionqh("HT009003");
+//                            contractnumbercountMapper.updateByPrimaryKeySelective(countLi.get(0));
+                        }
+                        //采购担当待办
+                        List<MembersVo> rolelist = roleService.getMembers("5e7863d88f4316308435113b");
+                        if (rolelist.size() > 0) {
+                            //采购担当待办
+                            ToDoNotice toDoNotice = new ToDoNotice();
+                            toDoNotice.setTitle("【您有一个采购需处理】");
+                            toDoNotice.setInitiator(seal.getUserid());
+                            toDoNotice.setContent("有一个采购合同已经通过审批，可进行请款或支付！");
+                            toDoNotice.setDataid(seal.getUserid());
+                            toDoNotice.setUrl("/PFANS3005FormView");
+                            toDoNotice.setWorkflowurl("/PFANS3005View");
+                            toDoNotice.preInsert(tokenModel);
+                            toDoNotice.setOwner(rolelist.get(0).getUserid());
+                            toDoNoticeService.save(toDoNotice);
                         }
                     }
                     if (countLi.get(0).getClaimconditionqh() != null && countLi.get(0).getClaimconditionqh() != "") {
