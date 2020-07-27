@@ -2,7 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper">
     <select id="existCheck" resultType="com.nt.dao_Pfans.PFANS1000.Vo.ExistVo">
-       select a.count1 as count1,b.count1 as count2,c.count1 as count3,d.count1 as count4,e.count1 as count5,f.count1 as count6,g.count1 as count7,h.count1 as count8
+        select a.count1 as count1,b.count1 as count2,c.count1 as count3,d.count1 as count4,e.count1 as count5,f.count1 as count6,g.count1 as count7
+        ,h.count1 as count8
+        ,ga.count1 as count9
+
         from(
         select count(*) as count1 from `quotation` where CONTRACTNUMBER = #{contractNumber} and status = '0'
         ) as a
@@ -30,10 +33,24 @@
         (
         select count(*) as count1 from `award` where CONTRACTNUMBER = #{contractNumber} and MAKETYPE = '7' and status = '0'
         ) as g on 1 =1
-				 left join
+        left join
         (
         select count(*) as count1 from `individual` where CONTRACTNUMBER = #{contractNumber} and status = '0'
         ) as h on 1 =1
+        left join
+        (
+        select count(*) as count1 from `award` where CONTRACTNUMBER = #{contractNumber} and MAKETYPE = '9' and status = '0'
+        ) as ga on 1 =1
 	</select>
 
+    <select id="purchaseExistCheck" resultType="java.lang.String">
+        select cc.purnumbers
+        from contractapplication cl
+        inner join contractnumbercount cc
+        on cl.CONTRACTNUMBER = cc.CONTRACTNUMBER
+        where cl.status = '0'
+        <if test="purnumbers != null and purnumbers!=''">
+            and cc.purnumbers = #{purnumbers}
+        </if>
+    </select>
 </mapper>
