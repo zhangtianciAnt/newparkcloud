@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,9 +127,9 @@ public class Pfans1006Controller {
             }
             //预算单位
             List<Dictionary> curList2 = dictionaryService.getForSelect("JY002");
-            for (Dictionary item : curList1) {
-                if (item.getCode().equals(loanApplication.getCurrencychoice())) {
-                    loanApplication.setBudgetunit(item.getValue1() + "_" + item.getValue2());
+            for (Dictionary item : curList2) {
+                if (item.getCode().equals(loanApplication.getBudgetunit())) {
+                    loanApplication.setBudgetunit(item.getValue2() + "_" + item.getValue3());
                 }
             }
             //获取审批节点的负责人
@@ -204,6 +206,18 @@ public class Pfans1006Controller {
                     }
                 }
             }
+            String str_format = "";
+            DecimalFormat df = new DecimalFormat("###,###.00");
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(loanApplication.getMoneys())) {
+                BigDecimal bd = new BigDecimal(loanApplication.getMoneys());
+                str_format = df.format(bd);
+                if (str_format.equals(".00")) {
+                    str_format = "0.00";
+                }
+                loanApplication.setMoneys(str_format);
+            } else {
+                loanApplication.setMoneys("0.00");
+            }
             data.put("wfList1", wfList1);
             data.put("wfList2", wfList2);
             data.put("wfList3", wfList3);
@@ -214,7 +228,7 @@ public class Pfans1006Controller {
             data.put("userim", userim);
             data.put("loan", loanApplication);
 
-            ExcelOutPutUtil.OutPutPdf("暂借款申请单", "zanjiekuanshenqingdan.xls", data, response);
+            ExcelOutPutUtil.OutPutPdf("暂借款申请单", "zanjiekuan.xls", data, response);
 
             ExcelOutPutUtil.deleteDir("E:\\PFANS\\image");
         }

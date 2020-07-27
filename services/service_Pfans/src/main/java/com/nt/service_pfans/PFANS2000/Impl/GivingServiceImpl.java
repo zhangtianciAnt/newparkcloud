@@ -41,6 +41,9 @@ public class GivingServiceImpl implements GivingService {
     private GivingMapper givingMapper;
 
     @Autowired
+    private CasgiftApplyMapper casgiftApplyMapper;
+
+    @Autowired
     private BaseMapper baseMapper;
 
     @Autowired
@@ -806,6 +809,9 @@ public class GivingServiceImpl implements GivingService {
         OtherTwo othertwo = new OtherTwo();
         CasgiftApply casgiftapply = new CasgiftApply();
         casgiftapply.setPayment("0");
+        //add gbb 0727 关联祝礼金 start
+        casgiftapply.setReleasedate(DateUtil.format(new Date(),"yyyy-MM"));
+        //add gbb 0727 关联祝礼金 end
         casgiftapply.setStatus("4");
         List<CasgiftApply> casgiftapplylist = casgiftapplyMapper.select(casgiftapply);
         othertwo.setType("0");
@@ -2356,7 +2362,7 @@ public class GivingServiceImpl implements GivingService {
      * @return
      */
     @Override
-    public void updatestate(String givingid, TokenModel tokenModel) throws Exception {
+    public void updatestate(String givingid, String generationdate,TokenModel tokenModel) throws Exception {
         //工资表
         wagesMapper.updateWages(givingid,tokenModel.getUserId());
 
@@ -2366,5 +2372,8 @@ public class GivingServiceImpl implements GivingService {
         giving.setGrantstatus("1");
         giving.preUpdate(tokenModel);
         givingMapper.updateByPrimaryKeySelective(giving);
+
+        //祝礼金申请
+        casgiftApplyMapper.updpayment(generationdate.substring(0,7),tokenModel.getUserId());
     }
 }

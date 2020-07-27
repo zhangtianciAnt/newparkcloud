@@ -63,6 +63,16 @@ public class Pfans1004Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value="/updateJudgementDetail",method = {RequestMethod.POST})
+    public ApiResult updateJudgementDetail(@RequestBody JudgementVo judgementVo, HttpServletRequest request) throws Exception{
+        if (judgementVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        judgementService.updateJudgementDetail(judgementVo,tokenModel);
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "/create",method={RequestMethod.POST})
     public ApiResult create(@RequestBody JudgementVo judgementVo, HttpServletRequest request) throws Exception {
         if (judgementVo == null) {
@@ -70,6 +80,16 @@ public class Pfans1004Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         judgementService.insert(judgementVo,tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/createJudgementDetail",method={RequestMethod.POST})
+    public ApiResult createJudgementDetail(@RequestBody JudgementVo judgementVo, HttpServletRequest request) throws Exception {
+        if (judgementVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        judgementService.createJudgementDetail(judgementVo,tokenModel);
         return ApiResult.success();
     }
 

@@ -604,6 +604,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 String lineCost = FNUM.format(money / (1 + rate));
                 // 税金
                 String lineRate = FNUM.format(gettaxes);
+                String lineRateNo = FNUM.format(money / (1 + rate) * rate);
                 if (money > 0) {
                     // 税
                     //add-ws-4/22-税金不为0存2302-00-01A0
@@ -622,7 +623,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     taxList.add(taxCost);
                     // 税拔
                     setProperty(detail, inputType, lineCost);
-                    float diff = money / (1 + rate) + money / (1 + rate) * rate - money;
+                    float diff = Float.parseFloat(lineCost) + Float.parseFloat(lineRateNo) - money;
                     if (diff != 0) {
                         TotalCost padding = new TotalCost();
                         padding.setLineamount(diff + "");

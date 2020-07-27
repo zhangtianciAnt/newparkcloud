@@ -938,6 +938,9 @@ public class WagesServiceImpl implements WagesService {
         OtherTwo othertwo = new OtherTwo();
         CasgiftApply casgiftapply = new CasgiftApply();
         casgiftapply.setPayment("0");
+        //add gbb 0727 关联祝礼金 start
+        casgiftapply.setReleasedate(DateUtil.format(new Date(),"yyyy-MM"));
+        //add gbb 0727 关联祝礼金 end
         casgiftapply.setStatus("4");
         casgiftapply.setUser_id(userid);
         List<CasgiftApply> casgiftapplylist = casgiftapplyMapper.select(casgiftapply);
