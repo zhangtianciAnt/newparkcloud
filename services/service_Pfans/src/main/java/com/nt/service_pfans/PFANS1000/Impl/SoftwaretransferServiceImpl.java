@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Assets.Assets;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS1000.Softwaretransfer;
 import com.nt.dao_Pfans.PFANS1000.Notification;
 import com.nt.dao_Pfans.PFANS1000.Vo.SoftwaretransferVo;
@@ -12,6 +13,9 @@ import com.nt.service_pfans.PFANS1000.mapper.NotificationMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +34,8 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
     private AssetsMapper assetsMapper;
     @Autowired
     private NotificationMapper notificationMapper;
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
 //    @Override
 //    public List<Softwaretransfer> getSoftwaretransfer(Softwaretransfer softwaretransfer) throws Exception {
@@ -81,7 +87,13 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
                     for(Assets ast : assetsList){
                         ast.setOwner(notification.getEafter());
                         ast.setPsdcdreturnconfirmation(notification.getEafter());
-                        ast.setUsedepartment(softwaretransfer.getTubegroup_id());
+                        Query query = new Query();
+                        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        query.addCriteria(Criteria.where("userinfo.groupid").is(softwaretransfer.getTubegroup_id()));
+                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                        if (customerInfo != null) {
+                            ast.setUsedepartment(customerInfo.getUserinfo().getGroupname());
+                        }
                         assetsMapper.updateByPrimaryKeySelective(ast);
                     }
                 }

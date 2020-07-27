@@ -293,6 +293,17 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         if(expatriatesinfor.getExits().equals("0")){
             expatriatesinfor.setNumber("00000");
         }
+        //退场时修改卡号
+        if(expatriatesinfor.getExits().equals("1")){
+            Query query = new Query();
+            query.addCriteria(Criteria.where("_id").is(expatriatesinfor.getAccount()));
+            query.addCriteria(Criteria.where("status").is("1"));
+            UserAccount userAccountInfo = mongoTemplate.findOne(query, UserAccount.class);
+            if (userAccountInfo != null) {
+                userAccountInfo.setStatus("0");
+                mongoTemplate.save(userAccountInfo);
+            }
+        }
 
         //add ccm 20200605
         List<Expatriatesinfor> accountlist = new ArrayList<>();
