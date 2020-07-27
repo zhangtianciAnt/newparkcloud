@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -203,6 +205,18 @@ public class Pfans1006Controller {
                         wfList4 = sign.startGraphics2D(wfList4);
                     }
                 }
+            }
+            String str_format = "";
+            DecimalFormat df = new DecimalFormat("###,###.00");
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(loanApplication.getMoneys())) {
+                BigDecimal bd = new BigDecimal(loanApplication.getMoneys());
+                str_format = df.format(bd);
+                if (str_format.equals(".00")) {
+                    str_format = "0.00";
+                }
+                loanApplication.setMoneys(str_format);
+            } else {
+                loanApplication.setMoneys("0.00");
             }
             data.put("wfList1", wfList1);
             data.put("wfList2", wfList2);
