@@ -181,4 +181,13 @@ public class PublicExpense extends BaseModel {
     //add fjl   供应商/社员名称
     @Column(name = "ACCENAME")
     private String accename;
+    //决裁摘要内容
+    @Column(name = "REMARKSDETAIL")
+    private String remarksdetail;
+    //决裁类型
+    @Column(name = "JUDGEMENTS_TYPE")
+    private String judgements_type;
+    //决裁金额
+    @Column(name = "JUDGEMENTS_MONEYS")
+    private String judgements_moneys;
 }

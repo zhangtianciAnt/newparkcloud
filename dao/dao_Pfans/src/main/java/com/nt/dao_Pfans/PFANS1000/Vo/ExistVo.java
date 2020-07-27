@@ -22,4 +22,5 @@ public class ExistVo {
     private int count5;
     private int count6;
     private int count7;
+    private int count8;
 }

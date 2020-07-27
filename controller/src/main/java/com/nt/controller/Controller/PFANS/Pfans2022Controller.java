@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/casgiftapply")
@@ -70,5 +71,15 @@ public class Pfans2022Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(casgiftapplyService.getCasgiftApplyList(casgiftapply, request));
+    }
+
+    @RequestMapping(value="/updateCasgiftApplyList",method = {RequestMethod.POST})
+    public ApiResult updateCasgiftApplyList(@RequestBody List<CasgiftApply> casgiftapply, HttpServletRequest request) throws Exception{
+        if (casgiftapply == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        casgiftapplyService.updateCasgiftApplyList(casgiftapply,tokenModel);
+        return ApiResult.success();
     }
 }

@@ -212,4 +212,8 @@ public class Contractapplication extends BaseModel {
 
     @Column(name = "EXTENSIONDATE")
     private Date extensiondate;
+    //add-ws-7/22-禅道341任务
+    @Column(name = "CHECKINDIVDUAL")
+    private String checkindivdual;
+    //add-ws-7/22-禅道341任务
 }

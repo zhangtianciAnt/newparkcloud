@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Pfans.PFANS2000.CasgiftApply;
 import com.nt.service_pfans.PFANS2000.CasgiftApplyService;
 import com.nt.service_pfans.PFANS2000.mapper.CasgiftApplyMapper;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,5 +49,20 @@ public class CasgiftApplyServiceImpl implements CasgiftApplyService {
     public List<CasgiftApply> getCasgiftApplyList(CasgiftApply casgiftapply, HttpServletRequest request) throws Exception {
 
         return casgiftapplyMapper.select(casgiftapply) ;
+    }
+
+    @Override
+    public void updateCasgiftApplyList(List<CasgiftApply> casgiftapply, TokenModel tokenModel) throws Exception {
+        String strTenantid = casgiftapply.get(0).getTenantid();
+        for (CasgiftApply ca : casgiftapply){
+            ca.preUpdate(tokenModel);
+            if(strTenantid.equals("0")){
+                ca.setReleasedate(DateUtil.format(new Date(),"yyyy-MM"));
+            }
+            else{
+                ca.setReleasedate("");
+            }
+            casgiftapplyMapper.updateByPrimaryKey(ca);
+        }
     }
 }

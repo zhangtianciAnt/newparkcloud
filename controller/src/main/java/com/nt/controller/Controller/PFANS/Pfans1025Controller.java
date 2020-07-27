@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/award")
 public class Pfans1025Controller {
     @Autowired
+    private IndividualMapper individualmapper;
+    @Autowired
     private AwardService awardService;
     @Autowired
     private PolicyContractMapper policycontractmapper;
@@ -296,7 +298,6 @@ public class Pfans1025Controller {
                     policycontractlist2 = policycontractlist3;
                 }
             }
-
         }
         return ApiResult.success(policycontractlist2);
     }
@@ -345,6 +346,12 @@ public class Pfans1025Controller {
         Petition petition = new Petition();
         petition.setContractnumber(award.getContractnumber());
         List<Petition> petilist = petitionMapper.select(petition);
+        //add-ws-7/22-禅道341任务
+        Individual individual = new Individual();
+        individual.setContractnumber(award.getContractnumber());
+        List<Individual> individuallist = individualmapper.select(individual);
+        //add-ws-7/22-禅道341任务
+        data.put("individual", individuallist);
         data.put("quolist", quolist);
         data.put("nonlist", nonlist);
         data.put("conlist", conlist);

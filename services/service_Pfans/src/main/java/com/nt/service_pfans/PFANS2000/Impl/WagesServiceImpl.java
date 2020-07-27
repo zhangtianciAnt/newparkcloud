@@ -339,7 +339,6 @@ public class WagesServiceImpl implements WagesService {
         // 2020/03/11 add by myt start
         insertInduction(givingid, tokenModel);
         insertRetire(givingid, tokenModel);
-        // 2020/03/14 add by myt end
         insertBase(givingid, tokenModel);
         insertContrast(givingid, tokenModel);
         insertOtherTwo(givingid, tokenModel);
@@ -427,8 +426,6 @@ public class WagesServiceImpl implements WagesService {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         long endMillisecond = format.parse("2012-08-31").getTime();
         long otherOneTime = format.parse("2012-03-31").getTime();
-        AbNormal abNormal = new AbNormal();
-        abNormal.setStatus("4");
         List<AbNormal> abNormalinfo = abNormalMapper.selectAbNormal(format.format(new Date()));
 //        AttendanceSetting attendanceSetting = attendanceSettingMapper.selectOne(new AttendanceSetting());
         /*根据字典获取 納付率.全社社会保険基数（元） -lxx*/
@@ -941,7 +938,11 @@ public class WagesServiceImpl implements WagesService {
         OtherTwo othertwo = new OtherTwo();
         CasgiftApply casgiftapply = new CasgiftApply();
         casgiftapply.setPayment("0");
+        //add gbb 0727 关联祝礼金 start
+        casgiftapply.setReleasedate(DateUtil.format(new Date(),"yyyy-MM"));
+        //add gbb 0727 关联祝礼金 end
         casgiftapply.setStatus("4");
+        casgiftapply.setUser_id(userid);
         List<CasgiftApply> casgiftapplylist = casgiftapplyMapper.select(casgiftapply);
         othertwo.setType("0");
         othertwoMapper.delete(othertwo);
@@ -993,6 +994,7 @@ public class WagesServiceImpl implements WagesService {
         Contrast contrast = new Contrast();
         Base base = new Base();
         base.setGiving_id(givingid);
+        base.setUser_id(userid);
         List<Base> baselist = baseMapper.select(base);
         if (baselist != null) {
             int rowindex = 0;
@@ -1293,6 +1295,7 @@ public class WagesServiceImpl implements WagesService {
         // 获取基数表数据
         Base base = new Base();
         base.setGiving_id(givingid);
+        base.setUser_id(userid);
         List<Base> baseList = baseMapper.select(base);
 
         // 代休截止间隔修改为从字典中获取
@@ -1525,6 +1528,7 @@ public class WagesServiceImpl implements WagesService {
         // region 获取基数表数据
         Base base = new Base();
         base.setGiving_id(givingid);
+        base.setUser_id(userid);
         List<Base> baseList = baseMapper.select(base);
         // endregion
 

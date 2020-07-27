@@ -517,11 +517,14 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             }
             // 行合并
             float money = getPropertyFloat(detail, inputType);
+            float taxes = getPropertyFloat(detail, "taxes");
             Object mergeObject = resultMap.get(mergeKey);
             if (mergeObject != null) {
                 // 发现可以合并数据
                 float newMoney = getPropertyFloat(mergeObject, inputType) + money;
+                float oldMoneysum = getPropertyFloat(mergeObject, "taxes") + taxes;
                 setProperty(mergeObject, inputType, newMoney + "");
+                setProperty(mergeObject, "taxes", oldMoneysum + "");
             } else {
                 resultMap.put(mergeKey, detail);
             }
@@ -534,6 +537,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             String keyNo = getProperty(detail, FIELD_INVOICENUMBER);
             float money = getPropertyFloat(detail, "rmb");
             float moneysum = getPropertyFloat(detail, "foreigncurrency");
+            float gettaxes = getPropertyFloat(detail, "taxes");
             totalTax = totalTax + money + moneysum;
             String getRmb = getProperty(detail, "rmb");
             // 如果是专票，处理税
@@ -546,7 +550,8 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 // 税拔
                 String lineCost = FNUM.format(money / (1 + rate));
                 // 税金
-                String lineRate = FNUM.format((money / (1 + rate)) * rate);
+                String lineRate = FNUM.format(gettaxes);
+                String lineRateNo = FNUM.format(money / (1 + rate) * rate);
                 if (money > 0) {
                     // 税
                     //add-ws-4/22-税金不为0存2302-00-01A0
@@ -565,7 +570,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     taxList.add(taxCost);
                     // 税拔
                     setProperty(detail, inputType, lineCost);
-                    float diff = money / (1 + rate) + money / (1 + rate) * rate - money;
+                    float diff = Float.parseFloat(lineCost) + Float.parseFloat(lineRateNo) - money;
                     if (diff != 0) {
                         TotalCost padding = new TotalCost();
                         padding.setLineamount(diff + "");
@@ -656,20 +661,20 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 if (awa != null) {
                     awa.setStatuspublic(status);
                     awardMapper.updateByPrimaryKey(awa);
-                }
-                if(status.equals("4")){
-                    List<MembersVo> rolelist = roleService.getMembers("5e78633d8f43163084351138");
-                    if (rolelist.size() > 0) {
-                        ToDoNotice toDoNotice3 = new ToDoNotice();
-                        toDoNotice3.setTitle("【" +awa.getContractnumber() + "】发起得精算申请已成功");
-                        toDoNotice3.setInitiator(awa.getUser_id());
-                        toDoNotice3.setContent("流程结束。可进行线下支付");
-                        toDoNotice3.setDataid(awa.getContractnumber());
-                        toDoNotice3.setUrl("/PFANS1025FormView");
-                        toDoNotice3.setWorkflowurl("/PFANS1025FormView");
-                        toDoNotice3.preInsert(tokenModel);
-                        toDoNotice3.setOwner(rolelist.get(0).getUserid());
-                        toDoNoticeService.save(toDoNotice3);
+                    if (status.equals("4")) {
+                        List<MembersVo> rolelist = roleService.getMembers("5e78633d8f43163084351138");
+                        if (rolelist.size() > 0) {
+                            ToDoNotice toDoNotice3 = new ToDoNotice();
+                            toDoNotice3.setTitle("【" + awa.getContractnumber() + "】发起得精算申请已成功");
+                            toDoNotice3.setInitiator(awa.getUser_id());
+                            toDoNotice3.setContent("流程结束。可进行线下支付");
+                            toDoNotice3.setDataid(awa.getContractnumber());
+                            toDoNotice3.setUrl("/PFANS1025FormView");
+                            toDoNotice3.setWorkflowurl("/PFANS1025FormView");
+                            toDoNotice3.preInsert(tokenModel);
+                            toDoNotice3.setOwner(rolelist.get(0).getUserid());
+                            toDoNoticeService.save(toDoNotice3);
+                        }
                     }
                 }
             }

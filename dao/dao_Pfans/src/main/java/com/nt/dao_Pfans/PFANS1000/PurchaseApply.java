@@ -81,4 +81,8 @@ private String group_name;
     @Column(name = "REMARKS")
     private String remarks;
 //add-ws-4/17-费用编号添加
+
+    //总金额
+    @Column(name = "SUMMONEY")
+    private String summoney;
 }
