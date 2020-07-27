@@ -82,9 +82,11 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                 List<Object> value = list.get(k);
                 k++;
                 if (value != null && !value.isEmpty()) {
-                    if (value.get(0).toString().equals("")) {
+                    //卡号 upd gbb 0727 start
+                    if (value.get(1).toString().equals("")) {
                         continue;
                     }
+                    //卡号 upd gbb 0727 end
                     String click = "^(-?[1-9][0-9]*)+(.[0-9]{1,2})?$";
                     if (!Pattern.matches(click, value.get(3).toString())) {
                         error = error + 1;

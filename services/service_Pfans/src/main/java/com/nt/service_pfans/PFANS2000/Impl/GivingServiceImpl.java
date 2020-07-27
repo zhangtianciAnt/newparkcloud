@@ -806,6 +806,9 @@ public class GivingServiceImpl implements GivingService {
         OtherTwo othertwo = new OtherTwo();
         CasgiftApply casgiftapply = new CasgiftApply();
         casgiftapply.setPayment("0");
+        //add gbb 0727 关联祝礼金 start
+        casgiftapply.setReleasedate(DateUtil.format(new Date(),"yyyy-MM"));
+        //add gbb 0727 关联祝礼金 end
         casgiftapply.setStatus("4");
         List<CasgiftApply> casgiftapplylist = casgiftapplyMapper.select(casgiftapply);
         othertwo.setType("0");
