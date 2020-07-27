@@ -74,3 +74,4 @@ public class Seal extends BaseModel {
     private String awardid;
     //add-ws-7/20-禅道任务342
 }
+

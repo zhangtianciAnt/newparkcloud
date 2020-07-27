@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS1000;
 
 import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
+import com.nt.dao_Pfans.PFANS1000.Individual;
 import com.nt.dao_Pfans.PFANS1000.Petition;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
@@ -13,7 +14,9 @@ import java.util.Map;
 public interface ContractapplicationService {
 
     ContractapplicationVo get(Contractapplication contractapplication) throws Exception;
-
+    //add-ws-7/22-禅道341任务
+    List<Individual> getindividual(Individual individual ) throws Exception;
+    //add-ws-7/22-禅道341任务
     List<ContractapplicationVo> getList(List<Contractapplication> contractapplicationlist) throws Exception;
 
     public void update(ContractapplicationVo contractapplication, TokenModel tokenModel) throws Exception;

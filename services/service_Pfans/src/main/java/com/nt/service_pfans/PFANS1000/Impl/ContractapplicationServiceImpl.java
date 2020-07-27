@@ -8,6 +8,7 @@ import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
+import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
@@ -15,6 +16,7 @@ import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
+import com.nt.service_pfans.PFANS1000.mapper.IndividualMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractcompoundMapper;
 import com.nt.service_pfans.PFANS1000.mapper.QuotationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractMapper;
@@ -22,6 +24,7 @@ import com.nt.service_pfans.PFANS1000.mapper.NonJudgmentMapper;
 import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
+import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
@@ -38,7 +41,10 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class ContractapplicationServiceImpl implements ContractapplicationService {
-
+    @Autowired
+    private SupplierinforMapper supplierinforMapper;
+    @Autowired
+    private IndividualMapper individualmapper;
     @Autowired
     private ContractapplicationMapper contractapplicationMapper;
     @Autowired
@@ -65,6 +71,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private RoleService roleService;
     @Autowired
     private ToDoNoticeService toDoNoticeService;
+    //add-ws-7/22-禅道341任务
+    @Override
+    public List<Individual> getindividual(Individual individual) throws Exception {
+        return individualmapper.select(individual);
+    }
+    //add-ws-7/22-禅道341任务
+
     @Override
     public ContractapplicationVo get(Contractapplication contractapplication) {
         ContractapplicationVo vo = new ContractapplicationVo();
@@ -130,13 +143,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
             for (Contractapplication citation : cnList) {
-                for(Contractnumbercount contractRemarks : numberList){
-                    if(contractRemarks.getQingremarksqh() != null && !contractRemarks.getQingremarksqh().isEmpty()){
+                for (Contractnumbercount contractRemarks : numberList) {
+                    if (contractRemarks.getQingremarksqh() != null && !contractRemarks.getQingremarksqh().isEmpty()) {
                         strBuffer.append(contractRemarks.getQingremarksqh());
                         strBuffer.append(",");
                     }
                 }
-                if(strBuffer.length() != 0){
+                if (strBuffer.length() != 0) {
                     strBuffer.deleteCharAt(strBuffer.length() - 1);
                 }
                 citation.setQingremarks(String.valueOf(strBuffer));
@@ -214,7 +227,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     }
 
     @Override
-    public  Map<String, Object> insertBook(String contractnumber, String rowindex, String countNumber, TokenModel tokenModel) throws Exception {
+    public Map<String, Object> insertBook(String contractnumber, String rowindex, String countNumber, TokenModel tokenModel) throws Exception {
 //        String contractnumber = contractapplication.getContractnumber();
 //        String rowindex = contractapplication.getRowindex();
         Contractapplication co = new Contractapplication();
@@ -233,6 +246,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         String awardlist2 = "";
         String naplist = "";
         String petilist = "";
+        String individuallist = "";
         //add-ws-7/1-禅道152任务
         if (coList != null) {
             for (Contractapplication contractapp : coList) {
@@ -657,6 +671,33 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     }
 //                    upd_fjl_05/26   --课题票No.176 生成决裁时ID不变（不能删除旧的数据，走更新处理）
                 }
+                //add-ws-7/22-禅道341 个别合同
+                else if (rowindex.equals("8")) {
+                    contractnumbercount = new Contractnumbercount();
+                    contractnumbercount.setContractnumber(contractnumber);
+                    List<Contractnumbercount> countLi = contractnumbercountMapper.select(contractnumbercount);
+                    Supplierinfor supplierinfor = new Supplierinfor();
+                    supplierinfor.setSupchinese(contractapp.getCustochinese());
+                    List<Supplierinfor> supplierinforlist = supplierinforMapper.select(supplierinfor);
+                    Individual individual = new Individual();
+                    individual.preInsert(tokenModel);
+                    individual.setIndividual_id(UUID.randomUUID().toString());
+                    individuallist = contractnumber;
+                    individual.setContractnumber(contractnumber);
+                    individual.setContracttype(contractapp.getContracttype());
+                    individual.setCustojapanese(contractapp.getCustochinese());
+                    individual.setLiableperson(supplierinforlist.get(0).getLiableperson());
+                    individual.setAddress(supplierinforlist.get(0).getAddchinese());
+                    individual.setSupportdate(countLi.get(0).getSupportdate());
+                    individual.setClaimdate(countLi.get(0).getClaimdate());
+                    individual.setCompletiondate(countLi.get(0).getCompletiondate());
+                    individual.setDeliverydate(countLi.get(0).getDeliverydate());
+                    Individual individual3 = new Individual();
+                    individual3.setContractnumber(contractnumber);
+                    individualmapper.delete(individual3);
+                    individualmapper.insert(individual);
+                }
+                //add-ws-7/22-禅道341 个别合同
                 contractapp.preUpdate(tokenModel);
                 contractapplicationMapper.updateByPrimaryKeySelective(contractapp);
             }
@@ -669,6 +710,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         resultMap.put("awardlist2", awardlist2);
         resultMap.put("naplist", naplist);
         resultMap.put("petilist", petilist);
+        resultMap.put("individuallist", individuallist);
         //add-ws-7/1-禅道152任务
         return resultMap;
     }
@@ -756,6 +798,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         return PetitionMapper.select(petition);
 
     }
+
     @Override
     public Map<String, Object> insert(ContractapplicationVo contractapplication, TokenModel tokenModel) throws Exception {
         Map<String, Object> result = new HashMap<>();
@@ -768,25 +811,25 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             for (Contractapplication citation : cnList) {
                 if (!StringUtils.isNullOrEmpty(citation.getContractapplication_id())) {
                     citation.preUpdate(tokenModel);
-                    for(Contractnumbercount contractRemarks : numberList){
-                        if(contractRemarks.getQingremarksqh() != null && !contractRemarks.getQingremarksqh().isEmpty()){
+                    for (Contractnumbercount contractRemarks : numberList) {
+                        if (contractRemarks.getQingremarksqh() != null && !contractRemarks.getQingremarksqh().isEmpty()) {
                             strBuffer.append(contractRemarks.getQingremarksqh());
                             strBuffer.append(",");
                         }
                     }
-                    if(strBuffer.length() != 0){
+                    if (strBuffer.length() != 0) {
                         strBuffer.deleteCharAt(strBuffer.length() - 1);
                     }
                     citation.setQingremarks(String.valueOf(strBuffer));
                     contractapplicationMapper.updateByPrimaryKeySelective(citation);
                 } else {
-                    for(Contractnumbercount contractRemarks : numberList){
-                        if(contractRemarks.getQingremarksqh() != null && !contractRemarks.getQingremarksqh().isEmpty()){
+                    for (Contractnumbercount contractRemarks : numberList) {
+                        if (contractRemarks.getQingremarksqh() != null && !contractRemarks.getQingremarksqh().isEmpty()) {
                             strBuffer.append(contractRemarks.getQingremarksqh());
                             strBuffer.append(",");
                         }
                     }
-                    if(strBuffer.length() != 0){
+                    if (strBuffer.length() != 0) {
                         strBuffer.deleteCharAt(strBuffer.length() - 1);
                     }
                     citation.setQingremarks(String.valueOf(strBuffer));
@@ -809,11 +852,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             coList = coList.stream().filter(coi -> (!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
                             String number = "01";
                             String coListcount = String.valueOf(coList.size() + 1);
-                            if(coList.size() > 0){
+                            if (coList.size() > 0) {
                                 List<String> coString = new ArrayList<String>();
-                                for (int i = 0; i < coList.size(); i ++){
+                                for (int i = 0; i < coList.size(); i++) {
                                     String strcon = coList.get(i).getContractnumber();
-                                    coListcount = String.valueOf(strcon.substring(strcon.length() -2,strcon.length()));
+                                    coListcount = String.valueOf(strcon.substring(strcon.length() - 2, strcon.length()));
                                     coString.add(coListcount);
                                 }
                                 Collections.sort(coString);
@@ -831,11 +874,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             coList = coList.stream().filter(coi -> (!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
                             String number = "0001";
                             String coListcount = String.valueOf(coList.size() + 1);
-                            if(coList.size() > 0){
+                            if (coList.size() > 0) {
                                 List<String> coString = new ArrayList<String>();
-                                for (int i = 0; i < coList.size(); i ++){
+                                for (int i = 0; i < coList.size(); i++) {
                                     String strcon = coList.get(i).getContractnumber();
-                                    coListcount = String.valueOf(strcon.substring(strcon.length() -4,strcon.length()));
+                                    coListcount = String.valueOf(strcon.substring(strcon.length() - 4, strcon.length()));
                                     coString.add(coListcount);
                                 }
                                 Collections.sort(coString);
@@ -856,11 +899,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             coList = coList.stream().filter(coi -> (!coi.getContractnumber().contains("覚"))).collect(Collectors.toList());
                             String number = "01";
                             String coListcount = String.valueOf(coList.size() + 1);
-                            if(coList.size() > 0){
+                            if (coList.size() > 0) {
                                 List<String> coString = new ArrayList<String>();
-                                for (int i = 0; i < coList.size(); i ++){
+                                for (int i = 0; i < coList.size(); i++) {
                                     String strcon = coList.get(i).getContractnumber();
-                                    coListcount = String.valueOf(strcon.substring(strcon.length() -2,strcon.length()));
+                                    coListcount = String.valueOf(strcon.substring(strcon.length() - 2, strcon.length()));
                                     coString.add(coListcount);
                                 }
                                 Collections.sort(coString);
