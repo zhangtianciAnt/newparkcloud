@@ -231,9 +231,9 @@ public class Pfans2005Controller {
     }
 
     @RequestMapping(value = "/updatestate", method = {RequestMethod.GET})
-    public ApiResult updatestate(String givingid,HttpServletRequest request) throws Exception {
+    public ApiResult updatestate(String givingid,String generationdate,HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        givingService.updatestate(givingid,tokenModel);
+        givingService.updatestate(givingid,generationdate,tokenModel);
         return ApiResult.success();
     }
 }

@@ -133,12 +133,9 @@ public class CasgiftApply extends BaseModel {
     @Column(name = "UPLOADFILE")
     private String uploadfile;
 
+    //奖金发放状态
     @Column(name = "PAYMENT")
     private String payment;
-
-    //奖金发放状态
-    @Column(name = "MONEYSTATUS")
-    private String moneystatus;
 
     //发放日期
     @Column(name = "RELEASEDATE")
