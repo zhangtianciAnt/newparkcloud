@@ -16,7 +16,11 @@ public interface JudgementService {
 
     public void updateJudgement(JudgementVo judgementVo, TokenModel tokenModel) throws Exception;
 
+    public void updateJudgementDetail(JudgementVo judgementVo, TokenModel tokenModel) throws Exception;
+
     public void insert(JudgementVo judgementVo, TokenModel tokenModel)throws Exception;
+
+    public void createJudgementDetail(JudgementVo judgementVo, TokenModel tokenModel)throws Exception;
 
     public List<Judgement> getJudgementList(Judgement judgement, HttpServletRequest request) throws Exception;
 

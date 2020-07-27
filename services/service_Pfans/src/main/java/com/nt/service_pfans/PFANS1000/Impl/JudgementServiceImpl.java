@@ -1,12 +1,14 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.Judgement;
+import com.nt.dao_Pfans.PFANS1000.Judgementdetail;
 import com.nt.dao_Pfans.PFANS1000.Unusedevice;
 import com.nt.dao_Pfans.PFANS1000.Vo.JudgementVo;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
 import com.nt.service_pfans.PFANS1000.JudgementService;
 import com.nt.service_pfans.PFANS1000.mapper.JudgementMapper;
+import com.nt.service_pfans.PFANS1000.mapper.JudgementdetailMapper;
 import com.nt.service_pfans.PFANS1000.mapper.UnusedeviceMapper;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
@@ -33,6 +35,9 @@ public class JudgementServiceImpl implements JudgementService {
     @Autowired
     private UnusedeviceMapper unusedeviceMapper;
 
+    @Autowired
+    private JudgementdetailMapper judgementdetailMapper;
+
     @Override
     public List<Judgement> getJudgement(Judgement judgement ) {
         return judgementMapper.select(judgement);
@@ -49,14 +54,24 @@ public class JudgementServiceImpl implements JudgementService {
         //设备
         Unusedevice unusedevice = new Unusedevice();
 
+        Judgementdetail judgementdetail = new Judgementdetail();
+
         unusedevice.setJudgementid(judgementid);
+
+        judgementdetail.setJudgementid(judgementid);
 
         Judgement judgement = judgementMapper.selectByPrimaryKey(judgementid);
 
         List<Unusedevice> unusedeviceList = unusedeviceMapper.select(unusedevice);
         unusedeviceList = unusedeviceList.stream().sorted(Comparator.comparing(Unusedevice::getRowindex)).collect(Collectors.toList());
+
+        List<Judgementdetail> judgementdetailList = judgementdetailMapper.select(judgementdetail);
+        judgementdetailList = judgementdetailList.stream().sorted(Comparator.comparing(Judgementdetail::getRowindex)).collect(Collectors.toList());
+
         judgVo.setJudgement(judgement);
         judgVo.setUnusedevice(unusedeviceList);
+        judgVo.setJudgementdetail(judgementdetailList);
+
         return judgVo;
     }
 
@@ -82,7 +97,45 @@ public class JudgementServiceImpl implements JudgementService {
                 unusedeviceMapper.insertSelective(unu);
             }
         }
+    }
 
+    @Override
+    public void updateJudgementDetail(JudgementVo judgementVo, TokenModel tokenModel) throws Exception {
+        Judgement judgement = new Judgement();
+        BeanUtils.copyProperties(judgementVo.getJudgement(), judgement);
+        judgement.preUpdate(tokenModel);
+        judgementMapper.updateByPrimaryKeySelective(judgement);
+        String judgementid = judgement.getJudgementid();
+        List<Unusedevice> unusedeviceList = judgementVo.getUnusedevice();
+        if(unusedeviceList != null){
+            Unusedevice unusedevice = new Unusedevice();
+            unusedevice.setJudgementid(judgementid);
+            unusedeviceMapper.delete(unusedevice);
+            int rowindex = 0;
+            for(Unusedevice unu : unusedeviceList){
+                rowindex = rowindex + 1;
+                unu.preInsert(tokenModel);
+                unu.setUnusedeviceid(UUID.randomUUID().toString());
+                unu.setJudgementid(judgementid);
+                unu.setRowindex(rowindex);
+                unusedeviceMapper.insertSelective(unu);
+            }
+        }
+        List<Judgementdetail> judgementdetailList = judgementVo.getJudgementdetail();
+        if(judgementdetailList != null){
+            Judgementdetail judgementdetail = new Judgementdetail();
+            judgementdetail.setJudgementid(judgementid);
+            judgementdetailMapper.delete(judgementdetail);
+            int rowindex = 0;
+            for(Judgementdetail judge : judgementdetailList){
+                rowindex = rowindex + 1;
+                judge.preInsert(tokenModel);
+                judge.setJudgementdetail_id(UUID.randomUUID().toString());
+                judge.setJudgementid(judgementid);
+                judge.setRowindex(rowindex);
+                judgementdetailMapper.insertSelective(judge);
+            }
+        }
     }
 
     @Override
@@ -143,8 +196,59 @@ public class JudgementServiceImpl implements JudgementService {
     }
 
     @Override
-    public List<Judgement> getJudgementList(Judgement judgement, HttpServletRequest request) throws Exception {
+    public void createJudgementDetail(JudgementVo judgementVo, TokenModel tokenModel) throws Exception {
+        String judgementid = UUID.randomUUID().toString();
+        Judgement judgement = new Judgement();
+        //add-ws-根据当前年月日从001开始增加决裁编号
+        List<Judgement> judgementlist = judgementMapper.selectAll();
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
+        Date date = new Date();
+        String year = sf1.format(date);
+        int number = 0;
+        String Numbers = "";
+        String no = "";
+        if(judgementlist.size()>0){
+            for(Judgement judge :judgementlist){
+                if(judge.getJudgnumbers()!="" && judge.getJudgnumbers()!=null){
+                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(judge.getJudgnumbers(), 2,10));
+                    if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
+                        number = number+1;
+                    }
+                }
 
+            }
+            if(number<=8){
+                no="00"+(number + 1);
+            }else{
+                no="0"+(number + 1);
+            }
+        }else{
+            no = "001";
+        }
+        BeanUtils.copyProperties(judgementVo.getJudgement(), judgement);
+        Numbers = "JC"+year+ no;
+        //add-ws-根据当前年月日从001开始增加决裁编号
+        judgement.preInsert(tokenModel);
+        judgement.setJudgementid(judgementid);
+        judgement.setJudgnumbers(Numbers);
+//        judgement.setEquipment("0");
+        judgementMapper.insertSelective(judgement);
+        List<Judgementdetail> JudgementdetailList = judgementVo.getJudgementdetail();
+        if(JudgementdetailList != null){
+            int rowundex = 0;
+            for(Judgementdetail judge : JudgementdetailList){
+                rowundex = rowundex + 1;
+                judge.preInsert(tokenModel);
+                judge.setJudgementdetail_id(UUID.randomUUID().toString());
+                judge.setJudgementid(judgementid);
+                judge.setRowindex(rowundex);
+                judgementdetailMapper.insertSelective(judge);
+            }
+        }
+    }
+
+    @Override
+    public List<Judgement> getJudgementList(Judgement judgement, HttpServletRequest request) throws Exception {
         return judgementMapper.select(judgement) ;
     }
 }
