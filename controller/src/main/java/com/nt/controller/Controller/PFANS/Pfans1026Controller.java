@@ -124,4 +124,12 @@ public class Pfans1026Controller {
         return ApiResult.success(contractapplicationService.getPe(claimnumber));
     }
 
+    //add ccm 0725  采购合同chongfucheck
+    @RequestMapping(value = "/purchaseExistCheck",method={RequestMethod.GET})
+    public ApiResult purchaseExistCheck(String purnumbers, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(contractapplicationService.purchaseExistCheck(purnumbers));
+    }
+    //add ccm 0725  采购合同chongfucheck
+
 }

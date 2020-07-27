@@ -29,7 +29,6 @@ public class Pfans3005Controller {
 
     @Autowired
     private PurchaseService  purchaseService;
-
     @Autowired
     private TokenService tokenService;
 
@@ -38,7 +37,7 @@ public class Pfans3005Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         Purchase purchase = new Purchase();
         purchase.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(purchaseService.getPurchase(purchase));
+        return ApiResult.success(purchaseService.getPurchase(purchase,tokenModel));
     }
 
     @RequestMapping(value="/getlist",method = {RequestMethod.GET})

@@ -2,9 +2,11 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.LoanApplication;
 import com.nt.dao_Pfans.PFANS1000.PublicExpense;
+import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.LoanApplicationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PublicExpenseMapper;
+import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,9 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     private LoanApplicationMapper loanapplicationMapper;
     @Autowired
     private PublicExpenseMapper publicExpenseMapper;
+
+    @Autowired
+    private PurchaseMapper purchaseMapper;
 
     @Override
     public List<LoanApplication> getLoanApplication(LoanApplication loanapplication) {
@@ -87,6 +92,25 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         loanapplication.preInsert(tokenModel);
         loanapplication.setLoanapplication_id(UUID.randomUUID().toString());
         loanapplicationMapper.insert(loanapplication);
+
+        //CCM ADD 0726
+        if(loanapplication.getJudgements_name().substring(0,2).equals("CG"))
+        {
+            String []pur = loanapplication.getJudgements_name().split(",");
+            for(String p:pur)
+            {
+                Purchase purchase = new Purchase();
+                purchase.setPurnumbers(p);
+                List<Purchase> purchaseList = purchaseMapper.select(purchase);
+                if(purchaseList.size()>0)
+                {
+                    purchaseList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                    purchaseList.get(0).setLoanapno(loanapplication.getLoanapno());
+                    purchaseList.get(0).preUpdate(tokenModel);
+                    purchaseMapper.updateByPrimaryKey(purchaseList.get(0));
+                }
+            }
+        }
     }
 
 }

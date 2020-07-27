@@ -160,4 +160,8 @@ public class Contractnumbercount extends BaseModel {
     private Date recoverydate;
 //    ADD_FJL
 
+    //采购编号
+    @Column(name = "PURNUMBERS")
+    private String purnumbers;
+
 }

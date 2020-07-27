@@ -29,4 +29,7 @@ public interface ContractapplicationService {
     ExistVo existCheck(String contractNumber) throws Exception;
 
     List<Petition> getPe(String countNumber) throws Exception;
+    //add ccm 0725  采购合同chongfucheck
+    List<String> purchaseExistCheck(String purnumbers) throws Exception;
+    //add ccm 0725  采购合同chongfucheck
 }

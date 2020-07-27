@@ -372,5 +372,13 @@ public class Pfans1025Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/getList", method = {RequestMethod.POST})
+    public ApiResult getList(@RequestBody Award award, HttpServletRequest request) throws Exception {
+        if (award == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(awardService.get(award));
+    }
+
 
 }

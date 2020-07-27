@@ -244,6 +244,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         String conlist = "";
         String awardlist1 = "";
         String awardlist2 = "";
+        String awardlist3 = "";
         String naplist = "";
         String petilist = "";
         String individuallist = "";
@@ -671,6 +672,85 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     }
 //                    upd_fjl_05/26   --课题票No.176 生成决裁时ID不变（不能删除旧的数据，走更新处理）
                 }
+                //決裁書作成(其他契约)
+                else if (rowindex.equals("9")) {
+                    Award award3 = new Award();
+                    award3.setContractnumber(contractnumber);
+                    List<Award> awardlist = AwardMapper.select(award3);
+                    if (awardlist.size() > 0) {
+                        for (Award pe : awardlist) {
+                            if (!StringUtils.isNullOrEmpty(pe.getSealstatus())) {
+                                throw new LogicalException("其他决裁书正在印章中，不可更新！");
+                            }
+                        }
+                    }
+                    contractnumbercount = new Contractnumbercount();
+                    contractnumbercount.setContractnumber(contractnumber);
+                    List<Contractnumbercount> countLi = contractnumbercountMapper.select(contractnumbercount);
+                    Award award2 = new Award();
+                    award2.setContractnumber(contractnumber);
+                    List<Award> orgin = AwardMapper.select(award2);
+                    Award award = new Award();
+                    if (orgin.size() > 0) {
+                        for (Award io : orgin) {
+                            Workflowinstance con = new Workflowinstance();
+                            con.setDataid(io.getAward_id());
+                            con.setFormid("/PFANS1047View");
+                            con.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                            if (workflowinstanceMapper.select(con).size() > 0) {
+                                throw new LogicalException("决裁书正在审批中，不可更新！");
+                            }
+                            io.preUpdate(tokenModel);
+                            io.setContractnumber(contractnumber);
+
+                            awardlist3 = io.getAward_id();
+                            io.setStatuspublic("0");
+                            io.setContracttype(contractapp.getContracttype());
+                            io.setCustojapanese(contractapp.getCustojapanese());
+                            io.setCustochinese(contractapp.getCustochinese());
+                            io.setPlacejapanese(contractapp.getPlacejapanese());
+                            io.setPlacechinese(contractapp.getPlacechinese());
+                            io.setDeployment(contractapp.getDeployment());
+                            io.setPjnamechinese(contractapp.getConchinese());
+                            io.setPjnamejapanese(contractapp.getConjapanese());
+                            io.setClaimdatetime(contractapp.getContractdate());
+                            io.setDeliverydate(countLi.get(0).getDeliverydate());
+                            io.setCurrencyposition("PG019003");
+                            io.setClaimamount(contractapp.getClaimamount());
+                            io.setUser_id(contractapp.getUser_id());
+                            io.setRemarks(contractapp.getRemarks());
+                            io.setMaketype(rowindex);
+                            io.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                            AwardMapper.updateByPrimaryKeySelective(io);
+                        }
+                    } else {
+                        award.preInsert(tokenModel);
+                        award.setAward_id(UUID.randomUUID().toString());
+
+                        awardlist3 = award.getAward_id();
+
+                        award.setContractnumber(contractnumber);
+                        //13
+                        award.setStatuspublic("0");
+                        award.setContracttype(contractapp.getContracttype());
+                        award.setCustojapanese(contractapp.getCustojapanese());
+                        award.setCustochinese(contractapp.getCustochinese());
+                        award.setPlacejapanese(contractapp.getPlacejapanese());
+                        award.setPlacechinese(contractapp.getPlacechinese());
+                        award.setDeployment(contractapp.getDeployment());
+                        award.setPjnamechinese(contractapp.getConchinese());
+                        award.setPjnamejapanese(contractapp.getConjapanese());
+                        award.setClaimdatetime(contractapp.getContractdate());
+                        award.setDeliverydate(countLi.get(0).getDeliverydate());
+                        award.setCurrencyposition("PG019003");
+                        award.setClaimamount(contractapp.getClaimamount());
+                        award.setUser_id(contractapp.getUser_id());
+                        award.setRemarks(contractapp.getRemarks());
+                        award.setMaketype(rowindex);
+                        award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                        AwardMapper.insert(award);
+                    }
+                }
                 //add-ws-7/22-禅道341 个别合同
                 else if (rowindex.equals("8")) {
                     contractnumbercount = new Contractnumbercount();
@@ -708,6 +788,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         resultMap.put("conlist", conlist);
         resultMap.put("awardlist1", awardlist1);
         resultMap.put("awardlist2", awardlist2);
+        resultMap.put("awardlist3", awardlist3);
         resultMap.put("naplist", naplist);
         resultMap.put("petilist", petilist);
         resultMap.put("individuallist", individuallist);
@@ -1015,5 +1096,25 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         existVo = contractapplicationMapper.existCheck(contractNumber);
         return existVo;
     }
-
+    //add ccm 0725  采购合同chongfucheck
+    @Override
+    public List<String> purchaseExistCheck(String purnumbers) throws Exception {
+        if(purnumbers.contains(","))
+        {
+            purnumbers.substring(0,purnumbers.length()-1);
+        }
+        String[] pus = purnumbers.split(",");
+        List<String> purList =  new ArrayList<String>();
+        String  p = null;
+        for(String pr :pus)
+        {
+            p = contractapplicationMapper.purchaseExistCheck(pr);
+            if(p!=null)
+            {
+                purList.add(p);
+            }
+        }
+        return purList;
+    }
+    //add ccm 0725  采购合同chongfucheck
 }

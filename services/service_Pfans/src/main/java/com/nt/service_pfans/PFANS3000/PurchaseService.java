@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface PurchaseService {
 
-    List<Purchase> getPurchase(Purchase purchase)throws Exception;
+    List<Purchase> getPurchase(Purchase purchase, TokenModel tokenModel)throws Exception;
 
     List<Purchase> getPurchaselist(Purchase purchase)throws Exception;
 

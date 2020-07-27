@@ -238,4 +238,32 @@ public class Purchase  extends BaseModel {
     @Column(name = "PROJECT_ID")
     private String project_id;
 //add-ws-6/16-禅道137
+
+    //add ccm 0720
+    //报价单
+    @Column(name = "SALEQUOTATION")
+    private String salequotation;
+    //不足俩份理由
+    @Column(name = "REASONSFORQUOTATION")
+    private String reasonsforquotation;
+    //附件
+    @Column(name = "UPLOADFILE")
+    private String uploadfile;
+    //预算不足理由
+    @Column(name = "YUSUANBUZUCASE")
+    private String yusuanbuzu;
+    //暂借款ID
+    @Column(name = "LOANAPPLICATION_ID")
+    private String loanapplication_id;
+    //暂借款编号
+    @Column(name = "LOANAPNO")
+    private String loanapno;
+    //精算报销编号
+    @Column(name = "INVOICENO")
+    private String invoiceno;
+    //精算ID
+    @Column(name = "PUBLICEXPENSE_ID")
+    private String publicexpense_id;
+    //add ccm 0720
+
 }
