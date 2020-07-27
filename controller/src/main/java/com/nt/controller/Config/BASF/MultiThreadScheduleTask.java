@@ -1,15 +1,14 @@
 package com.nt.controller.Config.BASF;
 
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSON;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
-import com.nt.dao_BASF.Deviceinformation;
-import com.nt.dao_BASF.Firealarm;
-import com.nt.dao_BASF.PersonnelPermissions;
-import com.nt.dao_BASF.Switchnotifications;
+import com.nt.dao_BASF.*;
 import com.nt.dao_BASF.VO.DeviceAndSqlUserinfoVo;
 import com.nt.dao_BASF.VO.DeviceinformationVo;
 import com.nt.dao_SQL.SqlAPBCardHolder;
@@ -161,11 +160,8 @@ public class MultiThreadScheduleTask {
     @Scheduled(fixedDelay = 30000)
     public void getGps() throws Exception {
         // TODO: 2020/7/22 获取所有GPS盒子imei和key（key是鉴权码），循环调用获取GPS，都调用结束，推送前台
-        Map<String, Object> map = new HashMap<>();
-        map.put("imei", "868500025879859");
-        map.put("key", "0F4137ED1502B5045D6083AA258B5C42");
-        JSONObject jsonObject = (JSONObject) JSONObject.parseObject(restTemplate.getForObject("http://58.61.160.60:97/api/car/getlastinfo", String.class, map));
-        System.out.println(jsonObject.toString());
+        webSocketVo.setCarSet(restTemplate.getForObject("http://58.61.160.60:97/api/car/getlastinfo?imei=868500025879859&key=0F4137ED1502B5045D6083AA258B5C42", String.class));
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
     private HttpEntity<String> getResponse(Map<String, Object> requestMap) {
@@ -293,60 +289,63 @@ public class MultiThreadScheduleTask {
     @Async
     @Scheduled(fixedDelay = 30000)
     public void selectDeviceUsersCount() throws Exception {
+        APBCardHolder apbCardHolder = JSONObject.parseObject(JSONObject.parseObject(HttpUtil.post(Url + "userInfo/selectDeviceUsersCnt", new HashMap<>())).get("data").toString(), APBCardHolder.class);
+        webSocketVo.setApbCardHolder(apbCardHolder);
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
         // 装置人数统计
 //        List<SqlAPBCardHolder> userCnt = basfUserInfoMapper.selectDeviceUsersCnt();
-        JSONArray userCntarray = returnpostlist("userInfo/selectDeviceUsersCnt");
-        List<SqlAPBCardHolder> userCnt = JSONObject.parseArray(userCntarray.toJSONString(), SqlAPBCardHolder.class);
-        List<SqlAPBCardHolder> userCntLast = new ArrayList<>();
-        String lastName = "";
-        if (userCnt.size() > 0) {
-            int j = -1;
-            for (int i = 0; i < userCnt.size(); i++) {
-                if (userCnt.get(i).getApbname().contains("（内）")) {
-                    SqlAPBCardHolder tempApb = new SqlAPBCardHolder();
-                    if (i != 0) {
-                        if (1 != userCnt.get(i - 1).getApbflg()) {
-                            userCntLast.get(j).setApbflg(1);
-                            userCntLast.get(j).setOutCnt(0);
-                        }
-                    }
-
-                    String[] strs = userCnt.get(i).getApbname().split("（内）");
-                    tempApb.setApbid(userCnt.get(i).getApbid());
-                    tempApb.setApbname(strs[0] + "装置");
-                    tempApb.setCnt(userCnt.get(i).getCnt());
-
-                    userCnt.get(i).setApbflg(0);
-                    userCnt.get(i).setApbname(strs[0] + "装置");
-                    userCntLast.add(userCnt.get(i));
-                    j = j + 1;
-                    lastName = userCnt.get(i).getApbname();
-
-                    if (i == userCnt.size() - 1) {
-                        userCntLast.get(j).setOutCnt(0);
-                    }
-                }
-
-                if (userCnt.get(i).getApbname().contains("（外）")) {
-                    String[] strs = userCnt.get(i).getApbname().split("（外）");
-                    SqlAPBCardHolder tempApb = new SqlAPBCardHolder();
-                    if (i == 0 || !lastName.equals(strs[0] + "装置")) {
-                        tempApb.setCnt(0);
-                        tempApb.setApbname(strs[0] + "装置");
-                        tempApb.setApbid(userCnt.get(i).getApbid());
-                        userCntLast.add(tempApb);
-                        j = j + 1;
-                    }
-                    userCnt.get(i).setApbflg(1);
-                    userCnt.get(i).setApbname(strs[0] + "装置");
-                    userCntLast.get(j).setOutCnt(userCnt.get(i).getCnt());
-                    lastName = userCnt.get(i).getApbname();
-                }
-            }
-        }
-
-        webSocketVo.setDeviceUsersCountList(userCntLast);
-        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//        JSONArray userCntarray = returnpostlist("userInfo/selectDeviceUsersCnt");
+//        List<SqlAPBCardHolder> userCnt = JSONObject.parseArray(userCntarray.toJSONString(), SqlAPBCardHolder.class);
+//        List<SqlAPBCardHolder> userCntLast = new ArrayList<>();
+//        String lastName = "";
+//        if (userCnt.size() > 0) {
+//            int j = -1;
+//            for (int i = 0; i < userCnt.size(); i++) {
+//                if (userCnt.get(i).getApbname().contains("（内）")) {
+//                    SqlAPBCardHolder tempApb = new SqlAPBCardHolder();
+//                    if (i != 0) {
+//                        if (1 != userCnt.get(i - 1).getApbflg()) {
+//                            userCntLast.get(j).setApbflg(1);
+//                            userCntLast.get(j).setOutCnt(0);
+//                        }
+//                    }
+//
+//                    String[] strs = userCnt.get(i).getApbname().split("（内）");
+//                    tempApb.setApbid(userCnt.get(i).getApbid());
+//                    tempApb.setApbname(strs[0] + "装置");
+//                    tempApb.setCnt(userCnt.get(i).getCnt());
+//
+//                    userCnt.get(i).setApbflg(0);
+//                    userCnt.get(i).setApbname(strs[0] + "装置");
+//                    userCntLast.add(userCnt.get(i));
+//                    j = j + 1;
+//                    lastName = userCnt.get(i).getApbname();
+//
+//                    if (i == userCnt.size() - 1) {
+//                        userCntLast.get(j).setOutCnt(0);
+//                    }
+//                }
+//
+//                if (userCnt.get(i).getApbname().contains("（外）")) {
+//                    String[] strs = userCnt.get(i).getApbname().split("（外）");
+//                    SqlAPBCardHolder tempApb = new SqlAPBCardHolder();
+//                    if (i == 0 || !lastName.equals(strs[0] + "装置")) {
+//                        tempApb.setCnt(0);
+//                        tempApb.setApbname(strs[0] + "装置");
+//                        tempApb.setApbid(userCnt.get(i).getApbid());
+//                        userCntLast.add(tempApb);
+//                        j = j + 1;
+//                    }
+//                    userCnt.get(i).setApbflg(1);
+//                    userCnt.get(i).setApbname(strs[0] + "装置");
+//                    userCntLast.get(j).setOutCnt(userCnt.get(i).getCnt());
+//                    lastName = userCnt.get(i).getApbname();
+//                }
+//            }
+//        }
+//
+//        webSocketVo.setDeviceUsersCountList(userCntLast);
+//        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
     // region BASF90600 ERC-车辆定位

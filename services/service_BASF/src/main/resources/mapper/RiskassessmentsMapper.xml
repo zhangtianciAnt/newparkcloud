@@ -43,10 +43,10 @@ SELECT
 	r.operationandstop
 FROM
 	riskassessments AS r
-WHERE
-	DATEDIFF(
-	r.date,
-	CURRENT_DATE ()) = 0
+-- WHERE
+-- 	DATEDIFF(
+-- 	r.date,
+-- 	CURRENT_DATE ()) = 0
 	ORDER BY
 	r.devicecode ASC
     </select>
