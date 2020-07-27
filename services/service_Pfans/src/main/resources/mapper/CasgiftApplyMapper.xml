@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS2000.mapper.CasgiftApplyMapper">
+	<update id="updpayment" parameterType="com.nt.dao_Pfans.PFANS2000.CasgiftApply">
+        update casgiftapply
+        set payment = '1'
+        ,MODIFYBY = #{user_id}
+        ,MODIFYON = NOW()
+        where releasedate = #{releasedate}
+    </update>
+</mapper>
