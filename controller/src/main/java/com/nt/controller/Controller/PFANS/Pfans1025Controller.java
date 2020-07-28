@@ -27,6 +27,8 @@ import java.util.stream.Collectors;
 @RequestMapping("/award")
 public class Pfans1025Controller {
     @Autowired
+    private ContractapplicationMapper contractapplicationMapper;
+    @Autowired
     private IndividualMapper individualmapper;
     @Autowired
     private AwardService awardService;
@@ -241,8 +243,15 @@ public class Pfans1025Controller {
     public ApiResult get2(Award award, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         List<Award> Awardlist = awardMapper.selectAll();
+        List<Award>   awardList =new ArrayList<>();
         Awardlist = Awardlist.stream().filter(item -> (item.getMaketype().equals("7"))).collect(Collectors.toList());
-        return ApiResult.success(Awardlist);
+        List<Contractapplication> contractapplicationlist = contractapplicationMapper.selectAll();
+        contractapplicationlist=contractapplicationlist.stream().filter(item -> (item.getState().equals("有效"))).collect(Collectors.toList());
+        for(Contractapplication list:contractapplicationlist){
+            Awardlist = Awardlist.stream().filter(item -> (item.getContractnumber().equals(list.getContractnumber()))).collect(Collectors.toList());
+            awardList.addAll(0,Awardlist);
+        }
+        return ApiResult.success(awardList);
     }
 
     @RequestMapping(value = "/checkby", method = {RequestMethod.POST})
