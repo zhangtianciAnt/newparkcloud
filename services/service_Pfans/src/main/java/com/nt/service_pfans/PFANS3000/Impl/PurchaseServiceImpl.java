@@ -59,8 +59,8 @@ public class PurchaseServiceImpl implements PurchaseService {
         for(Role role : userAccountlist.get(0).getRoles()){
             roles = roles + role.getDescription();
         }
-        //财务担当，财务部长角色
-        if(roles.contains("财务部长") || roles.contains("财务担当"))
+        //财务担当，财务部长,IT担当 审批完成的数据可以看见
+        if(roles.contains("财务部长") || roles.contains("财务担当") || roles.contains("IT担当"))
         {
             pList2 = purchaseMapper.getPurchaseEnd();
             if(pList2.size()>0)
