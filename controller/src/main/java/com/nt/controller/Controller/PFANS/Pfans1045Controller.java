@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,42 +95,66 @@ public class Pfans1045Controller {
         if (policycontract == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        Map<String, Object> data = new HashMap<>();
-        String checkerror = "0";
-        String checksuccess = "0";
-        List<PolicyContract> policycontractlist = policycontractmapper.selectAll();
-        for (PolicyContract pro : policycontractlist) {
-            if (pro.getCycle().equals(policycontract.getCycle())) {
-                checkerror = "1";
-                break;
-            } else {
-                if (pro.getCycle().equals("0")) {
-                    checkerror = "1";
-                    break;
-                }else if (policycontract.getCycle().equals("0")) {
-                    checkerror = "1";
-                    break;
-                } else {
-                    if (pro.getCycle().equals("1") && (policycontract.getCycle().equals("3") || policycontract.getCycle().equals("4"))) {
-                        checkerror = "1";
-                        break;
-                    } else if (pro.getCycle().equals("2") && (policycontract.getCycle().equals("5") || policycontract.getCycle().equals("6"))) {
-                        checkerror = "1";
-                        break;
-                    } else if (policycontract.getCycle().equals("1") && (pro.getCycle().equals("5") || pro.getCycle().equals("6"))) {
-                        checkerror = "1";
-                        break;
-                    } else if (policycontract.getCycle().equals("2") && (pro.getCycle().equals("5") || pro.getCycle().equals("6"))) {
-                        checkerror = "1";
-                        break;
+        PolicyContract policy = new PolicyContract();
+        String cycle = policycontract.getCycle();
+        policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
+        List<PolicyContract> policycontractlist2 = new ArrayList<>();
+        List<PolicyContract> policycontractlist3 = policycontractmapper.selectAll();
+        List<PolicyContract> policylist = policycontractmapper.select(policy);
+        if (policylist.size() > 0) {
+            for (PolicyContract PolicyContract : policylist) {
+                if (PolicyContract.getCycle().equals("0")) {
+                    if (cycle.equals("0") || cycle.equals("1") || cycle.equals("2") || cycle.equals("3") || cycle.equals("4") || cycle.equals("5") || cycle.equals("6")) {
+                        policycontractlist2 = policylist;
                     } else {
-                        checksuccess = "2";
+                        policycontractlist2 = policycontractlist3;
+                    }
+                } else if (PolicyContract.getCycle().equals("1")) {
+                    if (cycle.equals("3") || cycle.equals("4") || cycle.equals("1")) {
+                        policycontractlist2 = policylist;
+                    } else {
+                        policycontractlist2 = policycontractlist3;
+                    }
+
+                } else if (PolicyContract.getCycle().equals("2")) {
+                    if (cycle.equals("5") || cycle.equals("6") || cycle.equals("2")) {
+                        policycontractlist2 = policylist;
+                    } else {
+                        policycontractlist2 = policycontractlist3;
+                    }
+
+                } else if (PolicyContract.getCycle().equals("3")) {
+                    if (cycle.equals("3") || cycle.equals("1")) {
+                        policycontractlist2 = policylist;
+                    } else {
+                        policycontractlist2 = policycontractlist3;
+                    }
+
+                } else if (PolicyContract.getCycle().equals("4")) {
+                    if (cycle.equals("4") || cycle.equals("1")) {
+                        policycontractlist2 = policylist;
+                    } else {
+                        policycontractlist2 = policycontractlist3;
+                    }
+
+                } else if (PolicyContract.getCycle().equals("5")) {
+                    if (cycle.equals("5") || cycle.equals("2")) {
+                        policycontractlist2 = policylist;
+                    } else {
+                        policycontractlist2 = policycontractlist3;
+                    }
+
+                } else if (PolicyContract.getCycle().equals("6")) {
+                    if (cycle.equals("6") || cycle.equals("2")) {
+                        policycontractlist2 = policylist;
+                    } else {
+                        policycontractlist2 = policycontractlist3;
                     }
                 }
             }
+        } else {
+            policycontractlist2 = policylist;
         }
-        data.put("errorcheck", checkerror);
-        data.put("successcheck", checksuccess);
-        return ApiResult.success(data);
+        return ApiResult.success(policycontractlist2);
     }
 }

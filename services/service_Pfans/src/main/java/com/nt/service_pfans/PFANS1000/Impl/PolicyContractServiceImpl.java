@@ -15,20 +15,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(rollbackFor=Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class PolicyContractServiceImpl implements PolicyContractService {
 
     @Autowired
     private PolicyContractMapper policycontractmapper;
     @Autowired
     private PolicyContractDetailsMapper policycontractdetailsmapper;
+
     @Override
     public PolicyContractVo One(String policycontract_id) throws Exception {
         PolicyContractVo policycontractvo = new PolicyContractVo();
@@ -56,12 +54,12 @@ public class PolicyContractServiceImpl implements PolicyContractService {
         policy2.setPolicycontract_id(policy.getPolicycontract_id());
         policycontractmapper.delete(policy2);
         String status = policy.getStatus();
-        if(status.equals("4")){
+        if (status.equals("4")) {
             policy.preInsert(tokenModel);
             policy.setType("1");
             policy.setStatus(status);
             policycontractmapper.insertSelective(policy);
-        }else{
+        } else {
             policy.preInsert(tokenModel);
             policy.setStatus(status);
             policycontractmapper.insertSelective(policy);
@@ -72,7 +70,7 @@ public class PolicyContractServiceImpl implements PolicyContractService {
         policycontractdetails.setPolicycontract_id(policycontract_id);
         policycontractdetailsmapper.delete(policycontractdetails);
         List<PolicyContractDetails> policycontractdetailslist = policycontractvo.getPolicycontractdetails();
-        if(policycontractdetailslist!=null){
+        if (policycontractdetailslist != null) {
             for (PolicyContractDetails policycontractdetail : policycontractdetailslist) {
                 policycontractdetail.preInsert(tokenModel);
                 policycontractdetail.setPolicycontractdetails_id(UUID.randomUUID().toString());
@@ -81,6 +79,7 @@ public class PolicyContractServiceImpl implements PolicyContractService {
             }
         }
     }
+
     @Override
     public List<PolicyContract> check(PolicyContract policycontract, TokenModel tokenModel) throws Exception {
         PolicyContract policy = new PolicyContract();
@@ -90,7 +89,7 @@ public class PolicyContractServiceImpl implements PolicyContractService {
 
     @Override
     public void insert(PolicyContractVo policycontractvo, TokenModel tokenModel) throws Exception {
-        PolicyContract policycontract =new PolicyContract();
+        PolicyContract policycontract = new PolicyContract();
         BeanUtils.copyProperties(policycontractvo.getPolicycontract(), policycontract);
         List<PolicyContract> policycontractlist = policycontractmapper.selectAll();
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
@@ -117,14 +116,14 @@ public class PolicyContractServiceImpl implements PolicyContractService {
         } else {
             no = "001";
         }
-        Numbers = "FZ"+year + no;
+        Numbers = "FZ" + year + no;
         policycontract.setPolicynumbers(Numbers);
         policycontract.preInsert(tokenModel);
         policycontract.setPolicycontract_id(UUID.randomUUID().toString());
         policycontractmapper.insertSelective(policycontract);
         String policycontract_id = policycontract.getPolicycontract_id();
         List<PolicyContractDetails> policycontractdetailslist = policycontractvo.getPolicycontractdetails();
-        if(policycontractdetailslist!=null){
+        if (policycontractdetailslist != null) {
             for (PolicyContractDetails policycontractdetail : policycontractdetailslist) {
                 policycontractdetail.preInsert(tokenModel);
                 policycontractdetail.setPolicycontractdetails_id(UUID.randomUUID().toString());
