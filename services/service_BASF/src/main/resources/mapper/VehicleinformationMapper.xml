@@ -29,7 +29,22 @@
     </resultMap>
     <!--    获取在场车辆信息一览-->
     <select id="getInsideList" resultType="com.nt.dao_BASF.VO.InsideVehicleinformationVo">
-       SELECT
+--        SELECT
+-- 	v.vehiclenumber,
+-- 	v.transporter,
+-- 	v.intime,
+-- 	v.goodsname,
+-- 	v.destination,
+-- 	v.speed,
+-- 	v.ishazardous
+-- FROM
+-- 	vehicleinformation AS v
+-- WHERE
+-- 	ifnull(outtime,'') = ''
+-- ORDER BY
+-- 	v.intime DESC
+SELECT
+v.vehicleinformationid,
 	v.vehiclenumber,
 	v.transporter,
 	v.intime,
@@ -40,9 +55,9 @@
 FROM
 	vehicleinformation AS v
 WHERE
-	ifnull(outtime,'') = ''
+	ifnull(outtime,'') = '' and TO_DAYS(CREATEON) = TO_DAYS(now())
 ORDER BY
-	v.intime DESC
+	v.intime and v.speed>'15' DESC
     </select>
 
     <!--    获取本月车辆出入统计-->
@@ -117,7 +132,7 @@ ORDER BY
         )
     </select>
 
-<!--    增量更新GPS点位信息-->
+    <!--    增量更新GPS点位信息-->
     <update id="updategps">
 UPDATE vehicleinformation
 SET `gps` = CONCAT( IFNULL(`gps`,''), IFNULL(#{gps},'') ),

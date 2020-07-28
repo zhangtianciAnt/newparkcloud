@@ -144,13 +144,13 @@ public class MultiThreadScheduleTask {
             }
         } catch (Exception ex) {
             switchnotifications.setContent("门禁系统连接被拒绝！");
-            List<Switchnotifications> switchnotificationsList = switchnotificationsServices.list(switchnotifications);
-            if (switchnotificationsList.size() > 0) {
-
-            } else {
-                switchnotifications.setContent("门禁系统连接被拒绝！");
-                switchnotificationsServices.create(switchnotifications);
-            }
+//            List<Switchnotifications> switchnotificationsList = switchnotificationsServices.list(switchnotifications);
+//            if (switchnotificationsList.size() > 0) {
+//
+//            } else {
+//                switchnotifications.setContent("门禁系统连接被拒绝！");
+//                switchnotificationsServices.create(switchnotifications);
+//            }
         }
 
         return (JSONArray) jsonObject.get("data");

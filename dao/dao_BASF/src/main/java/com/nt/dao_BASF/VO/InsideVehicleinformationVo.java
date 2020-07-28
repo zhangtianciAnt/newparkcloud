@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InsideVehicleinformationVo extends BaseModel {
+    private String vehicleinformationid;
     /**
      * 车牌号
      */
