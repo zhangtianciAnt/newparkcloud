@@ -266,6 +266,7 @@ public class Pfans1025Controller {
         policycontract.setPolicycontract_id(awardvo.getAward().getPolicycontract_id());
         List<PolicyContract> policycontractlist = policycontractmapper.select(policycontract);
         List<PolicyContract> policycontractlist3 = policycontractmapper.selectAll();
+        policycontractlist3.addAll(0,policycontractlist3);
         if (policycontractlist.size() > 0) {
             if (policycontractlist.get(0).getCycle().equals("0")) {
                 policycontractlist2 = policycontractlist;

@@ -3,6 +3,7 @@ package com.nt.controller.Controller.PFANS;
 import com.nt.dao_Pfans.PFANS1000.PolicyContract;
 import com.nt.dao_Pfans.PFANS1000.Vo.PolicyContractVo;
 import com.nt.service_pfans.PFANS1000.PolicyContractService;
+import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PolicyContractMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -31,6 +32,8 @@ public class Pfans1045Controller {
     private PolicyContractService policycontractservice;
     @Autowired
     private PolicyContractMapper policycontractmapper;
+    @Autowired
+    private AwardMapper awardMapper;
 
     @Autowired
     private TokenService tokenService;
@@ -100,6 +103,7 @@ public class Pfans1045Controller {
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
         List<PolicyContract> policycontractlist3 = policycontractmapper.selectAll();
+        policycontractlist3.addAll(0,policycontractlist3);
         List<PolicyContract> policylist = policycontractmapper.select(policy);
         if (policylist.size() > 0) {
             for (PolicyContract PolicyContract : policylist) {
