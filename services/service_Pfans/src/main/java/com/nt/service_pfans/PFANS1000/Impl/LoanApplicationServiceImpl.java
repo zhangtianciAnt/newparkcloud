@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -53,6 +54,22 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
             }
         }
         return loanapplicationMapper.select(loanapplication);
+    }
+
+    @Override
+    public List<LoanApplication> getLoanApplicationList(String loanappno) {
+        String[] loa = loanappno.split(",");
+        List<LoanApplication> loaList =  new ArrayList<LoanApplication>();
+        LoanApplication  lo = new LoanApplication();
+        for(String l :loa)
+        {
+            lo = loanapplicationMapper.selectByPrimaryKey(l);
+            if(lo!=null && !loaList.contains(lo))
+            {
+                loaList.add(lo);
+            }
+        }
+        return loaList;
     }
 
 
