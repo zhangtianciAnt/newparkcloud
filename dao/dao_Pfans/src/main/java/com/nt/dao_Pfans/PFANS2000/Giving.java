@@ -40,4 +40,7 @@ public class Giving extends BaseModel {
     @Column(name = "USER_ID")
     private String user_id;  //离职相关
 
+    @Column(name = "ACTUAL")
+    private String actual;  //实际工资：1
+
 }

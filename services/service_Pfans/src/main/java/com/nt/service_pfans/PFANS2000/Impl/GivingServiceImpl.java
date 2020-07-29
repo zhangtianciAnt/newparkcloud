@@ -266,6 +266,7 @@ public class GivingServiceImpl implements GivingService {
         // zqu start 先判断wages表里有没有当月工资数据，有用表里的，没有用sql生成
         Wages wages = new Wages();
         wages.setGiving_id(giving_id);
+        wages.setActual("0");
         List<Wages> wagesList = wagesMapper.select(wages);
         if (wagesList.size() > 0) {
             givingVo.setWagesList(wagesList.stream().sorted(Comparator.comparing(Wages::getUser_id)).collect(Collectors.toList()));
@@ -884,6 +885,7 @@ public class GivingServiceImpl implements GivingService {
 
                 Wages wages = new Wages();
                 wages.setUser_id(base1.getUser_id());
+                wages.setActual("0");
                 List<Wages> wageslist = wagesMapper.select(wages);
                 if (wageslist != null) {
                     for (Wages wa : wageslist) {
@@ -921,6 +923,7 @@ public class GivingServiceImpl implements GivingService {
         // 查询当前月份的giving
         Giving giving = new Giving();
         giving.setMonths(strTemp);
+        giving.setActual("0");
         List<Giving> givinglist = givingMapper.select(giving);
         // 如果存在当月数据
         if (givinglist.size() != 0) {
@@ -986,6 +989,7 @@ public class GivingServiceImpl implements GivingService {
         giving.setGeneration(generation);
         giving.setGenerationdate(new Date());
         giving.setMonths(sf1.format(new Date()));
+        giving.setActual("0");
         givingMapper.insert(giving);
         /*
             插入其他相关表数据
