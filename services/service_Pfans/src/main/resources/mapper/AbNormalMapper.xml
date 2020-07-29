@@ -119,5 +119,15 @@ and a.user_id = #{userid}
 						  (date_format(a.FINISHED_DATE,'%Y-%m') BETWEEN date_format( concat( #{year}, '-04-01' ) ,'%Y-%m')
 																	AND  date_format( concat(  CONVERT(#{year}, SIGNED) + 1 , '-03-31' ),'%Y-%m'))))
     </select>
+    <select id="selectAbnomalBystatusandUserid"  resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        select
+            status as status,
+            OCCURRENCE_DATE as occurrencedate,
+            FINISHED_DATE as finisheddate,
+            RE_OCCURRENCE_DATE as reoccurrencedate,
+            RE_FINISHED_DATE as refinisheddate
+        from abNormal
+        where status in ('2','5') and user_id = #{userid}
+    </select>
 </mapper>
 

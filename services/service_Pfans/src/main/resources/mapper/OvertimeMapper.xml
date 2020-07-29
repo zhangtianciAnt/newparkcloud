@@ -18,4 +18,11 @@
 		and DATE_FORMAT(RESERVEOVERTIME_DATE, '%Y-%m-%d') = #{reserdate}
 		and user_id = #{userid}
 	</select>
+	<select id="selectOvertimeBystatusandUserid" resultType="com.nt.dao_Pfans.PFANS2000.Overtime">
+		select
+			status as status,
+			RESERVEOVERTIME_DATE as reserveovertimedate
+		from overtime
+		where status in ('2','5') and user_id = #{userid}
+	</select>
 </mapper>

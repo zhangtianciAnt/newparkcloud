@@ -1,19 +1,25 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.dao_Pfans.PFANS2000.Attendance;
+import com.nt.dao_Pfans.PFANS2000.Overtime;
 import com.nt.dao_Pfans.PFANS2000.Vo.AttendanceVo;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_WorkFlow.mapper.WorkflownodeinstanceMapper;
 import com.nt.service_pfans.PFANS2000.AttendanceService;
 import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
+import com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper;
 import com.nt.service_pfans.PFANS2000.mapper.AttendanceMapper;
+import com.nt.service_pfans.PFANS2000.mapper.OvertimeMapper;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +40,12 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Autowired
     private PunchcardRecordService punchcardRecordService;
+
+    @Autowired
+    private AbNormalMapper abNormalMapper;
+
+    @Autowired
+    private OvertimeMapper overtimeMapper;
 
     @Override
     public List<Attendance> getlist(Attendance attendance) throws Exception {
@@ -128,4 +140,48 @@ public class AttendanceServiceImpl implements AttendanceService {
         attendance.preUpdate(tokenModel);
         attendanceMapper.updStatus1(attendance.getUser_id(), attendance.getYears(), attendance.getMonths());
     }
+
+    //add ccm 2020729 考勤异常加班审批中的日期，考勤不允许承认
+    @Override
+    public List<Date> selectAbnomalandOvertime(AttendanceVo attendancevo) throws Exception {
+        List<Date> returnDateList = new ArrayList<Date>();
+        SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
+        //本月选择承认的数据
+        List<Attendance> attendancelist = attendancevo.getAttendance();
+
+        //检索考勤未审批完成的数据
+        List<AbNormal> abList = new ArrayList<AbNormal>();
+        abList = abNormalMapper.selectAbnomalBystatusandUserid(attendancelist.get(0).getUser_id());
+        //检索加班未完成的数据
+        List<Overtime> oList = new ArrayList<Overtime>();
+        oList = overtimeMapper.selectOvertimeBystatusandUserid(attendancelist.get(0).getUser_id());
+
+        for(Attendance attendance :attendancelist)
+        {
+            //判断考勤未审批的数据
+            for(AbNormal ab:abList)
+            {
+                if(!returnDateList.contains(attendance.getDates()))
+                {
+                    if(ab.getStatus().equals("2") && sfymd.parse(sfymd.format(attendance.getDates())).getTime() >= sfymd.parse(sfymd.format(ab.getOccurrencedate())).getTime() && sfymd.parse(sfymd.format(attendance.getDates())).getTime() <= sfymd.parse(sfymd.format(ab.getFinisheddate())).getTime())
+                    {
+                        returnDateList.add(attendance.getDates());
+                    }
+                    else if(ab.getStatus().equals("5") && sfymd.parse(sfymd.format(attendance.getDates())).getTime() >= sfymd.parse(sfymd.format(ab.getReoccurrencedate())).getTime() && sfymd.parse(sfymd.format(attendance.getDates())).getTime() <= sfymd.parse(sfymd.format(ab.getRefinisheddate())).getTime())
+                    {
+                        returnDateList.add(attendance.getDates());
+                    }
+                }
+            }
+
+            //判断加班未审批通过的数据
+            List<Overtime> ov = oList.stream().filter(item -> sfymd.format(attendance.getDates()).equals(sfymd.format(item.getReserveovertimedate()))).collect(Collectors.toList());
+            if(ov.size()>0 && !returnDateList.contains(attendance.getDates()))
+            {
+                returnDateList.add(attendance.getDates());
+            }
+        }
+        return returnDateList;
+    }
+    //add ccm 2020729 考勤异常加班审批中的日期，考勤不允许承认
 }

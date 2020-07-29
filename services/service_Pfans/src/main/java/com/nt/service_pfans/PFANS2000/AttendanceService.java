@@ -4,6 +4,7 @@ import com.nt.dao_Pfans.PFANS2000.Attendance;
 import com.nt.dao_Pfans.PFANS2000.Vo.AttendanceVo;
 import com.nt.utils.dao.TokenModel;
 
+import java.util.Date;
 import java.util.List;
 
 public interface AttendanceService {
@@ -29,4 +30,8 @@ public interface AttendanceService {
     // add 0622 ccm --审批被驳回后，当月考勤数据全部变为未承认状态
     void updStatus1(Attendance attendance, TokenModel tokenModel) throws Exception;
     // add 0622 ccm --审批被驳回后，当月考勤数据全部变为未承认状态
+
+    //add ccm 2020729 考勤异常加班审批中的日期，考勤不允许承认
+    List<Date> selectAbnomalandOvertime(AttendanceVo attendancevo) throws Exception;
+    //add ccm 2020729 考勤异常加班审批中的日期，考勤不允许承认
 }
