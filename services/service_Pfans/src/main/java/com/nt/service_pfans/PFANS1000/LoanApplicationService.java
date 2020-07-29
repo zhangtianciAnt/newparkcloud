@@ -17,5 +17,7 @@ public interface LoanApplicationService {
 
     public void updateLoanApplication(LoanApplication loanapplication, TokenModel tokenModel)throws  Exception;
 
-
+    //add ccm 0728  精算时关联多个暂借款
+    List<LoanApplication> getLoanApplicationList(String loanappno)throws Exception;
+    //add ccm 0728  精算时关联多个暂借款
 }

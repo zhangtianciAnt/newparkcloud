@@ -247,6 +247,7 @@
        select USER_ID from wages
        where YEAR(wages.CREATEON) = #{year}
        and MONTH(wages.CREATEON) = #{month}
+       and wages.actual = '0'
        <if test="userid != ''" >
            and USER_ID = #{userid}
        </if>
@@ -256,6 +257,7 @@
        select * from wages
        where YEAR(wages.CREATEON) = #{year}
        AND MONTH(wages.CREATEON) = #{month}
+       AND wages.actual = '0'
        <if test="userid != ''" >
            and USER_ID = #{userid}
        </if>
@@ -536,6 +538,7 @@
         on otherfive.GIVING_ID = wages.GIVING_ID
         and otherfive.USER_ID = wages.USER_ID
 		where DATE_FORMAT(wages.CREATEON,'%Y-%m')  = #{dates}
+		AND wages.actual = '0'
 		GROUP BY wages.DEPARTMENT_ID
 		ORDER BY FIELD(wages.DEPARTMENT_ID, 'CTA','IED','APD','ALD','APO','LSD','ECD','DTD','OSD','SSD','SPD','ISD','SDEO','DANP','FPO','ADMN')
     </select>
@@ -568,6 +571,7 @@
         left join otherfive
         on otherfive.GIVING_ID = wages.GIVING_ID
         and otherfive.USER_ID = wages.USER_ID
+        where wages.actual = '0'
         group by DATE_FORMAT(wages.createon,'%Y-%m')
         order by DATE_FORMAT(wages.createon,'%Y-%m')
     </select>

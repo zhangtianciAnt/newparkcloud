@@ -110,4 +110,15 @@ public class Pfans2010Controller {
         return ApiResult.success();
     }
     // add 0622 ccm --审批被驳回后，当月考勤数据全部变为未承认状态
+
+    //add ccm 2020729 考勤异常加班审批中的日期，考勤不允许承认
+    @RequestMapping(value = "/selectAbnomalandOvertime", method = {RequestMethod.POST})
+    public ApiResult selectAbnomalandOvertime(@RequestBody AttendanceVo attendancevo, HttpServletRequest request) throws Exception {
+        if (attendancevo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(attendanceService.selectAbnomalandOvertime(attendancevo));
+    }
+    //add ccm 2020729 考勤异常加班审批中的日期，考勤不允许承认
+
 }

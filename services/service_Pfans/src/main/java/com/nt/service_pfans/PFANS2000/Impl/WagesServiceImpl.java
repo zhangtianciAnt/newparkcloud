@@ -203,22 +203,21 @@ public class WagesServiceImpl implements WagesService {
     public List<Wages> wagesList(Wages wages) throws Exception {
         //已经发放的工资
         wages.setGrantstatus("1");
+        wages.setActual("0");
         List<Wages> listw = wagesMapper.select(wages);
-        //gbb 0721 无用代码 start
-//        for (Wages wages1 : listw) {
-//            if (wages1.getGiving_id() != null) {
-//                Giving giving = new Giving();
-//                giving.setGiving_id(wages1.getGiving_id());
-//                List<Giving> givingList = givingMapper.select(giving);
-//                for (Giving giving1 : givingList) {
-//                    if (wages1.getGiving_id().equals(giving1.getGiving_id())) {
-//                        wages1.setGiving_id(giving1.getMonths());
-//                    }
-//                }
-//
-//            }
-//        }
-        //gbb 0721 无用代码 end
+        for (Wages wages1 : listw) {
+            if (wages1.getGiving_id() != null) {
+                Giving giving = new Giving();
+                giving.setGiving_id(wages1.getGiving_id());
+                List<Giving> givingList = givingMapper.select(giving);
+                for (Giving giving1 : givingList) {
+                    if (wages1.getGiving_id().equals(giving1.getGiving_id())) {
+                        wages1.setGiving_id(giving1.getMonths());
+                    }
+                }
+
+            }
+        }
         return listw;
     }
 
@@ -253,6 +252,7 @@ public class WagesServiceImpl implements WagesService {
     @Override
     public void insertWages(List<Wages> wages, TokenModel tokenModel) throws Exception {
         String status = wages.get(0).getStatus();
+        String actual = wages.get(0).getActual();
         if(status.equals("0") || status.equals("2")){
             // 先删除当月数据，再插入
             Wages del_wage = new Wages();
@@ -261,6 +261,7 @@ public class WagesServiceImpl implements WagesService {
             for (Wages wage : wages) {
                 wage.setWages_id(UUID.randomUUID().toString());
                 wage.setCreateonym(DateUtil.format(new Date(), "YYYY-MM"));
+                wage.setActual(actual);
                 wage.preInsert(tokenModel);
             }
             wagesMapper.insertListAllCols(wages);
@@ -289,6 +290,7 @@ public class WagesServiceImpl implements WagesService {
         Wages wages = new Wages();
         wages.setUser_id(user_id);
         wages.setCreateonym(DateUtil.format(new Date(),"yyyy-MM"));
+        wages.setActual("0");
         //工资表数据
         List<Wages> wagesListEstimate = wagesMapper.select(wages);
         if (wagesListEstimate.size() > 0) {
@@ -316,6 +318,7 @@ public class WagesServiceImpl implements WagesService {
         Giving giving = new Giving();
         giving.setMonths(strTemp);
         giving.setUser_id(userid);
+        giving.setActual("0");
         List<Giving> givinglist = givingMapper.select(giving);
         // 如果存在当月数据（删除）
         deletewages(strTemp,givinglist);
@@ -332,6 +335,7 @@ public class WagesServiceImpl implements WagesService {
         giving.setUser_id(userid);
         giving.setGenerationdate(new Date());
         giving.setMonths(strTemp);
+        giving.setActual("0");
         givingMapper.insert(giving);
         /*
             插入其他相关表数据
@@ -1015,6 +1019,7 @@ public class WagesServiceImpl implements WagesService {
 
                 Wages wages = new Wages();
                 wages.setUser_id(base1.getUser_id());
+                wages.setActual("0");
                 List<Wages> wageslist = wagesMapper.select(wages);
                 if (wageslist != null) {
                     for (Wages wa : wageslist) {
