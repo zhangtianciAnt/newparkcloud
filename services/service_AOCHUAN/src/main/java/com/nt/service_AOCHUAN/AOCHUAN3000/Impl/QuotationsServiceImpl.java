@@ -6,6 +6,7 @@ import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.QuoAndEnq;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.ToDoNotice;
+import com.nt.service_AOCHUAN.AOCHUAN3000.Impl.xls.MyXLSTransformer;
 import com.nt.service_AOCHUAN.AOCHUAN3000.QuotationsService;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ApplicationrecordMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.EnquiryMapper;
@@ -232,7 +233,7 @@ public class QuotationsServiceImpl implements QuotationsService {
      * @return
      **/
     private File createNewFile(Map<String, Object> beans, File file, String path) {
-        XLSTransformer transformer = new XLSTransformer();
+        XLSTransformer transformer = new MyXLSTransformer();
 
         //命名
         String name = "bbb.xlsx";
@@ -241,6 +242,7 @@ public class QuotationsServiceImpl implements QuotationsService {
         try (InputStream in = new BufferedInputStream(new FileInputStream(file));
              OutputStream out = new FileOutputStream(newFile)) {
             //poi版本使用3.1.7要不然会报错
+			// poi 4.x 对应
             Workbook workbook = transformer.transformXLS(in, beans);
             workbook.write(out);
             out.flush();

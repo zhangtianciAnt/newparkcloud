@@ -1,13 +1,10 @@
 package com.nt.service_AOCHUAN.AOCHUAN3000;
 
-import com.nt.dao_AOCHUAN.AOCHUAN3000.Applicationrecord;
-import com.nt.dao_AOCHUAN.AOCHUAN3000.Quotations;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.utils.dao.TokenModel;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -35,5 +32,5 @@ public interface TransportGoodService {
     void paymentXS(List<FinPurchase> finPurchases, TokenModel token);
 
     //    导出
-    void setExport(HttpServletResponse response , List<TransportGood> exportVo) throws Exception;
+    boolean setExport(HttpServletResponse response , List<TransportGood> exportVo) throws Exception;
 }

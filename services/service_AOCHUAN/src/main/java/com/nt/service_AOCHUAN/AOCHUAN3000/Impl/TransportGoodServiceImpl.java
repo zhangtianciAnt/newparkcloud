@@ -10,6 +10,7 @@ import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.ToDoNotice;
+import com.nt.service_AOCHUAN.AOCHUAN3000.Impl.xls.MyXLSTransformer;
 import com.nt.service_AOCHUAN.AOCHUAN3000.TransportGoodService;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.*;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinPurchaseMapper;
@@ -22,12 +23,9 @@ import com.nt.utils.dao.TokenModel;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -412,9 +410,11 @@ public class TransportGoodServiceImpl implements TransportGoodService {
      * 2.根据模板生成新的excel
      * 3.将新生成的excel文件从浏览器输出
      * 4.删除新生成的模板文件
-     */
+	 * @return
+	 */
     @Override
-    public void setExport(HttpServletResponse response, List<TransportGood> exportVo) throws Exception {
+    public boolean setExport(HttpServletResponse response, List<TransportGood> exportVo) throws Exception {
+    	boolean isSuccess = true;
 
         Map<String, Object> beans = new HashMap();
 
@@ -443,25 +443,33 @@ public class TransportGoodServiceImpl implements TransportGoodService {
                 }
                 delete = true;
             } catch (Exception e1) {
+				isSuccess = false;
                 e1.printStackTrace();
             }
         }
 
         //配置下载路径
-        String path = "/Users/ying/Documents/download/";
+        String path = "/tmp/";
         createDir(new File(path));
 
         //根据模板生成新的excel
-        File excelFile = createNewFile(beans, file, path);
+		try {
+			File excelFile = createNewFile(beans, file, path);
+			//浏览器端下载文件
+			try {
+				downloadFile(response, excelFile);
+			} catch (Exception e ) {}
+			//删除服务器生成文件
+			deleteFile(excelFile);
+		} catch (Exception e ) {
+			isSuccess = false;
+		}
 
-        //浏览器端下载文件
-        downloadFile(response, excelFile);
-
-        //删除服务器生成文件
-        deleteFile(excelFile);
         if ( delete ) {
             deleteFile(file);
         }
+
+        return isSuccess;
     }
 
 
@@ -555,8 +563,8 @@ public class TransportGoodServiceImpl implements TransportGoodService {
      * @param path
      * @return
      */
-    private File createNewFile(Map<String, Object> beans, File file, String path) {
-        XLSTransformer transformer = new XLSTransformer();
+    private File createNewFile(Map<String, Object> beans, File file, String path) throws Exception {
+        XLSTransformer transformer = new MyXLSTransformer();
 
         //命名
         String name = "bbb.xlsx";
@@ -565,14 +573,18 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         try (InputStream in = new BufferedInputStream(new FileInputStream(file));
              OutputStream out = new FileOutputStream(newFile)) {
             //poi版本使用3.1.7要不然会报错
+			// 对应poi4.x 扩展XLSTransformer
+			// 需要初始化为com.nt.service_AOCHUAN.AOCHUAN3000.Impl.xlsMyXLSTransformer
             Workbook workbook = transformer.transformXLS(in, beans);
             workbook.write(out);
             out.flush();
             return newFile;
         } catch (Exception e) {
             System.out.println(e.getMessage());
+			//删除服务器生成文件
+			deleteFile(newFile);
+            throw e;
         }
-        return newFile;
     }
 
     /**
@@ -607,7 +619,6 @@ public class TransportGoodServiceImpl implements TransportGoodService {
      * @param excelFile
      */
     private void deleteFile(File excelFile) {
-
         excelFile.delete();
     }
 

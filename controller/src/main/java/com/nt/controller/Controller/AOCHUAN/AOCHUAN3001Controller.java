@@ -107,8 +107,7 @@ public class AOCHUAN3001Controller {
         String account = quotations.getAccount();
         BigDecimal amounts = new BigDecimal(0);
         int i = 0;
-        for (Enquiry en:
-        enquiry) {
+        for (Enquiry en: enquiry) {
             i += 1;
             en.setIndex(i);
             en.setProducten(quotations.getProducten());
