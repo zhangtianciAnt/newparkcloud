@@ -289,48 +289,44 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         publicExpenseMapper.insertSelective(publicExpense);
 
         //add ccm 0727
-        if(publicExpense.getJudgement_name().substring(0,2).equals("CG"))
-        {
-            String []pur = publicExpense.getJudgement_name().split(",");
-            for(String p:pur)
-            {
-                Purchase purchase = new Purchase();
-                purchase.setPurnumbers(p);
-                List<Purchase> purchaseList = purchaseMapper.select(purchase);
-                if(purchaseList.size()>0)
-                {
-                    purchaseList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
-                    purchaseList.get(0).setInvoiceno(publicExpense.getInvoiceno());
-                    purchaseList.get(0).preUpdate(tokenModel);
-                    purchaseMapper.updateByPrimaryKey(purchaseList.get(0));
-                }
-                if(publicExpense.getStatus().equals("4"))
-                {
-                    ToDoNotice toDoNotice = new ToDoNotice();
-                    toDoNotice.setTitle("【有采购申请需您维护资产信息】");
-                    toDoNotice.setInitiator(purchaseList.get(0).getUser_id());
-                    toDoNotice.setContent("有一个采购申请已经精算完成，请维护资产相关信息！");
-                    toDoNotice.setDataid(purchaseList.get(0).getPurchase_id());
-                    toDoNotice.setUrl("/PFANS3005FormView");
-                    toDoNotice.setWorkflowurl("/PFANS3005View");
-                    toDoNotice.preInsert(tokenModel);
-                    //财务担当
-                    List<MembersVo> rolelist = roleService.getMembers("5e78645a8f4316308435113c");
-                    if(rolelist.size()>0)
-                    {
-                        toDoNotice.setOwner(rolelist.get(0).getUserid());
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpense.getJudgement_name())) {
+            if (publicExpense.getJudgement_name().substring(0, 2).equals("CG")) {
+                String[] pur = publicExpense.getJudgement_name().split(",");
+                for (String p : pur) {
+                    Purchase purchase = new Purchase();
+                    purchase.setPurnumbers(p);
+                    List<Purchase> purchaseList = purchaseMapper.select(purchase);
+                    if (purchaseList.size() > 0) {
+                        purchaseList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
+                        purchaseList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+                        purchaseList.get(0).preUpdate(tokenModel);
+                        purchaseMapper.updateByPrimaryKey(purchaseList.get(0));
                     }
-                    toDoNoticeService.save(toDoNotice);
+                    if (publicExpense.getStatus().equals("4")) {
+                        ToDoNotice toDoNotice = new ToDoNotice();
+                        toDoNotice.setTitle("【有采购申请需您维护资产信息】");
+                        toDoNotice.setInitiator(purchaseList.get(0).getUser_id());
+                        toDoNotice.setContent("有一个采购申请已经精算完成，请维护资产相关信息！");
+                        toDoNotice.setDataid(purchaseList.get(0).getPurchase_id());
+                        toDoNotice.setUrl("/PFANS3005FormView");
+                        toDoNotice.setWorkflowurl("/PFANS3005View");
+                        toDoNotice.preInsert(tokenModel);
+                        //财务担当
+                        List<MembersVo> rolelist = roleService.getMembers("5e78645a8f4316308435113c");
+                        if (rolelist.size() > 0) {
+                            toDoNotice.setOwner(rolelist.get(0).getUserid());
+                        }
+                        toDoNoticeService.save(toDoNotice);
 
-                    //IT
-                    List<MembersVo> rolelist1 = roleService.getMembers("5e78630d8f43163084351137");
-                    if(rolelist1.size()>0)
-                    {
-                        toDoNotice.setOwner(rolelist1.get(0).getUserid());
+                        //IT
+                        List<MembersVo> rolelist1 = roleService.getMembers("5e78630d8f43163084351137");
+                        if (rolelist1.size() > 0) {
+                            toDoNotice.setOwner(rolelist1.get(0).getUserid());
+                        }
+                        toDoNoticeService.save(toDoNotice);
                     }
-                    toDoNoticeService.save(toDoNotice);
-                }
 
+                }
             }
         }
         //add ccm 0727
