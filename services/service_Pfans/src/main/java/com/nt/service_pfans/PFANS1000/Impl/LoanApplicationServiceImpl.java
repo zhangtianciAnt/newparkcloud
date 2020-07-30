@@ -32,27 +32,6 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     @Override
     public List<LoanApplication> getLoanApplication(LoanApplication loanapplication) {
-        int canafvermoney = 0;
-        List<LoanApplication> loanApplicationList = loanapplicationMapper.select(loanapplication);
-        for (LoanApplication loanApplication : loanApplicationList) {
-            PublicExpense publicExpense = new PublicExpense();
-            publicExpense.setJudgement(loanApplication.getJudgements());
-            List<PublicExpense> publicExpenseList = publicExpenseMapper.select(publicExpense);
-            if (loanApplication.getCanafver() != null && loanApplication.getCanafver() != "") {
-                if (publicExpenseList.size() != 0) {
-                    if (publicExpenseList.get(0).getStatus().equals("4")) {
-                        loanApplication.setCanafver("1");
-                    } else {
-                        loanApplication.setCanafver("0");
-                    }
-                    for(int i = 0; i < publicExpenseList.size(); i ++){
-                        canafvermoney += Integer.parseInt(publicExpenseList.get(i).getMoneys());
-                    }
-                    loanApplication.setCanafvermoney(canafvermoney);
-                    loanapplicationMapper.updateByPrimaryKeySelective(loanApplication);
-                }
-            }
-        }
         return loanapplicationMapper.select(loanapplication);
     }
 
