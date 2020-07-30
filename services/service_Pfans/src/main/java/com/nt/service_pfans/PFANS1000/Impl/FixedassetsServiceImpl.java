@@ -41,7 +41,10 @@ public class FixedassetsServiceImpl  implements FixedassetsService {
             assets.setBarcode(fixedassets.getRfid());
             List<Assets> assetsList = assetsMapper.select(assets);
             for(Assets ast : assetsList){
-                ast.setStockstatus("PA002001");
+//                2020-07-13 ~ 2020-07-25
+                ast.setPsdcdbringoutreason(fixedassets.getObjective());
+                ast.setPsdcdperiod(fixedassets.getRepair().substring(0,10));
+                ast.setPsdcdreturndate(fixedassets.getRepair().substring(fixedassets.getRepair().length() - 10));
                 assetsMapper.updateByPrimaryKeySelective(ast);
             }
         }
