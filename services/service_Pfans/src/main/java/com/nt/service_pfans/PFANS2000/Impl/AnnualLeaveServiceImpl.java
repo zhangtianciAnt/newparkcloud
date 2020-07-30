@@ -8,10 +8,13 @@ import com.alibaba.fastjson.JSON;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.alibaba.fastjson.JSONArray;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Pfans.PFANS2000.*;
+import com.nt.dao_Pfans.PFANS2000.Vo.restViewVo;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
+import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
 import com.nt.service_pfans.PFANS2000.WagesService;
@@ -120,6 +123,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     private WagesMapper wagesMapper;
     @Autowired
     private WagesService wagesservice;
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
+
 
     @Autowired
     private TokenService tokenService;
@@ -3718,16 +3724,28 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //endregion 获取离职人员最后一天的打卡记录并插入到数据库
 
         //region 本月实际工资
-
-        //region 获取本月预计工资
         String strTemp = sfym.format(new Date());
-        String oldgivingid = "";
+
+        //region 删除实际工资
         // 查询当前月份的giving
         Giving giving = new Giving();
         giving.setMonths(strTemp);
+        giving.setActual("1");
+        List<Giving> givinglist = givingMapper.select(giving);
+
+        if (givinglist.size() > 0) {
+            deletewages(givinglist);
+        }
+        //endregion 获取本月预计工资
+
+        //region 获取本月预计工资
+        String oldgivingid = "";
+        // 查询当前月份的giving
+        giving = new Giving();
+        giving.setMonths(strTemp);
         giving.setStatus("4");
         giving.setActual("0");
-        List<Giving> givinglist = givingMapper.select(giving);
+        givinglist = givingMapper.select(giving);
 
         if (givinglist.size() > 0) {
             oldgivingid = givinglist.get(0).getGiving_id();
@@ -3917,6 +3935,21 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 rowundex++;
             }
         }
+        //离职人员实际欠勤
+        List<Lackattendance> lackattendanceListnew = insertLackattendance("2",givingid, tokenModel);
+        if(lackattendanceListnew.size() > 0){
+            for (Lackattendance lackattendance : lackattendanceListnew) {
+                //删除预计离职人员加班
+                Lackattendance lackattendanceold = new Lackattendance();
+                lackattendanceold.setGiving_id(lackattendance.getGiving_id());
+                lackattendanceold.setUser_id(lackattendance.getUser_id());
+                lackattendanceMapper.delete(lackattendanceold);
+                //添加离职人员实际欠勤
+                lackattendance.setRowindex(rowundex);
+                lackattendanceMapper.insert(lackattendance);
+                rowundex++;
+            }
+        }
         //endregion 欠勤
 
         //region 加班
@@ -3933,6 +3966,21 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 } else {
                     residual.preInsert();
                 }
+                residual.setRowindex(rowundex);
+                residualMapper.insert(residual);
+                rowundex++;
+            }
+        }
+        //离职人员实际加班
+        List<Residual> residualListnew = insertResidual("2",givingid, tokenModel);
+        if(residualListnew.size() > 0){
+            for (Residual residual : residualListnew) {
+                //删除预计离职人员加班
+                Residual residualold = new Residual();
+                residualold.setGiving_id(residual.getGiving_id());
+                residualold.setUser_id(residual.getUser_id());
+                residualMapper.delete(residualold);
+                //添加离职人员实际加班
                 residual.setRowindex(rowundex);
                 residualMapper.insert(residual);
                 rowundex++;
@@ -4007,11 +4055,591 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     }
 
+    public void deletewages(List<Giving> givinglist) {
+        // 删除当前月份的入职表数据
+        Induction induction = new Induction();
+        induction.setGiving_id(givinglist.get(0).getGiving_id());
+        inductionMapper.delete(induction);
+        // 删除当前月份的退职表数据
+        Retire retire = new Retire();
+        retire.setGiving_id(givinglist.get(0).getGiving_id());
+        retireMapper.delete(retire);
+        // 删除当前月份的基数表数据
+        Base base = new Base();
+        base.setGiving_id(givinglist.get(0).getGiving_id());
+        baseMapper.delete(base);
+        // 删除当前月份的其他2表数据
+        OtherTwo otherTwo = new OtherTwo();
+        otherTwo.setGiving_id(givinglist.get(0).getGiving_id());
+        othertwoMapper.delete(otherTwo);
+        // 删除当前月份的其他1表数据
+        OtherOne otherOne = new OtherOne();
+        otherOne.setGiving_id(givinglist.get(0).getGiving_id());
+        otheroneMapper.delete(otherOne);
+        // 删除当前月份的其他4表数据
+        OtherFour otherfour = new OtherFour();
+        otherfour.setGiving_id(givinglist.get(0).getGiving_id());
+        otherfourMapper.delete(otherfour);
+        // 删除当前月份的其他5表数据
+        OtherFive otherfive = new OtherFive();
+        otherfive.setGiving_id(givinglist.get(0).getGiving_id());
+        otherfiveMapper.delete(otherfive);
+
+        //删除当前月份的欠勤表数据
+        Lackattendance lackattendance = new Lackattendance();
+        lackattendance.setGiving_id(givinglist.get(0).getGiving_id());
+        lackattendanceMapper.delete(lackattendance);
+
+        //删除当前月份的加班数据
+        Residual residual = new Residual();
+        residual.setGiving_id(givinglist.get(0).getGiving_id());
+        residualMapper.delete(residual);
+
+        //删除当前月份的月度赏与数据
+        Appreciation appreciation = new Appreciation();
+        appreciation.setGiving_id(givinglist.get(0).getGiving_id());
+        appreciationMapper.delete(appreciation);
+
+        //删除当前月份的附加控除数据
+        Additional additional = new Additional();
+        additional.setGiving_id(givinglist.get(0).getGiving_id());
+        additionalMapper.delete(additional);
+
+        //删除wages当月数据
+        Wages del_wage = new Wages();
+        del_wage.setGiving_id(givinglist.get(0).getGiving_id());
+        wagesMapper.delete(del_wage);
+        //zqu end
+        // 删除当前月giving表数据
+        Giving giving = new Giving();
+        giving.setGiving_id(givinglist.get(0).getGiving_id());
+        givingMapper.delete(giving);
+    }
+
+    /**
+     * @return
+     * @Method insertLackattendance
+     * @Author SKAIXX
+     * @Description 欠勤数据插入
+     * @Date 2020/3/16 8:52
+     * @Param [givingid, tokenModel]
+     **/
+    public List<Lackattendance> insertLackattendance(String strFlg,String givingid, TokenModel tokenModel) throws Exception {
+        List<Lackattendance> lackattendanceList = new ArrayList<>();
+        // region 获取基数表数据
+        Base base = new Base();
+        base.setGiving_id(givingid);
+        base.setType("4");
+        List<Base> baseList = baseMapper.select(base);
+        // endregion
+
+        // region 获取当月与前月
+        Calendar cal = Calendar.getInstance();
+
+        // 当月
+        String currentYear = String.valueOf(cal.get(Calendar.YEAR));
+        String currentMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+
+        // 前月
+        cal.add(Calendar.MONTH, -1);
+        String preYear = String.valueOf(cal.get(Calendar.YEAR));
+        String preMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+        // endregion
+
+        // 以基数表数据为单位循环插入欠勤数据
+        baseList.forEach(item -> {
+
+            // 本月是否已退职(员工ID如果在退职表里存在，则视为已退职)
+            Retire retire = new Retire();
+            retire.setUser_id(item.getUser_id());
+            boolean isResign = retireMapper.select(retire).size() > 0;
+
+            Lackattendance lackattendance = new Lackattendance();
+
+            lackattendance.setLackattendance_id(UUID.randomUUID().toString());
+            lackattendance.setGiving_id(givingid);
+            lackattendance.setUser_id(item.getUser_id());
+            lackattendance.setRowindex(item.getRowindex());
+
+            // 取得前月欠勤数据
+            Attendance attendance = new Attendance();
+            attendance.setUser_id(item.getUser_id());
+            attendance.setYears(preYear);
+            attendance.setMonths(preMonth);
+            List<Attendance> attendanceList = attendanceMapper.select(attendance);
+
+            // 欠勤-试用(试用无故旷工 + 试用事假)
+            double Lastdiligencetry  =  attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTabsenteeism()))).sum()
+                    + attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTcompassionateleave()))).sum();
+            lackattendance.setLastdiligencetry(BigDecimal.valueOf(Lastdiligencetry).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // 短病欠-试用
+            lackattendance.setLastshortdeficiencytry(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTshortsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // 长病欠-试用
+            lackattendance.setLastchronicdeficiencytry(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTlongsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // 欠勤-正式(无故旷工 + 正式事假)
+            double Lastdiligenceformal = attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getAbsenteeism()))).sum()
+                    + attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getCompassionateleave()))).sum();
+            lackattendance.setLastdiligenceformal(BigDecimal.valueOf(Lastdiligenceformal).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // 短病欠-正式
+            lackattendance.setLastshortdeficiencyformal(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getShortsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // 长病欠-正式
+            lackattendance.setLastchronicdeficiencyformal(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getLongsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // 欠勤
+            lackattendance.setLastdiligence(lackSumCalc(lackattendance.getLastdiligencetry(), lackattendance.getLastdiligenceformal()));
+
+            // 短病欠
+            lackattendance.setLastshortdeficiency(lackSumCalc(lackattendance.getLastshortdeficiencyformal(), lackattendance.getLastshortdeficiencytry()));
+
+            // 长病欠
+            lackattendance.setLastchronicdeficiency(lackSumCalc(lackattendance.getLastchronicdeficiencytry(), lackattendance.getLastchronicdeficiencyformal()));
+
+            // 前月合计
+            lackattendance.setLasttotal(lackAttendanceCalc(item, lackattendance, "pre"));
+
+            // 获取本月考勤数据
+            if(strFlg.equals("1")){//预计
+                attendance = new Attendance();
+                attendance.setUser_id(item.getUser_id());
+                attendance.setYears(currentYear);
+                attendance.setMonths(currentMonth);
+                attendanceList = attendanceMapper.select(attendance);
+            }
+            else{
+                //实际AttendanceResignation
+                attendanceList = attendanceMapper.selectResignation(item.getUser_id(),currentYear,currentMonth);
+            }
+
+            // 欠勤-试用(试用无故旷工 + 试用事假)
+            double Thisdiligencetry  =  attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTabsenteeism()))).sum()
+                    + attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTcompassionateleave()))).sum();
+            lackattendance.setThisdiligencetry(BigDecimal.valueOf(Thisdiligencetry).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // 短病欠-试用
+            lackattendance.setThisshortdeficiencytry(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTshortsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // 长病欠-试用
+            lackattendance.setThischronicdeficiencytry(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getTlongsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // 欠勤-正式(无故旷工 + 正式事假)
+            double Thisdiligenceformal = attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getAbsenteeism()))).sum()
+                    + attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getCompassionateleave()))).sum();
+            lackattendance.setThisdiligenceformal(BigDecimal.valueOf(Thisdiligenceformal).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // 短病欠-正式
+            lackattendance.setThisshortdeficiencyformal(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getShortsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // 长病欠-正式
+            lackattendance.setThischronicdeficiencyformal(BigDecimal.valueOf(attendanceList.stream()
+                    .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getLongsickleave()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // 欠勤
+            lackattendance.setThisdiligence(lackSumCalc(lackattendance.getThisdiligencetry(), lackattendance.getThisdiligenceformal()));
+
+            // 短病欠
+            lackattendance.setThisshortdeficiency(lackSumCalc(lackattendance.getThisshortdeficiencytry(), lackattendance.getThisshortdeficiencyformal()));
+
+            // 长病欠
+            lackattendance.setThischronicdeficiency(lackSumCalc(lackattendance.getThischronicdeficiencytry(), lackattendance.getThischronicdeficiencyformal()));
+
+            // 本月合计
+            lackattendance.setThistotal(lackAttendanceCalc(item, lackattendance, "current"));
+
+            // 备考
+            lackattendance.setRemarks(isResign ? "退职" : "-");
+
+            // 控除给料
+
+            lackattendance.setGive(BigDecimal.valueOf(Double.parseDouble(lackattendance.getLasttotal())
+                    + Double.parseDouble(lackattendance.getThistotal())).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // give不为0.00的时候数据加负号
+//            if (!"0.00".equals(lackattendance.getGive())) {
+//                lackattendance.setGive("-" + lackattendance.getGive());
+//            }
+
+            if (tokenModel != null) {
+                lackattendance.preInsert(tokenModel);
+            } else {
+                lackattendance.preInsert();
+            }
+            lackattendanceList.add(lackattendance);
+            //lackattendanceMapper.insert(lackattendance);
+        });
+        return lackattendanceList;
+    }
+
+    /**
+     * @return void
+     * @Method insertResidual
+     * @Author SKAIXX
+     * @Description 残业计算
+     * @Date 2020/3/13 15:51
+     * @Param [givingid, tokenModel]
+     **/
+    public List<Residual> insertResidual(String strFlg, String givingid, TokenModel tokenModel) throws Exception {
+        List<Residual> residualList = new ArrayList<>();
+        // region 获取当月与前月
+        Calendar cal = Calendar.getInstance();
+
+        // 当月
+        String currentYear = String.valueOf(cal.get(Calendar.YEAR));
+        String currentMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+
+        // 前月
+        cal.add(Calendar.MONTH, -1);
+        String preYear = String.valueOf(cal.get(Calendar.YEAR));
+        String preMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+        // endregion
+
+        // 获取基数表数据
+        Base base = new Base();
+        base.setGiving_id(givingid);
+        base.setType("4");//离职人员
+        List<Base> baseList = baseMapper.select(base);
+
+        // 代休截止间隔修改为从字典中获取
+        Dictionary replaceDic = new Dictionary();
+        replaceDic.setCode("PR061001");    // 代休间隔
+        replaceDic = dictionaryMapper.select(replaceDic).get(0);
+        int rep = Integer.parseInt(replaceDic.getValue1());
+
+        // 以基数表数据为单位循环插入残业数据
+        baseList.forEach(item -> {
+            Residual residual = new Residual();
+            // 名字
+            residual.setUser_id(item.getUser_id());
+            // Rn
+            residual.setRn(item.getRn());
+            residual.setGiving_id(givingid);
+            residual.setResidual_id(UUID.randomUUID().toString());
+            residual.setRowindex(item.getRowindex());
+
+            // 本月是否已退职(员工ID如果在退职表里存在，则视为已退职)
+            Retire retire = new Retire();
+            retire.setUser_id(item.getUser_id());
+            boolean isResign = retireMapper.select(retire).size() > 0;
+
+            double totalh = 0d; // 合计加班小时
+
+            // 获取前月勤怠表数据
+            Attendance attendance = new Attendance();
+            attendance.setUser_id(item.getUser_id());
+            attendance.setYears(preYear);
+            attendance.setMonths(preMonth);
+            List<Attendance> attendanceList = attendanceMapper.select(attendance);
+            // region 前月残业数据
+            // 平日加班（150%）
+            residual.setLastweekdays(BigDecimal.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getOrdinaryindustry()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+            totalh += Double.parseDouble(residual.getLastweekdays());
+
+            // 休日加班（200%）
+            residual.setLastrestDay(BigDecimal.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getWeekendindustry()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+            totalh += Double.parseDouble(residual.getLastrestDay());
+
+            // 法定加班（300%）
+            residual.setLastlegal(BigDecimal.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getStatutoryresidue()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+            totalh += Double.parseDouble(residual.getLastlegal());
+
+            // 代休
+            // 从代休视图获取该员工所有代休
+            List<restViewVo> restViewVoList = annualLeaveMapper.getrest(item.getUser_id());
+            // 获取3个月之前的代休
+            cal.add(Calendar.MONTH, -2 + rep * -1);
+            String restYear = String.valueOf(cal.get(Calendar.YEAR));
+            String restMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+
+            if (restViewVoList.size() > 0) {
+                residual.setLastreplace(String.valueOf(restViewVoList.stream().
+                        filter(subItem -> subItem.getApplicationdate()
+                                .equals(restYear + restMonth))
+                        .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+                totalh += Double.parseDouble(residual.getLastreplace());
+            } else {
+                residual.setLastreplace("0");
+            }
+
+            // 合计(H)
+            residual.setLasttotalh(BigDecimal.valueOf(totalh).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // 合计(元)
+            residual.setLasttotaly(overtimeCalc(item, residual, "pre"));
+            // endregion
+
+            // 获取本月勤怠表数据
+            if(strFlg.equals("1")){//预计
+                attendance = new Attendance();
+                attendance.setUser_id(item.getUser_id());
+                attendance.setYears(currentYear);
+                attendance.setMonths(currentMonth);
+                attendanceList = attendanceMapper.select(attendance);
+            }
+            else{
+                //实际AttendanceResignation
+                attendanceList = attendanceMapper.selectResignation(item.getUser_id(),currentYear,currentMonth);
+            }
+            totalh = 0d;
+
+            // region 本月残业数据
+            // 平日加班（150%）
+            residual.setThisweekdays(BigDecimal.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getOrdinaryindustry()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+            totalh += Double.parseDouble(residual.getThisweekdays());
+
+            // 休日加班（200%）
+            residual.setThisrestDay(BigDecimal.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getWeekendindustry()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+            totalh += Double.parseDouble(residual.getThisrestDay());
+
+            // 法定加班（300%）
+            residual.setThislegal(BigDecimal.valueOf(attendanceList.stream().mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getStatutoryresidue()))).sum()).setScale(2, RoundingMode.HALF_UP).toPlainString());
+            totalh += Double.parseDouble(residual.getThislegal());
+
+            // 本月代休(3か月前)
+            cal.add(Calendar.MONTH, 1);
+            String currentRestYear = String.valueOf(cal.get(Calendar.YEAR));
+            String currentRestMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+
+            if (restViewVoList.size() > 0) {
+                residual.setThisreplace(String.valueOf(restViewVoList.stream().
+                        filter(subItem -> subItem.getApplicationdate()
+                                .equals(currentRestYear + currentRestMonth))
+                        .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+                totalh += Double.parseDouble(residual.getThisreplace());
+            } else {
+                residual.setThisreplace("0");
+            }
+
+            // 本月代休（3か月以内）
+            int index = 0;
+            List<String> conditionList = new ArrayList<>();
+            while (index <= rep) {
+                cal.add(Calendar.MONTH, 1);
+                conditionList.add(cal.get(Calendar.YEAR) + String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0"));
+                index++;
+            }
+
+            if (restViewVoList.size() > 0) {
+                residual.setThisreplace3(String.valueOf(restViewVoList.stream().
+                        filter(subItem -> conditionList.contains(subItem.getApplicationdate()))
+                        .mapToDouble(tmp -> Double.parseDouble(ifNull(tmp.getRestdays()))).sum() * 8d));
+                totalh += Double.parseDouble(residual.getThisreplace3());
+            } else {
+                residual.setThisreplace3("0");
+            }
+
+            // 合计(H)
+            residual.setThistotalh(BigDecimal.valueOf(totalh).setScale(2, RoundingMode.HALF_UP).toPlainString());
+
+            // 合计(元)
+            residual.setThistotaly(overtimeCalc(item, residual, "current"));
+            // endregion
+
+            // 备考
+            residual.setRemarks(isResign ? "退职" : "-");
+
+            // 加班补助
+            residual.setSubsidy(BigDecimal.valueOf(Double.parseDouble(residual.getLasttotaly()) + Double.parseDouble(residual.getThistotaly())).setScale(2, RoundingMode.HALF_UP).toPlainString());
+            if (tokenModel != null) {
+                residual.preInsert(tokenModel);
+            } else {
+                residual.preInsert();
+            }
+            residualList.add(residual);
+            //residualMapper.insert(residual);
+        });
+        return residualList;
+    }
+
     public String getMonth(String mouth) {
         String _mouth = mouth.substring(5, 7);
         if (_mouth.substring(0, 1) == "0") {
             return _mouth.substring(1);
         }
         return _mouth;
+    }
+
+    /**
+     * @return
+     * @Method ifNull
+     * @Author SKAIXX
+     * @Description 数值Null替换
+     * @Date 2020/3/14 14:15
+     * @Param [val]
+     **/
+    private String ifNull(String val) {
+        if (!com.nt.utils.StringUtils.isEmpty(val)) {
+            return val;
+        }
+        return "0";
+    }
+
+    /**
+     * @return java.lang.String
+     * @Method lackSumCalc
+     * @Author SKAIXX
+     * @Description 欠勤试用与正式合计计算
+     * @Date 2020/3/18 16:03
+     * @Param [val1, val2]
+     **/
+    private String lackSumCalc(String val1, String val2) {
+        return BigDecimal.valueOf(Double.parseDouble(ifNull(val1)) + Double.parseDouble(ifNull(val2))).setScale(2, RoundingMode.HALF_UP).toPlainString();
+    }
+
+    /**
+     * @return java.lang.String
+     * @Method lackAttendanceCalc
+     * @Author SKAIXX
+     * @Description 合计欠勤计算
+     * @Date 2020/3/16 9:45
+     * @Param [base, lackattendance]
+     **/
+    private String lackAttendanceCalc(Base base, Lackattendance lackattendance, String mode) {
+        double total = 0d;  // 总欠勤费
+        // 前月正式小时工资 = 月工资÷21.75天÷8小时
+        double preSalaryPerHour = Double.parseDouble(base.getLastmonth()) / 21.75d / 8d;
+
+        // 当月小时工资 = 月工资÷21.75天÷8小时
+        double currentSalaryPerHour = Double.parseDouble(base.getThismonth()) / 21.75d / 8d;
+
+        // 获取短病欠扣除比例
+        com.nt.dao_Org.Dictionary shortDictionary = new com.nt.dao_Org.Dictionary();
+        shortDictionary.setCode("PR049005");    // 短病欠扣除比例
+        shortDictionary = dictionaryMapper.select(shortDictionary).get(0);
+
+        // 获取长病欠
+        com.nt.dao_Org.Dictionary longDictionary = new Dictionary();
+        longDictionary.setCode("PR047001");     // 大連社会最低賃金
+        longDictionary = dictionaryMapper.select(longDictionary).get(0);
+        // 长病欠小时工资
+        double longSalary = Double.parseDouble(longDictionary.getValue2()) / 21.75d / 8d;
+
+        // UPD_GBB_2020/06/11 update
+        if ("pre".equals(mode)) {   // 前月欠勤费用
+            // 欠勤费用-正式
+            //total += Double.parseDouble(ifNull(lackattendance.getLastdiligenceformal())) * preSalaryPerHour;
+            double Lastdiligenceformal = Double.parseDouble(ifNull(lackattendance.getLastdiligenceformal())) * preSalaryPerHour;
+            // 欠勤费用-试用
+            //total += Double.parseDouble(ifNull(lackattendance.getLastdiligencetry())) * preSalaryPerHour * 0.9d;
+            double Lastdiligencetry = Double.parseDouble(ifNull(lackattendance.getLastdiligencetry())) * preSalaryPerHour * 0.9d;
+            // 短病欠-正式
+//            total += Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencyformal())) * preSalaryPerHour
+//                    * Double.parseDouble(shortDictionary.getValue2());
+            double Lastshortdeficiencyformal = Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencyformal())) * preSalaryPerHour
+                    * Double.parseDouble(shortDictionary.getValue2());
+            // 短病欠-试用
+//            total += Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencytry())) * preSalaryPerHour * 0.9d
+//                    * Double.parseDouble(shortDictionary.getValue2());
+            double Lastshortdeficiencytry = Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencytry())) * preSalaryPerHour * 0.9d
+                    * Double.parseDouble(shortDictionary.getValue2());
+
+            // 长病欠-正式
+            //total += Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencyformal())) * longSalary;
+            double Lastchronicdeficiencyformal = Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencyformal())) * longSalary;
+            // 长病欠-试用
+            //total += Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencytry())) * longSalary * 0.9d;
+            double Lastchronicdeficiencytry = Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencytry())) * longSalary * 0.9d;
+
+            //费用-正式
+            double totala = - Lastdiligenceformal - Lastshortdeficiencyformal - Lastchronicdeficiencyformal;
+            //费用-试用
+            double totalb = - Lastdiligencetry - Lastshortdeficiencytry - Lastchronicdeficiencytry;
+            total = totala + totalb;
+        } else {    // 当月欠勤费用
+            // 欠勤费用-正式
+            //total += Double.parseDouble(ifNull(lackattendance.getThisdiligenceformal())) * currentSalaryPerHour;
+            double Thisdiligenceformal = Double.parseDouble(ifNull(lackattendance.getThisdiligenceformal())) * currentSalaryPerHour;
+            // 欠勤费用-试用
+            //total += Double.parseDouble(ifNull(lackattendance.getThisdiligencetry())) * currentSalaryPerHour * 0.9d;
+            double Thisdiligencetry = Double.parseDouble(ifNull(lackattendance.getThisdiligencetry())) * currentSalaryPerHour * 0.9d;
+
+            // 短病欠-正式
+            total += Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencyformal())) * currentSalaryPerHour
+                    * Double.parseDouble(shortDictionary.getValue2());
+            double Thisshortdeficiencyformal = Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencyformal())) * currentSalaryPerHour
+                    * Double.parseDouble(shortDictionary.getValue2());
+            // 短病欠-试用
+//            total += Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencytry())) * currentSalaryPerHour * 0.9d
+//                    * Double.parseDouble(shortDictionary.getValue2());
+            double Thisshortdeficiencytry = Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencytry())) * currentSalaryPerHour * 0.9d
+                    * Double.parseDouble(shortDictionary.getValue2());
+
+            // 长病欠-正式
+            //total += Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencyformal())) * longSalary;
+            double Thischronicdeficiencyformal = Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencyformal())) * longSalary;
+            // 长病欠-试用
+            //total += Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary * 0.9d;
+            double Thischronicdeficiencytry = Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary * 0.9d;
+            //费用-正式
+            double totala = - Thisdiligenceformal - Thisshortdeficiencyformal - Thisshortdeficiencytry;
+            //费用-试用
+            double totalb = - Thisdiligencetry - Thischronicdeficiencyformal - Thischronicdeficiencytry;
+            total = totala + totalb;
+        }
+        // UPD_GBB_2020/06/11 update
+        return new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString();
+    }
+
+    /**
+     * @return
+     * @Method overtimeCalc
+     * @Author SKAIXX
+     * @Description 加班费计算
+     * @Date 2020/3/16 10:50
+     * @Param [base, residual, mode]
+     **/
+    private String overtimeCalc(Base base, Residual residual, String mode) {
+
+        double total = 0d;  // 总加班费
+
+        // 判断员工当月级别是否为R8及以上
+        boolean isOverR8 = false;
+        String rn = com.nt.utils.StringUtils.isEmpty(base.getRn()) || "その他".equals(base.getRn()) ? "PR021001" : base.getRn();
+        if (Integer.parseInt(rn.substring(rn.length() - 2)) > 5) {
+            isOverR8 = true;
+        }
+
+        if ("pre".equals(mode)) {   // 前月加班费计算
+            // 3个月前小时工资 = 月工资÷21.75天÷8小时
+            double salaryPerHourTma = Double.parseDouble(base.getTmabasic()) / 21.75d / 8d;
+            // 2020/06/05 UPDATE by myt start //GBB
+            // 前月小时工资
+            //double salaryPerHour = Double.parseDouble(base.getThismonth()) / 21.75d / 8d;
+            //上月基本工资
+            double salaryPerHour = Double.parseDouble(base.getLastmonthbasic()) / 21.75d / 8d;
+            // 2020/06/05 UPDATE by myt END //GBB
+            // 平日加班费 150%
+            total += isOverR8 ? 0d : Double.parseDouble(ifNull(residual.getLastweekdays())) * salaryPerHour * 1.5d;
+            // 休日加班费 200%
+            total += isOverR8 ? 0d : Double.parseDouble(ifNull(residual.getLastrestDay())) * salaryPerHour * 2.0d;
+            // 法定加班费 300%
+            total += Double.parseDouble(ifNull(residual.getLastlegal())) * salaryPerHour * 3.0d;
+            // 代休加班费 200%
+            total += isOverR8 ? 0d : Double.parseDouble(ifNull(residual.getLastreplace())) * 8d * salaryPerHourTma * 2.0d;
+        } else {    // 当月加班费计算
+            // 小时工资 = 月工资÷21.75天÷8小时
+            double salaryPerHour = Double.parseDouble(base.getThismonth()) / 21.75d / 8d;
+            // 前月小时工资
+            double lastSalaryPerHour = Double.parseDouble(base.getLastmonth()) / 21.75d / 8d;
+            // 平日加班费 150%
+            total += isOverR8 ? 0d : Double.parseDouble(ifNull(residual.getThisweekdays())) * salaryPerHour * 1.5d;
+            // 休日加班费 200%
+            total += isOverR8 ? 0d : Double.parseDouble(ifNull(residual.getThisrestDay())) * salaryPerHour * 2.0d;
+            // 法定加班费 300%
+            total += Double.parseDouble(ifNull(residual.getThislegal())) * salaryPerHour * 3.0d;
+            // 代休加班费 200% (本月代休加班费 = (3个月前代休+3个月之内的代休) * 前月小时工资 * 200%)
+            total += isOverR8 ? 0d : (Double.parseDouble(ifNull(residual.getThisreplace3())) + Double.parseDouble(ifNull(residual.getThisreplace()))) * 8d * lastSalaryPerHour * 2.0d;
+        }
+        return new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString();
     }
 }

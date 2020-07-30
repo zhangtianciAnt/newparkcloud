@@ -538,7 +538,7 @@
         on otherfive.GIVING_ID = wages.GIVING_ID
         and otherfive.USER_ID = wages.USER_ID
 		where DATE_FORMAT(wages.CREATEON,'%Y-%m')  = #{dates}
-		AND wages.actual = '0'
+		AND wages.actual = #{actual}
 		GROUP BY wages.DEPARTMENT_ID
 		ORDER BY FIELD(wages.DEPARTMENT_ID, 'CTA','IED','APD','ALD','APO','LSD','ECD','DTD','OSD','SSD','SPD','ISD','SDEO','DANP','FPO','ADMN')
     </select>
@@ -571,7 +571,7 @@
         left join otherfive
         on otherfive.GIVING_ID = wages.GIVING_ID
         and otherfive.USER_ID = wages.USER_ID
-        where wages.actual = '0'
+        where wages.actual = #{actual}
         group by DATE_FORMAT(wages.createon,'%Y-%m')
         order by DATE_FORMAT(wages.createon,'%Y-%m')
     </select>

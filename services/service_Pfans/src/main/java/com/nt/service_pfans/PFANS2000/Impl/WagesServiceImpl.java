@@ -30,6 +30,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.nt.utils.MongoObject.CustmizeQuery;
+
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class WagesServiceImpl implements WagesService {
@@ -239,13 +241,13 @@ public class WagesServiceImpl implements WagesService {
     //获取工资公司集计
     @Override
     public List<Wages> getWagesdepartment(String dates) throws Exception {
-        return wagesMapper.getWagesdepartment(dates);
+        return wagesMapper.getWagesdepartment(dates,"0");
     }
 
     @Override
     public List<Wages> getWagecompany() throws Exception {
         List<Wages>  Wageslist = new ArrayList<>();
-        Wageslist = wagesMapper.getWagecompany();
+        Wageslist = wagesMapper.getWagecompany("0");
         return Wageslist;
     }
 
@@ -253,6 +255,18 @@ public class WagesServiceImpl implements WagesService {
     public void insertWages(List<Wages> wages, TokenModel tokenModel) throws Exception {
         String status = wages.get(0).getStatus();
         String actual = wages.get(0).getActual();
+
+//        Query query = CustmizeQuery(new OrgTree());
+//        OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
+//        List<OrgTree> orgTreeList = new ArrayList<>();
+//        List<OrgTree>  orgTrees =  orgTree.getOrgs();
+//        for (OrgTree org:
+//                orgTrees ) {
+//            orgTreeList.addAll(org.getOrgs());
+//        }
+
+        Query query = new Query();
+        List<CustomerInfo> customerInfoList = mongoTemplate.find(query,CustomerInfo.class);
         if(status.equals("0") || status.equals("2")){
             // 先删除当月数据，再插入
             Wages del_wage = new Wages();
@@ -262,6 +276,12 @@ public class WagesServiceImpl implements WagesService {
                 wage.setWages_id(UUID.randomUUID().toString());
                 wage.setCreateonym(DateUtil.format(new Date(), "YYYY-MM"));
                 wage.setActual(actual);
+                if(actual.equals("1")){
+                    List<CustomerInfo> customerinfo = customerInfoList.stream().filter(coi -> (coi.getUserid().contains(wage.getUser_id()))).collect(Collectors.toList());
+                    if(customerinfo.size() > 0){
+                        wage.setDepartment_id(customerinfo.get(0).getUserinfo().getBudgetunit());
+                    }
+                }
                 wage.preInsert(tokenModel);
             }
             wagesMapper.insertListAllCols(wages);
