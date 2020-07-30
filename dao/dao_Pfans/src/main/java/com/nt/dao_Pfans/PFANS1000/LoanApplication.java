@@ -191,7 +191,7 @@ public class LoanApplication extends BaseModel {
      * 核销金额
      */
     @Column(name = "CANAFVERMONEY")
-    private Integer canafvermoney;
+    private String canafvermoney;
 
     //add ccm 0724
     //决裁类型

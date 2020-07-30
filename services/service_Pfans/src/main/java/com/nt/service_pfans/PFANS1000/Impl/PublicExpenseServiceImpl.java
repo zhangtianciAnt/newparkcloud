@@ -30,6 +30,7 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -77,6 +78,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 
     @Autowired
     private PurchaseMapper purchaseMapper;
+
+    @Autowired
+    private LoanApplicationMapper loanApplicationMapper;
 
     //add-ws-7/9-禅道任务248
     @Override
@@ -700,6 +704,30 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         //add-ws-7/20-禅道任务342
         publicExpense.preUpdate(tokenModel);
         publicExpenseMapper.updateByPrimaryKey(publicExpense);
+
+
+
+        if(status.equals("4")){
+            String[] loa = publicExpense.getLoan().split(",");
+            if(loa.length > 0){
+                for(int i = 0; i < loa.length; i ++){
+                    LoanApplication loanApplication = new LoanApplication();
+                    loanApplication.setLoanapplication_id(loa[i]);
+                    LoanApplication loantion = loanApplicationMapper.selectByPrimaryKey(loanApplication);
+                    if(loantion != null){
+                        loantion.setCanafver("1");
+                        if(loantion.getCanafvermoney() != null){
+                            loantion.setCanafvermoney(BigDecimal.valueOf(Double.parseDouble(loantion.getCanafvermoney()) + Double.parseDouble(publicExpense.getMoneys())).setScale(2, RoundingMode.HALF_UP).toPlainString());
+                        }else{
+                            loantion.setCanafvermoney(publicExpense.getMoneys());
+                        }
+                        loanApplicationMapper.updateByPrimaryKey(loantion);
+                    }
+                }
+            }
+        }
+
+
         //add-ws-7/20-禅道任务342
         String[] ts = judgement.split(",");
         if (ts.length > 0) {
@@ -796,6 +824,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 invoicemapper.insertSelective(invoicel);
             }
         }
+
 
         // 付款方式为网上银行付款，个人账户，转账支票做以下处理
 //        if ("PJ004001".equals(publicExpense.getPaymentmethod()) || "PJ004002".equals(publicExpense.getPaymentmethod()) || "PJ004003".equals(publicExpense.getPaymentmethod())) {
