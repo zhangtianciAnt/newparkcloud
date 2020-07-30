@@ -637,32 +637,32 @@
         select
             actual.DEPARTMENT_ID,
             '2' as actual,
-            ROUND((actual.user_id - estimate.user_id),2) as user_id,
-            ROUND((actual.totalwages - estimate.totalwages),2) as totalwages,
-            ROUND((actual.taxestotal - estimate.taxestotal),2) as taxestotal,
-            ROUND((actual.total3 - estimate.total3),2) as total3,
-            ROUND((actual.pension - estimate.pension),2) as pension,
-            ROUND((actual.comendowmentinsurance - estimate.comendowmentinsurance),2) as comendowmentinsurance,
-            ROUND((actual.commedicalinsurance - estimate.commedicalinsurance),2) as commedicalinsurance,
-            ROUND((actual.comunemploymentinsurance - estimate.comunemploymentinsurance),2) as comunemploymentinsurance,
-            ROUND((actual.cominjuryinsurance - estimate.cominjuryinsurance),2) as cominjuryinsurance,
-            ROUND((actual.combirthinsurance - estimate.combirthinsurance),2) as combirthinsurance,
-            ROUND((actual.comheating - estimate.comheating),2) as comheating,
-            ROUND((actual.comaccumulationfund - estimate.comaccumulationfund),2) as comaccumulationfund,
-            ROUND((actual.bonusmoney - estimate.bonusmoney),2) as bonusmoney,
-            ROUND((actual.appreciation - estimate.appreciation),2) as appreciation,
-            ROUND((actual.labourunionfunds - estimate.labourunionfunds),2) as labourunionfunds,
-            ROUND((actual.other4 - estimate.other4),2) as other4,
-            ROUND((actual.other5 - estimate.other5),2) as other5,
-            ROUND((actual.total - estimate.total),2) as total,
-            ROUND((actual.overtimesubsidy - estimate.overtimesubsidy),2) as overtimesubsidy,
-            ROUND((actual.thismonthadjustment - estimate.thismonthadjustment),2) as thismonthadjustment,
-            ROUND((actual.socialinsurance - estimate.socialinsurance),2) as socialinsurance,
-            ROUND((actual.accumulationfund - estimate.accumulationfund),2) as accumulationfund,
-            ROUND((actual.realwages - estimate.realwages),2) as realwages,
-            ROUND((actual.shouldcumulative - estimate.shouldcumulative),2) as shouldcumulative,
-            ROUND((actual.other6 - estimate.other6),2) as other6,
-            ROUND((actual.labourunionbase - estimate.labourunionbase),2) as labourunionbase
+            replace(ROUND((actual.user_id - estimate.user_id),2),'0.00','-') as user_id,
+            replace(ROUND((actual.totalwages - estimate.totalwages),2),'0.00','-') as totalwages,
+            replace(ROUND((actual.taxestotal - estimate.taxestotal),2),'0.00','-') as taxestotal,
+            replace(ROUND((actual.total3 - estimate.total3),2),'0.00','-') as total3,
+            replace(ROUND((actual.pension - estimate.pension),2),'0.00','-') as pension,
+            replace(ROUND((actual.comendowmentinsurance - estimate.comendowmentinsurance),2),'0.00','-') as comendowmentinsurance,
+            replace(ROUND((actual.commedicalinsurance - estimate.commedicalinsurance),2),'0.00','-') as commedicalinsurance,
+            replace(ROUND((actual.comunemploymentinsurance - estimate.comunemploymentinsurance),2),'0.00','-') as comunemploymentinsurance,
+            replace(ROUND((actual.cominjuryinsurance - estimate.cominjuryinsurance),2),'0.00','-') as cominjuryinsurance,
+            replace(ROUND((actual.combirthinsurance - estimate.combirthinsurance),2),'0.00','-') as combirthinsurance,
+            replace(ROUND((actual.comheating - estimate.comheating),2),'0.00','-') as comheating,
+            replace(ROUND((actual.comaccumulationfund - estimate.comaccumulationfund),2),'0.00','-') as comaccumulationfund,
+            replace(ROUND((actual.bonusmoney - estimate.bonusmoney),2),'0.00','-') as bonusmoney,
+            replace(ROUND((actual.appreciation - estimate.appreciation),2),'0.00','-') as appreciation,
+            replace(ROUND((actual.labourunionfunds - estimate.labourunionfunds),2),'0.00','-') as labourunionfunds,
+            replace(ROUND((actual.other4 - estimate.other4),2),'0.00','-') as other4,
+            replace(ROUND((actual.other5 - estimate.other5),2),'0.00','-') as other5,
+            replace(ROUND((actual.total - estimate.total),2),'0.00','-') as total,
+            replace(ROUND((actual.overtimesubsidy - estimate.overtimesubsidy),2),'0.00','-') as overtimesubsidy,
+            replace(ROUND((actual.thismonthadjustment - estimate.thismonthadjustment),2),'0.00','-') as thismonthadjustment,
+            replace(ROUND((actual.socialinsurance - estimate.socialinsurance),2),'0.00','-') as socialinsurance,
+            replace(ROUND((actual.accumulationfund - estimate.accumulationfund),2),'0.00','-') as accumulationfund,
+            replace(ROUND((actual.realwages - estimate.realwages),2),'0.00','-') as realwages,
+            replace(ROUND((actual.shouldcumulative - estimate.shouldcumulative),2),'0.00','-') as shouldcumulative,
+            replace(ROUND((actual.other6 - estimate.other6),2),'0.00','-') as other6,
+            replace(ROUND((actual.labourunionbase - estimate.labourunionbase),2),'0.00','-') as labourunionbase
         from
         (
             select
@@ -819,6 +819,7 @@
             and otherfive.USER_ID = wages.USER_ID
             where wages.actual = '0'
             GROUP BY wages.createonym
+            ORDER BY wages.createonym desc
         ) estimate
 		union all
         select * from
@@ -853,28 +854,29 @@
             and otherfive.USER_ID = wages.USER_ID
             where wages.actual = '1'
             GROUP BY wages.createonym
+            ORDER BY wages.createonym desc
         ) actual
 		union all
         select
             actual.createonym,
             '2' as actual,
-            ROUND((actual.user_id - estimate.user_id),2) as user_id,
-            ROUND((actual.totalwages - estimate.totalwages),2) as totalwages,
-            ROUND((actual.taxestotal - estimate.taxestotal),2) as taxestotal,
-            ROUND((actual.total3 - estimate.total3),2) as total3,
-            ROUND((actual.socialinsurance - estimate.socialinsurance),2) as socialinsurance,
-            ROUND((actual.comaccumulationfund - estimate.comaccumulationfund),2) as comaccumulationfund,
-            ROUND((actual.bonusmoney - estimate.bonusmoney),2) as bonusmoney,
-            ROUND((actual.appreciation - estimate.appreciation),2) as appreciation,
-            ROUND((actual.labourunionfunds - estimate.labourunionfunds),2) as labourunionfunds,
-            ROUND((actual.other4 - estimate.other4),2) as other4,
-            ROUND((actual.other5 - estimate.other5),2) as other5,
-            ROUND((actual.total - estimate.total),2) as total,
-            ROUND((actual.overtimesubsidy - estimate.overtimesubsidy),2) as overtimesubsidy,
-            ROUND((actual.thismonthadjustment - estimate.thismonthadjustment),2) as thismonthadjustment,
-            ROUND((actual.realwages - estimate.realwages),2) as realwages,
-            ROUND((actual.shouldcumulative - estimate.shouldcumulative),2) as shouldcumulative,
-            ROUND((actual.other6 - estimate.other6),2) as other6
+            replace(ROUND((actual.user_id - estimate.user_id),2),'0.00','-') as user_id,
+            replace(ROUND((actual.totalwages - estimate.totalwages),2),'0.00','-') as totalwages,
+            replace(ROUND((actual.taxestotal - estimate.taxestotal),2),'0.00','-') as taxestotal,
+            replace(ROUND((actual.total3 - estimate.total3),2),'0.00','-') as total3,
+            replace(ROUND((actual.socialinsurance - estimate.socialinsurance),2),'0.00','-') as socialinsurance,
+            replace(ROUND((actual.comaccumulationfund - estimate.comaccumulationfund),2),'0.00','-') as comaccumulationfund,
+            replace(ROUND((actual.bonusmoney - estimate.bonusmoney),2),'0.00','-') as bonusmoney,
+            replace(ROUND((actual.appreciation - estimate.appreciation),2),'0.00','-') as appreciation,
+            replace(ROUND((actual.labourunionfunds - estimate.labourunionfunds),2),'0.00','-') as labourunionfunds,
+            replace(ROUND((actual.other4 - estimate.other4),2),'0.00','-') as other4,
+            replace(ROUND((actual.other5 - estimate.other5),2),'0.00','-') as other5,
+            replace(ROUND((actual.total - estimate.total),2),'0.00','-') as total,
+            replace(ROUND((actual.overtimesubsidy - estimate.overtimesubsidy),2),'0.00','-') as overtimesubsidy,
+            replace(ROUND((actual.thismonthadjustment - estimate.thismonthadjustment),2),'0.00','-') as thismonthadjustment,
+            replace(ROUND((actual.realwages - estimate.realwages),2),'0.00','-') as realwages,
+            replace(ROUND((actual.shouldcumulative - estimate.shouldcumulative),2),'0.00','-') as shouldcumulative,
+            replace(ROUND((actual.other6 - estimate.other6),2),'0.00','-') as other6
         from
         (
             select
@@ -907,6 +909,7 @@
             and otherfive.USER_ID = wages.USER_ID
             where wages.actual = '0'
             GROUP BY wages.createonym
+            ORDER BY wages.createonym desc
         ) estimate,
         (
             select
@@ -939,6 +942,7 @@
             and otherfive.USER_ID = wages.USER_ID
             where wages.actual = '1'
             GROUP BY wages.createonym
+            ORDER BY wages.createonym desc
         ) actual
         where  estimate.createonym = actual.createonym
     </select>
