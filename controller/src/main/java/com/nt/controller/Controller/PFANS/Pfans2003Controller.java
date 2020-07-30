@@ -2,6 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.InterviewRecord;
 import com.nt.service_pfans.PFANS2000.InterviewRecordService;
+import com.nt.service_pfans.PFANS2000.mapper.InterviewRecordMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -15,10 +16,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/interviewrecord")
 public class Pfans2003Controller {
+    @Autowired
+    private InterviewRecordMapper interviewrecordMapper;
 
     @Autowired
     private InterviewRecordService interviewrecordService;
@@ -34,32 +39,48 @@ public class Pfans2003Controller {
         return ApiResult.success(interviewrecordService.getInterviewRecord(interviewrecord));
     }
 
-    @RequestMapping(value="/one",method={RequestMethod.POST})
-    public ApiResult  one(@RequestBody InterviewRecord interviewrecord,HttpServletRequest request)throws Exception{
-        if(interviewrecord == null){
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+    @RequestMapping(value = "/one", method = {RequestMethod.POST})
+    public ApiResult one(@RequestBody InterviewRecord interviewrecord, HttpServletRequest request) throws Exception {
+        if (interviewrecord == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(interviewrecordService.One(interviewrecord.getInterviewrecord_id()));
     }
 
-    @RequestMapping(value = "/update",method = {RequestMethod.POST})
-    public ApiResult updateInterviewRecord(@RequestBody InterviewRecord interviewrecord, HttpServletRequest request)throws Exception{
-        if (interviewrecord == null){
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult updateInterviewRecord(@RequestBody InterviewRecord interviewrecord, HttpServletRequest request) throws Exception {
+        if (interviewrecord == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        interviewrecordService.updateInterviewRecord(interviewrecord,tokenModel);
+        interviewrecordService.updateInterviewRecord(interviewrecord, tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/create",method={RequestMethod.POST})
+    @RequestMapping(value = "/create", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody InterviewRecord interviewrecord, HttpServletRequest request) throws Exception {
         if (interviewrecord == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        interviewrecordService.insert(interviewrecord,tokenModel);
+        interviewrecordService.insert(interviewrecord, tokenModel);
         return ApiResult.success();
     }
+
+    //add-ws-7/30-禅道任务296
+    @RequestMapping(value = "/create2", method = {RequestMethod.POST})
+    public ApiResult create2(@RequestBody List<InterviewRecord> interviewrecord, HttpServletRequest request) throws Exception {
+        if (interviewrecord == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        for (InterviewRecord list : interviewrecord) {
+            list.preInsert(tokenModel);
+            list.setInterviewrecord_id(UUID.randomUUID().toString()); ;
+            interviewrecordMapper.insert(list);
+        }
+        return ApiResult.success();
+    }
+    //add-ws-7/30-禅道任务296
 }
