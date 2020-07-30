@@ -48,6 +48,12 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     private ToDoNoticeService toDoNoticeService;
     @Autowired
     private AwardMapper awardMapper;
+    @Autowired
+    private PurchaseApplyMapper purchaseapplyMapper;
+    @Autowired
+    private CommunicationMapper communicationMapper;
+    @Autowired
+    private JudgementMapper judgementMapper;
 
     @Autowired
     private PublicExpenseMapper publicExpenseMapper;
@@ -294,7 +300,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 
         //add ccm 0727
         if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpense.getJudgement_name())) {
-            if (publicExpense.getJudgement_name().substring(0, 2).equals("CG")) {
+            if (publicExpense.getJudgement_name().substring(0, 2).equals("CG")) {//采购
                 String[] pur = publicExpense.getJudgement_name().split(",");
                 for (String p : pur) {
                     Purchase purchase = new Purchase();
@@ -332,6 +338,65 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 
                 }
             }
+            //ADD_FJL_0730  start
+            else if (publicExpense.getJudgement_name().substring(0, 3).equals("JJF"))//交际费
+            {
+                String[] pur = publicExpense.getJudgement_name().split(",");
+                for (String p : pur) {
+                    Communication communication = new Communication();
+                    communication.setNumbercation(p);
+                    List<Communication> communicationList = communicationMapper.select(communication);
+                    if (communicationList.size() > 0) {
+                        communicationList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
+                        communicationList.get(0).setLoanapno(publicExpense.getInvoiceno());
+                        communicationList.get(0).preUpdate(tokenModel);
+                        communicationMapper.updateByPrimaryKey(communicationList.get(0));
+                    }
+                }
+            } else if (publicExpense.getJudgement_name().substring(0, 2).equals("JC"))//其他业务
+            {
+                String[] pur = publicExpense.getJudgement_name().split(",");
+                for (String p : pur) {
+                    Judgement judgement = new Judgement();
+                    judgement.setJudgnumbers(p);
+                    List<Judgement> judgementList = judgementMapper.select(judgement);
+                    if (judgementList.size() > 0) {
+                        judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
+                        judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+                        judgementList.get(0).preUpdate(tokenModel);
+                        judgementMapper.updateByPrimaryKey(judgementList.get(0));
+                    }
+                }
+            } else if (publicExpense.getJudgement_name().substring(0, 2).equals("WC"))//无偿设备
+            {
+                String[] pur = publicExpense.getJudgement_name().split(",");
+                for (String p : pur) {
+                    Judgement judgement = new Judgement();
+                    judgement.setJudgnumbers(p);
+                    List<Judgement> judgementList = judgementMapper.select(judgement);
+                    if (judgementList.size() > 0) {
+                        judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
+                        judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+                        judgementList.get(0).preUpdate(tokenModel);
+                        judgementMapper.updateByPrimaryKey(judgementList.get(0));
+                    }
+                }
+            } else if (publicExpense.getJudgement_name().substring(0, 2).equals("QY"))//千元费用
+            {
+                String[] pur = publicExpense.getJudgement_name().split(",");
+                for (String p : pur) {
+                    PurchaseApply purchaseapply = new PurchaseApply();
+                    purchaseapply.setPurchasenumbers(p);
+                    List<PurchaseApply> purchaseapplyList = purchaseapplyMapper.select(purchaseapply);
+                    if (purchaseapplyList.size() > 0) {
+                        purchaseapplyList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
+                        purchaseapplyList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+                        purchaseapplyList.get(0).preUpdate(tokenModel);
+                        purchaseapplyMapper.updateByPrimaryKey(purchaseapplyList.get(0));
+                    }
+                }
+            }
+            //ADD_FJL_0730  end
         }
         //add ccm 0727
 

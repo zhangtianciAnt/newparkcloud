@@ -225,5 +225,19 @@ public class Judgement extends BaseModel {
     @Column(name = "USERLISTM")
     private String userlistM;
 
+    //ADD_FJL_0730 START
+    //暂借款ID
+    @Column(name = "LOANAPPLICATION_ID")
+    private String loanapplication_id;
+    //暂借款编号
+    @Column(name = "LOANAPNO")
+    private String loanapno;
+    //精算报销编号
+    @Column(name = "INVOICENO")
+    private String invoiceno;
+    //精算ID
+    @Column(name = "PUBLICEXPENSE_ID")
+    private String publicexpense_id;
+    //ADD_FJL_0730 END
 
 }

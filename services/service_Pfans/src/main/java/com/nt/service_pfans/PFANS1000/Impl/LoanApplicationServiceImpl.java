@@ -1,11 +1,10 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
-import com.nt.dao_Pfans.PFANS1000.LoanApplication;
-import com.nt.dao_Pfans.PFANS1000.PublicExpense;
+import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
-import com.nt.service_pfans.PFANS1000.mapper.LoanApplicationMapper;
-import com.nt.service_pfans.PFANS1000.mapper.PublicExpenseMapper;
+import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +25,12 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     private LoanApplicationMapper loanapplicationMapper;
     @Autowired
     private PublicExpenseMapper publicExpenseMapper;
+    @Autowired
+    private PurchaseApplyMapper purchaseapplyMapper;
+    @Autowired
+    private CommunicationMapper communicationMapper;
+    @Autowired
+    private JudgementMapper judgementMapper;
 
     @Autowired
     private PurchaseMapper purchaseMapper;
@@ -92,22 +97,79 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         //CCM ADD 0726
         if(loanapplication.getJudgements_name()!=null && !loanapplication.getJudgements_name().equals(""))
         {
-            if(loanapplication.getJudgements_name().substring(0,2).equals("CG"))
+            if (loanapplication.getJudgements_name().substring(0, 2).equals("CG")) //采购
             {
                 String []pur = loanapplication.getJudgements_name().split(",");
-                for(String p:pur)
-                {
+                for(String p:pur) {
                     Purchase purchase = new Purchase();
                     purchase.setPurnumbers(p);
                     List<Purchase> purchaseList = purchaseMapper.select(purchase);
-                    if(purchaseList.size()>0)
-                    {
+                    if(purchaseList.size()>0) {
                         purchaseList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
                         purchaseList.get(0).setLoanapno(loanapplication.getLoanapno());
                         purchaseList.get(0).preUpdate(tokenModel);
                         purchaseMapper.updateByPrimaryKey(purchaseList.get(0));
                     }
                 }
+            }
+            //ADD_FJL_0730  start
+            else if (loanapplication.getJudgements_name().substring(0, 3).equals("JJF"))//交际费
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    Communication communication = new Communication();
+                    communication.setNumbercation(p);
+                    List<Communication> communicationList = communicationMapper.select(communication);
+                    if (communicationList.size() > 0) {
+                        communicationList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                        communicationList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        communicationList.get(0).preUpdate(tokenModel);
+                        communicationMapper.updateByPrimaryKey(communicationList.get(0));
+                    }
+                }
+            } else if (loanapplication.getJudgements_name().substring(0, 2).equals("JC"))//其他业务
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    Judgement judgement = new Judgement();
+                    judgement.setJudgnumbers(p);
+                    List<Judgement> judgementList = judgementMapper.select(judgement);
+                    if (judgementList.size() > 0) {
+                        judgementList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                        judgementList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        judgementList.get(0).preUpdate(tokenModel);
+                        judgementMapper.updateByPrimaryKey(judgementList.get(0));
+                    }
+                }
+            } else if (loanapplication.getJudgements_name().substring(0, 2).equals("WC"))//无偿设备
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    Judgement judgement = new Judgement();
+                    judgement.setJudgnumbers(p);
+                    List<Judgement> judgementList = judgementMapper.select(judgement);
+                    if (judgementList.size() > 0) {
+                        judgementList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                        judgementList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        judgementList.get(0).preUpdate(tokenModel);
+                        judgementMapper.updateByPrimaryKey(judgementList.get(0));
+                    }
+                }
+            } else if (loanapplication.getJudgements_name().substring(0, 2).equals("QY"))//千元费用
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    PurchaseApply purchaseapply = new PurchaseApply();
+                    purchaseapply.setPurchasenumbers(p);
+                    List<PurchaseApply> purchaseapplyList = purchaseapplyMapper.select(purchaseapply);
+                    if (purchaseapplyList.size() > 0) {
+                        purchaseapplyList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                        purchaseapplyList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        purchaseapplyList.get(0).preUpdate(tokenModel);
+                        purchaseapplyMapper.updateByPrimaryKey(purchaseapplyList.get(0));
+                    }
+                }
+                //ADD_FJL_0730  end
             }
         }
     }
