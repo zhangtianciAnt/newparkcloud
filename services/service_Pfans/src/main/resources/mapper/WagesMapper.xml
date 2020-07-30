@@ -819,7 +819,7 @@
             and otherfive.USER_ID = wages.USER_ID
             where wages.actual = '0'
             GROUP BY wages.createonym
-            ORDER BY wages.createonym desc
+            ORDER BY wages.createonym
         ) estimate
 		union all
         select * from
@@ -854,7 +854,7 @@
             and otherfive.USER_ID = wages.USER_ID
             where wages.actual = '1'
             GROUP BY wages.createonym
-            ORDER BY wages.createonym desc
+            ORDER BY wages.createonym
         ) actual
 		union all
         select
@@ -909,7 +909,7 @@
             and otherfive.USER_ID = wages.USER_ID
             where wages.actual = '0'
             GROUP BY wages.createonym
-            ORDER BY wages.createonym desc
+            ORDER BY wages.createonym
         ) estimate,
         (
             select
@@ -942,7 +942,7 @@
             and otherfive.USER_ID = wages.USER_ID
             where wages.actual = '1'
             GROUP BY wages.createonym
-            ORDER BY wages.createonym desc
+            ORDER BY wages.createonym
         ) actual
         where  estimate.createonym = actual.createonym
     </select>
