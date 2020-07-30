@@ -24,6 +24,13 @@ public class BASFWebSocketConfig implements WebSocketConfigurer {
                 // websock拦截器
                 .addInterceptors(new WebSocketInterceptor())
         ;
+
+        registry.addHandler(myHandler(), "basfWebSocket/chatroom")
+                // 允许跨域
+                .setAllowedOrigins("*")
+                // websock拦截器
+                .addInterceptors(new WebSocketInterceptorChatroom())
+        ;
     }
 
     public WebSocketHandler myHandler() {
