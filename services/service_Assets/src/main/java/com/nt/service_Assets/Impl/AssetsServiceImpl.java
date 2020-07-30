@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -117,6 +118,27 @@ public class AssetsServiceImpl implements AssetsService {
     @Override
     public List<Assets> list(Assets assets) throws Exception {
         return assetsMapper.select(assets);
+    }
+
+
+    //定时任务
+    @Scheduled(cron = "0 37 0 * * ?")
+    public void updateAssets() throws Exception{
+        SimpleDateFormat st = new SimpleDateFormat("yyyy-MM-dd");
+        String newDate = st.format(new Date());
+        Assets assets  = new Assets();
+        List<Assets> assetsList = assetsMapper.select(assets);
+        if(assetsList.size() > 0){
+            for(Assets as : assetsList){
+                if(as.getPsdcdperiod() != null && as.getPsdcdperiod().equals(newDate)){
+                    as.setStockstatus("PA002001");
+                    assetsMapper.updateByPrimaryKey(as);
+                }else if(as.getPsdcdreturndate() != null && as.getPsdcdreturndate().equals(newDate)){
+                    as.setStockstatus("PA002002");
+                    assetsMapper.updateByPrimaryKey(as);
+                }
+            }
+        }
     }
 
     @Override
