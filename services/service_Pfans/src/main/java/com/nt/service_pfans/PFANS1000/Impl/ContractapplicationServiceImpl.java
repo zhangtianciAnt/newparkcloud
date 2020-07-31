@@ -805,7 +805,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<Contractnumbercount> contractnumbercountList = contractnumbercountMapper.select(contractnumbercount);
         if (contractnumbercountList.size() > 0) {
             //请求日  Claimdate   给请求担当发代办
-            List<Contractnumbercount> conList = contractnumbercountList.stream().filter(item -> Integer.parseInt(st.format(item.getClaimdate())) <= Integer.parseInt(st.format(new Date()))).collect(Collectors.toList());
+            List<Contractnumbercount> conList = contractnumbercountList.stream().filter(item -> (StringUtils.isNullOrEmpty(item.getClaimconditionqh()) || item.getClaimconditionqh().equals("HT011001")) && Integer.parseInt(st.format(item.getClaimdate())) <= Integer.parseInt(st.format(new Date()))).collect(Collectors.toList());
             if (conList.size() > 0) {
                 for (Contractnumbercount cq : conList) {
                     Contractapplication contractapplication = new Contractapplication();
@@ -837,7 +837,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
             }
             //纳品预订日  Deliverydate  给纳品担当发代办
-            List<Contractnumbercount> conList1 = contractnumbercountList.stream().filter(item -> Integer.parseInt(st.format(item.getDeliverydate())) <= Integer.parseInt(st.format(new Date()))).collect(Collectors.toList());
+            List<Contractnumbercount> conList1 = contractnumbercountList.stream().filter(item -> (StringUtils.isNullOrEmpty(item.getDeliveryconditionqh()) || item.getDeliveryconditionqh().equals("HT009001")) && Integer.parseInt(st.format(item.getDeliverydate())) <= Integer.parseInt(st.format(new Date()))).collect(Collectors.toList());
             if (conList1.size() > 0) {
                 for (Contractnumbercount cN : conList1) {
                     Contractapplication contractapplication = new Contractapplication();
