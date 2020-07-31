@@ -239,5 +239,9 @@ public class Judgement extends BaseModel {
     @Column(name = "PUBLICEXPENSE_ID")
     private String publicexpense_id;
     //ADD_FJL_0730 END
+    //精算ID
+    @Column(name = "SUPPLEMENTARY")
+    private String supplementary;
+    //ADD_FJL_0730 END
 
 }
