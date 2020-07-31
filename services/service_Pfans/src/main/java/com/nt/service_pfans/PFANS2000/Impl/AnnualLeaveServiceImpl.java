@@ -3322,6 +3322,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 .lte(now.get(Calendar.YEAR) + "-" + getMonth(sfymd.format(now.getTime())) + "-" + lastDay);
         query.addCriteria(criteria);
         List<CustomerInfo> customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
+        //List<CustomerInfo> customerInfoList = new ArrayList<>();
         if (customerInfoList.size() > 0) {
             for(CustomerInfo info :customerInfoList){
                 StaffNoList = info.getUserinfo().getJobnumber();
@@ -3772,7 +3773,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
         //region 入职
         Induction indu = new Induction();
-        indu.setGive(oldgivingid);
+        indu.setGiving_id(oldgivingid);
         List<Induction> inductionList = inductionMapper.select(indu);
         if (inductionList.size() > 0) {
             for (Induction induction : inductionList) {
@@ -3793,7 +3794,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //region 退职
         rowundex = 1;
         Retire ret = new Retire();
-        ret.setGive(oldgivingid);
+        ret.setGiving_id(oldgivingid);
         List<Retire> retireList = retireMapper.select(ret);
         if (retireList.size() > 0) {
             for (Retire retire : retireList) {
@@ -4049,8 +4050,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         if(wagesList.size() > 0){
             wagesList.get(0).setStatus(AuthConstants.DEL_FLAG_NORMAL);//实际工资
             wagesList.get(0).setActual("1");//实际工资
+            wagesservice.insertWages(wagesList,tokenModel);
         }
-        wagesservice.insertWages(wagesList,tokenModel);
         //endregion 实际工资
 
     }
