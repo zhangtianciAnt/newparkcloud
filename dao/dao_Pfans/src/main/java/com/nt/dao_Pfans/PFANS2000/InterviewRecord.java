@@ -172,6 +172,13 @@ public class InterviewRecord  extends BaseModel {
      */
     @Column(name = "INTERVIEW ")
     private String interview ;
+    //add_fjl_0731
+    /**
+     * 姓名ID
+     */
+    @Column(name = "USERID")
+    private String userid;
+    //add_fjl_0731
 
 }
 

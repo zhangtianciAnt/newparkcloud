@@ -123,4 +123,7 @@ public class RecruitJudgement extends BaseModel {
     private Date intime;
     private Date expectedtime;
     private Date entrytime;
+    //add_fjl_0731
+    private String interviewrecord_id;
+    //add_fjl_0731
 }

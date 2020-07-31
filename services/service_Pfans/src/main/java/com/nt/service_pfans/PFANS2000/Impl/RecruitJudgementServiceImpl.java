@@ -9,11 +9,13 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.ToDoNotice;
+import com.nt.dao_Pfans.PFANS2000.InterviewRecord;
 import com.nt.dao_Pfans.PFANS2000.RecruitJudgement;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS2000.RecruitJudgementService;
+import com.nt.service_pfans.PFANS2000.mapper.InterviewRecordMapper;
 import com.nt.service_pfans.PFANS2000.mapper.RecruitJudgementMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
@@ -35,6 +37,8 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
 
     @Autowired
     private RecruitJudgementMapper recruitJudgementMapper;
+    @Autowired
+    private InterviewRecordMapper interviewRecordMapper;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -121,6 +125,16 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
             List<UserAccount> userAccountlist = mongoTemplate.find(query0, UserAccount.class);
             if (userAccountlist.size() > 0) {
                 String _id = userAccountlist.get(0).get_id();
+                //add_fjl_0731  审批通过之后把useri往招聘信息管理中插入userid
+                if (!StringUtils.isNullOrEmpty(recruitJudgement.getInterviewrecord_id())) {
+                    String intcordid = recruitJudgement.getInterviewrecord_id();
+                    InterviewRecord interviewRecord = interviewRecordMapper.selectByPrimaryKey(intcordid);
+                    if (interviewRecord != null) {
+                        interviewRecord.setUserid(_id);
+                        interviewRecordMapper.updateByPrimaryKey(interviewRecord);
+                    }
+                }
+                //add_fjl_0731  审批通过之后把useri往招聘信息管理中插入userid
 
                 CustomerInfo customerInfo = new CustomerInfo();
                 CustomerInfo.UserInfo info = new CustomerInfo.UserInfo();
