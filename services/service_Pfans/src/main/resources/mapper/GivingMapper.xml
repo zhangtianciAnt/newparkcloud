@@ -40,6 +40,7 @@
     ON base.giving_id=wages.giving_id
     AND base.user_id=wages.user_id
     where DATE_FORMAT(wages.CREATEON,'%Y-%m') = #{dates}
+    and wages.actual = '0'
     </select>
 
 </mapper>

@@ -49,4 +49,7 @@ public interface AnnualLeaveService {
      void insertNewAnnualRest(UserVo userVo,String id) throws Exception;
     //离职剩余年休
     public String remainingAnnual(String userid,String year) throws Exception;
+
+    //每月最后一天计算实际工资
+    void getrealwages() throws Exception;
 }

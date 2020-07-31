@@ -38,7 +38,7 @@ public class WagesController {
     }
     //获取工资部门集计
     @RequestMapping(value = "/getWagesdepartment", method = {RequestMethod.GET})
-    public ApiResult getWagesdepartment(HttpServletRequest request, @RequestParam String dates) throws Exception {
+    public ApiResult getWagesdepartment(HttpServletRequest request, String dates) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return new ApiResult(wagesService.getWagesdepartment(dates));
     }

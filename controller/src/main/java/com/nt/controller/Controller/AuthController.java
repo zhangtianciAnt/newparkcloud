@@ -133,4 +133,11 @@ public class AuthController {
         annualLeaveService.getPunchcardbp(Punchcard);
         return ApiResult.success();
     }
+
+    //每月最后一天计算实际工资 add gbb 0728
+    @RequestMapping(value = "/getrealwages",method={RequestMethod.GET})
+    public ApiResult getrealwages(HttpServletRequest request) throws Exception {
+        annualLeaveService.getrealwages();
+        return ApiResult.success();
+    }
 }

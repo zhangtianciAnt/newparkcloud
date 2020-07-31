@@ -368,4 +368,7 @@ public class Wages extends BaseModel {
 
     @Column(name = "GRANTSTATUS")
     private String grantstatus;         //工资发放状态
+
+    @Column(name = "ACTUAL")
+    private String actual;         //实际工资：1
 }
