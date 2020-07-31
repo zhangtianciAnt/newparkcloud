@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 import com.nt.dao_Pfans.PFANS1000.Contract;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
+import com.nt.dao_Pfans.PFANS1000.NonJudgment;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractVo;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.service_pfans.PFANS1000.ContractService;
@@ -13,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class ContractServiceImpl implements ContractService {
@@ -29,7 +33,11 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public List<Contract> get(Contract contract) throws Exception {
-        return contractMapper.select(contract);
+        List<Contract> contractlist = contractMapper.select(contract);
+        if (contractlist.size()  > 0) {
+            contractlist = contractlist.stream().sorted(Comparator.comparing(Contract::getCreateon).reversed()).collect(Collectors.toList());
+        }
+        return contractlist;
     }
 
     @Override

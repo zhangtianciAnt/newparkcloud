@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.NonJudgment;
+import com.nt.dao_Pfans.PFANS1000.Quotation;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.service_pfans.PFANS1000.NonJudgmentService;
 import com.nt.service_pfans.PFANS1000.mapper.NonJudgmentMapper;
@@ -10,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -25,7 +28,11 @@ public class NonJudgmentServiceImpl implements NonJudgmentService {
 
     @Override
     public List<NonJudgment> get(NonJudgment nonJudgment) throws Exception {
-        return nonJudgmentMapper.select(nonJudgment);
+        List<NonJudgment> nonjudgmentlist = nonJudgmentMapper.select(nonJudgment);
+        if (nonjudgmentlist.size()  > 0) {
+            nonjudgmentlist = nonjudgmentlist.stream().sorted(Comparator.comparing(NonJudgment::getCreateon).reversed()).collect(Collectors.toList());
+        }
+        return nonjudgmentlist;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.QuotationVo;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
@@ -18,7 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(rollbackFor=Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class QuotationServiceImpl implements QuotationService {
 
     @Autowired
@@ -43,8 +44,12 @@ public class QuotationServiceImpl implements QuotationService {
     CompanyProjectsMapper companyProjectsMapper;
 
     @Override
-    public List<Quotation> get(Quotation quotation)  throws Exception{
-        return quotationMapper.select(quotation);
+    public List<Quotation> get(Quotation quotation) throws Exception {
+        List<Quotation> quotationlist = quotationMapper.select(quotation);
+        if (quotationlist.size() > 0) {
+            quotationlist = quotationlist.stream().sorted(Comparator.comparing(Quotation::getCreateon).reversed()).collect(Collectors.toList());
+        }
+        return quotationlist;
     }
 
     @Override
@@ -87,7 +92,7 @@ public class QuotationServiceImpl implements QuotationService {
         asseVo.setOthpersonfee(othpersonfeelist);
         asseVo.setFruit(fruitlist);
 
-        if ( asseVo != null ) {
+        if (asseVo != null) {
             Contractnumbercount contractnumbercount = new Contractnumbercount();
             contractnumbercount.setContractnumber(quo.getContractnumber());
             List<Contractnumbercount> list = contractnumbercountMapper.select(contractnumbercount);
