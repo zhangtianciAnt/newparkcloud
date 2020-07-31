@@ -76,7 +76,8 @@ public class SecurityServiceImpl implements SecurityService {
                 interviewrecord.setUserid(securitydetail.getTitle());
                 List<InterviewRecord> interviewrecordlist = interviewrecordMapper.select(interviewrecord);
                 if (interviewrecordlist.size() > 0) {
-                    interviewrecordlist.get(0).setWhetherentry("1");
+                    interviewrecordlist.get(0).setWhetherentry("0");
+                    interviewrecordlist.get(0).setResult("0");
                     interviewrecordMapper.updateByPrimaryKey(interviewrecord);
                 }
             }
