@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Pfans.PFANS1000.Napalm;
 import com.nt.dao_Pfans.PFANS1000.Petition;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.service_pfans.PFANS1000.PetitionService;
@@ -10,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
-
+import java.util.stream.Collectors;
+import java.text.SimpleDateFormat;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class PetitionServiceImpl implements PetitionService {
@@ -25,8 +28,12 @@ public class PetitionServiceImpl implements PetitionService {
 
     @Override
     public List<Petition> get(Petition petition) throws Exception {
-
-        return petitionMapper.select(petition);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        List<Petition> petitionlist = petitionMapper.select(petition);
+        if (petitionlist.size() > 0) {
+            petitionlist = petitionlist.stream().sorted(Comparator.comparing(Petition::getCreateon).reversed()).collect(Collectors.toList());
+        }
+        return petitionlist;
     }
 
     @Override

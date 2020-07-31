@@ -2,10 +2,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.ToDoNotice;
-import com.nt.dao_Pfans.PFANS1000.Award;
-import com.nt.dao_Pfans.PFANS1000.AwardDetail;
-import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
-import com.nt.dao_Pfans.PFANS1000.StaffDetail;
+import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.service_Auth.RoleService;
@@ -52,7 +49,11 @@ public class AwardServiceImpl implements AwardService {
 
     @Override
     public List<Award> get(Award award) throws Exception {
-        return awardMapper.select(award);
+        List<Award> awardlist = awardMapper.select(award);
+        if (awardlist.size()  > 0) {
+            awardlist = awardlist.stream().sorted(Comparator.comparing(Award::getCreateon).reversed()).collect(Collectors.toList());
+        }
+        return awardlist;
     }
 
     // 禅道任务152

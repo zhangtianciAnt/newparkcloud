@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.dao_Pfans.PFANS1000.Napalm;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.service_pfans.PFANS1000.NapalmService;
@@ -11,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -21,11 +24,15 @@ public class NapalmServiceImpl implements NapalmService {
     private NapalmMapper napalmMapper;
 
     @Autowired
-    CompanyProjectsMapper  companyProjectsMapper;
+    CompanyProjectsMapper companyProjectsMapper;
 
     @Override
-    public List<Napalm> get(Napalm napalm) throws Exception{
-        return napalmMapper.select(napalm);
+    public List<Napalm> get(Napalm napalm) throws Exception {
+        List<Napalm> napalmlist = napalmMapper.select(napalm);
+        if (napalmlist.size() > 0) {
+            napalmlist = napalmlist.stream().sorted(Comparator.comparing(Napalm::getCreateon).reversed()).collect(Collectors.toList());
+        }
+        return napalmlist;
     }
 
     @Override
