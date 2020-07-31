@@ -3,9 +3,11 @@ package com.nt.service_pfans.PFANS1000.Impl;
 import com.nt.dao_Pfans.PFANS1000.Security;
 import com.nt.dao_Pfans.PFANS1000.Securitydetail;
 import com.nt.dao_Pfans.PFANS1000.Vo.SecurityVo;
+import com.nt.dao_Pfans.PFANS2000.InterviewRecord;
 import com.nt.service_pfans.PFANS1000.SecurityService;
 import com.nt.service_pfans.PFANS1000.mapper.SecurityMapper;
 import com.nt.service_pfans.PFANS1000.mapper.SecuritydetailMapper;
+import com.nt.service_pfans.PFANS2000.mapper.InterviewRecordMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +20,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(rollbackFor=Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class SecurityServiceImpl implements SecurityService {
-
+    @Autowired
+    private InterviewRecordMapper interviewrecordMapper;
     @Autowired
     private SecurityMapper securityMapper;
 
@@ -28,7 +31,7 @@ public class SecurityServiceImpl implements SecurityService {
     private SecuritydetailMapper securitydetailMapper;
 
     @Override
-    public List<Security> getSecurity(Security security)  throws Exception{
+    public List<Security> getSecurity(Security security) throws Exception {
         return securityMapper.select(security);
     }
 
@@ -67,7 +70,19 @@ public class SecurityServiceImpl implements SecurityService {
                 securitydetailMapper.insertSelective(securitydetail);
             }
         }
+        if (securityVo.getSecurity().getStatus().equals("4")) {
+            for (Securitydetail securitydetail : securitydetaillist) {
+                InterviewRecord interviewrecord = new InterviewRecord();
+                interviewrecord.setUserid(securitydetail.getTitle());
+                List<InterviewRecord> interviewrecordlist = interviewrecordMapper.select(interviewrecord);
+                if (interviewrecordlist.size() > 0) {
+                    interviewrecordlist.get(0).setWhetherentry("1");
+                    interviewrecordMapper.updateByPrimaryKey(interviewrecord);
+                }
+            }
+        }
     }
+
     @Override
     public void insert(SecurityVo securityVo, TokenModel tokenModel) throws Exception {
         String securityid = UUID.randomUUID().toString();
