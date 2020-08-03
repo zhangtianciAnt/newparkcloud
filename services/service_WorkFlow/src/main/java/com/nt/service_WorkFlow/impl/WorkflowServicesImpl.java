@@ -1190,30 +1190,58 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     if (item.getOutcondition() == null || item.getOutcondition() == "") {
                         item.setOutcondition("1");
                     }
-                    if (workflowsteplist.size() > 0 && workflowsteplist.stream().filter(stepi -> (AuthConstants.APPROVED_FLAG_YES.equals(stepi.getStatus()))).count() < Convert.toInt(item.getOutcondition())) {
-                        // 结束操作
-                        outOperationWorkflowVo.setState("0");
-                        outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
-                        return outOperationWorkflowVo;
-                    } else {
-                        if (item.getItemid() != null) {
-                            for (String user : item.getItemid().split(",")) {
-                                ToDoNotice toDoNotice1 = new ToDoNotice();
-                                toDoNotice1.setDataid(dataId);
-                                toDoNotice1.setUrl(url);
-                                toDoNotice1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-                                toDoNotice1.setOwner(user);
-                                List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
-                                for (ToDoNotice itemToDoNotice :
-                                        rst1) {
-                                    itemToDoNotice.setStatus(AuthConstants.TODO_STATUS_DONE);
-                                    toDoNoticeService.updateNoticesStatus(itemToDoNotice);
+                    if(0 != Convert.toInt(item.getOutcondition())){
+                        if (workflowsteplist.size() > 0 && workflowsteplist.stream().filter(stepi -> (AuthConstants.APPROVED_FLAG_YES.equals(stepi.getStatus()))).count() < Convert.toInt(item.getOutcondition())) {
+                            // 结束操作
+                            outOperationWorkflowVo.setState("0");
+                            outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+                            return outOperationWorkflowVo;
+                        } else {
+                            if (item.getItemid() != null) {
+                                for (String user : item.getItemid().split(",")) {
+                                    ToDoNotice toDoNotice1 = new ToDoNotice();
+                                    toDoNotice1.setDataid(dataId);
+                                    toDoNotice1.setUrl(url);
+                                    toDoNotice1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                                    toDoNotice1.setOwner(user);
+                                    List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
+                                    for (ToDoNotice itemToDoNotice :
+                                            rst1) {
+                                        itemToDoNotice.setStatus(AuthConstants.TODO_STATUS_DONE);
+                                        toDoNoticeService.updateNoticesStatus(itemToDoNotice);
+                                    }
                                 }
                             }
+
+
                         }
+                    }else{
+                        if (workflowsteplist.size() > 0 && workflowsteplist.stream().filter(stepi -> (AuthConstants.APPROVED_FLAG_NO.equals(stepi.getStatus()))).count() > 0) {
+                            // 结束操作
+                            outOperationWorkflowVo.setState("0");
+                            outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+                            return outOperationWorkflowVo;
+                        } else {
+                            if (item.getItemid() != null) {
+                                for (String user : item.getItemid().split(",")) {
+                                    ToDoNotice toDoNotice1 = new ToDoNotice();
+                                    toDoNotice1.setDataid(dataId);
+                                    toDoNotice1.setUrl(url);
+                                    toDoNotice1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                                    toDoNotice1.setOwner(user);
+                                    List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
+                                    for (ToDoNotice itemToDoNotice :
+                                            rst1) {
+                                        itemToDoNotice.setStatus(AuthConstants.TODO_STATUS_DONE);
+                                        toDoNoticeService.updateNoticesStatus(itemToDoNotice);
+                                    }
+                                }
+                            }
 
 
+                        }
                     }
+
 
                     // 如果节点为最后一个节点时，结束流程
                     if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
