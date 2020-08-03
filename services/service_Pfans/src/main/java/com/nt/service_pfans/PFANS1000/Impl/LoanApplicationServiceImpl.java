@@ -35,6 +35,11 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     @Autowired
     private PurchaseMapper purchaseMapper;
 
+    @Autowired
+    private BusinessMapper businessMapper;
+
+
+
     @Override
     public List<LoanApplication> getLoanApplication(LoanApplication loanapplication) {
         return loanapplicationMapper.select(loanapplication);
@@ -155,7 +160,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         judgementMapper.updateByPrimaryKey(judgementList.get(0));
                     }
                 }
-            } else if (loanapplication.getJudgements_name().substring(0, 2).equals("QY"))//千元费用
+            }
+            else if (loanapplication.getJudgements_name().substring(0, 2).equals("QY"))//千元费用
             {
                 String[] pur = loanapplication.getJudgements_name().split(",");
                 for (String p : pur) {
@@ -170,6 +176,21 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     }
                 }
                 //ADD_FJL_0730  end
+            }
+            else if (loanapplication.getJudgements_name().substring(0, 1).equals("C"))//境内外出差
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    Business business = new Business();
+                    business.setBusiness_number(p);
+                    List<Business> businessList = businessMapper.select(business);
+                    if (businessList.size() > 0) {
+                        businessList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                        businessList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        businessList.get(0).preUpdate(tokenModel);
+                        businessMapper.updateByPrimaryKey(businessList.get(0));
+                    }
+                }
             }
         }
     }

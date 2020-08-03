@@ -379,4 +379,13 @@ public class Business extends BaseModel {
     //地域名称
     @Column(name = "REGIONNAME")
     private String regionname;
+
+    //add ccm 0731 START
+    //暂借款ID
+    @Column(name = "LOANAPPLICATION_ID")
+    private String loanapplication_id;
+    //暂借款编号
+    @Column(name = "LOANAPNO")
+    private String loanapno;
+    //add ccm 0731 to
 }
