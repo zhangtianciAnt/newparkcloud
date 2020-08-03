@@ -74,4 +74,10 @@ public class Pfans6008Controller {
         }
     }
 
+    @RequestMapping(value = "/getcostMonth", method = {RequestMethod.GET})
+    public ApiResult getcostMonth(String groupid,HttpServletRequest request) throws Exception {
+        //Coststatistics coststatistics = new Coststatistics();
+        return ApiResult.success(coststatisticsService.getcostMonth(groupid));
+    }
+
 }

@@ -21,4 +21,5 @@ public interface CoststatisticsService {
     Map<String, Double> getUserPriceMapBygroupid(String groupid,String years) throws Exception;
 
     public XSSFWorkbook downloadExcel(CoststatisticsVo coststatisticsVo, HttpServletRequest request, HttpServletResponse resp) throws LogicalException;
+    List<Map<String, String>>  getcostMonth(String groupid) throws Exception;
 }

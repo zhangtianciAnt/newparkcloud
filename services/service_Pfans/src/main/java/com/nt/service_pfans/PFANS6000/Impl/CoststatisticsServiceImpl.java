@@ -435,4 +435,51 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             throw new LogicalException(e.getMessage());
         }
     }
+
+    @Override
+    public List<Map<String, String>>  getcostMonth(String groupid) throws Exception {
+        List<String> groupIdList = new ArrayList<String>();
+        groupIdList.add("6ED276094B952D25E106897F7726BB58F9F9");
+        groupIdList.add("3C03D6F2E6D48E51C97CA44F630F13DBE77D");
+        List<Map<String, String>> dataList = new ArrayList<Map<String,String>>();
+        String strGroupid = "";
+        if(groupIdList.size() > 0){
+            Integer ingflg = 0;
+            for(int i=0;i<groupIdList.size();i++ ){
+                strGroupid = strGroupid + groupIdList.get(i) + ",";
+                List<Map<String, String>> data = coststatisticsMapper.getcostMonth("manhour6","cost6",strGroupid);
+                if(data.size() > 0){
+                    if(i == 0){
+                        dataList = data;
+                    }
+                    else{
+                        for(int j=0;j<dataList.size();j++ ){
+                            dataList.get(j).put("groupnumber", String.valueOf(ingflg + 1));//group个数
+                            dataList.get(j).put("strgroupid", strGroupid);//groupid
+                            if(dataList.get(j).get("bpcompany").equals(data.get(j).get("bpcompany"))){//会社名
+                                //委任工数
+                                dataList.get(j).put("ex1manhour" + String.valueOf(j), String.valueOf(data.get(j).get("ex1manhour")));
+                                //委任费用
+                                dataList.get(j).put("ex1cost" + String.valueOf(j), String.valueOf(data.get(j).get("ex1cost")));
+                                //委任人数
+                                dataList.get(j).put("ex1usercount" + String.valueOf(j), String.valueOf(data.get(j).get("ex1usercount")));
+                                //請負工数
+                                dataList.get(j).put("ex2manhour" + String.valueOf(j), String.valueOf(data.get(j).get("ex2manhour")));
+                                //請負费用
+                                dataList.get(j).put("ex2cost" + String.valueOf(j), String.valueOf(data.get(j).get("ex2cost")));
+                                //請負人数
+                                dataList.get(j).put("ex2usercount" + String.valueOf(j), String.valueOf(data.get(j).get("ex2usercount")));
+
+                                BigDecimal bddataList = new BigDecimal(String.valueOf(dataList.get(j).get("costcount")));
+                                BigDecimal bddata = new BigDecimal(String.valueOf(data.get(j).get("costcount")));
+                                //会社总费用
+                                dataList.get(j).put("bpcompanycount", String.valueOf(bddataList.add(bddata)));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return dataList;
+    }
 }
