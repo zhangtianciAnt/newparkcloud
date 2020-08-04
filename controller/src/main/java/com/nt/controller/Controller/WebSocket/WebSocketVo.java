@@ -83,6 +83,8 @@ public class WebSocketVo {
 
     //应急预案列表
     private List<Emergencyplan> emergencyplanList = new ArrayList<>();
+    //化学品SDS列表
+    private List<Chemicalsds> chemicalsdsList = new ArrayList<>();
     //响应信息列表
     private List<Responseinformation> responseinformationList = new ArrayList<>();
     //在厂人员列表

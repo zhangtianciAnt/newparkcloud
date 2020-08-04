@@ -80,6 +80,9 @@ public class MultiThreadScheduleTask {
     EmergencyplanServices emergencyplanServices;
 
     @Autowired
+    ChemicalsdsServices chemicalsdsServices;
+
+    @Autowired
     private ResponseinformationServices responseinformationServices;
 
     @Autowired
@@ -494,6 +497,14 @@ public class MultiThreadScheduleTask {
     public void BASF10802_GetEmergencyplanInfo() throws Exception {
         // 应急预案列表
         webSocketVo.setEmergencyplanList(emergencyplanServices.list());
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF10804_GetChemicalsdsInfo() throws Exception {
+        // 化学品SDS列表
+        webSocketVo.setChemicalsdsList(chemicalsdsServices.list());
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
