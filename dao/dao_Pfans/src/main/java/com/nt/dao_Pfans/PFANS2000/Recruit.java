@@ -180,4 +180,11 @@ public class Recruit extends BaseModel {
      */
     @Column(name = "RESPONSIBILITIES")
     private String responsibilities;
+//add-ws-8/4-禅道任务296-->
+    /**
+     * 招聘编号
+     */
+    @Column(name = "NUMBERS")
+    private String numbers;
+//add-ws-8/4-禅道任务296-->
 }

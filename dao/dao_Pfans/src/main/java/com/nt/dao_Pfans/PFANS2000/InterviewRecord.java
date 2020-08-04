@@ -179,7 +179,13 @@ public class InterviewRecord  extends BaseModel {
     @Column(name = "USERID")
     private String userid;
     //add_fjl_0731
-
+    //add-ws-8/4-禅道任务296-->
+    /**
+     * 招聘ID
+     */
+    @Column(name = "RECRUIT_ID")
+    private String recruit_id;
+//add-ws-8/4-禅道任务296-->
 }
 
 
