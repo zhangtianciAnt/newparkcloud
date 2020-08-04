@@ -7,7 +7,7 @@
        t.contractnumber,
        t.appraisalcost,
        p.CHINANAME,
-       c.CUSTOMERNAMECN,
+       c.CUSTOMERNAMEEN,
        t.country,
        s2.SUPPLIERNAMECN,
        s.numbers,

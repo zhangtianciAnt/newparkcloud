@@ -131,9 +131,9 @@ public class AOCHUAN3001Controller {
                 }}
         );
         ServletOutputStream out = response.getOutputStream();
-        template.writeToFile("E:\\Quotation1.docx");
+        template.writeToFile("home/Quotation1.docx");
         Document document = new Document();
-        document.loadFromFile("E:\\Quotation1.docx");
+        document.loadFromFile("home/Quotation1.docx");
         document.saveToStream(out, FileFormat.PDF);
         template.close();
 
