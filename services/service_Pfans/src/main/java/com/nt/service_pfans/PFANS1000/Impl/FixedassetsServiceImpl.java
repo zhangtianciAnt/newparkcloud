@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,12 +38,17 @@ public class FixedassetsServiceImpl  implements FixedassetsService {
     @Override
     public void updateFixedassets(Fixedassets fixedassets, TokenModel tokenModel) throws Exception {
         fixedassets.preUpdate(tokenModel);
+        LocalDate localDate = LocalDate.now();
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String newDate = localDate.format(fmt);
         if(fixedassets.getStatus().equals("4")){
             Assets assets = new Assets();
             assets.setBarcode(fixedassets.getRfid());
             List<Assets> assetsList = assetsMapper.select(assets);
             for(Assets ast : assetsList){
-//                2020-07-13 ~ 2020-07-25
+                if(ast.getPsdcdperiod() != null && ast.getPsdcdperiod().equals(newDate)) {
+                    ast.setStockstatus("PA002001");
+                }
                 ast.setPsdcdbringoutreason(fixedassets.getObjective());
                 ast.setPsdcdperiod(fixedassets.getRepair().substring(0,10));
                 ast.setPsdcdreturndate(fixedassets.getRepair().substring(fixedassets.getRepair().length() - 10));
