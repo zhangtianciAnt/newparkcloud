@@ -74,10 +74,18 @@ public class Pfans6008Controller {
         }
     }
 
+    //gbb add 0804 月度赏与列表
+    @RequestMapping(value = "/getcostMonthList", method = {RequestMethod.GET})
+    public ApiResult getcostMonthList(String dates,String role,String groupid,HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(coststatisticsService.getcostMonthList(dates,role,groupid,tokenModel));
+    }
+
+    //gbb add 0804 月度赏与详情
     @RequestMapping(value = "/getcostMonth", method = {RequestMethod.GET})
-    public ApiResult getcostMonth(String groupid,HttpServletRequest request) throws Exception {
-        //Coststatistics coststatistics = new Coststatistics();
-        return ApiResult.success(coststatisticsService.getcostMonth(groupid));
+    public ApiResult getcostMonth(String dates,String role,String groupid,HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(coststatisticsService.getcostMonth(dates,role,groupid,tokenModel));
     }
 
 }
