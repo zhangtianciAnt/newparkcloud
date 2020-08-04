@@ -63,6 +63,13 @@ public class Pfans1025Controller {
     public void generateJxls(@RequestBody AwardVo av, HttpServletRequest request, HttpServletResponse response) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         AwardVo nu = awardService.selectById(av.getAward().getAward_id());
+        //add_fjl_0804  生成书类的覚字去掉 start
+        if (av.getAward() != null) {
+            if (av.getAward().getContractnumber().contains("覚")) {
+                av.getAward().setContractnumber(av.getAward().getContractnumber().replace("覚", ""));
+            }
+        }
+        //add_fjl_0804  生成书类的覚字去掉 end
         String aa[] = av.getAward().getClaimdatetime().split(" ~ ");
         List<Map<String, String>> grouplist = (List<Map<String, String>>) av.getGroupN();
         List<AwardDetail> adlist = av.getAwardDetail();

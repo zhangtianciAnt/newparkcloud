@@ -38,6 +38,13 @@ public class Pfans1029Controller {
     public void downLoad(@RequestBody Contract contract, HttpServletRequest request, HttpServletResponse response) throws Exception{
         TokenModel tokenModel=tokenService.getToken(request);
         ContractVo cv = contractService.One(contract.getContract_id());
+        //add_fjl_0804  生成书类的覚字去掉 start
+        if (cv.getContract() != null) {
+            if (cv.getContract().getContractnumber().contains("覚")) {
+                cv.getContract().setContractnumber(cv.getContract().getContractnumber().replace("覚", ""));
+            }
+        }
+        //add_fjl_0804  生成书类的覚字去掉 end
 //        List<Dictionary> CurList = dictionaryService.getForSelect("HT006");
 //        for(Dictionary item:CurList){
 //            if(item.getCode().equals(cv.getContract().getCurrencyposition())) {

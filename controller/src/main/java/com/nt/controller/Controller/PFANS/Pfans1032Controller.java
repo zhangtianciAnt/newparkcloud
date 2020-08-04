@@ -66,6 +66,16 @@ public class Pfans1032Controller {
     public void downLoad1(@RequestBody Petition petition, HttpServletRequest request, HttpServletResponse response) throws Exception{
         TokenModel tokenModel = tokenService.getToken(request);
         Petition pd = petitionService.one(petition.getPetition_id());
+        //add_fjl_0804  生成书类的覚字去掉 start
+        if (pd != null) {
+            if (pd.getContractnumber().contains("覚")) {
+                pd.setContractnumber(pd.getContractnumber().replace("覚", ""));
+            }
+            if (pd.getClaimnumber().contains("覚")) {
+                pd.setClaimnumber(pd.getClaimnumber().replace("覚", ""));
+            }
+        }
+        //add_fjl_0804  生成书类的覚字去掉 end
         Map<String, Object> data = new HashMap<>();
 
         //20200427 add by lin format data start
