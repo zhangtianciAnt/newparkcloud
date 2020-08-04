@@ -2,6 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.Recruit;
 import com.nt.service_pfans.PFANS2000.RecruitService;
+import com.nt.service_pfans.PFANS2000.mapper.RecruitMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -15,27 +16,37 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/recruit")
 public class Pfans2001Controller {
-
+    @Autowired
+    private RecruitMapper recruitMapper;
     @Autowired
     private RecruitService recruitService;
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value="/get",method = {RequestMethod.GET})
-    public ApiResult getRecruit(HttpServletRequest request) throws Exception{
-
-
-            TokenModel tokenModel = tokenService.getToken(request);
-            Recruit recruit = new Recruit();
-            recruit.setOwners(tokenModel.getOwnerList());
-            return ApiResult.success(recruitService.getRecruit(recruit));
+    @RequestMapping(value = "/get", method = {RequestMethod.GET})
+    public ApiResult getRecruit(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Recruit recruit = new Recruit();
+        recruit.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(recruitService.getRecruit(recruit));
     }
 
-    @RequestMapping(value = "/one",method={RequestMethod.POST})
+    //add-ws-8/4-禅道任务296
+    @RequestMapping(value = "/get2", method = {RequestMethod.GET})
+    public ApiResult getRecruit2(HttpServletRequest request) throws Exception {
+        List<Recruit> Recruitlist = recruitMapper.selectAll();
+        Recruitlist = Recruitlist.stream().filter(item -> (item.getStatus().equals("4"))).collect(Collectors.toList());
+        return ApiResult.success(Recruitlist);
+    }
+
+    //add-ws-8/4-禅道任务296
+    @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult one(@RequestBody Recruit recruit, HttpServletRequest request) throws Exception {
         if (recruit == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
@@ -44,23 +55,23 @@ public class Pfans2001Controller {
         return ApiResult.success(recruitService.One(recruit.getRecruitid()));
     }
 
-    @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateRecruit(@RequestBody Recruit recruit, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult updateRecruit(@RequestBody Recruit recruit, HttpServletRequest request) throws Exception {
         if (recruit == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        recruitService.updateRecruit(recruit,tokenModel);
+        recruitService.updateRecruit(recruit, tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/create",method={RequestMethod.POST})
+    @RequestMapping(value = "/create", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody Recruit recruit, HttpServletRequest request) throws Exception {
         if (recruit == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        recruitService.insert(recruit,tokenModel);
+        recruitService.insert(recruit, tokenModel);
         return ApiResult.success();
     }
 

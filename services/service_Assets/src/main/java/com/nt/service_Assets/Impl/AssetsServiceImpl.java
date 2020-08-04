@@ -36,6 +36,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -122,10 +124,12 @@ public class AssetsServiceImpl implements AssetsService {
 
 
     //定时任务
-    @Scheduled(cron = "0 37 0 * * ?")
+    @Scheduled(cron = "0 04 10 * * ?")
     public void updateAssets() throws Exception{
-        SimpleDateFormat st = new SimpleDateFormat("yyyy-MM-dd");
-        String newDate = st.format(new Date());
+        LocalDate localDate = LocalDate.now();
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String newDate = localDate.format(fmt);
+        String prevDate = localDate.plusDays(-1).format(fmt);
         Assets assets  = new Assets();
         List<Assets> assetsList = assetsMapper.select(assets);
         if(assetsList.size() > 0){
@@ -133,7 +137,7 @@ public class AssetsServiceImpl implements AssetsService {
                 if(as.getPsdcdperiod() != null && as.getPsdcdperiod().equals(newDate)){
                     as.setStockstatus("PA002001");
                     assetsMapper.updateByPrimaryKey(as);
-                }else if(as.getPsdcdreturndate() != null && as.getPsdcdreturndate().equals(newDate)){
+                }else if(as.getPsdcdreturndate() != null && as.getPsdcdreturndate().equals(prevDate)){
                     as.setStockstatus("PA002002");
                     assetsMapper.updateByPrimaryKey(as);
                 }

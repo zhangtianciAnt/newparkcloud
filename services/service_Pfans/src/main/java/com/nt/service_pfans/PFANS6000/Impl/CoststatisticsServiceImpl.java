@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS6000.Impl;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS6000.*;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.mapper.DictionaryMapper;
@@ -23,6 +24,8 @@ import org.bytedeco.javacpp.presets.opencv_core;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +39,8 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static com.nt.utils.MongoObject.CustmizeQuery;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -58,6 +63,9 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 
     @Autowired
     private DictionaryMapper dictionaryMapper;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @Override
     public List<Coststatistics> getCostList(Coststatistics coststatistics) throws Exception {
@@ -436,47 +444,120 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         }
     }
 
+    //gbb add 0804 月度赏与列表
     @Override
-    public List<Map<String, String>>  getcostMonth(String groupid) throws Exception {
+    public List<Coststatistics>  getcostMonthList(String dates,String role,String groupid,TokenModel tokenModel) throws Exception {
         List<String> groupIdList = new ArrayList<String>();
-        groupIdList.add("6ED276094B952D25E106897F7726BB58F9F9");
-        groupIdList.add("3C03D6F2E6D48E51C97CA44F630F13DBE77D");
+        Query query = CustmizeQuery(new OrgTree());
+        OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
+        List<OrgTree>  orgTrees =  orgTree.getOrgs();
+        if(role.equals("2")){
+            for (OrgTree org: orgTrees ) {
+                if(org.get_id().equals(groupid)){
+                    for (OrgTree org1: org.getOrgs() ) {
+                        groupIdList.add(org1.get_id());
+                    }
+                }
+            }
+        }
+        else if(role.equals("4")){
+            for (OrgTree org: orgTrees ) {
+                for (OrgTree org1: org.getOrgs() ) {
+                    groupIdList.add(org1.get_id());
+                }
+            }
+        }
+        else{
+            groupIdList.add(groupid);
+        }
+        List<Coststatistics> costMonthList = new ArrayList<>();
+        costMonthList = coststatisticsMapper.getcostMonthList(dates,groupIdList);
+        return costMonthList;
+    }
+    //gbb add 0804 月度赏与详情
+    @Override
+    public List<Map<String, String>>  getcostMonth(String dates,String role,String groupid,TokenModel tokenModel) throws Exception {
+        List<String> groupIdList = new ArrayList<String>();
+        Query query = CustmizeQuery(new OrgTree());
+        OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
+        List<OrgTree>  orgTrees =  orgTree.getOrgs();
+        if(role.equals("2")){
+            for (OrgTree org: orgTrees ) {
+                if(org.get_id().equals(groupid)){
+                    for (OrgTree org1: org.getOrgs() ) {
+                        groupIdList.add(org1.get_id());
+                    }
+                }
+            }
+        }
+        else if(role.equals("4")){
+            for (OrgTree org: orgTrees ) {
+                for (OrgTree org1: org.getOrgs() ) {
+                    groupIdList.add(org1.get_id());
+                }
+            }
+        }
+        else{
+            groupIdList.add(groupid);
+        }
+        String manhour = "manhour" + String.valueOf(Integer.valueOf(dates.substring(dates.length() - 2,7)));
+        String cost = "cost" + String.valueOf(Integer.valueOf(dates.substring(dates.length() - 2,7)));
         List<Map<String, String>> dataList = new ArrayList<Map<String,String>>();
         String strGroupid = "";
         if(groupIdList.size() > 0){
-            Integer ingflg = 0;
             for(int i=0;i<groupIdList.size();i++ ){
                 strGroupid = strGroupid + groupIdList.get(i) + ",";
-                List<Map<String, String>> data = coststatisticsMapper.getcostMonth("manhour6","cost6",strGroupid);
+                List<Map<String, String>> data = coststatisticsMapper.getcostMonth(dates.substring(0,4),manhour,cost,strGroupid);
                 if(data.size() > 0){
                     if(i == 0){
                         dataList = data;
                     }
                     else{
                         for(int j=0;j<dataList.size();j++ ){
-                            dataList.get(j).put("groupnumber", String.valueOf(ingflg + 1));//group个数
-                            dataList.get(j).put("strgroupid", strGroupid);//groupid
                             if(dataList.get(j).get("bpcompany").equals(data.get(j).get("bpcompany"))){//会社名
                                 //委任工数
-                                dataList.get(j).put("ex1manhour" + String.valueOf(j), String.valueOf(data.get(j).get("ex1manhour")));
+                                dataList.get(j).put("ex1manhour" + String.valueOf(i), String.valueOf(data.get(j).get("ex1manhour0")));
                                 //委任费用
-                                dataList.get(j).put("ex1cost" + String.valueOf(j), String.valueOf(data.get(j).get("ex1cost")));
+                                dataList.get(j).put("ex1cost" + String.valueOf(i), String.valueOf(data.get(j).get("ex1cost0")));
                                 //委任人数
-                                dataList.get(j).put("ex1usercount" + String.valueOf(j), String.valueOf(data.get(j).get("ex1usercount")));
+                                dataList.get(j).put("ex1usercount" + String.valueOf(i), String.valueOf(data.get(j).get("ex1usercount0")));
                                 //請負工数
-                                dataList.get(j).put("ex2manhour" + String.valueOf(j), String.valueOf(data.get(j).get("ex2manhour")));
+                                dataList.get(j).put("ex2manhour" + String.valueOf(i), String.valueOf(data.get(j).get("ex2manhour0")));
                                 //請負费用
-                                dataList.get(j).put("ex2cost" + String.valueOf(j), String.valueOf(data.get(j).get("ex2cost")));
+                                dataList.get(j).put("ex2cost" + String.valueOf(i), String.valueOf(data.get(j).get("ex2cost0")));
                                 //請負人数
-                                dataList.get(j).put("ex2usercount" + String.valueOf(j), String.valueOf(data.get(j).get("ex2usercount")));
+                                dataList.get(j).put("ex2usercount" + String.valueOf(i), String.valueOf(data.get(j).get("ex2usercount0")));
+                                //請負人数
+                                dataList.get(j).put("costcount" + String.valueOf(i), String.valueOf(data.get(j).get("costcount0")));
 
-                                BigDecimal bddataList = new BigDecimal(String.valueOf(dataList.get(j).get("costcount")));
-                                BigDecimal bddata = new BigDecimal(String.valueOf(data.get(j).get("costcount")));
+                                //会社总工数
+                                BigDecimal dataListmanhourcount = new BigDecimal(0d);
+                                BigDecimal bddatamanhourcount = new BigDecimal(0d);
+                                if(!String.valueOf(dataList.get(j).get("manhourcount0")).equals("")){
+                                    dataListmanhourcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(dataList.get(j).get("manhourcount0"))));
+                                }
+                                if(!String.valueOf(data.get(j).get("manhourcount0")).equals("")){
+                                    bddatamanhourcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(data.get(j).get("manhourcount0"))));
+                                }
+                                //会社总工数
+                                dataList.get(j).put("bpmanhourcount", String.valueOf(dataListmanhourcount.add(bddatamanhourcount)));
+
                                 //会社总费用
-                                dataList.get(j).put("bpcompanycount", String.valueOf(bddataList.add(bddata)));
+                                BigDecimal dataListcostcount = new BigDecimal(0d);
+                                BigDecimal bddatacostcount = new BigDecimal(0d);
+                                if(!String.valueOf(dataList.get(j).get("costcount0")).equals("")){
+                                    dataListcostcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(dataList.get(j).get("costcount0"))));
+                                }
+                                if(!String.valueOf(data.get(j).get("costcount0")).equals("")){
+                                    bddatacostcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(data.get(j).get("costcount0"))));
+                                }
+                                //会社总费用
+                                dataList.get(j).put("bpcostcount", String.valueOf(dataListcostcount.add(bddatacostcount)));
                             }
                         }
                     }
+                    dataList.get(0).put("groupnumber", String.valueOf(groupIdList.size()));//group个数
+                    dataList.get(0).put("strgroupid", strGroupid);//groupid
                 }
             }
         }

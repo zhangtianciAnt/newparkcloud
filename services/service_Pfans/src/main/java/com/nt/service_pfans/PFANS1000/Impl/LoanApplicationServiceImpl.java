@@ -187,6 +187,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     if (businessList.size() > 0) {
                         businessList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
                         businessList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        businessList.get(0).setLoanday(new Date());
                         businessList.get(0).preUpdate(tokenModel);
                         businessMapper.updateByPrimaryKey(businessList.get(0));
                     }
