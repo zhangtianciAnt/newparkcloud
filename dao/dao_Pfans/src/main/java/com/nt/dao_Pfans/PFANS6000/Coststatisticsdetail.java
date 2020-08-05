@@ -49,5 +49,5 @@ public class Coststatisticsdetail extends BaseModel {
      * 费用
      */
     @Column(name = "cost")
-    private Double cost;
+    private String cost;
 }
