@@ -20,6 +20,7 @@ import com.nt.service_Org.mapper.TodoNoticeMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
+import lombok.extern.log4j.Log4j;
 import net.sf.jxls.transformer.XLSTransformer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -41,6 +42,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
+@Log4j
 public class QuotationsServiceImpl implements QuotationsService {
 
     @Autowired
@@ -167,11 +169,11 @@ public class QuotationsServiceImpl implements QuotationsService {
             }
         }
         //配置下载路径
-        String path = "/download/";
-        createDir(new File(path));
 
+//        String path = "/download/";
+//        createDir(new File(path));
         //根据模板生成新的excel
-        File excelFile = createNewFile(beans, file, path);
+        File excelFile = createNewFile(beans, file);
 
         //浏览器端下载文件
         downloadFile(response, excelFile);
@@ -228,29 +230,26 @@ public class QuotationsServiceImpl implements QuotationsService {
      * 根据excel模板生成新的excel
      *
      * @param beans
-     * @param file
-     * @param path
+     * @param sourceFile
      * @return
      **/
-    private File createNewFile(Map<String, Object> beans, File file, String path) {
+    private File createNewFile(Map<String, Object> beans, File sourceFile) throws IOException {
         XLSTransformer transformer = new MyXLSTransformer();
+		File tempFile = File.createTempFile("D3001", ".xlsx");
 
-        //命名
-        String name = "bbb.xlsx";
-        File newFile = new File(path + name);
-
-        try (InputStream in = new BufferedInputStream(new FileInputStream(file));
-             OutputStream out = new FileOutputStream(newFile)) {
+        try (InputStream in = new BufferedInputStream(new FileInputStream(sourceFile));
+             OutputStream out = new FileOutputStream(tempFile)) {
             //poi版本使用3.1.7要不然会报错
 			// poi 4.x 对应
             Workbook workbook = transformer.transformXLS(in, beans);
             workbook.write(out);
             out.flush();
-            return newFile;
+            return tempFile;
         } catch (Exception e) {
+        	log.error("error with download 3001 Excel file.", e);
             System.out.println(e.getMessage());
         }
-        return newFile;
+        return tempFile;
     }
 
     /**
