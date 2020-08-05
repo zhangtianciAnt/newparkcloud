@@ -9,7 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @ProjectName: BASF应急平台
@@ -38,9 +41,15 @@ public class VehicleManagementServicesImpl implements VehicleManagementServices 
      * @Date 2019/11/13 16：15
      */
     @Override
-    public List<VehicleManagement> list() throws Exception {
-        VehicleManagement vehicleManagement = new VehicleManagement();
+    public List<VehicleManagement> list(VehicleManagement vehicleManagement) throws Exception {
         return vehicleManagementMapper.select(vehicleManagement);
+    }
+
+    @Override
+    public int insert(VehicleManagement vehicleManagement, TokenModel tokenModel) throws Exception {
+        vehicleManagement.preInsert(tokenModel);
+        vehicleManagement.setVehiclemanagementid(UUID.randomUUID().toString());
+        return vehicleManagementMapper.insert(vehicleManagement);
     }
 
     /**

@@ -62,12 +62,16 @@ public class PersonnelPermissionsServicesImpl implements PersonnelPermissionsSer
         PersonnelPermissions personnelPermissions1 = new PersonnelPermissions();
         personnelPermissionsMapper.delete(personnelPermissions1);
 
-        for(int i = 0;i<personnelPermissions.size();i++)
-        {
+        for (int i = 0; i < personnelPermissions.size(); i++) {
             personnelPermissions.get(i).preInsert(tokenModel);
             personnelPermissions.get(i).setPermissionsid(UUID.randomUUID().toString());
             personnelPermissionsMapper.insert(personnelPermissions.get(i));
         }
+    }
+
+    @Override
+    public List<PersonnelPermissions>  selectByClass() throws Exception {
+        return personnelPermissionsMapper.selectByClass();
     }
 
 }

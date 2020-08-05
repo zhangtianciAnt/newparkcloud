@@ -2,6 +2,7 @@ package com.nt.service_BASF;
 
 import com.nt.dao_BASF.VehicleManagement;
 import com.nt.utils.dao.TokenModel;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -17,7 +18,10 @@ import java.util.List;
 public interface VehicleManagementServices {
 
     //获取车辆状态列表
-    List<VehicleManagement> list() throws Exception;
+    List<VehicleManagement> list(VehicleManagement vehicleManagement) throws Exception;
+
+    int insert(VehicleManagement vehicleManagement, TokenModel tokenModel) throws Exception;
+
     //更新车辆状态
-    void update(VehicleManagement vehicleManagement, TokenModel tokenModel)throws Exception;
+    void update(VehicleManagement vehicleManagement, TokenModel tokenModel) throws Exception;
 }

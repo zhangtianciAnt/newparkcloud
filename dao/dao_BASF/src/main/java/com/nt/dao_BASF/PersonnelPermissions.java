@@ -34,6 +34,10 @@ public class PersonnelPermissions extends BaseModel {
 
     /**
      * classname
+     * class1:内部员工；
+     * class2：临时访客；
+     * class3：承包商；
+     * class4:其他
      */
     private String classname;
 

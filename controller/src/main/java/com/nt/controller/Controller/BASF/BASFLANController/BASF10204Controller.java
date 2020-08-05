@@ -43,9 +43,20 @@ public class BASF10204Controller {
      * @Return com.nt.utils.ApiResult
      * @Date 2019/11/13 16：33
      */
-    @RequestMapping(value = "/list",method = {RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request)throws Exception{
-        return ApiResult.success(vehicleManagementServices.list());
+    @RequestMapping(value = "/list", method = {RequestMethod.POST})
+    public ApiResult list(HttpServletRequest request,@RequestBody VehicleManagement vehicleManagement) throws Exception {
+        return ApiResult.success(vehicleManagementServices.list(vehicleManagement));
+    }
+
+    @RequestMapping(value = "/insert", method = {RequestMethod.POST})
+    public ApiResult insert(HttpServletRequest request, @RequestBody VehicleManagement vehicleManagement) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        int result = vehicleManagementServices.insert(vehicleManagement, tokenModel);
+        if (result > 0) {
+            return ApiResult.success();
+        } else {
+            return ApiResult.fail("创建消防车数据失败！");
+        }
     }
 
     /**
@@ -59,12 +70,12 @@ public class BASF10204Controller {
      * @Date 2019/11/13 16:34
      */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody VehicleManagement vehicleManagement , HttpServletRequest request) throws Exception {
+    public ApiResult update(@RequestBody VehicleManagement vehicleManagement, HttpServletRequest request) throws Exception {
         if (vehicleManagement == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        vehicleManagementServices.update(vehicleManagement,tokenModel);
+        vehicleManagementServices.update(vehicleManagement, tokenModel);
         return ApiResult.success();
     }
 }

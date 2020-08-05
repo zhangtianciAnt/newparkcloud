@@ -22,4 +22,6 @@ public interface PersonnelPermissionsServices {
 
     //保存部门列表
     void insert(ArrayList<PersonnelPermissions> personnelPermissions, TokenModel tokenModel) throws Exception;
+
+    List<PersonnelPermissions>  selectByClass() throws Exception;
 }

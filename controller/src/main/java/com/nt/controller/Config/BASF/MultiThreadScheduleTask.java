@@ -1,23 +1,18 @@
 package com.nt.controller.Config.BASF;
 
 import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSON;
-import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.*;
 import com.nt.dao_BASF.VO.DeviceAndSqlUserinfoVo;
-import com.nt.dao_BASF.VO.DeviceinformationVo;
 import com.nt.dao_SQL.SqlAPBCardHolder;
 import com.nt.dao_SQL.SqlViewDepartment;
 import com.nt.service_BASF.*;
 import com.nt.service_BASF.mapper.DeviceinformationMapper;
-import com.nt.service_SQL.SqlUserInfoServices;
 import com.nt.service_SQL.sqlMapper.BasfUserInfoMapper;
-import com.nt.service_SQL.sqlMapper.SqlUserInfoMapper;
+import com.nt.utils.CowBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -26,13 +21,12 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.TextMessage;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * basf多线程定时任务
@@ -184,105 +178,47 @@ public class MultiThreadScheduleTask {
     @Async
     @Scheduled(fixedDelay = 30000)
     public void selectUsersCount() throws Exception {
+        // 获取personnelpermissions下人员类别分组
+        List<PersonnelPermissions> personnelPermissions = personnelPermissionsServices.selectByClass();
+        // 获取门禁数据库今天所有用户信息
+        List<SqlAPBCardHolder> apbCardHolders = JSONObject.parseArray(
+                JSONObject.parseObject(HttpUtil.post(Url + "userInfo/selectapbcardholder", new HashMap<>())).get("data").toString(), SqlAPBCardHolder.class
+        );
+        // 根据departmentpeid对用户进行分组汇总，统计各类用户count
+        //1. 获取class1（内部员工）总数
+        int YG = (int) apbCardHolders.stream().filter(
+                s -> CowBUtils.wordsIndexOf(s.getDepartmentpeid(),
+                        personnelPermissions.stream().filter(p -> p.getClassname().equals("class1")).collect(Collectors.toList()).get(0).getRecnum().split(","))
+        ).count();
 
-        Map<String, String> departmentInfoList = new HashMap<>();
-//        List departlist = sqlUserInfoMapper.selectdepartment();
-//        List apblist = sqlUserInfoMapper.selectapbcardholder();
-        JSONArray departarray = returnpostlist("userInfo/selectdepartment");
-        List<SqlViewDepartment> departlist = JSONObject.parseArray(departarray.toJSONString(), SqlViewDepartment.class);
+        //2. 获取class2（临时访客）总数
+        int FK = (int) apbCardHolders.stream().filter(
+                s -> CowBUtils.wordsIndexOf(s.getDepartmentpeid(),
+                        personnelPermissions.stream().filter(p -> p.getClassname().equals("class2")).collect(Collectors.toList()).get(0).getRecnum().split(","))
+        ).count();
+        //3. 获取class3（承包商）总数
+        int CBS = (int) apbCardHolders.stream().filter(
+                s -> CowBUtils.wordsIndexOf(s.getDepartmentpeid(),
+                        personnelPermissions.stream().filter(p -> p.getClassname().equals("class3")).collect(Collectors.toList()).get(0).getRecnum().split(","))
+        ).count();
 
-        JSONArray apbarray = returnpostlist("userInfo/selectapbcardholder");
-        List<SqlAPBCardHolder> apblist = JSONObject.parseArray(apbarray.toJSONString(), SqlAPBCardHolder.class);
-
-        List<PersonnelPermissions> personnelPermissionsList = personnelPermissionsServices.list();
-        String companystaff = "";
-        String supplier = "";
-        String foreignworkers = "";
-
-        // 查询员工人数
-        int YG = 0;
-        // 查询访客人数
-        int FK = 0;
-        // 查询承包商人数
-        int CBS = 0;
-        // 在厂总人数
-        int ZALL = 0;
-
-        if (apblist.size() > 0) {
-            if (departlist.size() > 0) {
-                for (int i = 0; i < departlist.size(); i++) {
-                    departmentInfoList.put(((SqlViewDepartment) departlist.get(i)).getRecnum(), ((SqlViewDepartment) departlist.get(i)).getDepartmentpeid());
-                }
-            }
-            if (personnelPermissionsList.size() > 0) {
-                for (int i = 0; i < personnelPermissionsList.size(); i++) {
-                    if ("class1".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
-                        if ("".equals(companystaff)) {
-                            companystaff = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        } else {
-                            companystaff = companystaff + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        }
-                    }
-                    if ("class2".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
-                        if ("".equals(foreignworkers)) {
-                            foreignworkers = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        } else {
-                            foreignworkers = foreignworkers + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        }
-                    }
-                    if ("class3".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
-                        if ("".equals(supplier)) {
-                            supplier = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        } else {
-                            supplier = supplier + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        }
-                    }
-                }
-            }
-            List<String> companystaffList = Arrays.asList(companystaff.split(","));
-            List<String> supplierList = Arrays.asList(supplier.split(","));
-            List<String> foreignworkersList = Arrays.asList(foreignworkers.split(","));
-
-            for (int i = 0; i < apblist.size(); i++) {
-                String departmentID = ((SqlAPBCardHolder) apblist.get(i)).getDepartmentid();
-                for (int j = 1; j < 10; j++) {
-                    if ("-1".equals(departmentInfoList.get(departmentID))) {
-                        for (int z = 0; z < companystaffList.size(); z++) {
-                            if (companystaffList.get(z).equals(departmentID)) {
-                                YG += 1;
-                            }
-                        }
-                        for (int z = 0; z < supplierList.size(); z++) {
-                            if (supplierList.get(z).equals(departmentID)) {
-                                CBS += 1;
-                            }
-                        }
-                        for (int z = 0; z < foreignworkersList.size(); z++) {
-                            if (foreignworkersList.get(z).equals(departmentID)) {
-                                FK += 1;
-                            }
-                        }
-                        j = 10;
-                    } else {
-                        departmentID = departmentInfoList.get(departmentID);
-                    }
-                }
-            }
-        }
-
-        ZALL = YG + FK + CBS;
+        // 发送websocket信息
         webSocketVo.setUsersCount(YG);
         webSocketVo.setContractorsCount(CBS);
         webSocketVo.setVisitorsCount(FK);
-        webSocketVo.setAllUsersCount(ZALL);
+        webSocketVo.setAllUsersCount(YG + CBS + FK);
+
+        webSocketVo.setSelectapbcardList(apbCardHolders);
+
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
+
 
     /**
      * @return void
      * @Method selectDeviceUsersCount
      * @Author GJ
-     * @Description ERC大屏装置人数统计
+     * @Description ERC大屏区域人数
      * @Date 2020/03/31 11:21
      * @Param
      **/
@@ -292,60 +228,6 @@ public class MultiThreadScheduleTask {
         APBCardHolder apbCardHolder = JSONObject.parseObject(JSONObject.parseObject(HttpUtil.post(Url + "userInfo/selectDeviceUsersCnt", new HashMap<>())).get("data").toString(), APBCardHolder.class);
         webSocketVo.setApbCardHolder(apbCardHolder);
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-        // 装置人数统计
-//        List<SqlAPBCardHolder> userCnt = basfUserInfoMapper.selectDeviceUsersCnt();
-//        JSONArray userCntarray = returnpostlist("userInfo/selectDeviceUsersCnt");
-//        List<SqlAPBCardHolder> userCnt = JSONObject.parseArray(userCntarray.toJSONString(), SqlAPBCardHolder.class);
-//        List<SqlAPBCardHolder> userCntLast = new ArrayList<>();
-//        String lastName = "";
-//        if (userCnt.size() > 0) {
-//            int j = -1;
-//            for (int i = 0; i < userCnt.size(); i++) {
-//                if (userCnt.get(i).getApbname().contains("（内）")) {
-//                    SqlAPBCardHolder tempApb = new SqlAPBCardHolder();
-//                    if (i != 0) {
-//                        if (1 != userCnt.get(i - 1).getApbflg()) {
-//                            userCntLast.get(j).setApbflg(1);
-//                            userCntLast.get(j).setOutCnt(0);
-//                        }
-//                    }
-//
-//                    String[] strs = userCnt.get(i).getApbname().split("（内）");
-//                    tempApb.setApbid(userCnt.get(i).getApbid());
-//                    tempApb.setApbname(strs[0] + "装置");
-//                    tempApb.setCnt(userCnt.get(i).getCnt());
-//
-//                    userCnt.get(i).setApbflg(0);
-//                    userCnt.get(i).setApbname(strs[0] + "装置");
-//                    userCntLast.add(userCnt.get(i));
-//                    j = j + 1;
-//                    lastName = userCnt.get(i).getApbname();
-//
-//                    if (i == userCnt.size() - 1) {
-//                        userCntLast.get(j).setOutCnt(0);
-//                    }
-//                }
-//
-//                if (userCnt.get(i).getApbname().contains("（外）")) {
-//                    String[] strs = userCnt.get(i).getApbname().split("（外）");
-//                    SqlAPBCardHolder tempApb = new SqlAPBCardHolder();
-//                    if (i == 0 || !lastName.equals(strs[0] + "装置")) {
-//                        tempApb.setCnt(0);
-//                        tempApb.setApbname(strs[0] + "装置");
-//                        tempApb.setApbid(userCnt.get(i).getApbid());
-//                        userCntLast.add(tempApb);
-//                        j = j + 1;
-//                    }
-//                    userCnt.get(i).setApbflg(1);
-//                    userCnt.get(i).setApbname(strs[0] + "装置");
-//                    userCntLast.get(j).setOutCnt(userCnt.get(i).getCnt());
-//                    lastName = userCnt.get(i).getApbname();
-//                }
-//            }
-//        }
-//
-//        webSocketVo.setDeviceUsersCountList(userCntLast);
-//        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
     // region BASF90600 ERC-车辆定位
@@ -505,95 +387,95 @@ public class MultiThreadScheduleTask {
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
-    @Async
-    @Scheduled(fixedDelay = 30000)
-    public void BASFSQL60001_GetSelectapbcard() throws Exception {
-        //在厂人员列表
-//        JSONArray apbcardarray = returnpostlist("userInfo/selectapbcard");
-//        List<SqlAPBCardHolder> selectapbcardList = JSONObject.parseArray(apbcardarray.toJSONString(), SqlAPBCardHolder.class);
-
-        Map<String, String> departmentInfoList = new HashMap<>();
-//        List departlist = sqlUserInfoMapper.selectdepartment();
-//        List apblist = sqlUserInfoMapper.selectapbcardholder();
-        List resultlist = new ArrayList();
-        JSONArray departarray = returnpostlist("userInfo/selectdepartment");
-        List<SqlViewDepartment> departlist = JSONObject.parseArray(departarray.toJSONString(), SqlViewDepartment.class);
-
-        JSONArray apbarray = returnpostlist("userInfo/selectapbcard");
-        List<SqlAPBCardHolder> apblist = JSONObject.parseArray(apbarray.toJSONString(), SqlAPBCardHolder.class);
-
-        List<PersonnelPermissions> personnelPermissionsList = personnelPermissionsServices.list();
-        String companystaff = "";
-        String supplier = "";
-        String foreignworkers = "";
-
-        if (apblist.size() > 0) {
-            if (departlist.size() > 0) {
-                for (int i = 0; i < departlist.size(); i++) {
-                    departmentInfoList.put(((SqlViewDepartment) departlist.get(i)).getRecnum(), ((SqlViewDepartment) departlist.get(i)).getDepartmentpeid());
-                }
-            }
-            if (personnelPermissionsList.size() > 0) {
-                for (int i = 0; i < personnelPermissionsList.size(); i++) {
-                    if ("class1".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
-                        if ("".equals(companystaff)) {
-                            companystaff = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        } else {
-                            companystaff = companystaff + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        }
-                    }
-                    if ("class2".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
-                        if ("".equals(foreignworkers)) {
-                            foreignworkers = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        } else {
-                            foreignworkers = foreignworkers + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        }
-                    }
-                    if ("class3".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
-                        if ("".equals(supplier)) {
-                            supplier = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        } else {
-                            supplier = supplier + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-                        }
-                    }
-                }
-            }
-            List<String> companystaffList = Arrays.asList(companystaff.split(","));
-            List<String> supplierList = Arrays.asList(supplier.split(","));
-            List<String> foreignworkersList = Arrays.asList(foreignworkers.split(","));
-
-            for (int i = 0; i < apblist.size(); i++) {
-                String departmentID = ((SqlAPBCardHolder) apblist.get(i)).getDepartmentid();
-                for (int j = 1; j < 10; j++) {
-                    if ("-1".equals(departmentInfoList.get(departmentID))) {
-                        for (int z = 0; z < companystaffList.size(); z++) {
-                            if (companystaffList.get(z).equals(departmentID)) {
-                                ((SqlAPBCardHolder) apblist.get(i)).setUsertype("员工");
-                                resultlist.add(apblist.get(i));
-                            }
-                        }
-                        for (int z = 0; z < supplierList.size(); z++) {
-                            if (supplierList.get(z).equals(departmentID)) {
-                                ((SqlAPBCardHolder) apblist.get(i)).setUsertype("承包商");
-                                resultlist.add(apblist.get(i));
-                            }
-                        }
-                        for (int z = 0; z < foreignworkersList.size(); z++) {
-                            if (foreignworkersList.get(z).equals(departmentID)) {
-                                ((SqlAPBCardHolder) apblist.get(i)).setUsertype("访客");
-                                resultlist.add(apblist.get(i));
-                            }
-                        }
-                        j = 10;
-                    } else {
-                        departmentID = departmentInfoList.get(departmentID);
-                    }
-                }
-            }
-        }
-        webSocketVo.setSelectapbcardList(resultlist);
-        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    @Async
+//    @Scheduled(fixedDelay = 30000)
+//    public void BASFSQL60001_GetSelectapbcard() throws Exception {
+//        //在厂人员列表
+////        JSONArray apbcardarray = returnpostlist("userInfo/selectapbcard");
+////        List<SqlAPBCardHolder> selectapbcardList = JSONObject.parseArray(apbcardarray.toJSONString(), SqlAPBCardHolder.class);
+//
+//        Map<String, String> departmentInfoList = new HashMap<>();
+////        List departlist = sqlUserInfoMapper.selectdepartment();
+////        List apblist = sqlUserInfoMapper.selectapbcardholder();
+//        List resultlist = new ArrayList();
+//        JSONArray departarray = returnpostlist("userInfo/selectdepartment");
+//        List<SqlViewDepartment> departlist = JSONObject.parseArray(departarray.toJSONString(), SqlViewDepartment.class);
+//
+//        JSONArray apbarray = returnpostlist("userInfo/selectapbcard");
+//        List<SqlAPBCardHolder> apblist = JSONObject.parseArray(apbarray.toJSONString(), SqlAPBCardHolder.class);
+//
+//        List<PersonnelPermissions> personnelPermissionsList = personnelPermissionsServices.list();
+//        String companystaff = "";
+//        String supplier = "";
+//        String foreignworkers = "";
+//
+//        if (apblist.size() > 0) {
+//            if (departlist.size() > 0) {
+//                for (int i = 0; i < departlist.size(); i++) {
+//                    departmentInfoList.put(((SqlViewDepartment) departlist.get(i)).getRecnum(), ((SqlViewDepartment) departlist.get(i)).getDepartmentpeid());
+//                }
+//            }
+//            if (personnelPermissionsList.size() > 0) {
+//                for (int i = 0; i < personnelPermissionsList.size(); i++) {
+//                    if ("class1".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
+//                        if ("".equals(companystaff)) {
+//                            companystaff = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+//                        } else {
+//                            companystaff = companystaff + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+//                        }
+//                    }
+//                    if ("class2".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
+//                        if ("".equals(foreignworkers)) {
+//                            foreignworkers = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+//                        } else {
+//                            foreignworkers = foreignworkers + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+//                        }
+//                    }
+//                    if ("class3".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
+//                        if ("".equals(supplier)) {
+//                            supplier = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+//                        } else {
+//                            supplier = supplier + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
+//                        }
+//                    }
+//                }
+//            }
+//            List<String> companystaffList = Arrays.asList(companystaff.split(","));
+//            List<String> supplierList = Arrays.asList(supplier.split(","));
+//            List<String> foreignworkersList = Arrays.asList(foreignworkers.split(","));
+//
+//            for (int i = 0; i < apblist.size(); i++) {
+//                String departmentID = ((SqlAPBCardHolder) apblist.get(i)).getDepartmentid();
+//                for (int j = 1; j < 10; j++) {
+//                    if ("-1".equals(departmentInfoList.get(departmentID))) {
+//                        for (int z = 0; z < companystaffList.size(); z++) {
+//                            if (companystaffList.get(z).equals(departmentID)) {
+//                                ((SqlAPBCardHolder) apblist.get(i)).setUsertype("员工");
+//                                resultlist.add(apblist.get(i));
+//                            }
+//                        }
+//                        for (int z = 0; z < supplierList.size(); z++) {
+//                            if (supplierList.get(z).equals(departmentID)) {
+//                                ((SqlAPBCardHolder) apblist.get(i)).setUsertype("承包商");
+//                                resultlist.add(apblist.get(i));
+//                            }
+//                        }
+//                        for (int z = 0; z < foreignworkersList.size(); z++) {
+//                            if (foreignworkersList.get(z).equals(departmentID)) {
+//                                ((SqlAPBCardHolder) apblist.get(i)).setUsertype("访客");
+//                                resultlist.add(apblist.get(i));
+//                            }
+//                        }
+//                        j = 10;
+//                    } else {
+//                        departmentID = departmentInfoList.get(departmentID);
+//                    }
+//                }
+//            }
+//        }
+//        webSocketVo.setSelectapbcardList(resultlist);
+//        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
     @Async
     @Scheduled(fixedDelay = 30000)

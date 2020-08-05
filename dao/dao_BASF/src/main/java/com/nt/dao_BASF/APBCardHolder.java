@@ -22,4 +22,7 @@ public class APBCardHolder {
     private String pa6Out;
     private String aoIn;
     private String aoOut;
+
+    private String DepartmentID;
+    private String departmentpeid;
 }

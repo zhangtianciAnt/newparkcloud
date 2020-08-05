@@ -15,48 +15,8 @@ import javax.persistence.Table;
 public class VehicleManagement extends BaseModel {
     @Id
     private String vehiclemanagementid;
-    /**
-     *一号车状态
-     */
-    private String carstatus1;
-
-    /**
-     *二号车状态
-     */
-    private String carstatus2;
-
-    /**
-     *三号车状态
-     */
-    private String carstatus3;
-
-    /**
-     *四号车状态
-     */
-    private String carstatus4;
-
-    /**
-     *五号车状态
-     */
-    private String carstatus5;
-
-    /**
-     *六号车状态
-     */
-    private String carstatus6;
-
-    /**
-     *七号车状态
-     */
-    private String carstatus7;
-
-    /**
-     *八号车状态
-     */
-    private String carstatus8;
-
-    /**
-     *九号车状态
-     */
-    private String carstatus9;
+    private String carnum;
+    private String imei;
+    private String ikey;
+    private String flag;
 }
