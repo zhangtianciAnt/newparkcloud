@@ -77,8 +77,8 @@ public class Pfans1026Controller {
         String first = "";
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         if (individual.getDates() != null && individual.getDates() != "") {
-            int year = Integer.valueOf(individual.getDates().substring(0, 3));
-            int month = Integer.valueOf(individual.getDates().substring(5, 6));
+            int year = Integer.valueOf(individual.getDates().substring(0, 4));
+            int month = Integer.valueOf(individual.getDates().substring(5, 7));
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.YEAR, year);
             cal.set(Calendar.MONTH, month);
