@@ -177,7 +177,8 @@
 			round(sum(cost3),2) as cost3
 			from coststatistics
 			where years = substring(#{years},1,4)
-			<if test="groupIdList != null and groupIdList.size() > 0 ">and group_id in
+			<if test="groupIdList != null and groupIdList.size() > 0 ">
+			    and group_id in
 				<foreach item="item" index="index" collection="groupIdList"
 							 open="(" separator="," close=")">
 					#{item}
@@ -215,9 +216,9 @@
 			case when co2.ex2manhour = '0.00' then '' else round(co2.ex2manhour,2) end ex2manhour0,
 			case when co2.ex2cost = '0.00' then '' else round(co2.ex2cost,2) end ex2cost0,
 			case when co2.ex2usercount = '0' then '' else co2.ex2usercount end ex2usercount0,
-			@manhourcount0 := case when co1.ex1manhour + co2.ex2manhour = '0.00' then '' else round( co1.ex1manhour + co2.ex2manhour, 2 ) end manhourcount0,
+			@manhourcount0 := round( co1.ex1manhour + co2.ex2manhour, 2 ) as manhourcount0,
 			@manhourcount0 as bpmanhourcount,
-			@costcount0 := case when co1.ex1cost + co2.ex2cost = '0.00' then '' else round( co1.ex1cost + co2.ex2cost, 2 ) end costcount0,
+			@costcount0 := round( co1.ex1cost + co2.ex2cost, 2 ) as  costcount0,
 			@costcount0 as bpcostcount
 		FROM
 			(
@@ -229,7 +230,7 @@
 				FROM
 					coststatistics
 					LEFT JOIN expatriatesinfor ex1 ON coststatistics.bpname = ex1.expatriatesinfor_id
-					AND ex1.jobclassification IN ('BP025001','BP025002','BP025004' )
+					AND ex1.jobclassification IN ('BP025001','BP025002','BP025005' )
 				WHERE coststatistics.years = #{years}
 				GROUP BY bpcompany
 			) co1

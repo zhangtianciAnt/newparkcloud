@@ -764,8 +764,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     individual.setIndividual_id(UUID.randomUUID().toString());
                     individuallist = contractnumber;
                     individual.setContractnumber(contractnumber);
+                    individual.setProjectname(contractapp.getProjectname());
+                    individual.setDates(contractapp.getDates());
                     individual.setContracttype(contractapp.getContracttype());
                     individual.setCustojapanese(contractapp.getCustochinese());
+                    individual.setClaimamount(contractapp.getClaimamount());
                     individual.setLiableperson(supplierinforlist.get(0).getLiableperson());
                     individual.setAddress(supplierinforlist.get(0).getAddchinese());
                     individual.setSupportdate(countLi.get(0).getSupportdate());

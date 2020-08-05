@@ -503,6 +503,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         }
         String manhour = "manhour" + String.valueOf(Integer.valueOf(dates.substring(dates.length() - 2,7)));
         String cost = "cost" + String.valueOf(Integer.valueOf(dates.substring(dates.length() - 2,7)));
+        Integer groupIdListcount = groupIdList.size();
         List<Map<String, String>> dataList = new ArrayList<Map<String,String>>();
         String strGroupid = "";
         if(groupIdList.size() > 0){
@@ -532,26 +533,14 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                                 dataList.get(j).put("costcount" + String.valueOf(i), String.valueOf(data.get(j).get("costcount0")));
 
                                 //会社总工数
-                                BigDecimal dataListmanhourcount = new BigDecimal(0d);
-                                BigDecimal bddatamanhourcount = new BigDecimal(0d);
-                                if(!String.valueOf(dataList.get(j).get("manhourcount0")).equals("")){
-                                    dataListmanhourcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(dataList.get(j).get("manhourcount0"))));
-                                }
-                                if(!String.valueOf(data.get(j).get("manhourcount0")).equals("")){
-                                    bddatamanhourcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(data.get(j).get("manhourcount0"))));
-                                }
+                                BigDecimal dataListmanhourcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(dataList.get(j).get("bpmanhourcount"))));
+                                BigDecimal bddatamanhourcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(data.get(j).get("bpmanhourcount"))));
                                 //会社总工数
                                 dataList.get(j).put("bpmanhourcount", String.valueOf(dataListmanhourcount.add(bddatamanhourcount)));
 
                                 //会社总费用
-                                BigDecimal dataListcostcount = new BigDecimal(0d);
-                                BigDecimal bddatacostcount = new BigDecimal(0d);
-                                if(!String.valueOf(dataList.get(j).get("costcount0")).equals("")){
-                                    dataListcostcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(dataList.get(j).get("costcount0"))));
-                                }
-                                if(!String.valueOf(data.get(j).get("costcount0")).equals("")){
-                                    bddatacostcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(data.get(j).get("costcount0"))));
-                                }
+                                BigDecimal dataListcostcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(dataList.get(j).get("bpcostcount"))));
+                                BigDecimal bddatacostcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(data.get(j).get("bpcostcount"))));
                                 //会社总费用
                                 dataList.get(j).put("bpcostcount", String.valueOf(dataListcostcount.add(bddatacostcount)));
                             }
@@ -562,12 +551,12 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         }
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         for(int x=0;x<dataList.size();x++ ){
-            if(!dataList.get(x).get("bpcostcount").equals("")){//会社总费用
+            if(!String.valueOf(dataList.get(x).get("bpcostcount")).equals("0.0")){
                 Map<String,String> map = dataList.get(x);
                 list.add(map);
             }
         }
-        list.get(0).put("groupnumber", String.valueOf(groupIdList.size()));//group个数
+        list.get(0).put("groupnumber", String.valueOf(groupIdListcount));//group个数
         list.get(0).put("strgroupid", strGroupid);//groupid
         return list;
     }
@@ -575,14 +564,25 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     //gbb add 0805 添加費用統計
     @Override
     public void insertcoststatisticsdetail(List<ArrayList> strData, TokenModel tokenModel) throws Exception {
-        String groupid = "";
-        if(strData.size() > 0){
-            groupid = "1";
-            for(int i=0;i<strData.size();i++ ){
+
+        List<Map<String, String>> strDatanew = strData.get(0);
+        if(strDatanew.size() > 0){
+            for(int i=0;i<strDatanew.size();i++ ){
                 Coststatisticsdetail detail = new Coststatisticsdetail();
-                detail.setGroupid(groupid);
+
+                //部门
+                detail.setGroupid(String.valueOf(strDatanew.get(i).get("groupid")));
+                //供应商
+                detail.setSupplierinforid(strDatanew.get(i).get("bpcompany"));
+                //年月
+                detail.setDates(strDatanew.get(i).get("dates"));
+                //总费用
+                detail.setCost(strDatanew.get(i).get("bpcostcount"));
+                //主键
                 detail.setCoststatisticsdetail_id(UUID.randomUUID().toString());
+
                 detail.preInsert(tokenModel);
+
                 coststatisticsdetailMapper.insert(detail);
             }
         }
