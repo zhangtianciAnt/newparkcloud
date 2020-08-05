@@ -3,10 +3,12 @@ package com.nt.controller.Config.BASF;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.*;
 import com.nt.dao_BASF.VO.DeviceAndSqlUserinfoVo;
+import com.nt.dao_SQL.APBCardHolderVo;
 import com.nt.dao_SQL.SqlAPBCardHolder;
 import com.nt.dao_SQL.SqlViewDepartment;
 import com.nt.service_BASF.*;
@@ -184,35 +186,34 @@ public class MultiThreadScheduleTask {
         // 获取personnelpermissions下人员类别分组
         List<PersonnelPermissions> personnelPermissions = personnelPermissionsServices.selectByClass();
         // 获取门禁数据库今天所有用户信息
-        List<SqlAPBCardHolder> apbCardHolders = JSONObject.parseArray(
-                JSONObject.parseObject(HttpUtil.post(Url + "userInfo/selectapbcardholder", new HashMap<>())).get("data").toString(), SqlAPBCardHolder.class
+        List<APBCardHolderVo> apbCardHolderVos = JSONObject.parseArray(
+                JSONObject.parseObject(HttpUtil.post(Url + "userInfo/selectapbcardholder", new HashMap<>())).get("data").toString(), APBCardHolderVo.class
         );
-        // 根据departmentpeid对用户进行分组汇总，统计各类用户count
-        //1. 获取class1（内部员工）总数
-        int YG = (int) apbCardHolders.stream().filter(
-                s -> CowBUtils.wordsIndexOf(s.getDepartmentpeid(),
-                        personnelPermissions.stream().filter(p -> p.getClassname().equals("class1")).collect(Collectors.toList()).get(0).getRecnum().split(","))
-        ).count();
-
-        //2. 获取class2（临时访客）总数
-        int FK = (int) apbCardHolders.stream().filter(
-                s -> CowBUtils.wordsIndexOf(s.getDepartmentpeid(),
-                        personnelPermissions.stream().filter(p -> p.getClassname().equals("class2")).collect(Collectors.toList()).get(0).getRecnum().split(","))
-        ).count();
-        //3. 获取class3（承包商）总数
-        int CBS = (int) apbCardHolders.stream().filter(
-                s -> CowBUtils.wordsIndexOf(s.getDepartmentpeid(),
-                        personnelPermissions.stream().filter(p -> p.getClassname().equals("class3")).collect(Collectors.toList()).get(0).getRecnum().split(","))
-        ).count();
-
+        // TODO: 2020/8/5 因为json循环引用，导致前端接收的json是$ref,需要研究下怎么改 
+        List<APBCardHolderVo> apbCardHolderVos1 = JSONObject.parseArray(
+                JSONObject.parseObject(HttpUtil.post(Url + "userInfo/selectapbcardholder", new HashMap<>())).get("data").toString(), APBCardHolderVo.class
+        );
+        // 获取内部员工总数
+        List<APBCardHolderVo> YGList = apbCardHolderVos.stream().filter(
+                s -> CowBUtils.wordsEqualOf(s.getType(),
+                        personnelPermissions.stream().filter(p -> p.getClassname().equals("class1")).collect(Collectors.toList()).get(0).getAllname().split(","))).collect(Collectors.toList());
+        int YG = YGList.size();
+        //2. 获取临时访客总数
+        List<APBCardHolderVo> FKList = apbCardHolderVos.stream().filter(
+                s -> CowBUtils.wordsEqualOf(s.getType(),
+                        personnelPermissions.stream().filter(p -> p.getClassname().equals("class2")).collect(Collectors.toList()).get(0).getAllname().split(","))).collect(Collectors.toList());
+        int FK = FKList.size();
+        //3. 获取承包商总数
+        List<APBCardHolderVo> CBSList = apbCardHolderVos.stream().filter(
+                s -> CowBUtils.wordsEqualOf(s.getType(),
+                        personnelPermissions.stream().filter(p -> p.getClassname().equals("class3")).collect(Collectors.toList()).get(0).getAllname().split(","))).collect(Collectors.toList());
+        int CBS = CBSList.size();
         // 发送websocket信息
-        webSocketVo.setUsersCount(YG);
-        webSocketVo.setContractorsCount(CBS);
-        webSocketVo.setVisitorsCount(FK);
-        webSocketVo.setAllUsersCount(YG + CBS + FK);
-
-        webSocketVo.setSelectapbcardList(apbCardHolders);
-
+        webSocketVo.setUsersCount(YGList);
+        webSocketVo.setContractorsCount(CBSList);
+        webSocketVo.setVisitorsCount(FKList);
+        webSocketVo.setAllUsersCount(YG + FK + CBS);
+        webSocketVo.setSelectapbcardList(apbCardHolderVos1);
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 

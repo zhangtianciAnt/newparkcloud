@@ -18,4 +18,22 @@ public class CowBUtils {
         }
         return result;
     }
+
+    /**
+     * 用于判断一个字符串，是否与数组字符串中的任意一个相等
+     *
+     * @param inputString 进行判断的字符串
+     * @param words       字符串数组
+     * @return true 有相同，false 没有相同
+     */
+    public static boolean wordsEqualOf(String inputString, String[] words) {
+        boolean result = false;
+        for (String w : words) {
+            if (inputString.equals(w)) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
 }

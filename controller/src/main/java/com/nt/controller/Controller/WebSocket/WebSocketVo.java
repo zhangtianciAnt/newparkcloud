@@ -2,6 +2,7 @@ package com.nt.controller.Controller.WebSocket;
 
 import com.nt.dao_BASF.*;
 import com.nt.dao_BASF.VO.*;
+import com.nt.dao_SQL.APBCardHolderVo;
 import com.nt.dao_SQL.SqlAPBCardHolder;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,13 +29,13 @@ public class WebSocketVo {
     private Integer allUsersCount;
 
     // 员工人数
-    private Integer usersCount;
+    private List<APBCardHolderVo> usersCount;
 
     // 承包商人数
-    private Integer contractorsCount;
+    private List<APBCardHolderVo> contractorsCount;
 
     // 访客人数
-    private Integer visitorsCount;
+    private List<APBCardHolderVo> visitorsCount;
 
     // BASF90500 人员清点模块 各装置人数集合
 //    private List<SqlAPBCardHolder> deviceUsersCountList = new ArrayList<>();
@@ -88,7 +89,7 @@ public class WebSocketVo {
     //响应信息列表
     private List<Responseinformation> responseinformationList = new ArrayList<>();
     //在厂人员列表
-    private List<SqlAPBCardHolder> selectapbcardList = new ArrayList<>();
+    private List<APBCardHolderVo> selectapbcardList = new ArrayList<>();
 
     //获取培训即将到期人员列表
     private List<OverduePersonnelListVo> overduePersonnelListVoList = new ArrayList<>();
@@ -114,7 +115,7 @@ public class WebSocketVo {
     // endregion
 
     //道路占用/临时封闭区域列表
-    private List<Application> roadClosed=new ArrayList<>();
+    private List<Application> roadClosed = new ArrayList<>();
 
     //
     private List<Switchnotifications> switchList = new ArrayList<>();
