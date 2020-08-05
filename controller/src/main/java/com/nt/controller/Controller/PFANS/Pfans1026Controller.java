@@ -7,10 +7,12 @@ import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
+import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.IndividualMapper;
 import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
+import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -26,16 +28,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 @RestController
 @RequestMapping("/contractapplication")
 public class Pfans1026Controller {
+    @Autowired
+    private SupplierinforMapper supplierinforMapper;
     @Autowired
     private IndividualMapper individualmapper;
     @Autowired
@@ -59,17 +59,23 @@ public class Pfans1026Controller {
     public void generateJxls(String individual_id, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Map<String, Object> data = new HashMap<>();
         Individual individual = individualmapper.selectByPrimaryKey(individual_id);
-        Coststatisticsdetail coststatisticsdetail = new Coststatisticsdetail();
-        coststatisticsdetail.setSupplierinforid(individual.getCustojapanese());
-        coststatisticsdetail.setDates(individual.getDates());
-        List<Coststatisticsdetail> coststatisticsdetaillist = coststatisticsdetailMapper.select(coststatisticsdetail);
-        if (coststatisticsdetaillist.size() > 0) {
-            for(Coststatisticsdetail cost :coststatisticsdetaillist){
-                Query query = new Query();
-                query.addCriteria(Criteria.where("userinfo.groupid").is(cost.getGroupid()));
-                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                if (customerInfo != null) {
-                    cost.setGroupid((customerInfo.getUserinfo().getGroupname()));
+        Supplierinfor Supplierinfor =new Supplierinfor();
+        Supplierinfor.setSupchinese(individual.getCustojapanese());
+        List<Supplierinfor> supplierinforlist = supplierinforMapper.select(Supplierinfor);
+        List<Coststatisticsdetail> coststatisticsdetaillist = new ArrayList<>();
+        if(supplierinforlist.size()>0){
+            Coststatisticsdetail coststatisticsdetail = new Coststatisticsdetail();
+            coststatisticsdetail.setSupplierinforid(supplierinforlist.get(0).getSupplierinfor_id());
+            coststatisticsdetail.setDates(individual.getDates());
+            coststatisticsdetaillist = coststatisticsdetailMapper.select(coststatisticsdetail);
+            if (coststatisticsdetaillist.size() > 0) {
+                for(Coststatisticsdetail cost :coststatisticsdetaillist){
+                    Query query = new Query();
+                    query.addCriteria(Criteria.where("userinfo.groupid").is(cost.getGroupid()));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        cost.setGroupid((customerInfo.getUserinfo().getGroupname()));
+                    }
                 }
             }
         }
