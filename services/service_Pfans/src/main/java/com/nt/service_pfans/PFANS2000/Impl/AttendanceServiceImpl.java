@@ -77,6 +77,17 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Override
     public List<Attendance> getAttendancelist1(Attendance attendance) throws Exception {
         List<Attendance> attendancelist = attendanceMapper.select(attendance);
+        for(Attendance atten :attendancelist)
+        {
+            if(atten.getAbsenteeism()!=null && atten.getAbsenteeism()!="")
+            {
+                atten = selectAbnomaling(atten);
+            }
+            else if(atten.getTabsenteeism()!=null && atten.getTabsenteeism()!="")
+            {
+                atten = selectAbnomaling(atten);
+            }
+        }
         return attendancelist;
     }
 
@@ -184,4 +195,44 @@ public class AttendanceServiceImpl implements AttendanceService {
         return returnDateList;
     }
     //add ccm 2020729 考勤异常加班审批中的日期，考勤不允许承认
+
+    //add ccm 0804 查询欠勤是否已经全部申请
+    public Attendance selectAbnomaling(Attendance attendance) throws Exception
+    {
+        SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
+        List<AbNormal> abList = new ArrayList<AbNormal>();
+        abList = abNormalMapper.selectAbnomalBystatusandUserid(attendance.getUser_id());
+        if(abList.size()>0)
+        {
+            Double hours = 0D;
+            for(AbNormal a: abList)
+            {
+                if(a.getStatus().equals("2"))
+                {
+                    if(sfymd.parse(sfymd.format(attendance.getDates())).getTime() >= sfymd.parse(sfymd.format(a.getOccurrencedate())).getTime() && sfymd.parse(sfymd.format(attendance.getDates())).getTime() <= sfymd.parse(sfymd.format(a.getFinisheddate())).getTime())
+                    {
+                        hours += Double.valueOf(a.getLengthtime());
+                    }
+                    else
+                    {
+                        hours += 0;
+                    }
+                }
+                else
+                {
+                    if(sfymd.parse(sfymd.format(attendance.getDates())).getTime() >= sfymd.parse(sfymd.format(a.getReoccurrencedate())).getTime() && sfymd.parse(sfymd.format(attendance.getDates())).getTime() <= sfymd.parse(sfymd.format(a.getRefinisheddate())).getTime())
+                    {
+                        hours += Double.valueOf(a.getRelengthtime());
+                    }
+                    else
+                    {
+                        hours += 0;
+                    }
+                }
+            }
+            attendance.setTenantid(String.valueOf(hours));
+        }
+        return attendance;
+    }
+    //add ccm 0804 查询欠勤是否已经全部申请
 }

@@ -69,6 +69,13 @@ public class Pfans1027Controller {
     public void downLoad(@RequestBody Quotation quotation, HttpServletRequest request, HttpServletResponse response) throws Exception{
         TokenModel tokenModel=tokenService.getToken(request);
         QuotationVo qu = quotationService.selectById(quotation.getQuotationid());
+        //add_fjl_0804  生成书类的覚字去掉 start
+        if (qu.getQuotation() != null) {
+            if (qu.getQuotation().getContractnumber().contains("覚")) {
+                qu.getQuotation().setContractnumber(qu.getQuotation().getContractnumber().replace("覚", ""));
+            }
+        }
+        //add_fjl_0804  生成书类的覚字去掉 end
         String qq[] = quotation.getClaimdatetime().split(" ~ ");
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("PG019");
         for(Dictionary item:dictionaryList){

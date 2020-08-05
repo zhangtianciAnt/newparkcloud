@@ -78,7 +78,7 @@ public class SecurityServiceImpl implements SecurityService {
                 if (interviewrecordlist.size() > 0) {
                     interviewrecordlist.get(0).setWhetherentry("0");
                     interviewrecordlist.get(0).setResult("0");
-                    interviewrecordMapper.updateByPrimaryKey(interviewrecord);
+                    interviewrecordMapper.updateByPrimaryKey(interviewrecordlist.get(0));
                 }
             }
         }

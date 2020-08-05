@@ -66,6 +66,16 @@ public class pfans1031Controller {
 
     @RequestMapping(value = "/downLoad1", method = {RequestMethod.POST})
     public void downLoad1(@RequestBody Napalm na, HttpServletRequest request, HttpServletResponse response) throws Exception{
+        //add_fjl_0804  生成书类的覚字去掉 start
+        if (na != null) {
+            if (na.getContractnumber().contains("覚")) {
+                na.setContractnumber(na.getContractnumber().replace("覚", ""));
+            }
+            if (na.getClaimnumber().contains("覚")) {
+                na.setClaimnumber(na.getClaimnumber().replace("覚", ""));
+            }
+        }
+        //add_fjl_0804  生成书类的覚字去掉 end
         TokenModel tokenModel=tokenService.getToken(request);
         String nn[] = na.getClaimdatetime().split(" ~ ");
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("PG019");

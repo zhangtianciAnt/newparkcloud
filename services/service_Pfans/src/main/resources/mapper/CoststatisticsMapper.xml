@@ -144,42 +144,108 @@
 		group by exp.EXPATRIATESINFOR_ID,exp.EXPNAME,df.year,df.GROUP_ID
 	</select>
 
+	<select id="getcostMonthList" resultType="com.nt.dao_Pfans.PFANS6000.Coststatistics">
+		select co.*,
+			concat(co.groupid,',',substring(#{years},1,4),',',substring(#{years},6,7)) as coststatistics_id,
+		    workflow.status
+		from (
+			select
+			group_id as groupid,
+			round(sum(manhour4),2) as manhour4,
+			round(sum(cost4),2) as cost4,
+			round(sum(manhour5),2) as manhour5,
+			round(sum(cost5),2) as cost5,
+			round(sum(manhour6),2) as manhour6,
+			round(sum(cost6),2) as cost6,
+			round(sum(manhour7),2) as manhour7,
+			round(sum(cost7),2) as cost7,
+			round(sum(manhour8),2) as manhour8,
+			round(sum(cost8),2) as cost8,
+			round(sum(manhour9),2) as manhour9,
+			round(sum(cost9),2) as cost9,
+			round(sum(manhour10),2) as manhour10,
+			round(sum(cost10),2) as cost10,
+			round(sum(manhour11),2) as manhour11,
+			round(sum(cost11),2) as cost11,
+			round(sum(manhour12),2) as manhour12,
+			round(sum(cost12),2) as cost12,
+			round(sum(manhour1),2) as manhour1,
+			round(sum(cost1),2) as cost1,
+			round(sum(manhour2),2) as manhour2,
+			round(sum(cost2),2) as cost2,
+			round(sum(manhour3),2) as manhour3,
+			round(sum(cost3),2) as cost3
+			from coststatistics
+			where years = substring(#{years},1,4)
+			<if test="groupIdList != null and groupIdList.size() > 0 ">
+			    and group_id in
+				<foreach item="item" index="index" collection="groupIdList"
+							 open="(" separator="," close=")">
+					#{item}
+				</foreach>
+				</if>
+			group by group_id
+		) co
+		left join
+		(
+			SELECT
+				wf1.*
+			FROM
+				workflowinstance wf1
+			WHERE
+			NOT EXISTS
+			(
+				SELECT
+				1
+				FROM
+				workflowinstance wf2
+				WHERE
+				wf2.DATAID = wf1.DATAID
+				AND wf2.CREATEON > wf1.CREATEON
+			)
+		) workflow
+		on workflow.DATAID = concat(co.groupid,',',substring(#{years},1,4),',',substring(#{years},6,7))
+	</select>
+
 	<select id="getcostMonth" parameterType="java.lang.String" resultType="java.util.HashMap">
 		SELECT
-			co1.bpcompany, #????
-			case when co1.ex1manhour = '0.00' then '' else co1.ex1manhour end ex1manhour, #????
-			case when co1.ex1cost = '0.00' then '' else co1.ex1cost end ex1cost, #????
-			case when co1.ex1usercount = '0.00' then '' else co1.ex1usercount end ex1usercount, #????
-			case when co2.ex2manhour = '0.00' then '' else co2.ex2manhour end ex2manhour, #????
-			case when co2.ex2cost = '0.00' then '' else co2.ex2cost end ex2cost, #????
-			case when co2.ex2usercount = '0.00' then '' else co2.ex2usercount end ex2usercount, #????
-			case when co1.ex1cost + co2.ex2cost = '0.00' then '' else round( co1.ex1cost + co2.ex2cost, 2 ) end costcount #?????
+			co1.bpcompany,
+			case when co1.ex1manhour = '0.00' then '' else round(co1.ex1manhour,2) end ex1manhour0,
+			case when co1.ex1cost = '0.00' then '' else round(co1.ex1cost,2) end ex1cost0,
+			case when co1.ex1usercount = '0' then '' else co1.ex1usercount end ex1usercount0,
+			case when co2.ex2manhour = '0.00' then '' else round(co2.ex2manhour,2) end ex2manhour0,
+			case when co2.ex2cost = '0.00' then '' else round(co2.ex2cost,2) end ex2cost0,
+			case when co2.ex2usercount = '0' then '' else co2.ex2usercount end ex2usercount0,
+			@manhourcount0 := round( co1.ex1manhour + co2.ex2manhour, 2 ) as manhourcount0,
+			@manhourcount0 as bpmanhourcount,
+			@costcount0 := round( co1.ex1cost + co2.ex2cost, 2 ) as  costcount0,
+			@costcount0 as bpcostcount
 		FROM
 			(
 				SELECT
 					coststatistics.bpcompany,
-					round( SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${manhour} ELSE 0 END ), 2 ) AS ex1manhour,
-					round( SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${cost} ELSE 0 END ), 2 ) AS ex1cost,
-					count( ex1.expatriatesinfor_id ) AS ex1usercount
+					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${manhour} ELSE 0 END ) AS ex1manhour,
+					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${cost} ELSE 0 END ) AS ex1cost,
+					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN 1 ELSE 0 END ) AS ex1usercount
 				FROM
 					coststatistics
 					LEFT JOIN expatriatesinfor ex1 ON coststatistics.bpname = ex1.expatriatesinfor_id
-					AND ex1.jobclassification IN ('BP025001','BP025002','BP025004' )
-				GROUP BY
-					bpcompany
+					AND ex1.jobclassification IN ('BP025001','BP025002','BP025005' )
+				WHERE coststatistics.years = #{years}
+				GROUP BY bpcompany
 			) co1
 			LEFT JOIN (
 				SELECT
 					coststatistics.bpcompany,
-					round( SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${manhour} ELSE 0 END ), 2 ) AS ex2manhour,
-					round( SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${cost} ELSE 0 END ), 2 ) AS ex2cost,
-					count( ex2.expatriatesinfor_id ) AS ex2usercount
+					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${manhour} ELSE 0 END ) AS ex2manhour,
+					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${cost} ELSE 0 END ) AS ex2cost,
+					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL ) THEN 1 ELSE 0 END ) AS ex2usercount
 				FROM
 					coststatistics
 					LEFT JOIN expatriatesinfor ex2 ON coststatistics.bpname = ex2.expatriatesinfor_id
 					AND ex2.jobclassification IN ('BP025003','BP025004' )
-				GROUP BY
-				bpcompany
+				WHERE coststatistics.years = #{years}
+				GROUP BY bpcompany
 			) co2 ON co1.bpcompany = co2.bpcompany
 		order by co1.bpcompany
 	</select>
