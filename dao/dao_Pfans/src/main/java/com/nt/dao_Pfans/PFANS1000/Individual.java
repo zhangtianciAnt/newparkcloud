@@ -48,4 +48,13 @@ public class Individual extends BaseModel {
     @Column(name = "SUPPORTDATE")
     private Date supportdate;
 
+    @Column(name = "CLAIMAMOUNT")
+    private String claimamount;
+
+    @Column(name = "PROJECTNAME")
+    private String projectname;
+
+    @Column(name = "DATES")
+    private String dates;
+
 }
