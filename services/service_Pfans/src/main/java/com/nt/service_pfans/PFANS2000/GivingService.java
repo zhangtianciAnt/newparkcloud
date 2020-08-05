@@ -37,6 +37,8 @@ public interface GivingService {
     Lackattendance thisMonthLacktimeChange(GivingVo givingVo) throws Exception;
 
     void updatestate(String  givingid,String generationdate,TokenModel tokenModel)throws Exception;
+
+    Integer attendancecheck(TokenModel tokenModel)throws Exception;
 }
 
 

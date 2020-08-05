@@ -15,4 +15,9 @@ public interface GivingMapper extends MyMapper<Giving> {
     List<Attendance> selectAttendance(@Param("user_id")String user_id, @Param("years") String years, @Param("months") String months);
 
     List<BaseVo> selectBase(@Param("dates")String dates);
+
+    //add gbb 0805 生成工资时check考试数据(当月离职人员)
+    Integer getAttendanceRetireCount(@Param("userIdList")List<String> userIdList);
+    //add gbb 0805 生成工资时check考试数据(上月所有员工)
+    Integer getAttendanceStatus();
 }

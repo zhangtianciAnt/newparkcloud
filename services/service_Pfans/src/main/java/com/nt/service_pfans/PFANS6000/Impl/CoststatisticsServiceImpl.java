@@ -556,8 +556,10 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 list.add(map);
             }
         }
-        list.get(0).put("groupnumber", String.valueOf(groupIdListcount));//group个数
-        list.get(0).put("strgroupid", strGroupid);//groupid
+        if(list.size() >0){
+            list.get(0).put("groupnumber", String.valueOf(groupIdListcount));//group个数
+            list.get(0).put("strgroupid", strGroupid);//groupid
+        }
         return list;
     }
 

@@ -43,4 +43,104 @@
     and wages.actual = '0'
     </select>
 
+    <select id="getAttendanceRetireCount" resultType="Integer">
+        SELECT
+            count(*)
+        FROM
+        (
+            SELECT
+                co.*,
+                concat(
+                    co.USER_ID,
+                    ',',
+                    substring( DATE_FORMAT( DATE_ADD( now(), INTERVAL - 1 MONTH ), '%Y-%m' ), 1, 4 ),
+                    ',',
+                substring( DATE_FORMAT( DATE_ADD( now(), INTERVAL - 1 MONTH ), '%Y-%m' ), 6, 7 )) AS coststatistics_id,
+                workflow.STATUS
+            FROM
+                (
+                SELECT
+                    user_id
+                FROM
+                    attendance
+                WHERE
+                    STATUS = '0'
+                    AND DATE_FORMAT( dates, '%Y-%m' ) = DATE_FORMAT( DATE_ADD( now(), INTERVAL - 1 MONTH ), '%Y-%m' )
+                    <if test="userIdList != null and userIdList.size() > 0 ">
+                        and
+                        user_id in
+                        <foreach item="item" index="index" collection="userIdList"
+                                 open="(" separator="," close=")">
+                            #{item}
+                        </foreach>
+                    </if>
+                GROUP BY
+                    user_id
+                ) co
+                LEFT JOIN (
+                SELECT
+                    wf1.*
+                FROM
+                    workflowinstance wf1
+                WHERE
+                    NOT EXISTS ( SELECT 1 FROM workflowinstance wf2 WHERE wf2.DATAID = wf1.DATAID AND wf2.CREATEON > wf1.CREATEON )
+                    ) workflow ON workflow.DATAID = concat(
+                    co.USER_ID,
+                    ',',
+                    substring( DATE_FORMAT( DATE_ADD( now(), INTERVAL - 1 MONTH ), '%Y-%m' ), 1, 4 ),
+                    ',',
+                substring( DATE_FORMAT( DATE_ADD( now(), INTERVAL - 1 MONTH ), '%Y-%m' ), 6, 7 ))
+            WHERE
+            ( workflow.STATUS != 4 OR workflow.STATUS IS NULL )
+        ) attcount
+
+    </select>
+
+    <select id="getAttendanceStatus" resultType="Integer">
+        SELECT
+            count(*)
+        FROM
+        (
+            SELECT
+                co.*,
+                concat(
+                    co.user_id,
+                    ',',
+                    substring( DATE_FORMAT( DATE_ADD( now(), INTERVAL - 1 MONTH ), '%Y-%m' ), 1, 4 ),
+                    ',',
+                substring( DATE_FORMAT( DATE_ADD( now(), INTERVAL - 1 MONTH ), '%Y-%m' ), 6, 7 )) AS coststatistics_id,
+                workflow.STATUS
+            FROM
+                (
+                SELECT
+                    user_id
+                FROM
+                    attendance
+                WHERE
+                    STATUS = '0'
+                    AND DATE_FORMAT( dates, '%Y-%m' ) = DATE_FORMAT( DATE_ADD( now(), INTERVAL - 1 MONTH ), '%Y-%m' )
+                GROUP BY
+                    user_id
+                ) co
+                LEFT JOIN (
+                SELECT
+                    wf1.*
+                FROM
+                    workflowinstance wf1
+                WHERE
+                    NOT EXISTS ( SELECT 1 FROM workflowinstance wf2 WHERE wf2.DATAID = wf1.DATAID AND wf2.CREATEON > wf1.CREATEON )
+                    ) workflow ON workflow.DATAID = concat(
+                    co.user_id,
+                    ',',
+                    substring( DATE_FORMAT( DATE_ADD( now(), INTERVAL - 1 MONTH ), '%Y-%m' ), 1, 4 ),
+                    ',',
+                substring( DATE_FORMAT( DATE_ADD( now(), INTERVAL - 1 MONTH ), '%Y-%m' ), 6, 7 ))
+            WHERE
+            ( workflow.STATUS != 4 OR workflow.STATUS IS NULL )
+        ) attcount
+
+    </select>
+
+
+
 </mapper>

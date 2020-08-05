@@ -2380,4 +2380,44 @@ public class GivingServiceImpl implements GivingService {
         //祝礼金申请
         casgiftApplyMapper.updpayment(generationdate.substring(0,7),tokenModel.getUserId());
     }
+
+    /**
+     * insert gbb 0808 生成工资是check考勤（1：上月未审批通过的；2：当月离职人员为审批通过的）
+     *
+     * @param tokenModel
+     * @return
+     */
+    @Override
+    public Integer attendancecheck(TokenModel tokenModel) throws Exception {
+        Query query = new Query();
+        List<String> userIdList = new ArrayList<String>();
+        // 东八区（中国）时间格式化
+        SimpleDateFormat sfChina = new SimpleDateFormat("yyyy-MM-dd");
+        // 上个月
+        Calendar lastMonth = Calendar.getInstance();
+        lastMonth.add(Calendar.MONTH, -1);
+        // 上个月最后一日
+        int lastMonthLastDay = lastMonth.getActualMaximum(Calendar.DAY_OF_MONTH);
+        // 本月
+        Calendar thisMonth = Calendar.getInstance();
+        // 本月最后一日
+        int thisMonthLastDay = thisMonth.getActualMaximum(Calendar.DAY_OF_MONTH);
+        // 查询退职人员信息（本月退职人员为对象）
+        Criteria criteria = Criteria.where("userinfo.resignation_date")
+                .gte(thisMonth.get(Calendar.YEAR)  + "-" + getMouth(sfChina.format(lastMonth.getTime())) + "-" + '1')
+                .lt(thisMonth.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(lastMonth.getTime())) + "-" + thisMonthLastDay)
+                .and("status").is("0");
+        query.addCriteria(criteria);
+        List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+        if (customerInfos.size() > 0) {
+            for (CustomerInfo customerInfo : customerInfos) {
+                userIdList.add(customerInfo.getUserid());
+            }
+        }
+        //add gbb 0805 生成工资时check考试数据(上月所有员工)
+        int RetireCount = givingMapper.getAttendanceRetireCount(userIdList);
+        //add gbb 0805 生成工资时check考试数据(上月所有员工)
+        int AttendanceStatus = givingMapper.getAttendanceStatus();
+        return RetireCount + AttendanceStatus;
+    }
 }
