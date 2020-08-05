@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -86,6 +87,14 @@ public class Pfans6008Controller {
     public ApiResult getcostMonth(String dates,String role,String groupid,HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(coststatisticsService.getcostMonth(dates,role,groupid,tokenModel));
+    }
+
+    //gbb add 0805 添加費用統計
+    @RequestMapping(value = "/insertcoststatisticsdetail", method = {RequestMethod.POST})
+    public ApiResult insertcoststatisticsdetail(@RequestBody List<ArrayList> strData, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        coststatisticsService.insertcoststatisticsdetail(strData, tokenModel);
+        return ApiResult.success();
     }
 
 }

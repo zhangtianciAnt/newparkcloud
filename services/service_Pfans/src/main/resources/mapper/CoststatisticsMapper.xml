@@ -209,21 +209,23 @@
 	<select id="getcostMonth" parameterType="java.lang.String" resultType="java.util.HashMap">
 		SELECT
 			co1.bpcompany,
-			case when co1.ex1manhour = '0.00' then '' else co1.ex1manhour end ex1manhour0,
-			case when co1.ex1cost = '0.00' then '' else co1.ex1cost end ex1cost0,
-			case when co1.ex1usercount = '0.00' then '' else co1.ex1usercount end ex1usercount0,
-			case when co2.ex2manhour = '0.00' then '' else co2.ex2manhour end ex2manhour0,
-			case when co2.ex2cost = '0.00' then '' else co2.ex2cost end ex2cost0,
-			case when co2.ex2usercount = '0.00' then '' else co2.ex2usercount end ex2usercount0,
-			case when co1.ex1manhour + co2.ex2manhour = '0.00' then '' else round( co1.ex1manhour + co2.ex2manhour, 2 ) end manhourcount0,
-			case when co1.ex1cost + co2.ex2cost = '0.00' then '' else round( co1.ex1cost + co2.ex2cost, 2 ) end costcount0
+			case when co1.ex1manhour = '0.00' then '' else round(co1.ex1manhour,2) end ex1manhour0,
+			case when co1.ex1cost = '0.00' then '' else round(co1.ex1cost,2) end ex1cost0,
+			case when co1.ex1usercount = '0' then '' else co1.ex1usercount end ex1usercount0,
+			case when co2.ex2manhour = '0.00' then '' else round(co2.ex2manhour,2) end ex2manhour0,
+			case when co2.ex2cost = '0.00' then '' else round(co2.ex2cost,2) end ex2cost0,
+			case when co2.ex2usercount = '0' then '' else co2.ex2usercount end ex2usercount0,
+			@manhourcount0 := case when co1.ex1manhour + co2.ex2manhour = '0.00' then '' else round( co1.ex1manhour + co2.ex2manhour, 2 ) end manhourcount0,
+			@manhourcount0 as bpmanhourcount,
+			@costcount0 := case when co1.ex1cost + co2.ex2cost = '0.00' then '' else round( co1.ex1cost + co2.ex2cost, 2 ) end costcount0,
+			@costcount0 as bpcostcount
 		FROM
 			(
 				SELECT
 					coststatistics.bpcompany,
-					round( SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${manhour} ELSE 0 END ), 2 ) AS ex1manhour,
-					round( SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${cost} ELSE 0 END ), 2 ) AS ex1cost,
-					count( ex1.expatriatesinfor_id ) AS ex1usercount
+					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${manhour} ELSE 0 END ) AS ex1manhour,
+					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${cost} ELSE 0 END ) AS ex1cost,
+					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN 1 ELSE 0 END ) AS ex1usercount
 				FROM
 					coststatistics
 					LEFT JOIN expatriatesinfor ex1 ON coststatistics.bpname = ex1.expatriatesinfor_id
@@ -234,9 +236,9 @@
 			LEFT JOIN (
 				SELECT
 					coststatistics.bpcompany,
-					round( SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${manhour} ELSE 0 END ), 2 ) AS ex2manhour,
-					round( SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${cost} ELSE 0 END ), 2 ) AS ex2cost,
-					count( ex2.expatriatesinfor_id ) AS ex2usercount
+					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${manhour} ELSE 0 END ) AS ex2manhour,
+					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${cost} ELSE 0 END ) AS ex2cost,
+					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL ) THEN 1 ELSE 0 END ) AS ex2usercount
 				FROM
 					coststatistics
 					LEFT JOIN expatriatesinfor ex2 ON coststatistics.bpname = ex2.expatriatesinfor_id

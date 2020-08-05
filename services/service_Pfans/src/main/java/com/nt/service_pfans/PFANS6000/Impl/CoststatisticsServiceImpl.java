@@ -66,6 +66,8 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private CoststatisticsdetailMapper coststatisticsdetailMapper;
 
     @Override
     public List<Coststatistics> getCostList(Coststatistics coststatistics) throws Exception {
@@ -470,8 +472,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         else{
             groupIdList.add(groupid);
         }
-        List<Coststatistics> costMonthList = new ArrayList<>();
-        costMonthList = coststatisticsMapper.getcostMonthList(dates,groupIdList);
+        List<Coststatistics> costMonthList = coststatisticsMapper.getcostMonthList(dates,groupIdList);
         return costMonthList;
     }
     //gbb add 0804 月度赏与详情
@@ -507,7 +508,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         if(groupIdList.size() > 0){
             for(int i=0;i<groupIdList.size();i++ ){
                 strGroupid = strGroupid + groupIdList.get(i) + ",";
-                List<Map<String, String>> data = coststatisticsMapper.getcostMonth(dates.substring(0,4),manhour,cost,strGroupid);
+                List<Map<String, String>> data = coststatisticsMapper.getcostMonth(dates.substring(0,4),manhour,cost,groupIdList.get(i));
                 if(data.size() > 0){
                     if(i == 0){
                         dataList = data;
@@ -556,11 +557,34 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                             }
                         }
                     }
-                    dataList.get(0).put("groupnumber", String.valueOf(groupIdList.size()));//group个数
-                    dataList.get(0).put("strgroupid", strGroupid);//groupid
                 }
             }
         }
-        return dataList;
+        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        for(int x=0;x<dataList.size();x++ ){
+            if(!dataList.get(x).get("bpcostcount").equals("")){//会社总费用
+                Map<String,String> map = dataList.get(x);
+                list.add(map);
+            }
+        }
+        list.get(0).put("groupnumber", String.valueOf(groupIdList.size()));//group个数
+        list.get(0).put("strgroupid", strGroupid);//groupid
+        return list;
+    }
+
+    //gbb add 0805 添加費用統計
+    @Override
+    public void insertcoststatisticsdetail(List<ArrayList> strData, TokenModel tokenModel) throws Exception {
+        String groupid = "";
+        if(strData.size() > 0){
+            groupid = "1";
+            for(int i=0;i<strData.size();i++ ){
+                Coststatisticsdetail detail = new Coststatisticsdetail();
+                detail.setGroupid(groupid);
+                detail.setCoststatisticsdetail_id(UUID.randomUUID().toString());
+                detail.preInsert(tokenModel);
+                coststatisticsdetailMapper.insert(detail);
+            }
+        }
     }
 }
