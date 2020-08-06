@@ -124,7 +124,7 @@ public class AssetsServiceImpl implements AssetsService {
 
 
     //定时任务
-    @Scheduled(cron = "0 17 0 * * ?")
+    @Scheduled(cron = "0 04 10 * * ?")
     public void updateAssets() throws Exception{
         LocalDate localDate = LocalDate.now();
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");

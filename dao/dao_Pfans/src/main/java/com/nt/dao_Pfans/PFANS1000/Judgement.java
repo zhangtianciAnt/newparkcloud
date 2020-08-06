@@ -244,8 +244,4 @@ public class Judgement extends BaseModel {
     private String supplementary;
     //ADD_FJL_0730 END
 
-    //原决裁
-    @Column(name = "OLDJUDGEMENTID")
-    private String oldjudgementid;
-
 }
