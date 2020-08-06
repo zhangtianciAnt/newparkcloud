@@ -171,13 +171,13 @@ public class Award extends BaseModel {
     private String sealstatus;
     @Column(name = "STATUSPUBLIC")
     private String statuspublic;
-
+    //年月
+    @Column(name = "DATES")
+    private String dates;
     //印章ID
     @Column(name = "SEALID")
     private String sealid;
     //add-ws-7/20-禅道任务342
 
-    //年月
-    @Column(name = "DATES")
-    private String dates;
+
 }
