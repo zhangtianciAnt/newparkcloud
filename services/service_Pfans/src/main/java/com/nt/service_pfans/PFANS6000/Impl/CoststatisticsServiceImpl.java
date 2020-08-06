@@ -479,37 +479,33 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     @Override
     public List<Map<String, String>>  getcostMonth(String dates,String role,String groupid,TokenModel tokenModel) throws Exception {
         List<String> groupIdList = new ArrayList<String>();
+        groupIdList.add(groupid);
         Query query = CustmizeQuery(new OrgTree());
         OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
         List<OrgTree>  orgTrees =  orgTree.getOrgs();
-        if(role.equals("2")){
-            for (OrgTree org: orgTrees ) {
-                if(org.get_id().equals(groupid)){
-                    for (OrgTree org1: org.getOrgs() ) {
-                        groupIdList.add(org1.get_id());
-                    }
-                }
-            }
-        }
-        else if(role.equals("4")){
+        //外驻担当看全部
+        if(role.equals("4")){
             for (OrgTree org: orgTrees ) {
                 for (OrgTree org1: org.getOrgs() ) {
                     groupIdList.add(org1.get_id());
                 }
             }
         }
-        else{
-            groupIdList.add(groupid);
-        }
-        String manhour = "manhour" + String.valueOf(Integer.valueOf(dates.substring(dates.length() - 2,7)));
-        String cost = "cost" + String.valueOf(Integer.valueOf(dates.substring(dates.length() - 2,7)));
+        //月份
+        String months = String.valueOf(Integer.valueOf(dates.substring(dates.length() - 2,7)));
+        //工数
+        String manhour = "manhour" + months;
+        //费用
+        String cost = "cost" + months;
+        //经费（3,6,9,12月有数据）
+        String expense = "expense" + months;
         Integer groupIdListcount = groupIdList.size();
         List<Map<String, String>> dataList = new ArrayList<Map<String,String>>();
         String strGroupid = "";
         if(groupIdList.size() > 0){
             for(int i=0;i<groupIdList.size();i++ ){
                 strGroupid = strGroupid + groupIdList.get(i) + ",";
-                List<Map<String, String>> data = coststatisticsMapper.getcostMonth(dates.substring(0,4),manhour,cost,groupIdList.get(i));
+                List<Map<String, String>> data = coststatisticsMapper.getcostMonth(dates.substring(0,4),manhour,cost,expense,months,groupIdList.get(i));
                 if(data.size() > 0){
                     if(i == 0){
                         dataList = data;
@@ -552,8 +548,10 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         for(int x=0;x<dataList.size();x++ ){
             if(!String.valueOf(dataList.get(x).get("bpcostcount")).equals("0.0")){
-                Map<String,String> map = dataList.get(x);
-                list.add(map);
+                if(!String.valueOf(dataList.get(x).get("bpcostcount")).equals("0")){
+                    Map<String,String> map = dataList.get(x);
+                    list.add(map);
+                }
             }
         }
         if(list.size() >0){

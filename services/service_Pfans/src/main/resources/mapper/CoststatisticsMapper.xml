@@ -225,7 +225,18 @@
 				SELECT
 					coststatistics.bpcompany,
 					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${manhour} ELSE 0 END ) AS ex1manhour,
-					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${cost} ELSE 0 END ) AS ex1cost,
+					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL )
+						THEN
+							(
+								CASE WHEN ( ${months} = 3 or ${months} = 6 or ${months} = 9 or ${months} = 12)
+								THEN ${cost}
+								<if test="months == 3 or months == 6 or months == 9 or months == 12 " >
+									+ ${expense}
+								</if>
+								ELSE ${cost}
+								END
+							)
+						ELSE 0 END ) AS ex1cost,
 					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN 1 ELSE 0 END ) AS ex1usercount
 				FROM
 					coststatistics
@@ -238,7 +249,18 @@
 				SELECT
 					coststatistics.bpcompany,
 					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${manhour} ELSE 0 END ) AS ex2manhour,
-					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${cost} ELSE 0 END ) AS ex2cost,
+					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL )
+						THEN
+							(
+								CASE WHEN ( ${months} = 3 or ${months} = 6 or ${months} = 9 or ${months} = 12)
+								THEN ${cost}
+								<if test="months == 3 or months == 6 or months == 9 or months == 12 " >
+									+ ${expense}
+								</if>
+								ELSE ${cost}
+								END
+							)
+						ELSE 0 END ) AS ex2cost,
 					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL ) THEN 1 ELSE 0 END ) AS ex2usercount
 				FROM
 					coststatistics

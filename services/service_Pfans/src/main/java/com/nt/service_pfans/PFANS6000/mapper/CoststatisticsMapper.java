@@ -16,6 +16,7 @@ public interface CoststatisticsMapper extends MyMapper<Coststatistics> {
     //gbb add 0804 月度赏与列表
     List<Coststatistics> getcostMonthList(@Param("years") String years,@Param("groupIdList")List<String> groupIdList);
     //gbb add 0804 月度赏与详情
-    List<Map<String, String>> getcostMonth(@Param("years") String years,@Param("manhour") String manhour,@Param("cost") String cost,@Param("groupid") String groupid);
+    List<Map<String, String>> getcostMonth(@Param("years") String years,@Param("manhour") String manhour,@Param("cost") String cost
+            ,@Param("expense") String expense,@Param("months") String months,@Param("groupid") String groupid);
 }
 
