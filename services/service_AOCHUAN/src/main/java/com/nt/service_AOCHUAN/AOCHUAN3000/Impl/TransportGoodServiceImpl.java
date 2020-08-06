@@ -449,12 +449,12 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         }
 
         //配置下载路径
-        String path = "/tmp/";
-        createDir(new File(path));
+//        String path = "/tmp/";
+//        createDir(new File(path));
 
         //根据模板生成新的excel
 		try {
-			File excelFile = createNewFile(beans, file, path);
+			File excelFile = createNewFile(beans, file);
 			//浏览器端下载文件
 			try {
 				downloadFile(response, excelFile);
@@ -559,30 +559,31 @@ public class TransportGoodServiceImpl implements TransportGoodService {
      * 根据excel模板生成新的excel
      *
      * @param beans
-     * @param file
-     * @param path
+     * @param sourceFile
      * @return
      */
-    private File createNewFile(Map<String, Object> beans, File file, String path) throws Exception {
+    private File createNewFile(Map<String, Object> beans, File sourceFile) throws Exception {
         XLSTransformer transformer = new MyXLSTransformer();
+        File tempFile = File.createTempFile("D3002", ".xlsx");
 
         //命名
-        String name = "bbb.xlsx";
-        File newFile = new File(path + name);
+//        String name = "bbb.xlsx";
+//        File newFile = new File(path + name);
 
-        try (InputStream in = new BufferedInputStream(new FileInputStream(file));
-             OutputStream out = new FileOutputStream(newFile)) {
+        try (InputStream in = new BufferedInputStream(new FileInputStream(sourceFile));
+             OutputStream out = new FileOutputStream(tempFile)) {
             //poi版本使用3.1.7要不然会报错
 			// 对应poi4.x 扩展XLSTransformer
 			// 需要初始化为com.nt.service_AOCHUAN.AOCHUAN3000.Impl.xlsMyXLSTransformer
             Workbook workbook = transformer.transformXLS(in, beans);
             workbook.write(out);
             out.flush();
-            return newFile;
+            return tempFile;
         } catch (Exception e) {
+        	log.error("error download 3002 excel file.", e);
             System.out.println(e.getMessage());
 			//删除服务器生成文件
-			deleteFile(newFile);
+			deleteFile(tempFile);
             throw e;
         }
     }
