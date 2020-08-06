@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS6000.mapper;
 
 import com.nt.dao_Pfans.PFANS6000.Coststatistics;
+import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -18,5 +19,6 @@ public interface CoststatisticsMapper extends MyMapper<Coststatistics> {
     //gbb add 0804 月度赏与详情
     List<Map<String, String>> getcostMonth(@Param("years") String years,@Param("manhour") String manhour,@Param("cost") String cost
             ,@Param("expense") String expense,@Param("months") String months,@Param("groupid") String groupid);
+    List<Workflowinstance> getworkflowinstance(@Param("groupIdList")List<String> groupIdList);
 }
 

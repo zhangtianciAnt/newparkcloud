@@ -2,10 +2,15 @@ package com.nt.service_pfans.PFANS6000.Impl;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
+import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS6000.*;
+import com.nt.dao_Workflow.Workflowinstance;
+import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
 import com.nt.service_pfans.PFANS6000.mapper.*;
@@ -68,6 +73,11 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private CoststatisticsdetailMapper coststatisticsdetailMapper;
+    @Autowired
+    private ToDoNoticeService toDoNoticeService;
+
+    @Autowired
+    private RoleService roleService;
 
     @Override
     public List<Coststatistics> getCostList(Coststatistics coststatistics) throws Exception {
@@ -564,20 +574,25 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     //gbb add 0805 添加費用統計
     @Override
     public void insertcoststatisticsdetail(List<ArrayList> strData, TokenModel tokenModel) throws Exception {
-
+        //外协岳父费用年月
+        String strDates = "";
+        //审批部门
+        String strGroupid = "";
         List<Map<String, String>> strDatanew = strData.get(0);
         if(strDatanew.size() > 0){
             for(int i=0;i<strDatanew.size();i++ ){
                 Coststatisticsdetail detail = new Coststatisticsdetail();
 
                 //部门
-                detail.setGroupid(String.valueOf(strDatanew.get(i).get("groupid")));
+                strGroupid = strDatanew.get(i).get("groupid");
+                detail.setGroupid(String.valueOf(strGroupid));
                 //供应商
                 detail.setSupplierinforid(strDatanew.get(i).get("bpcompany"));
                 //年月
-                detail.setDates(strDatanew.get(i).get("dates"));
+                strDates = strDatanew.get(i).get("dates");
+                detail.setDates(strDates);
                 //总费用
-                detail.setCost(strDatanew.get(i).get("bpcostcount"));
+                detail.setCost(String.valueOf(strDatanew.get(i).get("bpcostcount")));
                 //主键
                 detail.setCoststatisticsdetail_id(UUID.randomUUID().toString());
 
@@ -585,6 +600,38 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 
                 coststatisticsdetailMapper.insert(detail);
             }
+        }
+        String pp[] = strDates.split("-");
+
+        List<String> groupIdList = new ArrayList<String>();
+        Query query = CustmizeQuery(new OrgTree());
+        OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
+        List<OrgTree>  orgTrees =  orgTree.getOrgs();
+        for (OrgTree org: orgTrees ) {
+            for (OrgTree org1: org.getOrgs() ) {
+                groupIdList.add(org1.get_id() + "," + pp[0] +  "," + pp[1]);
+            }
+        }
+        //查询所有审批通过的部门
+        List<Workflowinstance> workflow = coststatisticsMapper.getworkflowinstance(groupIdList);
+        if(workflow.size() == groupIdList.size()){
+            // 创建代办
+            ToDoNotice toDoNotice = new ToDoNotice();
+            List<String> params = new ArrayList<String>();
+            toDoNotice.setTitle("本月费用总览已全部审批完毕，可生成合同！");
+            toDoNotice.setInitiator(tokenModel.getUserId());
+            toDoNotice.setContent("本月费用总览已全部审批完毕，可生成合同！");
+            toDoNotice.setDataid(strGroupid);
+            toDoNotice.setUrl("/PFANS6010View");
+            toDoNotice.setWorkflowurl("/PFANS6010View");
+            toDoNotice.preInsert(tokenModel);
+            //外注管理担当发待办
+            List<MembersVo> rolelist = roleService.getMembers("5e78633d8f43163084351138");
+            if(rolelist.size()>0)
+            {
+                toDoNotice.setOwner(rolelist.get(0).getUserid());
+            }
+            toDoNoticeService.save(toDoNotice);
         }
     }
 }

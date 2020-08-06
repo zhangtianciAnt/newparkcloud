@@ -271,4 +271,21 @@
 			) co2 ON co1.bpcompany = co2.bpcompany
 		order by co1.bpcompany
 	</select>
+
+	<select id="getworkflowinstance" resultType="com.nt.dao_Workflow.Workflowinstance">
+		SELECT
+		wf1.workflowinstanceid
+		FROM
+		workflowinstance wf1
+		WHERE
+		NOT EXISTS ( SELECT 1 FROM workflowinstance wf2 WHERE wf2.DATAID = wf1.DATAID AND wf2.CREATEON > wf1.CREATEON )
+		AND wf1.STATUS = '4'
+		<if test="groupIdList != null and groupIdList.size() > 0 ">
+			AND wf1.DATAID IN
+			<foreach item="item" index="index" collection="groupIdList"
+					 open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</select>
 </mapper>
