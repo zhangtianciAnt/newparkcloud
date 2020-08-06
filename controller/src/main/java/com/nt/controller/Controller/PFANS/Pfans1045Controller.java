@@ -41,7 +41,7 @@ public class Pfans1045Controller {
         SimpleDateFormat sf = new SimpleDateFormat("MM");
         SimpleDateFormat sf1 = new SimpleDateFormat("YYYY");
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
-        String cycle = sf.format(policycontract.getApplicationdate());
+        String cycle =  policycontract.getInformation().substring(5, 7);
         PolicyContract policy = new PolicyContract();
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
         List<PolicyContract> policycontractlist = policycontractmapper.select(policy);
