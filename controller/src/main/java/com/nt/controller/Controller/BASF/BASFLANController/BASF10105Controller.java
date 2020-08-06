@@ -52,11 +52,7 @@ public class BASF10105Controller {
 
     @Autowired
     private FirealarmServices firealarmServices;
-
-    // websocket消息推送
-    private WebSocket ws = new WebSocket();
     private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
-
 //    private MainTask mt = new MainTask(this);
 
     /**
@@ -107,24 +103,20 @@ public class BASF10105Controller {
                     firealarm.setAlarmpeo("系统管理员");
                     firealarm.setAlarmtimes(yyMMddHHmmss);
                     firealarm.setIndevice(linkagelist.get(0).getDevice());
-                    String accunit ="";
-                    String speloc ="";
-                    String[] lastlist =linkagelist.get(0).getDetailedlocation().split("/");
-                    if(lastlist.length>3)
-                    {
-                        accunit =lastlist[0] + "/" + lastlist[1];
+                    String accunit = "";
+                    String speloc = "";
+                    String[] lastlist = linkagelist.get(0).getDetailedlocation().split("/");
+                    if (lastlist.length > 3) {
+                        accunit = lastlist[0] + "/" + lastlist[1];
                         speloc = lastlist[2] + "/" + lastlist[3];
                         firealarm.setAccunit(accunit);
                         firealarm.setSpeloc(speloc);
-                    }else if(lastlist.length>2)
-                    {
-                        accunit =lastlist[0] + "/" + lastlist[1];
-                        speloc = lastlist[2] ;
+                    } else if (lastlist.length > 2) {
+                        accunit = lastlist[0] + "/" + lastlist[1];
+                        speloc = lastlist[2];
                         firealarm.setAccunit(accunit);
                         firealarm.setSpeloc(speloc);
-                    }
-                    else
-                    {
+                    } else {
                         firealarm.setSpeloc(linkagelist.get(0).getDetailedlocation());
                     }
                     //firealarm.setSpeloc(linkagelist.get(0).getDetailedlocation());
@@ -157,7 +149,7 @@ public class BASF10105Controller {
 
             // 推送报警设备信息
             webSocketDeviceinfoVo.setDeviceinformationList(list);
-            ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
+            WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
         }
         return ApiResult.success();
     }

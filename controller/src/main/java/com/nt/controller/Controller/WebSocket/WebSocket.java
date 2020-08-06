@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.WebSocket;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 
 import java.io.IOException;
@@ -9,7 +10,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * basf websocket 主类
+ * basf websocket 主类 ,
+ * !!!!!!!!!!!!使用这个类千万别new，所有要用到的方法都是静态的。！！！！！！！！！！！！
  */
 public class WebSocket implements WebSocketHandler {
 
@@ -28,7 +30,7 @@ public class WebSocket implements WebSocketHandler {
         System.out.println(token);
         if (token != null && !"".equals(token)) {
             // 因为可以多点登录，所以要判断当前users集合里是否有这个token
-            if (users.containsKey("token")) {
+            if (users.containsKey(token)) {
                 users.get(token).add(webSocketSession);
             } else {
                 Set<WebSocketSession> webSocketSessionSet = new HashSet<>();
@@ -87,7 +89,7 @@ public class WebSocket implements WebSocketHandler {
     /**
      * 发送信息给指定token用户
      */
-    public Boolean sendMessageToUser(String clientToken, TextMessage message) {
+    public static Boolean sendMessageToUser(String clientToken, TextMessage message) {
         if (users.get(clientToken) == null) return false;
         Set<WebSocketSession> webSocketSessionSet = users.get(clientToken);
         for (WebSocketSession ws : webSocketSessionSet) {
@@ -108,7 +110,7 @@ public class WebSocket implements WebSocketHandler {
     /**
      * 发送信息给所有用户
      */
-    public Boolean sendMessageToAll(TextMessage message) {
+    public static Boolean sendMessageToAll(TextMessage message) {
         Boolean sendState = true;
         Set<String> clientTokens = users.keySet();
         for (String token : clientTokens) {
