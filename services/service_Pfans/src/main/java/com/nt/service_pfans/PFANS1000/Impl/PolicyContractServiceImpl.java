@@ -115,7 +115,7 @@ public class PolicyContractServiceImpl implements PolicyContractService {
         }
         Numbers = "FZ" + year + no;
         int aaa = Integer.valueOf(sf3.format(new Date())) - 1;
-        if (sf2.format(policycontract.getApplicationdate()).equals("08") || sf2.format(policycontract.getApplicationdate()).equals("02") || sf2.format(policycontract.getApplicationdate()).equals("03")) {
+        if (sf2.format(policycontract.getApplicationdate()).equals("01") || sf2.format(policycontract.getApplicationdate()).equals("02") || sf2.format(policycontract.getApplicationdate()).equals("03")) {
             policycontract.setYearss(String.valueOf(aaa));
         } else {
             policycontract.setYearss(sf3.format(new Date()));
