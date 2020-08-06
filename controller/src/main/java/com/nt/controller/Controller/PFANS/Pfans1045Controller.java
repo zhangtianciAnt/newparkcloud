@@ -132,6 +132,7 @@ public class Pfans1045Controller {
         if (policycontract == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
+        SimpleDateFormat sf1 = new SimpleDateFormat("YYYY");
         PolicyContract policy = new PolicyContract();
         String cycle = policycontract.getCycle();
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
@@ -141,52 +142,54 @@ public class Pfans1045Controller {
         List<PolicyContract> policylist = policycontractmapper.select(policy);
         if (policylist.size() > 0) {
             for (PolicyContract PolicyContract : policylist) {
-                if (PolicyContract.getCycle().equals("0")) {
-                    if (cycle.equals("0") || cycle.equals("1") || cycle.equals("2") || cycle.equals("3") || cycle.equals("4") || cycle.equals("5") || cycle.equals("6")) {
-                        policycontractlist2 = policylist;
-                    } else {
-                        policycontractlist2 = policycontractlist3;
-                    }
-                } else if (PolicyContract.getCycle().equals("1")) {
-                    if (cycle.equals("3") || cycle.equals("4") || cycle.equals("1")) {
-                        policycontractlist2 = policylist;
-                    } else {
-                        policycontractlist2 = policycontractlist3;
-                    }
+                if(PolicyContract.getYearss().equals(sf1.format(new Date()))) {
+                    if (PolicyContract.getCycle().equals("0")) {
+                        if (cycle.equals("0") || cycle.equals("1") || cycle.equals("2") || cycle.equals("3") || cycle.equals("4") || cycle.equals("5") || cycle.equals("6")) {
+                            policycontractlist2 = policylist;
+                        } else {
+                            policycontractlist2 = policycontractlist3;
+                        }
+                    } else if (PolicyContract.getCycle().equals("1")) {
+                        if (cycle.equals("3") || cycle.equals("4") || cycle.equals("1")) {
+                            policycontractlist2 = policylist;
+                        } else {
+                            policycontractlist2 = policycontractlist3;
+                        }
 
-                } else if (PolicyContract.getCycle().equals("2")) {
-                    if (cycle.equals("5") || cycle.equals("6") || cycle.equals("2")) {
-                        policycontractlist2 = policylist;
-                    } else {
-                        policycontractlist2 = policycontractlist3;
-                    }
+                    } else if (PolicyContract.getCycle().equals("2")) {
+                        if (cycle.equals("5") || cycle.equals("6") || cycle.equals("2")) {
+                            policycontractlist2 = policylist;
+                        } else {
+                            policycontractlist2 = policycontractlist3;
+                        }
 
-                } else if (PolicyContract.getCycle().equals("3")) {
-                    if (cycle.equals("3") || cycle.equals("1")) {
-                        policycontractlist2 = policylist;
-                    } else {
-                        policycontractlist2 = policycontractlist3;
-                    }
+                    } else if (PolicyContract.getCycle().equals("3")) {
+                        if (cycle.equals("3") || cycle.equals("1")) {
+                            policycontractlist2 = policylist;
+                        } else {
+                            policycontractlist2 = policycontractlist3;
+                        }
 
-                } else if (PolicyContract.getCycle().equals("4")) {
-                    if (cycle.equals("4") || cycle.equals("1")) {
-                        policycontractlist2 = policylist;
-                    } else {
-                        policycontractlist2 = policycontractlist3;
-                    }
+                    } else if (PolicyContract.getCycle().equals("4")) {
+                        if (cycle.equals("4") || cycle.equals("1")) {
+                            policycontractlist2 = policylist;
+                        } else {
+                            policycontractlist2 = policycontractlist3;
+                        }
 
-                } else if (PolicyContract.getCycle().equals("5")) {
-                    if (cycle.equals("5") || cycle.equals("2")) {
-                        policycontractlist2 = policylist;
-                    } else {
-                        policycontractlist2 = policycontractlist3;
-                    }
+                    } else if (PolicyContract.getCycle().equals("5")) {
+                        if (cycle.equals("5") || cycle.equals("2")) {
+                            policycontractlist2 = policylist;
+                        } else {
+                            policycontractlist2 = policycontractlist3;
+                        }
 
-                } else if (PolicyContract.getCycle().equals("6")) {
-                    if (cycle.equals("6") || cycle.equals("2")) {
-                        policycontractlist2 = policylist;
-                    } else {
-                        policycontractlist2 = policycontractlist3;
+                    } else if (PolicyContract.getCycle().equals("6")) {
+                        if (cycle.equals("6") || cycle.equals("2")) {
+                            policycontractlist2 = policylist;
+                        } else {
+                            policycontractlist2 = policycontractlist3;
+                        }
                     }
                 }
             }

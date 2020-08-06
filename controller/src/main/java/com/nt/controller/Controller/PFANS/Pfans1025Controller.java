@@ -267,6 +267,7 @@ public class Pfans1025Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         SimpleDateFormat sf = new SimpleDateFormat("MM");
+        SimpleDateFormat sf1 = new SimpleDateFormat("YYYY");
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
         Date draftingdate = awardvo.getAward().getDraftingdate();
         PolicyContract policycontract = new PolicyContract();
@@ -275,44 +276,46 @@ public class Pfans1025Controller {
         List<PolicyContract> policycontractlist3 = policycontractmapper.selectAll();
         policycontractlist3.addAll(0,policycontractlist3);
         if (policycontractlist.size() > 0) {
-            if (policycontractlist.get(0).getCycle().equals("0")) {
-                policycontractlist2 = policycontractlist;
-            } else if (policycontractlist.get(0).getCycle().equals("1")) {
-                if (4 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 9) {
+            if(policycontractlist.get(0).getYearss().equals(sf1.format(new Date()))) {
+                if (policycontractlist.get(0).getCycle().equals("0")) {
                     policycontractlist2 = policycontractlist;
-                } else {
-                    policycontractlist2 = policycontractlist3;
-                }
+                } else if (policycontractlist.get(0).getCycle().equals("1")) {
+                    if (4 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 9) {
+                        policycontractlist2 = policycontractlist;
+                    } else {
+                        policycontractlist2 = policycontractlist3;
+                    }
 
-            } else if (policycontractlist.get(0).getCycle().equals("2")) {
-                if ((10 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 12) || (1 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 3)) {
-                    policycontractlist2 = policycontractlist;
-                } else {
-                    policycontractlist2 = policycontractlist3;
-                }
-            } else if (policycontractlist.get(0).getCycle().equals("3")) {
-                if (4 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 6) {
-                    policycontractlist2 = policycontractlist;
-                } else {
-                    policycontractlist2 = policycontractlist3;
-                }
-            } else if (policycontractlist.get(0).getCycle().equals("4")) {
-                if (7 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 9) {
-                    policycontractlist2 = policycontractlist;
-                } else {
-                    policycontractlist2 = policycontractlist3;
-                }
-            } else if (policycontractlist.get(0).getCycle().equals("5")) {
-                if (9 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 12) {
-                    policycontractlist2 = policycontractlist;
-                } else {
-                    policycontractlist2 = policycontractlist3;
-                }
-            } else if (policycontractlist.get(0).getCycle().equals("6")) {
-                if (1 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 3) {
-                    policycontractlist2 = policycontractlist;
-                } else {
-                    policycontractlist2 = policycontractlist3;
+                } else if (policycontractlist.get(0).getCycle().equals("2")) {
+                    if ((10 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 12) || (1 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 3)) {
+                        policycontractlist2 = policycontractlist;
+                    } else {
+                        policycontractlist2 = policycontractlist3;
+                    }
+                } else if (policycontractlist.get(0).getCycle().equals("3")) {
+                    if (4 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 6) {
+                        policycontractlist2 = policycontractlist;
+                    } else {
+                        policycontractlist2 = policycontractlist3;
+                    }
+                } else if (policycontractlist.get(0).getCycle().equals("4")) {
+                    if (7 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 9) {
+                        policycontractlist2 = policycontractlist;
+                    } else {
+                        policycontractlist2 = policycontractlist3;
+                    }
+                } else if (policycontractlist.get(0).getCycle().equals("5")) {
+                    if (9 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 12) {
+                        policycontractlist2 = policycontractlist;
+                    } else {
+                        policycontractlist2 = policycontractlist3;
+                    }
+                } else if (policycontractlist.get(0).getCycle().equals("6")) {
+                    if (1 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 3) {
+                        policycontractlist2 = policycontractlist;
+                    } else {
+                        policycontractlist2 = policycontractlist3;
+                    }
                 }
             }
         }
