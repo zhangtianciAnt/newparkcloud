@@ -5,7 +5,15 @@
     <select id="getNowMon" resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Attendance">
         select *
         from attendance
-        where substring(ATTENDANCETIM,1,10) = #{attendancetim}
+        <if test="attendancetim.length() == 4">
+            where substring(ATTENDANCETIM,1,4) = #{attendancetim}
+        </if>
+        <if test="attendancetim.length() == 7">
+            where substring(ATTENDANCETIM,1,7) = #{attendancetim}
+        </if>
+        <if test="attendancetim.length() == 10">
+            where substring(ATTENDANCETIM,1,10) = #{attendancetim}
+        </if>
         <if test="owners != null and owners.size() > 0 ">
             and
             names in
