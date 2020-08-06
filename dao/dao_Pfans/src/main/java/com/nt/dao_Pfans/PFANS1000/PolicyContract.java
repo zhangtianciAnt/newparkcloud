@@ -120,4 +120,8 @@ public class PolicyContract extends BaseModel {
     @Id
     @Column(name = "TYPE")
     private String type;
+
+    @Id
+    @Column(name = "YEARSS")
+    private String yearss;
 }

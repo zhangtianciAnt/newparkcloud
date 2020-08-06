@@ -88,6 +88,8 @@ public class PolicyContractServiceImpl implements PolicyContractService {
         BeanUtils.copyProperties(policycontractvo.getPolicycontract(), policycontract);
         List<PolicyContract> policycontractlist = policycontractmapper.selectAll();
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
+        SimpleDateFormat sf2 = new SimpleDateFormat("MM");
+        SimpleDateFormat sf3 = new SimpleDateFormat("yyyy");
         Date date = new Date();
         String year = sf1.format(date);
         int number = 0;
@@ -112,6 +114,12 @@ public class PolicyContractServiceImpl implements PolicyContractService {
             no = "001";
         }
         Numbers = "FZ" + year + no;
+        int aaa = Integer.valueOf(sf3.format(new Date())) - 1;
+        if (sf2.format(policycontract.getApplicationdate()).equals("08") || sf2.format(policycontract.getApplicationdate()).equals("02") || sf2.format(policycontract.getApplicationdate()).equals("03")) {
+            policycontract.setYearss(String.valueOf(aaa));
+        } else {
+            policycontract.setYearss(sf3.format(new Date()));
+        }
         policycontract.setPolicynumbers(Numbers);
         policycontract.preInsert(tokenModel);
         policycontract.setPolicycontract_id(UUID.randomUUID().toString());

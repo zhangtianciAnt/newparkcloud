@@ -46,7 +46,7 @@ public class Pfans1045Controller {
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
         List<PolicyContract> policycontractlist = policycontractmapper.select(policy);
         for (PolicyContract PolicyCon : policycontractlist) {
-            if(sf1.format(PolicyCon.getCreateon()).equals(sf1.format(new Date()))){
+            if(PolicyCon.getYearss().equals(sf1.format(new Date()))){
                 if (cycle.equals("03") || cycle.equals("04") || cycle.equals("05")) {
                     if (PolicyCon.getCycle().equals("3") || PolicyCon.getCycle().equals("1")) {
                         policycontractlist2.add(PolicyCon);
@@ -77,6 +77,14 @@ public class Pfans1045Controller {
     public ApiResult getPolicyContract2(HttpServletRequest request) throws Exception {
         List<PolicyContract> PolicyContractlist = policycontractmapper.selectAll();
         PolicyContractlist = PolicyContractlist.stream().filter(item -> (item.getStatus().equals("4"))).collect(Collectors.toList());
+        return ApiResult.success(PolicyContractlist);
+    }
+    @RequestMapping(value = "/get3", method = {RequestMethod.GET})
+    public ApiResult getPolicyContract3(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        PolicyContract policycontract = new PolicyContract();
+        policycontract.setOwners(tokenModel.getOwnerList());
+        List<PolicyContract> PolicyContractlist = policycontractmapper.select(policycontract);
         return ApiResult.success(PolicyContractlist);
     }
 
