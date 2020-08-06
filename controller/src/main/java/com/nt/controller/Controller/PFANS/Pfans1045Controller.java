@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -42,31 +39,34 @@ public class Pfans1045Controller {
     @RequestMapping(value = "/get", method = {RequestMethod.POST})
     public ApiResult getPolicyContract(@RequestBody PolicyContract policycontract, HttpServletRequest request) throws Exception {
         SimpleDateFormat sf = new SimpleDateFormat("MM");
+        SimpleDateFormat sf1 = new SimpleDateFormat("YYYY");
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
         String cycle = sf.format(policycontract.getApplicationdate());
         PolicyContract policy = new PolicyContract();
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
         List<PolicyContract> policycontractlist = policycontractmapper.select(policy);
         for (PolicyContract PolicyCon : policycontractlist) {
-            if (cycle.equals("03") || cycle.equals("04") || cycle.equals("05")) {
-                if (PolicyCon.getCycle().equals("3") || PolicyCon.getCycle().equals("1")) {
+            if(sf1.format(PolicyCon.getCreateon()).equals(sf1.format(new Date()))){
+                if (cycle.equals("03") || cycle.equals("04") || cycle.equals("05")) {
+                    if (PolicyCon.getCycle().equals("3") || PolicyCon.getCycle().equals("1")) {
+                        policycontractlist2.add(PolicyCon);
+                    }
+                } else if (cycle.equals("06") || cycle.equals("07") || cycle.equals("08")) {
+                    if (PolicyCon.getCycle().equals("4") || PolicyCon.getCycle().equals("1")) {
+                        policycontractlist2.add(PolicyCon);
+                    }
+                } else if (cycle.equals("09") || cycle.equals("10") || cycle.equals("11")) {
+                    if (PolicyCon.getCycle().equals("5") || PolicyCon.getCycle().equals("2")) {
+                        policycontractlist2.add(PolicyCon);
+                    }
+                } else if (cycle.equals("12") || cycle.equals("01") || cycle.equals("02")) {
+                    if (PolicyCon.getCycle().equals("6") || PolicyCon.getCycle().equals("2")) {
+                        policycontractlist2.add(PolicyCon);
+                    }
+                }
+                if (PolicyCon.getCycle().equals("0")) {
                     policycontractlist2.add(PolicyCon);
                 }
-            } else if (cycle.equals("06") || cycle.equals("07") || cycle.equals("08")) {
-                if (PolicyCon.getCycle().equals("4") || PolicyCon.getCycle().equals("1")) {
-                    policycontractlist2.add(PolicyCon);
-                }
-            } else if (cycle.equals("09") || cycle.equals("10") || cycle.equals("11")) {
-                if (PolicyCon.getCycle().equals("5") || PolicyCon.getCycle().equals("2")) {
-                    policycontractlist2.add(PolicyCon);
-                }
-            } else if (cycle.equals("12") || cycle.equals("01") || cycle.equals("02")) {
-                if (PolicyCon.getCycle().equals("6") || PolicyCon.getCycle().equals("2")) {
-                    policycontractlist2.add(PolicyCon);
-                }
-            }
-            if (PolicyCon.getCycle().equals("0")) {
-                policycontractlist2.add(PolicyCon);
             }
         }
         return ApiResult.success(policycontractlist2);

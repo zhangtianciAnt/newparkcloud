@@ -630,6 +630,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             io.setCustochinese(contractapp.getCustochinese());
                             io.setPlacejapanese(contractapp.getPlacejapanese());
                             io.setPlacechinese(contractapp.getPlacechinese());
+                            io.setDates(contractapp.getDates());
                             io.setDeployment(contractapp.getDeployment());
                             io.setPjnamechinese(contractapp.getConchinese());
                             io.setPjnamejapanese(contractapp.getConjapanese());
@@ -651,6 +652,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         //add-ws-7/1-禅道152任
                         award.setContractnumber(contractnumber);
                         //13
+                        award.setDates(contractapp.getDates());
                         award.setStatuspublic("0");
                         award.setContracttype(contractapp.getContracttype());
                         award.setCustojapanese(contractapp.getCustojapanese());
