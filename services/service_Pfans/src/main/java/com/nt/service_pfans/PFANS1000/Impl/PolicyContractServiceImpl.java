@@ -42,11 +42,6 @@ public class PolicyContractServiceImpl implements PolicyContractService {
     }
 
     @Override
-    public List<PolicyContract> getPolicyContract(PolicyContract policycontract) throws Exception {
-        return policycontractmapper.select(policycontract);
-    }
-
-    @Override
     public void updatePolicyContract(PolicyContractVo policycontractvo, TokenModel tokenModel) throws Exception {
         PolicyContract policy = new PolicyContract();
         PolicyContract policy2 = new PolicyContract();

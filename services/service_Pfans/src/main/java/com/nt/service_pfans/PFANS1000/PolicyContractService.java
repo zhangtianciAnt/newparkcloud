@@ -10,7 +10,6 @@ import java.util.List;
 public interface PolicyContractService {
 
 
-      List<PolicyContract> getPolicyContract(PolicyContract policycontract)throws Exception;
 
       public PolicyContractVo One(String policycontract_id)throws  Exception;
 

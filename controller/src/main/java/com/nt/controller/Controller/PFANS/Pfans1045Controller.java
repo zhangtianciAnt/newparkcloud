@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,12 +39,37 @@ public class Pfans1045Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value = "/get", method = {RequestMethod.GET})
-    public ApiResult getPolicyContract(HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        PolicyContract policycontract = new PolicyContract();
-        policycontract.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(policycontractservice.getPolicyContract(policycontract));
+    @RequestMapping(value = "/get", method = {RequestMethod.POST})
+    public ApiResult getPolicyContract(@RequestBody PolicyContract policycontract, HttpServletRequest request) throws Exception {
+        SimpleDateFormat sf = new SimpleDateFormat("MM");
+        List<PolicyContract> policycontractlist2 = new ArrayList<>();
+        String cycle = sf.format(policycontract.getApplicationdate());
+        PolicyContract policy = new PolicyContract();
+        policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
+        List<PolicyContract> policycontractlist = policycontractmapper.select(policy);
+        for (PolicyContract PolicyCon : policycontractlist) {
+            if (cycle.equals("03") || cycle.equals("04") || cycle.equals("05")) {
+                if (PolicyCon.getCycle().equals("3") || PolicyCon.getCycle().equals("1")) {
+                    policycontractlist2.add(PolicyCon);
+                }
+            } else if (cycle.equals("06") || cycle.equals("07") || cycle.equals("08")) {
+                if (PolicyCon.getCycle().equals("4") || PolicyCon.getCycle().equals("1")) {
+                    policycontractlist2.add(PolicyCon);
+                }
+            } else if (cycle.equals("09") || cycle.equals("10") || cycle.equals("11")) {
+                if (PolicyCon.getCycle().equals("5") || PolicyCon.getCycle().equals("2")) {
+                    policycontractlist2.add(PolicyCon);
+                }
+            } else if (cycle.equals("12") || cycle.equals("01") || cycle.equals("02")) {
+                if (PolicyCon.getCycle().equals("6") || PolicyCon.getCycle().equals("2")) {
+                    policycontractlist2.add(PolicyCon);
+                }
+            }
+            if (PolicyCon.getCycle().equals("0")) {
+                policycontractlist2.add(PolicyCon);
+            }
+        }
+        return ApiResult.success(policycontractlist2);
 
     }
 
@@ -103,7 +129,7 @@ public class Pfans1045Controller {
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
         List<PolicyContract> policycontractlist3 = policycontractmapper.selectAll();
-        policycontractlist3.addAll(0,policycontractlist3);
+        policycontractlist3.addAll(0, policycontractlist3);
         List<PolicyContract> policylist = policycontractmapper.select(policy);
         if (policylist.size() > 0) {
             for (PolicyContract PolicyContract : policylist) {
