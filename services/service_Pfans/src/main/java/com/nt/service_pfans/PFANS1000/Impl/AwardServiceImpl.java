@@ -8,10 +8,7 @@ import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS1000.AwardService;
-import com.nt.service_pfans.PFANS1000.mapper.AwardDetailMapper;
-import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
-import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
-import com.nt.service_pfans.PFANS1000.mapper.StaffDetailMapper;
+import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.utils.ExcelOutPutUtil;
 import com.nt.utils.dao.TokenModel;
@@ -22,12 +19,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class AwardServiceImpl implements AwardService {
+
+    @Autowired
+    private PolicyContractMapper policycontractmapper;
     @Autowired
     private RoleService roleService;
     @Autowired
@@ -117,6 +118,22 @@ public class AwardServiceImpl implements AwardService {
         String contractnumber = award.getContractnumber();
         String status = award.getStatus();
         if (status.equals("4")) {
+            int scale = 2;//设置位数
+            int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+            PolicyContract policy = new PolicyContract();
+            policy.setPolicycontract_id(award.getPolicycontract_id());
+            List<PolicyContract> policycontractlist = policycontractmapper.select(policy);
+            if(policycontractlist.size()>0){
+                BigDecimal bd = new BigDecimal(policycontractlist.get(0).getModifiedamount());
+                bd = bd.setScale(scale, roundingMode);
+                BigDecimal bd1 = new BigDecimal(policycontractlist.get(0).getNewamountcase());
+                bd1 = bd1.setScale(scale, roundingMode);
+                BigDecimal bd2 = new BigDecimal(award.getClaimamount());
+                bd2 = bd2.setScale(scale, roundingMode);
+                policycontractlist.get(0).setModifiedamount(String.valueOf(bd.subtract(bd2)));
+                policycontractlist.get(0).setNewamountcase(String.valueOf(bd1.add(bd2)));
+                policycontractmapper.updateByPrimaryKey( policycontractlist.get(0));
+            }
             if(award.getMaketype().equals("9"))
             {
                 //合同担当
