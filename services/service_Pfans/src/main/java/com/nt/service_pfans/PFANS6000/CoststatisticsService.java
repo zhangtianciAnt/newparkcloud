@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS6000;
 
+import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS6000.Coststatistics;
 import com.nt.dao_Pfans.PFANS6000.CoststatisticsVo;
 import com.nt.utils.LogicalException;
@@ -29,4 +30,6 @@ public interface CoststatisticsService {
     List<Map<String, String>> getcostMonth(String dates,String role,String groupid,TokenModel tokenModel) throws Exception;
     //gbb add 0805 添加費用統計
     void insertcoststatisticsdetail(List<ArrayList> strData, TokenModel tokenModel)throws  Exception;
+    //0807 check是否已经生成个别合同
+    int checkcontract(Contractapplication contract)throws  Exception;
 }

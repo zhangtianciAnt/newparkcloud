@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS6000.Coststatistics;
 import com.nt.dao_Pfans.PFANS6000.CoststatisticsVo;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
@@ -95,6 +96,13 @@ public class Pfans6008Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         coststatisticsService.insertcoststatisticsdetail(strData, tokenModel);
         return ApiResult.success();
+    }
+
+    //gbb add 0807 check是否已经生成个别合同
+    @RequestMapping(value = "/checkcontract", method = {RequestMethod.POST})
+    public ApiResult checkcontract(@RequestBody Contractapplication contract, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(coststatisticsService.checkcontract(contract));
     }
 
 }
