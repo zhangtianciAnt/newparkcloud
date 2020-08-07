@@ -97,8 +97,8 @@ public class Pfans1026Controller {
             first = format.format(firstDate);
         }
         data.put("cos", coststatisticsdetaillist);
-        data.put("firstday", last);
-        data.put("lastday", first);
+        data.put("firstday", first);
+        data.put("lastday", last);
         data.put("ind", individual);
         ExcelOutPutUtil.OutPutPdf("个别合同书", "gebiehetong.xls", data, response);
     }

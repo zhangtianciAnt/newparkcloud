@@ -41,12 +41,12 @@ public class Pfans1045Controller {
         SimpleDateFormat sf = new SimpleDateFormat("MM");
         SimpleDateFormat sf1 = new SimpleDateFormat("YYYY");
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
-        String cycle = sf.format(policycontract.getApplicationdate());
+        String cycle =  policycontract.getInformation().substring(5, 7);
         PolicyContract policy = new PolicyContract();
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
         List<PolicyContract> policycontractlist = policycontractmapper.select(policy);
         for (PolicyContract PolicyCon : policycontractlist) {
-            if(sf1.format(PolicyCon.getCreateon()).equals(sf1.format(new Date()))){
+            if(PolicyCon.getYearss().equals(sf1.format(new Date()))){
                 if (cycle.equals("03") || cycle.equals("04") || cycle.equals("05")) {
                     if (PolicyCon.getCycle().equals("3") || PolicyCon.getCycle().equals("1")) {
                         policycontractlist2.add(PolicyCon);
@@ -77,6 +77,14 @@ public class Pfans1045Controller {
     public ApiResult getPolicyContract2(HttpServletRequest request) throws Exception {
         List<PolicyContract> PolicyContractlist = policycontractmapper.selectAll();
         PolicyContractlist = PolicyContractlist.stream().filter(item -> (item.getStatus().equals("4"))).collect(Collectors.toList());
+        return ApiResult.success(PolicyContractlist);
+    }
+    @RequestMapping(value = "/get3", method = {RequestMethod.GET})
+    public ApiResult getPolicyContract3(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        PolicyContract policycontract = new PolicyContract();
+        policycontract.setOwners(tokenModel.getOwnerList());
+        List<PolicyContract> PolicyContractlist = policycontractmapper.select(policycontract);
         return ApiResult.success(PolicyContractlist);
     }
 
@@ -124,6 +132,7 @@ public class Pfans1045Controller {
         if (policycontract == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
+        SimpleDateFormat sf1 = new SimpleDateFormat("YYYY");
         PolicyContract policy = new PolicyContract();
         String cycle = policycontract.getCycle();
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
@@ -133,52 +142,54 @@ public class Pfans1045Controller {
         List<PolicyContract> policylist = policycontractmapper.select(policy);
         if (policylist.size() > 0) {
             for (PolicyContract PolicyContract : policylist) {
-                if (PolicyContract.getCycle().equals("0")) {
-                    if (cycle.equals("0") || cycle.equals("1") || cycle.equals("2") || cycle.equals("3") || cycle.equals("4") || cycle.equals("5") || cycle.equals("6")) {
-                        policycontractlist2 = policylist;
-                    } else {
-                        policycontractlist2 = policycontractlist3;
-                    }
-                } else if (PolicyContract.getCycle().equals("1")) {
-                    if (cycle.equals("3") || cycle.equals("4") || cycle.equals("1")) {
-                        policycontractlist2 = policylist;
-                    } else {
-                        policycontractlist2 = policycontractlist3;
-                    }
+                if(PolicyContract.getYearss().equals(sf1.format(new Date()))) {
+                    if (PolicyContract.getCycle().equals("0")) {
+                        if (cycle.equals("0") || cycle.equals("1") || cycle.equals("2") || cycle.equals("3") || cycle.equals("4") || cycle.equals("5") || cycle.equals("6")) {
+                            policycontractlist2 = policylist;
+                        } else {
+                            policycontractlist2 = policycontractlist3;
+                        }
+                    } else if (PolicyContract.getCycle().equals("1")) {
+                        if (cycle.equals("3") || cycle.equals("4") || cycle.equals("1")) {
+                            policycontractlist2 = policylist;
+                        } else {
+                            policycontractlist2 = policycontractlist3;
+                        }
 
-                } else if (PolicyContract.getCycle().equals("2")) {
-                    if (cycle.equals("5") || cycle.equals("6") || cycle.equals("2")) {
-                        policycontractlist2 = policylist;
-                    } else {
-                        policycontractlist2 = policycontractlist3;
-                    }
+                    } else if (PolicyContract.getCycle().equals("2")) {
+                        if (cycle.equals("5") || cycle.equals("6") || cycle.equals("2")) {
+                            policycontractlist2 = policylist;
+                        } else {
+                            policycontractlist2 = policycontractlist3;
+                        }
 
-                } else if (PolicyContract.getCycle().equals("3")) {
-                    if (cycle.equals("3") || cycle.equals("1")) {
-                        policycontractlist2 = policylist;
-                    } else {
-                        policycontractlist2 = policycontractlist3;
-                    }
+                    } else if (PolicyContract.getCycle().equals("3")) {
+                        if (cycle.equals("3") || cycle.equals("1")) {
+                            policycontractlist2 = policylist;
+                        } else {
+                            policycontractlist2 = policycontractlist3;
+                        }
 
-                } else if (PolicyContract.getCycle().equals("4")) {
-                    if (cycle.equals("4") || cycle.equals("1")) {
-                        policycontractlist2 = policylist;
-                    } else {
-                        policycontractlist2 = policycontractlist3;
-                    }
+                    } else if (PolicyContract.getCycle().equals("4")) {
+                        if (cycle.equals("4") || cycle.equals("1")) {
+                            policycontractlist2 = policylist;
+                        } else {
+                            policycontractlist2 = policycontractlist3;
+                        }
 
-                } else if (PolicyContract.getCycle().equals("5")) {
-                    if (cycle.equals("5") || cycle.equals("2")) {
-                        policycontractlist2 = policylist;
-                    } else {
-                        policycontractlist2 = policycontractlist3;
-                    }
+                    } else if (PolicyContract.getCycle().equals("5")) {
+                        if (cycle.equals("5") || cycle.equals("2")) {
+                            policycontractlist2 = policylist;
+                        } else {
+                            policycontractlist2 = policycontractlist3;
+                        }
 
-                } else if (PolicyContract.getCycle().equals("6")) {
-                    if (cycle.equals("6") || cycle.equals("2")) {
-                        policycontractlist2 = policylist;
-                    } else {
-                        policycontractlist2 = policycontractlist3;
+                    } else if (PolicyContract.getCycle().equals("6")) {
+                        if (cycle.equals("6") || cycle.equals("2")) {
+                            policycontractlist2 = policylist;
+                        } else {
+                            policycontractlist2 = policycontractlist3;
+                        }
                     }
                 }
             }
