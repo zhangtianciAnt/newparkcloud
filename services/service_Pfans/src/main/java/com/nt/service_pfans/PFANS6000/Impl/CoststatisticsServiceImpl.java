@@ -2,16 +2,23 @@ package com.nt.service_pfans.PFANS6000.Impl;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
+import com.nt.dao_Pfans.PFANS1000.Businessplan;
+import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS6000.*;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.mapper.DictionaryMapper;
+import com.nt.service_pfans.PFANS1000.mapper.BusinessplanMapper;
+import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
 import com.nt.service_pfans.PFANS6000.mapper.*;
 import com.nt.utils.ApiResult;
@@ -75,9 +82,13 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     private CoststatisticsdetailMapper coststatisticsdetailMapper;
     @Autowired
     private ToDoNoticeService toDoNoticeService;
-
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private BusinessplanMapper businessplanMapper;
+    @Autowired
+    private ContractapplicationMapper contractapplicationMapper;
+
 
     @Override
     public List<Coststatistics> getCostList(Coststatistics coststatistics) throws Exception {
@@ -488,6 +499,22 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     //gbb add 0804 月度赏与详情
     @Override
     public List<Map<String, String>>  getcostMonth(String dates,String role,String groupid,TokenModel tokenModel) throws Exception {
+        Businessplan plan = new Businessplan();
+        plan.setGroup_id(groupid);
+        plan.setYear(dates.substring(0,4));
+        //region 事业计划费用
+//        List<Businessplan> planList = businessplanMapper.select(plan);
+//        if(planList.size() > 0){
+//            //JSONObject.parseObject(JSONObject.toJSONString(object),HashMap.class);
+//            String json = "[{\"groupid\":\"96858E5838833ADC564AF863C3DFE5F31705\",\"groupname\":\"APD\"},{\"groupid\":\"31567D6741113AEC1C73C424B452D6CFDB07\",\"groupname\":\"DANP\"}]\\";
+//            JSONObject jsonObject = JSONObject.parseObject(json);
+////            JSONObject jsonObject = JSONObject.parseObject(planList.get(0).getGroupB1());
+////            Map jsonToMap =  JSONObject.parseObject(jsonObject.toJSONString());
+//            System.out.println("jsonToMap=>"+jsonObject);
+//            //JSONObject obj = JSONUtil.parseObj(planList.get(0).getGroupB1());
+//            String a = "";
+//        }
+        //endregion 事业计划费用
         List<String> groupIdList = new ArrayList<String>();
         groupIdList.add(groupid);
         Query query = CustmizeQuery(new OrgTree());
@@ -625,13 +652,24 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             toDoNotice.setUrl("/PFANS6010View");
             toDoNotice.setWorkflowurl("/PFANS6010View");
             toDoNotice.preInsert(tokenModel);
-            //外注管理担当发待办
-            List<MembersVo> rolelist = roleService.getMembers("5e78633d8f43163084351138");
-            if(rolelist.size()>0)
+            //【军权_合同，PJ所有】发待办
+            List<MembersVo> rolelist = roleService.getMembers("5e9d62b91decd61bb0398686");
+            if(rolelist.size() > 0)
             {
                 toDoNotice.setOwner(rolelist.get(0).getUserid());
             }
             toDoNoticeService.save(toDoNotice);
         }
+    }
+
+    //0807 check是否已经生成个别合同
+    @Override
+    public int checkcontract(Contractapplication contract) throws Exception {
+        int count = 0;
+        List<Contractapplication> contractList = contractapplicationMapper.select(contract);
+        if(contractList.size() > 0){
+            return 1;
+        }
+        return 0;
     }
 }
