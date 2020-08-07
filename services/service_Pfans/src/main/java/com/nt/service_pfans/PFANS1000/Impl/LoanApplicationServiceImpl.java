@@ -1,8 +1,10 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
@@ -34,6 +36,10 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     @Autowired
     private PurchaseMapper purchaseMapper;
+    @Autowired
+    private AwardMapper awardMapper;
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @Autowired
     private BusinessMapper businessMapper;
@@ -98,10 +104,35 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         loanapplication.preInsert(tokenModel);
         loanapplication.setLoanapplication_id(UUID.randomUUID().toString());
         loanapplicationMapper.insert(loanapplication);
-
+        //add_fjl_0807  获取委托合同番号的命名规则
+        String dic = "";
+        List<Dictionary> curList1 = dictionaryService.getForSelect("HT014");
+        for (Dictionary item : curList1) {
+            dic += item.getValue2() + ",";
+        }
+        //add_fjl_0807  获取委托合同番号的命名规则
         //CCM ADD 0726
         if(loanapplication.getJudgements_name()!=null && !loanapplication.getJudgements_name().equals(""))
         {
+            //add_fjl_0807
+            if (dic != "") {
+                if (dic.contains(loanapplication.getJudgements_name().substring(0, 2))) //委托决裁
+                {
+                    String[] pur = loanapplication.getJudgements_name().split(",");
+                    for (String p : pur) {
+                        Award award = new Award();
+                        award.setContractnumber(p);
+                        List<Award> awardList = awardMapper.select(award);
+                        if (awardList.size() > 0) {
+                            awardList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                            awardList.get(0).setLoanapno(loanapplication.getLoanapno());
+                            awardList.get(0).preUpdate(tokenModel);
+                            awardMapper.updateByPrimaryKey(awardList.get(0));
+                        }
+                    }
+                }
+            }
+            //add_fjl_0807
             if (loanapplication.getJudgements_name().substring(0, 2).equals("CG")) //采购
             {
                 String []pur = loanapplication.getJudgements_name().split(",");

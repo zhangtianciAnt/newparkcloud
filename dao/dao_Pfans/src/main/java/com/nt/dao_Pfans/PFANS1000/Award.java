@@ -179,5 +179,14 @@ public class Award extends BaseModel {
     private String sealid;
     //add-ws-7/20-禅道任务342
 
+    //ADD_FJL_0807 START
+    //暂借款ID
+    @Column(name = "LOANAPPLICATION_ID")
+    private String loanapplication_id;
+    //暂借款编号
+    @Column(name = "LOANAPNO")
+    private String loanapno;
+    //ADD_FJL_0807 END
+
 
 }
