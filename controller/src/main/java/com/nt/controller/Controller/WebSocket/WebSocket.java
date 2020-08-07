@@ -66,7 +66,8 @@ public class WebSocket implements WebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus) throws Exception {
         System.out.println("websocket 连接关闭:" + closeStatus);
-        users.remove(getClientToken(webSocketSession));
+//        users.remove(getClientToken(webSocketSession));
+        users.get(getClientToken(webSocketSession)).remove(webSocketSession);
     }
 
     @Override
