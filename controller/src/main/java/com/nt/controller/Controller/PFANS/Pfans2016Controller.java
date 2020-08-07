@@ -137,4 +137,14 @@ public class Pfans2016Controller {
         return ApiResult.success(abNormalService.getLeaveNumber(abNormal));
     }
 //    add_fjl_06/16  -- 添加异常申请每天累计不超过8小时check  end
+
+    //add ccm 0806 查询申请人的剩余年休
+    @RequestMapping(value = "/getremainingByuserid", method = {RequestMethod.GET})
+    public ApiResult getremainingByuserid(String userid, HttpServletRequest request) throws Exception {
+        if (userid == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(abNormalService.getremainingByuserid(userid));
+    }
+    //add ccm 0806 查询申请人的剩余年休
 }

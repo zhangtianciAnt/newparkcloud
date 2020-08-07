@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS2000;
 
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
+import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
 import com.nt.dao_Pfans.PFANS2000.Vo.restViewVo;
 import com.nt.utils.dao.TokenModel;
 
@@ -35,4 +36,8 @@ public interface AbNormalService {
     List<restViewVo> getRestday(String user_id) throws Exception;
 
     Double getLeaveNumber(AbNormal abNormal) throws Exception;
+
+    //add ccm 0806 查询申请人的剩余年休，
+    List<AnnualLeave> getremainingByuserid(String userid) throws Exception;
+    //add ccm 0806 查询申请人的剩余年休，
 }

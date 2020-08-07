@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS2000.mapper;
 
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
+import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
 import com.nt.dao_Pfans.PFANS2000.Attendance;
 import com.nt.dao_Pfans.PFANS2000.Vo.restViewVo;
 import com.nt.utils.MyMapper;
@@ -28,4 +29,10 @@ public interface AbNormalMapper extends MyMapper<AbNormal> {
     //add ccm 2020729 考勤异常加班审批中的日期，考勤不允许承认
     List<AbNormal> selectAbnomalBystatusandUserid(@Param("userid") String userid);
     //add ccm 2020729 考勤异常加班审批中的日期，考勤不允许承认
+
+    //add ccm 0806 查询申请人的剩余年休，
+    @Select("select * from annulleaveview where user_id = #{userid}")
+    List<AnnualLeave> getremainingByuserid(@Param("userid") String userid);
+    //add ccm 0806 查询申请人的剩余年休，
+
 }

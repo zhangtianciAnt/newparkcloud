@@ -625,4 +625,27 @@ public class AbNormalServiceImpl implements AbNormalService {
         return timeSum;
     }
     //    add_fjl_06/16  -- 添加异常申请每天累计不超过8小时check  end
+
+    //add ccm 0806 查询申请人的剩余年休，
+    @Override
+    public List<AnnualLeave> getremainingByuserid(String userid) throws Exception
+    {
+        Calendar calendar = Calendar.getInstance();
+        int year = 0;
+        int month = calendar.get(Calendar.MONTH);
+        if(month >= 1 && month <= 3) {
+            year = calendar.get(Calendar.YEAR) - 1;
+        }else {
+            year = calendar.get(Calendar.YEAR);
+        }
+        TokenModel tokenModel = new TokenModel();
+        String remaning ="0";
+        List<AnnualLeave> aList = new ArrayList<AnnualLeave>();
+        aList = abNormalMapper.getremainingByuserid(userid);
+        remaning = annualLeaveService.remainingAnnual(userid,String.valueOf(year));
+        aList.get(0).setAnnual_avg_remaining(remaning);
+        return aList;
+    }
+    //add ccm 0806 查询申请人的剩余年休，
+
 }
