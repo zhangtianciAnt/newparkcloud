@@ -251,12 +251,13 @@ public class Pfans1025Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         List<Award> Awardlist = awardMapper.selectAll();
         List<Award>   awardList =new ArrayList<>();
+        List<Award>   awardList2 =new ArrayList<>();
         Awardlist = Awardlist.stream().filter(item -> (item.getMaketype().equals("7"))).collect(Collectors.toList());
         List<Contractapplication> contractapplicationlist = contractapplicationMapper.selectAll();
         contractapplicationlist=contractapplicationlist.stream().filter(item -> (item.getState().equals("有效"))).collect(Collectors.toList());
         for(Contractapplication list:contractapplicationlist){
-            Awardlist = Awardlist.stream().filter(item -> (item.getContractnumber().equals(list.getContractnumber()))).collect(Collectors.toList());
-            awardList.addAll(0,Awardlist);
+            awardList2 = Awardlist.stream().filter(item -> (item.getContractnumber().equals(list.getContractnumber()))).collect(Collectors.toList());
+            awardList.addAll(0,awardList2);
         }
         return ApiResult.success(awardList);
     }
