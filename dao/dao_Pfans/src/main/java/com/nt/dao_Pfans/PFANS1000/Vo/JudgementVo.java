@@ -29,4 +29,10 @@ public class JudgementVo {
      */
     private List<Judgementdetail> Judgementdetail;
 
+
+    /**
+     * 历史决裁
+     */
+    private List<Judgement> JudgementLoAntList;
+
 }
