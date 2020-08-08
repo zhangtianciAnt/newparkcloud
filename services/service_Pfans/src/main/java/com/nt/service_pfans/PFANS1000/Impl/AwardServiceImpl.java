@@ -120,19 +120,25 @@ public class AwardServiceImpl implements AwardService {
         if (status.equals("4")) {
             int scale = 2;//设置位数
             int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
-            PolicyContract policy = new PolicyContract();
-            policy.setPolicycontract_id(award.getPolicycontract_id());
-            List<PolicyContract> policycontractlist = policycontractmapper.select(policy);
+            PolicyContract policy3 = new PolicyContract();
+            policy3.setPolicycontract_id(award.getPolicycontract_id());
+            List<PolicyContract> policycontractlist = policycontractmapper.select(policy3);
             if(policycontractlist.size()>0){
-                BigDecimal bd = new BigDecimal(policycontractlist.get(0).getModifiedamount());
+                PolicyContract policy = new PolicyContract();
+                PolicyContract policy2 = new PolicyContract();
+                BeanUtils.copyProperties(policycontractlist.get(0), policy);
+                policy2.setPolicycontract_id(policy.getPolicycontract_id());
+                policycontractmapper.delete(policy2);
+                BigDecimal bd = new BigDecimal(policy.getModifiedamount());
                 bd = bd.setScale(scale, roundingMode);
-                BigDecimal bd1 = new BigDecimal(policycontractlist.get(0).getNewamountcase());
+                BigDecimal bd1 = new BigDecimal(policy.getNewamountcase());
                 bd1 = bd1.setScale(scale, roundingMode);
                 BigDecimal bd2 = new BigDecimal(award.getClaimamount());
                 bd2 = bd2.setScale(scale, roundingMode);
-                policycontractlist.get(0).setModifiedamount(String.valueOf(bd.subtract(bd2)));
-                policycontractlist.get(0).setNewamountcase(String.valueOf(bd1.add(bd2)));
-                policycontractmapper.updateByPrimaryKey( policycontractlist.get(0));
+                policy.preUpdate(tokenModel);
+                policy.setModifiedamount(String.valueOf(bd.subtract(bd2)));
+                policy.setNewamountcase(String.valueOf(bd1.add(bd2)));
+                policycontractmapper.insertSelective(policy);
             }
             if(award.getMaketype().equals("9"))
             {

@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS1000.LoanApplication;
 import com.nt.dao_Pfans.PFANS1000.PolicyContract;
 import com.nt.dao_Pfans.PFANS1000.Vo.PolicyContractVo;
@@ -36,6 +37,7 @@ public class PolicyContractServiceImpl implements PolicyContractService {
         PolicyContractDetails policycontractdetails = new PolicyContractDetails();
         policycontractdetails.setPolicycontract_id(policycontract_id);
         List<PolicyContractDetails> policycontractdetailslist = policycontractdetailsmapper.select(policycontractdetails);
+        policycontractdetailslist = policycontractdetailslist.stream().sorted(Comparator.comparing(PolicyContractDetails::getInvoicenumber)).collect(Collectors.toList());
         policycontractvo.setPolicycontract(PolicyContractlist.get(0));
         policycontractvo.setPolicycontractdetails(policycontractdetailslist);
         return policycontractvo;
