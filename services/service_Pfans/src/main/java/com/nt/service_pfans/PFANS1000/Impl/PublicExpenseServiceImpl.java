@@ -49,6 +49,8 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     @Autowired
     private AwardMapper awardMapper;
     @Autowired
+    private BusinessMapper businessMapper;
+    @Autowired
     private PurchaseApplyMapper purchaseapplyMapper;
     @Autowired
     private CommunicationMapper communicationMapper;
@@ -369,6 +371,20 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         purchaseapplyList.get(0).setInvoiceno(publicExpense.getInvoiceno());
                         purchaseapplyList.get(0).preUpdate(tokenModel);
                         purchaseapplyMapper.updateByPrimaryKey(purchaseapplyList.get(0));
+                    }
+                }
+            } else if (publicExpense.getJudgement_name().substring(0, 1).equals("C"))//境内外出差
+            {
+                String[] pur = publicExpense.getJudgement_name().split(",");
+                for (String p : pur) {
+                    Business business = new Business();
+                    business.setBusiness_number(p);
+                    List<Business> businessList = businessMapper.select(business);
+                    if (businessList.size() > 0) {
+                        businessList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
+                        businessList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+                        businessList.get(0).preUpdate(tokenModel);
+                        businessMapper.updateByPrimaryKey(businessList.get(0));
                     }
                 }
             }
