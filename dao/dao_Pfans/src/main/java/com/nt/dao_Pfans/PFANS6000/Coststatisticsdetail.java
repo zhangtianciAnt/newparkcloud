@@ -31,6 +31,12 @@ public class Coststatisticsdetail extends BaseModel {
     @Column(name = "GROUP_ID")
     private String groupid;
 
+    /**
+     * GROUPNAME
+     */
+    @Column(name = "GROUP_NAME")
+    private String groupname;
+
     //供应商
     @Column(name = "SUPPLIERINFOR_ID")
     private String supplierinforid;
