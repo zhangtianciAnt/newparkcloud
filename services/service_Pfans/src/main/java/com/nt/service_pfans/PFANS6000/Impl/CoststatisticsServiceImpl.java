@@ -4,6 +4,7 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.Dictionary;
@@ -499,24 +500,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     //gbb add 0804 月度赏与详情
     @Override
     public List<Map<String, String>>  getcostMonth(String dates,String role,String groupid,TokenModel tokenModel) throws Exception {
-        Businessplan plan = new Businessplan();
-        plan.setGroup_id(groupid);
-        plan.setYear(dates.substring(0,4));
-        //region 事业计划费用
-//        List<Businessplan> planList = businessplanMapper.select(plan);
-//        if(planList.size() > 0){
-//            //JSONObject.parseObject(JSONObject.toJSONString(object),HashMap.class);
-//            String json = "[{\"groupid\":\"96858E5838833ADC564AF863C3DFE5F31705\",\"groupname\":\"APD\"},{\"groupid\":\"31567D6741113AEC1C73C424B452D6CFDB07\",\"groupname\":\"DANP\"}]\\";
-//            JSONObject jsonObject = JSONObject.parseObject(json);
-////            JSONObject jsonObject = JSONObject.parseObject(planList.get(0).getGroupB1());
-////            Map jsonToMap =  JSONObject.parseObject(jsonObject.toJSONString());
-//            System.out.println("jsonToMap=>"+jsonObject);
-//            //JSONObject obj = JSONUtil.parseObj(planList.get(0).getGroupB1());
-//            String a = "";
-//        }
-        //endregion 事业计划费用
         List<String> groupIdList = new ArrayList<String>();
-        groupIdList.add(groupid);
         Query query = CustmizeQuery(new OrgTree());
         OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
         List<OrgTree>  orgTrees =  orgTree.getOrgs();
@@ -528,6 +512,29 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 }
             }
         }
+        else{
+            groupIdList.add(groupid);
+        }
+        //region 事业计划费用
+        List<Businessplan> planList = businessplanMapper.getBusinessplan(dates.substring(0,4),groupIdList);
+//        if(planList.size() > 0){
+//            List<Map<String, String>> databuList = new ArrayList<Map<String,String>>();
+//            JSONArray array1 = new JSONArray();
+//            JSONArray array2 = new JSONArray();
+//            for( int i = 0 ; i< planList.size() ; i++){
+//                if(!planList.get(i).getGroupB1().equals("")){
+//                    array1 = JSONArray.parseArray(planList.get(i).getGroupB1());
+//                }
+//                if(!planList.get(i).getGroupB2().equals("")){
+//                    array2 = JSONArray.parseArray(planList.get(i).getGroupB1());
+//                }
+//                Map<String,String> map =new HashMap<String,String>();
+//                map.put("group_id",String.valueOf(planList.get(i).getGroup_id()));
+//                databuList.add(map);
+//            }
+//        }
+        //endregion 事业计划费用
+
         //月份
         String months = String.valueOf(Integer.valueOf(dates.substring(dates.length() - 2,7)));
         //工数
@@ -546,9 +553,14 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 if(data.size() > 0){
                     if(i == 0){
                         dataList = data;
+                        dataList.get(0).put("bpmanhourcount", String.valueOf(data.get(0).get("bpmanhourcount")));
                     }
                     else{
                         for(int j=0;j<dataList.size();j++ ){
+                            //cbd5e2e6-f706-4f7c-ba37-d04c0f2bdde5
+                            if(dataList.get(j).get("bpcompany").equals("cbd5e2e6-f706-4f7c-ba37-d04c0f2bdde5")){//大连艾普迪科技有限公司
+                                String a= "";
+                            }
                             if(dataList.get(j).get("bpcompany").equals(data.get(j).get("bpcompany"))){//会社名
                                 //委任工数
                                 dataList.get(j).put("ex1manhour" + String.valueOf(i), String.valueOf(data.get(j).get("ex1manhour0")));
@@ -567,13 +579,13 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 
                                 //会社总工数
                                 BigDecimal dataListmanhourcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(dataList.get(j).get("bpmanhourcount"))));
-                                BigDecimal bddatamanhourcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(data.get(j).get("bpmanhourcount"))));
+                                BigDecimal bddatamanhourcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(data.get(j).get("manhourcount0"))));
                                 //会社总工数
                                 dataList.get(j).put("bpmanhourcount", String.valueOf(dataListmanhourcount.add(bddatamanhourcount)));
 
                                 //会社总费用
                                 BigDecimal dataListcostcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(dataList.get(j).get("bpcostcount"))));
-                                BigDecimal bddatacostcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(data.get(j).get("bpcostcount"))));
+                                BigDecimal bddatacostcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(data.get(j).get("costcount0"))));
                                 //会社总费用
                                 dataList.get(j).put("bpcostcount", String.valueOf(dataListcostcount.add(bddatacostcount)));
                             }
@@ -605,6 +617,8 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         String strDates = "";
         //审批部门
         String strGroupid = "";
+        //审批部门名称
+        String strGroupname = "";
         List<Map<String, String>> strDatanew = strData.get(0);
         if(strDatanew.size() > 0){
             for(int i=0;i<strDatanew.size();i++ ){
@@ -613,6 +627,9 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 //部门
                 strGroupid = strDatanew.get(i).get("groupid");
                 detail.setGroupid(String.valueOf(strGroupid));
+                //部门名称
+                strGroupname = strDatanew.get(i).get("groupname");
+                detail.setGroupname(String.valueOf(strGroupname));
                 //供应商
                 detail.setSupplierinforid(strDatanew.get(i).get("bpcompany"));
                 //年月

@@ -68,21 +68,21 @@ public class Pfans1026Controller {
             coststatisticsdetail.setSupplierinforid(supplierinforlist.get(0).getSupplierinfor_id());
             coststatisticsdetail.setDates(individual.getDates());
             coststatisticsdetaillist = coststatisticsdetailMapper.select(coststatisticsdetail);
-            if (coststatisticsdetaillist.size() > 0) {
-                for(Coststatisticsdetail cost :coststatisticsdetaillist){
-                    Query query = new Query();
-                    query.addCriteria(Criteria.where("userinfo.groupid").is(cost.getGroupid()));
-                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
-                        cost.setGroupid((customerInfo.getUserinfo().getGroupname()));
-                    }
-                }
-            }
+//            if (coststatisticsdetaillist.size() > 0) {
+//                for(Coststatisticsdetail cost :coststatisticsdetaillist){
+//                    Query query = new Query();
+//                    query.addCriteria(Criteria.where("userinfo.groupid").is(cost.getGroupid()));
+//                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                    if (customerInfo != null) {
+//                        cost.setGroupid((customerInfo.getUserinfo().getGroupname()));
+//                    }
+//                }
+//            }
         }
         String last = "";
         String first = "";
         String trr = "费用明细";
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日");
         if (individual.getDates() != null && individual.getDates() != "") {
             int year = Integer.valueOf(individual.getDates().substring(0, 4));
             int month = Integer.valueOf(individual.getDates().substring(5, 7));

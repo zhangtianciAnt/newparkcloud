@@ -99,4 +99,7 @@ public class Petition extends BaseModel {
     @Column(name = "SEALID")
     private String sealid;
 
+    @Column(name = "PJNAMEENGLISH")
+    private String pjnameenglish;
+
 }
