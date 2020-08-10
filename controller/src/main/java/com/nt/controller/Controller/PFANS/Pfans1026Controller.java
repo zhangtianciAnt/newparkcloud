@@ -81,6 +81,7 @@ public class Pfans1026Controller {
         }
         String last = "";
         String first = "";
+        String trr = "费用明细";
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         if (individual.getDates() != null && individual.getDates() != "") {
             int year = Integer.valueOf(individual.getDates().substring(0, 4));
@@ -100,6 +101,8 @@ public class Pfans1026Controller {
         data.put("firstday", first);
         data.put("lastday", last);
         data.put("ind", individual);
+        data.put("trr", trr);
+        data.put("tra", coststatisticsdetaillist);
         ExcelOutPutUtil.OutPutPdf("个别合同书", "gebiehetong.xls", data, response);
     }
 
