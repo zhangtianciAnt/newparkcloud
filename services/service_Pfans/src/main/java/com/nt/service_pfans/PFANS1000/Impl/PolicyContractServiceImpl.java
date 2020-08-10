@@ -1,11 +1,17 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.ToDoNotice;
+import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.dao_Pfans.PFANS1000.LoanApplication;
 import com.nt.dao_Pfans.PFANS1000.PolicyContract;
 import com.nt.dao_Pfans.PFANS1000.Vo.PolicyContractVo;
 import com.nt.dao_Pfans.PFANS1000.PolicyContractDetails;
+import com.nt.service_Auth.RoleService;
+import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS1000.PolicyContractService;
+import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PolicyContractMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PolicyContractDetailsMapper;
 import com.nt.utils.StringUtils;
@@ -28,6 +34,12 @@ public class PolicyContractServiceImpl implements PolicyContractService {
     @Autowired
     private PolicyContractDetailsMapper policycontractdetailsmapper;
 
+    @Autowired
+    private AwardMapper awardMapper;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private ToDoNoticeService toDoNoticeService;
     @Override
     public PolicyContractVo One(String policycontract_id) throws Exception {
         PolicyContractVo policycontractvo = new PolicyContractVo();
@@ -51,18 +63,39 @@ public class PolicyContractServiceImpl implements PolicyContractService {
         policy2.setPolicycontract_id(policy.getPolicycontract_id());
         policycontractmapper.delete(policy2);
         String status = policy.getStatus();
+        String policycontract_id = policy.getPolicycontract_id();
+        String user_id = policy.getUser_id();
         if (status.equals("4")) {
             policy.preInsert(tokenModel);
             policy.setType("1");
             policy.setStatus(status);
             policycontractmapper.insertSelective(policy);
+            Award award = new Award();
+            award.setPolicycontract_id(policycontract_id);
+            List<Award> awardlist = awardMapper.select(award);
+            for (Award awa : awardlist) {
+                if(!awa.getStatus().equals("4")){
+                    //军权——合同
+                    List<MembersVo> rolelist = roleService.getMembers("5e9d62b91decd61bb0398686");
+                    if (rolelist.size() > 0) {
+                        ToDoNotice toDoNotice3 = new ToDoNotice();
+                        toDoNotice3.setTitle("【方针合同觉书已创建完成！】");
+                        toDoNotice3.setInitiator(user_id);
+                        toDoNotice3.setContent("委托决裁发起得印章申请已成功！");
+                        toDoNotice3.setDataid(awa.getAward_id());
+                        toDoNotice3.setUrl("/PFANS1025FormView");
+                        toDoNotice3.setWorkflowurl("/PFANS1025FormView");
+                        toDoNotice3.preInsert(tokenModel);
+                        toDoNotice3.setOwner(rolelist.get(0).getUserid());
+                        toDoNoticeService.save(toDoNotice3);
+                    }
+                }
+            }
         } else {
             policy.preInsert(tokenModel);
             policy.setStatus(status);
             policycontractmapper.insertSelective(policy);
         }
-
-        String policycontract_id = policy.getPolicycontract_id();
         PolicyContractDetails policycontractdetails = new PolicyContractDetails();
         policycontractdetails.setPolicycontract_id(policycontract_id);
         policycontractdetailsmapper.delete(policycontractdetails);
