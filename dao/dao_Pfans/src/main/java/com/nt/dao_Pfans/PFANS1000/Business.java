@@ -388,4 +388,10 @@ public class Business extends BaseModel {
     @Column(name = "LOANAPNO")
     private String loanapno;
     //add ccm 0731 to
+    //精算报销编号
+    @Column(name = "INVOICENO")
+    private String invoiceno;
+    //精算ID
+    @Column(name = "PUBLICEXPENSE_ID")
+    private String publicexpense_id;
 }
