@@ -14,6 +14,8 @@ import java.util.List;
 
 public interface AbNormalMapper extends MyMapper<AbNormal> {
     List<AbNormal> selectAbNormal(@Param("now") String now);
+
+    List<AbNormal> selectAbNormalGiving(@Param("now") String now);
     List<AbNormal> selectAbNormalThisYear(AbNormal abNormal);
     Double selectAbNormalDate(@Param("userid") String userid);
     List<AbNormal> selectAbNormalParent(@Param("userid") String userid);

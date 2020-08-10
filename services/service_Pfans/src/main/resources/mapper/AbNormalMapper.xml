@@ -27,6 +27,19 @@
         where status >= 4
 		and error_type in ('PR013012','PR013012')
     </select>
+    <select id="selectAbNormalGiving" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        select
+		USER_ID,
+        'PR013012' errortype,
+        MIN(case when status = '7' then re_occurrence_date
+        else occurrence_date end) occurrencedate,
+        MAX(case when status = '7' then re_finished_date
+        else finished_date end) finisheddate
+        from abnormal
+        where status >= 4
+				and error_type = 'PR013012'
+				group by USER_ID
+    </select>
     <select id="selectAbNormalThisYear" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
         select
         ERROR_TYPE errortype,

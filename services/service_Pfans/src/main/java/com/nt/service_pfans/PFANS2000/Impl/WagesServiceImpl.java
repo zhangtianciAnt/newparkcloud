@@ -472,7 +472,10 @@ public class WagesServiceImpl implements WagesService {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         long endMillisecond = format.parse("2012-08-31").getTime();
         long otherOneTime = format.parse("2012-03-31").getTime();
-        List<AbNormal> abNormalinfo = abNormalMapper.selectAbNormal(format.format(new Date()));
+        //upd_fjl_0910  更改取值 start
+//        List<AbNormal> abNormalinfo = abNormalMapper.selectAbNormal(format.format(new Date()));
+        List<AbNormal> abNormalinfo = abNormalMapper.selectAbNormalGiving(format.format(new Date()));
+        //upd_fjl_0910  更改取值 end
 //        AttendanceSetting attendanceSetting = attendanceSettingMapper.selectOne(new AttendanceSetting());
         /*根据字典获取 納付率.全社社会保険基数（元） -lxx*/
 //        Dictionary dictionary = new Dictionary();
@@ -2326,7 +2329,7 @@ public class WagesServiceImpl implements WagesService {
                 if (value.get(1).toString().equals("")) {
                     continue;
                 }
-                String click="^([0-9][0-9]*)+(.[0-9]{1,2})?$";
+                String click = "^(-?[0-9][0-9]*)+(.[0-9]{1,2})?$";
 
                 //region 查询是否已经存在
                 Wages wa = new Wages();
@@ -2348,7 +2351,14 @@ public class WagesServiceImpl implements WagesService {
                 if (customerInfo != null) {
                     wages.setJobnumber(jobnumber);  //工号
                     wages.setUser_id(customerInfo.getUserid());
-                    wages.setWorkdate(customerInfo.getUserinfo().getEnterday());//入社时间
+                    //upd_fjl_0910
+//                    wages.setWorkdate(customerInfo.getUserinfo().getEnterday());//入社时间
+                    String resignationDate = customerInfo.getUserinfo().getEnterday();
+                    if (customerInfo.getUserinfo().getEnterday().indexOf("Z") > 0) {
+                        resignationDate = resignationDate.replace("-", "/").substring(0, 10);
+                    }
+                    //upd_fjl_0910
+                    wages.setWorkdate(resignationDate);//入社时间
                     wages.setSex(customerInfo.getUserinfo().getSex());  //性别
 
                     wages.setBonus(customerInfo.getUserinfo().getDifference());//奨金計上

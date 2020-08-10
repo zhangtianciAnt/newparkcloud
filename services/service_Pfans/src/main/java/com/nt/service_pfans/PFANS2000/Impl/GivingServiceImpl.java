@@ -289,7 +289,10 @@ public class GivingServiceImpl implements GivingService {
         long otherOneTime = format.parse("2012-03-31").getTime();
         AbNormal abNormal = new AbNormal();
         abNormal.setStatus("4");
-        List<AbNormal> abNormalinfo = abNormalMapper.selectAbNormal(format.format(new Date()));
+        //upd_fjl_0910  更改取值 start
+//        List<AbNormal> abNormalinfo = abNormalMapper.selectAbNormal(format.format(new Date()));
+        List<AbNormal> abNormalinfo = abNormalMapper.selectAbNormalGiving(format.format(new Date()));
+        //upd_fjl_0910  更改取值 end
 //        AttendanceSetting attendanceSetting = attendanceSettingMapper.selectOne(new AttendanceSetting());
         /*根据字典获取 納付率.全社社会保険基数（元） -lxx*/
 //        Dictionary dictionary = new Dictionary();
