@@ -14,7 +14,4 @@ public interface BusinessplanMapper extends MyMapper<Businessplan> {
     List<PersonPlanTable> selectPersonTable(@Param("groupid") String groupid);
 
     List<ActualPL> getAcutal(@Param("groupid") String groupid,@Param("startday") String startday,@Param("endday") String endday);
-
-    //gbb add 0810 月度费用统计查询事业计划
-    List<Businessplan> getBusinessplan(@Param("years") String years,@Param("groupIdList")List<String> groupIdList);
 }
