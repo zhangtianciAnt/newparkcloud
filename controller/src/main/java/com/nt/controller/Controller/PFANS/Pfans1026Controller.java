@@ -81,7 +81,7 @@ public class Pfans1026Controller {
         }
         String last = "";
         String first = "";
-        String trr = "费用明细";
+        String trr = "";
         SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日");
         if (individual.getDates() != null && individual.getDates() != "") {
             int year = Integer.valueOf(individual.getDates().substring(0, 4));
