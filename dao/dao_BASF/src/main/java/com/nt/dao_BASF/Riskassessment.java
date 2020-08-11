@@ -34,6 +34,12 @@ public class Riskassessment extends BaseModel {
 
     private Synthesize synthesize;
 
+    // ADD By SKAIXX On 20200811
+    /**
+     * 确定FLG
+     */
+    private boolean determineflg;
+
     /**
      * 综合信息
      */

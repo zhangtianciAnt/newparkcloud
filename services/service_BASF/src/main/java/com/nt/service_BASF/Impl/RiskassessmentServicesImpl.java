@@ -57,7 +57,14 @@ public class RiskassessmentServicesImpl implements RiskassessmentServices {
     public void noticeUpdata(String notice, TokenModel tokenModel) throws Exception {
         Query query = new Query();
         Riskassessment riskassessment = mongoTemplate.findOne(query, Riskassessment.class);
-        riskassessment.setNotice(notice);
+        if (notice.equals("determine")) {
+            riskassessment.setDetermineflg(true);
+        } else if (notice.equals("cancle")) {
+            riskassessment.setDetermineflg(false);
+        } else {
+            riskassessment.setNotice(notice);
+            riskassessment.setDetermineflg(false);
+        }
         riskassessment.preUpdate(tokenModel);
         mongoTemplate.save(riskassessment);
     }
