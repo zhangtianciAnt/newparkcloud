@@ -1147,7 +1147,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 if(numberList.get(0).getPurnumbers()!=null && !numberList.get(0).getPurnumbers().equals(""))
                 {
                     Purchase purchase =new Purchase();
-                    purchase.setPurchase_id(numberList.get(0).getPurnumbers());
+                    purchase.setPurnumbers(numberList.get(0).getPurnumbers());
                     getpurchaseMap = PurchaseService.getworkfolwPurchaseData(purchase);
                 }
             }
