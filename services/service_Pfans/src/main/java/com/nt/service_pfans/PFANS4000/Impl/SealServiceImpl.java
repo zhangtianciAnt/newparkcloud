@@ -243,11 +243,11 @@ public class SealServiceImpl implements SealService {
                             award.preUpdate(tokenModel);
                             awardMapper.updateByPrimaryKey(award);
                             //更新状况为完了
-//                            Contractnumbercount pp = new Contractnumbercount();
-//                            pp.setContractnumber(award.getContractnumber());
-//                            countLi = contractnumbercountMapper.select(pp);
-//                            countLi.get(0).setDeliveryconditionqh("HT009003");
-//                            contractnumbercountMapper.updateByPrimaryKeySelective(countLi.get(0));
+                            Contractnumbercount pp = new Contractnumbercount();
+                            pp.setContractnumber(award.getContractnumber());
+                            countLi = contractnumbercountMapper.select(pp);
+                            countLi.get(0).setDeliveryconditionqh("HT009003");
+                            contractnumbercountMapper.updateByPrimaryKeySelective(countLi.get(0));
                         }
                         //采购担当待办
                         List<MembersVo> rolelist = roleService.getMembers("5e7863d88f4316308435113b");

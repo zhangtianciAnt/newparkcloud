@@ -1,9 +1,6 @@
 package com.nt.service_pfans.PFANS1000;
 
-import com.nt.dao_Pfans.PFANS1000.Contractapplication;
-import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
-import com.nt.dao_Pfans.PFANS1000.Individual;
-import com.nt.dao_Pfans.PFANS1000.Petition;
+import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
 import com.nt.utils.dao.TokenModel;
@@ -30,6 +27,8 @@ public interface ContractapplicationService {
 
     List<Petition> getPe(String countNumber) throws Exception;
     //add ccm 0725  采购合同chongfucheck
-    List<String> purchaseExistCheck(String purnumbers) throws Exception;
+    List<Contractnumbercount> purchaseExistCheck(String purnumbers) throws Exception;
     //add ccm 0725  采购合同chongfucheck
+
+    Map<String, String> getworkfolwPurchaseData(Award award) throws Exception;
 }

@@ -3,10 +3,12 @@ package com.nt.service_pfans.PFANS1000.Impl;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.*;
+import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -43,6 +42,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     @Autowired
     private BusinessMapper businessMapper;
+    @Autowired
+    private PurchaseService purchaseService;
 
 
 
@@ -226,6 +227,31 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 }
             }
         }
+    }
+
+    public Map<String, String> getworkfolwPurchaseData(LoanApplication loanapplication) throws Exception
+    {
+        Map<String, String> getpurchaseMap = new HashMap<String, String>();
+        loanapplication = loanapplicationMapper.selectByPrimaryKey(loanapplication.getLoanapplication_id());
+        if(loanapplication.getJudgements_name()!=null && !loanapplication.getJudgements_name().equals(""))
+        {
+            String[] pusname = loanapplication.getJudgements_name().split(",");
+            String[] pusid = loanapplication.getJudgements().split(",");
+            if(pusname.length>0)
+            {
+                for(String pr :pusname)
+                {
+                    if(pr.substring(0,2).equals("CG"))
+                    {
+                        Purchase purchase =new Purchase();
+                        purchase.setPurchase_id(pusid[0]);
+                        getpurchaseMap = purchaseService.getworkfolwPurchaseData(purchase);
+                        break;
+                    }
+                }
+            }
+        }
+        return getpurchaseMap;
     }
 
 }

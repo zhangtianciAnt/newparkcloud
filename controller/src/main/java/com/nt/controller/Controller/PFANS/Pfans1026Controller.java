@@ -5,6 +5,7 @@ import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
+import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
@@ -182,5 +183,16 @@ public class Pfans1026Controller {
         return ApiResult.success(contractapplicationService.purchaseExistCheck(purnumbers));
     }
     //add ccm 0725  采购合同chongfucheck
+
+    //采购业务数据流程查看详情
+    @RequestMapping(value="/getworkfolwPurchaseData",method = {RequestMethod.POST})
+    public ApiResult getworkfolwPurchaseData(@RequestBody Award award, HttpServletRequest request) throws Exception{
+        if (award == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(contractapplicationService.getworkfolwPurchaseData(award));
+    }
+    //采购业务数据流程查看详情
 
 }

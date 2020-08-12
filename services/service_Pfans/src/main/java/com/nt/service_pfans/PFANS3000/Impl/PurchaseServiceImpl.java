@@ -4,11 +4,18 @@ import com.nt.dao_Auth.Role;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Org.UserAccount;
+import com.nt.dao_Pfans.PFANS1000.Award;
+import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
+import com.nt.dao_Pfans.PFANS1000.LoanApplication;
 import com.nt.dao_Pfans.PFANS1000.PublicExpense;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
+import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
+import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
+import com.nt.service_pfans.PFANS1000.mapper.LoanApplicationMapper;
+import com.nt.service_pfans.PFANS1000.mapper.PublicExpenseMapper;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
 import com.nt.utils.StringUtils;
@@ -21,10 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,6 +49,18 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Autowired
     private PublicExpenseService publicExpenseService;
+
+    @Autowired
+    private ContractapplicationMapper contractapplicationMapper;
+
+    @Autowired
+    private com.nt.service_pfans.PFANS1000.mapper.AwardMapper AwardMapper;
+
+    @Autowired
+    private LoanApplicationMapper  loanApplicationMapper;
+
+    @Autowired
+    private PublicExpenseMapper publicExpenseMapper;
 
     @Override
     public List<Purchase> getPurchase(Purchase purchase, TokenModel tokenModel) {
@@ -216,5 +232,54 @@ public class PurchaseServiceImpl implements PurchaseService {
         purchase.setPurnumbers(Numbers);
         purchase.setPurchase_id(UUID.randomUUID().toString()) ;
         purchaseMapper.insert(purchase);
+    }
+
+    //采购业务数据流程查看详情
+    @Override
+    public Map<String, String> getworkfolwPurchaseData(Purchase purchase) throws Exception
+    {
+        Map<String, String> getpurchaseMap = new HashMap<String, String>();
+        //采购决裁
+        List<Purchase> purchaseList = new ArrayList<Purchase>();
+        purchaseList = purchaseMapper.select(purchase);
+        if(purchaseList.size()>0)
+        {
+            getpurchaseMap.put("purchase",purchaseList.get(0).getPurchase_id() +","+purchaseList.get(0).getStatus());
+            //合同决裁
+            List<Contractnumbercount> ccList = new ArrayList<Contractnumbercount>();
+            ccList =  contractapplicationMapper.purchaseExistCheck(purchaseList.get(0).getPurnumbers());
+            if(ccList.size()>0)
+            {
+                Award con = new Award();
+                con.setContractnumber(ccList.get(0).getContractnumber());
+                List<Award> aw = AwardMapper.select(con);
+                if(aw.size()>0)
+                {
+                    getpurchaseMap.put("award",aw.get(0).getAward_id() +","+ aw.get(0).getStatus());
+                    getpurchaseMap.put("seal",aw.get(0).getSealid() +","+ aw.get(0).getSealstatus());
+                }
+            }
+            //暂借款申请
+            if(purchaseList.get(0).getLoanapplication_id()!=null && !purchaseList.get(0).getLoanapplication_id().equals(""))
+            {
+                LoanApplication loan = new LoanApplication();
+                loan = loanApplicationMapper.selectByPrimaryKey(purchaseList.get(0).getLoanapplication_id());
+                if(loan!=null)
+                {
+                    getpurchaseMap.put("loanApplication",loan.getLoanapplication_id() +","+ loan.getStatus());
+                }
+            }
+            //精算
+            if(purchaseList.get(0).getPublicexpense_id()!=null && !purchaseList.get(0).getPublicexpense_id().equals(""))
+            {
+                PublicExpense pub = new PublicExpense();
+                pub = publicExpenseMapper.selectByPrimaryKey(purchaseList.get(0).getPublicexpense_id());
+                if(pub!=null)
+                {
+                    getpurchaseMap.put("publicExpense",pub.getPublicexpenseid() +","+ pub.getStatus());
+                }
+            }
+        }
+        return getpurchaseMap;
     }
 }

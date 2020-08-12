@@ -6,6 +6,7 @@ import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TotalCostVo;
+import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.service_Org.DictionaryService;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
@@ -641,5 +642,16 @@ public class Pfans1012Controller {
         return ApiResult.success(loanapplicationService.getLoanApplicationList(loanapno));
     }
     //add ccm 0728  精算时关联多个暂借款
+
+    //采购业务数据流程查看详情
+    @RequestMapping(value="/getworkfolwPurchaseData",method = {RequestMethod.POST})
+    public ApiResult getworkfolwPurchaseData(@RequestBody PublicExpense publicExpense, HttpServletRequest request) throws Exception{
+        if (publicExpense == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(publicExpenseService.getworkfolwPurchaseData(publicExpense));
+    }
+    //采购业务数据流程查看详情
 
 }
