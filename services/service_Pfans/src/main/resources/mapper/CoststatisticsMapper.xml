@@ -216,10 +216,13 @@
 			case when co2.ex2manhour = '0.00' then '' else round(co2.ex2manhour,2) end ex2manhour0,
 			case when co2.ex2cost = '0.00' then '' else round(co2.ex2cost,2) end ex2cost0,
 			case when co2.ex2usercount = '0' then '' else co2.ex2usercount end ex2usercount0,
+			'' as ex3manhour0,
+			'' as ex3cost0,
 			@manhourcount0 := round( co1.ex1manhour + co2.ex2manhour, 2 ) as manhourcount0,
 			@manhourcount0 as bpmanhourcount,
 			@costcount0 := round( co1.ex1cost + co2.ex2cost, 2 ) as  costcount0,
-			@costcount0 as bpcostcount
+			@costcount0 as bpcostcount,
+		    '0' as ex3costcount
 		FROM
 			(
 				SELECT

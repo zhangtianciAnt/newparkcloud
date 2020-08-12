@@ -515,26 +515,6 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         else{
             groupIdList.add(groupid);
         }
-        //region 事业计划费用
-        List<Businessplan> planList = businessplanMapper.getBusinessplan(dates.substring(0,4),groupIdList);
-//        if(planList.size() > 0){
-//            List<Map<String, String>> databuList = new ArrayList<Map<String,String>>();
-//            JSONArray array1 = new JSONArray();
-//            JSONArray array2 = new JSONArray();
-//            for( int i = 0 ; i< planList.size() ; i++){
-//                if(!planList.get(i).getGroupB1().equals("")){
-//                    array1 = JSONArray.parseArray(planList.get(i).getGroupB1());
-//                }
-//                if(!planList.get(i).getGroupB2().equals("")){
-//                    array2 = JSONArray.parseArray(planList.get(i).getGroupB1());
-//                }
-//                Map<String,String> map =new HashMap<String,String>();
-//                map.put("group_id",String.valueOf(planList.get(i).getGroup_id()));
-//                databuList.add(map);
-//            }
-//        }
-        //endregion 事业计划费用
-
         //月份
         String months = String.valueOf(Integer.valueOf(dates.substring(dates.length() - 2,7)));
         //工数
@@ -549,18 +529,93 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         if(groupIdList.size() > 0){
             for(int i=0;i<groupIdList.size();i++ ){
                 strGroupid = strGroupid + groupIdList.get(i) + ",";
+
+                //region 事业计划费用
+                List<Map<String, String>> databuList = new ArrayList<Map<String,String>>();
+                Businessplan plan = new Businessplan();
+                plan.setYear(dates.substring(0,4));
+                plan.setGroup_id(groupIdList.get(i));
+                List<Businessplan> planList = businessplanMapper.select(plan);
+                if(planList.size() > 0){
+                    JSONArray array1 = new JSONArray();
+                    JSONArray array2 = new JSONArray();
+
+                    if(!planList.get(0).getGroupB1().equals("")){
+                        array1 = JSONArray.parseArray(planList.get(0).getGroupB1());
+                    }
+                    if(!planList.get(0).getGroupB2().equals("")){
+                        array2 = JSONArray.parseArray(planList.get(0).getGroupB2());
+                    }
+                    if(array1.size() > 0){
+                        for( int x = 0 ; x< array1.size() ; x++){
+                            JSONObject objarray1 = array1.getJSONObject(x);
+                            JSONObject objarray2 = array2.getJSONObject(x);
+                            Map<String,String> map =new HashMap<String,String>();
+                            //供应商ID
+                            map.put("bpcompany",objarray1.getString("supplierinfor_id"));
+                            BigDecimal objarray1number  = new BigDecimal(0);
+                            BigDecimal objarray2number  = new BigDecimal(0);
+                            BigDecimal objarray1money  = new BigDecimal(0);
+                            BigDecimal objarray2money  = new BigDecimal(0);
+                            if(objarray1.getString("number" + months) != null){
+                                objarray1number = BigDecimal.valueOf(Double.valueOf(objarray1.getString("number" + months)));
+                            }
+                            if(objarray2.getString("number" + months) != null){
+                                objarray2number = BigDecimal.valueOf(Double.valueOf(objarray2.getString("number" + months)));
+                            }
+                            if(objarray1.getString("money" + months) != null){
+                                objarray1money = BigDecimal.valueOf(Double.valueOf(objarray1.getString("money" + months)));
+                            }
+                            if(objarray2.getString("money" + months) != null){
+                                objarray2money = BigDecimal.valueOf(Double.valueOf(objarray2.getString("money" + months)));
+                            }
+                            String ex3manhour = String.valueOf(objarray1number.add(objarray2number));
+                            String ex3cost = String.valueOf(objarray1money.add(objarray2money));
+                            if(ex3manhour.equals("0") && (ex3cost.equals("0") || ex3cost.equals("0.0"))){
+                                continue;
+                            }
+                            map.put("ex3manhour",ex3manhour);
+                            map.put("ex3cost",ex3cost);
+                            map.put("group_id",String.valueOf(planList.get(0).getGroup_id()));
+                            databuList.add(map);
+                        }
+                    }
+                }
+                //endregion 事业计划费用
+
                 List<Map<String, String>> data = coststatisticsMapper.getcostMonth(dates.substring(0,4),manhour,cost,expense,months,groupIdList.get(i));
                 if(data.size() > 0){
                     if(i == 0){
                         dataList = data;
                         dataList.get(0).put("bpmanhourcount", String.valueOf(data.get(0).get("bpmanhourcount")));
+
+                        //region 事业计划费用
+                        if(databuList.size() > 0){
+                            for(int j=0;j<dataList.size();j++ ){
+                                for (Map<String, String> m : databuList){
+                                    if(m.get("bpcompany").equals(dataList.get(j).get("bpcompany"))){
+                                        //预计工数
+                                        dataList.get(j).put("ex3manhour" + String.valueOf(i), m.get("ex3manhour"));
+                                        //预计费用
+                                        if(m.get("ex3cost").equals("0") ||m.get("ex3cost").equals("0.0")){
+                                            dataList.get(j).put("ex3cost" + String.valueOf(i), "");
+                                        }
+                                        else{
+                                            dataList.get(j).put("ex3cost" + String.valueOf(i), m.get("ex3cost"));
+                                        }
+                                        //预计费用合计
+                                        BigDecimal ex3costcountList = BigDecimal.valueOf(Double.valueOf(String.valueOf(dataList.get(j).get("ex3costcount"))));
+                                        BigDecimal ex3costm = BigDecimal.valueOf(Double.valueOf(m.get("ex3cost")));
+                                        //预计总费用
+                                        dataList.get(j).put("ex3costcount", String.valueOf(ex3costcountList.add(ex3costm)));
+                                    }
+                                }
+                            }
+                        }
+                        //endregion 事业计划费用
                     }
                     else{
                         for(int j=0;j<dataList.size();j++ ){
-                            //cbd5e2e6-f706-4f7c-ba37-d04c0f2bdde5
-                            if(dataList.get(j).get("bpcompany").equals("cbd5e2e6-f706-4f7c-ba37-d04c0f2bdde5")){//大连艾普迪科技有限公司
-                                String a= "";
-                            }
                             if(dataList.get(j).get("bpcompany").equals(data.get(j).get("bpcompany"))){//会社名
                                 //委任工数
                                 dataList.get(j).put("ex1manhour" + String.valueOf(i), String.valueOf(data.get(j).get("ex1manhour0")));
@@ -589,6 +644,33 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                                 //会社总费用
                                 dataList.get(j).put("bpcostcount", String.valueOf(dataListcostcount.add(bddatacostcount)));
                             }
+
+                            //region 事业计划费用
+                            if(databuList.size() > 0){
+                                for (Map<String, String> m : databuList){
+                                    if(m.get("bpcompany").equals(dataList.get(j).get("bpcompany"))){
+                                        //预计工数
+                                        dataList.get(j).put("ex3manhour" + String.valueOf(i), m.get("ex3manhour"));
+                                        //预计费用
+                                        if(m.get("ex3cost").equals("0") ||m.get("ex3cost").equals("0.0")){
+                                            dataList.get(j).put("ex3cost" + String.valueOf(i), "");
+                                        }
+                                        else{
+                                            dataList.get(j).put("ex3cost" + String.valueOf(i), m.get("ex3cost"));
+                                        }
+                                        //预计费用合计
+                                        BigDecimal ex3costcountList = BigDecimal.valueOf(Double.valueOf(String.valueOf(dataList.get(j).get("ex3costcount"))));
+                                        BigDecimal ex3costm = BigDecimal.valueOf(Double.valueOf(m.get("ex3cost")));
+                                        //预计总费用
+                                        String strex3costcount = String.valueOf(ex3costcountList.add(ex3costm));
+                                        if(strex3costcount.equals("0.0")){
+                                            strex3costcount = "0";
+                                        }
+                                        dataList.get(j).put("ex3costcount", strex3costcount);
+                                    }
+                                }
+                            }
+                            //endregion 事业计划费用
                         }
                     }
                 }

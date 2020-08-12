@@ -127,18 +127,5 @@ inner join companyprojects cp
 where cp.GROUP_ID = #{groupid}
 group by cost.BPCOMPANY,code
     </select>
-
-    <select id="getBusinessplan" resultType="com.nt.dao_Pfans.PFANS1000.Businessplan">
-        select group_id,groupb1,groupb2
-        from businessplan
-        where year = #{years}
-        <if test="groupIdList != null and groupIdList.size() > 0 ">
-            and group_id in
-            <foreach item="item" index="index" collection="groupIdList"
-                     open="(" separator="," close=")">
-                #{item}
-            </foreach>
-        </if>
-    </select>
 </mapper>
 
