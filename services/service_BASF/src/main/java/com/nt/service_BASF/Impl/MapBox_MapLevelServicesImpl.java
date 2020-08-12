@@ -1,8 +1,10 @@
 package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.MapBox_MapLevel;
+import com.nt.dao_BASF.Riskassessments;
 import com.nt.service_BASF.MapBox_MapLevelServices;
 import com.nt.service_BASF.mapper.MapBox_MapLevelMapper;
+import com.nt.service_BASF.mapper.RiskassessmentsMapper;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,9 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
     @Autowired
     private MapBox_MapLevelMapper mapBox_mapLevelMapper;
 
+    @Autowired
+    private RiskassessmentsMapper riskassessmentsMapper;
+
     /**
      * @param mapid
      * @Method one
@@ -46,13 +51,16 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
     //查询树结构
     @Override
     public List<MapBox_MapLevel> getall() throws Exception {
-        MapBox_MapLevel mapBox_mapLevel = new MapBox_MapLevel();
-
-//        List<MapBox_MapLevel> moduleList  =  mapBox_mapLevelMapper.select(mapBox_mapLevel);
         List<MapBox_MapLevel> moduleList = mapBox_mapLevelMapper.getAll();
+        moduleList.forEach(item -> {
+            if (!StringUtils.isEmpty(item.getDevicecode())) {
+                Riskassessments riskassessments = new Riskassessments();
+                riskassessments.setDevicecode(item.getDevicecode());
+                item.setRiskassessmentsList(riskassessmentsMapper.select(riskassessments));
+            }
+        });
         // 生成树
-        List<MapBox_MapLevel> result = getChildren(moduleList);
-        return result;
+        return getChildren(moduleList);
     }
 
     @Override
