@@ -4,6 +4,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.LoanApplication;
 import com.nt.dao_Pfans.PFANS1000.PurchaseApply;
+import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
 import com.nt.service_Org.DictionaryService;
@@ -234,4 +235,15 @@ public class Pfans1006Controller {
         }
     }
     //add_fjl_0725  添加暂借款打印功能  end
+
+    //采购业务数据流程查看详情
+    @RequestMapping(value="/getworkfolwPurchaseData",method = {RequestMethod.POST})
+    public ApiResult getworkfolwPurchaseData(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception{
+        if (loanapplication == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(loanapplicationService.getworkfolwPurchaseData(loanapplication));
+    }
+    //采购业务数据流程查看详情
 }

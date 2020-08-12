@@ -4,6 +4,7 @@ import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PurchaseService {
 
@@ -17,4 +18,7 @@ public interface PurchaseService {
 
     public void updatePurchase(Purchase purchase,TokenModel tokenModel)throws  Exception;
 
+    //采购业务数据流程查看详情
+    public Map<String, String> getworkfolwPurchaseData(Purchase purchase) throws Exception;
+    //采购业务数据流程查看详情
 }

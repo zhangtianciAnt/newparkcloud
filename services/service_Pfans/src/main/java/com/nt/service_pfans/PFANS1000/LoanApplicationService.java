@@ -4,6 +4,7 @@ import com.nt.dao_Pfans.PFANS1000.LoanApplication;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
+import java.util.Map;
 
 public interface LoanApplicationService {
 
@@ -20,4 +21,6 @@ public interface LoanApplicationService {
     //add ccm 0728  精算时关联多个暂借款
     List<LoanApplication> getLoanApplicationList(String loanappno)throws Exception;
     //add ccm 0728  精算时关联多个暂借款
+
+    Map<String, String> getworkfolwPurchaseData(LoanApplication loanapplication) throws Exception;
 }

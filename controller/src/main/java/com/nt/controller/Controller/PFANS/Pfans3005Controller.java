@@ -89,4 +89,16 @@ public class Pfans3005Controller {
         ExcelOutPutUtil.OutPutPdf("领取验收单", "lingquyanshoudan.xlsx", data, response);
         ExcelOutPutUtil.deleteDir("E:\\PFANS\\image");
     }
+
+    //采购业务数据流程查看详情
+    @RequestMapping(value="/getworkfolwPurchaseData",method = {RequestMethod.POST})
+    public ApiResult getworkfolwPurchaseData(@RequestBody Purchase purchase, HttpServletRequest request) throws Exception{
+        if (purchase == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(purchaseService.getworkfolwPurchaseData(purchase));
+    }
+    //采购业务数据流程查看详情
+
 }

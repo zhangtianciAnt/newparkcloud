@@ -8,12 +8,15 @@ import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
+import com.nt.dao_Pfans.PFANS3000.Purchase;
+import com.nt.dao_Pfans.PFANS4000.Seal;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
+import com.nt.service_pfans.PFANS1000.PurchaseApplyService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
 import com.nt.service_pfans.PFANS1000.mapper.IndividualMapper;
@@ -24,6 +27,8 @@ import com.nt.service_pfans.PFANS1000.mapper.NonJudgmentMapper;
 import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
+import com.nt.service_pfans.PFANS3000.PurchaseService;
+import com.nt.service_pfans.PFANS4000.mapper.SealMapper;
 import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
@@ -60,6 +65,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     @Autowired
     private AwardMapper AwardMapper;
     @Autowired
+    private SealMapper sealMapper;
+    @Autowired
     private NapalmMapper napalmMapper;
     @Autowired
     private PetitionMapper PetitionMapper;
@@ -71,6 +78,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private RoleService roleService;
     @Autowired
     private ToDoNoticeService toDoNoticeService;
+    @Autowired
+    private PurchaseService PurchaseService;
     //add-ws-7/22-禅道341任务
     @Override
     public List<Individual> getindividual(Individual individual) throws Exception {
@@ -1104,23 +1113,46 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     }
     //add ccm 0725  采购合同chongfucheck
     @Override
-    public List<String> purchaseExistCheck(String purnumbers) throws Exception {
+    public List<Contractnumbercount> purchaseExistCheck(String purnumbers) throws Exception {
         if(purnumbers.contains(","))
         {
             purnumbers.substring(0,purnumbers.length()-1);
         }
         String[] pus = purnumbers.split(",");
-        List<String> purList =  new ArrayList<String>();
-        String  p = null;
+        List<Contractnumbercount> purList =  new ArrayList<Contractnumbercount>();
+        List<Contractnumbercount>  p = new ArrayList<Contractnumbercount>();
         for(String pr :pus)
         {
             p = contractapplicationMapper.purchaseExistCheck(pr);
-            if(p!=null)
+            if(p.size()>0)
             {
-                purList.add(p);
+                purList.add(p.get(0));
             }
         }
         return purList;
     }
     //add ccm 0725  采购合同chongfucheck
+
+    public Map<String, String> getworkfolwPurchaseData(Award award) throws Exception
+    {
+        Map<String, String> getpurchaseMap = new HashMap<String, String>();
+        award = AwardMapper.selectByPrimaryKey(award.getAward_id());
+        if(award.getMaketype().equals("9"))
+        {
+            Contractnumbercount c = new Contractnumbercount();
+            c.setContractnumber(award.getContractnumber());
+            List<Contractnumbercount> numberList = contractnumbercountMapper.select(c);
+            if(numberList.size()>0)
+            {
+                if(numberList.get(0).getPurnumbers()!=null && !numberList.get(0).getPurnumbers().equals(""))
+                {
+                    Purchase purchase =new Purchase();
+                    purchase.setPurchase_id(numberList.get(0).getPurnumbers());
+                    getpurchaseMap = PurchaseService.getworkfolwPurchaseData(purchase);
+                }
+            }
+        }
+        return getpurchaseMap;
+    }
+
 }

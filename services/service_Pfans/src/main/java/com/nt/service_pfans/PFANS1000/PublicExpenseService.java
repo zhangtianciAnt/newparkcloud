@@ -26,5 +26,6 @@ public interface PublicExpenseService {
 
     PublicExpenseVo selectById(String publicexpenseid) throws Exception;
 
+    Map<String, String> getworkfolwPurchaseData(PublicExpense publicExpense) throws Exception;
 
 }

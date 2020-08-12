@@ -14,6 +14,7 @@ import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
@@ -89,6 +90,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 
     @Autowired
     private LoanApplicationMapper loanApplicationMapper;
+
+    @Autowired
+    private PurchaseService purchaseService;
 
     //add-ws-7/9-禅道任务248
     @Override
@@ -962,4 +966,28 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         return pubVo;
     }
 
+    public Map<String, String> getworkfolwPurchaseData(PublicExpense publicExpense) throws Exception
+    {
+        Map<String, String> getpurchaseMap = new HashMap<String, String>();
+        publicExpense = publicExpenseMapper.selectByPrimaryKey(publicExpense.getPublicexpenseid());
+        if(publicExpense.getJudgement_name()!=null && !publicExpense.getJudgement_name().equals(""))
+        {
+            String[] pusname = publicExpense.getJudgement_name().split(",");
+            String[] pusid = publicExpense.getJudgement().split(",");
+            if(pusname.length>0)
+            {
+                for(String pr :pusname)
+                {
+                    if(pr.substring(0,2).equals("CG"))
+                    {
+                        Purchase purchase =new Purchase();
+                        purchase.setPurchase_id(pusid[0]);
+                        getpurchaseMap = purchaseService.getworkfolwPurchaseData(purchase);
+                        break;
+                    }
+                }
+            }
+        }
+        return getpurchaseMap;
+    }
 }
