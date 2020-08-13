@@ -12,8 +12,8 @@ import java.util.List;
 public interface ComProjectMapper extends MyMapper<Comproject> {
 
     List<CompanyProjectsVo2> getList();
-    List<Comproject> getList2();
-    List<Comproject> getList3();
+    List<Comproject> getList2(@Param("owners") List<String> owners);
+    List<Comproject> getList3(@Param("owners") List<String> owners);
     List<CompanyProjectsVo2> getListVo2();
     List<CompanyProjectsVo3> getCompanyProject(@Param("SyspName") String SyspName);
 }

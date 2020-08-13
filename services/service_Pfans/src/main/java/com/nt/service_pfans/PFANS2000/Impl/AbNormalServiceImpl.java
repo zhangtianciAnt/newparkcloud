@@ -642,8 +642,11 @@ public class AbNormalServiceImpl implements AbNormalService {
         String remaning ="0";
         List<AnnualLeave> aList = new ArrayList<AnnualLeave>();
         aList = abNormalMapper.getremainingByuserid(userid);
-        remaning = annualLeaveService.remainingAnnual(userid,String.valueOf(year));
-        aList.get(0).setAnnual_avg_remaining(remaning);
+        if(aList.size()>0)
+        {
+            remaning = annualLeaveService.remainingAnnual(userid,String.valueOf(year));
+            aList.get(0).setAnnual_avg_remaining(remaning);
+        }
         return aList;
     }
     //add ccm 0806 查询申请人的剩余年休，

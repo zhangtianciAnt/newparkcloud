@@ -43,8 +43,8 @@
         ) as ga on 1 =1
 	</select>
 
-    <select id="purchaseExistCheck" resultType="java.lang.String">
-        select cc.purnumbers
+    <select id="purchaseExistCheck" resultType="com.nt.dao_Pfans.PFANS1000.Contractnumbercount">
+        select cc.purnumbers,cc.contractnumber
         from contractapplication cl
         inner join contractnumbercount cc
         on cl.CONTRACTNUMBER = cc.CONTRACTNUMBER

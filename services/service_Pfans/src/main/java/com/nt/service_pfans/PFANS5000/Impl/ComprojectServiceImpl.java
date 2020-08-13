@@ -865,11 +865,12 @@ public class ComprojectServiceImpl implements ComprojectService {
     }
 
     @Override
-    public List<Comproject> getList2(String flag) throws Exception {
+    public List<Comproject> getList2(String flag,TokenModel tokenModel) throws Exception {
+        List<String> owners = tokenModel.getOwnerList();
         if ("0".equals(flag)) {
-            return comProjectMapper.getList2();
+            return comProjectMapper.getList2(owners);
         } else {
-            return comProjectMapper.getList3();
+            return comProjectMapper.getList3(owners);
         }
     }
 
