@@ -87,6 +87,26 @@ public class AttendanceServiceImpl implements AttendanceService {
             {
                 atten = selectAbnomaling(atten);
             }
+            //判断前台查看按钮可用。临时存放到正式迟到字段
+            List<AbNormal> abList = getabnormalByuseridandDate(atten);
+            if(abList.size()>0)
+            {
+                //判断当天所有申请的异常审批状态  暂存到早退字段中
+                abList = abList.stream().filter(item -> (!item.getStatus().equals("4") && !item.getStatus().equals("7"))).collect(Collectors.toList());
+                if(abList.size()>0)
+                {
+                    atten.setLeaveearly("0");
+                }
+                else
+                {
+                    atten.setLeaveearly("1");
+                }
+                atten.setLate("can");
+            }
+            else
+            {
+                atten.setLate("nocan");
+            }
         }
         return attendancelist;
     }
@@ -235,4 +255,16 @@ public class AttendanceServiceImpl implements AttendanceService {
         return attendance;
     }
     //add ccm 0804 查询欠勤是否已经全部申请
+
+    @Override
+    //add ccm 0812 考情管理查看当天的异常申请数据
+    public List<AbNormal> getabnormalByuseridandDate(Attendance attendance) throws Exception
+    {
+        SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
+        List<AbNormal> abNormals = new ArrayList<AbNormal>();
+        String dates = sfymd.format(attendance.getDates());
+        abNormals = abNormalMapper.getabnormalByuseridandDate(attendance.getUser_id(),dates);
+        return abNormals;
+    }
+    //add ccm 0812 考情管理查看当天的异常申请数据
 }

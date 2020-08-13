@@ -4,6 +4,7 @@ import com.nt.dao_Pfans.PFANS2000.Wages;
 import com.nt.service_pfans.PFANS2000.WagesService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.ExcelOutPutUtil;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +85,23 @@ public class WagesController {
         }
         if (templateName != null ) {
             ExcelOutPutUtil.OutPut(fileName,templateName,data,response);
+        }
+    }
+
+    /**
+     * 历史工资导入
+     * @param request
+     * @return
+     */
+    @RequestMapping(value = "/importWages",method={RequestMethod.POST})
+    public ApiResult importWages(HttpServletRequest request){
+        try{
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(wagesService.importWages(request,tokenModel));
+        }catch(LogicalException e){
+            return ApiResult.fail(e.getMessage());
+        }catch (Exception e) {
+            return ApiResult.fail("操作失败！");
         }
     }
 }

@@ -76,6 +76,23 @@ public class pfans1031Controller {
             }
         }
         //add_fjl_0804  生成书类的覚字去掉 end
+        //add-ws-8/13-禅道任务432
+        if(na.getRegindiff()!=null&&na.getRegindiff()!=""){
+            if(na.getRegindiff().equals("BP028001")){
+                na.setPjnameenglish(na.getPjnamechinese());
+            }else if(na.getRegindiff().equals("BP028002")){
+                na.setPjnameenglish(na.getPjnamejapanese());
+            }else if(na.getRegindiff().equals("BP028003")){
+                na.setPjnameenglish(na.getPjnameenglish());
+            }
+        }else{
+            if (na.getCurrencyformat().equals("PG019003")) {
+                na.setPjnameenglish(na.getPjnamechinese());
+            } else if (na.getCurrencyformat().equals("PG019001")) {
+                na.setPjnameenglish(na.getPjnamejapanese());
+            }
+        }
+        //add-ws-8/13-禅道任务432
         TokenModel tokenModel=tokenService.getToken(request);
         String nn[] = na.getClaimdatetime().split(" ~ ");
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("PG019");

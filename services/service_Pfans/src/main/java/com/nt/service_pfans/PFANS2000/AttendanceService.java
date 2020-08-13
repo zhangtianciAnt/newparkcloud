@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS2000;
 
+import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.dao_Pfans.PFANS2000.Attendance;
 import com.nt.dao_Pfans.PFANS2000.Vo.AttendanceVo;
 import com.nt.utils.dao.TokenModel;
@@ -34,4 +35,8 @@ public interface AttendanceService {
     //add ccm 2020729 考勤异常加班审批中的日期，考勤不允许承认
     List<Date> selectAbnomalandOvertime(AttendanceVo attendancevo) throws Exception;
     //add ccm 2020729 考勤异常加班审批中的日期，考勤不允许承认
+
+    //add ccm 0812 考情管理查看当天的异常申请数据
+    List<AbNormal> getabnormalByuseridandDate(Attendance attendance) throws Exception;
+    //add ccm 0812 考情管理查看当天的异常申请数据
 }

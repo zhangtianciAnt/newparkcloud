@@ -76,6 +76,19 @@ public class Pfans1027Controller {
             }
         }
         //add_fjl_0804  生成书类的覚字去掉 end
+        //add-ws-8/13-禅道任务432
+        if(qu.getQuotation().getRegindiff()!=null&&qu.getQuotation().getRegindiff()!=""){
+            if(qu.getQuotation().getRegindiff().equals("BP028001")){
+                qu.getQuotation().setPjnameenglish(qu.getQuotation().getPjchinese());
+            }else if(qu.getQuotation().getRegindiff().equals("BP028002")){
+                qu.getQuotation().setPjnameenglish(qu.getQuotation().getPjjapanese());
+            }else if(qu.getQuotation().getRegindiff().equals("BP028003")){
+                qu.getQuotation().setPjnameenglish(qu.getQuotation().getPjnameenglish());
+            }
+        }else{
+            qu.getQuotation().setPjnameenglish(qu.getQuotation().getPjjapanese());
+        }
+        //add-ws-8/13-禅道任务432
         String qq[] = quotation.getClaimdatetime().split(" ~ ");
         List<Dictionary> dictionaryList = dictionaryService.getForSelect("PG019");
         for(Dictionary item:dictionaryList){

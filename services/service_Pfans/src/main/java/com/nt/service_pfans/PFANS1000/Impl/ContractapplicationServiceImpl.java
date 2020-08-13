@@ -277,6 +277,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     //add-ws-7/1-禅道152任务
                     quotation.setContractnumber(contractnumber);
                     //6
+                    //add-ws-8/13-禅道任务432
+                    quotation.setRegindiff(contractapp.getRegindiff());
+                    quotation.setPjnameenglish(contractapp.getConenglish());
+                    //add-ws-8/13-禅道任务432
                     quotation.setContracttype(contractapp.getContracttype());
                     quotation.setContractnumber(contractapp.getContractnumber());
                     quotation.setTrusteejapanese(contractapp.getCustojapanese());
@@ -397,6 +401,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             awardlist1 = io.getAward_id();
                             //add-ws-7/1-禅道152任务
                             //13
+                            //add-ws-8/13-禅道任务432
+                            io.setRegindiff(contractapp.getRegindiff());
+                            io.setPjnameenglish(contractapp.getConenglish());
+                            //add-ws-8/13-禅道任务432
                             io.setContracttype(contractapp.getContracttype());
                             io.setCustojapanese(contractapp.getCustojapanese());
                             io.setCustochinese(contractapp.getCustochinese());
@@ -424,6 +432,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         awardlist1 = award.getAward_id();
                         //add-ws-7/1-禅道152任务
                         //13
+                        //add-ws-8/13-禅道任务432
+                        award.setRegindiff(contractapp.getRegindiff());
+                        award.setPjnameenglish(contractapp.getConenglish());
+                        //add-ws-8/13-禅道任务432
                         award.setContracttype(contractapp.getContracttype());
                         award.setCustojapanese(contractapp.getCustojapanese());
                         award.setCustochinese(contractapp.getCustochinese());
@@ -477,6 +489,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 //add-ws-7/1-禅道152任务
                                 napalm.setContractnumber(contractnumber);
                                 //7
+                                //add-ws-8/13-禅道任务432
+                                napalm.setRegindiff(contractapp.getRegindiff());
+                                napalm.setPjnameenglish(contractapp.getConenglish());
+                                //add-ws-8/13-禅道任务432
                                 napalm.setDepositjapanese(contractapp.getCustojapanese());
                                 napalm.setDepositenglish(contractapp.getCustoenglish());
                                 napalm.setEntrustment(contractapp.getCustoabbreviation());
@@ -576,7 +592,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 petition.setCurrencyposition(contractapp.getCurrencyposition());
                                 petition.setPjnamechinese(contractapp.getConchinese());
                                 petition.setPjnamejapanese(contractapp.getConjapanese());
+                                //add-ws-8/13-禅道任务432
+                                petition.setRegindiff(contractapp.getRegindiff());
                                 petition.setPjnameenglish(contractapp.getConenglish());
+                                //add-ws-8/13-禅道任务432
                                 petition.setClaimamount(countLi.get(0).getClaimamount());//請求金額
                                 petition.setClaimdate(countLi.get(0).getClaimdate());//請求日
                                 petition.setClaimnumber(countLi.get(0).getClaimnumber());//請求番号
