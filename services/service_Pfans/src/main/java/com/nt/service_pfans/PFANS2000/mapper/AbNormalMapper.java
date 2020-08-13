@@ -35,4 +35,7 @@ public interface AbNormalMapper extends MyMapper<AbNormal> {
     List<AnnualLeave> getremainingByuserid(@Param("userid") String userid);
     //add ccm 0806 查询申请人的剩余年休，
 
+    //add ccm 0812 考情管理查看当天的异常申请数据
+    List<AbNormal> getabnormalByuseridandDate(@Param("userid") String userid,@Param("dates") String dates);
+    //add ccm 0812 考情管理查看当天的异常申请数据
 }

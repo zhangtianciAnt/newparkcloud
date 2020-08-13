@@ -121,4 +121,15 @@ public class Pfans2010Controller {
     }
     //add ccm 2020729 考勤异常加班审批中的日期，考勤不允许承认
 
+    //add ccm 0812 考情管理查看当天的异常申请数据
+    @RequestMapping(value = "/getabnormalByuseridandDate", method = {RequestMethod.POST})
+    public ApiResult getabnormalByuseridandDate(@RequestBody Attendance attendance, HttpServletRequest request) throws Exception {
+        if (attendance == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(attendanceService.getabnormalByuseridandDate(attendance));
+    }
+    //add ccm 0812 考情管理查看当天的异常申请数据
+
 }

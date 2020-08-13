@@ -131,5 +131,38 @@ and a.user_id = #{userid}
         from abNormal
         where status in ('2','5') and user_id = #{userid}
     </select>
+    <select id="getabnormalByuseridandDate" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        select
+        ABNORMAL_ID as abnormalid,
+        USER_ID as user_id,
+        APPLICATION_DATE as applicationdate,
+        ERROR_TYPE as errortype,
+        OCCURRENCE_DATE as occurrencedate,
+        FINISHED_DATE as finisheddate,
+        LENGTHTIME as lengthtime,
+        RE_OCCURRENCE_DATE as reoccurrencedate,
+        RE_FINISHED_DATE as refinisheddate,
+        STATUS as status
+        from abnormal a
+        where a.STATUS in ('0','2','3','4')
+        and #{dates} between date_format(a.OCCURRENCE_DATE,'%Y-%m-%d')  and  date_format(a.FINISHED_DATE,'%Y-%m-%d')
+        and a.user_id = #{userid}
+        UNION
+        select
+        ABNORMAL_ID as abnormalid,
+        USER_ID as user_id,
+        APPLICATION_DATE as applicationdate,
+        ERROR_TYPE as errortype,
+        OCCURRENCE_DATE as occurrencedate,
+        FINISHED_DATE as finisheddate,
+        LENGTHTIME as lengthtime,
+        RE_OCCURRENCE_DATE as reoccurrencedate,
+        RE_FINISHED_DATE as refinisheddate,
+        STATUS as status
+        from abnormal a
+        where a.STATUS in ('5','6','7')
+        and #{dates} between date_format(a.RE_OCCURRENCE_DATE,'%Y-%m-%d') and date_format(a.RE_FINISHED_DATE,'%Y-%m-%d')
+        and a.user_id = #{userid}
+    </select>
 </mapper>
 
