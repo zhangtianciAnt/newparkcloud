@@ -265,5 +265,9 @@ public class Purchase  extends BaseModel {
     @Column(name = "PUBLICEXPENSE_ID")
     private String publicexpense_id;
     //add ccm 0720
-
+    //add_fjl_0813
+    //余额
+    @Column(name = "BALANCEJUDE")
+    private String balancejude;
+    //add_fjl_0813
 }

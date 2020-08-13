@@ -246,5 +246,10 @@ public class Judgement extends BaseModel {
     @Column(name = "OLDJUDGEMENTID")
     private String oldjudgementid;
     //ADD_FJL_0730 END
+    //add_fjl_0813
+    //余额
+    @Column(name = "BALANCEJUDE")
+    private String balancejude;
+    //add_fjl_0813
 
 }

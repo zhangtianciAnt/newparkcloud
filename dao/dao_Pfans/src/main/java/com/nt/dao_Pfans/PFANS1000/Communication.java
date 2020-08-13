@@ -130,4 +130,9 @@ public class Communication  extends BaseModel {
     @Column(name = "PUBLICEXPENSE_ID")
     private String publicexpense_id;
     //ADD_FJL_0730 END
+    //add_fjl_0813
+    //余额
+    @Column(name = "BALANCEJUDE")
+    private String balancejude;
+    //add_fjl_0813
 }
