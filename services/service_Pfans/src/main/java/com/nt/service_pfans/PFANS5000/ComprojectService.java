@@ -39,7 +39,7 @@ public interface ComprojectService {
     //PJ完了审批
     List<CompanyProjectsVo2> getPjList(String flag) throws Exception;
 
-    List<Comproject> getList2(String flag)throws Exception;
+    List<Comproject> getList2(String flag,TokenModel tokenModel)throws Exception;
 
     //获取外住人员所在的项目
     List<CompanyProjectsVo3> getCompanyProject(String SyspName)throws Exception;
