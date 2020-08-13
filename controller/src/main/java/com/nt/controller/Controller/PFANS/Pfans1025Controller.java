@@ -70,6 +70,19 @@ public class Pfans1025Controller {
             }
         }
         //add_fjl_0804  生成书类的覚字去掉 end
+        //add-ws-8/13-禅道任务432
+        if(av.getAward().getRegindiff()!=null&&av.getAward().getRegindiff()!=""){
+            if(av.getAward().getRegindiff().equals("BP028001")){
+                av.getAward().setPjnameenglish(av.getAward().getPjnamechinese());
+            }else if(av.getAward().getRegindiff().equals("BP028002")){
+                av.getAward().setPjnameenglish(av.getAward().getPjnamejapanese());
+            }else if(av.getAward().getRegindiff().equals("BP028003")){
+                av.getAward().setPjnameenglish(av.getAward().getPjnameenglish());
+            }
+        }else{
+            av.getAward().setPjnameenglish(av.getAward().getPjnamejapanese());
+        }
+        //add-ws-8/13-禅道任务432
         String aa[] = av.getAward().getClaimdatetime().split(" ~ ");
         List<Map<String, String>> grouplist = (List<Map<String, String>>) av.getGroupN();
         List<AwardDetail> adlist = av.getAwardDetail();

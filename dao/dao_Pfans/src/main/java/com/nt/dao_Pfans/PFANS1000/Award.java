@@ -188,5 +188,11 @@ public class Award extends BaseModel {
     private String loanapno;
     //ADD_FJL_0807 END
 
+    //add-ws-8/13-禅道任务432
+    @Column(name = "PJNAMEENGLISH")
+    private String pjnameenglish;
 
+    @Column(name = "REGINDIFF")
+    private String regindiff;
+    //add-ws-8/13-禅道任务432
 }

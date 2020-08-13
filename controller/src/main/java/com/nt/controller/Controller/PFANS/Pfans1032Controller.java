@@ -76,6 +76,27 @@ public class Pfans1032Controller {
             }
         }
         //add_fjl_0804  生成书类的覚字去掉 end
+        //add-ws-8/13-禅道任务432
+        if(pd.getRegindiff()!=null&&pd.getRegindiff()!=""){
+            if(pd.getRegindiff().equals("BP028001")){
+                pd.setPjnameenglish(pd.getPjnamechinese());
+            }else if(pd.getRegindiff().equals("BP028002")){
+                pd.setPjnameenglish(pd.getPjnamejapanese());
+            }else if(pd.getRegindiff().equals("BP028003")){
+                pd.setPjnameenglish(pd.getPjnameenglish());
+            }
+        }else{
+            if (pd.getContracttype().equals("HT008005") || pd.getContracttype().equals("HT008006") || pd.getContracttype().equals("HT008007") || pd.getContracttype().equals("HT008008")|| pd.getContracttype().equals("HT008009")) {
+                pd.setPjnameenglish(pd.getPjnamechinese());
+            } else if (pd.getContracttype().equals("HT008001") || pd.getContracttype().equals("HT008002") || pd.getContracttype().equals("HT008003") || pd.getContracttype().equals("HT008004")) {
+                if (pd.getCurrencyposition().equals("PG019003")) {
+                    pd.setPjnameenglish(pd.getPjnamejapanese());
+                } else if (pd.getCurrencyposition().equals("PG019001")) {
+                    pd.setPjnameenglish(pd.getPjnamejapanese());
+                }
+            }
+        }
+        //add-ws-8/13-禅道任务432
         Map<String, Object> data = new HashMap<>();
 
         //20200427 add by lin format data start

@@ -206,4 +206,9 @@ public class LoanApplication extends BaseModel {
     @Column(name = "JUDGEMENTS_MONEYS")
     private String judgements_moneys;
     //add ccm 0724
+    // add-ws-8/12-禅道任务446
+    //处理状态
+    @Column(name = "PROCESSINGSTATUS")
+    private String processingstatus;
+    // add-ws-8/12-禅道任务446
 }
