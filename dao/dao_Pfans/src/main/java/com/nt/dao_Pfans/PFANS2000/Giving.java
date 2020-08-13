@@ -29,7 +29,7 @@ public class Giving extends BaseModel {
 
 
     @Column(name = "GENERATION")
-    private String generation;
+    private String generation; //生成方式 0：手动(预计工资)/1：系统服务/2：月度计算的实际工资
 
     @Column(name = "MONTHS")
     private String months;
@@ -41,6 +41,6 @@ public class Giving extends BaseModel {
     private String user_id;  //离职相关
 
     @Column(name = "ACTUAL")
-    private String actual;  //实际工资：1
+    private String actual;  //0:预计工资/1：实际工资;
 
 }

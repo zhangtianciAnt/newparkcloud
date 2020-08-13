@@ -291,4 +291,6 @@ public class BaseVo {
     private String rnbasesalary;
 
     private String ykbz;
+
+    private String ykbzjs;
 }

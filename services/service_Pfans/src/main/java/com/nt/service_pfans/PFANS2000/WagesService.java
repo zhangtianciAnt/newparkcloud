@@ -5,6 +5,7 @@ import com.nt.dao_Pfans.PFANS2000.Vo.BaseVo;
 import com.nt.dao_Pfans.PFANS2000.Vo.WagesVo;
 import com.nt.utils.dao.TokenModel;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface WagesService {
@@ -51,6 +52,7 @@ public interface WagesService {
 
     void deletewages(String strTemp,List<Giving> givinglist)throws Exception;
 
+    List<String> importWages(HttpServletRequest request,TokenModel tokenModel) throws Exception;
 }
 
 
