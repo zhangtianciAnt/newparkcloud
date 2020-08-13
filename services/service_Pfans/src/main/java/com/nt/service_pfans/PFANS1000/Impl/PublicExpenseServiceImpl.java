@@ -766,9 +766,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         publicExpense.preUpdate(tokenModel);
         publicExpenseMapper.updateByPrimaryKey(publicExpense);
 
-
-
-        if(status.equals("4")){
+        if(publicExpense.getStatus().equals("4")){
             String[] loa = publicExpense.getLoan().split(",");
             if(loa.length > 0){
                 for(int i = 0; i < loa.length; i ++){

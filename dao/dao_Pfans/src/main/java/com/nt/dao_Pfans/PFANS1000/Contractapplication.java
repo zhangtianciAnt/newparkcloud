@@ -223,4 +223,9 @@ public class Contractapplication extends BaseModel {
     @Column(name = "DATES")
     private String dates;
     //add-ws-7/22-禅道341任务
+
+    //add_fjl_0813   客户信息的地域区分
+    @Column(name = "REGINDIFF")
+    private String regindiff;
+    //add_fjl_0813   客户信息的地域区分
 }
