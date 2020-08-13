@@ -155,4 +155,10 @@ public class Customerinfor extends BaseModel {
      */
     @Column(name = "CAUSECODE")
     private String causecode;
+
+    /**
+     * 地域区分
+     */
+    @Column(name = "REGINDIFF")
+    private String regindiff;
 }
