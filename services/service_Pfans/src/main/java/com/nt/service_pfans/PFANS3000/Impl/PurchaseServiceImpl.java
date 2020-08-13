@@ -262,21 +262,29 @@ public class PurchaseServiceImpl implements PurchaseService {
             //暂借款申请
             if(purchaseList.get(0).getLoanapplication_id()!=null && !purchaseList.get(0).getLoanapplication_id().equals(""))
             {
+                String [] loanid = purchaseList.get(0).getLoanapplication_id().split(",");
                 LoanApplication loan = new LoanApplication();
-                loan = loanApplicationMapper.selectByPrimaryKey(purchaseList.get(0).getLoanapplication_id());
-                if(loan!=null)
+                if(loanid.length>0)
                 {
-                    getpurchaseMap.put("loanApplication",loan.getLoanapplication_id() +","+ loan.getStatus());
+                    loan = loanApplicationMapper.selectByPrimaryKey(loanid[0]);
+                    if(loan!=null)
+                    {
+                        getpurchaseMap.put("loanApplication",loan.getLoanapplication_id() +","+ loan.getStatus());
+                    }
                 }
             }
             //精算
             if(purchaseList.get(0).getPublicexpense_id()!=null && !purchaseList.get(0).getPublicexpense_id().equals(""))
             {
+                String [] purid = purchaseList.get(0).getPublicexpense_id().split(",");
                 PublicExpense pub = new PublicExpense();
-                pub = publicExpenseMapper.selectByPrimaryKey(purchaseList.get(0).getPublicexpense_id());
-                if(pub!=null)
+                if(purid.length>0)
                 {
-                    getpurchaseMap.put("publicExpense",pub.getPublicexpenseid() +","+ pub.getStatus());
+                    pub = publicExpenseMapper.selectByPrimaryKey(purid[0]);
+                    if(pub!=null)
+                    {
+                        getpurchaseMap.put("publicExpense",pub.getPublicexpenseid() +","+ pub.getStatus());
+                    }
                 }
             }
         }
