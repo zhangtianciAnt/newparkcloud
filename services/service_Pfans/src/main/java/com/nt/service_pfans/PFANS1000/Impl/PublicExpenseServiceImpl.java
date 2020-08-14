@@ -274,6 +274,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         return listvo;
     }
 
+    public Float aFloat(Float a) {
+        return a > 0 ? a : -a;
+    }
     //新建
     @Override
     public void insert(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception {
@@ -303,6 +306,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         publicExpense.preInsert(tokenModel);
         publicExpense.setPublicexpenseid(publicexpenseid);
         publicExpenseMapper.insertSelective(publicExpense);
+        float money = Float.parseFloat(publicExpense.getRmbexpenditure()) + Float.parseFloat(publicExpense.getTormb());
 
         //add ccm 0727
         if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpense.getJudgement_name())) {
@@ -313,8 +317,27 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     purchase.setPurnumbers(p);
                     List<Purchase> purchaseList = purchaseMapper.select(purchase);
                     if (purchaseList.size() > 0) {
-                        purchaseList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
-                        purchaseList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+//                        float diff = money - Float.parseFloat(purchaseList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        purchaseList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if(com.nt.utils.StringUtils.isNotBlank(purchaseList.get(0).getPublicexpense_id()))
+                        {
+                            purchaseList.get(0).setPublicexpense_id(purchaseList.get(0).getPublicexpense_id()+","+publicExpense.getPublicexpenseid());
+                            purchaseList.get(0).setInvoiceno(purchaseList.get(0).getInvoiceno()+","+publicExpense.getInvoiceno());
+                        }
+                        else
+                        {
+                            purchaseList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
+                            purchaseList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+
                         purchaseList.get(0).preUpdate(tokenModel);
                         purchaseMapper.updateByPrimaryKey(purchaseList.get(0));
                     }
@@ -329,8 +352,27 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     communication.setNumbercation(p);
                     List<Communication> communicationList = communicationMapper.select(communication);
                     if (communicationList.size() > 0) {
-                        communicationList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
-                        communicationList.get(0).setLoanapno(publicExpense.getInvoiceno());
+//                        float diff = money - Float.parseFloat(communicationList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        communicationList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if(com.nt.utils.StringUtils.isNotBlank(communicationList.get(0).getPublicexpense_id()))
+                        {
+                            communicationList.get(0).setPublicexpense_id(communicationList.get(0).getPublicexpense_id()+","+publicExpense.getPublicexpenseid());
+                            communicationList.get(0).setInvoiceno(communicationList.get(0).getLoanapno()+","+publicExpense.getInvoiceno());
+                        }
+                        else
+                        {
+                            communicationList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
+                            communicationList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+
                         communicationList.get(0).preUpdate(tokenModel);
                         communicationMapper.updateByPrimaryKey(communicationList.get(0));
                     }
@@ -343,8 +385,26 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     judgement.setJudgnumbers(p);
                     List<Judgement> judgementList = judgementMapper.select(judgement);
                     if (judgementList.size() > 0) {
-                        judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
-                        judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+//                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        judgementList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if(com.nt.utils.StringUtils.isNotBlank(judgementList.get(0).getPublicexpense_id()))
+                        {
+                            judgementList.get(0).setPublicexpense_id(judgementList.get(0).getPublicexpense_id()+","+publicExpense.getPublicexpenseid());
+                            judgementList.get(0).setInvoiceno(judgementList.get(0).getLoanapno()+","+publicExpense.getInvoiceno());
+                        }
+                        else
+                        {
+                            judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
+                            judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         judgementList.get(0).preUpdate(tokenModel);
                         judgementMapper.updateByPrimaryKey(judgementList.get(0));
                     }
@@ -357,6 +417,26 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     judgement.setJudgnumbers(p);
                     List<Judgement> judgementList = judgementMapper.select(judgement);
                     if (judgementList.size() > 0) {
+//                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        judgementList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if(com.nt.utils.StringUtils.isNotBlank(judgementList.get(0).getPublicexpense_id()))
+                        {
+                            judgementList.get(0).setPublicexpense_id(judgementList.get(0).getPublicexpense_id()+","+publicExpense.getPublicexpenseid());
+                            judgementList.get(0).setInvoiceno(judgementList.get(0).getLoanapno()+","+publicExpense.getInvoiceno());
+                        }
+                        else
+                        {
+                            judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
+                            judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                         judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
                         judgementList.get(0).preUpdate(tokenModel);
@@ -371,8 +451,26 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     purchaseapply.setPurchasenumbers(p);
                     List<PurchaseApply> purchaseapplyList = purchaseapplyMapper.select(purchaseapply);
                     if (purchaseapplyList.size() > 0) {
-                        purchaseapplyList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
-                        purchaseapplyList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+//                        float diff = money - Float.parseFloat(purchaseapplyList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        purchaseapplyList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if(com.nt.utils.StringUtils.isNotBlank(purchaseapplyList.get(0).getPublicexpense_id()))
+                        {
+                            purchaseapplyList.get(0).setPublicexpense_id(purchaseapplyList.get(0).getPublicexpense_id()+","+publicExpense.getPublicexpenseid());
+                            purchaseapplyList.get(0).setInvoiceno(purchaseapplyList.get(0).getLoanapno()+","+publicExpense.getInvoiceno());
+                        }
+                        else
+                        {
+                            purchaseapplyList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
+                            purchaseapplyList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         purchaseapplyList.get(0).preUpdate(tokenModel);
                         purchaseapplyMapper.updateByPrimaryKey(purchaseapplyList.get(0));
                     }
@@ -385,6 +483,14 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     business.setBusiness_number(p);
                     List<Business> businessList = businessMapper.select(business);
                     if (businessList.size() > 0) {
+//                        float diff = money - Float.parseFloat(businessList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        businessList.get(0).setBalancejude(String.valueOf(diff));
                         businessList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                         businessList.get(0).setInvoiceno(publicExpense.getInvoiceno());
                         businessList.get(0).preUpdate(tokenModel);
@@ -903,7 +1009,15 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     List<Purchase> purchaseList = purchaseMapper.select(pu);
                     if (purchaseList.size() > 0) {
                         purchaseList.get(0).setActuarialdate(new Date());
-                        purchaseList.get(0).setActuarialamount(publicExpense.getMoneys());
+                        if(purchaseList.get(0).getActuarialamount()!=null && !purchaseList.get(0).getActuarialamount().equals(""))
+                        {
+                            purchaseList.get(0).setActuarialamount(String.valueOf(Double.valueOf(purchaseList.get(0).getActuarialamount()) + Double.valueOf(publicExpense.getMoneys())));
+                        }
+                        else
+                        {
+                            purchaseList.get(0).setActuarialamount(publicExpense.getMoneys());
+                        }
+
                         purchaseList.get(0).preUpdate(tokenModel);
                         purchaseMapper.updateByPrimaryKey(purchaseList.get(0));
 

@@ -394,4 +394,9 @@ public class Business extends BaseModel {
     //精算ID
     @Column(name = "PUBLICEXPENSE_ID")
     private String publicexpense_id;
+    //add_fjl_0813
+    //余额
+    @Column(name = "BALANCEJUDE")
+    private String balancejude;
+    //add_fjl_0813
 }

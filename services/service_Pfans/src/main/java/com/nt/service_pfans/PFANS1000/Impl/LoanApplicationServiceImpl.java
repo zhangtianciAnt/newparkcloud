@@ -1,6 +1,5 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
-import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
@@ -10,6 +9,7 @@ import com.nt.service_pfans.PFANS1000.LoanApplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,6 +85,9 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         loanapplicationMapper.updateByPrimaryKey(loanapplication);
     }
 
+    public Float aFloat(Float a) {
+        return a > 0 ? a : -a;
+    }
     @Override
     public void insert(LoanApplication loanapplication, TokenModel tokenModel) throws Exception {
 //        add_fjl_05/27  --添加申请编号
@@ -111,6 +114,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         for (Dictionary item : curList1) {
             dic += item.getValue2() + ",";
         }
+        float money = Float.parseFloat(loanapplication.getMoneys());
         //add_fjl_0807  获取委托合同番号的命名规则
         //CCM ADD 0726
         if(loanapplication.getJudgements_name()!=null && !loanapplication.getJudgements_name().equals(""))
@@ -125,8 +129,26 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         award.setContractnumber(p);
                         List<Award> awardList = awardMapper.select(award);
                         if (awardList.size() > 0) {
-                            awardList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
-                            awardList.get(0).setLoanapno(loanapplication.getLoanapno());
+//                            float diff = money - Float.parseFloat(awardList.get(0).getBalancejude());
+//                            if (diff >= 0) {
+//                                diff = 0;
+//                                money = diff;
+//                            } else {
+//                                aFloat(diff);
+//                            }
+//                            awardList.get(0).setBalancejude(String.valueOf(diff));
+                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                            if(StringUtils.isNotBlank(awardList.get(0).getLoanapplication_id()))
+                            {
+                                awardList.get(0).setLoanapplication_id(awardList.get(0).getLoanapplication_id()+","+loanapplication.getLoanapplication_id());
+                                awardList.get(0).setLoanapno(awardList.get(0).getLoanapno() +","+ loanapplication.getLoanapno());
+                            }
+                            else
+                            {
+                                awardList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                                awardList.get(0).setLoanapno(loanapplication.getLoanapno());
+                            }
+                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                             awardList.get(0).preUpdate(tokenModel);
                             awardMapper.updateByPrimaryKey(awardList.get(0));
                         }
@@ -142,9 +164,29 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     purchase.setPurnumbers(p);
                     List<Purchase> purchaseList = purchaseMapper.select(purchase);
                     if(purchaseList.size()>0) {
-                        purchaseList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
-                        purchaseList.get(0).setLoanapno(loanapplication.getLoanapno());
+//                        float diff = money - Float.parseFloat(purchaseList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        purchaseList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if(StringUtils.isNotBlank(purchaseList.get(0).getLoanapplication_id()))
+                        {
+                            purchaseList.get(0).setLoanapplication_id(purchaseList.get(0).getLoanapplication_id()+","+loanapplication.getLoanapplication_id());
+                            purchaseList.get(0).setLoanapno(purchaseList.get(0).getLoanapno()+","+loanapplication.getLoanapno());
+                        }
+                        else
+                        {
+                            purchaseList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                            purchaseList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+
                         purchaseList.get(0).preUpdate(tokenModel);
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         purchaseMapper.updateByPrimaryKey(purchaseList.get(0));
                     }
                 }
@@ -158,8 +200,27 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     communication.setNumbercation(p);
                     List<Communication> communicationList = communicationMapper.select(communication);
                     if (communicationList.size() > 0) {
-                        communicationList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
-                        communicationList.get(0).setLoanapno(loanapplication.getLoanapno());
+//                        float diff = money - Float.parseFloat(communicationList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        communicationList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if(StringUtils.isNotBlank(communicationList.get(0).getLoanapplication_id()))
+                        {
+                            communicationList.get(0).setLoanapplication_id(communicationList.get(0).getLoanapplication_id()+","+loanapplication.getLoanapplication_id());
+                            communicationList.get(0).setLoanapno(communicationList.get(0).getLoanapno()+","+loanapplication.getLoanapno());
+                        }
+                        else
+                        {
+                            communicationList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                            communicationList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+
                         communicationList.get(0).preUpdate(tokenModel);
                         communicationMapper.updateByPrimaryKey(communicationList.get(0));
                     }
@@ -172,8 +233,27 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     judgement.setJudgnumbers(p);
                     List<Judgement> judgementList = judgementMapper.select(judgement);
                     if (judgementList.size() > 0) {
-                        judgementList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
-                        judgementList.get(0).setLoanapno(loanapplication.getLoanapno());
+//                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        judgementList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if(StringUtils.isNotBlank(judgementList.get(0).getLoanapplication_id()))
+                        {
+                            judgementList.get(0).setLoanapplication_id(judgementList.get(0).getLoanapplication_id()+","+loanapplication.getLoanapplication_id());
+                            judgementList.get(0).setLoanapno(judgementList.get(0).getLoanapno()+","+loanapplication.getLoanapno());
+                        }
+                        else
+                        {
+                            judgementList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                            judgementList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+
                         judgementList.get(0).preUpdate(tokenModel);
                         judgementMapper.updateByPrimaryKey(judgementList.get(0));
                     }
@@ -186,8 +266,27 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     judgement.setJudgnumbers(p);
                     List<Judgement> judgementList = judgementMapper.select(judgement);
                     if (judgementList.size() > 0) {
-                        judgementList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
-                        judgementList.get(0).setLoanapno(loanapplication.getLoanapno());
+//                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        judgementList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if(StringUtils.isNotBlank(judgementList.get(0).getLoanapplication_id()))
+                        {
+                            judgementList.get(0).setLoanapplication_id(judgementList.get(0).getLoanapplication_id()+","+loanapplication.getLoanapplication_id());
+                            judgementList.get(0).setLoanapno(judgementList.get(0).getLoanapno()+","+loanapplication.getLoanapno());
+                        }
+                        else
+                        {
+                            judgementList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                            judgementList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+
                         judgementList.get(0).preUpdate(tokenModel);
                         judgementMapper.updateByPrimaryKey(judgementList.get(0));
                     }
@@ -201,8 +300,27 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     purchaseapply.setPurchasenumbers(p);
                     List<PurchaseApply> purchaseapplyList = purchaseapplyMapper.select(purchaseapply);
                     if (purchaseapplyList.size() > 0) {
-                        purchaseapplyList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
-                        purchaseapplyList.get(0).setLoanapno(loanapplication.getLoanapno());
+//                        float diff = money - Float.parseFloat(purchaseapplyList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        purchaseapplyList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if(StringUtils.isNotBlank(purchaseapplyList.get(0).getLoanapplication_id()))
+                        {
+                            purchaseapplyList.get(0).setLoanapplication_id(purchaseapplyList.get(0).getLoanapplication_id()+","+loanapplication.getLoanapplication_id());
+                            purchaseapplyList.get(0).setLoanapno(purchaseapplyList.get(0).getLoanapno()+","+loanapplication.getLoanapno());
+                        }
+                        else
+                        {
+                            purchaseapplyList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                            purchaseapplyList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+
                         purchaseapplyList.get(0).preUpdate(tokenModel);
                         purchaseapplyMapper.updateByPrimaryKey(purchaseapplyList.get(0));
                     }
@@ -217,6 +335,16 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     business.setBusiness_number(p);
                     List<Business> businessList = businessMapper.select(business);
                     if (businessList.size() > 0) {
+//                        float diff = money - Float.parseFloat(businessList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        businessList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         businessList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
                         businessList.get(0).setLoanapno(loanapplication.getLoanapno());
                         businessList.get(0).setLoanday(new Date());
