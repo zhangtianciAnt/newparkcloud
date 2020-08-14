@@ -109,6 +109,7 @@ public class UserController {
             logs.setEquipment(AuthConstants.LOG_EQUIPMENT_PC);
             log.setLogs(new ArrayList<Log.Logs>());
             log.getLogs().add(logs);
+            log.setCreateby(tokenModel.getUserId());
             log.preInsert();
             logService.save(log);
             messagingTemplate.convertAndSend("/topicLogin/subscribe", tokenModel.getToken());
