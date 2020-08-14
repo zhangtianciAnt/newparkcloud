@@ -211,5 +211,9 @@ public class Evection extends BaseModel {
     @Column(name = "REGIONNAME")
     private String regionname;
 
-
+    // add-ws-8/12-禅道任务446
+    //处理状态
+    @Column(name = "PROCESSINGSTATUS")
+    private String processingstatus;
+    // add-ws-8/12-禅道任务446
 }

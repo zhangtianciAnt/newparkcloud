@@ -190,4 +190,9 @@ public class PublicExpense extends BaseModel {
     //决裁金额
     @Column(name = "JUDGEMENTS_MONEYS")
     private String judgements_moneys;
+    // add-ws-8/12-禅道任务446
+    //处理状态
+    @Column(name = "PROCESSINGSTATUS")
+    private String processingstatus;
+    // add-ws-8/12-禅道任务446
 }
