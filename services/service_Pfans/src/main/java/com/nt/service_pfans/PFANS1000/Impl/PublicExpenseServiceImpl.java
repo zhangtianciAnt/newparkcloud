@@ -306,7 +306,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         publicExpense.preInsert(tokenModel);
         publicExpense.setPublicexpenseid(publicexpenseid);
         publicExpenseMapper.insertSelective(publicExpense);
-        float money = Float.parseFloat(publicExpense.getRmbexpenditure()) + Float.parseFloat(publicExpense.getTormb());
+        //float money = Float.parseFloat(publicExpense.getRmbexpenditure()) + Float.parseFloat(publicExpense.getTormb());
 
         //add ccm 0727
         if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpense.getJudgement_name())) {
