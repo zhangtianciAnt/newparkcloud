@@ -16,6 +16,7 @@ import com.nt.service_pfans.PFANS1000.JudgementService;
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
 import com.nt.service_pfans.PFANS1000.mapper.LoanApplicationMapper;
+import com.nt.service_pfans.PFANS1000.mapper.PublicExpenseMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -43,7 +44,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/publicexpense")
 public class Pfans1012Controller {
-
+    @Autowired
+    private PublicExpenseMapper publicExpenseMapper;
     @Autowired
     private PublicExpenseService publicExpenseService;
 
@@ -556,6 +558,26 @@ public class Pfans1012Controller {
 //        FileUtil.del("E:\\PFANS\\image" + "/" + wfList7);
 //        FileUtil.del("E:\\PFANS\\image" + "/" + userim);
     }
+
+    //ws-8/14-决裁子任务
+    @RequestMapping(value = "/one2", method = {RequestMethod.POST})
+    public ApiResult one2(@RequestBody PublicExpense publicExpense, HttpServletRequest request) throws Exception {
+        if (publicExpense == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        List<PublicExpense> publicexpenselist = new ArrayList<>();
+        String aa[] = publicExpense.getPublicexpenseid().split(",");
+        if (aa.length > 0) {
+            for (int i = 0; i < aa.length; i++) {
+                PublicExpense publicexpense =new PublicExpense();
+                publicexpense.setPublicexpenseid(aa[i]);
+                List<PublicExpense> publics = publicExpenseMapper.select(publicexpense);
+                publicexpenselist.addAll(0,publics);
+            }
+        }
+        return ApiResult.success(publicexpenselist);
+    }
+    //ws-8/14-决裁子任务
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {

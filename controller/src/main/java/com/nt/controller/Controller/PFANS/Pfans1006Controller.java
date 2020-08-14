@@ -10,6 +10,7 @@ import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
+import com.nt.service_pfans.PFANS1000.mapper.LoanApplicationMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -26,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +36,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/loanapplication")
 public class Pfans1006Controller {
-
+    @Autowired
+    private LoanApplicationMapper loanapplicationMapper;
     @Autowired
     private LoanApplicationService loanapplicationService;
 
@@ -51,8 +54,8 @@ public class Pfans1006Controller {
     private DictionaryService dictionaryService;
 
 
-    @RequestMapping(value="/get",method = {RequestMethod.GET})
-    public ApiResult getLoanapplication(HttpServletRequest request)throws  Exception{
+    @RequestMapping(value = "/get", method = {RequestMethod.GET})
+    public ApiResult getLoanapplication(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         LoanApplication loanapplication = new LoanApplication();
         loanapplication.setOwners(tokenModel.getOwnerList());
@@ -60,7 +63,7 @@ public class Pfans1006Controller {
 
     }
 
-    @RequestMapping(value = "/one",method={RequestMethod.POST})
+    @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult one(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
         if (loanapplication == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
@@ -69,23 +72,43 @@ public class Pfans1006Controller {
         return ApiResult.success(loanapplicationService.One(loanapplication.getLoanapplication_id()));
     }
 
-    @RequestMapping(value="/update",method = {RequestMethod.POST})
-    public ApiResult updateFlexibleWork(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception{
+    //ws-8/14-决裁子任务
+    @RequestMapping(value = "/one2", method = {RequestMethod.POST})
+    public ApiResult one2(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
+        if (loanapplication == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        List<LoanApplication> loanapplicationlist = new ArrayList<>();
+        String aa[] = loanapplication.getLoanapplication_id().split(",");
+        if (aa.length > 0) {
+            for (int i = 0; i < aa.length; i++) {
+                LoanApplication loanapplications =new LoanApplication();
+                loanapplications.setLoanapplication_id(aa[i]);
+                List<LoanApplication> application = loanapplicationMapper.select(loanapplications);
+                loanapplicationlist.addAll(0,application);
+            }
+        }
+        return ApiResult.success(loanapplicationlist);
+    }
+    //ws-8/14-决裁子任务
+
+    @RequestMapping(value = "/update", method = {RequestMethod.POST})
+    public ApiResult updateFlexibleWork(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
         if (loanapplication == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        loanapplicationService.updateLoanApplication(loanapplication,tokenModel);
+        loanapplicationService.updateLoanApplication(loanapplication, tokenModel);
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/create",method={RequestMethod.POST})
+    @RequestMapping(value = "/create", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
         if (loanapplication == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        loanapplicationService.insert(loanapplication,tokenModel);
+        loanapplicationService.insert(loanapplication, tokenModel);
         return ApiResult.success();
     }
 
@@ -237,8 +260,8 @@ public class Pfans1006Controller {
     //add_fjl_0725  添加暂借款打印功能  end
 
     //采购业务数据流程查看详情
-    @RequestMapping(value="/getworkfolwPurchaseData",method = {RequestMethod.POST})
-    public ApiResult getworkfolwPurchaseData(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/getworkfolwPurchaseData", method = {RequestMethod.POST})
+    public ApiResult getworkfolwPurchaseData(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
         if (loanapplication == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
