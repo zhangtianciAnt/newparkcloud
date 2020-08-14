@@ -129,14 +129,14 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         award.setContractnumber(p);
                         List<Award> awardList = awardMapper.select(award);
                         if (awardList.size() > 0) {
-                            float diff = money - Float.parseFloat(awardList.get(0).getBalancejude());
-                            if (diff >= 0) {
-                                diff = 0;
-                                money = diff;
-                            } else {
-                                aFloat(diff);
-                            }
-                            awardList.get(0).setBalancejude(String.valueOf(diff));
+//                            float diff = money - Float.parseFloat(awardList.get(0).getBalancejude());
+//                            if (diff >= 0) {
+//                                diff = 0;
+//                                money = diff;
+//                            } else {
+//                                aFloat(diff);
+//                            }
+//                            awardList.get(0).setBalancejude(String.valueOf(diff));
                             awardList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
                             awardList.get(0).setLoanapno(loanapplication.getLoanapno());
                             awardList.get(0).preUpdate(tokenModel);
@@ -154,14 +154,14 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     purchase.setPurnumbers(p);
                     List<Purchase> purchaseList = purchaseMapper.select(purchase);
                     if(purchaseList.size()>0) {
-                        float diff = money - Float.parseFloat(purchaseList.get(0).getBalancejude());
-                        if (diff >= 0) {
-                            diff = 0;
-                            money = diff;
-                        } else {
-                            aFloat(diff);
-                        }
-                        purchaseList.get(0).setBalancejude(String.valueOf(diff));
+//                        float diff = money - Float.parseFloat(purchaseList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        purchaseList.get(0).setBalancejude(String.valueOf(diff));
                         purchaseList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
                         purchaseList.get(0).setLoanapno(loanapplication.getLoanapno());
                         purchaseList.get(0).preUpdate(tokenModel);
@@ -178,14 +178,14 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     communication.setNumbercation(p);
                     List<Communication> communicationList = communicationMapper.select(communication);
                     if (communicationList.size() > 0) {
-                        float diff = money - Float.parseFloat(communicationList.get(0).getBalancejude());
-                        if (diff >= 0) {
-                            diff = 0;
-                            money = diff;
-                        } else {
-                            aFloat(diff);
-                        }
-                        communicationList.get(0).setBalancejude(String.valueOf(diff));
+//                        float diff = money - Float.parseFloat(communicationList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        communicationList.get(0).setBalancejude(String.valueOf(diff));
                         communicationList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
                         communicationList.get(0).setLoanapno(loanapplication.getLoanapno());
                         communicationList.get(0).preUpdate(tokenModel);
@@ -200,14 +200,14 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     judgement.setJudgnumbers(p);
                     List<Judgement> judgementList = judgementMapper.select(judgement);
                     if (judgementList.size() > 0) {
-                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
-                        if (diff >= 0) {
-                            diff = 0;
-                            money = diff;
-                        } else {
-                            aFloat(diff);
-                        }
-                        judgementList.get(0).setBalancejude(String.valueOf(diff));
+//                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        judgementList.get(0).setBalancejude(String.valueOf(diff));
                         judgementList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
                         judgementList.get(0).setLoanapno(loanapplication.getLoanapno());
                         judgementList.get(0).preUpdate(tokenModel);
@@ -222,14 +222,14 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     judgement.setJudgnumbers(p);
                     List<Judgement> judgementList = judgementMapper.select(judgement);
                     if (judgementList.size() > 0) {
-                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
-                        if (diff >= 0) {
-                            diff = 0;
-                            money = diff;
-                        } else {
-                            aFloat(diff);
-                        }
-                        judgementList.get(0).setBalancejude(String.valueOf(diff));
+//                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        judgementList.get(0).setBalancejude(String.valueOf(diff));
                         judgementList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
                         judgementList.get(0).setLoanapno(loanapplication.getLoanapno());
                         judgementList.get(0).preUpdate(tokenModel);
@@ -245,14 +245,14 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     purchaseapply.setPurchasenumbers(p);
                     List<PurchaseApply> purchaseapplyList = purchaseapplyMapper.select(purchaseapply);
                     if (purchaseapplyList.size() > 0) {
-                        float diff = money - Float.parseFloat(purchaseapplyList.get(0).getBalancejude());
-                        if (diff >= 0) {
-                            diff = 0;
-                            money = diff;
-                        } else {
-                            aFloat(diff);
-                        }
-                        purchaseapplyList.get(0).setBalancejude(String.valueOf(diff));
+//                        float diff = money - Float.parseFloat(purchaseapplyList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        purchaseapplyList.get(0).setBalancejude(String.valueOf(diff));
                         purchaseapplyList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
                         purchaseapplyList.get(0).setLoanapno(loanapplication.getLoanapno());
                         purchaseapplyList.get(0).preUpdate(tokenModel);
@@ -269,14 +269,14 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     business.setBusiness_number(p);
                     List<Business> businessList = businessMapper.select(business);
                     if (businessList.size() > 0) {
-                        float diff = money - Float.parseFloat(businessList.get(0).getBalancejude());
-                        if (diff >= 0) {
-                            diff = 0;
-                            money = diff;
-                        } else {
-                            aFloat(diff);
-                        }
-                        businessList.get(0).setBalancejude(String.valueOf(diff));
+//                        float diff = money - Float.parseFloat(businessList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        businessList.get(0).setBalancejude(String.valueOf(diff));
                         businessList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
                         businessList.get(0).setLoanapno(loanapplication.getLoanapno());
                         businessList.get(0).setLoanday(new Date());

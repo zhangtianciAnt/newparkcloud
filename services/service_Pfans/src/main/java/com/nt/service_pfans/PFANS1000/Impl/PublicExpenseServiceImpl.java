@@ -317,14 +317,14 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     purchase.setPurnumbers(p);
                     List<Purchase> purchaseList = purchaseMapper.select(purchase);
                     if (purchaseList.size() > 0) {
-                        float diff = money - Float.parseFloat(purchaseList.get(0).getBalancejude());
-                        if (diff >= 0) {
-                            diff = 0;
-                            money = diff;
-                        } else {
-                            aFloat(diff);
-                        }
-                        purchaseList.get(0).setBalancejude(String.valueOf(diff));
+//                        float diff = money - Float.parseFloat(purchaseList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        purchaseList.get(0).setBalancejude(String.valueOf(diff));
                         purchaseList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                         purchaseList.get(0).setInvoiceno(publicExpense.getInvoiceno());
                         purchaseList.get(0).preUpdate(tokenModel);
@@ -341,14 +341,14 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     communication.setNumbercation(p);
                     List<Communication> communicationList = communicationMapper.select(communication);
                     if (communicationList.size() > 0) {
-                        float diff = money - Float.parseFloat(communicationList.get(0).getBalancejude());
-                        if (diff >= 0) {
-                            diff = 0;
-                            money = diff;
-                        } else {
-                            aFloat(diff);
-                        }
-                        communicationList.get(0).setBalancejude(String.valueOf(diff));
+//                        float diff = money - Float.parseFloat(communicationList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        communicationList.get(0).setBalancejude(String.valueOf(diff));
                         communicationList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                         communicationList.get(0).setLoanapno(publicExpense.getInvoiceno());
                         communicationList.get(0).preUpdate(tokenModel);
@@ -363,14 +363,14 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     judgement.setJudgnumbers(p);
                     List<Judgement> judgementList = judgementMapper.select(judgement);
                     if (judgementList.size() > 0) {
-                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
-                        if (diff >= 0) {
-                            diff = 0;
-                            money = diff;
-                        } else {
-                            aFloat(diff);
-                        }
-                        judgementList.get(0).setBalancejude(String.valueOf(diff));
+//                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        judgementList.get(0).setBalancejude(String.valueOf(diff));
                         judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                         judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
                         judgementList.get(0).preUpdate(tokenModel);
@@ -385,14 +385,14 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     judgement.setJudgnumbers(p);
                     List<Judgement> judgementList = judgementMapper.select(judgement);
                     if (judgementList.size() > 0) {
-                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
-                        if (diff >= 0) {
-                            diff = 0;
-                            money = diff;
-                        } else {
-                            aFloat(diff);
-                        }
-                        judgementList.get(0).setBalancejude(String.valueOf(diff));
+//                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        judgementList.get(0).setBalancejude(String.valueOf(diff));
                         judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                         judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
                         judgementList.get(0).preUpdate(tokenModel);
@@ -407,14 +407,14 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     purchaseapply.setPurchasenumbers(p);
                     List<PurchaseApply> purchaseapplyList = purchaseapplyMapper.select(purchaseapply);
                     if (purchaseapplyList.size() > 0) {
-                        float diff = money - Float.parseFloat(purchaseapplyList.get(0).getBalancejude());
-                        if (diff >= 0) {
-                            diff = 0;
-                            money = diff;
-                        } else {
-                            aFloat(diff);
-                        }
-                        purchaseapplyList.get(0).setBalancejude(String.valueOf(diff));
+//                        float diff = money - Float.parseFloat(purchaseapplyList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        purchaseapplyList.get(0).setBalancejude(String.valueOf(diff));
                         purchaseapplyList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                         purchaseapplyList.get(0).setInvoiceno(publicExpense.getInvoiceno());
                         purchaseapplyList.get(0).preUpdate(tokenModel);
@@ -429,14 +429,14 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     business.setBusiness_number(p);
                     List<Business> businessList = businessMapper.select(business);
                     if (businessList.size() > 0) {
-                        float diff = money - Float.parseFloat(businessList.get(0).getBalancejude());
-                        if (diff >= 0) {
-                            diff = 0;
-                            money = diff;
-                        } else {
-                            aFloat(diff);
-                        }
-                        businessList.get(0).setBalancejude(String.valueOf(diff));
+//                        float diff = money - Float.parseFloat(businessList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        businessList.get(0).setBalancejude(String.valueOf(diff));
                         businessList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                         businessList.get(0).setInvoiceno(publicExpense.getInvoiceno());
                         businessList.get(0).preUpdate(tokenModel);
