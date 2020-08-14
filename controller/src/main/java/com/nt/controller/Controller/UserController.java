@@ -1,6 +1,7 @@
 package com.nt.controller.Controller;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.http.HttpUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Log;
 import com.nt.dao_Org.UserAccount;
@@ -104,12 +105,12 @@ public class UserController {
             var log = new Log();
             log.setType(AuthConstants.LOG_TYPE_LOGIN);
             var logs = new Log.Logs();
-            //logs.setIp(HttpUtil.getClientIP(request));
-//            logs.setEquipment(AuthConstants.LOG_EQUIPMENT_PC);
-//            log.setLogs(new ArrayList<Log.Logs>());
-//            log.getLogs().add(logs);
-//            log.preInsert(tokenModel);
-//            logService.save(log);
+            logs.setIp(Ip.getIPAddress(request));
+            logs.setEquipment(AuthConstants.LOG_EQUIPMENT_PC);
+            log.setLogs(new ArrayList<Log.Logs>());
+            log.getLogs().add(logs);
+            log.preInsert();
+            logService.save(log);
             messagingTemplate.convertAndSend("/topicLogin/subscribe", tokenModel.getToken());
             return ApiResult.success(tokenModel);
         } catch (LogicalException ex) {
