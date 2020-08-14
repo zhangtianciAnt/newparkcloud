@@ -367,8 +367,11 @@ public class Wages extends BaseModel {
     private String createonym;               // 创建年月
 
     @Column(name = "GRANTSTATUS")
-    private String grantstatus;         //工资发放状态
+    private String grantstatus;         //工资发放状态【1发放/ null:未发放】
 
     @Column(name = "ACTUAL")
-    private String actual;         //实际工资：1
+    private String actual;         //1：实际工资、0:预计工资
+
+    @Column(name = "JOBNUMBER")
+    private String jobnumber;         //工号
 }

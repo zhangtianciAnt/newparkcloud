@@ -78,7 +78,7 @@ public class Pfans2005Controller {
     public ApiResult get(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         Giving giving=new Giving();
-        giving.setActual("0");//預計工作
+        giving.setActual("0");//預計工资
         return ApiResult.success(givingService.getDataList(giving));
     }
 

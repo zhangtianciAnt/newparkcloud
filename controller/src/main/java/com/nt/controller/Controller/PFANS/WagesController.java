@@ -83,6 +83,10 @@ public class WagesController {
             templateName = "additional.xlsx";
             fileName = "附加控除导入模板";
         }
+        if ( "5".equals(type) ) {
+            templateName = "wages.xlsx";
+            fileName = "历史工资导入模板";
+        }
         if (templateName != null ) {
             ExcelOutPutUtil.OutPut(fileName,templateName,data,response);
         }

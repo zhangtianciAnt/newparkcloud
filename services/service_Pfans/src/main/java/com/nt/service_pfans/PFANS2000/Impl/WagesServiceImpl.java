@@ -2209,19 +2209,10 @@ public class WagesServiceImpl implements WagesService {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importWages(HttpServletRequest request,TokenModel tokenModel) throws Exception {
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMM");
+        SimpleDateFormat sdym = new SimpleDateFormat("yyyyMM");
+        SimpleDateFormat sdymd = new SimpleDateFormat("yyyy-MM-dd");
         String strTemp = sf1.format(new Date());
-        // region  給与計算预计工资
         String givingid = UUID.randomUUID().toString();
-        Giving giving = new Giving();
-        giving.preInsert(tokenModel);
-        giving.setGiving_id(givingid);
-        giving.setGeneration("0");//手动
-        giving.setGenerationdate(new Date());
-        giving.setMonths(sf1.format(new Date()));
-        giving.setActual("0");//预计
-        givingMapper.insert(giving);
-        //endregion 給与計算预计工资
-
         List<Wages> listVo = new ArrayList<Wages>();
         List<String> Result = new ArrayList<String>();
         MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
@@ -2231,42 +2222,33 @@ public class WagesServiceImpl implements WagesService {
         ExcelReader reader = ExcelUtil.getReader(f);
         List<List<Object>> list = reader.read();
         List<Object> model = new ArrayList<Object>();
-        model.add("No.");
+        model.add("发放时间");
+        model.add("工号");
         model.add("部门");
         model.add("名字");
-        model.add("入社年月");
-        model.add("性別");
-        model.add("独生子女");
-        model.add("入/退職/産休");
-        model.add("奨金計上");
-        model.add("1999年前社会人");
-        model.add("大連戸籍");
-        model.add("養老保険基数");
-        model.add("失業保険基数");
-        model.add("工傷保険基数");
-        model.add("医療保険基数");
-        model.add("生育保険基数");
+        model.add("養老基数");
+        model.add("失業基数");
+        model.add("工傷基数");
+        model.add("医療基数");
+        model.add("生育基数");
         model.add("住房公积金基数");
-        model.add("上月基本工资");
         model.add("上月职责工资");
+        model.add("上个月基本工资");
         model.add("本月基本工资");
         model.add("本月职责工资");
-        model.add("RN基本工资");
+        model.add("rank标准工资");
+        model.add("産休出勤日数(看護休暇日数)");
         model.add("本月入/退職/産休基本");
         model.add("本月入/退職/産休基本給");
         model.add("短病欠時数");
         model.add("长病欠時数");
         model.add("欠勤時数");
         model.add("病欠/欠勤控除");
-        model.add("基本給实际金额");
         model.add("本月基本给");
         model.add("本月职责给");
-        model.add("公积金补充(加班补充）");
-        model.add("电话补助");
-        model.add("住房补助");
-        model.add("午餐补助");
+        model.add("一括补助基本给");
+        model.add("一括补助");
         model.add("加班补助");
-        model.add("其他1");
         model.add("小计1(基本給+补助)");
         model.add("交通补助");
         model.add("女性洗理费");
@@ -2283,7 +2265,6 @@ public class WagesServiceImpl implements WagesService {
         model.add("医疗保险");
         model.add("失业保险");
         model.add("个人社会保险(専項控除)");
-        model.add("调整数");
         model.add("个人住房公积金(専項控除)");
         model.add("个人社会保险费+公积金(専項控除)合计");
         model.add("専項控除累計（当月まで）");
@@ -2297,7 +2278,6 @@ public class WagesServiceImpl implements WagesService {
         model.add("累計応発工資（当月含）");
         model.add("累計应纳税所得额");
         model.add("本月应扣缴所得税");
-        model.add("调整数");
         model.add("当月实发工资");
         model.add("养老保险");
         model.add("医疗保险");
@@ -2307,160 +2287,226 @@ public class WagesServiceImpl implements WagesService {
         model.add("暖房费");
         model.add("住房公积金");
         model.add("总计");
-        model.add("调整数");
         model.add("工会经费基数");
         model.add("工会经费");
         model.add("工资总额(纳税+免税)+福祉+公司負担+工会経費总计");
-        model.add("計上奨金");
         model.add("年休结余");
+        model.add("計上奨金");
         model.add("总计+計上奨金");
-        model.add("其他6");
-        model.add("工号");
-        model.add("一括补助");
-        model.add("一括补助基本给");
-        model.add("養老基数");
-        model.add("失業基数");
-        model.add("工傷基数");
-        model.add("医療基数");
-        model.add("生育基数");
-        model.add("创建年月");
-        model.add("累计専項控除");
-        model.add("総合収入累計");
-        model.add("工资发放状态");
-        model.add("实际工资（1）");
         List<Object> key = list.get(0);
         for (int i = 0; i < key.size()-1; i++) {
             if (!key.get(i).toString().trim().replace("\n","").equals(model.get(i))) {
                 throw new LogicalException("第" + (i + 1) + "列标题错误，应为" + model.get(i).toString());
             }
         }
+        //导入区分
+        String importflg = "";
+        if(list.size() > 1){
+            Giving giv = new Giving();
+            giv.setGeneration("2");//导入
+            giv.setMonths(list.get(1).get(0).toString().replace("-","").substring(0,6));
+            List<Giving> givlist = givingMapper.select(giv);
+            if(givlist.size() > 0){
+                importflg = "1";
+                givingid = givlist.get(0).getGiving_id();
+            }
+        }
         int k = 1;
         int accesscount = 0;
         int error = 0;
-        for (int i = 1; i < list.size()-1; i++) {
+        String Createonym = "";
+        for (int i = 1; i < list.size(); i++) {
             Wages wages = new Wages();
+            String WagesFlg = "";//判断该月是否已发放
             List<Object> value = list.get(k);
             k++;
             if (value != null && !value.isEmpty()) {
-                //卡号 upd gbb 0727 start
-                if (value.get(2).toString().equals("")) {
+                Createonym = value.get(0).toString().substring(0,10);
+                //卡号
+                if (value.get(1).toString().equals("")) {
                     continue;
                 }
-                //卡号 upd gbb 0727 end
                 String click="^([0-9][0-9]*)+(.[0-9]{1,2})?$";
-                if(value.size() > 4) {
-                    if (value.get(4).toString().length()>20) {
-                        error = error + 1;
-                        Result.add("模板第" + (k-1) + "行的补充医保长度超出范围，请输入长度为20位之内的补充医保，导入失败");
-                        continue;
+
+                //region 查询是否已经存在
+                Wages wa = new Wages();
+                wa.setCreateonym(Createonym.substring(0,7));
+                wa.setGiving_id(givingid);
+                wa.setJobnumber(value.get(1).toString());
+                List<Wages> wageslist = wagesMapper.select(wa);
+                if(wageslist.size() > 0){
+                    WagesFlg = "1";
+                    wages.setWages_id(wageslist.get(0).getWages_id());
+                }
+                //endregion 查询是否已经存在
+
+                //region 人员基础信息查询
+                Query query = new Query();
+                String jobnumber = value.get(1).toString();
+                query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
+                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wages.setJobnumber(jobnumber);  //工号
+                    wages.setUser_id(customerInfo.getUserid());
+                    wages.setWorkdate(customerInfo.getUserinfo().getEnterday());//入社时间
+                    wages.setSex(customerInfo.getUserinfo().getSex());  //性别
+
+                    wages.setBonus(customerInfo.getUserinfo().getDifference());//奨金計上
+
+                    //独生子女
+                    if (customerInfo.getUserinfo().getChildren() != null && customerInfo.getUserinfo().getChildren().equals("1")) {
+                        wages.setOnlychild("1");
+                    } else {
+                        wages.setOnlychild("2");
+                    }
+                    //入/退職/産休
+                    //wages.setType(value.get(1).toString());
+                    //奨金計上
+                    wages.setBonus(customerInfo.getUserinfo().getDifference());
+                    //1999年前社会人
+                    if (customerInfo.getUserinfo().getWorkday() != null && customerInfo.getUserinfo().getWorkday().length() > 0) {
+                        String strWorkday = customerInfo.getUserinfo().getWorkday().substring(0, 4);
+                        if (Integer.parseInt(strWorkday) < 1999) {
+                            wages.setSociology("1");
+                        } else {
+                            wages.setSociology("2");
+                        }
+                    }
+                    //大連戸籍
+                    wages.setRegistered("2");
+                    if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDlnation())) {
+                        if(customerInfo.getUserinfo().getDlnation().equals("1")){
+                            wages.setRegistered("1");
+                        }
                     }
                 }
-                if(value.size() > 5) {
-                    if (value.get(5).toString().length()>20) {
-                        error = error + 1;
-                        Result.add("模板第" + (k-1) + "行的意外保险长度超出范围，请输入长度为20位之内的意外保险，导入失败");
-                        continue;
-                    }
-                }
-                if(!Pattern.matches(click, value.get(5).toString())){
+                else{
                     error = error + 1;
-                    Result.add("模板第" + (k - 1) + "行的意外保险不符合规范，请输入正确的意外保险，导入失败");
+                    Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
                     continue;
                 }
-                if(value.size() > 6) {
-                    if (value.get(6).toString().length()>20) {
-                        error = error + 1;
-                        Result.add("模板第" + (k-1) + "行的体检长度超出范围，请输入长度为20位之内的体检，导入失败");
-                        continue;
-                    }
-                }
-                if(!Pattern.matches(click, value.get(6).toString())){
-                    error = error + 1;
-                    Result.add("模板第" + (k - 1) + "行的体检不符合规范，请输入正确的体检，导入失败");
-                    continue;
-                }
-                if(value.size() > 7) {
-                    if (value.get(7).toString().length()>20) {
-                        error = error + 1;
-                        Result.add("模板第" + (k-1) + "行的福祉合計长度超出范围，请输入长度为20位之内的福祉合計，导入失败");
-                        continue;
-                    }
-                }
-                if(value.size() > 8) {
-                    if (value.get(8).toString().length()>20) {
-                        error = error + 1;
-                        Result.add("模板第" + (k-1) + "行的工会福祉长度超出范围，请输入长度为20位之内的工会福祉，导入失败");
-                        continue;
-                    }
-                }
-                if(!Pattern.matches(click, value.get(8).toString())){
-                    error = error + 1;
-                    Result.add("模板第" + (k - 1) + "行的工会福祉不符合规范，请输入正确的工会福祉，导入失败");
-                    continue;
-                }
-                if(value.size() > 9) {
-                    if (value.get(9).toString().length()>20) {
-                        error = error + 1;
-                        Result.add("模板第" + (k-1) + "行的忘年会奖品长度超出范围，请输入长度为20位之内的忘年会奖品，导入失败");
-                        continue;
-                    }
-                }
-                if(!Pattern.matches(click, value.get(9).toString())){
-                    error = error + 1;
-                    Result.add("模板第" + (k - 1) + "行的忘年会奖品不符合规范，请输入正确的忘年会奖品，导入失败");
-                    continue;
-                }
-                if(value.size() > 10) {
-                    if (value.get(10).toString().length()>20) {
-                        error = error + 1;
-                        Result.add("模板第" + (k-1) + "行的組合旅游费长度超出范围，请输入长度为20位之内的組合旅游费，导入失败");
-                        continue;
-                    }
-                }
-                if(!Pattern.matches(click, value.get(10).toString())){
-                    error = error + 1;
-                    Result.add("模板第" + (k - 1) + "行的組合旅游费不符合规范，请输入正确的組合旅游费，导入失败");
-                    continue;
-                }
-                if(value.size() > 11) {
-                    if (value.get(11).toString().length()>20) {
-                        error = error + 1;
-                        Result.add("模板第" + (k-1) + "行的合計长度超出范围，请输入长度为20位之内的合計，导入失败");
-                        continue;
-                    }
-                }
-//                Query query = new Query();
-//                String jobnumber = value.get(2).toString();
-//                query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
-//                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-//                if (customerInfo != null) {
-//                    otherfive.setUser_id(customerInfo.getUserid());
-//                    otherfive.setJobnumber(value.get(2).toString());
-//                }
-//                if (customerInfo == null) {
-//                    error = error + 1;
-//                    Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
-//                    continue;
-//                }
-//                otherfive.setDepartment_id(value.get(1).toString());
-//                otherfive.setMedicalinsurance(value.get(4).toString());
-//                otherfive.setAccident(value.get(5).toString());
-//                otherfive.setPhysical(value.get(6).toString());
-//                otherfive.setWelfaretotal(value.get(7).toString());
-//                otherfive.setLabourunion(value.get(8).toString());
-//                otherfive.setAnnualmeeting(value.get(9).toString());
-//                otherfive.setTravel(value.get(10).toString());
-//                otherfive.setTotal(value.get(11).toString());
-//                otherfive.setRemarks(value.get(12).toString());
+                //endregion 人员基础信息查询
+
+                wages.setYanglaojs(value.get(4).toString());
+                wages.setShiyejs(value.get(5).toString());
+                wages.setGongshangjs(value.get(6).toString());
+                wages.setYiliaojs(value.get(7).toString());
+                wages.setShengyujs(value.get(8).toString());
+                wages.setAccumulation(value.get(9).toString());
+                wages.setLastmonthduty(value.get(10).toString());
+                wages.setLastmonthbasic(value.get(11).toString());
+                //上月职责工资
+                BigDecimal Lastmonthduty = BigDecimal.valueOf(Double.valueOf(value.get(10).toString()));
+                //上个月基本工资
+                BigDecimal Lastmonthbasic = BigDecimal.valueOf(Double.valueOf(value.get(11).toString()));
+                //上月基本給
+                wages.setLastmonth(String.valueOf(Lastmonthduty.add(Lastmonthbasic)));
+                wages.setBasethismonthbasic(value.get(12).toString());
+                wages.setThismonthduty(value.get(13).toString());
+                //本月职责工资
+                BigDecimal Basethismonthbasic = BigDecimal.valueOf(Double.valueOf(value.get(12).toString()));
+                //本个月基本工资
+                BigDecimal Thismonthduty = BigDecimal.valueOf(Double.valueOf(value.get(13).toString()));
+                //本月基本給
+                wages.setThismonth(String.valueOf(Basethismonthbasic.add(Thismonthduty)));
+                wages.setRnbasesalary(value.get(14).toString());
+                wages.setBirthrest(value.get(15).toString());
+                wages.setThismonthbasicbasic(value.get(16).toString());
+                wages.setThismonthbasic(value.get(17).toString());
+                wages.setShortillness(value.get(18).toString());
+                wages.setLongillness(value.get(19).toString());
+                wages.setOwediligence(value.get(20).toString());
+                wages.setOwingcontrol(value.get(21).toString());
+                wages.setThismonthbasicgei(value.get(22).toString());
+                wages.setThismonthdutygei(value.get(23).toString());
+                //本月基本给
+                BigDecimal Thismonthbasicgei = BigDecimal.valueOf(Double.valueOf(value.get(22).toString()));
+                //本月职责给
+                BigDecimal Thismonthdutygei = BigDecimal.valueOf(Double.valueOf(value.get(23).toString()));
+                //基本給实际金额
+                wages.setActualamount(String.valueOf(Thismonthbasicgei.add(Thismonthdutygei)));
+                wages.setYkbzjs(value.get(24).toString());
+                wages.setYkbz(value.get(25).toString());
+                wages.setOvertimesubsidy(value.get(26).toString());
+                wages.setTotal1(value.get(27).toString());
+                wages.setTraffic(value.get(28).toString());
+                wages.setWashingtheory(value.get(29).toString());
+                wages.setOther2(value.get(30).toString());
+                wages.setAppreciation(value.get(31).toString());
+                wages.setOther3(value.get(32).toString());
+                wages.setTotal2(value.get(33).toString());
+                wages.setTaxestotal(value.get(34).toString());
+                wages.setHeating(value.get(35).toString());
+                wages.setOnlychildmoney(value.get(36).toString());
+                wages.setTotal3(value.get(37).toString());
+                wages.setTotalwages(value.get(38).toString());
+                wages.setEndowmentinsurance(value.get(39).toString());
+                wages.setMedicalinsurance(value.get(40).toString());
+                wages.setUnemploymentinsurance(value.get(41).toString());
+                wages.setSocialinsurance(value.get(42).toString());
+                wages.setAccumulationfund(value.get(43).toString());
+                wages.setDisciplinarycontrol(value.get(44).toString());
+                wages.setThismonthterm(value.get(45).toString());
+                wages.setThismonthadditional(value.get(46).toString());
+                wages.setThismonthdutyfree(value.get(47).toString());
+                wages.setLastdutyfree(value.get(48).toString());
+                wages.setHousingmoneys(value.get(49).toString());
+                wages.setOther4(value.get(50).toString());
+                wages.setOther5(value.get(51).toString());
+                wages.setShouldwages(value.get(52).toString());
+                wages.setShouldcumulative(value.get(53).toString());
+                wages.setShouldpaytaxes(value.get(54).toString());
+                wages.setThismonthadjustment(value.get(55).toString());
+                wages.setRealwages(value.get(56).toString());
+                wages.setComendowmentinsurance(value.get(57).toString());
+                wages.setCommedicalinsurance(value.get(58).toString());
+                wages.setComunemploymentinsurance(value.get(59).toString());
+                wages.setCominjuryinsurance(value.get(60).toString());
+                wages.setCombirthinsurance(value.get(61).toString());
+                wages.setComheating(value.get(62).toString());
+                wages.setComaccumulationfund(value.get(63).toString());
+                wages.setTotal(value.get(64).toString());
+                wages.setLabourunionbase(value.get(65).toString());
+                wages.setLabourunionfunds(value.get(66).toString());
+                wages.setComtotalwages(value.get(67).toString());
+                wages.setNjjy(value.get(68).toString());
+                wages.setBonusmoney(value.get(69).toString());
+                wages.setTotalbonus(value.get(70).toString());
             }
+            wages.setCreateonym(Createonym.substring(0,7));
+            wages.setGrantstatus("1");
+            wages.setActual("0");
             wages.setGiving_id(givingid);
-            wages.setWages_id(UUID.randomUUID().toString());
             int rowundex = accesscount+ 1;
             wages.setRowindex(rowundex);
-            wages.preInsert(tokenModel);
-            //otherfiveMapper.insert(otherfive);
+            if(WagesFlg.equals("")){
+                wages.preInsert(tokenModel);
+                wages.setWages_id(UUID.randomUUID().toString());
+                wagesMapper.insert(wages);
+            }
+            else{
+                wages.preUpdate(tokenModel);
+                wagesMapper.updateByPrimaryKey(wages);
+            }
             listVo.add(wages);
             accesscount = accesscount + 1;
+        }
+        if(importflg.equals("")){
+            // region  給与計算预计工资
+            if(error == 0 && accesscount > 0){
+                // region  給与計算预计工资
+                Giving giving = new Giving();
+                giving.preInsert(tokenModel);
+                giving.setStatus("4");
+                giving.setGiving_id(givingid);
+                giving.setGeneration("2");//导入
+                giving.setGrantstatus("1");//已发放
+                giving.setGenerationdate(sdymd.parse(Createonym));
+                giving.setMonths(Createonym.replace("-","").substring(0,6));
+                giving.setActual("0");//预计
+                givingMapper.insert(giving);
+                //endregion 給与計算预计工资
+            }
         }
         Result.add("失败数：" + error);
         Result.add("成功数：" + accesscount);
