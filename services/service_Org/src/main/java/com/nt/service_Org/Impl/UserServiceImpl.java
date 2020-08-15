@@ -2360,4 +2360,19 @@ public class UserServiceImpl implements UserService {
 //            throw new LogicalException(e.getMessage());
 //        }
     }
+
+    //获取当前用户登陸信息（IP）
+    @Override
+    public List<Log.Logs> getSigninlog(String userId) throws Exception {
+        List<Log.Logs> logslist = new ArrayList<>();
+        Query query = new Query();
+        List<Log> loglist = mongoTemplate.find(query, Log.class);
+        if(loglist.size() > 0){
+            logslist = loglist.get(0).getLogs();
+            if(logslist.size() > 0){
+                logslist = logslist.stream().filter(coi -> (coi.getCreateby().contains(userId))).collect(Collectors.toList());
+            }
+        }
+        return logslist;
+    }
 }

@@ -1,6 +1,7 @@
 package com.nt.service_Org;
 
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Log;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.utils.ApiResult;
@@ -85,4 +86,7 @@ public interface UserService {
     List<CustomerInfo> getAllCustomerInfo();
 
     List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
+
+    //获取当前用户登陸信息（IP）
+    List<Log.Logs> getSigninlog(String userId) throws Exception ;
 }

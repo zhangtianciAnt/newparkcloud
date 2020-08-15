@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -107,9 +108,10 @@ public class UserController {
             var logs = new Log.Logs();
             logs.setIp(Ip.getIPAddress(request));
             logs.setEquipment(AuthConstants.LOG_EQUIPMENT_PC);
+            logs.setCreateby(tokenModel.getUserId());
+            logs.preInsert();
             log.setLogs(new ArrayList<Log.Logs>());
             log.getLogs().add(logs);
-            log.setCreateby(tokenModel.getUserId());
             log.preInsert();
             logService.save(log);
             messagingTemplate.convertAndSend("/topicLogin/subscribe", tokenModel.getToken());
@@ -343,5 +345,13 @@ public class UserController {
     @RequestMapping(value = "/getAllCustomer", method = {RequestMethod.POST})
     public ApiResult getAllCustomer() throws Exception {
         return ApiResult.success(userService.getAllCustomerInfo());
+    }
+
+    //获取当前用户登陸信息（IP）
+    @RequestMapping(value = "/getSigninlog", method = {RequestMethod.GET})
+    public ApiResult getSigninlog(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        String userId = tokenModel.getUserId();//RequestUtils.CurrentUserId(request);
+        return ApiResult.success(userService.getSigninlog(userId));
     }
 }
