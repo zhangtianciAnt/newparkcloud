@@ -114,7 +114,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         for (Dictionary item : curList1) {
             dic += item.getValue2() + ",";
         }
-        float money = Float.parseFloat(loanapplication.getMoneys());
+//        float money = Float.parseFloat(loanapplication.getMoneys());
         //add_fjl_0807  获取委托合同番号的命名规则
         //CCM ADD 0726
         if(loanapplication.getJudgements_name()!=null && !loanapplication.getJudgements_name().equals(""))
