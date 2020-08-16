@@ -807,9 +807,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 }
             }
         }
-        if (totalTax != specialMap.get(TOTAL_TAX)) {
-            throw new LogicalException("发票合计金额与明细不匹配。");
-        }
+//        if (totalTax != specialMap.get(TOTAL_TAX)) {
+//            throw new LogicalException("发票合计金额与明细不匹配。");
+//        }
         resultMap.put(INPUT_TYPE_KEY, inputType);
         return resultMap;
     }
