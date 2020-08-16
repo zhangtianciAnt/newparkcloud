@@ -140,6 +140,7 @@ and a.user_id = #{userid}
         OCCURRENCE_DATE as occurrencedate,
         FINISHED_DATE as finisheddate,
         LENGTHTIME as lengthtime,
+        RE_LENGTHTIME as relengthtime,
         RE_OCCURRENCE_DATE as reoccurrencedate,
         RE_FINISHED_DATE as refinisheddate,
         STATUS as status
@@ -156,6 +157,7 @@ and a.user_id = #{userid}
         OCCURRENCE_DATE as occurrencedate,
         FINISHED_DATE as finisheddate,
         LENGTHTIME as lengthtime,
+        RE_LENGTHTIME as relengthtime,
         RE_OCCURRENCE_DATE as reoccurrencedate,
         RE_FINISHED_DATE as refinisheddate,
         STATUS as status
