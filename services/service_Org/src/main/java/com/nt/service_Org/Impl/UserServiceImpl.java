@@ -2372,6 +2372,7 @@ public class UserServiceImpl implements UserService {
             if(logslist.size() > 0){
                 logslist = logslist.stream().filter(coi -> (coi.getCreateby() != null)).collect(Collectors.toList());
                 logslist = logslist.stream().filter(coi -> (coi.getCreateby().contains(userId))).collect(Collectors.toList());
+                logslist = logslist.stream().sorted(Comparator.comparing(Log.Logs::getCreateon).reversed()).collect(Collectors.toList());
             }
         }
         return logslist;
