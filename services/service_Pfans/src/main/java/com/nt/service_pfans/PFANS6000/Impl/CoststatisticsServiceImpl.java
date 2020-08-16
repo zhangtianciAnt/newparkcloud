@@ -52,6 +52,7 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
@@ -730,13 +731,19 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         String pp[] = strDates.split("-");
 
         List<String> groupIdList = new ArrayList<String>();
-        Query query = CustmizeQuery(new OrgTree());
-        OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
-        List<OrgTree>  orgTrees =  orgTree.getOrgs();
-        for (OrgTree org: orgTrees ) {
-            for (OrgTree org1: org.getOrgs() ) {
-                groupIdList.add(org1.get_id() + "," + pp[0] +  "," + pp[1]);
-            }
+//        Query query = CustmizeQuery(new OrgTree());
+//        OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
+//        List<OrgTree>  orgTrees =  orgTree.getOrgs();
+//        for (OrgTree org: orgTrees ) {
+//            for (OrgTree org1: org.getOrgs() ) {
+//                groupIdList.add(org1.get_id() + "," + pp[0] +  "," + pp[1]);
+//            }
+//        }
+        Expatriatesinfor infor = new Expatriatesinfor();
+        List<Expatriatesinfor> inforlist = expatriatesinforMapper.select(infor);
+        Map<String,List<Expatriatesinfor>> userGroupMap = inforlist.stream().collect(Collectors.groupingBy(Expatriatesinfor::getGroup_id));
+        for (String key : userGroupMap.keySet()) {
+            groupIdList.add(key + "," + pp[0] +  "," + pp[1]);
         }
         //查询所有审批通过的部门
         List<Workflowinstance> workflow = coststatisticsMapper.getworkflowinstance(groupIdList);
