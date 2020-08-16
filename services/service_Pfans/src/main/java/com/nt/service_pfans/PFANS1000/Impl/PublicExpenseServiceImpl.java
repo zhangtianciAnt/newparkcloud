@@ -437,8 +437,6 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                             judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
                         }
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                        judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
-                        judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
                         judgementList.get(0).preUpdate(tokenModel);
                         judgementMapper.updateByPrimaryKey(judgementList.get(0));
                     }
