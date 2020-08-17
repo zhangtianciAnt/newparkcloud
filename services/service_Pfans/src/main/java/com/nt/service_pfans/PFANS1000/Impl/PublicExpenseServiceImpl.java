@@ -891,34 +891,34 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         }
 
 
-        //add-ws-7/20-禅道任务342
-        String[] ts = judgement.split(",");
-        if (ts.length > 0) {
-            for (int i = 0; i < ts.length; i++) {
-                Award award = new Award();
-                award.setAward_id(ts[i]);
-                Award awa = awardMapper.selectByPrimaryKey(award);
-                if (awa != null) {
-                    awa.setStatuspublic(status);
-                    awardMapper.updateByPrimaryKey(awa);
-                    if (status.equals("4")) {
-                        List<MembersVo> rolelist = roleService.getMembers("5e78633d8f43163084351138");
-                        if (rolelist.size() > 0) {
-                            ToDoNotice toDoNotice3 = new ToDoNotice();
-                            toDoNotice3.setTitle("【" + awa.getContractnumber() + "】发起得精算申请已成功");
-                            toDoNotice3.setInitiator(awa.getUser_id());
-                            toDoNotice3.setContent("流程结束。可进行线下支付");
-                            toDoNotice3.setDataid(awa.getContractnumber());
-                            toDoNotice3.setUrl("/PFANS1025FormView");
-                            toDoNotice3.setWorkflowurl("/PFANS1025FormView");
-                            toDoNotice3.preInsert(tokenModel);
-                            toDoNotice3.setOwner(rolelist.get(0).getUserid());
-                            toDoNoticeService.save(toDoNotice3);
-                        }
-                    }
-                }
-            }
-        }
+        //add-ws-7/20-禅道任务342  08/17待办删除
+//        String[] ts = judgement.split(",");
+//        if (ts.length > 0) {
+//            for (int i = 0; i < ts.length; i++) {
+//                Award award = new Award();
+//                award.setAward_id(ts[i]);
+//                Award awa = awardMapper.selectByPrimaryKey(award);
+//                if (awa != null) {
+//                    awa.setStatuspublic(status);
+//                    awardMapper.updateByPrimaryKey(awa);
+//                    if (status.equals("4")) {
+//                        List<MembersVo> rolelist = roleService.getMembers("5e78633d8f43163084351138");
+//                        if (rolelist.size() > 0) {
+//                            ToDoNotice toDoNotice3 = new ToDoNotice();
+//                            toDoNotice3.setTitle("【" + awa.getContractnumber() + "】发起得精算申请已成功");
+//                            toDoNotice3.setInitiator(awa.getUser_id());
+//                            toDoNotice3.setContent("流程结束。可进行线下支付");
+//                            toDoNotice3.setDataid(awa.getContractnumber());
+//                            toDoNotice3.setUrl("/PFANS1025FormView");
+//                            toDoNotice3.setWorkflowurl("/PFANS1025FormView");
+//                            toDoNotice3.preInsert(tokenModel);
+//                            toDoNotice3.setOwner(rolelist.get(0).getUserid());
+//                            toDoNoticeService.save(toDoNotice3);
+//                        }
+//                    }
+//                }
+//            }
+//        }
         //add-ws-7/20-禅道任务342
         String spublicexpenseid = publicExpense.getPublicexpenseid();
         String invoiceNo = publicExpense.getInvoiceno();
