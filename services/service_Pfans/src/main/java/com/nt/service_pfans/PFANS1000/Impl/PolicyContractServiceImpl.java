@@ -70,27 +70,27 @@ public class PolicyContractServiceImpl implements PolicyContractService {
             policy.setType("1");
             policy.setStatus(status);
             policycontractmapper.insertSelective(policy);
-            Award award = new Award();
-            award.setPolicycontract_id(policycontract_id);
-            List<Award> awardlist = awardMapper.select(award);
-            for (Award awa : awardlist) {
-                if(!awa.getStatus().equals("4")){
-                    //军权——合同
-                    List<MembersVo> rolelist = roleService.getMembers("5e9d62b91decd61bb0398686");
-                    if (rolelist.size() > 0) {
-                        ToDoNotice toDoNotice3 = new ToDoNotice();
-                        toDoNotice3.setTitle("【方针合同觉书已创建完成！】");
-                        toDoNotice3.setInitiator(user_id);
-                        toDoNotice3.setContent("委托决裁发起得印章申请已成功！");
-                        toDoNotice3.setDataid(awa.getAward_id());
-                        toDoNotice3.setUrl("/PFANS1025FormView");
-                        toDoNotice3.setWorkflowurl("/PFANS1025FormView");
-                        toDoNotice3.preInsert(tokenModel);
-                        toDoNotice3.setOwner(rolelist.get(0).getUserid());
-                        toDoNoticeService.save(toDoNotice3);
-                    }
-                }
-            }
+//            Award award = new Award();
+//            award.setPolicycontract_id(policycontract_id);
+//            List<Award> awardlist = awardMapper.select(award);
+//            for (Award awa : awardlist) {
+//                if(!awa.getStatus().equals("4")){
+//                    //军权——合同
+//                    List<MembersVo> rolelist = roleService.getMembers("5e9d62b91decd61bb0398686");
+//                    if (rolelist.size() > 0) {
+//                        ToDoNotice toDoNotice3 = new ToDoNotice();
+//                        toDoNotice3.setTitle("【方针合同觉书已创建完成！】");
+//                        toDoNotice3.setInitiator(user_id);
+//                        toDoNotice3.setContent("委托决裁发起得印章申请已成功！");
+//                        toDoNotice3.setDataid(awa.getAward_id());
+//                        toDoNotice3.setUrl("/PFANS1025FormView");
+//                        toDoNotice3.setWorkflowurl("/PFANS1025FormView");
+//                        toDoNotice3.preInsert(tokenModel);
+//                        toDoNotice3.setOwner(rolelist.get(0).getUserid());
+//                        toDoNoticeService.save(toDoNotice3);
+//                    }
+//                }
+//            }
         } else {
             policy.preInsert(tokenModel);
             policy.setStatus(status);

@@ -159,25 +159,25 @@ public class AwardServiceImpl implements AwardService {
                     }
                 }
             }
-            else
-            {
-                //合同担当
-                List<MembersVo> rolelist = roleService.getMembers("5e7862618f43163084351135");
-                if (rolelist.size() > 0) {
-                    for (MembersVo rt : rolelist) {
-                        ToDoNotice toDoNotice3 = new ToDoNotice();
-                        toDoNotice3.setTitle("【" + contractnumber + "】决裁流程结束，请申请印章");
-                        toDoNotice3.setInitiator(award.getUser_id());
-                        toDoNotice3.setContent("流程结束，请申请印章");
-                        toDoNotice3.setDataid(contractnumber);
-                        toDoNotice3.setUrl("/PFANS1025View");
-                        toDoNotice3.setWorkflowurl("/PFANS1025View");
-                        toDoNotice3.preInsert(tokenModel);
-                        toDoNotice3.setOwner(rt.getUserid());
-                        toDoNoticeService.save(toDoNotice3);
-                    }
-                }
-            }
+//            else
+//            {
+//                //合同担当
+//                List<MembersVo> rolelist = roleService.getMembers("5e7862618f43163084351135");
+//                if (rolelist.size() > 0) {
+//                    for (MembersVo rt : rolelist) {
+//                        ToDoNotice toDoNotice3 = new ToDoNotice();
+//                        toDoNotice3.setTitle("【" + contractnumber + "】决裁流程结束，请申请印章");
+//                        toDoNotice3.setInitiator(award.getUser_id());
+//                        toDoNotice3.setContent("流程结束，请申请印章");
+//                        toDoNotice3.setDataid(contractnumber);
+//                        toDoNotice3.setUrl("/PFANS1025View");
+//                        toDoNotice3.setWorkflowurl("/PFANS1025View");
+//                        toDoNotice3.preInsert(tokenModel);
+//                        toDoNotice3.setOwner(rt.getUserid());
+//                        toDoNoticeService.save(toDoNotice3);
+//                    }
+//                }
+//            }
         }
         //add-ws-7/21-禅道任务341
         AwardDetail award2 = new AwardDetail();

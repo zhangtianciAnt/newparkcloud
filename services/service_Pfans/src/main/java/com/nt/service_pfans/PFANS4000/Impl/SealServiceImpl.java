@@ -222,19 +222,19 @@ public class SealServiceImpl implements SealService {
                             contractnumbercountMapper.updateByPrimaryKeySelective(countLi.get(0));
                         }
                         //外注代办
-                        List<MembersVo> rolelist = roleService.getMembers("5e78633d8f43163084351138");
-                        if (rolelist.size() > 0) {
-                            ToDoNotice toDoNotice3 = new ToDoNotice();
-                            toDoNotice3.setTitle("【" + countLi.get(0).getContractnumber() + "】发起得印章申请已成功");
-                            toDoNotice3.setInitiator(seal.getUserid());
-                            toDoNotice3.setContent("委托决裁发起得印章申请已成功！");
-                            toDoNotice3.setDataid(award.getAward_id());
-                            toDoNotice3.setUrl("/PFANS1025FormView");
-                            toDoNotice3.setWorkflowurl("/PFANS1025FormView");
-                            toDoNotice3.preInsert(tokenModel);
-                            toDoNotice3.setOwner(rolelist.get(0).getUserid());
-                            toDoNoticeService.save(toDoNotice3);
-                        }
+//                        List<MembersVo> rolelist = roleService.getMembers("5e78633d8f43163084351138");
+//                        if (rolelist.size() > 0) {
+//                            ToDoNotice toDoNotice3 = new ToDoNotice();
+//                            toDoNotice3.setTitle("【" + countLi.get(0).getContractnumber() + "】发起得印章申请已成功");
+//                            toDoNotice3.setInitiator(seal.getUserid());
+//                            toDoNotice3.setContent("委托决裁发起得印章申请已成功！");
+//                            toDoNotice3.setDataid(award.getAward_id());
+//                            toDoNotice3.setUrl("/PFANS1025FormView");
+//                            toDoNotice3.setWorkflowurl("/PFANS1025FormView");
+//                            toDoNotice3.preInsert(tokenModel);
+//                            toDoNotice3.setOwner(rolelist.get(0).getUserid());
+//                            toDoNoticeService.save(toDoNotice3);
+//                        }
                     } else if (bktype.equals("9")) {
 //                        book = "其他决裁";
                         Award award = awardMapper.selectByPrimaryKey(ls[i]);
