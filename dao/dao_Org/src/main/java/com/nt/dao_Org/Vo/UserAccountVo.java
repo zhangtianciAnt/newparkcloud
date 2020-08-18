@@ -1,6 +1,7 @@
 package com.nt.dao_Org.Vo;
 
 import cn.hutool.core.codec.Base64;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,7 +28,11 @@ public class UserAccountVo extends BaseModel {
     private String password;
 
     public void setPassword(String password) {
-        this.password = Base64.encode(password);
+        if(!StringUtils.isBase64Encode(password)){
+            this.password = Base64.encode(password);
+        }else{
+            this.password = password;
+        }
     }
 
     public void setNewpsw(String newpsw) {
