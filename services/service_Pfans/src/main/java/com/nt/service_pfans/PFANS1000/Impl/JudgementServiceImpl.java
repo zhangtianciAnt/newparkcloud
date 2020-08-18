@@ -4,8 +4,6 @@ import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.Judgementdetail;
 import com.nt.dao_Pfans.PFANS1000.Unusedevice;
 import com.nt.dao_Pfans.PFANS1000.Vo.JudgementVo;
-import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
-import com.nt.dao_Pfans.PFANS5000.ProjectContract;
 import com.nt.service_pfans.PFANS1000.JudgementService;
 import com.nt.service_pfans.PFANS1000.mapper.JudgementMapper;
 import com.nt.service_pfans.PFANS1000.mapper.JudgementdetailMapper;
@@ -26,7 +24,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional(rollbackFor=Exception.class)
+@Transactional(rollbackFor = Exception.class)
 public class JudgementServiceImpl implements JudgementService {
 
     @Autowired
@@ -39,7 +37,7 @@ public class JudgementServiceImpl implements JudgementService {
     private JudgementdetailMapper judgementdetailMapper;
 
     @Override
-    public List<Judgement> getJudgement(Judgement judgement ) {
+    public List<Judgement> getJudgement(Judgement judgement) {
         return judgementMapper.select(judgement);
     }
 
@@ -62,7 +60,7 @@ public class JudgementServiceImpl implements JudgementService {
 
         Judgement judgement = judgementMapper.selectByPrimaryKey(judgementid);
 
-        List<Judgement> judgementLoAntList = judgementMapper.judgementAnt(judgement.getJudgnumbers().substring(0,13));
+        List<Judgement> judgementLoAntList = judgementMapper.judgementAnt(judgement.getJudgnumbers().substring(0, 13));
 
         List<Unusedevice> unusedeviceList = unusedeviceMapper.select(unusedevice);
         unusedeviceList = unusedeviceList.stream().sorted(Comparator.comparing(Unusedevice::getRowindex)).collect(Collectors.toList());
@@ -83,7 +81,7 @@ public class JudgementServiceImpl implements JudgementService {
         Judgement judgement = new Judgement();
         BeanUtils.copyProperties(judgementVo.getJudgement(), judgement);
         judgement.preUpdate(tokenModel);
-        if(judgement.getStatus().equals("4") && judgement.getJudgnumbers().contains("_")){
+        if (judgement.getStatus().equals("4") && judgement.getJudgnumbers().contains("_")) {
 //            原决裁号
             String oldNumAnt = "";
 //            原决裁改为  _n
@@ -93,8 +91,8 @@ public class JudgementServiceImpl implements JudgementService {
             //对原决裁进行操作
             Judgement judgementAnt = judgementMapper.selectByPrimaryKey(judgementVo.getJudgement().getOldjudgementid());
             oldNumAnt = judgementAnt.getJudgnumbers();
-            for(Judgement jmet :judgementlist){
-                if((jmet.getJudgnumbers().substring(0,13)).equals(judgementAnt.getJudgnumbers())){
+            for (Judgement jmet : judgementlist) {
+                if ((jmet.getJudgnumbers().substring(0, 13)).equals(judgementAnt.getJudgnumbers())) {
                     intAnt++;
                 }
             }
@@ -104,16 +102,16 @@ public class JudgementServiceImpl implements JudgementService {
             //对tmp进行操作
             judgement.setJudgnumbers(oldNumAnt);
             judgementMapper.updateByPrimaryKeySelective(judgement);
-        }else{
+        } else {
             judgementMapper.updateByPrimaryKeySelective(judgement);
             String judgementid = judgement.getJudgementid();
             List<Unusedevice> unusedeviceList = judgementVo.getUnusedevice();
-            if(unusedeviceList != null){
+            if (unusedeviceList != null) {
                 Unusedevice unusedevice = new Unusedevice();
                 unusedevice.setJudgementid(judgementid);
                 unusedeviceMapper.delete(unusedevice);
                 int rowindex = 0;
-                for(Unusedevice unu : unusedeviceList){
+                for (Unusedevice unu : unusedeviceList) {
                     rowindex = rowindex + 1;
                     unu.preInsert(tokenModel);
                     unu.setUnusedeviceid(UUID.randomUUID().toString());
@@ -152,9 +150,9 @@ public class JudgementServiceImpl implements JudgementService {
             judgement.setJudgnumbers(oldNumAnt);
             judgementMapper.updateByPrimaryKeySelective(judgement);
             List<Judgementdetail> judgementdetailList = judgementVo.getJudgementdetail();
-            if(judgementdetailList != null){
+            if (judgementdetailList != null) {
                 int rowindex = 0;
-                for(Judgementdetail judge : judgementdetailList){
+                for (Judgementdetail judge : judgementdetailList) {
                     rowindex = rowindex + 1;
                     judge.preInsert(tokenModel);
                     judge.setJudgementdetail_id(UUID.randomUUID().toString());
@@ -205,71 +203,69 @@ public class JudgementServiceImpl implements JudgementService {
         Judgement judgement = new Judgement();
         List<Judgement> judgementlist = judgementMapper.selectAll();
         //补充决裁 ztc 0804
-        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(judgementVo.getJudgement().getSupplementary())) {
-            if(judgementVo.getJudgement().getSupplementary().equals("1")){
-                String judgementnumberAnt = judgementVo.getJudgement().getJudgnumbers() + "_" + "tmp";
-                BeanUtils.copyProperties(judgementVo.getJudgement(), judgement);
-                judgement.preInsert(tokenModel);
-                judgement.setJudgementid(judgementid);
-                judgement.setJudgnumbers(judgementnumberAnt);
-                judgement.setSupplementary("");
-                //原决裁
-                judgement.setOldjudgementid(judgementVo.getJudgement().getJudgementid());
-                judgementMapper.insertSelective(judgement);
-            }else{
-                //add-ws-根据当前年月日从001开始增加决裁编号
-                SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
-                Date date = new Date();
-                String year = sf1.format(date);
-                int number = 0;
-                String Numbers = "";
-                String no = "";
-                if(judgementlist.size()>0){
-                    for(Judgement judge :judgementlist){
-                        if(judge.getJudgnumbers()!="" && judge.getJudgnumbers()!=null){
-                            String checknumber = StringUtils.uncapitalize(StringUtils.substring(judge.getJudgnumbers(), 2,10));
-                            if(Integer.valueOf(year).equals(Integer.valueOf(checknumber))){
-                                number = number+1;
-                            }
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(judgementVo.getJudgement().getSupplementary()) && judgementVo.getJudgement().getSupplementary().equals("1")) {
+            String judgementnumberAnt = judgementVo.getJudgement().getJudgnumbers() + "_" + "tmp";
+            BeanUtils.copyProperties(judgementVo.getJudgement(), judgement);
+            judgement.preInsert(tokenModel);
+            judgement.setJudgementid(judgementid);
+            judgement.setJudgnumbers(judgementnumberAnt);
+            judgement.setSupplementary("");
+            //原决裁
+            judgement.setOldjudgementid(judgementVo.getJudgement().getJudgementid());
+            judgementMapper.insertSelective(judgement);
+        } else {
+            //add-ws-根据当前年月日从001开始增加决裁编号
+            SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
+            Date date = new Date();
+            String year = sf1.format(date);
+            int number = 0;
+            String Numbers = "";
+            String no = "";
+            if (judgementlist.size() > 0) {
+                for (Judgement judge : judgementlist) {
+                    if (judge.getJudgnumbers() != "" && judge.getJudgnumbers() != null) {
+                        String checknumber = StringUtils.uncapitalize(StringUtils.substring(judge.getJudgnumbers(), 2, 10));
+                        if (Integer.valueOf(year).equals(Integer.valueOf(checknumber))) {
+                            number = number + 1;
                         }
                     }
-                    if(number<=8){
-                        no="00"+(number + 1);
-                    }else{
-                        no="0"+(number + 1);
-                    }
-                }else{
-                    no = "001";
                 }
-                BeanUtils.copyProperties(judgementVo.getJudgement(), judgement);
-                if(judgement.getEquipment().equals("1")){
-                    Numbers = "WC"+year+ no;
-                }else{
-                    Numbers = "JC"+year+ no;
+                if (number <= 8) {
+                    no = "00" + (number + 1);
+                } else {
+                    no = "0" + (number + 1);
                 }
-                //add-ws-根据当前年月日从001开始增加决裁编号
-                judgement.preInsert(tokenModel);
-                judgement.setJudgementid(judgementid);
-                judgement.setJudgnumbers(Numbers);
+            } else {
+                no = "001";
+            }
+            BeanUtils.copyProperties(judgementVo.getJudgement(), judgement);
+            if (judgement.getEquipment().equals("1")) {
+                Numbers = "WC" + year + no;
+            } else {
+                Numbers = "JC" + year + no;
+            }
+            //add-ws-根据当前年月日从001开始增加决裁编号
+            judgement.preInsert(tokenModel);
+            judgement.setJudgementid(judgementid);
+            judgement.setJudgnumbers(Numbers);
 //        judgement.setEquipment("0");
-                judgementMapper.insertSelective(judgement);
-                List<Unusedevice> unusedeviceList = judgementVo.getUnusedevice();
-                if(unusedeviceList != null){
+            judgementMapper.insertSelective(judgement);
+            List<Unusedevice> unusedeviceList = judgementVo.getUnusedevice();
+            if (unusedeviceList != null) {
 //            judgement.setEquipment("1");
-                    int rowundex = 0;
-                    for(Unusedevice unu : unusedeviceList){
-                        rowundex = rowundex + 1;
-                        unu.preInsert(tokenModel);
-                        unu.setUnusedeviceid(UUID.randomUUID().toString());
-                        unu.setJudgementid(judgementid);
-                        unu.setRowindex(rowundex);
-                        unusedeviceMapper.insertSelective(unu);
-                    }
+                int rowundex = 0;
+                for (Unusedevice unu : unusedeviceList) {
+                    rowundex = rowundex + 1;
+                    unu.preInsert(tokenModel);
+                    unu.setUnusedeviceid(UUID.randomUUID().toString());
+                    unu.setJudgementid(judgementid);
+                    unu.setRowindex(rowundex);
+                    unusedeviceMapper.insertSelective(unu);
                 }
             }
         }
-
     }
+
 
     @Override
     public void createJudgementDetail(JudgementVo judgementVo, TokenModel tokenModel) throws Exception {
@@ -277,7 +273,7 @@ public class JudgementServiceImpl implements JudgementService {
         Judgement judgement = new Judgement();
         //add-ws-根据当前年月日从001开始增加决裁编号
         List<Judgement> judgementlist = judgementMapper.selectAll();
-        if(judgementVo.getJudgement().getSupplementary().equals("1")){
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(judgementVo.getJudgement().getSupplementary()) && judgementVo.getJudgement().getSupplementary().equals("1")) {
             String judgementnumberAnt = judgementVo.getJudgement().getJudgnumbers() + "_" + "tmp";
             BeanUtils.copyProperties(judgementVo.getJudgement(), judgement);
             judgement.preInsert(tokenModel);
@@ -287,9 +283,9 @@ public class JudgementServiceImpl implements JudgementService {
             judgement.setOldjudgementid(judgementVo.getJudgement().getJudgementid());
             judgementMapper.insertSelective(judgement);
             List<Judgementdetail> judgementdetailList = judgementVo.getJudgementdetail();
-            if(judgementdetailList != null){
+            if (judgementdetailList != null) {
                 int rowindex = 0;
-                for(Judgementdetail judge : judgementdetailList){
+                for (Judgementdetail judge : judgementdetailList) {
                     rowindex = rowindex + 1;
                     judge.preInsert(tokenModel);
                     judge.setJudgementdetail_id(UUID.randomUUID().toString());
@@ -298,7 +294,7 @@ public class JudgementServiceImpl implements JudgementService {
                     judgementdetailMapper.insertSelective(judge);
                 }
             }
-        }else {
+        } else {
             SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
             Date date = new Date();
             String year = sf1.format(date);
@@ -347,6 +343,6 @@ public class JudgementServiceImpl implements JudgementService {
 
     @Override
     public List<Judgement> getJudgementList(Judgement judgement, HttpServletRequest request) throws Exception {
-        return judgementMapper.select(judgement) ;
+        return judgementMapper.select(judgement);
     }
 }
