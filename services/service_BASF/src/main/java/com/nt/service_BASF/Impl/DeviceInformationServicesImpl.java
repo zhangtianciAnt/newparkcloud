@@ -9,6 +9,7 @@ import com.nt.service_BASF.mapper.ApplicationMapper;
 import com.nt.service_BASF.mapper.DeviceinformationMapper;
 import com.nt.service_BASF.mapper.MapBox_MapLevelMapper;
 import com.nt.utils.AuthConstants;
+import com.nt.utils.CowBUtils;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,9 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
 
     @Autowired
     private ApplicationMapper applicationMapper;
+
+    @Autowired
+    private CowBUtils cowBUtils;
 
     /**
      * @param deviceinformation
@@ -87,6 +91,19 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
             deviceinformation.preInsert(tokenModel);
             deviceinformation.setDeviceinformationid(UUID.randomUUID().toString());
             deviceinformationMapper.insert(deviceinformation);
+            // 如果设备是摄像头
+            if ("BC004004".equals(deviceinformation.getDevicetype())) {
+                // 获取摄像头 设备编号 作为h5s token
+                String token = deviceinformation.getDevrow();
+                // 获取摄像头ip 作为h5s url
+                String url = deviceinformation.getIp();
+                // 根据设备小类 判断摄像头品牌
+                String pp = deviceinformation.getDevicetypesmall();
+                // 根据摄像头品牌，设置摄像头用户名密码
+                String user = "";
+                String password = "";
+//                cowBUtils.insertH5sInfomation();
+            }
         }
     }
 
