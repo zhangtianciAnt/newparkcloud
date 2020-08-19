@@ -211,4 +211,11 @@ public class LoanApplication extends BaseModel {
     @Column(name = "PROCESSINGSTATUS")
     private String processingstatus;
     // add-ws-8/12-禅道任务446
+
+    //add_fjl_0819
+    //区分
+    @Column(name = "PUBLICRADIO")
+    private String publicradio;
+    //add_fjl_0819
+
 }
