@@ -43,7 +43,7 @@ public class Commandrecord extends BaseModel {
     //SIMT
     private String watchkeeperSimt;
     //所有车辆信息
-    private Carinfo carinfo;
+    private Object carinfo;
     //医疗
     private MedicalCare medicalCare;
     //scip
@@ -246,18 +246,18 @@ public class Commandrecord extends BaseModel {
     }
 
     //所有车辆信息
-    @Data
-    public static class Carinfo {
-        private Car car1;
-        private Car car2;
-        private Car car3;
-        private Car car4;
-        private Car car5;
-        private Car car6;
-        private Car car7;
-        private Car car8;
-        private Car car9;
-    }
+//    @Data
+//    public static class Carinfo {
+//        private Car car1;
+//        private Car car2;
+//        private Car car3;
+//        private Car car4;
+//        private Car car5;
+//        private Car car6;
+//        private Car car7;
+//        private Car car8;
+//        private Car car9;
+//    }
 
     //返回值
     @Data
