@@ -778,7 +778,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
                                             if (Ot.getOvertimetype().equals("PR001005")) {
                                                 //会社特别休日
-                                                overtimeHours = huisheshijiworkLength(time_start, time_end, lunchbreak_start, lunchbreak_end, PR);
+                                                overtimeHours = huisheshijiworkLength(workshift_start, closingtime_end, time_start, time_end, lunchbreak_start, lunchbreak_end, PR);
 
                                                 if (sdf.parse(time_start).getTime() == sdf.parse(time_end).getTime()) {
                                                     overtimeHours = "0";
@@ -2116,7 +2116,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
                                             if (Ot.getOvertimetype().equals("PR001005")) {
                                                 //会社特别休日
-                                                overtimeHours = huisheshijiworkLength(time_start, time_end, lunchbreak_start, lunchbreak_end, PR);
+                                                overtimeHours = huisheshijiworkLength(workshift_start, closingtime_end, time_start, time_end, lunchbreak_start, lunchbreak_end, PR);
 
                                                 if (sdf.parse(time_start).getTime() == sdf.parse(time_end).getTime()) {
                                                     overtimeHours = "0";
@@ -3311,9 +3311,17 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
     }
 
     //会社特别休日
-    public String huisheshijiworkLength(String time_start, String time_end, String lunchbreak_start, String lunchbreak_end, PunchcardRecord PR) throws Exception {
+    public String huisheshijiworkLength(String workshift_start, String closingtime_end, String time_start, String time_end, String lunchbreak_start, String lunchbreak_end, PunchcardRecord PR) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
         String shijiworkHours = "0";
+        //add_fjl_0819_会社特别休日的出勤时间判断 start
+        if (sdf.parse(time_start).getTime() < sdf.parse(workshift_start).getTime()) {
+            time_start = workshift_start;
+        }
+        if (sdf.parse(time_end).getTime() > sdf.parse(closingtime_end).getTime()) {
+            time_end = closingtime_end;
+        }
+        //add_fjl_0819_会社特别休日的出勤时间判断 end
         if (sdf.parse(time_end).getTime() <= sdf.parse(lunchbreak_start).getTime()) {
             long result1 = sdf.parse(time_end).getTime() - sdf.parse(time_start).getTime();
             shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000) - Double.valueOf(PR.getAbsenteeismam()));
@@ -3334,19 +3342,30 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
             Double result3 = Double.valueOf(result2) / 60 / 60 / 1000 - Double.valueOf(PR.getAbsenteeismam());
             Double result4 = Double.valueOf(result1) / 60 / 60 / 1000 - (Double.valueOf(PR.getWorktime()) - Double.valueOf(PR.getAbsenteeismam()));
-            //上午
-            if (result3 >= 4) {
-                shijiworkHours = String.valueOf(4);
+            //upd_fjl_0819_会社特别休日的出勤时间判断 start
+            if (result3 + result4 >= 8) {
+                shijiworkHours = String.valueOf(8);
             } else {
-                shijiworkHours = String.valueOf(0);
+                if (result3 >= 4 || result4 >= 4) {
+                    shijiworkHours = String.valueOf(4);
+                } else {
+                    shijiworkHours = String.valueOf(0);
+                }
             }
-
-            //下午
-            if (result4 >= 4) {
-                shijiworkHours = String.valueOf(4 + Double.valueOf(shijiworkHours));
-            } else {
-                shijiworkHours = String.valueOf(0 + Double.valueOf(shijiworkHours));
-            }
+//            //上午
+//            if (result3 >= 4) {
+//                shijiworkHours = String.valueOf(4);
+//            } else {
+//                shijiworkHours = String.valueOf(0);
+//            }
+//
+//            //下午
+//            if (result4 >= 4) {
+//                shijiworkHours = String.valueOf(4 + Double.valueOf(shijiworkHours));
+//            } else {
+//                shijiworkHours = String.valueOf(0 + Double.valueOf(shijiworkHours));
+//            }
+            //upd_fjl_0819_会社特别休日的出勤时间判断 end
 //
 //
 //            if(result3 + result4 >= 8)
