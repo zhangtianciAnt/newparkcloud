@@ -95,14 +95,32 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
             if ("BC004004".equals(deviceinformation.getDevicetype())) {
                 // 获取摄像头 设备编号 作为h5s token
                 String token = deviceinformation.getDevrow();
-                // 获取摄像头ip 作为h5s url
-                String url = deviceinformation.getIp();
+                // 获取摄像头ip 作为h5s url 需要encode
+                String url = CowBUtils.urlEncode(deviceinformation.getIp());
                 // 根据设备小类 判断摄像头品牌
                 String pp = deviceinformation.getDevicetypesmall();
                 // 根据摄像头品牌，设置摄像头用户名密码
                 String user = "";
                 String password = "";
-//                cowBUtils.insertH5sInfomation();
+                switch (pp) {
+                    case "BC048000":    // 海康
+                        user = "admin";
+                        password = "Hx37311378";
+                        break;
+                    case "BC048001":    // 安讯士
+                        user = "root";
+                        password = "root";
+                        break;
+                    case "BC048002":    // 派尔高
+                        user = "admin";
+                        password = "admin";
+                        break;
+                    case "BC048003":    // 大华
+                        break;
+                    case "BC048004":    // 博世
+                        break;
+                }
+                cowBUtils.insertH5sInfomation(token, user, password, url);
             }
         }
     }
