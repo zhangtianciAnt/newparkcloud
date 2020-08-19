@@ -29,7 +29,7 @@ public class MapBox_MapLevel extends BaseModel {
     private String id;
 
     /**
-     *级别 1厂区 2区域 3建筑和装置 4楼层
+     * 级别 1厂区 2区域 3建筑和装置 4楼层
      */
     private String level;
 
@@ -39,7 +39,7 @@ public class MapBox_MapLevel extends BaseModel {
     private String name;
 
     /**
-     *简称
+     * 简称
      */
     private String shortname;
 
@@ -49,22 +49,22 @@ public class MapBox_MapLevel extends BaseModel {
     private String parentid;
 
     /**
-     *备注
+     * 备注
      */
     private String remark;
 
     /**
-     *存放中心点坐标
+     * 存放中心点坐标
      */
     private String center;
 
     /**
-     *中心点缩放级别
+     * 中心点缩放级别
      */
     private String zoom;
 
     /**
-     *存放json
+     * 存放json
      */
     private String geojson;
 
@@ -77,5 +77,8 @@ public class MapBox_MapLevel extends BaseModel {
     private String colour;
     @Transient
     private List<MapBox_MapLevel> children;
+    private String devicecode;
 
+    @Transient
+    private List<Riskassessments> riskassessmentsList;
 }

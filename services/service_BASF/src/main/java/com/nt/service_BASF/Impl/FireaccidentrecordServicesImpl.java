@@ -22,10 +22,7 @@ import javax.xml.bind.DatatypeConverter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @ProjectName: BASF应急平台
@@ -134,6 +131,14 @@ public class FireaccidentrecordServicesImpl implements FireaccidentrecordService
         data.put("accidentCommands", accidentCommands);
         data.put("command", command);
         data.put("casualties", commandrecord.getCasualties().getNumber());
+
+        List<Object> carinfolist = new ArrayList<Object>();
+        Iterator<String> iterator = ((LinkedHashMap) commandrecord.getCarinfo()).keySet().iterator();
+        while (iterator.hasNext()){
+            carinfolist.add(((LinkedHashMap) commandrecord.getCarinfo()).get(iterator.next()));
+        }
+        data.put("carinfolist",carinfolist);
+
         String imgname = null;
         if (commandrecord.getGisimage() != null&& StringUtils.isNotEmpty(commandrecord.getGisimage())) {
             byte[] a = DatatypeConverter.parseBase64Binary(commandrecord.getGisimage().split(",")[1]);

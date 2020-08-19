@@ -2,7 +2,6 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
-//import com.nt.basf.subfactory.MainTask;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
 import com.nt.dao_BASF.Deviceinformation;
@@ -12,6 +11,8 @@ import com.nt.dao_BASF.VO.DeviceinformationVo;
 import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.FirealarmServices;
 import com.nt.service_BASF.MapBox_MapLevelServices;
+import com.nt.service_BASF.mapper.DeviceinformationMapper;
+import com.nt.service_BASF.mapper.FirealarmMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -27,6 +28,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+//import com.nt.basf.subfactory.MainTask;
 
 /**
  * @ProjectName: BASF应急平台
@@ -54,6 +57,12 @@ public class BASF10105Controller {
     private FirealarmServices firealarmServices;
     private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
 //    private MainTask mt = new MainTask(this);
+
+    @Autowired
+    private FirealarmMapper firealarmMapper;
+
+    @Autowired
+    private DeviceinformationMapper deviceinformationMapper;
 
     /**
      * @param request
@@ -151,6 +160,17 @@ public class BASF10105Controller {
             webSocketDeviceinfoVo.setDeviceinformationList(list);
             WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
         }
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/resetMapbox", method = {RequestMethod.GET})
+    public ApiResult resetMapbox(String firealarmid, HttpServletRequest request) throws Exception {
+        Firealarm firealarm = firealarmMapper.selectByPrimaryKey(firealarmid);
+        List<String> alarmMapidList = new ArrayList<>();
+        Deviceinformation deviceinformation = deviceinformationMapper.selectByPrimaryKey(firealarm.getDeviceinformationid());
+        alarmMapidList.add(deviceinformation.getMapid());
+        //更新mapbox_maplevel中的remark为1，并一直追设到对应的level2
+        mapBox_mapLevelServices.remarkSet(alarmMapidList, false, null);
         return ApiResult.success();
     }
 

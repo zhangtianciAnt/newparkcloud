@@ -88,7 +88,7 @@ ORDER BY
     <select id="getInsideVehicleType" resultType="com.nt.dao_BASF.VO.InsideVehicleTypeVo">
         select count(*) as cnt,vehicletype
         from vehicleinformation
-        where ifnull(outtime,'') = ''
+        where ifnull(outtime,'') = '' and TO_DAYS(CREATEON) = TO_DAYS(now())
         group by vehicletype
     </select>
 
