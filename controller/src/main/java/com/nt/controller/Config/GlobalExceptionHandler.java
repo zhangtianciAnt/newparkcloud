@@ -1,12 +1,8 @@
 package com.nt.controller.Config;
 
 
-
 import com.nt.controller.Start;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -26,7 +22,12 @@ public class GlobalExceptionHandler {
     public ApiResult defaultErrorHandler(HttpServletRequest req, Exception e) {
         log.error(e.getMessage());
         try {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.EXCEPTION_ERR_O1, RequestUtils.CurrentLocale(req)));
+            if (StringUtils.isEmpty(RequestUtils.CurrentLocale(req))) {
+                // TODO: 2020/8/20 需要加上h5s网络超时相关异常 
+                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.EXCEPTION_ERR_O1, "zh_CN"));
+            } else {
+                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.EXCEPTION_ERR_O1, RequestUtils.CurrentLocale(req)));
+            }
         } catch (Exception e1) {
             return ApiResult.fail();
         }

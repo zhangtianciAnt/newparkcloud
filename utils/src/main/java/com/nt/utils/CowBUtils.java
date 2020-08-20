@@ -112,16 +112,19 @@ public class CowBUtils {
         // String session = getH5sSession();
         // 请求参数
         HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("name", "RTSP");
         paramMap.put("token", token);
         paramMap.put("user", user);
         paramMap.put("password", password);
         paramMap.put("url", url);
-        //        paramMap.put("session", session);
+        paramMap.put("audio", "true");
+        // paramMap.put("session", "");
         JSONObject jsonObject = JSONObject.parseObject(HttpUtil.get(insertUrl, paramMap));
         if (jsonObject.get("bStatus").equals(true)) {
             strCode = jsonObject.get("strCode").toString();
         } else {
-            //
+            // TODO: 2020/8/20 插入失败异常 （如果摄像头编号重复 就会插入失败异常）
+            //  可以在保存设备的时候，添加设备编号不允许重复判断来解决
         }
         return strCode;
     }
@@ -131,11 +134,12 @@ public class CowBUtils {
         String delUrl = h5sUrl + "/api/v1/DelSrc";
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("token", token);
-        JSONObject jsonObject = JSONObject.parseObject(HttpUtil.get(delUrl, paramMap));
+        JSONObject jsonObject = JSONObject.parseObject(HttpUtil.get(delUrl, paramMap, 20000));
         if (jsonObject.get("bStatus").equals(true)) {
             strCode = jsonObject.get("strCode").toString();
         } else {
-            //
+            // TODO: 2020/8/20 删除失败异常 （如果摄像头编号在h5s conf里找不到，就回删除异常）
+            //  插入添加设备编号不允许重复判断，并且页面添加loading不允许重复提交后，应该可以保证不会出现conf里找不到对应token的情况
         }
         return strCode;
     }
@@ -150,4 +154,6 @@ public class CowBUtils {
     public static String urlEncode(String url) throws UnsupportedEncodingException {
         return URLEncoder.encode(url, "UTF-8");
     }
+
+
 }

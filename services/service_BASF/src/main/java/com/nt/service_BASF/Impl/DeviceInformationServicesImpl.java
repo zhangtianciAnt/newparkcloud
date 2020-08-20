@@ -10,7 +10,9 @@ import com.nt.service_BASF.mapper.DeviceinformationMapper;
 import com.nt.service_BASF.mapper.MapBox_MapLevelMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.CowBUtils;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.NotWritablePropertyException;
@@ -18,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.net.SocketTimeoutException;
 import java.util.*;
 
 /**
@@ -93,34 +97,11 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
             deviceinformationMapper.insert(deviceinformation);
             // 如果设备是摄像头
             if ("BC004004".equals(deviceinformation.getDevicetype())) {
-                // 获取摄像头 设备编号 作为h5s token
-                String token = deviceinformation.getDevrow();
-                // 获取摄像头ip 作为h5s url 需要encode
-                String url = CowBUtils.urlEncode(deviceinformation.getIp());
-                // 根据设备小类 判断摄像头品牌
-                String pp = deviceinformation.getDevicetypesmall();
-                // 根据摄像头品牌，设置摄像头用户名密码
-                String user = "";
-                String password = "";
-                switch (pp) {
-                    case "BC048000":    // 海康
-                        user = "admin";
-                        password = "Hx37311378";
-                        break;
-                    case "BC048001":    // 安讯士
-                        user = "root";
-                        password = "root";
-                        break;
-                    case "BC048002":    // 派尔高
-                        user = "admin";
-                        password = "admin";
-                        break;
-                    case "BC048003":    // 大华
-                        break;
-                    case "BC048004":    // 博世
-                        break;
+                String insertResult = insertH5sInfomation(deviceinformation);
+                // insertResult为空说明插入h5s失败，应该throw异常
+                if (StringUtils.isEmpty(insertResult)) {
+
                 }
-                cowBUtils.insertH5sInfomation(token, user, password, url);
             }
         }
     }
@@ -154,6 +135,37 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
         return deviceinformationMapper.selectByPrimaryKey(deviceid);
     }
 
+    private String insertH5sInfomation(Deviceinformation deviceinformation) {
+        // 获取摄像头 设备编号 作为h5s token
+        String token = deviceinformation.getDevrow();
+        // 获取摄像头ip 作为h5s url 需要encode
+        String url = deviceinformation.getIp();
+        // 根据设备小类 判断摄像头品牌
+        String pp = deviceinformation.getDevicetypesmall();
+        // 根据摄像头品牌，设置摄像头用户名密码
+        String user = "";
+        String password = "";
+        switch (pp) {
+            case "BC048000":    // 海康
+                user = "admin";
+                password = "Hx37311378";
+                break;
+            case "BC048001":    // 安讯士
+                user = "root";
+                password = "root";
+                break;
+            case "BC048002":    // 派尔高
+                user = "admin";
+                password = "admin";
+                break;
+            case "BC048003":    // 大华
+                break;
+            case "BC048004":    // 博世
+                break;
+        }
+        return cowBUtils.insertH5sInfomation(token, user, password, url);
+    }
+
     /**
      * @param deviceinformation
      * @param tokenModel
@@ -168,12 +180,17 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
     public void update(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception {
         deviceinformation.preUpdate(tokenModel);
         deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
-//        if ("BC004004".equals(deviceinformation.getDevicetype())) {
-//            // 如果是设备是 摄像头 根据设备编号 先删除h5s conf中的信息
-//            String token = deviceinformation.getDevrow();
-//            cowBUtils.delH5sInformation(token);
-//        }
-        // 再根据设备编号 创建h5s conf中的信息
+        if ("BC004004".equals(deviceinformation.getDevicetype())) {
+            // 如果是设备是 摄像头 根据设备编号 先删除h5s conf中的信息
+            String token = deviceinformation.getDevrow();
+            cowBUtils.delH5sInformation(token);
+            // 再根据设备编号 创建h5s conf中的信息
+            String insertResult = insertH5sInfomation(deviceinformation);
+            // insertResult为空说明插入h5s失败，应该throw异常
+            if (StringUtils.isEmpty(insertResult)) {
+
+            }
+        }
     }
 
     /**
