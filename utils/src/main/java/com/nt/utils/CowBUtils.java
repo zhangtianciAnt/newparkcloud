@@ -60,6 +60,8 @@ public class CowBUtils {
 
     /**
      * 获取h5s session
+     *
+     * @return 返回""说明获取session失败，有值说明成功
      */
     public String getH5sSession() {
         String session = "";
@@ -77,6 +79,24 @@ public class CowBUtils {
     }
 
     /**
+     * h5s session 保活，保活后只要h5s服务不挂，session就一直有效
+     *
+     * @param h5sSession h5s 登录后 session
+     * @return 返回""说明保活失败，Keepalive successfully保活成功
+     */
+    public String h5sKeepalive(String h5sSession) {
+        String result = "";
+        String url = h5sUrl + "/api/v1/Keepalive";
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("session", h5sSession);
+        JSONObject jsonObject = JSONObject.parseObject(HttpUtil.get(url, paramMap));
+        if (jsonObject.get("bStatus").equals(true)) {
+            result = jsonObject.get("strCode").toString();
+        }
+        return result;
+    }
+
+    /**
      * 向h5s conf 中添加摄像头信息
      *
      * @param token    h5s conf token 唯一值
@@ -89,17 +109,33 @@ public class CowBUtils {
         String strCode = "";
         String insertUrl = h5sUrl + "/api/v1/AddSrcRTSP";
         // 获取h5s session
-        String session = getH5sSession();
+        // String session = getH5sSession();
         // 请求参数
         HashMap<String, Object> paramMap = new HashMap<>();
         paramMap.put("token", token);
         paramMap.put("user", user);
         paramMap.put("password", password);
         paramMap.put("url", url);
-        paramMap.put("session", session);
+        //        paramMap.put("session", session);
         JSONObject jsonObject = JSONObject.parseObject(HttpUtil.get(insertUrl, paramMap));
         if (jsonObject.get("bStatus").equals(true)) {
             strCode = jsonObject.get("strCode").toString();
+        } else {
+            //
+        }
+        return strCode;
+    }
+
+    public String delH5sInformation(String token) {
+        String strCode = "";
+        String delUrl = h5sUrl + "/api/v1/DelSrc";
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("token", token);
+        JSONObject jsonObject = JSONObject.parseObject(HttpUtil.get(delUrl, paramMap));
+        if (jsonObject.get("bStatus").equals(true)) {
+            strCode = jsonObject.get("strCode").toString();
+        } else {
+            //
         }
         return strCode;
     }

@@ -168,6 +168,12 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
     public void update(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception {
         deviceinformation.preUpdate(tokenModel);
         deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
+//        if ("BC004004".equals(deviceinformation.getDevicetype())) {
+//            // 如果是设备是 摄像头 根据设备编号 先删除h5s conf中的信息
+//            String token = deviceinformation.getDevrow();
+//            cowBUtils.delH5sInformation(token);
+//        }
+        // 再根据设备编号 创建h5s conf中的信息
     }
 
     /**
