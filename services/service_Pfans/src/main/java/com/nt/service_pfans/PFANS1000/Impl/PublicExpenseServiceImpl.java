@@ -866,8 +866,17 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         //add-ws-7/20-禅道任务342
         String status = publicExpense.getStatus();
         String judgement = publicExpense.getJudgement();
+        String processingstatus = publicExpense.getProcessingstatus();
         //add-ws-7/20-禅道任务342
+        //upd-8/20-ws-禅道468任务
+        Date modeon = publicExpense.getModifyon();
+        //upd-8/20-ws-禅道468任务
         publicExpense.preUpdate(tokenModel);
+        //upd-8/20-ws-禅道468任务
+        if(status.equals("4")&&processingstatus.equals("1")){
+            publicExpense.setModifyon(modeon);
+        }
+        //upd-8/20-ws-禅道468任务
         publicExpenseMapper.updateByPrimaryKey(publicExpense);
 
         if(publicExpense.getStatus().equals("4")){

@@ -748,10 +748,22 @@ public class EvectionServiceImpl implements EvectionService {
 
     @Override
     public void updateEvectionVo(EvectionVo evectionVo, TokenModel tokenModel) throws Exception {
+
         Evection evection = new Evection();
         BeanUtils.copyProperties(evectionVo.getEvection(), evection);
+        //upd-8/20-ws-禅道468任务
+        Date modeon = evection.getModifyon();
+        String status = evection.getStatus();
+        String processingstatus = evection.getProcessingstatus();
+        //upd-8/20-ws-禅道468任务
         evection.preUpdate(tokenModel);
+        //upd-8/20-ws-禅道468任务
+        if(status.equals("4")&&processingstatus.equals("1")){
+            evection.setModifyon(modeon);
+        }
+        //upd-8/20-ws-禅道468任务
         evectionMapper.updateByPrimaryKey(evection);
+
         String evectionid = evection.getEvectionid();
         String invoiceNo = evection.getInvoiceno();
         TrafficDetails traffic = new TrafficDetails();

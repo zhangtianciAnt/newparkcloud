@@ -11,6 +11,7 @@ import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,8 +82,18 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 
     @Override
     public void updateLoanApplication(LoanApplication loanapplication, TokenModel tokenModel) throws Exception {
-        loanapplication.preUpdate(tokenModel);
-        loanapplicationMapper.updateByPrimaryKey(loanapplication);
+     //upd-8/20-ws-禅道468任务
+        LoanApplication loanapp = new LoanApplication();
+        Date modeon = loanapplication.getModifyon();
+        String status = loanapplication.getStatus();
+        String processingstatus = loanapplication.getProcessingstatus();
+        BeanUtils.copyProperties(loanapplication, loanapp);
+        loanapp.preUpdate(tokenModel);
+        if(status.equals("4")&&processingstatus.equals("1")){
+            loanapp.setModifyon(modeon);
+        }
+        loanapplicationMapper.updateByPrimaryKey(loanapp);
+        //upd-8/20-ws-禅道468任务
     }
 
     public Float aFloat(Float a) {
