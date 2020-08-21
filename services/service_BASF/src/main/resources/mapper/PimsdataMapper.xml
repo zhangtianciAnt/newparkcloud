@@ -7,15 +7,52 @@
          -->
         <id column="pimsid" property="pimsid" jdbcType="VARCHAR"/>
         <result column="devicecode" property="devicecode" jdbcType="VARCHAR"/>
-        <result column="monitoringpoint" property="monitoringpoint" jdbcType="VARCHAR"/>
-        <result column="pimsdata" property="pimsdata" jdbcType="DECIMAL"/>
-        <result column="type" property="type" jdbcType="VARCHAR"/>
-        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
-        <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
-        <result column="CREATEBY" property="createby" jdbcType="VARCHAR"/>
-        <result column="MODIFYON" property="modifyon" jdbcType="TIMESTAMP"/>
-        <result column="MODIFYBY" property="modifyby" jdbcType="VARCHAR"/>
-        <result column="Owner" property="owner" jdbcType="VARCHAR"/>
-        <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
+        <collection property="rows" ofType="com.nt.dao_BASF.VO.PimsdataVo">
+            <result column="monitoringpoint" property="monitoringpoint" jdbcType="VARCHAR"/>
+            <result column="pimsdata" property="pimsdata" jdbcType="DECIMAL"/>
+            <result column="type" property="type" jdbcType="VARCHAR"/>
+            <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
+        </collection>
     </resultMap>
+    <select id="getAllPimsInfo" resultMap="BaseResultMap">
+        SELECT
+        dcode.pimsid,
+        dcode.VALUE1 devicecode,
+        detail.monitoringpoint monitoringpoint,
+        detail.pimsdata pimsdata,
+        HOUR(detail.CREATEON) CREATEON,
+        detail.type type
+        FROM
+        (
+        SELECT
+        MAX(pd.pimsid) pimsid,
+        MAX( dc.VALUE1 ) VALUE1,
+        pd.devicecode
+        FROM
+        pimsdata pd
+        LEFT JOIN dictionary dc ON pd.devicecode = dc.`CODE`
+        GROUP BY
+        pd.devicecode
+        ) dcode
+        LEFT JOIN (
+        SELECT
+        devicecode,
+        monitoringpoint,
+        SUM( pimsdata ) pimsdata,
+        MAX( CREATEON ) CREATEON,
+        MAX( type ) type
+        FROM
+        pimsdata
+        WHERE
+        TO_DAYS( CREATEON ) = TO_DAYS(
+        NOW()) - 1
+        AND type = #{type}
+        GROUP BY
+        devicecode,
+        monitoringpoint,
+        HOUR ( CREATEON )
+        ) detail ON dcode.devicecode = detail.devicecode
+        WHERE detail.monitoringpoint IS NOT NULL
+        ORDER BY HOUR(detail.CREATEON)
+    </select>
 </mapper>
