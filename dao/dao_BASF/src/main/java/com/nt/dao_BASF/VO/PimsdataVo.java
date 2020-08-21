@@ -1,32 +1,22 @@
-package com.nt.dao_BASF;
+package com.nt.dao_BASF.VO;
 
-import com.nt.dao_BASF.VO.PimsdataVo;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "pimsdata")
-public class Pimsdata extends BaseModel {
-
-    @Id
-    private String pimsid;
-
-    /*
-     * 所属装置code
-     */
-
-    private String devicecode;
-
+public class PimsdataVo{
     /*
      * 监控点
      */
@@ -43,8 +33,9 @@ public class Pimsdata extends BaseModel {
      */
     private String type;
 
-
-    @Transient
-    private List<PimsdataVo> rows;
+    /*
+     *  统计小时
+     */
+    private String createon;
 
 }

@@ -18,4 +18,7 @@ public interface PimsdataServices {
 
     // 导入PIMS系统数据
     void insert(List<Pimsdata> pimsdata) throws Exception;
+
+    //获取大屏环境相关信息
+    List<Pimsdata> getAllPimsInfo(String type) throws Exception;
 }

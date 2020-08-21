@@ -51,4 +51,16 @@ public class PimadataServicesImpl implements PimsdataServices {
             pimsdataMapper.insert(temp);
         }
     }
+
+    /**
+     * @Description:获取大屏环境相关信息
+     * @Param: []
+     * @return: java.util.List<com.nt.dao_BASF.Pimsdata>
+     * @Author: Mr.LXX
+     * @Date: 2020/8/19
+     */
+    @Override
+    public List<Pimsdata> getAllPimsInfo(String type) throws Exception {
+        return pimsdataMapper.getAllPimsInfo(type);
+    }
 }

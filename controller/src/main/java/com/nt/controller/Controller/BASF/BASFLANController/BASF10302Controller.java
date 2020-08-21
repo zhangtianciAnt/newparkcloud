@@ -49,4 +49,16 @@ public class BASF10302Controller {
         pimsdataServices.insert(pimsdata);
         return ApiResult.success();
     }
+
+    /**
+     * @Description:获取大屏环境相关信息
+     * @Param: [request]
+     * @return: com.nt.utils.ApiResult
+     * @Author: Mr.LXX
+     * @Date: 2020/8/19
+     */
+    @RequestMapping(value = "/getAllPimsInfo",method = {RequestMethod.GET})
+    public ApiResult getAllPimsInfo(String type,HttpServletRequest request) throws Exception {
+        return ApiResult.success(pimsdataServices.getAllPimsInfo(type));
+    }
 }
