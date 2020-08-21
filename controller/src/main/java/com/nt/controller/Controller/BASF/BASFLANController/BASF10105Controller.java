@@ -81,84 +81,92 @@ public class BASF10105Controller {
 
     @RequestMapping(value = "/linkagelist", method = {RequestMethod.POST})
     public ApiResult linkagelist(@RequestBody List<ServerInfo> serverinfolist, HttpServletRequest request) throws Exception {
-        //serverinfolist是机柜传来的报警信息列表
-        if (serverinfolist.size() > 0) {
-//            TokenModel tokenModel = tokenService.getToken(request);
-            //存储需要更改remark的报警设备的Mapid
-            List<String> alarmMapidList = new ArrayList<>();
-            //存储发送到websocket中的信息
-            List<DeviceinformationVo> list = new ArrayList<>();
-
-            for (int i = 0; i < serverinfolist.size(); i++) {
-
-                //根据设备总厂/分厂名称、回路号/寄存器地址、设备地址/寄存器位查询唯一对应设备
-                ServerInfo serverinfo = serverinfolist.get(i);
-                Deviceinformation deviceinformation = new Deviceinformation();
-                deviceinformation.setFactoryname(serverinfo.getFactoryname());
-                deviceinformation.setDevline(serverinfo.getDevline());
-                deviceinformation.setDevrow(serverinfo.getDevrow());
-                List<Deviceinformation> linkagelist = deviceinFormationServices.list(deviceinformation);
-
-                //添加需要更改remark的报警设备的Mapid
-                if (linkagelist.size() == 1) {
-                    alarmMapidList.add(linkagelist.get(0).getMapid());
-                }
-
-                //创建消防报警单
-                if (linkagelist.size() == 1) {
-                    Firealarm firealarm = new Firealarm();
-                    String yyMMddHHmmss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()).toString();
-                    firealarm.setDeviceinformationid(linkagelist.get(0).getDeviceinformationid());
-                    firealarm.setAlarmpeo("系统管理员");
-                    firealarm.setAlarmtimes(yyMMddHHmmss);
-                    firealarm.setIndevice(linkagelist.get(0).getDevice());
-                    String accunit = "";
-                    String speloc = "";
-                    String[] lastlist = linkagelist.get(0).getDetailedlocation().split("/");
-                    if (lastlist.length > 3) {
-                        accunit = lastlist[0] + "/" + lastlist[1];
-                        speloc = lastlist[2] + "/" + lastlist[3];
-                        firealarm.setAccunit(accunit);
-                        firealarm.setSpeloc(speloc);
-                    } else if (lastlist.length > 2) {
-                        accunit = lastlist[0] + "/" + lastlist[1];
-                        speloc = lastlist[2];
-                        firealarm.setAccunit(accunit);
-                        firealarm.setSpeloc(speloc);
-                    } else {
-                        firealarm.setSpeloc(linkagelist.get(0).getDetailedlocation());
-                    }
-                    //firealarm.setSpeloc(linkagelist.get(0).getDetailedlocation());
-                    firealarm.setCompletesta("0");
-                    firealarm.setMisinformation("0");
-                    String firealarmuuid = firealarmServices.insert(firealarm, null);
-                }
-            }
-
-            //获取并立即推送非误报且未完成的消防报警单
-            Firealarm firealarm = new Firealarm();
-            firealarm.setCompletesta("0");
-            firealarm.setMisinformation("0");
-            List<Firealarm> firealarms = firealarmServices.list(firealarm);
-            for (Firealarm f : firealarms) {
-                if (StringUtils.isNotEmpty(f.getDeviceinformationid()) && StringUtils.isNotEmpty(f.getFirealarmid())) {
-                    DeviceinformationVo linkagelistVo = new DeviceinformationVo();
-                    linkagelistVo.setFirealarmuuid(f.getFirealarmid());
-                    if (deviceinFormationServices.one(f.getDeviceinformationid()) != null) {
-                        linkagelistVo.setDeviceinformation(deviceinFormationServices.one(f.getDeviceinformationid()));
-                    } else
-                        continue;
-                    list.add(linkagelistVo);
-                }
-            }
-            webSocketDeviceinfoVo.setTopfirealarmList(firealarms);
-
-            //更新mapbox_maplevel中的remark为1，并一直追设到对应的level2
-            mapBox_mapLevelServices.remarkSet(alarmMapidList, true, null);
-
-            // 推送报警设备信息
-            webSocketDeviceinfoVo.setDeviceinformationList(list);
+        if ("ElectricShield".equals(serverinfolist.get(0).getFactoryname())) {
+            // 电子围栏报警
+            // 根据回路号，找到设备，把设备推送回前端
+            List<Deviceinformation> deviceinformations = deviceinformationMapper.selectElectricShield(serverinfolist);
+            webSocketDeviceinfoVo.setElectricShield(deviceinformations);
             WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
+        } else {
+            //serverinfolist是机柜传来的报警信息列表
+            if (serverinfolist.size() > 0) {
+//            TokenModel tokenModel = tokenService.getToken(request);
+                //存储需要更改remark的报警设备的Mapid
+                List<String> alarmMapidList = new ArrayList<>();
+                //存储发送到websocket中的信息
+                List<DeviceinformationVo> list = new ArrayList<>();
+
+                for (int i = 0; i < serverinfolist.size(); i++) {
+
+                    //根据设备总厂/分厂名称、回路号/寄存器地址、设备地址/寄存器位查询唯一对应设备
+                    ServerInfo serverinfo = serverinfolist.get(i);
+                    Deviceinformation deviceinformation = new Deviceinformation();
+                    deviceinformation.setFactoryname(serverinfo.getFactoryname());
+                    deviceinformation.setDevline(serverinfo.getDevline());
+                    deviceinformation.setDevrow(serverinfo.getDevrow());
+                    List<Deviceinformation> linkagelist = deviceinFormationServices.list(deviceinformation);
+
+                    //添加需要更改remark的报警设备的Mapid
+                    if (linkagelist.size() == 1) {
+                        alarmMapidList.add(linkagelist.get(0).getMapid());
+                    }
+
+                    //创建消防报警单
+                    if (linkagelist.size() == 1) {
+                        Firealarm firealarm = new Firealarm();
+                        String yyMMddHHmmss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()).toString();
+                        firealarm.setDeviceinformationid(linkagelist.get(0).getDeviceinformationid());
+                        firealarm.setAlarmpeo("系统管理员");
+                        firealarm.setAlarmtimes(yyMMddHHmmss);
+                        firealarm.setIndevice(linkagelist.get(0).getDevice());
+                        String accunit = "";
+                        String speloc = "";
+                        String[] lastlist = linkagelist.get(0).getDetailedlocation().split("/");
+                        if (lastlist.length > 3) {
+                            accunit = lastlist[0] + "/" + lastlist[1];
+                            speloc = lastlist[2] + "/" + lastlist[3];
+                            firealarm.setAccunit(accunit);
+                            firealarm.setSpeloc(speloc);
+                        } else if (lastlist.length > 2) {
+                            accunit = lastlist[0] + "/" + lastlist[1];
+                            speloc = lastlist[2];
+                            firealarm.setAccunit(accunit);
+                            firealarm.setSpeloc(speloc);
+                        } else {
+                            firealarm.setSpeloc(linkagelist.get(0).getDetailedlocation());
+                        }
+                        //firealarm.setSpeloc(linkagelist.get(0).getDetailedlocation());
+                        firealarm.setCompletesta("0");
+                        firealarm.setMisinformation("0");
+                        String firealarmuuid = firealarmServices.insert(firealarm, null);
+                    }
+                }
+
+                //获取并立即推送非误报且未完成的消防报警单
+                Firealarm firealarm = new Firealarm();
+                firealarm.setCompletesta("0");
+                firealarm.setMisinformation("0");
+                List<Firealarm> firealarms = firealarmServices.list(firealarm);
+                for (Firealarm f : firealarms) {
+                    if (StringUtils.isNotEmpty(f.getDeviceinformationid()) && StringUtils.isNotEmpty(f.getFirealarmid())) {
+                        DeviceinformationVo linkagelistVo = new DeviceinformationVo();
+                        linkagelistVo.setFirealarmuuid(f.getFirealarmid());
+                        if (deviceinFormationServices.one(f.getDeviceinformationid()) != null) {
+                            linkagelistVo.setDeviceinformation(deviceinFormationServices.one(f.getDeviceinformationid()));
+                        } else
+                            continue;
+                        list.add(linkagelistVo);
+                    }
+                }
+                webSocketDeviceinfoVo.setTopfirealarmList(firealarms);
+
+                //更新mapbox_maplevel中的remark为1，并一直追设到对应的level2
+                mapBox_mapLevelServices.remarkSet(alarmMapidList, true, null);
+
+                // 推送报警设备信息
+                webSocketDeviceinfoVo.setDeviceinformationList(list);
+                WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
+            }
         }
         return ApiResult.success();
     }
