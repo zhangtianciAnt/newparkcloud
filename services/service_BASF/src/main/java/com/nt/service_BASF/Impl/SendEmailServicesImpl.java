@@ -6,12 +6,11 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeUtility;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Properties;
 
@@ -45,7 +44,14 @@ public class SendEmailServicesImpl implements SendEmailServices {
             properties.put("mail.smtp.starrttls.enable", "true");
             //创建会话
 //            VerifyEmail verifyEmail = new VerifyEmail(emailEntity.getUserName(), emailEntity.getPassword());
-            Session mailSession = Session.getInstance(properties, null);
+            Authenticator authenticator = new Authenticator() {
+                @Override
+                public PasswordAuthentication getPasswordAuthentication() {
+                    //填写自己的163邮箱的登录帐号和授权密码，授权密码的获取，在后面会进行讲解。
+                    return new PasswordAuthentication("bachfirebrigade@163.com","ADOSDBRZTJGJMGNJ");
+                }
+            };
+            Session mailSession = Session.getInstance(properties, authenticator);
             mailSession.setDebug(true);
             //创建信息对象
             Message message = new MimeMessage(mailSession);
@@ -55,7 +61,8 @@ public class SendEmailServicesImpl implements SendEmailServices {
             message.setFrom(from);
             //设置邮件的接收者
             message.setRecipients(MimeMessage.RecipientType.TO, to);
-            message.setSubject(emailEntity.getSubject());
+            String subject = MimeUtility.encodeWord(emailEntity.getSubject(), "UTF-8", "Q");
+            message.setSubject(subject);
             //设置邮件发送日期
             message.setSentDate(new Date());
             //设置邮件内容
@@ -66,7 +73,7 @@ public class SendEmailServicesImpl implements SendEmailServices {
             transport.connect(emailEntity.getHost(), emailEntity.getUserName(), emailEntity.getPassword());
             transport.sendMessage(message, message.getAllRecipients());
             return true;
-        } catch (MessagingException e) {
+        } catch (MessagingException | UnsupportedEncodingException e) {
             e.printStackTrace();
             return false;
         }
