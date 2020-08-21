@@ -27,6 +27,8 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/quotations")
@@ -111,9 +113,9 @@ public class AOCHUAN3001Controller {
             i += 1;
             en.setIndex(i);
             en.setProducten(quotations.getProducten());
-             amounts = new BigDecimal(en.getCounts() == null ? "0" : en.getCounts()).multiply(new BigDecimal(en.getQuotedprice() == null ? "0" : en.getQuotedprice())).add(amounts);
+            // amounts = new BigDecimal(en.getCounts() == null ? "0" : getNumber(en.getCounts())).multiply(new BigDecimal(en.getQuotedprice() == null ? "0" : en.getQuotedprice())).add(amounts);
         }
-        String amount = amounts.toString();
+       // String amount = amounts.toString();
         HackLoopTableRenderPolicy policy = new HackLoopTableRenderPolicy();
         Configure config = Configure.newBuilder()
                 .bind("enquiry", policy).build();
@@ -126,14 +128,16 @@ public class AOCHUAN3001Controller {
                     put("inquirydate",inquirydate);
                     put("quotationsno",quotationsno);
                     put("account",account);
-                    put("amount",amount);
+                   // put("amount",amount);
                     put("others",others);
                 }}
         );
         ServletOutputStream out = response.getOutputStream();
-        template.writeToFile("home/Quotation1.docx");
+      template.writeToFile("/home/Quotation1.docx");
+       // template.writeToFile("E:\\Quotation1.docx");
         Document document = new Document();
-        document.loadFromFile("home/Quotation1.docx");
+     document.loadFromFile("/home/Quotation1.docx");
+      // document.loadFromFile("E:\\Quotation1.docx");
         document.saveToStream(out, FileFormat.PDF);
         template.close();
 
@@ -150,5 +154,12 @@ public class AOCHUAN3001Controller {
     public void getexport(@RequestBody List<Quotations> quotationsList, HttpServletResponse response) throws Exception {
         quotationsService.setExport(response , quotationsList);
 //        return ApiResult.success();
+    }
+
+    private String getNumber(String num){
+        Pattern pattern = Pattern.compile("[^0-9]");
+        Matcher matcher = pattern.matcher(num);
+        String all = matcher.replaceAll("");
+        return  all;
     }
 }

@@ -39,18 +39,25 @@
     </select>
 
     <select id="getVacation"  resultType="com.nt.dao_AOCHUAN.AOCHUAN6000.Vo.LeaveDaysVo">
-            select names,thingleave,sickthing,compensatory,marriage,annual,maternity,funeral
-            from (select
-            distinct v.APPLICANTERID names,
-            typ1.res thingleave,
-            typ2.res sickthing,
-            typ3.res compensatory,
-            typ4.res marriage,
-            typ5.res annual,
-            typ6.res maternity,
-            typ7.res funeral
-            from vacation v
-            left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001001' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ1
+            select names,
+	 ifnull(thingleave,0) as thingleave,
+	 ifnull(sickthing,0) as sickthing,
+	 ifnull(compensatory,0) as compensatory,
+	 ifnull(marriage,0) as marriage,
+	 ifnull(annual,0) as annual,
+	 ifnull(maternity,0) as maternity,
+	 ifnull(funeral,0) as funeral
+	from (select
+	distinct v.APPLICANTERID names,
+	typ1.res thingleave,
+	typ2.res sickthing,
+	typ3.res compensatory,
+	typ4.res marriage,
+	typ5.res annual,
+	typ6.res maternity,
+	typ7.res funeral
+	from vacation v
+	left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001001' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ1
             on typ1.APPLICANTERID = v.APPLICANTERID
             left join (select APPLICANTERID, APPLICATIONTYPE,SUM(SUMTIM) res from vacation where APPLICATIONTYPE = 'PJ001002' and `STATUS` = '4' GROUP BY APPLICANTERID, APPLICATIONTYPE) typ2
             on typ2.APPLICANTERID = v.APPLICANTERID

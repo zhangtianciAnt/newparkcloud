@@ -87,8 +87,14 @@ public class QuotationsServiceImpl implements QuotationsService {
         List<Enquiry> enquiries = enquiryMapper.select(enquiry);
         for (Enquiry _enquiry:
         enquiries) {
-         String[] document = _enquiry.getDoc().length() > 0 ? _enquiry.getDoc().split(","):new String[0];
-         _enquiry.setDocument(document);
+            if(_enquiry.getDoc() == null){
+                String[] document = new String[0];
+                _enquiry.setDocument(document);
+            }else{
+                String[] document = _enquiry.getDoc().length() > 0 ? _enquiry.getDoc().split(","):new String[0];
+                _enquiry.setDocument(document);
+            }
+
         }
         quotations.setEnquiry(enquiries);
         return quotations;
@@ -321,19 +327,21 @@ public class QuotationsServiceImpl implements QuotationsService {
     }
 
     private void insertEnquiry(List<Enquiry> enquiryList,String quotationsId){
-        Enquiry enquiry = new Enquiry();
-        enquiry.setQuotations_id(quotationsId);
-        enquiryMapper.delete(enquiry);
-         if(enquiryList!= null && enquiryList.size() > 0){
-             for (Enquiry _enquiry:
-             enquiryList) {
-                 _enquiry.setEnquiry_id(UUID.randomUUID().toString());
-                 _enquiry.setQuotations_id(quotationsId);
-             String document = _enquiry.getDocument().length > 0 ? StringUtils.join(_enquiry.getDocument()) : "";
-             _enquiry.setDoc(document);
-             }
-             enquiryMapper.insertEnquiryList(enquiryList);
-         }
+        if(StringUtils.isNotEmpty(quotationsId)){
+            Enquiry enquiry = new Enquiry();
+            enquiry.setQuotations_id(quotationsId);
+            enquiryMapper.delete(enquiry);
+            if(enquiryList!= null && enquiryList.size() > 0){
+                for (Enquiry _enquiry:
+                        enquiryList) {
+                    _enquiry.setEnquiry_id(UUID.randomUUID().toString());
+                    _enquiry.setQuotations_id(quotationsId);
+                    String document = _enquiry.getDocument().length > 0 ? StringUtils.join(_enquiry.getDocument(),",") : "";
+                    _enquiry.setDoc(document);
+                }
+                enquiryMapper.insertEnquiryList(enquiryList);
+            }
+        }
     }
 
     private MessageHeaders createHeaders(String sessionId) {
