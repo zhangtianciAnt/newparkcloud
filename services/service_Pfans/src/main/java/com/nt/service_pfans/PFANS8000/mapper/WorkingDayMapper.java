@@ -23,4 +23,8 @@ public interface WorkingDayMapper extends MyMapper<WorkingDay> {
     //ccm 1019 计算一个月出勤多少小时
     List<WorkingDay> getBymonth(@Param("startDate") String startDate,@Param("endDate") String endDate, @Param("year") String year);
     //ccm 1019 计算一个月出勤多少小时
+
+    //gbb 1022 获取条件时间段内的工作日
+    List<WorkingDay> getWorkingday(@Param("startDate") String startDate,@Param("endDate") String endDate);
+    //gbb 1022 获取条件时间段内的工作日
 }

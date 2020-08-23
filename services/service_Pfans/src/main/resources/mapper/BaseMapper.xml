@@ -37,13 +37,9 @@
         SELECT USER_ID,'3' type
         FROM abnormal
         where
-        (ERROR_TYPE = 'PR013013')
-        and (abnormal.occurrence_date &lt;= NOW()
-        and abnormal.FINISHED_DATE &gt;= NOW()
-        or (YEAR(abnormal.occurrence_date) = YEAR(NOW())
-        and MONTH(abnormal.occurrence_date) = MONTH(NOW()))
-        or (YEAR(abnormal.FINISHED_DATE) = YEAR(NOW())
-        and MONTH(abnormal.FINISHED_DATE) = MONTH(NOW())))
+        ERROR_TYPE = 'PR013013'
+        and DATE_FORMAT(abnormal.occurrence_date,'%Y%m') &lt;= DATE_FORMAT( DATE_SUB(NOW(), interval 1 MONTH),'%Y%m')
+        and DATE_FORMAT(abnormal.finished_date,'%Y%m') >= DATE_FORMAT( DATE_SUB(NOW(), interval 1 MONTH),'%Y%m')
         UNION ALL
         SELECT USER_ID,'4' type
         FROM retire

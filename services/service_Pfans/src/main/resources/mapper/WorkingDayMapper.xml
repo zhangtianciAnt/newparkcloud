@@ -44,4 +44,12 @@
         AND  date_format( #{endDate}, '%Y-%m-%d')
         AND STATUS='0'
     </select>
+
+    <select id="getWorkingday" resultType="com.nt.dao_Pfans.PFANS8000.WorkingDay">
+        SELECT * FROM workingday
+        WHERE  WORKINGDATE BETWEEN date_format( #{startDate}, '%Y-%m-%d')
+        AND  date_format( #{endDate}, '%Y-%m-%d')
+        AND STATUS='0'
+    </select>
+
 </mapper>
