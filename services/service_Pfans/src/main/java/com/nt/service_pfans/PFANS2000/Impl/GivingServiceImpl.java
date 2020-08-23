@@ -2097,6 +2097,9 @@ public class GivingServiceImpl implements GivingService {
         int lastDay = thisMonthDate.getActualMaximum(Calendar.DAY_OF_MONTH);
         long mouthStart = sfChina.parse((thisMonthDate.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(thisMonthDate.getTime())) + "-01")).getTime();
         long mouthEnd = sfChina.parse((thisMonthDate.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(thisMonthDate.getTime())) + "-" + lastDay)).getTime();
+        //add_fjl_0923  获取上月月初 start
+        long lastmouthStart = sfChina.parse((lastMonthDate.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(lastMonthDate.getTime())) + "-01")).getTime();
+        //add_fjl_0923  获取上月月初 end
         // 保留小数点后两位四舍五入
         DecimalFormat df = new DecimalFormat("0.00");
         df.setRoundingMode(RoundingMode.HALF_UP);
@@ -2138,22 +2141,36 @@ public class GivingServiceImpl implements GivingService {
                 induction.setGiving_id(givingId);
                 // 上月工资结算时点过后入职没发工资的人（包含上月入职和本月入职的员工）
                 if (!userids.contains(customerInfo.getUserid()) && userids.size() > 0) {
-                    if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
-                        // 转正日期
-                        if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
-                            customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
+                    //add_fjl_0923  添加[入社年月日]是在上月与本月的条件 start
+                    if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnterday())) {
+                        //入社年月日
+                        if (customerInfo.getUserinfo().getEnterday().indexOf("Z") < 0) {
+                            customerInfo.getUserinfo().setEnterday(formatStringDate(customerInfo.getUserinfo().getEnterday()));
                         }
-                        Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
-                        // 本月转正
-                        if (endDate.getTime() >= mouthStart && endDate.getTime() <= mouthEnd) {
-                            // 正社员工開始日
-                            staffStartDate = endDate.toString();
-                            induction.setStartdate(endDate);
+                        Date enterDay = sfUTC.parse(customerInfo.getUserinfo().getEnterday().replace("Z", " UTC"));
+                        //上月入职和本月入职的员工
+                        if (enterDay.getTime() >= lastmouthStart && enterDay.getTime() <= mouthEnd) {
+                            //add_fjl_0923  添加[入社年月日]是在上月与本月的条件 end
+                            if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
+                                // 转正日期
+                                if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
+                                    customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
+                                }
+                                Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
+                                // 本月转正
+                                if (endDate.getTime() >= mouthStart && endDate.getTime() <= mouthEnd) {
+                                    // 正社员工開始日
+                                    staffStartDate = endDate.toString();
+                                    induction.setStartdate(endDate);
+                                }
+                            }
+                            // 计算給料和补助
+                            calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
+                            inductions.add(induction);
                         }
+                        //add_fjl_0923  添加[入社年月日]是在上月与本月的条件 start
                     }
-                    // 计算給料和补助
-                    calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df);
-                    inductions.add(induction);
+                    //add_fjl_0923  添加[入社年月日]是在上月与本月的条件 end
                 } else {
                     // 上月开了工资的员工
                     // 试用期截止日为空的情况
