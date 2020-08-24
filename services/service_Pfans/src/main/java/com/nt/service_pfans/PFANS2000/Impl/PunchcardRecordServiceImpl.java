@@ -1242,7 +1242,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 }
                                             }
                                         }
-                                    } else if (workinghours.equals("8")) {
+                                    }
+                                    else if (workinghours.equals("8")) {
                                         //申请了年休，代休
                                         if (i > 0 || j > 0) {
                                             String time_end_temp = time_end;
@@ -1371,7 +1372,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 }
                                             }
                                         }
-                                    } else {
+                                    }
+                                    else {
                                         if (ad.getWeekendindustry() != null && !ad.getWeekendindustry().isEmpty()) {
                                             if (Double.valueOf(ad.getWeekendindustry()) >= 8) {
                                                 //换代休1天
@@ -1379,7 +1381,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 //操作代休表
                                                 //insertReplace(ad,tokenModel,"1",duration);
                                                 //周末加班除去换代休的时间
-                                                ad.setWeekendindustry(df.format(Double.valueOf(ad.getWeekendindustry()) - 8));
+                                                //ad.setWeekendindustry(df.format(Double.valueOf(ad.getWeekendindustry()) - 8));
                                             }
                                         } else if (ad.getSpecialday() != null && !ad.getSpecialday().isEmpty()) {
                                             String duration = null;
@@ -1809,7 +1811,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         }
                                     }
 
-                                } else if (workinghours.equals("8")) {
+                                }
+                                else if (workinghours.equals("8")) {
                                     if (sf1ymd.parse(sf1ymd.format(calendar.getTime())).compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) > 0) {
                                         if (Double.valueOf(ad.getAbsenteeism()) >= Double.valueOf(workinghours)) {
                                             ad.setNormal("0");
@@ -1843,6 +1846,33 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     }
 
                                 }
+                                else {
+                                    if (ad.getWeekendindustry() != null && !ad.getWeekendindustry().isEmpty()) {
+                                        if (Double.valueOf(ad.getWeekendindustry()) >= 8) {
+                                            //换代休1天
+                                            //String duration = "8";
+                                            //操作代休表
+                                            //insertReplace(ad,tokenModel,"1",duration);
+                                            //周末加班除去换代休的时间
+                                            //ad.setWeekendindustry(df.format(Double.valueOf(ad.getWeekendindustry()) - 8));
+                                        }
+                                    } else if (ad.getSpecialday() != null && !ad.getSpecialday().isEmpty()) {
+                                        String duration = null;
+                                        if (Double.valueOf(ad.getSpecialday()) >= 8) {
+                                            //特别休日
+                                            //换代休1天
+                                            ad.setSpecialday(df.format(8));
+
+                                        } else if (Double.valueOf(ad.getSpecialday()) >= 4 && Double.valueOf(ad.getSpecialday()) < 8) {
+                                            //特别休日
+                                            //换代休0.5天
+                                            ad.setSpecialday(df.format(4));
+                                        } else {
+                                            ad.setSpecialday(null);
+                                        }
+                                    }
+                                }
+
                                 ad.setNormal(ad.getNormal() == null ? null : (Double.valueOf(ad.getNormal()) <= 0 ? null : df.format(Double.valueOf(ad.getNormal()))));
                                 ad.setAnnualrest(Double.valueOf(ad.getAnnualrest()) <= 0 ? null : df.format(Double.valueOf(ad.getAnnualrest())));
                                 ad.setDaixiu(Double.valueOf(ad.getDaixiu()) <= 0 ? null : df.format(Double.valueOf(ad.getDaixiu())));

@@ -758,8 +758,8 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             toDoNotice.setUrl("/PFANS6010View");
             toDoNotice.setWorkflowurl("/PFANS6010View");
             toDoNotice.preInsert(tokenModel);
-            //【军权_合同，PJ所有】发待办
-            List<MembersVo> rolelist = roleService.getMembers("5e9d62b91decd61bb0398686");
+            //给合同担当发待办
+            List<MembersVo> rolelist = roleService.getMembers("5e7862618f43163084351135");
             if(rolelist.size() > 0)
             {
                 toDoNotice.setOwner(rolelist.get(0).getUserid());
