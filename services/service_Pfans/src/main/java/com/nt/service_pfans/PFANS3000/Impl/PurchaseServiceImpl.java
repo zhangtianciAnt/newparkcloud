@@ -66,6 +66,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     public List<Purchase> getPurchase(Purchase purchase, TokenModel tokenModel) {
         List<Purchase> pList1 = new ArrayList<Purchase>();
         List<Purchase> pList2 = new ArrayList<Purchase>();
+        List<Purchase> pList3 = new ArrayList<Purchase>();
         pList1  =  purchaseMapper.select(purchase);
         //根据登陆用户id查看人员角色
         Query query = new Query();
@@ -78,13 +79,15 @@ public class PurchaseServiceImpl implements PurchaseService {
         //财务担当，财务部长,IT担当 审批完成的数据可以看见
         if(roles.contains("财务部长") || roles.contains("财务担当") || roles.contains("IT担当"))
         {
-            pList2 = purchaseMapper.getPurchaseEnd();
+            Purchase pur = new Purchase();
+            pur.setStatus("4");
+            pList2  =  purchaseMapper.select(pur);
             if(pList2.size()>0)
             {
-                pList2 = pList2.stream().filter(item -> (item.getStatus().equals("4"))).collect(Collectors.toList());
                 for(Purchase p:pList2)
                 {
-                    if(!pList1.contains(p))
+                    pList3 = pList1.stream().filter(item -> (item.getPurchase_id().equals(p.getPurchase_id()))).collect(Collectors.toList());
+                    if(pList3.size()==0)
                     {
                         pList1.add(p);
                     }
