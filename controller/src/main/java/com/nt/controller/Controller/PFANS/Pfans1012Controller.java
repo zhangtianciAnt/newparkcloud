@@ -606,6 +606,7 @@ public class Pfans1012Controller {
 
         return ApiResult.success(loanapplicationlist);
     }
+
     // add-ws-8/20-禅道469
     @RequestMapping(value = "/getpublicelist", method = {RequestMethod.GET})
     public ApiResult getpublicelist(String publicexpenseid, HttpServletRequest request) throws Exception {
