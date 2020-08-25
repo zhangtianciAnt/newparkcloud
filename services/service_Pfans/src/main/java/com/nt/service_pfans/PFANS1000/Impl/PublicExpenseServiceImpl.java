@@ -8,7 +8,6 @@ import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TotalCostVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
-import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
@@ -28,15 +27,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -274,9 +270,6 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         return listvo;
     }
 
-    public Float aFloat(Float a) {
-        return a > 0 ? a : -a;
-    }
     //新建
     @Override
     public void insert(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception {
@@ -306,40 +299,65 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         publicExpense.preInsert(tokenModel);
         publicExpense.setPublicexpenseid(publicexpenseid);
         publicExpenseMapper.insertSelective(publicExpense);
-        //float money = Float.parseFloat(publicExpense.getRmbexpenditure()) + Float.parseFloat(publicExpense.getTormb());
+        if (com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpense.getRmbexpenditure())) {
+            publicExpense.setRmbexpenditure("0");
+        }
+        if (com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpense.getTormb())) {
+            publicExpense.setTormb("0");
+        }
+        BigDecimal mo1 = new BigDecimal(publicExpense.getRmbexpenditure());
+        BigDecimal mo2 = new BigDecimal(publicExpense.getTormb());
+        BigDecimal money = mo1.add(mo2);
 
         //add ccm 0727
         if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpense.getJudgement_name())) {
             if (publicExpense.getJudgement_name().substring(0, 2).equals("CG")) {//采购
                 String[] pur = publicExpense.getJudgement_name().split(",");
+                List<Purchase> allList = new ArrayList<Purchase>();
                 for (String p : pur) {
                     Purchase purchase = new Purchase();
                     purchase.setPurnumbers(p);
                     List<Purchase> purchaseList = purchaseMapper.select(purchase);
                     if (purchaseList.size() > 0) {
-//                        float diff = money - Float.parseFloat(purchaseList.get(0).getBalancejude());
-//                        if (diff >= 0) {
-//                            diff = 0;
-//                            money = diff;
-//                        } else {
-//                            aFloat(diff);
-//                        }
-//                        purchaseList.get(0).setBalancejude(String.valueOf(diff));
-                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                        if(com.nt.utils.StringUtils.isNotBlank(purchaseList.get(0).getPublicexpense_id()))
-                        {
-                            purchaseList.get(0).setPublicexpense_id(purchaseList.get(0).getPublicexpense_id()+","+publicExpense.getPublicexpenseid());
-                            purchaseList.get(0).setInvoiceno(purchaseList.get(0).getInvoiceno()+","+publicExpense.getInvoiceno());
+                        allList.addAll(purchaseList);
+                    }
+                }
+                if (allList.size() > 0) {
+                    allList = allList.stream().sorted(Comparator.comparing(Purchase::getSpendjude).reversed()).collect(Collectors.toList());
+                    int rowindex = 0;
+                    for (Purchase pp : allList) {
+                        if (money != null) {
+                            rowindex++;
+                            float spend = 0;
+                            float balance = 0;
+                            float diff = money.subtract(new BigDecimal(pp.getBalancejude())).floatValue();
+                            if (diff >= 0) {
+                                balance = 0;
+                                money = BigDecimal.valueOf(diff);
+                                spend = (new BigDecimal(pp.getSpendjude()).add(new BigDecimal(pp.getBalancejude()))).floatValue();
+                            } else {
+                                if (String.valueOf(diff).contains("-")) {
+                                    balance = -diff;
+                                }
+                                spend = (new BigDecimal(pp.getSpendjude()).add(money)).floatValue();
+                                money = null;
+                            }
+                            pp.setJudeindex(rowindex);
+                            pp.setBalancejude(String.valueOf(balance));
+                            pp.setSpendjude(spend);
                         }
-                        else
-                        {
-                            purchaseList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
-                            purchaseList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if (com.nt.utils.StringUtils.isNotBlank(pp.getPublicexpense_id())) {
+                            pp.setPublicexpense_id(pp.getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
+                            pp.setInvoiceno(pp.getInvoiceno() + "," + publicExpense.getInvoiceno());
+                        } else {
+                            pp.setPublicexpense_id(publicExpense.getPublicexpenseid());
+                            pp.setInvoiceno(publicExpense.getInvoiceno());
                         }
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
 
-                        purchaseList.get(0).preUpdate(tokenModel);
-                        purchaseMapper.updateByPrimaryKey(purchaseList.get(0));
+                        pp.preUpdate(tokenModel);
+                        purchaseMapper.updateByPrimaryKey(pp);
                     }
                 }
             }
@@ -347,156 +365,202 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             else if (publicExpense.getJudgement_name().substring(0, 3).equals("JJF"))//交际费
             {
                 String[] pur = publicExpense.getJudgement_name().split(",");
+                List<Communication> allList = new ArrayList<Communication>();
                 for (String p : pur) {
                     Communication communication = new Communication();
                     communication.setNumbercation(p);
                     List<Communication> communicationList = communicationMapper.select(communication);
                     if (communicationList.size() > 0) {
-//                        float diff = money - Float.parseFloat(communicationList.get(0).getBalancejude());
-//                        if (diff >= 0) {
-//                            diff = 0;
-//                            money = diff;
-//                        } else {
-//                            aFloat(diff);
-//                        }
-//                        communicationList.get(0).setBalancejude(String.valueOf(diff));
-                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                        if(com.nt.utils.StringUtils.isNotBlank(communicationList.get(0).getPublicexpense_id()))
-                        {
-                            communicationList.get(0).setPublicexpense_id(communicationList.get(0).getPublicexpense_id()+","+publicExpense.getPublicexpenseid());
-                            communicationList.get(0).setInvoiceno(communicationList.get(0).getLoanapno()+","+publicExpense.getInvoiceno());
+                        allList.addAll(communicationList);
+                    }
+                }
+                if (allList.size() > 0) {
+                    allList = allList.stream().sorted(Comparator.comparing(Communication::getSpendjude).reversed()).collect(Collectors.toList());
+                    int rowindex = 0;
+                    for (Communication pp : allList) {
+                        if (money != null) {
+                            rowindex++;
+                            float spend = 0;
+                            float balance = 0;
+                            float diff = money.subtract(new BigDecimal(pp.getBalancejude())).floatValue();
+                            if (diff >= 0) {
+                                balance = 0;
+                                money = BigDecimal.valueOf(diff);
+                                spend = (new BigDecimal(pp.getSpendjude()).add(new BigDecimal(pp.getBalancejude()))).floatValue();
+                            } else {
+                                if (String.valueOf(diff).contains("-")) {
+                                    balance = -diff;
+                                }
+                                spend = (new BigDecimal(pp.getSpendjude()).add(money)).floatValue();
+                                money = null;
+                            }
+                            pp.setJudeindex(rowindex);
+                            pp.setBalancejude(String.valueOf(balance));
+                            pp.setSpendjude(spend);
                         }
-                        else
-                        {
-                            communicationList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
-                            communicationList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if (com.nt.utils.StringUtils.isNotBlank(pp.getPublicexpense_id())) {
+                            pp.setPublicexpense_id(pp.getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
+                            pp.setInvoiceno(pp.getLoanapno() + "," + publicExpense.getInvoiceno());
+                        } else {
+                            pp.setPublicexpense_id(publicExpense.getPublicexpenseid());
+                            pp.setInvoiceno(publicExpense.getInvoiceno());
                         }
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
 
-                        communicationList.get(0).preUpdate(tokenModel);
-                        communicationMapper.updateByPrimaryKey(communicationList.get(0));
+                        pp.preUpdate(tokenModel);
+                        communicationMapper.updateByPrimaryKey(pp);
                     }
                 }
             } else if (publicExpense.getJudgement_name().substring(0, 2).equals("JC"))//其他业务
             {
                 String[] pur = publicExpense.getJudgement_name().split(",");
+                List<Judgement> allList = new ArrayList<Judgement>();
                 for (String p : pur) {
                     Judgement judgement = new Judgement();
                     judgement.setJudgnumbers(p);
                     List<Judgement> judgementList = judgementMapper.select(judgement);
                     if (judgementList.size() > 0) {
-//                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
-//                        if (diff >= 0) {
-//                            diff = 0;
-//                            money = diff;
-//                        } else {
-//                            aFloat(diff);
-//                        }
-//                        judgementList.get(0).setBalancejude(String.valueOf(diff));
-                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                        if(com.nt.utils.StringUtils.isNotBlank(judgementList.get(0).getPublicexpense_id()))
-                        {
-                            judgementList.get(0).setPublicexpense_id(judgementList.get(0).getPublicexpense_id()+","+publicExpense.getPublicexpenseid());
-                            judgementList.get(0).setInvoiceno(judgementList.get(0).getLoanapno()+","+publicExpense.getInvoiceno());
+                        allList.addAll(judgementList);
+                    }
+                }
+                if (allList.size() > 0) {
+                    allList = allList.stream().sorted(Comparator.comparing(Judgement::getSpendjude).reversed()).collect(Collectors.toList());
+                    int rowindex = 0;
+                    for (Judgement pp : allList) {
+                        if (money != null) {
+                            rowindex++;
+                            float spend = 0;
+                            float balance = 0;
+                            float diff = money.subtract(new BigDecimal(pp.getBalancejude())).floatValue();
+                            if (diff >= 0) {
+                                balance = 0;
+                                money = BigDecimal.valueOf(diff);
+                                spend = (new BigDecimal(pp.getSpendjude()).add(new BigDecimal(pp.getBalancejude()))).floatValue();
+                            } else {
+                                if (String.valueOf(diff).contains("-")) {
+                                    balance = -diff;
+                                }
+                                spend = (new BigDecimal(pp.getSpendjude()).add(money)).floatValue();
+                                money = null;
+                            }
+                            pp.setJudeindex(rowindex);
+                            pp.setBalancejude(String.valueOf(balance));
+                            pp.setSpendjude(spend);
                         }
-                        else
-                        {
-                            judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
-                            judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+//                      //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if (com.nt.utils.StringUtils.isNotBlank(pp.getPublicexpense_id())) {
+                            pp.setPublicexpense_id(pp.getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
+                            pp.setInvoiceno(pp.getLoanapno() + "," + publicExpense.getInvoiceno());
+                        } else {
+                            pp.setPublicexpense_id(publicExpense.getPublicexpenseid());
+                            pp.setInvoiceno(publicExpense.getInvoiceno());
                         }
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                        judgementList.get(0).preUpdate(tokenModel);
-                        judgementMapper.updateByPrimaryKey(judgementList.get(0));
+                        pp.preUpdate(tokenModel);
+                        judgementMapper.updateByPrimaryKey(pp);
                     }
                 }
             } else if (publicExpense.getJudgement_name().substring(0, 2).equals("WC"))//无偿设备
             {
                 String[] pur = publicExpense.getJudgement_name().split(",");
+                List<Judgement> allList = new ArrayList<Judgement>();
                 for (String p : pur) {
                     Judgement judgement = new Judgement();
                     judgement.setJudgnumbers(p);
                     List<Judgement> judgementList = judgementMapper.select(judgement);
                     if (judgementList.size() > 0) {
-//                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
-//                        if (diff >= 0) {
-//                            diff = 0;
-//                            money = diff;
-//                        } else {
-//                            aFloat(diff);
-//                        }
-//                        judgementList.get(0).setBalancejude(String.valueOf(diff));
-                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                        if(com.nt.utils.StringUtils.isNotBlank(judgementList.get(0).getPublicexpense_id()))
-                        {
-                            judgementList.get(0).setPublicexpense_id(judgementList.get(0).getPublicexpense_id()+","+publicExpense.getPublicexpenseid());
-                            judgementList.get(0).setInvoiceno(judgementList.get(0).getLoanapno()+","+publicExpense.getInvoiceno());
+                        allList.addAll(judgementList);
+                    }
+                }
+                if (allList.size() > 0) {
+                    allList = allList.stream().sorted(Comparator.comparing(Judgement::getSpendjude).reversed()).collect(Collectors.toList());
+                    int rowindex = 0;
+                    for (Judgement pp : allList) {
+                        if (money != null) {
+                            rowindex++;
+                            float spend = 0;
+                            float balance = 0;
+                            float diff = money.subtract(new BigDecimal(pp.getBalancejude())).floatValue();
+                            if (diff >= 0) {
+                                balance = 0;
+                                money = BigDecimal.valueOf(diff);
+                                spend = (new BigDecimal(pp.getSpendjude()).add(new BigDecimal(pp.getBalancejude()))).floatValue();
+                            } else {
+                                if (String.valueOf(diff).contains("-")) {
+                                    balance = -diff;
+                                }
+                                spend = (new BigDecimal(pp.getSpendjude()).add(money)).floatValue();
+                                money = null;
+                            }
+                            pp.setJudeindex(rowindex);
+                            pp.setBalancejude(String.valueOf(balance));
+                            pp.setSpendjude(spend);
                         }
-                        else
-                        {
-                            judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
-                            judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if (com.nt.utils.StringUtils.isNotBlank(pp.getPublicexpense_id())) {
+                            pp.setPublicexpense_id(pp.getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
+                            pp.setInvoiceno(pp.getLoanapno() + "," + publicExpense.getInvoiceno());
+                        } else {
+                            pp.setPublicexpense_id(publicExpense.getPublicexpenseid());
+                            pp.setInvoiceno(publicExpense.getInvoiceno());
                         }
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                        judgementList.get(0).preUpdate(tokenModel);
-                        judgementMapper.updateByPrimaryKey(judgementList.get(0));
+                        pp.preUpdate(tokenModel);
+                        judgementMapper.updateByPrimaryKey(pp);
                     }
                 }
             } else if (publicExpense.getJudgement_name().substring(0, 2).equals("QY"))//千元费用
             {
                 String[] pur = publicExpense.getJudgement_name().split(",");
+                List<PurchaseApply> allList = new ArrayList<PurchaseApply>();
                 for (String p : pur) {
                     PurchaseApply purchaseapply = new PurchaseApply();
                     purchaseapply.setPurchasenumbers(p);
                     List<PurchaseApply> purchaseapplyList = purchaseapplyMapper.select(purchaseapply);
                     if (purchaseapplyList.size() > 0) {
-//                        float diff = money - Float.parseFloat(purchaseapplyList.get(0).getBalancejude());
-//                        if (diff >= 0) {
-//                            diff = 0;
-//                            money = diff;
-//                        } else {
-//                            aFloat(diff);
-//                        }
-//                        purchaseapplyList.get(0).setBalancejude(String.valueOf(diff));
-                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                        if(com.nt.utils.StringUtils.isNotBlank(purchaseapplyList.get(0).getPublicexpense_id()))
-                        {
-                            purchaseapplyList.get(0).setPublicexpense_id(purchaseapplyList.get(0).getPublicexpense_id()+","+publicExpense.getPublicexpenseid());
-                            purchaseapplyList.get(0).setInvoiceno(purchaseapplyList.get(0).getLoanapno()+","+publicExpense.getInvoiceno());
-                        }
-                        else
-                        {
-                            purchaseapplyList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
-                            purchaseapplyList.get(0).setInvoiceno(publicExpense.getInvoiceno());
-                        }
-                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                        purchaseapplyList.get(0).preUpdate(tokenModel);
-                        purchaseapplyMapper.updateByPrimaryKey(purchaseapplyList.get(0));
+                        allList.addAll(purchaseapplyList);
                     }
                 }
-            } else if (publicExpense.getJudgement_name().substring(0, 1).equals("C"))//境内外出差
-            {
-                String[] pur = publicExpense.getJudgement_name().split(",");
-                for (String p : pur) {
-                    Business business = new Business();
-                    business.setBusiness_number(p);
-                    List<Business> businessList = businessMapper.select(business);
-                    if (businessList.size() > 0) {
-//                        float diff = money - Float.parseFloat(businessList.get(0).getBalancejude());
-//                        if (diff >= 0) {
-//                            diff = 0;
-//                            money = diff;
-//                        } else {
-//                            aFloat(diff);
-//                        }
-//                        businessList.get(0).setBalancejude(String.valueOf(diff));
-                        businessList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
-                        businessList.get(0).setInvoiceno(publicExpense.getInvoiceno());
-                        businessList.get(0).preUpdate(tokenModel);
-                        businessMapper.updateByPrimaryKey(businessList.get(0));
+                if (allList.size() > 0) {
+                    allList = allList.stream().sorted(Comparator.comparing(PurchaseApply::getSpendjude).reversed()).collect(Collectors.toList());
+                    int rowindex = 0;
+                    for (PurchaseApply pp : allList) {
+                        if (money != null) {
+                            rowindex++;
+                            float spend = 0;
+                            float balance = 0;
+                            float diff = money.subtract(new BigDecimal(pp.getBalancejude())).floatValue();
+                            if (diff >= 0) {
+                                balance = 0;
+                                money = BigDecimal.valueOf(diff);
+                                spend = (new BigDecimal(pp.getSpendjude()).add(new BigDecimal(pp.getBalancejude()))).floatValue();
+                            } else {
+                                if (String.valueOf(diff).contains("-")) {
+                                    balance = -diff;
+                                }
+                                spend = (new BigDecimal(pp.getSpendjude()).add(money)).floatValue();
+                                money = null;
+                            }
+                            pp.setJudeindex(rowindex);
+                            pp.setBalancejude(String.valueOf(balance));
+                            pp.setSpendjude(spend);
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if (com.nt.utils.StringUtils.isNotBlank(pp.getPublicexpense_id())) {
+                            pp.setPublicexpense_id(pp.getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
+                            pp.setInvoiceno(pp.getLoanapno() + "," + publicExpense.getInvoiceno());
+                        } else {
+                            pp.setPublicexpense_id(publicExpense.getPublicexpenseid());
+                            pp.setInvoiceno(publicExpense.getInvoiceno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        pp.preUpdate(tokenModel);
+                        purchaseapplyMapper.updateByPrimaryKey(pp);
                     }
                 }
+                //ADD_FJL_0730  end
             }
-            //ADD_FJL_0730  end
         }
         //add ccm 0727
 
@@ -858,9 +922,459 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         }
     }
 
+    //add_fjl_0824  添加关联精算的决裁金额计算 start
+    public void judeMonery(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception {
+        PublicExpense publicExpense = new PublicExpense();
+        BeanUtils.copyProperties(publicExpenseVo.getPublicexpense(), publicExpense);
+        PublicExpense publicExpenseOld = new PublicExpense();
+        PublicExpenseVo pub = selectById(publicExpense.getPublicexpenseid());
+        BeanUtils.copyProperties(pub.getPublicexpense(), publicExpenseOld);
+        if (com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpense.getRmbexpenditure())) {
+            publicExpense.setRmbexpenditure("0");
+        }
+        if (com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpense.getTormb())) {
+            publicExpense.setTormb("0");
+        }
+        BigDecimal mo1 = new BigDecimal(publicExpense.getRmbexpenditure());
+        BigDecimal mo2 = new BigDecimal(publicExpense.getTormb());
+        BigDecimal money = mo1.add(mo2);
+
+        if (com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpenseOld.getRmbexpenditure())) {
+            publicExpenseOld.setRmbexpenditure("0");
+        }
+        if (com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpenseOld.getTormb())) {
+            publicExpenseOld.setTormb("0");
+        }
+        BigDecimal moOld1 = new BigDecimal(publicExpenseOld.getRmbexpenditure());
+        BigDecimal moOld2 = new BigDecimal(publicExpenseOld.getTormb());
+        BigDecimal moneyOld = moOld1.add(moOld2);
+
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpense.getJudgement_name())) {
+            if (publicExpense.getJudgement_name().substring(0, 2).equals("CG")) {//采购
+                if (money.compareTo(moneyOld) > 0) {
+                    BigDecimal diffMonery = money.subtract(moneyOld);
+                    String[] pur = publicExpense.getJudgement_name().split(",");
+                    List<Purchase> allList = new ArrayList<Purchase>();
+                    for (String p : pur) {
+                        Purchase purchase = new Purchase();
+                        purchase.setPurnumbers(p);
+                        List<Purchase> purchaseList = purchaseMapper.select(purchase);
+                        if (purchaseList.size() > 0) {
+                            allList.addAll(purchaseList);
+                        }
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().filter(item -> item.getJudeindex() != null).collect(Collectors.toList());
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().sorted(Comparator.comparing(Purchase::getJudeindex)).collect(Collectors.toList());
+                        for (Purchase pp : allList) {
+                            if (money != null) {
+                                float spend = 0;
+                                float balance = 0;
+                                float diff = diffMonery.subtract(new BigDecimal(pp.getBalancejude())).floatValue();
+                                if (diff >= 0) {
+                                    balance = 0;
+                                    diffMonery = BigDecimal.valueOf(diff);
+                                    spend = (new BigDecimal(pp.getSpendjude()).add(new BigDecimal(pp.getBalancejude()))).floatValue();
+                                } else {
+                                    if (String.valueOf(diff).contains("-")) {
+                                        balance = -diff;
+                                    }
+                                    spend = (new BigDecimal(pp.getSpendjude()).add(diffMonery)).floatValue();
+                                    money = null;
+                                }
+                                pp.setBalancejude(String.valueOf(balance));
+                                pp.setSpendjude(spend);
+
+                                pp.preUpdate(tokenModel);
+                                purchaseMapper.updateByPrimaryKey(pp);
+                            }
+                        }
+                    }
+                } else if (money.compareTo(moneyOld) < 0) {
+                    BigDecimal diffMonery1 = moneyOld.subtract(money);
+                    String[] pur = publicExpense.getJudgement_name().split(",");
+                    List<Purchase> allList = new ArrayList<Purchase>();
+                    for (String p : pur) {
+                        Purchase purchase = new Purchase();
+                        purchase.setPurnumbers(p);
+                        List<Purchase> purchaseList = purchaseMapper.select(purchase);
+                        if (purchaseList.size() > 0) {
+                            allList.addAll(purchaseList);
+                        }
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().filter(item -> item.getJudeindex() != null).collect(Collectors.toList());
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().sorted(Comparator.comparing(Purchase::getJudeindex).reversed()).collect(Collectors.toList());
+                        for (Purchase pp : allList) {
+                            if (diffMonery1 != null) {
+                                float spend = 0;
+                                float diff = diffMonery1.add(new BigDecimal(pp.getBalancejude())).floatValue();
+                                if (diff >= Float.parseFloat(pp.getTotalamount())) {
+                                    diff = Float.parseFloat(pp.getTotalamount());
+                                    diffMonery1 = diffMonery1.subtract(new BigDecimal(pp.getTotalamount()).subtract(new BigDecimal(pp.getBalancejude())));
+                                    spend = 0;
+                                } else {
+                                    if (String.valueOf(diff).contains("-")) {
+                                        diff = -diff;
+                                    }
+                                    spend = (new BigDecimal(pp.getSpendjude()).subtract(diffMonery1)).floatValue();
+                                    diffMonery1 = null;
+                                }
+                                pp.setBalancejude(String.valueOf(diff));
+                                pp.setSpendjude(spend);
+                                pp.preUpdate(tokenModel);
+                                purchaseMapper.updateByPrimaryKey(pp);
+                            }
+                        }
+                    }
+                }
+            } else if (publicExpense.getJudgement_name().substring(0, 3).equals("JJF"))//交际费
+            {
+                if (money.compareTo(moneyOld) > 0) {
+                    BigDecimal diffMonery = money.subtract(moneyOld);
+                    String[] pur = publicExpense.getJudgement_name().split(",");
+                    List<Communication> allList = new ArrayList<Communication>();
+                    for (String p : pur) {
+                        Communication communication = new Communication();
+                        communication.setNumbercation(p);
+                        List<Communication> communicationList = communicationMapper.select(communication);
+                        if (communicationList.size() > 0) {
+                            allList.addAll(communicationList);
+                        }
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().filter(item -> item.getJudeindex() != null).collect(Collectors.toList());
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().sorted(Comparator.comparing(Communication::getJudeindex)).collect(Collectors.toList());
+                        for (Communication pp : allList) {
+                            if (money != null) {
+                                float spend = 0;
+                                float balance = 0;
+                                float diff = diffMonery.subtract(new BigDecimal(pp.getBalancejude())).floatValue();
+                                if (diff >= 0) {
+                                    balance = 0;
+                                    diffMonery = BigDecimal.valueOf(diff);
+                                    spend = (new BigDecimal(pp.getSpendjude()).add(new BigDecimal(pp.getBalancejude()))).floatValue();
+                                } else {
+                                    if (String.valueOf(diff).contains("-")) {
+                                        balance = -diff;
+                                    }
+                                    spend = (new BigDecimal(pp.getSpendjude()).add(diffMonery)).floatValue();
+                                    money = null;
+                                }
+                                pp.setBalancejude(String.valueOf(balance));
+                                pp.setSpendjude(spend);
+
+                                pp.preUpdate(tokenModel);
+                                communicationMapper.updateByPrimaryKey(pp);
+                            }
+                        }
+                    }
+                } else if (money.compareTo(moneyOld) < 0) {
+                    BigDecimal diffMonery1 = moneyOld.subtract(money);
+                    String[] pur = publicExpense.getJudgement_name().split(",");
+                    List<Communication> allList = new ArrayList<Communication>();
+                    for (String p : pur) {
+                        Communication communication = new Communication();
+                        communication.setNumbercation(p);
+                        List<Communication> communicationList = communicationMapper.select(communication);
+                        if (communicationList.size() > 0) {
+                            allList.addAll(communicationList);
+                        }
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().filter(item -> item.getJudeindex() != null).collect(Collectors.toList());
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().sorted(Comparator.comparing(Communication::getJudeindex).reversed()).collect(Collectors.toList());
+                        for (Communication pp : allList) {
+                            if (diffMonery1 != null) {
+                                float spend = 0;
+                                float diff = diffMonery1.add(new BigDecimal(pp.getBalancejude())).floatValue();
+                                if (diff >= Float.parseFloat(pp.getMoneys())) {
+                                    diff = Float.parseFloat(pp.getMoneys());
+                                    diffMonery1 = diffMonery1.subtract(new BigDecimal(pp.getMoneys()).subtract(new BigDecimal(pp.getBalancejude())));
+                                    spend = 0;
+                                } else {
+                                    if (String.valueOf(diff).contains("-")) {
+                                        diff = -diff;
+                                    }
+                                    spend = (new BigDecimal(pp.getSpendjude()).subtract(diffMonery1)).floatValue();
+                                    diffMonery1 = null;
+                                }
+                                pp.setBalancejude(String.valueOf(diff));
+                                pp.setSpendjude(spend);
+                                pp.preUpdate(tokenModel);
+                                communicationMapper.updateByPrimaryKey(pp);
+                            }
+                        }
+                    }
+                }
+            } else if (publicExpense.getJudgement_name().substring(0, 2).equals("JC"))//其他业务
+            {
+                if (money.compareTo(moneyOld) > 0) {
+                    BigDecimal diffMonery = money.subtract(moneyOld);
+                    String[] pur = publicExpense.getJudgement_name().split(",");
+                    List<Judgement> allList = new ArrayList<Judgement>();
+                    for (String p : pur) {
+                        Judgement judgement = new Judgement();
+                        judgement.setJudgnumbers(p);
+                        List<Judgement> judgementList = judgementMapper.select(judgement);
+                        if (judgementList.size() > 0) {
+                            allList.addAll(judgementList);
+                        }
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().filter(item -> item.getJudeindex() != null).collect(Collectors.toList());
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().sorted(Comparator.comparing(Judgement::getJudeindex)).collect(Collectors.toList());
+                        for (Judgement pp : allList) {
+                            if (money != null) {
+                                float spend = 0;
+                                float balance = 0;
+                                float diff = diffMonery.subtract(new BigDecimal(pp.getBalancejude())).floatValue();
+                                if (diff >= 0) {
+                                    balance = 0;
+                                    diffMonery = BigDecimal.valueOf(diff);
+                                    spend = (new BigDecimal(pp.getSpendjude()).add(new BigDecimal(pp.getBalancejude()))).floatValue();
+                                } else {
+                                    if (String.valueOf(diff).contains("-")) {
+                                        balance = -diff;
+                                    }
+                                    spend = (new BigDecimal(pp.getSpendjude()).add(diffMonery)).floatValue();
+                                    money = null;
+                                }
+                                pp.setBalancejude(String.valueOf(balance));
+                                pp.setSpendjude(spend);
+
+                                pp.preUpdate(tokenModel);
+                                judgementMapper.updateByPrimaryKey(pp);
+                            }
+                        }
+                    }
+                } else if (money.compareTo(moneyOld) < 0) {
+                    BigDecimal diffMonery1 = moneyOld.subtract(money);
+                    String[] pur = publicExpense.getJudgement_name().split(",");
+                    List<Judgement> allList = new ArrayList<Judgement>();
+                    for (String p : pur) {
+                        Judgement judgement = new Judgement();
+                        judgement.setJudgnumbers(p);
+                        List<Judgement> judgementList = judgementMapper.select(judgement);
+                        if (judgementList.size() > 0) {
+                            allList.addAll(judgementList);
+                        }
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().filter(item -> item.getJudeindex() != null).collect(Collectors.toList());
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().sorted(Comparator.comparing(Judgement::getJudeindex).reversed()).collect(Collectors.toList());
+                        for (Judgement pp : allList) {
+                            if (diffMonery1 != null) {
+                                float spend = 0;
+                                float diff = diffMonery1.add(new BigDecimal(pp.getBalancejude())).floatValue();
+                                if (diff >= Float.parseFloat(pp.getMoney())) {
+                                    diff = Float.parseFloat(pp.getMoney());
+                                    diffMonery1 = diffMonery1.subtract(new BigDecimal(pp.getMoney()).subtract(new BigDecimal(pp.getBalancejude())));
+                                    spend = 0;
+                                } else {
+                                    if (String.valueOf(diff).contains("-")) {
+                                        diff = -diff;
+                                    }
+                                    spend = (new BigDecimal(pp.getSpendjude()).subtract(diffMonery1)).floatValue();
+                                    diffMonery1 = null;
+                                }
+                                pp.setBalancejude(String.valueOf(diff));
+                                pp.setSpendjude(spend);
+                                pp.preUpdate(tokenModel);
+                                judgementMapper.updateByPrimaryKey(pp);
+                            }
+                        }
+                    }
+                }
+            } else if (publicExpense.getJudgement_name().substring(0, 2).equals("WC"))//无偿设备
+            {
+                if (money.compareTo(moneyOld) > 0) {
+                    BigDecimal diffMonery = money.subtract(moneyOld);
+                    String[] pur = publicExpense.getJudgement_name().split(",");
+                    List<Judgement> allList = new ArrayList<Judgement>();
+                    for (String p : pur) {
+                        Judgement judgement = new Judgement();
+                        judgement.setJudgnumbers(p);
+                        List<Judgement> judgementList = judgementMapper.select(judgement);
+                        if (judgementList.size() > 0) {
+                            allList.addAll(judgementList);
+                        }
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().filter(item -> item.getJudeindex() != null).collect(Collectors.toList());
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().sorted(Comparator.comparing(Judgement::getJudeindex)).collect(Collectors.toList());
+                        for (Judgement pp : allList) {
+                            if (money != null) {
+                                float spend = 0;
+                                float balance = 0;
+                                float diff = diffMonery.subtract(new BigDecimal(pp.getBalancejude())).floatValue();
+                                if (diff >= 0) {
+                                    balance = 0;
+                                    diffMonery = BigDecimal.valueOf(diff);
+                                    spend = (new BigDecimal(pp.getSpendjude()).add(new BigDecimal(pp.getBalancejude()))).floatValue();
+                                } else {
+                                    if (String.valueOf(diff).contains("-")) {
+                                        balance = -diff;
+                                    }
+                                    spend = (new BigDecimal(pp.getSpendjude()).add(diffMonery)).floatValue();
+                                    money = null;
+                                }
+                                pp.setBalancejude(String.valueOf(balance));
+                                pp.setSpendjude(spend);
+
+                                pp.preUpdate(tokenModel);
+                                judgementMapper.updateByPrimaryKey(pp);
+                            }
+                        }
+                    }
+                } else if (money.compareTo(moneyOld) < 0) {
+                    BigDecimal diffMonery1 = moneyOld.subtract(money);
+                    String[] pur = publicExpense.getJudgement_name().split(",");
+                    List<Judgement> allList = new ArrayList<Judgement>();
+                    for (String p : pur) {
+                        Judgement judgement = new Judgement();
+                        judgement.setJudgnumbers(p);
+                        List<Judgement> judgementList = judgementMapper.select(judgement);
+                        if (judgementList.size() > 0) {
+                            allList.addAll(judgementList);
+                        }
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().filter(item -> item.getJudeindex() != null).collect(Collectors.toList());
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().sorted(Comparator.comparing(Judgement::getJudeindex).reversed()).collect(Collectors.toList());
+                        for (Judgement pp : allList) {
+                            if (diffMonery1 != null) {
+                                float spend = 0;
+                                float diff = diffMonery1.add(new BigDecimal(pp.getBalancejude())).floatValue();
+                                if (diff >= Float.parseFloat(pp.getMoney())) {
+                                    diff = Float.parseFloat(pp.getMoney());
+                                    diffMonery1 = diffMonery1.subtract(new BigDecimal(pp.getMoney()).subtract(new BigDecimal(pp.getBalancejude())));
+                                    spend = 0;
+                                } else {
+                                    if (String.valueOf(diff).contains("-")) {
+                                        diff = -diff;
+                                    }
+                                    spend = (new BigDecimal(pp.getSpendjude()).subtract(diffMonery1)).floatValue();
+                                    diffMonery1 = null;
+                                }
+                                pp.setBalancejude(String.valueOf(diff));
+                                pp.setSpendjude(spend);
+                                pp.preUpdate(tokenModel);
+                                judgementMapper.updateByPrimaryKey(pp);
+                            }
+                        }
+                    }
+                }
+            } else if (publicExpense.getJudgement_name().substring(0, 2).equals("QY"))//千元费用
+            {
+                if (money.compareTo(moneyOld) > 0) {
+                    BigDecimal diffMonery = money.subtract(moneyOld);
+                    String[] pur = publicExpense.getJudgement_name().split(",");
+                    List<PurchaseApply> allList = new ArrayList<PurchaseApply>();
+                    for (String p : pur) {
+                        PurchaseApply purchaseapply = new PurchaseApply();
+                        purchaseapply.setPurchasenumbers(p);
+                        List<PurchaseApply> purchaseapplyList = purchaseapplyMapper.select(purchaseapply);
+                        if (purchaseapplyList.size() > 0) {
+                            allList.addAll(purchaseapplyList);
+                        }
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().filter(item -> item.getJudeindex() != null).collect(Collectors.toList());
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().sorted(Comparator.comparing(PurchaseApply::getJudeindex)).collect(Collectors.toList());
+                        for (PurchaseApply pp : allList) {
+                            if (money != null) {
+                                float spend = 0;
+                                float balance = 0;
+                                float diff = diffMonery.subtract(new BigDecimal(pp.getBalancejude())).floatValue();
+                                if (diff >= 0) {
+                                    balance = 0;
+                                    diffMonery = BigDecimal.valueOf(diff);
+                                    spend = (new BigDecimal(pp.getSpendjude()).add(new BigDecimal(pp.getBalancejude()))).floatValue();
+                                } else {
+                                    if (String.valueOf(diff).contains("-")) {
+                                        balance = -diff;
+                                    }
+                                    spend = (new BigDecimal(pp.getSpendjude()).add(diffMonery)).floatValue();
+                                    money = null;
+                                }
+                                pp.setBalancejude(String.valueOf(balance));
+                                pp.setSpendjude(spend);
+
+                                pp.preUpdate(tokenModel);
+                                purchaseapplyMapper.updateByPrimaryKey(pp);
+                            }
+                        }
+                    }
+                } else if (money.compareTo(moneyOld) < 0) {
+                    BigDecimal diffMonery1 = moneyOld.subtract(money);
+                    String[] pur = publicExpense.getJudgement_name().split(",");
+                    List<PurchaseApply> allList = new ArrayList<PurchaseApply>();
+                    for (String p : pur) {
+                        PurchaseApply purchaseapply = new PurchaseApply();
+                        purchaseapply.setPurchasenumbers(p);
+                        List<PurchaseApply> purchaseapplyList = purchaseapplyMapper.select(purchaseapply);
+                        if (purchaseapplyList.size() > 0) {
+                            allList.addAll(purchaseapplyList);
+                        }
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().filter(item -> item.getJudeindex() != null).collect(Collectors.toList());
+                    }
+                    if (allList.size() > 0) {
+                        allList = allList.stream().sorted(Comparator.comparing(PurchaseApply::getJudeindex).reversed()).collect(Collectors.toList());
+                        for (PurchaseApply pp : allList) {
+                            if (diffMonery1 != null) {
+                                float spend = 0;
+                                float diff = diffMonery1.add(new BigDecimal(pp.getBalancejude())).floatValue();
+                                if (diff >= Float.parseFloat(pp.getSummoney())) {
+                                    diff = Float.parseFloat(pp.getSummoney());
+                                    diffMonery1 = diffMonery1.subtract(new BigDecimal(pp.getSummoney()).subtract(new BigDecimal(pp.getBalancejude())));
+                                    spend = 0;
+                                } else {
+                                    if (String.valueOf(diff).contains("-")) {
+                                        diff = -diff;
+                                    }
+                                    spend = (new BigDecimal(pp.getSpendjude()).subtract(diffMonery1)).floatValue();
+                                    diffMonery1 = null;
+                                }
+                                pp.setBalancejude(String.valueOf(diff));
+                                pp.setSpendjude(spend);
+                                pp.preUpdate(tokenModel);
+                                purchaseapplyMapper.updateByPrimaryKey(pp);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //add_fjl_0824  添加关联精算的决裁金额计算 start
     //编辑
     @Override
     public void update(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception {
+        //add_fjl_0824  添加关联精算的决裁金额计算 start
+        judeMonery(publicExpenseVo, tokenModel);
+        //add_fjl_0824  添加关联精算的决裁金额计算 end
         PublicExpense publicExpense = new PublicExpense();
         BeanUtils.copyProperties(publicExpenseVo.getPublicexpense(), publicExpense);
         //add-ws-7/20-禅道任务342
@@ -1016,12 +1530,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     List<Purchase> purchaseList = purchaseMapper.select(pu);
                     if (purchaseList.size() > 0) {
                         purchaseList.get(0).setActuarialdate(new Date());
-                        if(purchaseList.get(0).getActuarialamount()!=null && !purchaseList.get(0).getActuarialamount().equals(""))
-                        {
+                        if(purchaseList.get(0).getActuarialamount()!=null && !purchaseList.get(0).getActuarialamount().equals("")) {
                             purchaseList.get(0).setActuarialamount(String.valueOf(Double.valueOf(purchaseList.get(0).getActuarialamount()) + Double.valueOf(publicExpense.getMoneys())));
-                        }
-                        else
-                        {
+                        } else {
                             purchaseList.get(0).setActuarialamount(publicExpense.getMoneys());
                         }
 
