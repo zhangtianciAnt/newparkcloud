@@ -217,5 +217,9 @@ public class LoanApplication extends BaseModel {
     @Column(name = "PUBLICRADIO")
     private String publicradio;
     //add_fjl_0819
-
+    // add-ws-8/20-禅道469
+    //余额
+    @Column(name = "BALANCE")
+    private String balance;
+    // add-ws-8/20-禅道469
 }

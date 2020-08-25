@@ -48,7 +48,6 @@ public class Pfans1012Controller {
     private PublicExpenseMapper publicExpenseMapper;
     @Autowired
     private PublicExpenseService publicExpenseService;
-
     @Autowired
     private TokenService tokenService;
 
@@ -586,7 +585,29 @@ public class Pfans1012Controller {
         publicExpense.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(publicExpenseService.get(publicExpense));
     }
+    // add-ws-8/20-禅道469
+    @RequestMapping(value = "/loanapplication", method = {RequestMethod.GET})
+    public ApiResult loanapplication(HttpServletRequest request) throws Exception {
+        List<LoanApplication> loanapplicationlist = new ArrayList<>();
+        LoanApplication loanapplication = new LoanApplication();
+        loanapplication.setPublicradio("1");
+        List<LoanApplication> LoanApplicationlist = loanapplicationMapper.select(loanapplication);
+        for(LoanApplication loan : LoanApplicationlist){
+            int scale = 2;//设置位数
+            int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+            BigDecimal bd = new BigDecimal(loan.getBalance());
+            bd = bd.setScale(scale, roundingMode);
+            BigDecimal bd1 = new BigDecimal(loan.getMoneys());
+            bd1 = bd1.setScale(scale, roundingMode);
+            if(bd.compareTo(bd1) == -1){
+                loanapplicationlist.add(loan);
+            }
+        }
 
+        return ApiResult.success(loanapplicationlist);
+    }
+
+    // add-ws-8/20-禅道469
     @RequestMapping(value = "/getpublicelist", method = {RequestMethod.GET})
     public ApiResult getpublicelist(String publicexpenseid, HttpServletRequest request) throws Exception {
         if (publicexpenseid == null) {
