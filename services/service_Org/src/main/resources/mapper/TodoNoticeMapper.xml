@@ -5,4 +5,10 @@
 SELECT * FROM todonotice
 			 WHERE #{STATUS} = STATUS
 </select>
+
+    <select id="upDateID" resultType="com.nt.dao_Org.ToDoNotice">
+    UPDATE todonotice
+    SET STATUS = 1
+    WHERE NOTICEID = #{ID}
+</select>
 </mapper>

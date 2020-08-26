@@ -84,4 +84,21 @@ public class ToDoNoticeController {
         }
         return ApiResult.success();
     }
+
+    /**
+     * @方法名：updateStart
+     * @描述：更改代办状态
+     * @创建日期：20200826
+     * @作者：YANGSHUBO
+     * @参数：id
+     * @返回值：null
+     */
+    @RequestMapping(value = "/upDataStart", method = {RequestMethod.GET})
+    public ApiResult upDataStart(String id, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        toDoNoticeService.upData(id);
+        return ApiResult.success("OK");
+    }
+
+
 }

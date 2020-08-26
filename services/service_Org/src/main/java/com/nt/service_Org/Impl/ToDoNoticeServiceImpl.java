@@ -58,6 +58,12 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
         return todonotice;
     }
 
+    @Override
+    public String upData(String id) throws Exception {
+        String ID = id;
+        return todoNoticeMapper.upDateID(ID);
+    }
+
     /**
      * @方法名：save
      * @描述：消息保存

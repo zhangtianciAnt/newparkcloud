@@ -11,4 +11,6 @@ public interface TodoNoticeMapper extends MyMapper<ToDoNotice> {
 
     List<ToDoNotice> getDataList(@Param("STATUS") String STATUS);
 
+    String upDateID(@Param("ID") String ID);
+
 }

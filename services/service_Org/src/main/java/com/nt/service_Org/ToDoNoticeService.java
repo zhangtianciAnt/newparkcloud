@@ -7,11 +7,13 @@ import java.util.List;
 
 public interface ToDoNoticeService {
 
-
-
     List<ToDoNotice> list(ToDoNotice todonotice) throws Exception;
 
     List<ToDoNotice> getDataList(String status)throws Exception;
+
+    //更新狀態
+    String upData(String toDoNotice) throws Exception;
+
     //保存消息
     void save(ToDoNotice toDoNotice) throws Exception;
 
