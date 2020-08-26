@@ -532,16 +532,34 @@ public class Pfans1012Controller {
 
         if (bd7.intValue() >= 20000) {
             if (pubvo.getTrafficdetails().size() > 0) {
-                ExcelOutPutUtil.OutPutPdf("公共費用精算書", "newgonggongfeiyongjingsuanshu.xls", data, response);
+                //add_fjl_0826  添加如果是多行明细的时候，明细放到第二页  start
+                if (trafficlist.size() >= 6) {
+                    ExcelOutPutUtil.OutPutPdf("公共費用精算書", "newgonggongfeiyongjingsuanshu11.xls", data, response);
+                } else {
+                    ExcelOutPutUtil.OutPutPdf("公共費用精算書", "newgonggongfeiyongjingsuanshu.xls", data, response);
+                }
             } else {
-                ExcelOutPutUtil.OutPutPdf("公共費用精算書", "newgonggongfeiyongjingsuanshu_other.xls", data, response);
+                if ((purchasedetailslist.size() + otherDetailslist.size()) >= 5) {
+                    ExcelOutPutUtil.OutPutPdf("公共費用精算書", "newgonggongfeiyongjingsuanshu_other11.xls", data, response);
+                } else {
+                    ExcelOutPutUtil.OutPutPdf("公共費用精算書", "newgonggongfeiyongjingsuanshu_other.xls", data, response);
+                }
             }
         } else {
             if (pubvo.getTrafficdetails().size() > 0) {
-                ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu.xls", data, response);
+                if (trafficlist.size() >= 6) {
+                    ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu11.xls", data, response);
+                } else {
+                    ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu.xls", data, response);
+                }
             } else {
-                ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu_other.xls", data, response);
+                if ((purchasedetailslist.size() + otherDetailslist.size()) >= 5) {
+                    ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu_other11.xls", data, response);
+                } else {
+                    ExcelOutPutUtil.OutPutPdf("公共費用精算書", "gonggongfeiyongjingsuanshu_other.xls", data, response);
+                }
             }
+            //add_fjl_0826  添加如果是多行明细的时候，明细放到第二页  end
         }
         ExcelOutPutUtil.deleteDir("E:\\PFANS\\image");
 //        FileUtil.del("E:\\PFANS\\image" + "/" + wfList1);
