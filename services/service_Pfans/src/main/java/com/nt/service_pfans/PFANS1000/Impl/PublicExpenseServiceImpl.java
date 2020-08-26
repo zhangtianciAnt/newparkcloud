@@ -323,6 +323,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     }
                 }
                 if (allList.size() > 0) {
+                    allList = allList.stream().filter(item -> item.getSpendjude() != null).collect(Collectors.toList());
+                }
+                if (allList.size() > 0) {
                     allList = allList.stream().sorted(Comparator.comparing(Purchase::getSpendjude).reversed()).collect(Collectors.toList());
                     int rowindex = 0;
                     for (Purchase pp : allList) {
@@ -375,6 +378,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     }
                 }
                 if (allList.size() > 0) {
+                    allList = allList.stream().filter(item -> item.getSpendjude() != null).collect(Collectors.toList());
+                }
+                if (allList.size() > 0) {
                     allList = allList.stream().sorted(Comparator.comparing(Communication::getSpendjude).reversed()).collect(Collectors.toList());
                     int rowindex = 0;
                     for (Communication pp : allList) {
@@ -423,6 +429,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     if (judgementList.size() > 0) {
                         allList.addAll(judgementList);
                     }
+                }
+                if (allList.size() > 0) {
+                    allList = allList.stream().filter(item -> item.getSpendjude() != null).collect(Collectors.toList());
                 }
                 if (allList.size() > 0) {
                     allList = allList.stream().sorted(Comparator.comparing(Judgement::getSpendjude).reversed()).collect(Collectors.toList());
@@ -474,6 +483,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     }
                 }
                 if (allList.size() > 0) {
+                    allList = allList.stream().filter(item -> item.getSpendjude() != null).collect(Collectors.toList());
+                }
+                if (allList.size() > 0) {
                     allList = allList.stream().sorted(Comparator.comparing(Judgement::getSpendjude).reversed()).collect(Collectors.toList());
                     int rowindex = 0;
                     for (Judgement pp : allList) {
@@ -521,6 +533,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     if (purchaseapplyList.size() > 0) {
                         allList.addAll(purchaseapplyList);
                     }
+                }
+                if (allList.size() > 0) {
+                    allList = allList.stream().filter(item -> item.getSpendjude() != null).collect(Collectors.toList());
                 }
                 if (allList.size() > 0) {
                     allList = allList.stream().sorted(Comparator.comparing(PurchaseApply::getSpendjude).reversed()).collect(Collectors.toList());
