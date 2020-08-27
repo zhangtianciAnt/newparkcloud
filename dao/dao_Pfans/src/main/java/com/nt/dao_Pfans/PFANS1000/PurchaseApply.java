@@ -107,10 +107,10 @@ private String group_name;
     //add_fjl_0813
     //add_fjl_0824
     //关联决裁的扣除顺序
-    @Column(name = "JUDEINDEX")
-    private Integer judeindex;
-    //扣除费用
-    @Column(name = "SPENDJUDE")
-    private Float spendjude;
+//    @Column(name = "JUDEINDEX")
+//    private Integer judeindex;
+//    //扣除费用
+//    @Column(name = "SPENDJUDE")
+//    private Float spendjude;
     //add_fjl_0824
 }
