@@ -1,5 +1,11 @@
 # 奥川生物ERP系统
 
+### 访问地址
+
+```http
+http://erp.autran.cn/
+```
+
 ### 使用技术
 
 - Springboot
