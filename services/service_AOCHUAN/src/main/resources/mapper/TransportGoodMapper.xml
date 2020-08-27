@@ -17,7 +17,7 @@
 	t.saleresponsibility,
 	t.productresponsibility,
 	t.orders,
-	CONCAT(LEFT(t.contractnumber,4),RIGHT(t.contractnumber,4)) as numberoreder
+	rpad(GetNum(t.contractnumber),9, '0') as numberoreder
   from transportgood t
   left join saledetails
 	on saledetails.transportgood_id = t.transportgood_id
