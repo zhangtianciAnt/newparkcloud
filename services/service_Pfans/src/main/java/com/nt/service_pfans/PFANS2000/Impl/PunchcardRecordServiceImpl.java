@@ -858,11 +858,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 }
 
                                             } else if (Ot.getOvertimetype().equals("PR001005")) {//会社特别休日加班
-                                                if (ad.getSpecialday() != null && !ad.getSpecialday().isEmpty()) {
-                                                    overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(ad.getSpecialday())));
-                                                } else {
+//                                                if (ad.getSpecialday() != null && !ad.getSpecialday().isEmpty()) {
+//                                                    overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(ad.getSpecialday())));
+//                                                } else {
                                                     overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
-                                                }
+//                                                }
                                                 //加班时间大于等于15分
                                                 if (Double.valueOf(overtimeHours) % ((Double.valueOf(strovertime)) / 60 / 60 / 1000) == 0) {
                                                     ad.setSpecialday(Double.valueOf(overtimeHours) == 0 ? null : overtimeHours);
@@ -1521,11 +1521,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             }
 
                                         } else if (Ot.getOvertimetype().equals("PR001005")) {//会社特别休日加班
-                                            if (ad.getSpecialday() != null && !ad.getSpecialday().isEmpty()) {
-                                                overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(ad.getSpecialday())));
-                                            } else {
+//                                            if (ad.getSpecialday() != null && !ad.getSpecialday().isEmpty()) {
+//                                                overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(ad.getSpecialday())));
+//                                            } else {
                                                 overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours)));
-                                            }
+//                                            }
                                             //加班时间大于等于15分
                                             if (Double.valueOf(overtimeHours) % ((Double.valueOf(strovertime)) / 60 / 60 / 1000) == 0) {
                                                 ad.setSpecialday(Double.valueOf(overtimeHours) == 0 ? null : overtimeHours);
