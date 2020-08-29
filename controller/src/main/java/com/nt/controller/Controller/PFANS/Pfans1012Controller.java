@@ -610,19 +610,19 @@ public class Pfans1012Controller {
         LoanApplication loanapplication = new LoanApplication();
         loanapplication.setPublicradio("1");
         List<LoanApplication> LoanApplicationlist = loanapplicationMapper.select(loanapplication);
-        for(LoanApplication loan : LoanApplicationlist){
-            int scale = 2;//设置位数
-            int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
-            BigDecimal bd = new BigDecimal(loan.getBalance());
-            bd = bd.setScale(scale, roundingMode);
-            BigDecimal bd1 = new BigDecimal(loan.getMoneys());
-            bd1 = bd1.setScale(scale, roundingMode);
-            if(bd.compareTo(bd1) == -1){
-                loanapplicationlist.add(loan);
-            }
-        }
+//        for(LoanApplication loan : LoanApplicationlist){
+//            int scale = 2;//设置位数
+//            int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+//            BigDecimal bd = new BigDecimal(loan.getBalance());
+//            bd = bd.setScale(scale, roundingMode);
+//            BigDecimal bd1 = new BigDecimal(loan.getMoneys());
+//            bd1 = bd1.setScale(scale, roundingMode);
+//            if(bd.compareTo(bd1) == -1){
+//                loanapplicationlist.add(loan);
+//            }
+//        }
 
-        return ApiResult.success(loanapplicationlist);
+        return ApiResult.success(LoanApplicationlist);
     }
 
     // add-ws-8/20-禅道469
