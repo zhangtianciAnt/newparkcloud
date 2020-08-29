@@ -39,11 +39,10 @@ public class Pfans2016Controller {
     }
     //add-ws-6/8-禅道035
     @RequestMapping(value = "/list2", method = {RequestMethod.POST})
-    public ApiResult list2(HttpServletRequest request) throws Exception {
+    public ApiResult list2(@RequestBody AbNormal abNormal,HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        AbNormal abnormal =new  AbNormal();
-        List<AbNormal> abNormalList = abNormalService.list2(abnormal);
-        abNormalList = abNormalList.stream().filter(item -> (item.getUser_id().equals(tokenModel.getUserId()))).collect(Collectors.toList());
+        List<AbNormal> abNormalList = abNormalService.list2(abNormal);
+//        abNormalList = abNormalList.stream().filter(item -> (item.getUser_id().equals(tokenModel.getUserId()))).collect(Collectors.toList());
         return ApiResult.success(abNormalList);
     }
     //add-ws-6/8-禅道035
