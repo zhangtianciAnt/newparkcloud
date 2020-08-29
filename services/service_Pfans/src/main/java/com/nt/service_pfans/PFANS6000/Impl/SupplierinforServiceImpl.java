@@ -26,6 +26,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -48,18 +51,36 @@ public class SupplierinforServiceImpl implements SupplierinforService {
 
     @Override
     public void updatesupplierinforApply(Supplierinfor supplierinfor, TokenModel tokenModel) throws Exception {
-        supplierinforMapper.updateByPrimaryKeySelective(supplierinfor);
+        //upd-ws-8/25-禅道451
+        Supplierinfor supplier = new Supplierinfor();
+        supplier.setVendornum(supplierinfor.getVendornum());
+        List<Supplierinfor> Supplierinforlist = supplierinforMapper.select(supplier);
+        Supplierinforlist = Supplierinforlist.stream().filter(item -> (!item.getSupplierinfor_id().equals(supplierinfor.getSupplierinfor_id()))).collect(Collectors.toList());
+        if (Supplierinforlist.size() > 0) {
+            throw new LogicalException("供应商编码已存在，请重新填写");
+        } else {
+            supplierinforMapper.updateByPrimaryKeySelective(supplierinfor);
+        }
+        //upd-ws-8/25-禅道451
     }
 
     @Override
     public void createsupplierinforApply(Supplierinfor supplierinfor, TokenModel tokenModel) throws Exception {
         //upd-ws-8/25-禅道451
-        Supplierinfor supplier = new Supplierinfor();
-        supplier.setVendornum(supplierinfor.getVendornum());
-        List<Supplierinfor> Supplierinforlist = supplierinforMapper.select(supplier);
-        if(Supplierinforlist.size()>0){
-            throw new LogicalException("供应商编码已存在，请重新填写");
-        }else{
+        Pattern pattern = Pattern.compile("[0]*");
+        Matcher isNum = pattern.matcher(supplierinfor.getVendornum());
+        if (!isNum.matches()) {
+            Supplierinfor supplier = new Supplierinfor();
+            supplier.setVendornum(supplierinfor.getVendornum());
+            List<Supplierinfor> Supplierinforlist = supplierinforMapper.select(supplier);
+            if (Supplierinforlist.size() > 0) {
+                throw new LogicalException("供应商编码已存在，请重新填写");
+            } else {
+                supplierinfor.preInsert(tokenModel);
+                supplierinfor.setSupplierinfor_id(UUID.randomUUID().toString());
+                supplierinforMapper.insert(supplierinfor);
+            }
+        } else {
             supplierinfor.preInsert(tokenModel);
             supplierinfor.setSupplierinfor_id(UUID.randomUUID().toString());
             supplierinforMapper.insert(supplierinfor);
@@ -124,221 +145,172 @@ public class SupplierinforServiceImpl implements SupplierinforService {
                 List<Object> value = list.get(k);
                 k++;
                 if (value != null && !value.isEmpty()) {
-                    if(value.size()>0)
-                    {
+                    if (value.size() > 0) {
                         supplierinfor.setSupchinese(Convert.toStr(value.get(0)));
-                        if(supplierinfor.getSupchinese() != null && supplierinfor.getSupchinese().length() > 50)
-                        {
+                        if (supplierinfor.getSupchinese() != null && supplierinfor.getSupchinese().length() > 50) {
                             throw new LogicalException("第" + i + "行 供应商名称(中文) 长度超长，最大长度为50");
                         }
-                        if(supplierinfor.getSupchinese() != null && !supplierinfor.getSupchinese() .isEmpty())
-                        {
+                        if (supplierinfor.getSupchinese() != null && !supplierinfor.getSupchinese().isEmpty()) {
                             Supplierinfor sup = new Supplierinfor();
                             sup.setSupchinese(supplierinfor.getSupchinese().trim());
                             List<Supplierinfor> supList = supplierinforMapper.select(sup);
-                            if(supList.size()>0)
-                            {
+                            if (supList.size() > 0) {
                                 throw new LogicalException("第" + i + "行 供应商名称(中文) 已经存在，请确认。");
                             }
                         }
                     }
-                    if(value.size()>1)
-                    {
+                    if (value.size() > 1) {
                         supplierinfor.setSupjapanese(Convert.toStr(value.get(1)));
-                        if(supplierinfor.getSupjapanese() != null && supplierinfor.getSupjapanese().length() > 50)
-                        {
+                        if (supplierinfor.getSupjapanese() != null && supplierinfor.getSupjapanese().length() > 50) {
                             throw new LogicalException("第" + i + "行 供应商名称(日文) 长度超长，最大长度为50");
                         }
                     }
-                    if(value.size()>2)
-                    {
+                    if (value.size() > 2) {
                         supplierinfor.setSupenglish(Convert.toStr(value.get(2)));
-                        if(supplierinfor.getSupenglish() != null && supplierinfor.getSupenglish().length() > 50)
-                        {
+                        if (supplierinfor.getSupenglish() != null && supplierinfor.getSupenglish().length() > 50) {
                             throw new LogicalException("第" + i + "行 供应商名称(英文) 长度超长，最大长度为50");
                         }
                     }
-                    if(value.size()>3)
-                    {
+                    if (value.size() > 3) {
                         supplierinfor.setAbbreviation(Convert.toStr(value.get(3)));
-                        if(supplierinfor.getAbbreviation() != null && supplierinfor.getAbbreviation().length() > 50)
-                        {
+                        if (supplierinfor.getAbbreviation() != null && supplierinfor.getAbbreviation().length() > 50) {
                             throw new LogicalException("第" + i + "行 简称 长度超长，最大长度为50");
                         }
                     }
-                    if(value.size()>4)
-                    {
+                    if (value.size() > 4) {
                         supplierinfor.setLiableperson(Convert.toStr(value.get(4)));
-                        if(supplierinfor.getLiableperson() != null && supplierinfor.getLiableperson().length() > 50)
-                        {
+                        if (supplierinfor.getLiableperson() != null && supplierinfor.getLiableperson().length() > 50) {
                             throw new LogicalException("第" + i + "行 负责人 长度超长，最大长度为50");
                         }
                     }
-                    if(value.size()>5)
-                    {
+                    if (value.size() > 5) {
                         supplierinfor.setVendornum(Convert.toStr(value.get(5)));
-                        if(supplierinfor.getVendornum() != null && supplierinfor.getVendornum().length() > 50)
-                        {
+                        if (supplierinfor.getVendornum() != null && supplierinfor.getVendornum().length() > 50) {
                             throw new LogicalException("第" + i + "行 供应商编码（合同用） 长度超长，最大长度为50");
                         }
-                        if(supplierinfor.getVendornum() != null && !supplierinfor.getVendornum() .isEmpty())
-                        {
+                        if (supplierinfor.getVendornum() != null && !supplierinfor.getVendornum().isEmpty()) {
                             Supplierinfor sup = new Supplierinfor();
                             sup.setVendornum(supplierinfor.getVendornum().trim());
                             List<Supplierinfor> supList = supplierinforMapper.select(sup);
-                            if(supList.size()>0)
-                            {
+                            if (supList.size() > 0) {
                                 throw new LogicalException("第" + i + "行 供应商编码（合同用） 已经存在，请确认。");
                             }
                         }
                     }
-                    if(value.size()>6)
-                    {
+                    if (value.size() > 6) {
                         supplierinfor.setPayeename(Convert.toStr(value.get(6)));
-                        if(supplierinfor.getPayeename() != null && supplierinfor.getPayeename().length() > 20)
-                        {
+                        if (supplierinfor.getPayeename() != null && supplierinfor.getPayeename().length() > 20) {
                             throw new LogicalException("第" + i + "行 收款方全称 长度超长，最大长度为20");
                         }
                     }
-                    if(value.size()>7)
-                    {
+                    if (value.size() > 7) {
                         supplierinfor.setPayeebankaccountnumber(Convert.toStr(value.get(7)));
-                        if(supplierinfor.getPayeebankaccountnumber() != null && supplierinfor.getPayeebankaccountnumber().length() > 100)
-                        {
+                        if (supplierinfor.getPayeebankaccountnumber() != null && supplierinfor.getPayeebankaccountnumber().length() > 100) {
                             throw new LogicalException("第" + i + "行 收款方银行账号 长度超长，最大长度为100");
                         }
                     }
-                    if(value.size()>8)
-                    {
+                    if (value.size() > 8) {
                         supplierinfor.setPayeebankaccount(Convert.toStr(value.get(8)));
-                        if(supplierinfor.getPayeebankaccount() != null && supplierinfor.getPayeebankaccount().length() > 20)
-                        {
+                        if (supplierinfor.getPayeebankaccount() != null && supplierinfor.getPayeebankaccount().length() > 20) {
                             throw new LogicalException("第" + i + "行 收款方开户行 长度超长，最大长度为20");
                         }
                     }
-                    if(value.size()>9)
-                    {
+                    if (value.size() > 9) {
                         supplierinfor.setSuppliercode(Convert.toStr(value.get(9)));
-                        if(supplierinfor.getSuppliercode() != null && supplierinfor.getSuppliercode().length() > 20)
-                        {
+                        if (supplierinfor.getSuppliercode() != null && supplierinfor.getSuppliercode().length() > 20) {
                             throw new LogicalException("第" + i + "行 收款方编码 长度超长，最大长度为20");
                         }
                     }
-                    if(value.size()>10)
-                    {
+                    if (value.size() > 10) {
                         supplierinfor.setProchinese(Convert.toStr(value.get(10)));
-                        if(supplierinfor.getProchinese() != null && supplierinfor.getProchinese().length() > 50)
-                        {
+                        if (supplierinfor.getProchinese() != null && supplierinfor.getProchinese().length() > 50) {
                             throw new LogicalException("第" + i + "行 项目联络人(中文) 长度超长，最大长度为50");
                         }
                     }
-                    if(value.size()>11)
-                    {
+                    if (value.size() > 11) {
                         supplierinfor.setProjapanese(Convert.toStr(value.get(11)));
-                        if(supplierinfor.getProjapanese() != null && supplierinfor.getProjapanese().length() > 50)
-                        {
+                        if (supplierinfor.getProjapanese() != null && supplierinfor.getProjapanese().length() > 50) {
                             throw new LogicalException("第" + i + "行 项目联络人(日文) 长度超长，最大长度为50");
                         }
                     }
-                    if(value.size()>12)
-                    {
+                    if (value.size() > 12) {
                         supplierinfor.setProenglish(Convert.toStr(value.get(12)));
-                        if(supplierinfor.getProenglish() != null && supplierinfor.getProenglish().length() > 50)
-                        {
+                        if (supplierinfor.getProenglish() != null && supplierinfor.getProenglish().length() > 50) {
                             throw new LogicalException("第" + i + "行 项目联络人(英文) 长度超长，最大长度为50");
                         }
                     }
-                    if(value.size()>13)
-                    {
+                    if (value.size() > 13) {
                         supplierinfor.setProtelephone(Convert.toStr(value.get(13)));
-                        if(supplierinfor.getProenglish() != null && supplierinfor.getProenglish().length() > 20)
-                        {
+                        if (supplierinfor.getProenglish() != null && supplierinfor.getProenglish().length() > 20) {
                             throw new LogicalException("第" + i + "行 联系电话 长度超长，最大长度为20");
                         }
                     }
-                    if(value.size()>14)
-                    {
+                    if (value.size() > 14) {
                         supplierinfor.setProtemail(Convert.toStr(value.get(14)));
-                        if(supplierinfor.getProtemail() != null && supplierinfor.getProtemail().length() > 50)
-                        {
+                        if (supplierinfor.getProtemail() != null && supplierinfor.getProtemail().length() > 50) {
                             throw new LogicalException("第" + i + "行 邮箱地址 长度超长，最大长度为50");
                         }
                     }
-                    if(value.size()>15)
-                    {
+                    if (value.size() > 15) {
                         supplierinfor.setCommontperson(Convert.toStr(value.get(15)));
-                        if(supplierinfor.getCommontperson() != null && supplierinfor.getCommontperson().length() > 50)
-                        {
+                        if (supplierinfor.getCommontperson() != null && supplierinfor.getCommontperson().length() > 50) {
                             throw new LogicalException("第" + i + "行 共通事务联络人 长度超长，最大长度为50");
                         }
                     }
-                    if(value.size()>16)
-                    {
+                    if (value.size() > 16) {
                         supplierinfor.setComtelephone(Convert.toStr(value.get(16)));
-                        if(supplierinfor.getComtelephone() != null && supplierinfor.getComtelephone().length() > 20)
-                        {
+                        if (supplierinfor.getComtelephone() != null && supplierinfor.getComtelephone().length() > 20) {
                             throw new LogicalException("第" + i + "行 联系电话 长度超长，最大长度为20");
                         }
                     }
-                    if(value.size()>17)
-                    {
+                    if (value.size() > 17) {
                         supplierinfor.setComnemail(Convert.toStr(value.get(17)));
-                        if(supplierinfor.getComnemail() != null && supplierinfor.getComnemail().length() > 50)
-                        {
+                        if (supplierinfor.getComnemail() != null && supplierinfor.getComnemail().length() > 50) {
                             throw new LogicalException("第" + i + "行 邮箱地址 长度超长，最大长度为50");
                         }
                     }
-                    if(value.size()>18)
-                    {
+                    if (value.size() > 18) {
                         supplierinfor.setAddchinese(Convert.toStr(value.get(18)));
-                        if(supplierinfor.getAddchinese() != null && supplierinfor.getAddchinese().length() > 50)
-                        {
+                        if (supplierinfor.getAddchinese() != null && supplierinfor.getAddchinese().length() > 50) {
                             throw new LogicalException("第" + i + "行 地址(中文) 长度超长，最大长度为50");
                         }
                     }
-                    if(value.size()>19)
-                    {
+                    if (value.size() > 19) {
                         supplierinfor.setAddjapanese(Convert.toStr(value.get(19)));
-                        if(supplierinfor.getAddjapanese() != null && supplierinfor.getAddjapanese().length() > 50)
-                        {
+                        if (supplierinfor.getAddjapanese() != null && supplierinfor.getAddjapanese().length() > 50) {
                             throw new LogicalException("第" + i + "行 地址(日文) 长度超长，最大长度为50");
                         }
                     }
-                    if(value.size()>20)
-                    {
+                    if (value.size() > 20) {
                         supplierinfor.setAddenglish(Convert.toStr(value.get(20)));
-                        if(supplierinfor.getAddenglish() != null && supplierinfor.getAddenglish().length() > 50)
-                        {
+                        if (supplierinfor.getAddenglish() != null && supplierinfor.getAddenglish().length() > 50) {
                             throw new LogicalException("第" + i + "行 地址(英文) 长度超长，最大长度为50");
                         }
                     }
-                    if(value.size()>22)
-                    {
+                    if (value.size() > 22) {
                         supplierinfor.setWebsite(Convert.toStr(value.get(22)));
-                        if(supplierinfor.getWebsite() != null && supplierinfor.getWebsite().length() > 200)
-                        {
+                        if (supplierinfor.getWebsite() != null && supplierinfor.getWebsite().length() > 200) {
                             throw new LogicalException("第" + i + "行 网址 长度超长，最大长度为200");
                         }
                     }
-                    if(value.size()>23)
-                    {
+                    if (value.size() > 23) {
                         supplierinfor.setRemarks(Convert.toStr(value.get(23)));
                     }
 
-                    if(value.size()>21)
-                    {
-                        String person= Convert.toStr(value.get(21));
-                        if(StrUtil.isNotBlank(person)){
-                            person = person.trim().replace("<","").replace(">","").replace("≥","").replace("=","").replace("≤","").replace("-","");
-                            if(Integer.parseInt(person)>0 && Integer.parseInt(person)<50){
+                    if (value.size() > 21) {
+                        String person = Convert.toStr(value.get(21));
+                        if (StrUtil.isNotBlank(person)) {
+                            person = person.trim().replace("<", "").replace(">", "").replace("≥", "").replace("=", "").replace("≤", "").replace("-", "");
+                            if (Integer.parseInt(person) > 0 && Integer.parseInt(person) < 50) {
                                 supplierinfor.setPerscale("BP007001");  //改数据
                             }
-                            if(Integer.parseInt(person)>=50 && Integer.parseInt(person)<100){
+                            if (Integer.parseInt(person) >= 50 && Integer.parseInt(person) < 100) {
                                 supplierinfor.setPerscale("BP007002");  //改数据
-                            } if(Integer.parseInt(person)>=100 && Integer.parseInt(person)<500){
+                            }
+                            if (Integer.parseInt(person) >= 100 && Integer.parseInt(person) < 500) {
                                 supplierinfor.setPerscale("BP007003");  //改数据
                             }
-                            if(Integer.parseInt(person)>500){
+                            if (Integer.parseInt(person) > 500) {
                                 supplierinfor.setPerscale("BP007004");  //改数据
                             }
                         }
