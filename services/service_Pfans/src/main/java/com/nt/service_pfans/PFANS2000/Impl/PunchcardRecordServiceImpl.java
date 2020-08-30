@@ -1917,7 +1917,18 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 }
                                 PunchcardRecord phr = new PunchcardRecord();
                                 //员工填写日志对应的实际工作时间
-                                ad.setOutgoinghours(getOutgoinghours(lunchbreak_start, lunchbreak_end, phr, nomal));
+                                if(workinghours.equals("0"))
+                                {
+                                    ad.setOutgoinghours(df.format(
+                                            Double.valueOf(ad.getAnnualrestday() == null || ad.getAnnualrestday() =="0" ? "0":ad.getAnnualrestday())
+                                           +Double.valueOf(ad.getSpecialday() == null || ad.getSpecialday() =="0" ? "0":ad.getSpecialday())
+                                           +Double.valueOf(ad.getStatutoryresidue() == null || ad.getStatutoryresidue() =="0" ? "0":ad.getStatutoryresidue())
+                                           +Double.valueOf(ad.getWeekendindustry() == null || ad.getWeekendindustry() =="0" ? "0":ad.getWeekendindustry())));
+                                }
+                                else
+                                {
+                                    ad.setOutgoinghours(getOutgoinghours(lunchbreak_start, lunchbreak_end, phr, nomal));
+                                }
                                 saveAttendance(ad, "0", token);
                             }
                             //---------查询昨天大打卡记录end-------
