@@ -1071,6 +1071,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     public Map<String, String> getworkfolwPurchaseData(PublicExpense publicExpense) throws Exception
     {
         Map<String, String> getpurchaseMap = new HashMap<String, String>();
+        Map<String, String> getpurchaseMapsub = new HashMap<String, String>();
         publicExpense = publicExpenseMapper.selectByPrimaryKey(publicExpense.getPublicexpenseid());
         if(publicExpense.getJudgement_name()!=null && !publicExpense.getJudgement_name().equals(""))
         {
@@ -1078,14 +1079,37 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             String[] pusid = publicExpense.getJudgement().split(",");
             if(pusname.length>0)
             {
-                for(String pr :pusname)
+                for(int i=0;i<pusname.length;i++)
                 {
-                    if(pr.substring(0,2).equals("CG"))
+                    if(pusname[i].substring(0,2).equals("CG"))
                     {
                         Purchase purchase =new Purchase();
-                        purchase.setPurchase_id(pusid[0]);
-                        getpurchaseMap = purchaseService.getworkfolwPurchaseData(purchase);
-                        break;
+                        purchase.setPurnumbers(pusname[i]);
+                        List<Purchase> purchaseList = new ArrayList<Purchase>();
+                        purchaseList = purchaseMapper.select(purchase);
+                        if(purchaseList.size()>0)
+                        {
+                            //采购决裁
+                            if(getpurchaseMap.containsKey("purchase"))
+                            {
+                                String val= getpurchaseMap.get("purchase")+";"+purchaseList.get(0).getPurchase_id() +","+purchaseList.get(0).getStatus();
+                                getpurchaseMap.put("purchase",val);
+                            }
+                            else
+                            {
+                                getpurchaseMap.put("purchase",purchaseList.get(0).getPurchase_id() +","+purchaseList.get(0).getStatus());
+                            }
+                            //精算
+                            if(getpurchaseMap.containsKey("publicExpense"))
+                            {
+                                String val= getpurchaseMap.get("publicExpense")+";"+purchaseList.get(0).getPublicexpense_id() +","+ purchaseList.get(0).getStatus();
+                                getpurchaseMap.put("publicExpense",val);
+                            }
+                            else
+                            {
+                                getpurchaseMap.put("publicExpense",purchaseList.get(0).getPublicexpense_id() +","+ purchaseList.get(0).getStatus());
+                            }
+                        }
                     }
                 }
             }

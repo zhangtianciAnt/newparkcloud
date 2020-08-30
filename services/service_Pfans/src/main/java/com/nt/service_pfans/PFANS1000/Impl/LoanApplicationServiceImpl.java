@@ -371,6 +371,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     public Map<String, String> getworkfolwPurchaseData(LoanApplication loanapplication) throws Exception
     {
         Map<String, String> getpurchaseMap = new HashMap<String, String>();
+        Map<String, String> getpurchaseMapsub = new HashMap<String, String>();
         loanapplication = loanapplicationMapper.selectByPrimaryKey(loanapplication.getLoanapplication_id());
         if(loanapplication.getJudgements_name()!=null && !loanapplication.getJudgements_name().equals(""))
         {
@@ -378,14 +379,37 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
             String[] pusid = loanapplication.getJudgements().split(",");
             if(pusname.length>0)
             {
-                for(String pr :pusname)
+                for(int i=0;i<pusname.length;i++)
                 {
-                    if(pr.substring(0,2).equals("CG"))
+                    if(pusname[i].substring(0,2).equals("CG"))
                     {
                         Purchase purchase =new Purchase();
-                        purchase.setPurchase_id(pusid[0]);
-                        getpurchaseMap = purchaseService.getworkfolwPurchaseData(purchase);
-                        break;
+                        purchase.setPurnumbers(pusname[i]);
+                        List<Purchase> purchaseList = new ArrayList<Purchase>();
+                        purchaseList = purchaseMapper.select(purchase);
+                        if(purchaseList.size()>0)
+                        {
+                            //采购决裁
+                            if(getpurchaseMap.containsKey("purchase"))
+                            {
+                                String val= getpurchaseMap.get("purchase")+";"+purchaseList.get(0).getPurchase_id() +","+purchaseList.get(0).getStatus();
+                                getpurchaseMap.put("purchase",val);
+                            }
+                            else
+                            {
+                                getpurchaseMap.put("purchase",purchaseList.get(0).getPurchase_id() +","+purchaseList.get(0).getStatus());
+                            }
+                            //暂借款
+                            if(getpurchaseMap.containsKey("loanApplication"))
+                            {
+                                String val= getpurchaseMap.get("loanApplication")+";"+loanapplication.getLoanapplication_id() +","+ loanapplication.getStatus();
+                                getpurchaseMap.put("loanApplication",val);
+                            }
+                            else
+                            {
+                                getpurchaseMap.put("loanApplication",loanapplication.getLoanapplication_id() +","+ loanapplication.getStatus());
+                            }
+                        }
                     }
                 }
             }

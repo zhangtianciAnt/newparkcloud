@@ -28,6 +28,7 @@ import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
+import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
 import com.nt.service_pfans.PFANS4000.mapper.SealMapper;
 import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.utils.AuthConstants;
@@ -48,6 +49,9 @@ import java.util.stream.Collectors;
 public class ContractapplicationServiceImpl implements ContractapplicationService {
     @Autowired
     private SupplierinforMapper supplierinforMapper;
+
+    @Autowired
+    private PurchaseMapper purchaseMapper;
     @Autowired
     private IndividualMapper individualmapper;
     @Autowired
@@ -1163,11 +1167,50 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             List<Contractnumbercount> numberList = contractnumbercountMapper.select(c);
             if(numberList.size()>0)
             {
-                if(numberList.get(0).getPurnumbers()!=null && !numberList.get(0).getPurnumbers().equals(""))
+                for(int i=0;i<numberList.size();i++)
                 {
-                    Purchase purchase =new Purchase();
-                    purchase.setPurnumbers(numberList.get(0).getPurnumbers());
-                    getpurchaseMap = PurchaseService.getworkfolwPurchaseData(purchase);
+                    if(numberList.get(i).getPurnumbers()!=null && !numberList.get(i).getPurnumbers().equals(""))
+                    {
+                        Purchase purchase =new Purchase();
+                        purchase.setPurnumbers(numberList.get(i).getPurnumbers());
+                        //采购决裁
+                        List<Purchase> purchaseList = new ArrayList<Purchase>();
+                        purchaseList = purchaseMapper.select(purchase);
+                        if(purchaseList.size()>0)
+                        {
+                            //采购决裁
+                            if(getpurchaseMap.containsKey("purchase"))
+                            {
+                                String val= getpurchaseMap.get("purchase")+";"+purchaseList.get(0).getPurchase_id() +","+purchaseList.get(0).getStatus();
+                                getpurchaseMap.put("purchase",val);
+                            }
+                            else
+                            {
+                                getpurchaseMap.put("purchase",purchaseList.get(0).getPurchase_id() +","+purchaseList.get(0).getStatus());
+                            }
+                            //合同
+                            if(getpurchaseMap.containsKey("award"))
+                            {
+                                String val= getpurchaseMap.get("award")+";"+award.getAward_id() +","+ award.getStatus();
+                                getpurchaseMap.put("award",val);
+                            }
+                            else
+                            {
+                                getpurchaseMap.put("award",award.getAward_id() +","+ award.getStatus());
+                            }
+
+                            //印章
+                            if(getpurchaseMap.containsKey("seal"))
+                            {
+                                String val= getpurchaseMap.get("seal")+";"+award.getSealid() +","+ award.getSealstatus();
+                                getpurchaseMap.put("seal",val);
+                            }
+                            else
+                            {
+                                getpurchaseMap.put("seal",award.getSealid() +","+ award.getSealstatus());
+                            }
+                        }
+                    }
                 }
             }
         }

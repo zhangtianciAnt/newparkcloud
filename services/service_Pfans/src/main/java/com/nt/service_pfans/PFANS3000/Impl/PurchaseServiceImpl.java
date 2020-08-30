@@ -247,7 +247,16 @@ public class PurchaseServiceImpl implements PurchaseService {
         purchaseList = purchaseMapper.select(purchase);
         if(purchaseList.size()>0)
         {
-            getpurchaseMap.put("purchase",purchaseList.get(0).getPurchase_id() +","+purchaseList.get(0).getStatus());
+            if(getpurchaseMap.containsKey("purchase"))
+            {
+                String val= getpurchaseMap.get("purchase")+";"+purchaseList.get(0).getPurchase_id() +","+purchaseList.get(0).getStatus();
+                getpurchaseMap.put("purchase",val);
+            }
+            else
+            {
+                getpurchaseMap.put("purchase",purchaseList.get(0).getPurchase_id() +","+purchaseList.get(0).getStatus());
+            }
+
             //合同决裁
             List<Contractnumbercount> ccList = new ArrayList<Contractnumbercount>();
             ccList =  contractapplicationMapper.purchaseExistCheck(purchaseList.get(0).getPurnumbers());
@@ -258,8 +267,27 @@ public class PurchaseServiceImpl implements PurchaseService {
                 List<Award> aw = AwardMapper.select(con);
                 if(aw.size()>0)
                 {
-                    getpurchaseMap.put("award",aw.get(0).getAward_id() +","+ aw.get(0).getStatus());
-                    getpurchaseMap.put("seal",aw.get(0).getSealid() +","+ aw.get(0).getSealstatus());
+                    //合同
+                    if(getpurchaseMap.containsKey("award"))
+                    {
+                        String val= getpurchaseMap.get("award")+";"+aw.get(0).getAward_id() +","+ aw.get(0).getStatus();
+                        getpurchaseMap.put("award",val);
+                    }
+                    else
+                    {
+                        getpurchaseMap.put("award",aw.get(0).getAward_id() +","+ aw.get(0).getStatus());
+                    }
+
+                    //印章
+                    if(getpurchaseMap.containsKey("seal"))
+                    {
+                        String val= getpurchaseMap.get("seal")+";"+aw.get(0).getSealid() +","+ aw.get(0).getSealstatus();
+                        getpurchaseMap.put("seal",val);
+                    }
+                    else
+                    {
+                        getpurchaseMap.put("seal",aw.get(0).getSealid() +","+ aw.get(0).getSealstatus());
+                    }
                 }
             }
             //暂借款申请
@@ -269,10 +297,21 @@ public class PurchaseServiceImpl implements PurchaseService {
                 LoanApplication loan = new LoanApplication();
                 if(loanid.length>0)
                 {
-                    loan = loanApplicationMapper.selectByPrimaryKey(loanid[0]);
-                    if(loan!=null)
+                    for(int i=0;i<loanid.length;i++)
                     {
-                        getpurchaseMap.put("loanApplication",loan.getLoanapplication_id() +","+ loan.getStatus());
+                        loan = loanApplicationMapper.selectByPrimaryKey(loanid[i]);
+                        if(loan!=null)
+                        {
+                            if(getpurchaseMap.containsKey("loanApplication"))
+                            {
+                                String val= getpurchaseMap.get("loanApplication")+";"+loan.getLoanapplication_id() +","+ loan.getStatus();
+                                getpurchaseMap.put("loanApplication",val);
+                            }
+                            else
+                            {
+                                getpurchaseMap.put("loanApplication",loan.getLoanapplication_id() +","+ loan.getStatus());
+                            }
+                        }
                     }
                 }
             }
@@ -283,10 +322,21 @@ public class PurchaseServiceImpl implements PurchaseService {
                 PublicExpense pub = new PublicExpense();
                 if(purid.length>0)
                 {
-                    pub = publicExpenseMapper.selectByPrimaryKey(purid[0]);
-                    if(pub!=null)
+                    for(int i=0;i<purid.length;i++)
                     {
-                        getpurchaseMap.put("publicExpense",pub.getPublicexpenseid() +","+ pub.getStatus());
+                        pub = publicExpenseMapper.selectByPrimaryKey(purid[0]);
+                        if(pub!=null)
+                        {
+                            if(getpurchaseMap.containsKey("publicExpense"))
+                            {
+                                String val= getpurchaseMap.get("publicExpense")+";"+pub.getPublicexpenseid() +","+ pub.getStatus();
+                                getpurchaseMap.put("publicExpense",val);
+                            }
+                            else
+                            {
+                                getpurchaseMap.put("publicExpense",pub.getPublicexpenseid() +","+ pub.getStatus());
+                            }
+                        }
                     }
                 }
             }
