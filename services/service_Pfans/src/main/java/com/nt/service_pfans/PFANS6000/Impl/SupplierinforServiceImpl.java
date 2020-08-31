@@ -52,15 +52,22 @@ public class SupplierinforServiceImpl implements SupplierinforService {
     @Override
     public void updatesupplierinforApply(Supplierinfor supplierinfor, TokenModel tokenModel) throws Exception {
         //upd-ws-8/25-禅道451
-        Supplierinfor supplier = new Supplierinfor();
-        supplier.setVendornum(supplierinfor.getVendornum());
-        List<Supplierinfor> Supplierinforlist = supplierinforMapper.select(supplier);
-        Supplierinforlist = Supplierinforlist.stream().filter(item -> (!item.getSupplierinfor_id().equals(supplierinfor.getSupplierinfor_id()))).collect(Collectors.toList());
-        if (Supplierinforlist.size() > 0) {
-            throw new LogicalException("供应商编码已存在，请重新填写");
+        Pattern pattern = Pattern.compile("[0]*");
+        Matcher isNum = pattern.matcher(supplierinfor.getVendornum());
+        if (!isNum.matches()) {
+            Supplierinfor supplier = new Supplierinfor();
+            supplier.setVendornum(supplierinfor.getVendornum());
+            List<Supplierinfor> Supplierinforlist = supplierinforMapper.select(supplier);
+            Supplierinforlist = Supplierinforlist.stream().filter(item -> (!item.getSupplierinfor_id().equals(supplierinfor.getSupplierinfor_id()))).collect(Collectors.toList());
+            if (Supplierinforlist.size() > 0) {
+                throw new LogicalException("供应商编码已存在，请重新填写");
+            } else {
+                supplierinforMapper.updateByPrimaryKeySelective(supplierinfor);
+            }
         } else {
             supplierinforMapper.updateByPrimaryKeySelective(supplierinfor);
         }
+
         //upd-ws-8/25-禅道451
     }
 

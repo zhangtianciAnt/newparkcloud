@@ -1102,12 +1102,12 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                             //精算
                             if(getpurchaseMap.containsKey("publicExpense"))
                             {
-                                String val= getpurchaseMap.get("publicExpense")+";"+purchaseList.get(0).getPublicexpense_id() +","+ purchaseList.get(0).getStatus();
+                                String val= getpurchaseMap.get("publicExpense")+";"+publicExpense.getPublicexpenseid() +","+ publicExpense.getStatus();
                                 getpurchaseMap.put("publicExpense",val);
                             }
                             else
                             {
-                                getpurchaseMap.put("publicExpense",purchaseList.get(0).getPublicexpense_id() +","+ purchaseList.get(0).getStatus());
+                                getpurchaseMap.put("publicExpense",publicExpense.getPublicexpenseid() +","+ publicExpense.getStatus());
                             }
                         }
                     }
