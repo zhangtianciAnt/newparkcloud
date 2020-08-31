@@ -55,4 +55,8 @@
         WHERE detail.monitoringpoint IS NOT NULL
         ORDER BY HOUR(detail.CREATEON)
     </select>
+
+    <insert id="insertPimsDataList">
+
+    </insert>
 </mapper>

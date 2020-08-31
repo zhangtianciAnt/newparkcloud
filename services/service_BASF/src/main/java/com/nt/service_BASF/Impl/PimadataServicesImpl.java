@@ -1,7 +1,9 @@
 package com.nt.service_BASF.Impl;
 
+import com.nt.dao_BASF.Pimspoint;
 import com.nt.dao_BASF.Pimsdata;
 import com.nt.service_BASF.PimsdataServices;
+import com.nt.service_BASF.mapper.PimsPointMapper;
 import com.nt.service_BASF.mapper.PimsdataMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +33,8 @@ public class PimadataServicesImpl implements PimsdataServices {
 
     @Autowired
     private PimsdataMapper pimsdataMapper;
+    @Autowired
+    private PimsPointMapper pimsPointMapper;
 
     /**
      * @param pimsdata
@@ -44,7 +48,12 @@ public class PimadataServicesImpl implements PimsdataServices {
     @Override
     public void insert(List<Pimsdata> pimsdata) throws Exception {
         Date date = new Date();
-        for(Pimsdata temp : pimsdata){
+
+
+
+
+
+        for (Pimsdata temp : pimsdata) {
             temp.setPimsid(UUID.randomUUID().toString());
             temp.setCreateby("PimsSystem");
             temp.setCreateon(date);
@@ -62,5 +71,11 @@ public class PimadataServicesImpl implements PimsdataServices {
     @Override
     public List<Pimsdata> getAllPimsInfo(String type) throws Exception {
         return pimsdataMapper.getAllPimsInfo(type);
+    }
+
+    @Override
+    public void createPimsPoint(Pimspoint pimsPoint) throws Exception {
+        pimsPoint.setId(UUID.randomUUID().toString());
+        pimsPointMapper.insert(pimsPoint);
     }
 }

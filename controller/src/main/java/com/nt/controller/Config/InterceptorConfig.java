@@ -22,6 +22,7 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
                 .excludePathPatterns("/BASF10105/linkagelist")
                 .excludePathPatterns("/BASF30000/login")
                 .excludePathPatterns("/BASF10302/import")
+                .excludePathPatterns("/BASF10302/createPimsPoint")
         ;
     }
 

@@ -38,11 +38,6 @@ public class Pimsdata extends BaseModel {
      */
     private BigDecimal pimsdata;
 
-    /*
-     * 类型
-     */
-    private String type;
-
 
     @Transient
     private List<PimsdataVo> rows;

@@ -1,7 +1,7 @@
 package com.nt.service_BASF;
 
+import com.nt.dao_BASF.Pimspoint;
 import com.nt.dao_BASF.Pimsdata;
-import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
 
@@ -21,4 +21,6 @@ public interface PimsdataServices {
 
     //获取大屏环境相关信息
     List<Pimsdata> getAllPimsInfo(String type) throws Exception;
+
+    void createPimsPoint(Pimspoint pimsPoint) throws Exception;
 }

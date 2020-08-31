@@ -1,10 +1,9 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
+import com.nt.dao_BASF.Pimspoint;
 import com.nt.dao_BASF.Pimsdata;
 import com.nt.service_BASF.PimsdataServices;
 import com.nt.utils.*;
-import com.nt.utils.dao.TokenModel;
-import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +29,14 @@ public class BASF10302Controller {
 
     @Autowired
     private PimsdataServices pimsdataServices;
+
+
+    @RequestMapping(value = "/createPimsPoint", method = {RequestMethod.POST})
+    public ApiResult createPimsPoint(@RequestBody Pimspoint pimsPoint) throws Exception {
+        pimsdataServices.createPimsPoint(pimsPoint);
+        return ApiResult.success();
+    }
+
 
     /**
      * @param pimsdata
@@ -57,8 +64,8 @@ public class BASF10302Controller {
      * @Author: Mr.LXX
      * @Date: 2020/8/19
      */
-    @RequestMapping(value = "/getAllPimsInfo",method = {RequestMethod.GET})
-    public ApiResult getAllPimsInfo(String type,HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/getAllPimsInfo", method = {RequestMethod.GET})
+    public ApiResult getAllPimsInfo(String type, HttpServletRequest request) throws Exception {
         return ApiResult.success(pimsdataServices.getAllPimsInfo(type));
     }
 }
