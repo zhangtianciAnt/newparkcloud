@@ -72,7 +72,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
     private MongoTemplate mongoTemplate;
 
     //系统服务——add_fjl_0717  退场的第二天，账号不可登录  start
-    @Scheduled(cron = "0 10 0 * * ?")
+    @Scheduled(cron = "0 0 1 * * ?")
     public void updExpatriatesinforStatus() throws Exception {
         SimpleDateFormat st = new SimpleDateFormat("yyyyMMdd");
         int re = Integer.parseInt(st.format(new Date()));
