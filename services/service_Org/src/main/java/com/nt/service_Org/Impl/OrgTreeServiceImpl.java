@@ -2,6 +2,7 @@ package com.nt.service_Org.Impl;
 
 import cn.hutool.core.util.ImageUtil;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.Vo.OrgListVo;
 import com.nt.service_Org.OrgTreeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -93,5 +94,32 @@ public class OrgTreeServiceImpl implements OrgTreeService {
             orgTrees = dynamicsQuery(dynamicsQuery, id);
         }
         return orgTrees;
+    }
+
+    /**
+     * @return java.util.List<com.nt.dao_Org.Vo.OrgListVo>
+     * @Method getOrgList
+     * @Author SKAIXX
+     * @Description 获取组织结构List
+     * @Date 2020/8/31 11:59
+     * @Param []
+     **/
+    @Override
+    public List<OrgListVo> getOrgList() throws Exception {
+        OrgTree orgTree = new OrgTree();
+        Query query = CustmizeQuery(orgTree);
+        orgTree = mongoTemplate.findOne(query, OrgTree.class);
+        List<OrgListVo> orgListVoList = new ArrayList<>();
+        OrgListVo orgListVo = new OrgListVo();
+        orgListVo.setValue(orgTree.get_id());
+        orgListVo.setLabel(orgTree.getTitle());
+        orgListVoList.add(orgListVo);
+        orgTree.getOrgs().forEach(item -> {
+            OrgListVo tmp = new OrgListVo();
+            tmp.setValue(item.get_id());
+            tmp.setLabel(item.getTitle());
+            orgListVoList.add(tmp);
+        });
+        return orgListVoList;
     }
 }

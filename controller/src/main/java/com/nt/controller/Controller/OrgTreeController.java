@@ -44,6 +44,11 @@ public class OrgTreeController {
         return ApiResult.success(orgTreeService.get(orgTree));
     }
 
+    @RequestMapping(value = "/getOrgList", method = {RequestMethod.GET})
+    public ApiResult getOrgList(HttpServletRequest request) throws Exception {
+        return ApiResult.success(orgTreeService.getOrgList());
+    }
+
     /**
      * @方法名：save
      * @描述：插入或更新组织机构树形结构
