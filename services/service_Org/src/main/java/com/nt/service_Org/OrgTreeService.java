@@ -1,6 +1,7 @@
 package com.nt.service_Org;
 
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.Vo.OrgListVo;
 
 import java.util.List;
 
@@ -26,4 +27,7 @@ public interface OrgTreeService {
 
     // 获取当前组织机构树形结构
     List<OrgTree> getById(OrgTree orgTree) throws Exception;
+
+    // 获取组织结构List
+    List<OrgListVo> getOrgList() throws Exception;
 }
