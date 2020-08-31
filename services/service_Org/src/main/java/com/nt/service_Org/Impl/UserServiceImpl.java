@@ -936,9 +936,9 @@ public class UserServiceImpl implements UserService {
                     int cf = 0;
                     if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                         for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                            if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                            if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
                                 cf++;
-                                userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
                                 userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
                                 userinfo.setGroupname(null);
                                 userinfo.setGroupid(null);
@@ -977,16 +977,16 @@ public class UserServiceImpl implements UserService {
                             if (gf == 0) {
 
 //                                }
-                                if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
                                     cf++;
-                                    userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                    userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
                                     userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
                                 }
                                 if (cf > 0 && item.get("group") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
                                     for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
-                                        if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+                                        if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname().equals(grp.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
                                             gf++;
-                                            userinfo.setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
+                                            userinfo.setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname());
                                             userinfo.setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
                                             userinfo.setTeamname(null);
                                             userinfo.setTeamid(null);
@@ -1036,9 +1036,9 @@ public class UserServiceImpl implements UserService {
                             if (tf == 0 && gf == 0) {
 
 //                                }
-                                if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
                                     cf++;
-                                    userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                    userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
                                     userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
                                 }
                                 if (cf > 0 && item.get("group") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
@@ -1046,16 +1046,16 @@ public class UserServiceImpl implements UserService {
                                         if (tf == 0) {
 
 //                                        }
-                                            if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+                                            if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname().equals(grp.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
                                                 gf++;
-                                                userinfo.setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
+                                                userinfo.setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname());
                                                 userinfo.setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
                                             }
                                             if (gf > 0 && item.get("team") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size() > 0) {
                                                 for (int t = 0; t < orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size(); t++) {
-                                                    if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle().equals(tem.trim())) {
+                                                    if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getCompanyname().equals(tem.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle().equals(tem.trim())) {
                                                         tf++;
-                                                        userinfo.setTeamname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle());
+                                                        userinfo.setTeamname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getCompanyname());
                                                         userinfo.setTeamid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).get_id());
                                                         break;
                                                     }
@@ -1592,9 +1592,9 @@ public class UserServiceImpl implements UserService {
                         int cf = 0;
                         if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                             for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                                if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
                                     cf++;
-                                    customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                    customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
                                     customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
                                     customerInfoList.get(0).getUserinfo().setGroupname(null);
                                     customerInfoList.get(0).getUserinfo().setGroupid(null);
@@ -1633,16 +1633,16 @@ public class UserServiceImpl implements UserService {
                                 if (gf == 0) {
 
 //                                }
-                                    if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                    if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
                                         cf++;
-                                        customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                        customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
                                         customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
                                     }
                                     if (cf > 0 && item.get("group●") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
                                         for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
-                                            if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+                                            if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname().equals(grp.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
                                                 gf++;
-                                                customerInfoList.get(0).getUserinfo().setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
+                                                customerInfoList.get(0).getUserinfo().setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname());
                                                 customerInfoList.get(0).getUserinfo().setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
                                                 customerInfoList.get(0).getUserinfo().setTeamname(null);
                                                 customerInfoList.get(0).getUserinfo().setTeamid(null);
@@ -1692,9 +1692,9 @@ public class UserServiceImpl implements UserService {
                                 if (tf == 0 && gf == 0) {
 
 //                                }
-                                    if (orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                    if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
                                         cf++;
-                                        customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getTitle());
+                                        customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
                                         customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
                                     }
                                     if (cf > 0 && item.get("group●") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
@@ -1702,16 +1702,16 @@ public class UserServiceImpl implements UserService {
                                             if (tf == 0) {
 
 //                                        }
-                                                if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+                                                if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname().equals(grp.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
                                                     gf++;
-                                                    customerInfoList.get(0).getUserinfo().setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle());
+                                                    customerInfoList.get(0).getUserinfo().setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname());
                                                     customerInfoList.get(0).getUserinfo().setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
                                                 }
                                                 if (gf > 0 && item.get("team●") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size() > 0) {
                                                     for (int t = 0; t < orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size(); t++) {
-                                                        if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle().equals(tem.trim())) {
+                                                        if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getCompanyname().equals(tem.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle().equals(tem.trim())) {
                                                             tf++;
-                                                            customerInfoList.get(0).getUserinfo().setTeamname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle());
+                                                            customerInfoList.get(0).getUserinfo().setTeamname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getCompanyname());
                                                             customerInfoList.get(0).getUserinfo().setTeamid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).get_id());
                                                             break;
                                                         }
