@@ -33,7 +33,7 @@ public class Pimsdata extends BaseModel {
 
 
     @Transient
-    private String pimspointname;
+    private String equipment;
     @Transient
     private List<PimsdataVo> rows;
 }
