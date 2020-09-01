@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @Classname BASFTestController
@@ -19,7 +21,12 @@ import javax.servlet.http.HttpServletRequest;
 public class BASFTestController {
 
     @RequestMapping(value = "/test", method = {RequestMethod.POST})
-    public ApiResult test(@RequestBody Object o, HttpServletRequest request) throws Exception {
+    public ApiResult test(@RequestBody List<Object> data, HttpServletRequest request) throws Exception {
+        for (Object info : data){
+            String name = ((LinkedHashMap) info).get("key").toString();
+            String value = ((LinkedHashMap) info).get("value").toString();
+            System.out.print(info);
+        }
         return ApiResult.success();
     }
 }
