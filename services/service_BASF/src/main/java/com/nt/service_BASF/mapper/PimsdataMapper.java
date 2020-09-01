@@ -13,4 +13,6 @@ public interface PimsdataMapper extends MyMapper<Pimsdata> {
     List<Pimsdata> getAllPimsInfo(@Param("type") String type) throws Exception;
 
     int insertPimsDataList(List<Pimsdata> pimsdataList) throws Exception;
+
+    List<Pimsdata> getLastestPims() throws Exception;
 }
