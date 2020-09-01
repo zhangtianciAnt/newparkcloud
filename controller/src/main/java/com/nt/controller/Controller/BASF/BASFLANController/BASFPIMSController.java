@@ -3,12 +3,14 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
+import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Pimsdata;
 import com.nt.dao_BASF.Pimspoint;
+import com.nt.dao_BASF.VO.PimsVo;
+import com.nt.service_BASF.mapper.DeviceinformationMapper;
 import com.nt.service_BASF.mapper.PimsPointMapper;
 import com.nt.service_BASF.mapper.PimsdataMapper;
 import com.nt.utils.ApiResult;
-import com.nt.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,10 +41,14 @@ public class BASFPIMSController {
     @Autowired
     private PimsdataMapper pimsdataMapper;
 
+    @Autowired
+    private DeviceinformationMapper deviceinformationMapper;
+
     private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
 
     @RequestMapping(value = "/getData", method = {RequestMethod.POST})
     public ApiResult getData(@RequestBody List<Object> data, HttpServletRequest request) throws Exception {
+        List<PimsVo> pimsVoList = new ArrayList<>();
         List<Pimsdata> pimsdataList = new ArrayList<>();
         for (Object info : data) {
             String name = ((LinkedHashMap) info).get("key").toString();
@@ -59,12 +65,20 @@ public class BASFPIMSController {
                 pimsdata.setPimsdata(BigDecimal.valueOf(Double.parseDouble(value)));
                 pimsdata.preInsert();
                 pimsdataList.add(pimsdata);
+                // 获取deviceinformation
+                Deviceinformation deviceinformation = new Deviceinformation();
+                deviceinformation.setDeviceno(pimspoint.getPimspointname());
+                deviceinformation = deviceinformationMapper.selectOne(deviceinformation);
+                PimsVo pimsVo = new PimsVo();
+                pimsVo.setPimsdata(pimsdata);
+                pimsVo.setDeviceinformation(deviceinformation);
+                pimsVoList.add(pimsVo);
             }
         }
         pimsdataMapper.insertPimsDataList(pimsdataList);
 
         // websocket推送数据到大屏
-        webSocketDeviceinfoVo.setPimsdataList(pimsdataList);
+        webSocketDeviceinfoVo.setPimsVoList(pimsVoList);
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
         return ApiResult.success();
     }

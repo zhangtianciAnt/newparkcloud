@@ -34,5 +34,5 @@ public class WebSocketDeviceinfoVo {
     private List<Deviceinformation> electricShield;
 
     // PimsData
-    private List<Pimsdata> pimsdataList;
+    private List<PimsVo> pimsVoList;
 }
