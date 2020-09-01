@@ -72,6 +72,7 @@ public class BASFPIMSController {
                 PimsVo pimsVo = new PimsVo();
                 pimsVo.setPimsdata(pimsdata);
                 pimsVo.setDeviceinformation(deviceinformation);
+                pimsVo.setPimspoint(pimspoint);
                 pimsVoList.add(pimsVo);
             }
         }

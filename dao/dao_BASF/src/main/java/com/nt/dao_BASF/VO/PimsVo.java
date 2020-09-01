@@ -2,6 +2,7 @@ package com.nt.dao_BASF.VO;
 
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Pimsdata;
+import com.nt.dao_BASF.Pimspoint;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,8 @@ import lombok.NoArgsConstructor;
 public class PimsVo {
 
     private Pimsdata pimsdata;
+
+    private Pimspoint pimspoint;
 
     private Deviceinformation deviceinformation;
 }
