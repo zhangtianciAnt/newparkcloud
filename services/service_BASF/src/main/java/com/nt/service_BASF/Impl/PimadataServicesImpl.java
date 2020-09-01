@@ -50,9 +50,6 @@ public class PimadataServicesImpl implements PimsdataServices {
         Date date = new Date();
 
 
-
-
-
         for (Pimsdata temp : pimsdata) {
             temp.setPimsid(UUID.randomUUID().toString());
             temp.setCreateby("PimsSystem");
@@ -77,5 +74,10 @@ public class PimadataServicesImpl implements PimsdataServices {
     public void createPimsPoint(Pimspoint pimsPoint) throws Exception {
         pimsPoint.setId(UUID.randomUUID().toString());
         pimsPointMapper.insert(pimsPoint);
+    }
+
+    @Override
+    public List<Pimspoint> getPimsPoint() throws Exception {
+        return pimsPointMapper.selectAll();
     }
 }

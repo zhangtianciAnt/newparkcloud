@@ -23,4 +23,6 @@ public interface PimsdataServices {
     List<Pimsdata> getAllPimsInfo(String type) throws Exception;
 
     void createPimsPoint(Pimspoint pimsPoint) throws Exception;
+
+    List<Pimspoint> getPimsPoint() throws Exception;
 }
