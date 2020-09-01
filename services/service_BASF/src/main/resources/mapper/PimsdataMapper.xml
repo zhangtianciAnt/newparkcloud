@@ -6,7 +6,7 @@
            WARNING - @mbg.generated
          -->
         <id column="pimsid" property="pimsid" jdbcType="VARCHAR"/>
-        <result column="devicecode" property="devicecode" jdbcType="VARCHAR"/>
+        <result column="pimspointname" property="pimspointname" jdbcType="VARCHAR"/>
         <collection property="rows" ofType="com.nt.dao_BASF.VO.PimsdataVo">
             <result column="monitoringpoint" property="monitoringpoint" jdbcType="VARCHAR"/>
             <result column="pimsdata" property="pimsdata" jdbcType="DECIMAL"/>
@@ -16,44 +16,45 @@
     </resultMap>
     <select id="getAllPimsInfo" resultMap="BaseResultMap">
         SELECT
-        dcode.pimsid,
-        dcode.VALUE1 devicecode,
-        detail.monitoringpoint monitoringpoint,
-        detail.pimsdata pimsdata,
-        HOUR(detail.CREATEON) CREATEON,
-        detail.type type
+        MAX(dcode.pointid) pimsid,
+        MAX(dcode.equipment) equipment,
+        detail.pimspointname pimspointname,
+        group_concat(detail.pimsdata) pimsdata,
+        group_concat(MINUTE(detail.CREATEON)) CREATEON,
+        MAX(detail.type) type
         FROM
         (
         SELECT
-        MAX(pd.pimsid) pimsid,
-        MAX( dc.VALUE1 ) VALUE1,
-        pd.devicecode
+        MAX(id) pointid,
+        equipment
         FROM
-        pimsdata pd
-        LEFT JOIN dictionary dc ON pd.devicecode = dc.`CODE`
+        pimspoint
         GROUP BY
-        pd.devicecode
+        equipment
         ) dcode
         LEFT JOIN (
         SELECT
-        devicecode,
-        monitoringpoint,
-        SUM( pimsdata ) pimsdata,
-        MAX( CREATEON ) CREATEON,
-        MAX( type ) type
+        pd.monitoringpoint,
+        MAX(point.pimspointname) pimspointname,
+        IF(LOCATE(",",group_concat( pd.pimsdata ORDER BY pd.CREATEON desc )) = 0,group_concat( pd.pimsdata ORDER BY pd.CREATEON desc ),SUBSTRING_INDEX(group_concat( pd.pimsdata ORDER BY pd.CREATEON desc ),",",1)) pimsdata,
+        MAX( pd.CREATEON ) CREATEON,
+        MAX( point.type ) type
         FROM
-        pimsdata
+        pimsdata pd
+        LEFT JOIN
+        pimspoint point
+        ON pd.monitoringpoint = point.id
         WHERE
-        TO_DAYS( CREATEON ) = TO_DAYS(
-        NOW()) - 1
-        AND type = #{type}
+        TO_DAYS( pd.CREATEON ) = TO_DAYS(
+        NOW())
+        AND HOUR(pd.CREATEON) = HOUR(NOW())
+        AND point.type = #{type}
         GROUP BY
-        devicecode,
-        monitoringpoint,
-        HOUR ( CREATEON )
-        ) detail ON dcode.devicecode = detail.devicecode
+        pd.monitoringpoint,
+        MINUTE ( pd.CREATEON )
+        ) detail ON dcode.pointid = detail.monitoringpoint
         WHERE detail.monitoringpoint IS NOT NULL
-        ORDER BY HOUR(detail.CREATEON)
+        GROUP BY detail.pimspointname
     </select>
 
     <insert id="insertPimsDataList">

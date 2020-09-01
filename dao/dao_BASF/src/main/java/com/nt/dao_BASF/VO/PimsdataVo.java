@@ -26,7 +26,7 @@ public class PimsdataVo{
     /*
      * 测量数据
      */
-    private BigDecimal pimsdata;
+    private String pimsdata;
 
     /*
      * 类型
