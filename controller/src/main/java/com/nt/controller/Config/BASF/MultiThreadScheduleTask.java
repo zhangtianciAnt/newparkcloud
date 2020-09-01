@@ -674,6 +674,8 @@ public class MultiThreadScheduleTask {
             item.preInsert();
         });
         //插入最新数据到PimsData
-        pimsdataMapper.insertPimsDataList(pimsdataList);
+        if (pimsdataList.size() > 0) {
+            pimsdataMapper.insertPimsDataList(pimsdataList);
+        }
     }
 }

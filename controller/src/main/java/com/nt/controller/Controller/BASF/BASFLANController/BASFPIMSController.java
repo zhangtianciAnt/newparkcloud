@@ -8,6 +8,7 @@ import com.nt.dao_BASF.Pimspoint;
 import com.nt.service_BASF.mapper.PimsPointMapper;
 import com.nt.service_BASF.mapper.PimsdataMapper;
 import com.nt.utils.ApiResult;
+import com.nt.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,10 @@ import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @Classname BASFTestController
@@ -40,7 +44,7 @@ public class BASFPIMSController {
     @RequestMapping(value = "/getData", method = {RequestMethod.POST})
     public ApiResult getData(@RequestBody List<Object> data, HttpServletRequest request) throws Exception {
         List<Pimsdata> pimsdataList = new ArrayList<>();
-        for (Object info : data){
+        for (Object info : data) {
             String name = ((LinkedHashMap) info).get("key").toString();
             String value = ((LinkedHashMap) info).get("value").toString();
             // 通过name获取pimsponitname
@@ -48,12 +52,14 @@ public class BASFPIMSController {
             pimspoint.setPimspointname(name);
             pimspoint = pimsPointMapper.selectOne(pimspoint);
             //将Pims数据插入到Pimsdata
-            Pimsdata pimsdata = new Pimsdata();
-            pimsdata.setPimsid(UUID.randomUUID().toString());
-            pimsdata.setMonitoringpoint(pimspoint.getId());
-            pimsdata.setPimsdata(BigDecimal.valueOf(Long.parseLong(value)));
-            pimsdata.preInsert();
-            pimsdataList.add(pimsdata);
+            if (pimspoint != null) {
+                Pimsdata pimsdata = new Pimsdata();
+                pimsdata.setPimsid(UUID.randomUUID().toString());
+                pimsdata.setMonitoringpoint(pimspoint.getId());
+                pimsdata.setPimsdata(BigDecimal.valueOf(Double.parseDouble(value)));
+                pimsdata.preInsert();
+                pimsdataList.add(pimsdata);
+            }
         }
         pimsdataMapper.insertPimsDataList(pimsdataList);
 
