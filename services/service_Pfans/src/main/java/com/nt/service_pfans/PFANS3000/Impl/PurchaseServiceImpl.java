@@ -118,7 +118,9 @@ public class PurchaseServiceImpl implements PurchaseService {
                 && (purchase.getYusuanbuzu() ==null || purchase.getYusuanbuzu().equals(""))
                 && purchase.getStoragedate() == null
                 && purchase.getCollectionday() == null
-                && (purchase.getRecipients() == null || purchase.getRecipients().equals("")))
+                && (purchase.getRecipients() == null || purchase.getRecipients().equals(""))
+                && (purchase.getAcceptstatus() == null || purchase.getAcceptstatus().equals(""))
+        )
         {
             //审批结束的更新，状态是4，预算不足为空，入库日为空，领取日，领取人为空，精算日，精算金额为空
             purchase.preUpdate(tokenModel);
@@ -144,7 +146,9 @@ public class PurchaseServiceImpl implements PurchaseService {
                 && (purchase.getYusuanbuzu() !=null && !purchase.getYusuanbuzu().equals(""))
                 && purchase.getStoragedate() == null
                 && purchase.getCollectionday() == null
-                && (purchase.getRecipients() == null || purchase.getRecipients().equals("")))
+                && (purchase.getRecipients() == null || purchase.getRecipients().equals(""))
+                && (purchase.getAcceptstatus() == null || purchase.getAcceptstatus().equals(""))
+        )
         {
             //审批结束，状态是4，预算不足有值，入库日为空，领取日，领取人为空，精算日，精算金额为空
             ToDoNotice toDoNotice = new ToDoNotice();
@@ -165,7 +169,9 @@ public class PurchaseServiceImpl implements PurchaseService {
                 && (purchase.getYusuanbuzu() ==null || purchase.getYusuanbuzu().equals(""))
                 && purchase.getStoragedate() != null
                 && purchase.getCollectionday() == null
-                && (purchase.getRecipients() == null || purchase.getRecipients().equals("")))
+                && (purchase.getRecipients() == null || purchase.getRecipients().equals(""))
+                && (purchase.getAcceptstatus() == null || purchase.getAcceptstatus().equals(""))
+        )
         {
             //审批结束，状态是4，预算不足为空，入库日有值，领取日，领取人为空，精算日，精算金额为空
             purchase.preUpdate(tokenModel);
@@ -185,7 +191,9 @@ public class PurchaseServiceImpl implements PurchaseService {
                 && (purchase.getYusuanbuzu() == null || purchase.getYusuanbuzu().equals(""))
                 && purchase.getStoragedate() != null
                 && purchase.getCollectionday() != null
-                && (purchase.getRecipients() != null && !purchase.getRecipients().equals("")))
+                && (purchase.getRecipients() != null && !purchase.getRecipients().equals(""))
+                && (purchase.getAcceptstatus() == null || purchase.getAcceptstatus().equals(""))
+        )
         {
             //审批结束，状态是4，预算不足为空，入库日有值，领取有值，领取人有值，精算日，精算金额为空
             purchase.preUpdate(tokenModel);
@@ -195,6 +203,10 @@ public class PurchaseServiceImpl implements PurchaseService {
         if(purchase.getStatus().equals("4") && purchase.getFixedassetsno()!=null && !purchase.getFixedassetsno().equals(""))
         {
             //审批结束，精算完成，资产管理番号更新
+            purchase.preUpdate(tokenModel);
+            purchaseMapper.updateByPrimaryKey(purchase);
+        }
+        if(purchase.getStatus().equals("4") && (purchase.getAcceptstatus() == null || purchase.getAcceptstatus().equals(""))){
             purchase.preUpdate(tokenModel);
             purchaseMapper.updateByPrimaryKey(purchase);
         }
