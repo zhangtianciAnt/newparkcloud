@@ -22,6 +22,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -405,8 +406,7 @@ public class AbNormalServiceImpl implements AbNormalService {
             rst.put("dat", "");
             rst.put("can", "no");
             //upd-ws-禅道159
-        }
-        else if ("PR013007".equals(abNormal.getErrortype())) {
+        } else if ("PR013007".equals(abNormal.getErrortype())) {
             if (StrUtil.isNotBlank(abNormal.getRelengthtime()) && abNormal.getRelengthtime().equals("0")) {
                 relengths = 0.5;
                 lengths = relengths - lengths;
@@ -414,12 +414,21 @@ public class AbNormalServiceImpl implements AbNormalService {
             List<restViewVo> list = annualLeaveMapper.getrest2(abNormal.getUser_id());
             String dat = "";
             for (restViewVo item : list) {
-                if (Double.parseDouble(item.getRestdays()) != 0) {
+                //add-ws-09/01-禅道任务484
+                int scale = 1;//设置位数
+                int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+                BigDecimal bd = new BigDecimal(item.getRestdays());
+                bd = bd.setScale(scale, roundingMode);
+                BigDecimal bd1 = new BigDecimal(item.getShenqinglengthtime());
+                bd1 = bd1.setScale(scale, roundingMode);
+                BigDecimal bd2 = bd.subtract(bd1);
+                if (bd.compareTo(bd1) == 1) {
+                    //add-ws-09/01-禅道任务484
                     if (lengths >= 0) {
                         lengths = lengths - Double.parseDouble(item.getRestdays());
                         dat += dat + "," + item.getApplicationdate();
                         if (lengths <= 0) {
-                            String check = String.valueOf(list.get(0).getRestdays());
+                            String check = String.valueOf(bd2);
                             rst.put("checkdat", check);
                             rst.put("error", abNormal.getErrortype());
                             rst.put("dat", "");
@@ -427,13 +436,28 @@ public class AbNormalServiceImpl implements AbNormalService {
                             return rst;
                         }
                     } else {
-                        String check = String.valueOf(list.get(0).getRestdays());
+                        String check = String.valueOf(bd2);
                         rst.put("checkdat", check);
                         rst.put("error", abNormal.getErrortype());
                         rst.put("dat", "");
                         rst.put("can", "yes");
                         return rst;
                     }
+//add-ws-09/01-禅道任务484
+                }else if (bd.compareTo(bd1) == -1) {
+                    String check =  String.valueOf(Convert.toDouble(abNormal.getLengthtime()) / 8);
+                    rst.put("checkdat", check);
+                    rst.put("error", abNormal.getErrortype());
+                    rst.put("dat", "");
+                    rst.put("can", "yes");
+                    return rst;
+                }else if (bd.compareTo(bd1) == 0) {
+                    String check =  String.valueOf(Convert.toDouble(abNormal.getLengthtime()) / 8);
+                    rst.put("checkdat", check);
+                    rst.put("error", abNormal.getErrortype());
+                    rst.put("dat", "");
+                    rst.put("can", "yes");
+                    return rst;
                 }
             }
 //upd-ws-禅道159

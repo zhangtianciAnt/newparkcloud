@@ -22,5 +22,7 @@ public class restViewVo implements Serializable {
     private String codetype;
 
     private String sumDay;
+
+    private String shenqinglengthtime;
     //add_fjl_05/26 --添加代休剩余
 }
