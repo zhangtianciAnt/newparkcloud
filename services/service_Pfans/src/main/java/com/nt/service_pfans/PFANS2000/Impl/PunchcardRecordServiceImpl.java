@@ -1446,7 +1446,35 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     }
 
                                     //员工填写日志对应的实际工作时间
-                                    ad.setOutgoinghours(getOutgoinghours(lunchbreak_start, lunchbreak_end, PR, nomal));
+                                    //add ccm 有打卡记录，加班实际审批通过，日志时长为申请时长
+                                    String hours = "0";
+                                    for (Overtime Ot : ovList)
+                                    {
+                                        if (Ot.getStatus().equals("7")) {
+                                            //会社特别休日//周末加班/法定日加班/一齐年休日加班
+                                            if(Ot.getOvertimetype().equals("PR001005") || Ot.getOvertimetype().equals("PR001002") || Ot.getOvertimetype().equals("PR001003") || Ot.getOvertimetype().equals("PR001004") )
+                                            {
+                                                hours = String.valueOf(Double.valueOf(hours) + Double.valueOf(Ot.getActualovertime()));
+                                            }
+                                        }
+                                    }
+
+                                    if (workinghours.equals("0"))
+                                    {
+                                        if(!hours.equals("0"))
+                                        {
+                                            ad.setOutgoinghours(df.format(Double.valueOf(hours)));
+                                        }
+                                        else
+                                        {
+                                            ad.setOutgoinghours(getOutgoinghours(lunchbreak_start, lunchbreak_end, PR, nomal));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        ad.setOutgoinghours(getOutgoinghours(lunchbreak_start, lunchbreak_end, PR, nomal));
+                                    }
+                                    //add ccm 有打卡记录，加班实际审批通过，日志时长为申请时长
                                     PR.setEffectiveduration(ad.getOutgoinghours());
                                     PR.setModifyby(ad.getUser_id());
                                     PR.setModifyon(new Date());
