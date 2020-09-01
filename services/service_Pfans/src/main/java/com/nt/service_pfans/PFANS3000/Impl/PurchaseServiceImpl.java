@@ -206,7 +206,7 @@ public class PurchaseServiceImpl implements PurchaseService {
             purchase.preUpdate(tokenModel);
             purchaseMapper.updateByPrimaryKey(purchase);
         }
-        if(purchase.getStatus().equals("4") && (purchase.getAcceptstatus() != null || !purchase.getAcceptstatus().equals(""))){
+        if(purchase.getStatus().equals("4") && purchase.getAcceptstatus() != null && !purchase.getAcceptstatus().equals("")){
             purchase.preUpdate(tokenModel);
             purchaseMapper.updateByPrimaryKey(purchase);
         }
