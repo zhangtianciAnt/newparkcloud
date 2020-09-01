@@ -6,9 +6,9 @@
            WARNING - @mbg.generated
          -->
         <id column="pimsid" property="pimsid" jdbcType="VARCHAR"/>
-        <result column="pimspointname" property="pimspointname" jdbcType="VARCHAR"/>
+        <result column="equipment" property="equipment" jdbcType="VARCHAR"/>
         <collection property="rows" ofType="com.nt.dao_BASF.VO.PimsdataVo">
-            <result column="monitoringpoint" property="monitoringpoint" jdbcType="VARCHAR"/>
+            <result column="pimspointname" property="pimspointname" jdbcType="VARCHAR"/>
             <result column="pimsdata" property="pimsdata" jdbcType="DECIMAL"/>
             <result column="type" property="type" jdbcType="VARCHAR"/>
             <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
@@ -20,7 +20,7 @@
         MAX(dcode.equipment) equipment,
         detail.pimspointname pimspointname,
         group_concat(detail.pimsdata) pimsdata,
-        group_concat(MINUTE(detail.CREATEON)) CREATEON,
+        group_concat(MINUTE(detail.CREATEON) ORDER BY detail.CREATEON) CREATEON,
         MAX(detail.type) type
         FROM
         (
@@ -34,6 +34,7 @@
         ) dcode
         LEFT JOIN (
         SELECT
+        MAX(point.equipment) equipment,
         pd.monitoringpoint,
         MAX(point.pimspointname) pimspointname,
         IF(LOCATE(",",group_concat( pd.pimsdata ORDER BY pd.CREATEON desc )) = 0,group_concat( pd.pimsdata ORDER BY pd.CREATEON desc ),SUBSTRING_INDEX(group_concat( pd.pimsdata ORDER BY pd.CREATEON desc ),",",1)) pimsdata,
@@ -47,12 +48,12 @@
         WHERE
         TO_DAYS( pd.CREATEON ) = TO_DAYS(
         NOW())
-        AND HOUR(pd.CREATEON) = HOUR(NOW())
+<!--        AND HOUR(pd.CREATEON) = HOUR(NOW())-->
         AND point.type = #{type}
         GROUP BY
         pd.monitoringpoint,
         MINUTE ( pd.CREATEON )
-        ) detail ON dcode.pointid = detail.monitoringpoint
+        ) detail ON dcode.equipment = detail.equipment
         WHERE detail.monitoringpoint IS NOT NULL
         GROUP BY detail.pimspointname
     </select>

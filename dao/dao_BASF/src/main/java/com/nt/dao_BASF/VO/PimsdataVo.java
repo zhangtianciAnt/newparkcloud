@@ -21,7 +21,7 @@ public class PimsdataVo{
      * 监控点
      */
 
-    private String monitoringpoint;
+    private String pimspointname;
 
     /*
      * 测量数据
