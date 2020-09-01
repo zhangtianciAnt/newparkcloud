@@ -1454,8 +1454,15 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             //会社特别休日//周末加班/法定日加班/一齐年休日加班
                                             if(Ot.getOvertimetype().equals("PR001005") || Ot.getOvertimetype().equals("PR001002") || Ot.getOvertimetype().equals("PR001003") || Ot.getOvertimetype().equals("PR001004") )
                                             {
-                                                hours = String.valueOf(Double.valueOf(hours) + Double.valueOf(Ot.getActualovertime()));
+                                                //hours = String.valueOf(Double.valueOf(hours) + Double.valueOf(Ot.getActualovertime()));
+                                                hours = df.format(
+                                                        Double.valueOf(ad.getAnnualrestday() == null || ad.getAnnualrestday() =="0" ? "0":ad.getAnnualrestday())
+                                                                +Double.valueOf(ad.getSpecialday() == null || ad.getSpecialday() =="0" ? "0":ad.getSpecialday())
+                                                                +Double.valueOf(ad.getStatutoryresidue() == null || ad.getStatutoryresidue() =="0" ? "0":ad.getStatutoryresidue())
+                                                                +Double.valueOf(ad.getWeekendindustry() == null || ad.getWeekendindustry() =="0" ? "0":ad.getWeekendindustry()));
+                                                break;
                                             }
+                                            break;
                                         }
                                     }
 
