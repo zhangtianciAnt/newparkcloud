@@ -37,6 +37,11 @@ public class BASF10302Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/getPimsPoint", method = {RequestMethod.GET})
+    public ApiResult getPimsPoint() throws Exception {
+        return ApiResult.success(pimsdataServices.getPimsPoint());
+    }
+
 
     /**
      * @param pimsdata
