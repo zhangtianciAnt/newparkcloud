@@ -48,7 +48,7 @@
         WHERE
         TO_DAYS( pd.CREATEON ) = TO_DAYS(
         NOW())
-<!--        AND HOUR(pd.CREATEON) = HOUR(NOW())-->
+        AND HOUR(pd.CREATEON) = HOUR(NOW())
         AND point.type = #{type}
         GROUP BY
         pd.monitoringpoint,
