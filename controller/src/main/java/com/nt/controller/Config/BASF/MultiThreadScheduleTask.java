@@ -13,6 +13,8 @@ import com.nt.dao_SQL.SqlAPBCardHolder;
 import com.nt.dao_SQL.SqlViewDepartment;
 import com.nt.service_BASF.*;
 import com.nt.service_BASF.mapper.DeviceinformationMapper;
+import com.nt.service_BASF.mapper.PimsPointMapper;
+import com.nt.service_BASF.mapper.PimsdataMapper;
 import com.nt.service_SQL.sqlMapper.BasfUserInfoMapper;
 import com.nt.utils.CowBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +99,12 @@ public class MultiThreadScheduleTask {
 
     @Resource
     private DeviceinformationMapper deviceinformationMapper;
+
+    @Resource
+    private PimsdataMapper pimsdataMapper;
+
+    @Resource
+    private PimsPointMapper pimsPointMapper;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -654,5 +662,18 @@ public class MultiThreadScheduleTask {
         Switchnotifications switchnotifications = new Switchnotifications();
         webSocketVo.setSwitchList(switchnotificationsServices.list(switchnotifications));
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
+    @Async
+    @Scheduled(fixedDelay = 60000)
+    public void updatePims() throws Exception {
+        //获取最新PimsData
+        List<Pimsdata> pimsdataList = pimsdataMapper.getLastestPims();
+        pimsdataList.forEach(item -> {
+            item.setPimsid(UUID.randomUUID().toString());
+            item.preInsert();
+        });
+        //插入最新数据到PimsData
+        pimsdataMapper.insertPimsDataList(pimsdataList);
     }
 }

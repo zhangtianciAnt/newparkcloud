@@ -33,4 +33,6 @@ public class WebSocketDeviceinfoVo {
     // 电子围栏报警
     private List<Deviceinformation> electricShield;
 
+    // PimsData
+    private List<Pimsdata> pimsdataList;
 }

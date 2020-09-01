@@ -58,7 +58,51 @@
         GROUP BY detail.pimspointname
     </select>
 
-    <insert id="insertPimsDataList">
+    <select id="getLastestPims" resultType="com.nt.dao_BASF.Pimsdata">
+        SELECT
+            a.monitoringpoint,
+        IF
+            (
+                LOCATE(
+                    ",",
+                group_concat( a.pimsdata ORDER BY a.createon DESC )) = 0,
+                group_concat( a.pimsdata ORDER BY a.createon DESC ),
+            SUBSTRING_INDEX( group_concat( a.pimsdata ORDER BY a.createon DESC ), ",", 1 )) pimsdata
+        FROM
+            ( SELECT * FROM pimsdata ORDER BY createon DESC) a
+        GROUP BY
+            a.monitoringpoint
+    </select>
+
+    <insert id="insertPimsDataList" parameterType="java.util.List">
+        insert into pimsdata
+        (
+            pimsid,
+            monitoringpoint,
+            pimsdata,
+            `status`,
+            createon,
+            createby,
+            modifyon,
+            modifyby,
+            `owner`,
+            tenantid
+        )
+        values
+        <foreach collection="list" item="pd" index="index" separator=",">
+            (
+                #{pd.pimsid},
+                #{pd.monitoringpoint},
+                #{pd.pimsdata},
+                #{pd.status},
+                #{pd.createon},
+                #{pd.createby},
+                #{pd.modifyon},
+                #{pd.modifyby},
+                #{pd.owner},
+                #{pd.tenantid}
+            )
+        </foreach>
 
     </insert>
 </mapper>
