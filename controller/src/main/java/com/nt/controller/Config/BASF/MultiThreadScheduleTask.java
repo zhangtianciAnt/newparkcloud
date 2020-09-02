@@ -160,8 +160,24 @@ public class MultiThreadScheduleTask {
         return (JSONArray) jsonObject.get("data");
     }
 
+//    /**
+//     * @return
+//     * @Method BASF90600_GetQueryVehiclesRegularlyInfo
+//     * @Author SKAIXX
+//     * @Description ERC定时查询车辆信息表（出场时间为空的数据）
+//     * @Date 2020/04/13 14:56
+//     * @Param
+//     **/
+//    @Async
+//    @Scheduled(fixedDelay = 10000)
+//    public void BASF90600_GetQueryVehiclesRegularlyInfo() throws Exception {
+//        // 定时查询车辆信息表（出场时间为空的数据）
+//        webSocketVo.setQueryVehiclesRegularlyInfoList(vehicleinformationServices.getQueryVehiclesRegularlyInfo());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
+
     @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 50000)
     public void getGps() throws Exception {
         // TODO: 2020/7/22 获取所有GPS盒子imei和key（key是鉴权码），循环调用获取GPS，都调用结束，推送前台
         webSocketVo.setCarSet(restTemplate.getForObject("http://58.61.160.60:97/api/car/getlastinfo?imei=868500025879859&key=0F4137ED1502B5045D6083AA258B5C42", String.class));
@@ -194,7 +210,7 @@ public class MultiThreadScheduleTask {
         List<APBCardHolderVo> apbCardHolderVos = JSONObject.parseArray(
                 JSONObject.parseObject(HttpUtil.post(Url + "userInfo/selectapbcardholder", new HashMap<>())).get("data").toString(), APBCardHolderVo.class
         );
-        // TODO: 2020/8/5 因为json循环引用，导致前端接收的json是$ref,需要研究下怎么改 
+        // TODO: 2020/8/5 因为json循环引用，导致前端接收的json是$ref,需要研究下怎么改
 //        List<APBCardHolderVo> apbCardHolderVos1 = JSONObject.parseArray(
 //                JSONObject.parseObject(HttpUtil.post(Url + "userInfo/selectapbcardholder", new HashMap<>())).get("data").toString(), APBCardHolderVo.class
 //        );
@@ -239,12 +255,7 @@ public class MultiThreadScheduleTask {
 
 
     /**
-     * @return void
-     * @Method selectDeviceUsersCount
-     * @Author GJ
-     * @Description ERC大屏区域人数
-     * @Date 2020/03/31 11:21
-     * @Param
+     * 火灾消防 事故区域人数
      **/
     @Async
     @Scheduled(fixedDelay = 30000)
@@ -265,7 +276,7 @@ public class MultiThreadScheduleTask {
      * @Param
      **/
     @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 40000)
     public void BASF90600_GetInsideList() throws Exception {
         // 获取在场车辆信息一览
         webSocketVo.setInsideVehicleinformationVoList(vehicleinformationServices.getInsideList());
@@ -281,7 +292,7 @@ public class MultiThreadScheduleTask {
      * @Param
      **/
     @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 40000)
     public void BASF90600_GetInsideVehicleType() throws Exception {
         // 在场车辆类别统计
         webSocketVo.setInsideVehicleTypeVoList(vehicleinformationServices.getInsideVehicleType());
@@ -297,7 +308,7 @@ public class MultiThreadScheduleTask {
      * @Param
      **/
     @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 60000)
     public void BASF90600_GetAccessStatistics() throws Exception {
         // 车辆出入统计
         webSocketVo.setVehicleAccessStatisticsVoList(vehicleinformationServices.getAccessStatistics());
@@ -313,7 +324,7 @@ public class MultiThreadScheduleTask {
      * @Param
      **/
     @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 60000)
     public void BASF90600_GetWeekAccessStatistics() throws Exception {
         // 车辆出入统计
         webSocketVo.setVehicleWeekAccessStatisticsVoList(vehicleinformationServices.getWeekAccessStatistics());
@@ -329,32 +340,16 @@ public class MultiThreadScheduleTask {
      * @Param
      **/
     @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 50000)
     public void BASF90600_GetDailyVehicleInfo() throws Exception {
         // 获取当日入场车辆信息
         webSocketVo.setVehicleinformationList(vehicleinformationServices.getDailyVehicleInfo());
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
-
-    /**
-     * @return
-     * @Method BASF90600_GetQueryVehiclesRegularlyInfo
-     * @Author SKAIXX
-     * @Description ERC定时查询车辆信息表（出场时间为空的数据）
-     * @Date 2020/04/13 14:56
-     * @Param
-     **/
-    @Async
-    @Scheduled(fixedDelay = 10000)
-    public void BASF90600_GetQueryVehiclesRegularlyInfo() throws Exception {
-        // 定时查询车辆信息表（出场时间为空的数据）
-        webSocketVo.setQueryVehiclesRegularlyInfoList(vehicleinformationServices.getQueryVehiclesRegularlyInfo());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
     // endregion
-
-    // region BASF90200 ERC-火灾消防
-
+//
+//    // region BASF90200 ERC-火灾消防
+//
     /**
      * @return 近30日接警数据分析
      * @Method BASF90200_GetFireAlarmStatistics
@@ -364,7 +359,7 @@ public class MultiThreadScheduleTask {
      * @Param
      **/
     @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 70000)
     public void BASF90200_GetFireAlarmStatistics() throws Exception {
         // 获取当月接警数据分析
         webSocketVo.setFireAlarmStatisticsVoList(firealarmServices.getFireAlarmStatistics());
@@ -372,31 +367,31 @@ public class MultiThreadScheduleTask {
     }
 
     @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 70000)
     public void BASF90200_GetFireAlarmList() throws Exception {
         // 获取接警事件记录
         webSocketVo.setFireAlarmList(firealarmServices.getFireAlarm());
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
-    @Async
-    @Scheduled(fixedDelay = 30000)
-    public void BASF90800_GetMandatoryInfo() throws Exception {
-        // 获取培训教育强制的通过/未通过
-        webSocketVo.setPassingRateList(startprogramServices.getMandatoryInfo());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    @Async
+//    @Scheduled(fixedDelay = 30000)
+//    public void BASF90800_GetMandatoryInfo() throws Exception {
+//        // 获取培训教育强制的通过/未通过
+//        webSocketVo.setPassingRateList(startprogramServices.getMandatoryInfo());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
+//    @Async
+//    @Scheduled(fixedDelay = 30000)
+//    public void BASF90800_GetIsMandatoryInfo() throws Exception {
+//        // 获取培训教育非强制的通过/未通过
+//        webSocketVo.setPassingIsRateList(startprogramServices.getIsMandatoryInfo());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
+//
     @Async
-    @Scheduled(fixedDelay = 30000)
-    public void BASF90800_GetIsMandatoryInfo() throws Exception {
-        // 获取培训教育非强制的通过/未通过
-        webSocketVo.setPassingIsRateList(startprogramServices.getIsMandatoryInfo());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
-
-    @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 80000)
     public void BASF10802_GetEmergencyplanInfo() throws Exception {
         // 应急预案列表
         webSocketVo.setEmergencyplanList(emergencyplanServices.list());
@@ -404,146 +399,56 @@ public class MultiThreadScheduleTask {
     }
 
     @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 80000)
     public void BASF10804_GetChemicalsdsInfo() throws Exception {
         // 化学品SDS列表
         webSocketVo.setChemicalsdsList(chemicalsdsServices.list());
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
-    @Async
-    @Scheduled(fixedDelay = 30000)
-    public void BASF10803_GetResponseinformationInfo() throws Exception {
-        //应急预案工艺处置队列表
-        webSocketVo.setResponseinformationList(responseinformationServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
-
 //    @Async
-//    @Scheduled(fixedDelay = 30000)
-//    public void BASFSQL60001_GetSelectapbcard() throws Exception {
-//        //在厂人员列表
-////        JSONArray apbcardarray = returnpostlist("userInfo/selectapbcard");
-////        List<SqlAPBCardHolder> selectapbcardList = JSONObject.parseArray(apbcardarray.toJSONString(), SqlAPBCardHolder.class);
-//
-//        Map<String, String> departmentInfoList = new HashMap<>();
-////        List departlist = sqlUserInfoMapper.selectdepartment();
-////        List apblist = sqlUserInfoMapper.selectapbcardholder();
-//        List resultlist = new ArrayList();
-//        JSONArray departarray = returnpostlist("userInfo/selectdepartment");
-//        List<SqlViewDepartment> departlist = JSONObject.parseArray(departarray.toJSONString(), SqlViewDepartment.class);
-//
-//        JSONArray apbarray = returnpostlist("userInfo/selectapbcard");
-//        List<SqlAPBCardHolder> apblist = JSONObject.parseArray(apbarray.toJSONString(), SqlAPBCardHolder.class);
-//
-//        List<PersonnelPermissions> personnelPermissionsList = personnelPermissionsServices.list();
-//        String companystaff = "";
-//        String supplier = "";
-//        String foreignworkers = "";
-//
-//        if (apblist.size() > 0) {
-//            if (departlist.size() > 0) {
-//                for (int i = 0; i < departlist.size(); i++) {
-//                    departmentInfoList.put(((SqlViewDepartment) departlist.get(i)).getRecnum(), ((SqlViewDepartment) departlist.get(i)).getDepartmentpeid());
-//                }
-//            }
-//            if (personnelPermissionsList.size() > 0) {
-//                for (int i = 0; i < personnelPermissionsList.size(); i++) {
-//                    if ("class1".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
-//                        if ("".equals(companystaff)) {
-//                            companystaff = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-//                        } else {
-//                            companystaff = companystaff + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-//                        }
-//                    }
-//                    if ("class2".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
-//                        if ("".equals(foreignworkers)) {
-//                            foreignworkers = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-//                        } else {
-//                            foreignworkers = foreignworkers + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-//                        }
-//                    }
-//                    if ("class3".equals(((PersonnelPermissions) personnelPermissionsList.get(i)).getClassname())) {
-//                        if ("".equals(supplier)) {
-//                            supplier = ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-//                        } else {
-//                            supplier = supplier + "," + ((PersonnelPermissions) personnelPermissionsList.get(i)).getRecnum();
-//                        }
-//                    }
-//                }
-//            }
-//            List<String> companystaffList = Arrays.asList(companystaff.split(","));
-//            List<String> supplierList = Arrays.asList(supplier.split(","));
-//            List<String> foreignworkersList = Arrays.asList(foreignworkers.split(","));
-//
-//            for (int i = 0; i < apblist.size(); i++) {
-//                String departmentID = ((SqlAPBCardHolder) apblist.get(i)).getDepartmentid();
-//                for (int j = 1; j < 10; j++) {
-//                    if ("-1".equals(departmentInfoList.get(departmentID))) {
-//                        for (int z = 0; z < companystaffList.size(); z++) {
-//                            if (companystaffList.get(z).equals(departmentID)) {
-//                                ((SqlAPBCardHolder) apblist.get(i)).setUsertype("员工");
-//                                resultlist.add(apblist.get(i));
-//                            }
-//                        }
-//                        for (int z = 0; z < supplierList.size(); z++) {
-//                            if (supplierList.get(z).equals(departmentID)) {
-//                                ((SqlAPBCardHolder) apblist.get(i)).setUsertype("承包商");
-//                                resultlist.add(apblist.get(i));
-//                            }
-//                        }
-//                        for (int z = 0; z < foreignworkersList.size(); z++) {
-//                            if (foreignworkersList.get(z).equals(departmentID)) {
-//                                ((SqlAPBCardHolder) apblist.get(i)).setUsertype("访客");
-//                                resultlist.add(apblist.get(i));
-//                            }
-//                        }
-//                        j = 10;
-//                    } else {
-//                        departmentID = departmentInfoList.get(departmentID);
-//                    }
-//                }
-//            }
-//        }
-//        webSocketVo.setSelectapbcardList(resultlist);
+//    @Scheduled(fixedDelay = 90000)
+//    public void BASF10803_GetResponseinformationInfo() throws Exception {
+//        //应急预案工艺处置队列表
+//        webSocketVo.setResponseinformationList(responseinformationServices.list());
 //        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
 //    }
 
-    @Async
-    @Scheduled(fixedDelay = 30000)
-    public void BASF90800_GetOverduePersonnelList() throws Exception {
-        //获取培训到期人员列表
-        webSocketVo.setOverduePersonnelListVoList(trainjoinlistServices.overduepersonnellist());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    @Async
+//    @Scheduled(fixedDelay = 30000)
+//    public void BASF90800_GetOverduePersonnelList() throws Exception {
+//        //获取培训到期人员列表
+//        webSocketVo.setOverduePersonnelListVoList(trainjoinlistServices.overduepersonnellist());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
+//
+//    @Async
+//    @Scheduled(fixedDelay = 30000)
+//    public void BASF90800_GetFutureProgram() throws Exception {
+//        //大屏培训信息推送列表
+//        webSocketVo.setFutureProgramList(startprogramServices.getFutureProgram());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
+//
+//    @Async
+//    @Scheduled(fixedDelay = 90000)
+//    public void BASF90900_GetRiskassessment() throws Exception {
+//        //获取风险判研信息(MongoDB)
+//        webSocketVo.setRiskassessment(riskassessmentServices.getData());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
+
+//    @Async
+//    @Scheduled(fixedDelay = 100000)
+//    public void BASF90900_WriteList() throws Exception {
+//        //获取风险研判信息（MySql）
+//        webSocketVo.setRiskassessmentsList(riskassessmentsServices.writeList());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
+
 
     @Async
-    @Scheduled(fixedDelay = 30000)
-    public void BASF90800_GetFutureProgram() throws Exception {
-        //大屏培训信息推送列表
-        webSocketVo.setFutureProgramList(startprogramServices.getFutureProgram());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
-
-    @Async
-    @Scheduled(fixedDelay = 30000)
-    public void BASF90900_GetRiskassessment() throws Exception {
-        //获取风险判研信息(MongoDB)
-        webSocketVo.setRiskassessment(riskassessmentServices.getData());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
-
-    @Async
-    @Scheduled(fixedDelay = 30000)
-    public void BASF90900_WriteList() throws Exception {
-        //获取风险研判信息（MySql）
-        webSocketVo.setRiskassessmentsList(riskassessmentsServices.writeList());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
-
-
-    @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 100000)
     public void BASF90905_GetSameDayFireAlarm() throws Exception {
         // 获取今日事件列表
         webSocketVo.setSameDayFireAlarm(firealarmServices.getSameDayFireAlarm());
@@ -551,7 +456,7 @@ public class MultiThreadScheduleTask {
     }
 
     @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 110000)
     public void BASF90906_GetWeekFireAlarm() throws Exception {
         // 获取本周事件列表
         webSocketVo.setWeekFireAlarm(firealarmServices.getWeekFireAlarm());
@@ -559,50 +464,15 @@ public class MultiThreadScheduleTask {
     }
 
     @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 110000)
     public void BASF90921_GetHighriskareaList() throws Exception {
         // 获取高风险作业清单
         webSocketVo.setHighriskareaList(highriskareaServices.list());
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
-
-//    @Async
-//    @Scheduled(fixedDelay = 30000)
-//    public void BASF10105_GetDeviceinformationVoList() throws Exception {
-//        List<DeviceinformationVo> deviceinformationVos=new ArrayList<>();
-//        //获取非误报且未完成的消防报警单
-//        Firealarm firealarm=new Firealarm();
-//        firealarm.setCompletesta("0");
-//        firealarm.setMisinformation("0");
-//        List<Firealarm> firealarms=firealarmServices.list(firealarm);
-//        //获取消防报警单对应的设备信息
-//        for (Firealarm firealarm1 : firealarms) {
-//            DeviceinformationVo deviceinformationVo = new DeviceinformationVo();
-//            deviceinformationVo.setFirealarmuuid(firealarm1.getFirealarmid());
-//            deviceinformationVo.setDeviceinformation(deviceInformationServices.one(firealarm1.getDeviceinformationid()));
-//            deviceinformationVos.add(deviceinformationVo);
-//        }
-//        webSocketVo.setDeviceinformationList(deviceinformationVos);
-//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-//    }
-
-//    @Async
-//    @Scheduled(fixedDelay = 30000)
-//    public void BASF10201_GetFirealarmList() throws Exception {
-//
-//        //获取非误报且未完成的消防报警单
-//        Firealarm firealarm = new Firealarm();
-//        firealarm.setCompletesta("0");
-//        firealarm.setMisinformation("0");
-//        List<Firealarm> firealarms = firealarmServices.list(firealarm);
-//
-//        webSocketVo.setTopfirealarmList(firealarms);
-//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-//    }
-
     @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 120000)
     public void BASF90800_GetVehicleinformationVolList() throws Exception {
         //获取车辆列表(危化品车辆数用)
         webSocketVo.setDangerousgoodsList(vehicleinformationServices.getlistinformation());
@@ -610,60 +480,60 @@ public class MultiThreadScheduleTask {
     }
 
     @Async
-    @Scheduled(fixedDelay = 30000)
+    @Scheduled(fixedDelay = 120000)
     public void BASF90800_GetVehicleinformationCount() throws Exception {
         //获取车辆列表(危化品车辆数用)
         webSocketVo.setCountdangerousgoods(vehicleinformationServices.getcountinformation());
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
-    @Async
-    @Scheduled(fixedDelay = 30000)
-    public void BASF10105_GetDeviceAndSqlUserinfoVoList() throws Exception {
-        DeviceAndSqlUserinfoVo deviceAndSqlUserinfoVo = new DeviceAndSqlUserinfoVo();
-        List<DeviceAndSqlUserinfoVo> deviceAndSqlUserinfoVoList = new ArrayList<>();
-
-        Deviceinformation deviceinformation = new Deviceinformation();
-        deviceinformation.setDevicetype("BC004003");
-        List<Deviceinformation> deviceinformationList = deviceinformationMapper.select(deviceinformation);
-        for (int i = 0; i < deviceinformationList.size(); i++) {
-
-//            for (int j = 0; j < departlist.size(); j++) {
-//                if (deviceinformationList.get(i).getDeviceno() == departlist.get(j).getApbid()) {
-//            List<SqlAPBCardHolder> departlist = sqlUserInfoMapper.selectapbid(deviceinformationList.get(i).getDeviceno());
-
-            JSONArray departarray = returngetlist("userInfo/selectapbid", deviceinformationList.get(i).getDeviceno());
-            List<SqlViewDepartment> departlist = JSONObject.parseArray(departarray.toJSONString(), SqlViewDepartment.class);
-
-            if (departlist.size() > 0) {
-                deviceAndSqlUserinfoVo.setDeviceinformation(deviceinformationList.get(i));
-                deviceAndSqlUserinfoVo.setSqlUserInfoCnt(departlist.size());
-                deviceAndSqlUserinfoVoList.add(deviceAndSqlUserinfoVo);
-            }
-        }
-        webSocketVo.setDeviceAndSqlUserinfoVoList(deviceAndSqlUserinfoVoList);
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    @Async
+//    @Scheduled(fixedDelay = 130000)
+//    public void BASF10105_GetDeviceAndSqlUserinfoVoList() throws Exception {
+//        DeviceAndSqlUserinfoVo deviceAndSqlUserinfoVo = new DeviceAndSqlUserinfoVo();
+//        List<DeviceAndSqlUserinfoVo> deviceAndSqlUserinfoVoList = new ArrayList<>();
+//
+//        Deviceinformation deviceinformation = new Deviceinformation();
+//        deviceinformation.setDevicetype("BC004003");
+//        List<Deviceinformation> deviceinformationList = deviceinformationMapper.select(deviceinformation);
+//        for (int i = 0; i < deviceinformationList.size(); i++) {
+//
+////            for (int j = 0; j < departlist.size(); j++) {
+////                if (deviceinformationList.get(i).getDeviceno() == departlist.get(j).getApbid()) {
+////            List<SqlAPBCardHolder> departlist = sqlUserInfoMapper.selectapbid(deviceinformationList.get(i).getDeviceno());
+//
+//            JSONArray departarray = returngetlist("userInfo/selectapbid", deviceinformationList.get(i).getDeviceno());
+//            List<SqlViewDepartment> departlist = JSONObject.parseArray(departarray.toJSONString(), SqlViewDepartment.class);
+//
+//            if (departlist.size() > 0) {
+//                deviceAndSqlUserinfoVo.setDeviceinformation(deviceinformationList.get(i));
+//                deviceAndSqlUserinfoVo.setSqlUserInfoCnt(departlist.size());
+//                deviceAndSqlUserinfoVoList.add(deviceAndSqlUserinfoVo);
+//            }
+//        }
+//        webSocketVo.setDeviceAndSqlUserinfoVoList(deviceAndSqlUserinfoVoList);
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
     // endregion
-
-    @Async
-    @Scheduled(fixedDelay = 30000)
-    public void BASF90620_GetRoadClosed() throws Exception {
-        //道路占用/临时封闭区域列表
-        webSocketVo.setRoadClosed(applicationServices.roadClosed());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
-
-    @Async
-    @Scheduled(fixedDelay = 30000)
-    public void SENDEMAIL_Listswitch() throws Exception {
-        //主备服务通知表
-        Switchnotifications switchnotifications = new Switchnotifications();
-        webSocketVo.setSwitchList(switchnotificationsServices.list(switchnotifications));
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
-
+//
+//    @Async
+//    @Scheduled(fixedDelay = 30000)
+//    public void BASF90620_GetRoadClosed() throws Exception {
+//        //道路占用/临时封闭区域列表
+//        webSocketVo.setRoadClosed(applicationServices.roadClosed());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
+//
+//    @Async
+//    @Scheduled(fixedDelay = 30000)
+//    public void SENDEMAIL_Listswitch() throws Exception {
+//        //主备服务通知表
+//        Switchnotifications switchnotifications = new Switchnotifications();
+//        webSocketVo.setSwitchList(switchnotificationsServices.list(switchnotifications));
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
+//
     @Async
     @Scheduled(fixedDelay = 60000)
     public void updatePims() throws Exception {
