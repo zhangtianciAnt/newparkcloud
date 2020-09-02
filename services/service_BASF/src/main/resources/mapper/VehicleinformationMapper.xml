@@ -55,7 +55,8 @@ v.vehicleinformationid,
 FROM
 	vehicleinformation AS v
 WHERE
-	ifnull(outtime,'') = '' and TO_DAYS(CREATEON) = TO_DAYS(now())
+	ifnull(outtime,'') = ''
+-- 	 and TO_DAYS(CREATEON) = TO_DAYS(now())
 ORDER BY
 	v.intime and v.speed>'15' DESC
     </select>
@@ -88,7 +89,8 @@ ORDER BY
     <select id="getInsideVehicleType" resultType="com.nt.dao_BASF.VO.InsideVehicleTypeVo">
         select count(*) as cnt,vehicletype
         from vehicleinformation
-        where ifnull(outtime,'') = '' and TO_DAYS(CREATEON) = TO_DAYS(now())
+        where ifnull(outtime,'') = ''
+--         and TO_DAYS(CREATEON) = TO_DAYS(now())
         group by vehicletype
     </select>
 
@@ -96,7 +98,8 @@ ORDER BY
     <select id="getDailyVehicleInfo" resultType="com.nt.dao_BASF.Vehicleinformation">
         select *
         from vehicleinformation
-        where date_format(intime,'%Y-%m-%d') = curdate()
+        where ifnull(outtime,'') = ''
+        order by intime desc
     </select>
 
     <!--    获取危化品车辆信息-->
