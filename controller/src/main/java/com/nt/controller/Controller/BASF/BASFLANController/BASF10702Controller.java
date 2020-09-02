@@ -2,13 +2,10 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.nt.dao_BASF.BlackList;
 import com.nt.dao_BASF.Vehicleinformation;
-import com.nt.service_BASF.VehicleinformationServices;
-import com.nt.utils.dao.TokenModel;
 import com.nt.service_BASF.BlackListServices;
+import com.nt.service_BASF.VehicleinformationServices;
 import com.nt.utils.*;
 import com.nt.utils.services.TokenService;
-import org.bytedeco.javacpp.presets.opencv_core;
-import org.opencv.tracking.TrackerBoosting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.annotation.ElementType;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * @ProjectName: BASF应急平台
@@ -67,6 +64,29 @@ public class BASF10702Controller {
     @RequestMapping(value = "/checkblack", method = {RequestMethod.POST})
     public ApiResult checkblack(String driverIdNo) throws Exception {
         return ApiResult.success(blackListServices.checkblack(driverIdNo));
+    }
+
+    /**
+     * @param driverIdNo
+     * @Method list
+     * @Author SKAIXX
+     * @Version 1.0
+     * @Description 添加黑名单
+     * @Return com.nt.utils.ApiResult
+     * @Date 2019/11/28 9:37
+     */
+    @RequestMapping(value = "/createBlack", method = {RequestMethod.POST})
+    public ApiResult createBlack(String drivername,
+                                 String driveridnumber, String violationtype) throws Exception {
+        BlackList blackList = new BlackList();
+        blackList.setDriveridnumber(driveridnumber);
+        blackList.setViolationstime(String.valueOf(new Date()));
+        blackList.setViolationtype(violationtype);
+        blackList.setDrivername(drivername);
+        blackList.setBlacklistid(UUID.randomUUID().toString());
+        blackList.preInsert();
+        blackListServices.createBlack(blackList);
+        return ApiResult.success();
     }
 
     /**
@@ -129,7 +149,7 @@ public class BASF10702Controller {
         vehicleinformation.setLinkdepartment(linkdepartment);
         vehicleinformation.setGoodsname(goodsname);
         vehicleinformation.setWeight(weight);
-        ishazardous = ishazardous.equals("是")?"0":"1";
+        ishazardous = ishazardous.equals("是") ? "0" : "1";
         vehicleinformation.setIshazardous(ishazardous);
         vehicleinformation.setIntime(new Date());
         return ApiResult.success(vehicleinformationServices.insert(vehicleinformation));
@@ -147,9 +167,9 @@ public class BASF10702Controller {
      * @Date 2019/11/4 19:39
      */
     @RequestMapping(value = "/updategps", method = {RequestMethod.POST})
-    public ApiResult updategps(String vehicleinformationid,String gps,String speed) throws Exception {
-        if(StringUtils.isNotEmpty(vehicleinformationid)&&StringUtils.isNotEmpty(speed)){
-            vehicleinformationServices.updategps(vehicleinformationid,gps,speed);
+    public ApiResult updategps(String vehicleinformationid, String gps, String speed) throws Exception {
+        if (StringUtils.isNotEmpty(vehicleinformationid) && StringUtils.isNotEmpty(speed)) {
+            vehicleinformationServices.updategps(vehicleinformationid, gps, speed);
         }
         return ApiResult.success();
     }
