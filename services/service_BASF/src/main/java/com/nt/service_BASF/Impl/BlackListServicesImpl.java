@@ -45,6 +45,19 @@ public class BlackListServicesImpl implements BlackListServices {
     }
 
     /**
+     * @return void
+     * @Method createBlack
+     * @Author SKAIXX
+     * @Description 添加黑名单信息
+     * @Date 2020/9/2 14:43
+     * @Param [blackList]
+     **/
+    @Override
+    public void createBlack(BlackList blackList) throws Exception {
+        blackListMapper.insert(blackList);
+    }
+
+    /**
      * @param driverIdNo
      * @Method list
      * @Author Wxz

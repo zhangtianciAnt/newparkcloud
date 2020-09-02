@@ -24,4 +24,7 @@ public interface BlackListServices {
 
     //删除驾驶员黑名单信息
     void delete(BlackList blackList) throws Exception;
+
+    //创建黑名单信息
+    void createBlack(BlackList blackList) throws Exception;
 }
