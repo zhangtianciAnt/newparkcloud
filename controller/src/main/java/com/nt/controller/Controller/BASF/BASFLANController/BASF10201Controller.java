@@ -2,6 +2,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
 import com.nt.dao_BASF.Deviceinformation;
@@ -69,6 +70,16 @@ public class BASF10201Controller {
         return ApiResult.success(firealarmServices.list());
     }
 
+    @RequestMapping(value = "/getFireAlarmStatistics", method = {RequestMethod.POST})
+    public ApiResult getFireAlarmStatistics(HttpServletRequest request) throws Exception {
+        return ApiResult.success(firealarmServices.getFireAlarmStatistics());
+    }
+
+    @RequestMapping(value = "/getFireAlarm", method = {RequestMethod.POST})
+    public ApiResult getFireAlarm(HttpServletRequest request) throws Exception {
+        return ApiResult.success(firealarmServices.getFireAlarm());
+    }
+
     /**
      * @param request
      * @Method list
@@ -104,6 +115,9 @@ public class BASF10201Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         String uuid = firealarmServices.insert(firealarm, tokenModel);
         pushMessage(null);
+        MultiThreadScheduleTask.webSocketVo.setFireAlarmList(firealarmServices.getFireAlarm());
+        MultiThreadScheduleTask.webSocketVo.setFireAlarmStatisticsVoList(firealarmServices.getFireAlarmStatistics());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success(uuid);
     }
 
@@ -124,6 +138,9 @@ public class BASF10201Controller {
         }
         firealarm.setStatus(AuthConstants.DEL_FLAG_DELETE);
         firealarmServices.delete(firealarm);
+        MultiThreadScheduleTask.webSocketVo.setFireAlarmList(firealarmServices.getFireAlarm());
+        MultiThreadScheduleTask.webSocketVo.setFireAlarmStatisticsVoList(firealarmServices.getFireAlarmStatistics());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 
@@ -163,6 +180,9 @@ public class BASF10201Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         firealarmServices.update(firealarm, tokenModel);
         pushMessage(tokenModel);
+        MultiThreadScheduleTask.webSocketVo.setFireAlarmList(firealarmServices.getFireAlarm());
+        MultiThreadScheduleTask.webSocketVo.setFireAlarmStatisticsVoList(firealarmServices.getFireAlarmStatistics());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 
