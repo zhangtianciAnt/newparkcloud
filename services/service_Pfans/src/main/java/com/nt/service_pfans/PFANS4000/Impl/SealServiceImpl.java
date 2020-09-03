@@ -61,6 +61,54 @@ public class SealServiceImpl implements SealService {
         seal.preInsert(tokenModel);
         seal.setSealid(UUID.randomUUID().toString());
         sealMapper.insert(seal);
+        Seal se = sealMapper.selectByPrimaryKey(seal);
+        if (!StringUtils.isNullOrEmpty(seal.getBookid())) {
+            String[] boksplit = seal.getBookid().split(",");
+            if (boksplit.length > 1) {
+                if (boksplit[0].equals("6")) {//请求书
+                    for (int a = 1; a < boksplit.length; a++) {
+                        Petition pt = ptitionMapper.selectByPrimaryKey(boksplit[a]);
+                        if (pt != null) {
+                            pt.setSealstatus("1");
+                            pt.setSealid(se.getSealid());
+                            pt.preUpdate(tokenModel);
+                            ptitionMapper.updateByPrimaryKey(pt);
+                        }
+                    }
+                } else if (boksplit[0].equals("5")) {//纳品书
+                    for (int a = 1; a < boksplit.length; a++) {
+                        Napalm np = napalmMapper.selectByPrimaryKey(boksplit[a]);
+                        if (np != null) {
+                            np.setSealstatus("1");
+                            np.setSealid(se.getSealid());
+                            np.preUpdate(tokenModel);
+                            napalmMapper.updateByPrimaryKey(np);
+                        }
+                    }
+                } else if (boksplit[0].equals("7")) {//委托决裁
+                    for (int a = 1; a < boksplit.length; a++) {
+                        Award aw = awardMapper.selectByPrimaryKey(boksplit[a]);
+                        if (aw != null) {
+                            aw.setSealstatus("1");
+                            aw.setSealid(se.getSealid());
+                            aw.preUpdate(tokenModel);
+                            awardMapper.updateByPrimaryKey(aw);
+                        }
+                    }
+                }
+                else if (boksplit[0].equals("9")) {//其他契约决裁
+                    for (int a = 1; a < boksplit.length; a++) {
+                        Award aw = awardMapper.selectByPrimaryKey(boksplit[a]);
+                        if (aw != null) {
+                            aw.setSealstatus("1");
+                            aw.setSealid(se.getSealid());
+                            aw.preUpdate(tokenModel);
+                            awardMapper.updateByPrimaryKey(aw);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     //add_fjl_添加合同回款相关  start

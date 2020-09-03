@@ -57,7 +57,8 @@
     <select id="getrest2" resultType="com.nt.dao_Pfans.PFANS2000.Vo.restViewVo">
         select
         USER_ID userid,
-        RESTDAYS restdays
+        RESTDAYS restdays,
+        SHENQINGLENGTHTIME shenqinglengthtime
         from restView2
         <if test="userid!=null and userid !=''">
             where USER_ID = #{userid}
