@@ -1,7 +1,12 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
+import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Controller.WebSocket.WebSocket;
+import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
+import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.Highriskarea;
 import com.nt.dao_BASF.Riskassessments;
+import com.nt.service_BASF.HighriskareaServices;
 import com.nt.service_BASF.RiskassessmentServices;
 import com.nt.service_BASF.RiskassessmentsServices;
 import com.nt.service_BASF.mapper.RiskassessmentsMapper;
@@ -10,6 +15,7 @@ import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -40,10 +46,21 @@ public class BASF11101Controller {
     @Autowired
     private RiskassessmentServices riskassessmentservices;
 
+    @Autowired
+    private HighriskareaServices highriskareaServices;
+
+    private WebSocketVo webSocketVo = new WebSocketVo();
+
     //获取风险研判数据
     @RequestMapping(value = "/getData", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
         return ApiResult.success(riskassessmentServices.getData());
+    }
+
+    //获取高风险作业
+    @RequestMapping(value = "/getHighRisk", method = {RequestMethod.POST})
+    public ApiResult getHighRisk(HttpServletRequest request) throws Exception {
+        return ApiResult.success(highriskareaServices.list());
     }
 
     //风险研判承诺公告更新
@@ -51,6 +68,10 @@ public class BASF11101Controller {
     public ApiResult noticeUpdata(String notice, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         riskassessmentServices.noticeUpdata(notice, tokenModel);
+
+        //获取风险判研信息(MongoDB)
+        webSocketVo.setRiskassessment(riskassessmentServices.getData());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
         return ApiResult.success();
     }
 
@@ -67,6 +88,11 @@ public class BASF11101Controller {
     public ApiResult updataRiskassessments(@RequestBody Riskassessments riskassessments, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         riskassessmentsServices.updataRiskassessments(riskassessments, tokenModel);
+
+        //获取风险研判信息（MySql）
+        webSocketVo.setRiskassessmentsList(riskassessmentsServices.writeList());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+
         return ApiResult.success();
     }
 
@@ -74,7 +100,11 @@ public class BASF11101Controller {
     @PostMapping("/insertRiskassessments")
     public ApiResult insertRiskassessments(@RequestBody Riskassessments riskassessments, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(riskassessmentsServices.insertRiskassessments(riskassessments, tokenModel));
+        riskassessmentsServices.insertRiskassessments(riskassessments, tokenModel);
+        //获取风险研判信息（MySql）
+        webSocketVo.setRiskassessmentsList(riskassessmentsServices.writeList());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+        return ApiResult.success();
     }
 
     //根据id查找风险研判数据
@@ -101,7 +131,7 @@ public class BASF11101Controller {
     //查询装置今日已填写的风险研判信息
     @PostMapping("/writeList")
     public ApiResult writeList(HttpServletRequest request) throws Exception {
-        return ApiResult.fail(riskassessmentsServices.writeList());
+        return ApiResult.success(riskassessmentsServices.writeList());
     }
     //endregion
 
@@ -118,6 +148,10 @@ public class BASF11101Controller {
     public ApiResult insert(@RequestBody Highriskarea highriskarea, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         riskassessmentservices.insert(tokenModel, highriskarea);
+
+        // 获取高风险作业清单
+        webSocketVo.setHighriskareaList(highriskareaServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
         return ApiResult.success();
     }
 
@@ -126,6 +160,10 @@ public class BASF11101Controller {
     public ApiResult update(@RequestBody Highriskarea highriskarea, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         riskassessmentservices.update(tokenModel, highriskarea);
+
+        // 获取高风险作业清单
+        webSocketVo.setHighriskareaList(highriskareaServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
         return ApiResult.success();
     }
 

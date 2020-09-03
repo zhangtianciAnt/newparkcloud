@@ -1,6 +1,9 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Controller.WebSocket.WebSocket;
+import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.Responseinformation;
 import com.nt.service_BASF.ResponseinformationServices;
 import com.nt.utils.*;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -27,6 +31,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/BASF10803")
 public class BASF10803Controller {
+    private WebSocketVo webSocketVo = new WebSocketVo();
+
     @Autowired
     private ResponseinformationServices responseinformationServices;
 
@@ -53,6 +59,9 @@ public class BASF10803Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         responseinformationServices.insert(tokenModel, responseinformation);
+        //应急预案工艺处置队列表
+        webSocketVo.setResponseinformationList(responseinformationServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
         return ApiResult.success();
     }
 
@@ -63,6 +72,9 @@ public class BASF10803Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         responseinformationServices.update(tokenModel, responseinformation);
+        //应急预案工艺处置队列表
+        webSocketVo.setResponseinformationList(responseinformationServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
         return ApiResult.success();
     }
 
@@ -74,6 +86,9 @@ public class BASF10803Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         responseinformation.setStatus(AuthConstants.DEL_FLAG_DELETE);
         responseinformationServices.delete(tokenModel, responseinformation);
+        //应急预案工艺处置队列表
+        webSocketVo.setResponseinformationList(responseinformationServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
         return ApiResult.success();
     }
 

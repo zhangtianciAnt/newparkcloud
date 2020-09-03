@@ -3,6 +3,8 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.nt.controller.Controller.WebSocket.WebSocket;
+import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.Chemicalsds;
 import com.nt.dao_BASF.VO.ChemicalsdsVo;
 import com.nt.service_BASF.ChemicalsdsServices;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,6 +41,8 @@ public class BASF10804Controller {
     private ChemicalsdsServices chemicalsdsServices;
     @Autowired
     private TokenService tokenService;
+
+    private WebSocketVo webSocketVo = new WebSocketVo();
 
     /**
      * @param request
@@ -90,6 +95,9 @@ public class BASF10804Controller {
             chemicalsds.setDownloadpath(downloadPath);
         }
         chemicalsdsServices.insert(chemicalsds, tokenModel);
+        // 化学品SDS列表
+        webSocketVo.setChemicalsdsList(chemicalsdsServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(com.alibaba.fastjson.JSONObject.toJSONString(webSocketVo)));
         return ApiResult.success();
     }
 
@@ -110,6 +118,9 @@ public class BASF10804Controller {
         }
         chemicalsds.setStatus(AuthConstants.DEL_FLAG_DELETE);
         chemicalsdsServices.delete(chemicalsds);
+        // 化学品SDS列表
+        webSocketVo.setChemicalsdsList(chemicalsdsServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(com.alibaba.fastjson.JSONObject.toJSONString(webSocketVo)));
         return ApiResult.success();
     }
 
@@ -167,6 +178,9 @@ public class BASF10804Controller {
         }
 
         chemicalsdsServices.update(chemicalsds, tokenModel);
+        // 化学品SDS列表
+        webSocketVo.setChemicalsdsList(chemicalsdsServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(com.alibaba.fastjson.JSONObject.toJSONString(webSocketVo)));
         return ApiResult.success();
     }
 }

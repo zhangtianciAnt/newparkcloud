@@ -438,13 +438,13 @@ public class MultiThreadScheduleTask {
 //        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
 //    }
 
-    @Async
-    @Scheduled(fixedDelay = 100000)
-    public void BASF90900_WriteList() throws Exception {
-        //获取风险研判信息（MySql）
-        webSocketVo.setRiskassessmentsList(riskassessmentsServices.writeList());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    @Async
+//    @Scheduled(fixedDelay = 100000)
+//    public void BASF90900_WriteList() throws Exception {
+//        //获取风险研判信息（MySql）
+//        webSocketVo.setRiskassessmentsList(riskassessmentsServices.writeList());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
 
     @Async
@@ -463,13 +463,13 @@ public class MultiThreadScheduleTask {
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
-    @Async
-    @Scheduled(fixedDelay = 110000)
-    public void BASF90921_GetHighriskareaList() throws Exception {
-        // 获取高风险作业清单
-        webSocketVo.setHighriskareaList(highriskareaServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    @Async
+//    @Scheduled(fixedDelay = 110000)
+//    public void BASF90921_GetHighriskareaList() throws Exception {
+//        // 获取高风险作业清单
+//        webSocketVo.setHighriskareaList(highriskareaServices.list());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
     @Async
     @Scheduled(fixedDelay = 120000)
