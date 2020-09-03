@@ -2,6 +2,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.Responseinformation;
@@ -31,7 +32,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/BASF10803")
 public class BASF10803Controller {
-    private WebSocketVo webSocketVo = new WebSocketVo();
+    private WebSocketVo webSocketVo = MultiThreadScheduleTask.webSocketVo;
 
     @Autowired
     private ResponseinformationServices responseinformationServices;
