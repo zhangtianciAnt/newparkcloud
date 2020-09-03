@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @ProjectName: BASF应急平台
@@ -43,7 +44,7 @@ public class BASF10802Controller {
     @Autowired
     private TokenService tokenService;
 
-    private WebSocketVo webSocketVo = MultiThreadScheduleTask.webSocketVo;
+//    private WebSocketVo webSocketVo = MultiThreadScheduleTask.webSocketVo;
 
     /**
      * @param request
@@ -56,12 +57,16 @@ public class BASF10802Controller {
      */
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
-        return ApiResult.success(emergencyplanServices.list());
+        List<Emergencyplan> emergencyplanList = emergencyplanServices.list();
+        MultiThreadScheduleTask.webSocketVo.setEmergencyplanList(emergencyplanList);
+        return ApiResult.success(emergencyplanList);
     }
 
     @Autowired
     private RestTemplate restTemplate;
-    @Value("${file.url}")String Url;
+    @Value("${file.url}")
+    String Url;
+
     /**
      * @param emergencyplanvo
      * @param request
@@ -78,7 +83,7 @@ public class BASF10802Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        Emergencyplan  emergencyplan = emergencyplanvo.getEmergencyplan();
+        Emergencyplan emergencyplan = emergencyplanvo.getEmergencyplan();
 
         if (emergencyplan.getUploadfile() != null && !"".equals(emergencyplan.getUploadfile())) {
             String url = Url + "/kodexplorer/?explorer/pathInfo&accessToken=" + emergencyplanvo.getToken();
@@ -97,8 +102,8 @@ public class BASF10802Controller {
         }
         emergencyplanServices.insert(emergencyplan, tokenModel);
         // 应急预案列表
-        webSocketVo.setEmergencyplanList(emergencyplanServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(com.alibaba.fastjson.JSONObject.toJSONString(webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setEmergencyplanList(emergencyplanServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(com.alibaba.fastjson.JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 
@@ -121,8 +126,8 @@ public class BASF10802Controller {
         emergencyplanServices.delete(emergencyplan);
 
         // 应急预案列表
-        webSocketVo.setEmergencyplanList(emergencyplanServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(com.alibaba.fastjson.JSONObject.toJSONString(webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setEmergencyplanList(emergencyplanServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(com.alibaba.fastjson.JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 
@@ -160,18 +165,18 @@ public class BASF10802Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        Emergencyplan  emergencyplan = emergencyplanvo.getEmergencyplan();
+        Emergencyplan emergencyplan = emergencyplanvo.getEmergencyplan();
 
-        if (emergencyplan.getUploadfile() != null && !"".equals(emergencyplan.getUploadfile())){
+        if (emergencyplan.getUploadfile() != null && !"".equals(emergencyplan.getUploadfile())) {
 
-            String url = Url + "/kodexplorer/?explorer/pathInfo&accessToken="+ emergencyplanvo.getToken();
+            String url = Url + "/kodexplorer/?explorer/pathInfo&accessToken=" + emergencyplanvo.getToken();
             HttpHeaders headers = new HttpHeaders();
-            MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
+            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
             String path = emergencyplan.getUploadfile().split(",")[1];
-            map.add("dataArr", "[{\"type\":\"file\",\"path\":\""+path.substring(0,path.length()-1)+"\"}]");
+            map.add("dataArr", "[{\"type\":\"file\",\"path\":\"" + path.substring(0, path.length() - 1) + "\"}]");
             HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(map, headers);
-            ResponseEntity<String> rst  = restTemplate.exchange(url, HttpMethod.POST,requestEntity,String.class);
+            ResponseEntity<String> rst = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
             String value = rst.getBody();
             JSONObject string_to_json = JSONUtil.parseObj(value);
             Object data = string_to_json.get("data");
@@ -181,8 +186,8 @@ public class BASF10802Controller {
 
         emergencyplanServices.update(emergencyplan, tokenModel);
         // 应急预案列表
-        webSocketVo.setEmergencyplanList(emergencyplanServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(com.alibaba.fastjson.JSONObject.toJSONString(webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setEmergencyplanList(emergencyplanServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(com.alibaba.fastjson.JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 }

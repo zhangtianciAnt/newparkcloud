@@ -111,11 +111,14 @@ public class MultiThreadScheduleTask {
 
     public static WebSocketVo webSocketVo = new WebSocketVo();
 
+    private static String Url;
+
     @Value("${sqlSerer.ip}")
-    private String Url;
+    public void setHost(String Url) {
+        this.Url = Url;
+    }
 
-    public JSONArray returnpostlist(String urlstr) {
-
+    public static JSONArray returnpostlist(String urlstr) {
         String url = Url + urlstr;
         HashMap<String, Object> paramMap = new HashMap<>();
         JSONObject jsonObject = JSONObject.parseObject(HttpUtil.post(url, paramMap));
@@ -350,6 +353,7 @@ public class MultiThreadScheduleTask {
 //
 //    // region BASF90200 ERC-火灾消防
 //
+
     /**
      * @return 近30日接警数据分析
      * @Method BASF90200_GetFireAlarmStatistics
@@ -390,26 +394,26 @@ public class MultiThreadScheduleTask {
 //        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
 //    }
 //
-    @Async
-    @Scheduled(fixedDelay = 80000)
-    public void BASF10802_GetEmergencyplanInfo() throws Exception {
-        // 应急预案列表
-        webSocketVo.setEmergencyplanList(emergencyplanServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    @Async
+//    @Scheduled(fixedDelay = 80000)
+//    public void BASF10802_GetEmergencyplanInfo() throws Exception {
+//        // 应急预案
+//        webSocketVo.setEmergencyplanList(emergencyplanServices.list());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
-    @Async
-    @Scheduled(fixedDelay = 80000)
-    public void BASF10804_GetChemicalsdsInfo() throws Exception {
-        // 化学品SDS列表
-        webSocketVo.setChemicalsdsList(chemicalsdsServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    @Async
+//    @Scheduled(fixedDelay = 80000)
+//    public void BASF10804_GetChemicalsdsInfo() throws Exception {
+//        // 化学品SDS
+//        webSocketVo.setChemicalsdsList(chemicalsdsServices.list());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
 //    @Async
 //    @Scheduled(fixedDelay = 90000)
 //    public void BASF10803_GetResponseinformationInfo() throws Exception {
-//        //应急预案工艺处置队列表
+//        //响应联系人
 //        webSocketVo.setResponseinformationList(responseinformationServices.list());
 //        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
 //    }

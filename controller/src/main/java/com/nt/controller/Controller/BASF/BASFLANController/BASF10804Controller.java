@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @ProjectName: BASF应急平台
@@ -43,7 +44,7 @@ public class BASF10804Controller {
     @Autowired
     private TokenService tokenService;
 
-    private WebSocketVo webSocketVo = MultiThreadScheduleTask.webSocketVo;
+//    private WebSocketVo webSocketVo = MultiThreadScheduleTask.webSocketVo;
 
     /**
      * @param request
@@ -56,12 +57,16 @@ public class BASF10804Controller {
      */
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
-        return ApiResult.success(chemicalsdsServices.list());
+        List<Chemicalsds> chemicalsds = chemicalsdsServices.list();
+        MultiThreadScheduleTask.webSocketVo.setChemicalsdsList(chemicalsds);
+        return ApiResult.success(chemicalsds);
     }
 
     @Autowired
     private RestTemplate restTemplate;
-    @Value("${file.url}")String Url;
+    @Value("${file.url}")
+    String Url;
+
     /**
      * @param chemicalsdsVo
      * @param request
@@ -97,8 +102,8 @@ public class BASF10804Controller {
         }
         chemicalsdsServices.insert(chemicalsds, tokenModel);
         // 化学品SDS列表
-        webSocketVo.setChemicalsdsList(chemicalsdsServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(com.alibaba.fastjson.JSONObject.toJSONString(webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setChemicalsdsList(chemicalsdsServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(com.alibaba.fastjson.JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 
@@ -120,8 +125,8 @@ public class BASF10804Controller {
         chemicalsds.setStatus(AuthConstants.DEL_FLAG_DELETE);
         chemicalsdsServices.delete(chemicalsds);
         // 化学品SDS列表
-        webSocketVo.setChemicalsdsList(chemicalsdsServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(com.alibaba.fastjson.JSONObject.toJSONString(webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setChemicalsdsList(chemicalsdsServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(com.alibaba.fastjson.JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 
@@ -161,16 +166,16 @@ public class BASF10804Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         Chemicalsds chemicalsds = chemicalsdsVo.getChemicalsds();
 
-        if (chemicalsds.getUploadfile() != null && !"".equals(chemicalsds.getUploadfile())){
+        if (chemicalsds.getUploadfile() != null && !"".equals(chemicalsds.getUploadfile())) {
 
-            String url = Url + "/kodexplorer/?explorer/pathInfo&accessToken="+ chemicalsdsVo.getToken();
+            String url = Url + "/kodexplorer/?explorer/pathInfo&accessToken=" + chemicalsdsVo.getToken();
             HttpHeaders headers = new HttpHeaders();
-            MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
+            MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
             headers.setContentType(MediaType.MULTIPART_FORM_DATA);
             String path = chemicalsds.getUploadfile().split(",")[1];
-            map.add("dataArr", "[{\"type\":\"file\",\"path\":\""+path.substring(0,path.length()-1)+"\"}]");
+            map.add("dataArr", "[{\"type\":\"file\",\"path\":\"" + path.substring(0, path.length() - 1) + "\"}]");
             HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(map, headers);
-            ResponseEntity<String> rst  = restTemplate.exchange(url, HttpMethod.POST,requestEntity,String.class);
+            ResponseEntity<String> rst = restTemplate.exchange(url, HttpMethod.POST, requestEntity, String.class);
             String value = rst.getBody();
             JSONObject string_to_json = JSONUtil.parseObj(value);
             Object data = string_to_json.get("data");
@@ -180,8 +185,8 @@ public class BASF10804Controller {
 
         chemicalsdsServices.update(chemicalsds, tokenModel);
         // 化学品SDS列表
-        webSocketVo.setChemicalsdsList(chemicalsdsServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(com.alibaba.fastjson.JSONObject.toJSONString(webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setChemicalsdsList(chemicalsdsServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(com.alibaba.fastjson.JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 }

@@ -32,7 +32,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/BASF10803")
 public class BASF10803Controller {
-    private WebSocketVo webSocketVo = MultiThreadScheduleTask.webSocketVo;
+//    private WebSocketVo webSocketVo = MultiThreadScheduleTask.webSocketVo;
 
     @Autowired
     private ResponseinformationServices responseinformationServices;
@@ -42,7 +42,9 @@ public class BASF10803Controller {
 
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
-        return ApiResult.success(responseinformationServices.list());
+        List<Responseinformation> responseinformations = responseinformationServices.list();
+        MultiThreadScheduleTask.webSocketVo.setResponseinformationList(responseinformations);
+        return ApiResult.success(responseinformations);
     }
 
     @RequestMapping(value = "/getone", method = {RequestMethod.GET})
@@ -61,8 +63,8 @@ public class BASF10803Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         responseinformationServices.insert(tokenModel, responseinformation);
         //应急预案工艺处置队列表
-        webSocketVo.setResponseinformationList(responseinformationServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setResponseinformationList(responseinformationServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 
@@ -74,8 +76,8 @@ public class BASF10803Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         responseinformationServices.update(tokenModel, responseinformation);
         //应急预案工艺处置队列表
-        webSocketVo.setResponseinformationList(responseinformationServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setResponseinformationList(responseinformationServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 
@@ -88,8 +90,8 @@ public class BASF10803Controller {
         responseinformation.setStatus(AuthConstants.DEL_FLAG_DELETE);
         responseinformationServices.delete(tokenModel, responseinformation);
         //应急预案工艺处置队列表
-        webSocketVo.setResponseinformationList(responseinformationServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setResponseinformationList(responseinformationServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 

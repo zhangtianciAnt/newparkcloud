@@ -2,6 +2,7 @@ package com.nt.controller.Controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.EmailConfig;
@@ -42,23 +43,23 @@ public class SendEmailController {
     @Autowired
     private TokenService tokenService;
 
-    // websocket消息推送
-    private WebSocket ws = new WebSocket();
-    // WebSocketVow
-    private WebSocketVo webSocketVo = new WebSocketVo();
+//    // websocket消息推送
+//    private WebSocket ws = new WebSocket();
+//    // WebSocketVow
+//    private WebSocketVo webSocketVo = new WebSocketVo();
 
 
-    @RequestMapping(value = "/sendemail",method={RequestMethod.POST})
+    @RequestMapping(value = "/sendemail", method = {RequestMethod.POST})
     public ApiResult SendEmail(@RequestBody SendEmail sendemail, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        List<EmailConfig> emailconfig =  emailConfigServices.get();
+        List<EmailConfig> emailconfig = emailConfigServices.get();
         sendemail.setUserName(emailconfig.get(0).getUsername());
         sendemail.setPassword(emailconfig.get(0).getPassword());
         sendemail.setHost(emailconfig.get(0).getHost());
         sendemail.setPort(emailconfig.get(0).getPort());
         sendemail.setFromAddress(emailconfig.get(0).getFromaddress());
         sendemail.setContextType(emailconfig.get(0).getContexttype());
-        return ApiResult.success(sendEmailServices.sendmail(tokenModel,sendemail));
+        return ApiResult.success(sendEmailServices.sendmail(tokenModel, sendemail));
     }
 
     @RequestMapping(value = "/listswitch", method = {RequestMethod.POST})
@@ -76,11 +77,10 @@ public class SendEmailController {
     public ApiResult delete(@RequestBody Switchnotifications switchnotifications, HttpServletRequest request) throws Exception {
         switchnotificationsServices.delete(switchnotifications);
         Switchnotifications switchnotifications1 = new Switchnotifications();
-        webSocketVo.setSwitchList(switchnotificationsServices.list(switchnotifications1));
-        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setSwitchList(switchnotificationsServices.list(switchnotifications1));
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
-
 
 
 }

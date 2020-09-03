@@ -45,8 +45,8 @@ public class BASF10207Controller {
     @Autowired
     private PersonnelPermissionsServices personnelPermissionsServices;
 
-    @Autowired
-    private MultiThreadScheduleTask mk;
+//    @Autowired
+//    private MultiThreadScheduleTask mk;
 
     /**
      * @ProjectName: BASF应急平台
@@ -60,7 +60,7 @@ public class BASF10207Controller {
     @RequestMapping(value = "/getsqldepmentlist", method = {RequestMethod.POST})
     public ApiResult getsqldepmentlist(HttpServletRequest request) throws Exception {
         //获取SQL部门列表
-        JSONArray departarray = mk.returnpostlist("userInfo/getsqldepmentlist");
+        JSONArray departarray = MultiThreadScheduleTask.returnpostlist("userInfo/getsqldepmentlist");
         List<SqlViewDepartment> departlist = JSONObject.parseArray(departarray.toJSONString(), SqlViewDepartment.class);
         return ApiResult.success(departlist);
     }

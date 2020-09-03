@@ -6,6 +6,7 @@ import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.Highriskarea;
+import com.nt.dao_BASF.Riskassessment;
 import com.nt.dao_BASF.Riskassessments;
 import com.nt.service_BASF.HighriskareaServices;
 import com.nt.service_BASF.RiskassessmentServices;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -53,12 +55,16 @@ public class BASF11101Controller {
     //获取风险研判数据
     @RequestMapping(value = "/getData", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
-        return ApiResult.success(riskassessmentServices.getData());
+        Riskassessment riskassessment = riskassessmentServices.getData();
+        MultiThreadScheduleTask.webSocketVo.setRiskassessment(riskassessment);
+        return ApiResult.success(riskassessment);
     }
 
     //获取高风险作业
     @RequestMapping(value = "/getHighRisk", method = {RequestMethod.POST})
     public ApiResult getHighRisk(HttpServletRequest request) throws Exception {
+        List<Highriskarea> highriskareas = highriskareaServices.list();
+        MultiThreadScheduleTask.webSocketVo.setHighriskareaList(highriskareas);
         return ApiResult.success(highriskareaServices.list());
     }
 
@@ -130,7 +136,9 @@ public class BASF11101Controller {
     //查询装置今日已填写的风险研判信息
     @PostMapping("/writeList")
     public ApiResult writeList(HttpServletRequest request) throws Exception {
-        return ApiResult.success(riskassessmentsServices.writeList());
+        List<Riskassessments> riskassessments = riskassessmentsServices.writeList();
+        MultiThreadScheduleTask.webSocketVo.setRiskassessmentsList(riskassessments);
+        return ApiResult.success(riskassessments);
     }
     //endregion
 
