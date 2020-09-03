@@ -3,6 +3,7 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.Chemicalsds;
@@ -42,7 +43,7 @@ public class BASF10804Controller {
     @Autowired
     private TokenService tokenService;
 
-    private WebSocketVo webSocketVo = new WebSocketVo();
+    private WebSocketVo webSocketVo = MultiThreadScheduleTask.webSocketVo;
 
     /**
      * @param request
