@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
@@ -49,8 +50,6 @@ public class BASF11101Controller {
     @Autowired
     private HighriskareaServices highriskareaServices;
 
-    private WebSocketVo webSocketVo = new WebSocketVo();
-
     //获取风险研判数据
     @RequestMapping(value = "/getData", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
@@ -70,8 +69,8 @@ public class BASF11101Controller {
         riskassessmentServices.noticeUpdata(notice, tokenModel);
 
         //获取风险判研信息(MongoDB)
-        webSocketVo.setRiskassessment(riskassessmentServices.getData());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setRiskassessment(riskassessmentServices.getData());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 
@@ -90,8 +89,8 @@ public class BASF11101Controller {
         riskassessmentsServices.updataRiskassessments(riskassessments, tokenModel);
 
         //获取风险研判信息（MySql）
-        webSocketVo.setRiskassessmentsList(riskassessmentsServices.writeList());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setRiskassessmentsList(riskassessmentsServices.writeList());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
 
         return ApiResult.success();
     }
@@ -102,8 +101,8 @@ public class BASF11101Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         riskassessmentsServices.insertRiskassessments(riskassessments, tokenModel);
         //获取风险研判信息（MySql）
-        webSocketVo.setRiskassessmentsList(riskassessmentsServices.writeList());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setRiskassessmentsList(riskassessmentsServices.writeList());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 
@@ -150,8 +149,8 @@ public class BASF11101Controller {
         riskassessmentservices.insert(tokenModel, highriskarea);
 
         // 获取高风险作业清单
-        webSocketVo.setHighriskareaList(highriskareaServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setHighriskareaList(highriskareaServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 
@@ -162,8 +161,8 @@ public class BASF11101Controller {
         riskassessmentservices.update(tokenModel, highriskarea);
 
         // 获取高风险作业清单
-        webSocketVo.setHighriskareaList(highriskareaServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setHighriskareaList(highriskareaServices.list());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 
