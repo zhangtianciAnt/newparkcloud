@@ -350,29 +350,29 @@ public class MultiThreadScheduleTask {
 //
 //    // region BASF90200 ERC-火灾消防
 //
-    /**
-     * @return 近30日接警数据分析
-     * @Method BASF90200_GetFireAlarmStatistics
-     * @Author SKAIXX
-     * @Description 获取当月接警数据分析
-     * @Date 2020/1/7 14:17
-     * @Param
-     **/
-    @Async
-    @Scheduled(fixedDelay = 70000)
-    public void BASF90200_GetFireAlarmStatistics() throws Exception {
-        // 获取当月接警数据分析
-        webSocketVo.setFireAlarmStatisticsVoList(firealarmServices.getFireAlarmStatistics());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    /**
+//     * @return 近30日接警数据分析
+//     * @Method BASF90200_GetFireAlarmStatistics
+//     * @Author SKAIXX
+//     * @Description 获取当月接警数据分析
+//     * @Date 2020/1/7 14:17
+//     * @Param
+//     **/
+//    @Async
+//    @Scheduled(fixedDelay = 70000)
+//    public void BASF90200_GetFireAlarmStatistics() throws Exception {
+//        // 获取当月接警数据分析
+//        webSocketVo.setFireAlarmStatisticsVoList(firealarmServices.getFireAlarmStatistics());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
-    @Async
-    @Scheduled(fixedDelay = 70000)
-    public void BASF90200_GetFireAlarmList() throws Exception {
-        // 获取接警事件记录
-        webSocketVo.setFireAlarmList(firealarmServices.getFireAlarm());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    @Async
+//    @Scheduled(fixedDelay = 70000)
+//    public void BASF90200_GetFireAlarmList() throws Exception {
+//        // 获取接警事件记录
+//        webSocketVo.setFireAlarmList(firealarmServices.getFireAlarm());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
 //    @Async
 //    @Scheduled(fixedDelay = 30000)
