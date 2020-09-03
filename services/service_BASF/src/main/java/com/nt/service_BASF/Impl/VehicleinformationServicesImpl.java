@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.socket.TextMessage;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;
@@ -60,12 +61,10 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         VehicleinformationGpsArrVo listarr = new VehicleinformationGpsArrVo();
 
         ArrayList arrayList = new ArrayList();
-        for(int i = 0; i< list.get(0).getGps().split(";").length; i++)
-        {
+        for (int i = 0; i < list.get(0).getGps().split(";").length; i++) {
             ArrayList arrayList1 = new ArrayList();
-            for(int j=0;j<list.get(0).getGps().split(";")[i].split(",").length;j++)
-            {
-                BigDecimal a= new BigDecimal(list.get(0).getGps().split(";")[i].split(",")[j]);
+            for (int j = 0; j < list.get(0).getGps().split(";")[i].split(",").length; j++) {
+                BigDecimal a = new BigDecimal(list.get(0).getGps().split(";")[i].split(",")[j]);
                 arrayList1.add(Arrays.asList(a));
             }
             arrayList.add(arrayList1);
@@ -110,29 +109,28 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
      */
     @Override
     public List<VehicleinformationVo> getlistinformation() throws Exception {
-        List<Vehicleinformation> getInformatoinlist =vehicleinformationMapper.getlistinformation();
-        List<VehicleinformationVo> infoList =new ArrayList<>();
+        List<Vehicleinformation> getInformatoinlist = vehicleinformationMapper.getlistinformation();
+        List<VehicleinformationVo> infoList = new ArrayList<>();
         VehicleinformationVo vehicleinformationVo;
-        String month ="";
+        String month = "";
         int data[] = new int[12];
-        for(int i=0;i<getInformatoinlist.size();i++)
-        {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd") ;
-            month= dateFormat.format(getInformatoinlist.get(i).getIntime());
-            month=month.substring(6,7);
-            data[Integer.parseInt(month)-1]=data[Integer.parseInt(month)-1]+1;
+        for (int i = 0; i < getInformatoinlist.size(); i++) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            month = dateFormat.format(getInformatoinlist.get(i).getIntime());
+            month = month.substring(6, 7);
+            data[Integer.parseInt(month) - 1] = data[Integer.parseInt(month) - 1] + 1;
         }
-        for(int j=0;j<data.length;j++)
-        {
-            int m =1;
-            vehicleinformationVo =new VehicleinformationVo();
+        for (int j = 0; j < data.length; j++) {
+            int m = 1;
+            vehicleinformationVo = new VehicleinformationVo();
             vehicleinformationVo.setCnt(data[j]);
-            vehicleinformationVo.setDate(String.valueOf(m+j) + "月");
+            vehicleinformationVo.setDate(String.valueOf(m + j) + "月");
             infoList.add(vehicleinformationVo);
         }
 
         return infoList;
     }
+
     /**
      * @param vehicleinformation
      * @param tokenModel
@@ -150,11 +148,11 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     }
 
     /**
+     * @param
      * @Method getInsideList
      * @Author SKAIXX
-     * @Version  1.0
+     * @Version 1.0
      * @Description 获取在场车辆信息一览
-     * @param
      * @Return java.util.List<com.nt.dao_BASF.Vehicleinformation>
      * @Date 2019/12/17 11:35
      */
@@ -164,11 +162,11 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     }
 
     /**
+     * @param
      * @Method getAccessStatistics
      * @Author SKAIXX
-     * @Version  1.0
+     * @Version 1.0
      * @Description 获取本月车辆出入统计
-     * @param
      * @Return java.util.List<com.nt.dao_BASF.VO.VehicleAccessStatisticsVo>
      * @Date 2019/12/17 11:35
      */
@@ -178,11 +176,11 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     }
 
     /**
+     * @param
      * @Method getAccessStatistics
      * @Author GJ
-     * @Version  1.0
+     * @Version 1.0
      * @Description 获取本周车辆出入统计
-     * @param
      * @Return java.util.List<com.nt.dao_BASF.VO.VehicleAccessStatisticsVo>
      * @Date 2020/04/14 10:14
      */
@@ -192,11 +190,11 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     }
 
     /**
+     * @param
      * @Method getDailyVehicleInfo
      * @Author SKAIXX
-     * @Version  1.0
+     * @Version 1.0
      * @Description 获取当日入场车辆信息
-     * @param
      * @Return java.util.List<com.nt.dao_BASF.Vehicleinformation>
      * @Date 2019/12/17 11:35
      */
@@ -206,11 +204,11 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     }
 
     /**
+     * @param
      * @Method getInsideVehicleType
      * @Author SKAIXX
-     * @Version  1.0
+     * @Version 1.0
      * @Description 获取在场车辆类别统计
-     * @param
      * @Return java.util.List<com.nt.dao_BASF.VO.InsideVehicleTypeVo>
      * @Date 2019/12/17 11:35
      */
@@ -220,27 +218,25 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     }
 
     /**
+     * @param
      * @Method getQueryVehiclesRegularlyInfo
      * @Author SKAIXX
-     * @Version  1.0
+     * @Version 1.0
      * @Description 定时查询车辆信息表（出场时间为空的数据）
-     * @param
      * @Return java.util.List<com.nt.dao_BASF.Vehicleinformation>
      * @Date 2020/04/13 14:49
      */
     @Override
     public List<VehicleinformationGpsArrVo> getQueryVehiclesRegularlyInfo() throws Exception {
-        List<VehicleinformationGpsArrVo> list=vehicleinformationMapper.getQueryVehiclesRegularlyInfo();
-        for(VehicleinformationGpsArrVo vehicleinformationGpsArrVo:list){
-            if(StringUtils.isNotEmpty(vehicleinformationGpsArrVo.getGps())){
+        List<VehicleinformationGpsArrVo> list = vehicleinformationMapper.getQueryVehiclesRegularlyInfo();
+        for (VehicleinformationGpsArrVo vehicleinformationGpsArrVo : list) {
+            if (StringUtils.isNotEmpty(vehicleinformationGpsArrVo.getGps())) {
 
                 ArrayList arrayList = new ArrayList();
-                for(int i = 0;i<vehicleinformationGpsArrVo.getGps().split(";").length;i++)
-                {
+                for (int i = 0; i < vehicleinformationGpsArrVo.getGps().split(";").length; i++) {
                     ArrayList arrayList1 = new ArrayList();
-                    for(int j=0;j<vehicleinformationGpsArrVo.getGps().split(";")[i].split(",").length;j++)
-                    {
-                        BigDecimal a= new BigDecimal(vehicleinformationGpsArrVo.getGps().split(";")[i].split(",")[j]);
+                    for (int j = 0; j < vehicleinformationGpsArrVo.getGps().split(";")[i].split(",").length; j++) {
+                        BigDecimal a = new BigDecimal(vehicleinformationGpsArrVo.getGps().split(";")[i].split(",")[j]);
                         arrayList1.add(Arrays.asList(a));
                     }
                     arrayList.add(arrayList1);
@@ -283,8 +279,8 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
      * @Date 2019/11/14 13：39
      */
     @Override
-    public void updategps(String vehicleinformationid,String gps,String speed) throws Exception {
-        vehicleinformationMapper.updategps(vehicleinformationid,gps,new Date(),speed);
+    public void updategps(String vehicleinformationid, String gps, String speed) throws Exception {
+        vehicleinformationMapper.updategps(vehicleinformationid, gps, new Date(), speed);
     }
 
     /**

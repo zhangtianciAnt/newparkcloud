@@ -1,5 +1,8 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
+import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
+import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.dao_BASF.BlackList;
 import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.service_BASF.BlackListServices;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -152,8 +156,23 @@ public class BASF10702Controller {
         ishazardous = ishazardous.equals("是") ? "0" : "1";
         vehicleinformation.setIshazardous(ishazardous);
         vehicleinformation.setIntime(new Date());
-        return ApiResult.success(vehicleinformationServices.insert(vehicleinformation));
 
+        String result = vehicleinformationServices.insert(vehicleinformation);
+
+        // websocket推送信息给大屏，改变在厂车辆，车辆查询，实时车辆清单，本周车辆概况，本月车辆概况数据
+        // 获取 大屏车辆定位-在厂车辆 个类型数量
+        MultiThreadScheduleTask.webSocketVo.setInsideVehicleTypeVoList(vehicleinformationServices.getInsideVehicleType());
+        // 获取 大屏车辆定位-实时车辆清单 数据
+        MultiThreadScheduleTask.webSocketVo.setVehicleinformationList(vehicleinformationServices.getDailyVehicleInfo());
+        // 获取 大屏车辆定位-车辆查询 数据
+        MultiThreadScheduleTask.webSocketVo.setInsideVehicleinformationVoList(vehicleinformationServices.getInsideList());
+        // 获取 本月车辆概况 数据
+        MultiThreadScheduleTask.webSocketVo.setVehicleAccessStatisticsVoList(vehicleinformationServices.getAccessStatistics());
+        // 获取 本周车辆概况 数据
+        MultiThreadScheduleTask.webSocketVo.setVehicleWeekAccessStatisticsVoList(vehicleinformationServices.getWeekAccessStatistics());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
+
+        return ApiResult.success(result);
     }
 
     /**
