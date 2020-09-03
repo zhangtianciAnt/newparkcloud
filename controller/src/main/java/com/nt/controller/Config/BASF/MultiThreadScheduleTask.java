@@ -109,7 +109,7 @@ public class MultiThreadScheduleTask {
     @Autowired
     private RestTemplate restTemplate;
 
-    private WebSocketVo webSocketVo = new WebSocketVo();
+    public static WebSocketVo webSocketVo = new WebSocketVo();
 
     @Value("${sqlSerer.ip}")
     private String Url;
@@ -267,85 +267,85 @@ public class MultiThreadScheduleTask {
 
     // region BASF90600 ERC-车辆定位
 
-    /**
-     * @return void
-     * @Method BASF90600_GetInsideList
-     * @Author SKAIXX
-     * @Description ERC大屏车辆定位模块获取在场车辆信息一览
-     * @Date 2019/12/30 15:47
-     * @Param
-     **/
-    @Async
-    @Scheduled(fixedDelay = 40000)
-    public void BASF90600_GetInsideList() throws Exception {
-        // 获取在场车辆信息一览
-        webSocketVo.setInsideVehicleinformationVoList(vehicleinformationServices.getInsideList());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    /**
+//     * @return void
+//     * @Method BASF90600_GetInsideList
+//     * @Author SKAIXX
+//     * @Description ERC大屏车辆定位模块获取在场车辆信息一览
+//     * @Date 2019/12/30 15:47
+//     * @Param
+//     **/
+//    @Async
+//    @Scheduled(fixedDelay = 40000)
+//    public void BASF90600_GetInsideList() throws Exception {
+//        // 获取在场车辆信息一览
+//        webSocketVo.setInsideVehicleinformationVoList(vehicleinformationServices.getInsideList());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
-    /**
-     * @return void
-     * @Method BASF90600_GetInsideVehicleType
-     * @Author SKAIXX
-     * @Description ERC大屏车辆定位模块在场车辆类别统计
-     * @Date 2019/12/30 16:27
-     * @Param
-     **/
-    @Async
-    @Scheduled(fixedDelay = 40000)
-    public void BASF90600_GetInsideVehicleType() throws Exception {
-        // 在场车辆类别统计
-        webSocketVo.setInsideVehicleTypeVoList(vehicleinformationServices.getInsideVehicleType());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    /**
+//     * @return void
+//     * @Method BASF90600_GetInsideVehicleType
+//     * @Author SKAIXX
+//     * @Description ERC大屏车辆定位模块在场车辆类别统计
+//     * @Date 2019/12/30 16:27
+//     * @Param
+//     **/
+//    @Async
+//    @Scheduled(fixedDelay = 40000)
+//    public void BASF90600_GetInsideVehicleType() throws Exception {
+//        // 在场车辆类别统计
+//        webSocketVo.setInsideVehicleTypeVoList(vehicleinformationServices.getInsideVehicleType());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
-    /**
-     * @return
-     * @Method BASF90600_GetAccessStatistics
-     * @Author SKAIXX
-     * @Description ERC大屏车辆定位模块本月车辆出入统计
-     * @Date 2019/12/30 19:09
-     * @Param
-     **/
-    @Async
-    @Scheduled(fixedDelay = 60000)
-    public void BASF90600_GetAccessStatistics() throws Exception {
-        // 车辆出入统计
-        webSocketVo.setVehicleAccessStatisticsVoList(vehicleinformationServices.getAccessStatistics());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    /**
+//     * @return
+//     * @Method BASF90600_GetAccessStatistics
+//     * @Author SKAIXX
+//     * @Description ERC大屏车辆定位模块本月车辆出入统计
+//     * @Date 2019/12/30 19:09
+//     * @Param
+//     **/
+//    @Async
+//    @Scheduled(fixedDelay = 60000)
+//    public void BASF90600_GetAccessStatistics() throws Exception {
+//        // 车辆出入统计
+//        webSocketVo.setVehicleAccessStatisticsVoList(vehicleinformationServices.getAccessStatistics());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
-    /**
-     * @return
-     * @Method BASF90600_GetWeekAccessStatistics
-     * @Author GJ
-     * @Description ERC大屏车辆定位模块本周车辆出入统计
-     * @Date 2020/04/14 10:19
-     * @Param
-     **/
-    @Async
-    @Scheduled(fixedDelay = 60000)
-    public void BASF90600_GetWeekAccessStatistics() throws Exception {
-        // 车辆出入统计
-        webSocketVo.setVehicleWeekAccessStatisticsVoList(vehicleinformationServices.getWeekAccessStatistics());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    /**
+//     * @return
+//     * @Method BASF90600_GetWeekAccessStatistics
+//     * @Author GJ
+//     * @Description ERC大屏车辆定位模块本周车辆出入统计
+//     * @Date 2020/04/14 10:19
+//     * @Param
+//     **/
+//    @Async
+//    @Scheduled(fixedDelay = 60000)
+//    public void BASF90600_GetWeekAccessStatistics() throws Exception {
+//        // 车辆出入统计
+//        webSocketVo.setVehicleWeekAccessStatisticsVoList(vehicleinformationServices.getWeekAccessStatistics());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
-    /**
-     * @return
-     * @Method BASF90600_GetDailyVehicleInfo
-     * @Author SKAIXX
-     * @Description ERC大屏车辆定位模块获取当日入场车辆信息
-     * @Date 2019/12/31 11:27
-     * @Param
-     **/
-    @Async
-    @Scheduled(fixedDelay = 50000)
-    public void BASF90600_GetDailyVehicleInfo() throws Exception {
-        // 获取当日入场车辆信息
-        webSocketVo.setVehicleinformationList(vehicleinformationServices.getDailyVehicleInfo());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    /**
+//     * @return
+//     * @Method BASF90600_GetDailyVehicleInfo
+//     * @Author SKAIXX
+//     * @Description ERC大屏车辆定位模块获取当日入场车辆信息
+//     * @Date 2019/12/31 11:27
+//     * @Param
+//     **/
+//    @Async
+//    @Scheduled(fixedDelay = 50000)
+//    public void BASF90600_GetDailyVehicleInfo() throws Exception {
+//        // 获取当日入场车辆信息
+//        webSocketVo.setVehicleinformationList(vehicleinformationServices.getDailyVehicleInfo());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
     // endregion
 //
 //    // region BASF90200 ERC-火灾消防
