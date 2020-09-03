@@ -37,6 +37,10 @@ public class WebSocketVo {
     // 访客人数
     private List<APBCardHolderVo> visitorsCount;
 
+    // BASF90500 人员清点模块 各装置人数集合
+//    private List<SqlAPBCardHolder> deviceUsersCountList = new ArrayList<>();
+    private APBCardHolder apbCardHolder;
+
     // region BASF90600 ERC大屏-车辆定位模块
     // BASF90600 车辆定位-车辆查询
     private List<InsideVehicleinformationVo> insideVehicleinformationVoList = new ArrayList<>();
