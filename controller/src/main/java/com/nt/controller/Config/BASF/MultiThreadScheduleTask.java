@@ -438,13 +438,13 @@ public class MultiThreadScheduleTask {
 //        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
 //    }
 
-//    @Async
-//    @Scheduled(fixedDelay = 100000)
-//    public void BASF90900_WriteList() throws Exception {
-//        //获取风险研判信息（MySql）
-//        webSocketVo.setRiskassessmentsList(riskassessmentsServices.writeList());
-//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-//    }
+    @Async
+    @Scheduled(fixedDelay = 100000)
+    public void BASF90900_WriteList() throws Exception {
+        //获取风险研判信息（MySql）
+        webSocketVo.setRiskassessmentsList(riskassessmentsServices.writeList());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
 
 
     @Async
