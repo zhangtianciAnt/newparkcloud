@@ -139,6 +139,8 @@ public class BASF10105Controller {
                         //firealarm.setSpeloc(linkagelist.get(0).getDetailedlocation());
                         firealarm.setCompletesta("0");
                         firealarm.setMisinformation("0");
+                        firealarm.setProno(linkagelist.get(0).getDevrow());
+                        firealarm.setProtype(linkagelist.get(0).getDevicename());
                         String firealarmuuid = firealarmServices.insert(firealarm, null);
                     }
                 }
