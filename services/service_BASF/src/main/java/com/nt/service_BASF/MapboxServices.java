@@ -1,6 +1,7 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.Mapbox;
+import com.nt.dao_SQL.APBCardHolderVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -17,4 +18,6 @@ import java.util.List;
 public interface MapboxServices {
     //获取
     Mapbox get(Mapbox mapbox) throws Exception;
+
+    List<APBCardHolderVo> selectUsersByDeviceid(String deviceid) throws Exception;
 }

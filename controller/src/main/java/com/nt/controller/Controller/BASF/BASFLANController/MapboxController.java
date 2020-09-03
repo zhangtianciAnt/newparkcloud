@@ -51,4 +51,10 @@ public class MapboxController {
         Mapbox mapbox = new Mapbox();
         return ApiResult.success(mapboxServices.get(mapbox));
     }
+
+    // 根据紧急集合点ID（deviceID）获取当前集合点所有人员
+    @RequestMapping(value = "/selectUsersByDeviceid", method = {RequestMethod.GET})
+    public ApiResult selectUsersByDeviceid(String deviceid, HttpServletRequest request) throws Exception {
+        return ApiResult.success(mapboxServices.selectUsersByDeviceid(deviceid));
+    }
 }
