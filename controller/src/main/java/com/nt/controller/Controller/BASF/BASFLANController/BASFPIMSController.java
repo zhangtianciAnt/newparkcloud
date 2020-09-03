@@ -76,11 +76,15 @@ public class BASFPIMSController {
                 pimsVoList.add(pimsVo);
             }
         }
-        pimsdataMapper.insertPimsDataList(pimsdataList);
+        if (pimsdataList.size() > 0) {
+            pimsdataMapper.insertPimsDataList(pimsdataList);
+        }
 
         // websocket推送数据到大屏
-        webSocketDeviceinfoVo.setPimsVoList(pimsVoList);
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
+        if (pimsVoList.size() > 0) {
+            webSocketDeviceinfoVo.setPimsVoList(pimsVoList);
+            WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
+        }
         return ApiResult.success();
     }
 }
