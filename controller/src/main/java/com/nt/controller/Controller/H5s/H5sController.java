@@ -24,10 +24,10 @@ public class H5sController {
         if ("".equals(session)) {
             return ApiResult.fail("获取h5s session失败,请联系管理员！");
         }
-        String keepaliveStatus = cowBUtils.h5sKeepalive(session);
-        if ("".equals(keepaliveStatus)) {
-            return ApiResult.fail("h5s session保活失败,请联系管理员！");
-        }
+//        String keepaliveStatus = cowBUtils.h5sKeepalive(session);
+//        if ("".equals(keepaliveStatus)) {
+//            return ApiResult.fail("h5s session保活失败,请联系管理员！");
+//        }
         return ApiResult.success(session);
     }
 }

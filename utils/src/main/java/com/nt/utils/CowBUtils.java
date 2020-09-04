@@ -80,6 +80,8 @@ public class CowBUtils {
             JSONObject jsonObject = JSONObject.parseObject(HttpUtil.get(url, paramMap));
             if (jsonObject.get("bStatus").equals(true)) {
                 session = jsonObject.get("strSession").toString();
+                // 保活
+                h5sKeepalive(session);
                 // 向静态变量中存放session
                 h5sSession = session;
             }
