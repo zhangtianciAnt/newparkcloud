@@ -122,4 +122,16 @@ public class WebSocketVo {
 
     private String carSet;
 
+    //大屏报警数据
+    private List<Firealarm> topfirealarmList = new ArrayList<>();
+
+    //接收机柜传过来的报警信息
+    private List<DeviceinformationVo> deviceinformationList = new ArrayList<>();
+
+    // 电子围栏报警
+    private List<Deviceinformation> electricShield;
+
+    // PimsData
+    private List<PimsVo> pimsVoList;
+
 }

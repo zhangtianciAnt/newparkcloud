@@ -2,6 +2,7 @@ package com.nt.controller.Controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
 import com.nt.dao_BASF.Deviceinformation;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.channels.MulticastChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +48,8 @@ public class DictionaryController {
     private DeviceInformationServices deviceinFormationServices;
 
     // websocket消息推送
-    private WebSocket ws = new WebSocket();
-    private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
+//    private WebSocket ws = new WebSocket();
+//    private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
 
 
     @RequestMapping(value = "/getForSelect", method = {RequestMethod.GET})
@@ -67,7 +69,7 @@ public class DictionaryController {
         firealarmnew.setCompletesta("0");
         firealarmnew.setMisinformation("0");
         List<Firealarm> firealarms = firealarmServices.list(firealarmnew);
-        webSocketDeviceinfoVo.setTopfirealarmList(firealarms);
+        MultiThreadScheduleTask.webSocketVo.setTopfirealarmList(firealarms);
 
         //设置剩余的报警层级状态
         List<DeviceinformationVo> list = new ArrayList<>();
@@ -84,8 +86,8 @@ public class DictionaryController {
             }
         }
         // 推送报警设备信息
-        webSocketDeviceinfoVo.setDeviceinformationList(list);
-        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
+        MultiThreadScheduleTask.webSocketVo.setDeviceinformationList(list);
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         //endregion
         return ApiResult.success(dictionaryService.getForSelect(""));
     }

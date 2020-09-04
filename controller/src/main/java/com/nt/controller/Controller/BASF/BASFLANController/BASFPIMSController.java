@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
 import com.nt.dao_BASF.Deviceinformation;
@@ -44,7 +45,7 @@ public class BASFPIMSController {
     @Autowired
     private DeviceinformationMapper deviceinformationMapper;
 
-    private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
+//    private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
 
     @RequestMapping(value = "/getData", method = {RequestMethod.POST})
     public ApiResult getData(@RequestBody List<Object> data, HttpServletRequest request) throws Exception {
@@ -82,8 +83,8 @@ public class BASFPIMSController {
 
         // websocket推送数据到大屏
         if (pimsVoList.size() > 0) {
-            webSocketDeviceinfoVo.setPimsVoList(pimsVoList);
-            WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
+            MultiThreadScheduleTask.webSocketVo.setPimsVoList(pimsVoList);
+            WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         }
         return ApiResult.success();
     }

@@ -56,7 +56,7 @@ public class BASF10105Controller {
 
     @Autowired
     private FirealarmServices firealarmServices;
-    private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
+//    private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
 //    private MainTask mt = new MainTask(this);
 
     @Autowired
@@ -86,8 +86,8 @@ public class BASF10105Controller {
             // 电子围栏报警
             // 根据回路号，找到设备，把设备推送回前端
             List<Deviceinformation> deviceinformations = deviceinformationMapper.selectElectricShield(serverinfolist);
-            webSocketDeviceinfoVo.setElectricShield(deviceinformations);
-            WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
+            MultiThreadScheduleTask.webSocketVo.setElectricShield(deviceinformations);
+            WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         } else {
             //serverinfolist是机柜传来的报警信息列表
             if (serverinfolist.size() > 0) {
@@ -161,14 +161,14 @@ public class BASF10105Controller {
                         list.add(linkagelistVo);
                     }
                 }
-                webSocketDeviceinfoVo.setTopfirealarmList(firealarms);
+                MultiThreadScheduleTask.webSocketVo.setTopfirealarmList(firealarms);
 
                 //更新mapbox_maplevel中的remark为1，并一直追设到对应的level2
                 mapBox_mapLevelServices.remarkSet(alarmMapidList, true, null);
 
                 // 推送报警设备信息
-                webSocketDeviceinfoVo.setDeviceinformationList(list);
-                WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
+                MultiThreadScheduleTask.webSocketVo.setDeviceinformationList(list);
+                WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
 
                 MultiThreadScheduleTask.webSocketVo.setFireAlarmList(firealarmServices.getFireAlarm());
                 MultiThreadScheduleTask.webSocketVo.setFireAlarmStatisticsVoList(firealarmServices.getFireAlarmStatistics());
