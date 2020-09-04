@@ -8,6 +8,7 @@ import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor=Exception.class)
@@ -53,9 +55,22 @@ public class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public List<Overtime> getOvertime(Overtime overtime) throws Exception {
-        return overtimeMapper.select(overtime);
+        //add-ws-9/4-加班申请可删除任务
+        List<Overtime> overtimelist = overtimeMapper.select(overtime);
+        overtimelist = overtimelist.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
+        return overtimelist;
+        //add-ws-9/4-加班申请可删除任务
     }
-
+    //add-ws-9/4-加班申请可删除任务
+    @Override
+    public void delete(Overtime overtime) throws Exception {
+        Overtime over = new Overtime();
+        Overtime overtimes = overtimeMapper.selectByPrimaryKey( overtime.getOvertimeid());
+        BeanUtils.copyProperties(overtimes, over);
+        over.setStatus(AuthConstants.DEL_FLAG_DELETE);
+        overtimeMapper.updateByPrimaryKey(over);
+    }
+    //add-ws-9/4-加班申请可删除任务
     @Override
     public List<Overtime> getOvertimelist(Overtime overtime) throws Exception {
         return overtimeMapper.select(overtime);
