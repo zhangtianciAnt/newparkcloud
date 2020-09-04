@@ -98,6 +98,7 @@ public class WebSocket implements WebSocketHandler {
                 try {
                     synchronized (ws) {
                         ws.sendMessage(message);
+//                        Thread.sleep(1000);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.nt.controller.Controller.WebSocket.WebSocket;
+import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
 import com.nt.dao_BASF.*;
 import com.nt.dao_BASF.VO.DeviceAndSqlUserinfoVo;
@@ -110,6 +111,8 @@ public class MultiThreadScheduleTask {
     private RestTemplate restTemplate;
 
     public static WebSocketVo webSocketVo = new WebSocketVo();
+
+//    public static WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
 
     private static String Url;
 
@@ -353,6 +356,7 @@ public class MultiThreadScheduleTask {
 //
 //    // region BASF90200 ERC-火灾消防
 //
+
     /**
      * @return 近30日接警数据分析
      * @Method BASF90200_GetFireAlarmStatistics
@@ -448,8 +452,6 @@ public class MultiThreadScheduleTask {
 //        webSocketVo.setRiskassessmentsList(riskassessmentsServices.writeList());
 //        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
 //    }
-
-
     @Async
     @Scheduled(fixedDelay = 50000)
     public void BASF90905_GetSameDayFireAlarm() throws Exception {

@@ -53,7 +53,7 @@ public class BASF10201Controller {
 
     // websocket消息推送
     private WebSocket ws = new WebSocket();
-    private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
+//    private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
 
 
     /**
@@ -192,7 +192,7 @@ public class BASF10201Controller {
         firealarmnew.setCompletesta("0");
         firealarmnew.setMisinformation("0");
         List<Firealarm> firealarms = firealarmServices.list(firealarmnew);
-        webSocketDeviceinfoVo.setTopfirealarmList(firealarms);
+        MultiThreadScheduleTask.webSocketVo.setTopfirealarmList(firealarms);
 
         //设置剩余的报警层级状态
         List<DeviceinformationVo> list = new ArrayList<>();
@@ -212,7 +212,7 @@ public class BASF10201Controller {
             }
         }
         // 推送报警设备信息
-        webSocketDeviceinfoVo.setDeviceinformationList(list);
-        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketDeviceinfoVo)));
+        MultiThreadScheduleTask.webSocketVo.setDeviceinformationList(list);
+        ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
     }
 }
