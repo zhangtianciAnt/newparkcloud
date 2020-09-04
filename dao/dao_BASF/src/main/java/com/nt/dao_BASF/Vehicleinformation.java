@@ -117,4 +117,9 @@ public class Vehicleinformation extends BaseModel {
      */
     private String speed;
 
+    /**
+     * MEID
+     */
+    private String meid;
+
 }

@@ -135,6 +135,13 @@ ORDER BY
         )
     </select>
 
+    <select id="checkVehicle" resultType="com.nt.dao_BASF.Vehicleinformation">
+        select * from vehicleinformation
+        where vehiclenumber = #{vehiclenumber}
+        and ifnull(meid, '') = #{meid}
+        and ifnull(outtime, '') = ''
+    </select>
+
     <!--    增量更新GPS点位信息-->
     <update id="updategps">
 UPDATE vehicleinformation

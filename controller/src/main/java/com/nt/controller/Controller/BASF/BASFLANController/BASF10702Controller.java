@@ -142,7 +142,8 @@ public class BASF10702Controller {
             String linkdepartment,
             String goodsname,
             String weight,
-            String ishazardous
+            String ishazardous,
+            String meid
     ) throws Exception {
 
         Vehicleinformation vehicleinformation = new Vehicleinformation();
@@ -161,6 +162,11 @@ public class BASF10702Controller {
         ishazardous = ishazardous.equals("是") ? "0" : "1";
         vehicleinformation.setIshazardous(ishazardous);
         vehicleinformation.setIntime(new Date());
+        vehicleinformation.setMeid(meid);
+        // 判断是否有既有未出场数据
+        vehicleinformationServices.checkVehicle(vehicleinformation);
+
+        // 插入新数据
         String result = vehicleinformationServices.insert(vehicleinformation);
         webSocketSend();
         return ApiResult.success(result);
