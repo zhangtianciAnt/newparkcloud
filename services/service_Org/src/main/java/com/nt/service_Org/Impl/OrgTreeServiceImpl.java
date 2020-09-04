@@ -114,12 +114,19 @@ public class OrgTreeServiceImpl implements OrgTreeService {
         orgListVo.setValue(orgTree.get_id());
         orgListVo.setLabel(orgTree.getTitle());
         orgListVoList.add(orgListVo);
+        getOrgChildren(orgListVoList,orgTree);
+        return orgListVoList;
+    }
+
+    private void getOrgChildren(List<OrgListVo> orgListVoList,OrgTree orgTree) {
         orgTree.getOrgs().forEach(item -> {
             OrgListVo tmp = new OrgListVo();
             tmp.setValue(item.get_id());
             tmp.setLabel(item.getTitle());
             orgListVoList.add(tmp);
+            if(item.getOrgs() != null && item.getOrgs().size() > 0){
+                getOrgChildren(orgListVoList,item);
+            }
         });
-        return orgListVoList;
     }
 }
