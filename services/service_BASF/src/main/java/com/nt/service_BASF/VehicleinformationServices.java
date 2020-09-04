@@ -54,7 +54,8 @@ public interface VehicleinformationServices {
     //定时查询车辆信息表（出场时间为空的数据）
     List<VehicleinformationGpsArrVo> getQueryVehiclesRegularlyInfo() throws Exception;
 	
-	
+	void checkVehicle(Vehicleinformation vehicleinformation) throws Exception;
+
     //更新车辆gps信息
     void updategps(String vehicleinformationid,String gps,String speed)throws Exception;
 
