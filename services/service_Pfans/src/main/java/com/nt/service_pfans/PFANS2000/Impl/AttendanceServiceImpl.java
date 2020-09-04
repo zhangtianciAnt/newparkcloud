@@ -186,7 +186,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         //检索加班未完成的数据
         List<Overtime> oList = new ArrayList<Overtime>();
         oList = overtimeMapper.selectOvertimeBystatusandUserid(attendancelist.get(0).getUser_id());
-
+        oList = oList.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
         for(Attendance attendance :attendancelist)
         {
             //判断考勤未审批的数据

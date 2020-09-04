@@ -45,12 +45,16 @@ public class OvertimeServiceImpl implements OvertimeService {
 
     @Override
     public List<Overtime> getOvertimeDay(Overtime overtime) throws Exception {
-        return overtimeMapper.getOvertimeDay(overtime.getOvertimetype(),DateUtil.format(overtime.getReserveovertimedate(),"YYYY-MM-dd"),overtime.getUserid());
+        List<Overtime> overtimelist =overtimeMapper.getOvertimeDay(overtime.getOvertimetype(),DateUtil.format(overtime.getReserveovertimedate(),"YYYY-MM-dd"),overtime.getUserid());
+        overtimelist = overtimelist.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
+        return overtimelist;
     }
 
     @Override
     public List<Overtime> getOvertimeOne(Overtime overtime) throws Exception {
-        return overtimeMapper.getOvertimeOne(DateUtil.format(overtime.getReserveovertimedate(),"YYYY-MM-dd"),overtime.getUserid());
+        List<Overtime> overtimelist = overtimeMapper.getOvertimeOne(DateUtil.format(overtime.getReserveovertimedate(),"YYYY-MM-dd"),overtime.getUserid());
+        overtimelist = overtimelist.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
+        return overtimelist;
     }
 
     @Override
