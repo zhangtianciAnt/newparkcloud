@@ -92,20 +92,90 @@ public class AttendanceServiceImpl implements AttendanceService {
             if(abList.size()>0)
             {
                 //判断当天所有申请的异常审批状态  暂存到早退字段中
-                abList = abList.stream().filter(item -> (!item.getStatus().equals("4") && !item.getStatus().equals("7"))).collect(Collectors.toList());
-                if(abList.size()>0)
+                List<AbNormal> abList1 = new ArrayList<AbNormal>();
+                abList1 = abList.stream().filter(item -> (item.getStatus().equals("2") || item.getStatus().equals("5"))).collect(Collectors.toList());
+                if(abList1.size()>0)
                 {
+                    //进行中
                     atten.setLeaveearly("0");
                 }
                 else
                 {
-                    atten.setLeaveearly("1");
+                    abList1 = abList.stream().filter(item -> (item.getStatus().equals("0"))).collect(Collectors.toList());
+                    if(abList1.size()>0)
+                    {
+                        //未发起
+                        atten.setLeaveearly("1");
+                    }
+                    else
+                    {
+                        abList1 = abList.stream().filter(item -> (item.getStatus().equals("3") || item.getStatus().equals("6"))).collect(Collectors.toList());
+                        if(abList1.size()>0)
+                        {
+                            //驳回
+                            atten.setLeaveearly("2");
+                        }
+                        else
+                        {
+                            abList1 = abList.stream().filter(item -> (item.getStatus().equals("4") || item.getStatus().equals("7"))).collect(Collectors.toList());
+                            if(abList1.size()>0)
+                            {
+                                //已完成
+                                atten.setLeaveearly("3");
+                            }
+                        }
+                    }
                 }
                 atten.setLate("can");
             }
             else
             {
                 atten.setLate("nocan");
+            }
+
+            //判断当天所有的加班申请的审批状态，临时存放到
+            Overtime o = new Overtime();
+            o.setReserveovertimedate(atten.getDates());
+            o.setUserid(atten.getUser_id());
+            List<Overtime> ovList = overtimeMapper.select(o);
+            ovList = ovList.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
+            if(ovList.size()>0)
+            {
+                //判断当天所有申请的加班审批状态  暂存到试用早退字段中
+                List<Overtime> ovList1 = new ArrayList<Overtime>();
+                ovList1 = ovList.stream().filter(item -> (item.getStatus().equals("2") || item.getStatus().equals("5"))).collect(Collectors.toList());
+                if(ovList1.size()>0)
+                {
+                    //进行中
+                    atten.setTleaveearly("0");
+                }
+                else
+                {
+                    ovList1 = ovList.stream().filter(item -> (item.getStatus().equals("0"))).collect(Collectors.toList());
+                    if(ovList1.size()>0)
+                    {
+                        //未发起
+                        atten.setTleaveearly("1");
+                    }
+                    else
+                    {
+                        ovList1 = ovList.stream().filter(item -> (item.getStatus().equals("3") || item.getStatus().equals("6"))).collect(Collectors.toList());
+                        if(ovList1.size()>0)
+                        {
+                            //驳回
+                            atten.setTleaveearly("2");
+                        }
+                        else
+                        {
+                            ovList1 = ovList.stream().filter(item -> (item.getStatus().equals("4") || item.getStatus().equals("7"))).collect(Collectors.toList());
+                            if(ovList1.size()>0)
+                            {
+                                //已完成
+                                atten.setTleaveearly("3");
+                            }
+                        }
+                    }
+                }
             }
         }
         return attendancelist;

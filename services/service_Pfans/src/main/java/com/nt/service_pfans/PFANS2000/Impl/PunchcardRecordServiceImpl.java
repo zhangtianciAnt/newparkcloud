@@ -1445,23 +1445,33 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setTlongsickleave(null);
                                         ad.setTabsenteeism(null);
                                     }
+                                    if (workinghours.equals("8")) {
+                                        ad.setWeekendindustry(null);
+                                        ad.setSpecialday(null);
+                                        ad.setAnnualrestday(null);
+                                        ad.setStatutoryresidue(null);
+                                    }
+
 
                                     //员工填写日志对应的实际工作时间
                                     //add ccm 有打卡记录，加班实际审批通过，日志时长为申请时长
-                                    String hours = "0";
+                                    String hoursshiji = "0";
+                                    String hoursyuji = "0";
                                     for (Overtime Ot : ovList)
                                     {
-                                        if (Ot.getStatus().equals("7")) {
-                                            //会社特别休日//周末加班/法定日加班/一齐年休日加班
-                                            if(Ot.getOvertimetype().equals("PR001005") || Ot.getOvertimetype().equals("PR001002") || Ot.getOvertimetype().equals("PR001003") || Ot.getOvertimetype().equals("PR001004") )
-                                            {
-                                                //hours = String.valueOf(Double.valueOf(hours) + Double.valueOf(Ot.getActualovertime()));
-                                                hours = df.format(
+                                        //会社特别休日//周末加班/法定日加班/一齐年休日加班
+                                        if(Ot.getOvertimetype().equals("PR001005") || Ot.getOvertimetype().equals("PR001002") || Ot.getOvertimetype().equals("PR001003") || Ot.getOvertimetype().equals("PR001004") )
+                                        {
+                                            if (Ot.getStatus().equals("7")) {
+                                                hoursshiji = df.format(
                                                         Double.valueOf(ad.getAnnualrestday() == null || ad.getAnnualrestday() =="0" ? "0":ad.getAnnualrestday())
                                                                 +Double.valueOf(ad.getSpecialday() == null || ad.getSpecialday() =="0" ? "0":ad.getSpecialday())
                                                                 +Double.valueOf(ad.getStatutoryresidue() == null || ad.getStatutoryresidue() =="0" ? "0":ad.getStatutoryresidue())
                                                                 +Double.valueOf(ad.getWeekendindustry() == null || ad.getWeekendindustry() =="0" ? "0":ad.getWeekendindustry()));
-                                                break;
+                                            }
+                                            else if(Ot.getStatus().equals("4") || Ot.getStatus().equals("5") || Ot.getStatus().equals("6"))
+                                            {
+                                                hoursyuji = df.format(Double.valueOf(Ot.getReserveovertime()));
                                             }
                                             break;
                                         }
@@ -1469,13 +1479,22 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
                                     if (workinghours.equals("0"))
                                     {
-                                        if(!hours.equals("0"))
+                                        if(!hoursshiji.equals("0"))
                                         {
-                                            ad.setOutgoinghours(df.format(Double.valueOf(hours)));
+                                            ad.setOutgoinghours(df.format(Double.valueOf(hoursshiji)));
                                         }
                                         else
                                         {
-                                            ad.setOutgoinghours(getOutgoinghours(lunchbreak_start, lunchbreak_end, PR, nomal));
+                                            String h = "0";
+                                            h = getOutgoinghours(lunchbreak_start, lunchbreak_end, PR, nomal);
+                                            if(Double.valueOf(h) > Double.valueOf(hoursyuji))
+                                            {
+                                                ad.setOutgoinghours(df.format(Double.valueOf(hoursshiji)));
+                                            }
+                                            else
+                                            {
+                                                ad.setOutgoinghours(getOutgoinghours(lunchbreak_start, lunchbreak_end, PR, nomal));
+                                            }
                                         }
                                     }
                                     else
