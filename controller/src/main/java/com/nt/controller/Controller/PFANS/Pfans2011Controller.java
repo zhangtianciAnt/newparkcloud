@@ -29,7 +29,16 @@ public class Pfans2011Controller {
         overtime.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(overtimeService.getOvertime(overtime));
     }
-
+    //add-ws-9/4-加班申请可删除任务
+    @RequestMapping(value = "/deleteLog", method = {RequestMethod.POST})
+    public ApiResult deleteLog(@RequestBody Overtime overtime, HttpServletRequest request) throws Exception {
+        if (overtime == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        overtimeService.delete(overtime);
+        return ApiResult.success();
+    }
+    //add-ws-9/4-加班申请可删除任务
     @RequestMapping(value = "/getOvertimelist", method = {RequestMethod.POST})
     public ApiResult getOvertimelist(@RequestBody Overtime overtime, HttpServletRequest request) throws Exception {
         if (overtime == null) {
@@ -40,6 +49,8 @@ public class Pfans2011Controller {
         overtime.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(overtimeService.getOvertimelist(overtime));
     }
+
+
 
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult one(@RequestBody Overtime overtime, HttpServletRequest request) throws Exception {

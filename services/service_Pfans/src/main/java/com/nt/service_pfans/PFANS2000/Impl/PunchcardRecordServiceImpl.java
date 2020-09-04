@@ -740,6 +740,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     overtime.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                                     overtime.setReserveovertimedate(ad.getDates());
                                     List<Overtime> overtimelist = overtimeMapper.select(overtime);
+                                    overtimelist = overtimelist.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
                                     List<Overtime> ovList = new ArrayList<Overtime>();
                                     //筛选审批通过的数据
                                     for (Overtime ov : overtimelist) {
@@ -1496,7 +1497,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 overtime.setReserveovertimedate(ad.getDates());
                                 overtime.setStatus("7");
                                 List<Overtime> ovList = overtimeMapper.select(overtime);
-
+                                ovList = ovList.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
                                 if (ovList.size() > 0) {
                                     for (Overtime Ot : ovList) {
                                         //申请的加班時間
@@ -2154,6 +2155,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     overtime.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                                     overtime.setReserveovertimedate(ad.getDates());
                                     List<Overtime> overtimelist = overtimeMapper.select(overtime);
+                                    overtimelist = overtimelist.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
                                     List<Overtime> ovList = new ArrayList<Overtime>();
                                     //筛选审批通过的数据
                                     for (Overtime ov : overtimelist) {
@@ -2873,7 +2875,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 overtime.setReserveovertimedate(ad.getDates());
                                 overtime.setStatus("7");
                                 List<Overtime> ovList = overtimeMapper.select(overtime);
-
+                                ovList = ovList.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
                                 if (ovList.size() > 0) {
                                     for (Overtime Ot : ovList) {
                                         //申请的加班時間

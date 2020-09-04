@@ -19,4 +19,7 @@ public interface OvertimeService {
     public void insertOvertime(Overtime overtime, TokenModel tokenModel)throws Exception;
 
     public void updateOvertime(Overtime overtime, TokenModel tokenModel)throws Exception;
+    //add-ws-9/4-加班申请可删除任务
+    void delete (Overtime overtime) throws Exception;
+    //add-ws-9/4-加班申请可删除任务
 }
