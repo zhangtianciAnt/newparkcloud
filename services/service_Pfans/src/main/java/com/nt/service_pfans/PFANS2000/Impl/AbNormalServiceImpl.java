@@ -94,6 +94,16 @@ public class AbNormalServiceImpl implements AbNormalService {
         abNormalMapper.insert(abNormal);
     }
 
+    //ADD_FJL_0904  添加删除data
+    @Override
+    public void delete(AbNormal abNormal, TokenModel tokenModel) throws Exception {
+        abNormal.preUpdate(tokenModel);
+        //逻辑删除
+        abNormal.setStatus(AuthConstants.DEL_FLAG_DELETE);
+        abNormalMapper.updateByPrimaryKey(abNormal);
+    }
+
+    //ADD_FJL_0904  添加删除data
     @Override
     public void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception {
         abNormal.preUpdate(tokenModel);
