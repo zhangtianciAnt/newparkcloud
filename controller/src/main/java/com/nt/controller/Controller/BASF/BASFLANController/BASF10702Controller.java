@@ -225,10 +225,10 @@ public class BASF10702Controller {
     //    mounted 大屏车辆定位-实时轨迹
     @RequestMapping(value = "/getQueryVehiclesRegularlyInfo", method = {RequestMethod.GET})
     public ApiResult getQueryVehiclesRegularlyInfo() throws Exception {
-//        List<VehicleinformationGpsArrVo> vehicleinformationGpsArrVos = vehicleinformationServices.getQueryVehiclesRegularlyInfo();
-//        MultiThreadScheduleTask.webSocketVo.setQueryVehiclesRegularlyInfoList(vehicleinformationGpsArrVos);
-//        return ApiResult.success(vehicleinformationGpsArrVos);
-        return ApiResult.success();
+        List<VehicleinformationGpsArrVo> vehicleinformationGpsArrVos = vehicleinformationServices.getQueryVehiclesRegularlyInfo();
+        MultiThreadScheduleTask.webSocketVo.setQueryVehiclesRegularlyInfoList(vehicleinformationGpsArrVos);
+        return ApiResult.success(vehicleinformationGpsArrVos);
+//        return ApiResult.success();
     }
 
     //    mounted 车辆定位-在厂车辆
