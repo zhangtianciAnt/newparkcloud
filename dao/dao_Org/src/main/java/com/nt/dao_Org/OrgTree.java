@@ -64,6 +64,19 @@ public class OrgTree extends BaseModel {
     private String upcompany;
     private String upcompanyid;
     /**
+     * 部门邮箱
+     */
+    private String departmentemail;
+    /**
+     * 装置经理邮箱
+     */
+    private String devicemanageremail;
+    /**
+     * 成本中心
+     */
+    private String costcenter;
+
+    /**
      * 组织单元	ORGS
      */
     private List<OrgTree> orgs;
