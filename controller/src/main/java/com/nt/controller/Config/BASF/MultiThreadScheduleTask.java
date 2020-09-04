@@ -180,7 +180,7 @@ public class MultiThreadScheduleTask {
 //    }
 
     @Async
-    @Scheduled(fixedDelay = 50000)
+    @Scheduled(fixedDelay = 20000)
     public void getGps() throws Exception {
         // TODO: 2020/7/22 获取所有GPS盒子imei和key（key是鉴权码），循环调用获取GPS，都调用结束，推送前台
         webSocketVo.setCarSet(restTemplate.getForObject("http://58.61.160.60:97/api/car/getlastinfo?imei=868500025879859&key=0F4137ED1502B5045D6083AA258B5C42", String.class));
@@ -361,21 +361,21 @@ public class MultiThreadScheduleTask {
      * @Date 2020/1/7 14:17
      * @Param
      **/
-    @Async
-    @Scheduled(fixedDelay = 70000)
-    public void BASF90200_GetFireAlarmStatistics() throws Exception {
-        // 获取当月接警数据分析
-        webSocketVo.setFireAlarmStatisticsVoList(firealarmServices.getFireAlarmStatistics());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    @Async
+//    @Scheduled(fixedDelay = 70000)
+//    public void BASF90200_GetFireAlarmStatistics() throws Exception {
+//        // 获取当月接警数据分析
+//        webSocketVo.setFireAlarmStatisticsVoList(firealarmServices.getFireAlarmStatistics());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
-    @Async
-    @Scheduled(fixedDelay = 70000)
-    public void BASF90200_GetFireAlarmList() throws Exception {
-        // 获取接警事件记录
-        webSocketVo.setFireAlarmList(firealarmServices.getFireAlarm());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    @Async
+//    @Scheduled(fixedDelay = 70000)
+//    public void BASF90200_GetFireAlarmList() throws Exception {
+//        // 获取接警事件记录
+//        webSocketVo.setFireAlarmList(firealarmServices.getFireAlarm());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
 //    @Async
 //    @Scheduled(fixedDelay = 30000)
@@ -393,21 +393,21 @@ public class MultiThreadScheduleTask {
 //        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
 //    }
 //
-    @Async
-    @Scheduled(fixedDelay = 80000)
-    public void BASF10802_GetEmergencyplanInfo() throws Exception {
-        // 应急预案列表
-        webSocketVo.setEmergencyplanList(emergencyplanServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
-
-    @Async
-    @Scheduled(fixedDelay = 80000)
-    public void BASF10804_GetChemicalsdsInfo() throws Exception {
-        // 化学品SDS列表
-        webSocketVo.setChemicalsdsList(chemicalsdsServices.list());
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+//    @Async
+//    @Scheduled(fixedDelay = 80000)
+//    public void BASF10802_GetEmergencyplanInfo() throws Exception {
+//        // 应急预案列表
+//        webSocketVo.setEmergencyplanList(emergencyplanServices.list());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
+//
+//    @Async
+//    @Scheduled(fixedDelay = 80000)
+//    public void BASF10804_GetChemicalsdsInfo() throws Exception {
+//        // 化学品SDS列表
+//        webSocketVo.setChemicalsdsList(chemicalsdsServices.list());
+//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
 //    @Async
 //    @Scheduled(fixedDelay = 90000)
@@ -451,7 +451,7 @@ public class MultiThreadScheduleTask {
 
 
     @Async
-    @Scheduled(fixedDelay = 100000)
+    @Scheduled(fixedDelay = 50000)
     public void BASF90905_GetSameDayFireAlarm() throws Exception {
         // 获取今日事件列表
         webSocketVo.setSameDayFireAlarm(firealarmServices.getSameDayFireAlarm());
@@ -459,7 +459,7 @@ public class MultiThreadScheduleTask {
     }
 
     @Async
-    @Scheduled(fixedDelay = 110000)
+    @Scheduled(fixedDelay = 50000)
     public void BASF90906_GetWeekFireAlarm() throws Exception {
         // 获取本周事件列表
         webSocketVo.setWeekFireAlarm(firealarmServices.getWeekFireAlarm());
@@ -475,7 +475,7 @@ public class MultiThreadScheduleTask {
 //    }
 
     @Async
-    @Scheduled(fixedDelay = 120000)
+    @Scheduled(fixedDelay = 40000)
     public void BASF90800_GetVehicleinformationVolList() throws Exception {
         //获取车辆列表(危化品车辆数用)
         webSocketVo.setDangerousgoodsList(vehicleinformationServices.getlistinformation());
@@ -483,7 +483,7 @@ public class MultiThreadScheduleTask {
     }
 
     @Async
-    @Scheduled(fixedDelay = 120000)
+    @Scheduled(fixedDelay = 40000)
     public void BASF90800_GetVehicleinformationCount() throws Exception {
         //获取车辆列表(危化品车辆数用)
         webSocketVo.setCountdangerousgoods(vehicleinformationServices.getcountinformation());
