@@ -57,13 +57,21 @@ public class AbNormalServiceImpl implements AbNormalService {
 
     @Override
     public List<AbNormal> list(AbNormal abNormal) throws Exception {
-        return abNormalMapper.select(abNormal);
+        //ADD_FJL_0904  获取status不为0的数据 status = 0 删除
+        List<AbNormal> abL = abNormalMapper.select(abNormal);
+        abL = abL.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
+        return abL;
+        //ADD_FJL_0904  获取status不为0的数据 status = 0 删除
     }
 
     //add-ws-6/8-禅道035
     @Override
     public List<AbNormal> list2(AbNormal abNormal) throws Exception {
-        return abNormalMapper.select(abNormal);
+        //ADD_FJL_0904  获取status不为0的数据 status = 0 删除
+        List<AbNormal> abL = abNormalMapper.select(abNormal);
+        abL = abL.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
+        return abL;
+        //ADD_FJL_0904  获取status不为0的数据 status = 0 删除
     }
 
     //add-ws-6/8-禅道035
