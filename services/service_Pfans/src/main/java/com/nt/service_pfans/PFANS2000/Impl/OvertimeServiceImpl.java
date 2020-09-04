@@ -73,7 +73,9 @@ public class OvertimeServiceImpl implements OvertimeService {
     //add-ws-9/4-加班申请可删除任务
     @Override
     public List<Overtime> getOvertimelist(Overtime overtime) throws Exception {
-        return overtimeMapper.select(overtime);
+        List<Overtime> overtimelist = overtimeMapper.select(overtime);
+        overtimelist = overtimelist.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
+        return overtimelist;
     }
     @Override
     public Overtime One(String overtimeid) throws Exception {
