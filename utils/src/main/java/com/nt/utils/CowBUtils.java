@@ -22,6 +22,8 @@ public class CowBUtils {
     @Value("${h5s.password}")
     private String h5sPassword;
 
+    private static String h5sSession = "";
+
     /**
      * 用于判断一个字符串中，是否包含多个字符串中的任意一个（例如：aabbccddeeffgg中是否包含aa,bb,cc其中任意一个，如果包含则返回true，否则false）
      *
@@ -65,15 +67,22 @@ public class CowBUtils {
      */
     public String getH5sSession() {
         String session = "";
-        // 获取session请求地址
-        String url = h5sUrl + "/api/v1/Login";
-        // 设置请求参数
-        HashMap<String, Object> paramMap = new HashMap<>();
-        paramMap.put("user", h5sUser);
-        paramMap.put("password", h5sPassword);
-        JSONObject jsonObject = JSONObject.parseObject(HttpUtil.get(url, paramMap));
-        if (jsonObject.get("bStatus").equals(true)) {
-            session = jsonObject.get("strSession").toString();
+        // 如果静态变量中有已经保活了的session，就使用已经保活了的session,否则重新向h5s获取。
+        if (!"".equals(h5sSession)) {
+            session = h5sSession;
+        } else {
+            // 获取session请求地址
+            String url = h5sUrl + "/api/v1/Login";
+            // 设置请求参数
+            HashMap<String, Object> paramMap = new HashMap<>();
+            paramMap.put("user", h5sUser);
+            paramMap.put("password", h5sPassword);
+            JSONObject jsonObject = JSONObject.parseObject(HttpUtil.get(url, paramMap));
+            if (jsonObject.get("bStatus").equals(true)) {
+                session = jsonObject.get("strSession").toString();
+                // 向静态变量中存放session
+                h5sSession = session;
+            }
         }
         return session;
     }
@@ -129,6 +138,12 @@ public class CowBUtils {
         return strCode;
     }
 
+    /**
+     * 删除h5s conf 中摄像头信息
+     *
+     * @param token
+     * @return
+     */
     public String delH5sInformation(String token) {
         String strCode = "";
         String delUrl = h5sUrl + "/api/v1/DelSrc";
