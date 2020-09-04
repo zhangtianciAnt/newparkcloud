@@ -89,7 +89,7 @@ public class BASF10702Controller {
                                  String driveridnumber, String violationtype) throws Exception {
         BlackList blackList = new BlackList();
         blackList.setDriveridnumber(driveridnumber);
-        blackList.setViolationstime(String.valueOf(new Date()));
+        blackList.setViolationstime(new Date());
         blackList.setViolationtype(violationtype);
         blackList.setDrivername(drivername);
         blackList.setBlacklistid(UUID.randomUUID().toString());

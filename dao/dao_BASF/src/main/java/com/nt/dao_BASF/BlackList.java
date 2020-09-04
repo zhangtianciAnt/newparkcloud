@@ -1,5 +1,6 @@
 package com.nt.dao_BASF;
 
+import cn.hutool.core.date.DateTime;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * @ProjectName: BASF应急平台
@@ -40,7 +42,7 @@ public class BlackList extends BaseModel {
     /**
      * 违规时间
      */
-    private String violationstime;
+    private Date violationstime;
 
     /**
      * 违规类型
