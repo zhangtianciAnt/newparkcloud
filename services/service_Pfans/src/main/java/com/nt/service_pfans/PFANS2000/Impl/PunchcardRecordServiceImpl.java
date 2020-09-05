@@ -1489,7 +1489,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             h = getOutgoinghours(lunchbreak_start, lunchbreak_end, PR, nomal);
                                             if(Double.valueOf(h) > Double.valueOf(hoursyuji))
                                             {
-                                                ad.setOutgoinghours(df.format(Double.valueOf(hoursshiji)));
+                                                ad.setOutgoinghours(df.format(Double.valueOf(hoursyuji)));
                                             }
                                             else
                                             {
