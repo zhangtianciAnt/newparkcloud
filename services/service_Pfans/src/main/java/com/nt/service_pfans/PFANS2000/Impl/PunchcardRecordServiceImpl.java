@@ -391,6 +391,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 if (attendanceList.size() > 0) {
                                     if (attendanceList.get(0).getRecognitionstate().equals(AuthConstants.RECOGNITION_FLAG_NO))
                                     {
+                                        attendanceList.get(0).setCenter_id(customerInfo.getUserinfo().getCentername());
+                                        attendanceList.get(0).setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                        attendanceList.get(0).setTeam_id(customerInfo.getUserinfo().getTeamname());
                                         attendanceList.get(0).setNormal("0");
                                         attendanceList.get(0).setActual(null);
                                         attendanceList.get(0).setOrdinaryindustry(null);
@@ -445,6 +448,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         if (attendanceList.size() > 0) {
                             if (attendanceList.get(0).getRecognitionstate().equals(AuthConstants.RECOGNITION_FLAG_NO))
                             {
+                                attendanceList.get(0).setCenter_id(customerInfo.getUserinfo().getCentername());
+                                attendanceList.get(0).setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                attendanceList.get(0).setTeam_id(customerInfo.getUserinfo().getTeamname());
                                 attendanceList.get(0).setNormal("0");
                                 attendanceList.get(0).setActual(null);
                                 attendanceList.get(0).setOrdinaryindustry(null);
@@ -507,6 +513,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             if (attendanceList.size() > 0) {
                                 if (attendanceList.get(0).getRecognitionstate().equals(AuthConstants.RECOGNITION_FLAG_NO) || attendanceList.get(0).getRecognitionstate().equals(""))
                                 {
+                                    attendanceList.get(0).setCenter_id(customerInfo.getUserinfo().getCentername());
+                                    attendanceList.get(0).setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                    attendanceList.get(0).setTeam_id(customerInfo.getUserinfo().getTeamname());
                                     attendanceList.get(0).setNormal("0");
                                     attendanceList.get(0).setActual(null);
                                     attendanceList.get(0).setOrdinaryindustry(null);
@@ -563,6 +572,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     List<AttendanceResignation> asList = attendanceResignationMapper.select(as);
                                     if(asList.size() > 0)
                                     {
+                                        asList.get(0).setCenter_id(customerInfo.getUserinfo().getCentername());
+                                        asList.get(0).setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                        asList.get(0).setTeam_id(customerInfo.getUserinfo().getTeamname());
                                         asList.get(0).setNormal("0");
                                         asList.get(0).setActual(null);
                                         asList.get(0).setOrdinaryindustry(null);
@@ -619,6 +631,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 attendance.setDates(sf1ymd.parse(sf1ymd.format(cal.getTime())));
                                 List<Attendance> attendanceList = attendanceMapper.select(attendance);
                                 if (attendanceList.size() > 0) {
+                                    attendanceList.get(0).setCenter_id(customerInfo.getUserinfo().getCentername());
+                                    attendanceList.get(0).setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                    attendanceList.get(0).setTeam_id(customerInfo.getUserinfo().getTeamname());
                                     attendanceList.get(0).setNormal(null);
                                     attendanceList.get(0).setActual(null);
                                     attendanceList.get(0).setOrdinaryindustry(null);
