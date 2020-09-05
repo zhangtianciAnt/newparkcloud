@@ -74,7 +74,6 @@
         select 'PR013007' as 'codetype' ,RESTDAYS as sumDay
         from restview2
         where user_id = #{userid}
-        and status != '1'
     </select>
     <select id="selectfinishAnnuel" resultType="Double">
         select sum(
