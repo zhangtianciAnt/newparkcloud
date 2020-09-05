@@ -90,7 +90,7 @@ public class CowBUtils {
     }
 
     /**
-     * h5s session 保活，保活后只要h5s服务不挂，session就一直有效
+     * h5s session 保活，保活后只要h5s服务不挂，session就一直有效。后台服务重启后，也需要重启h5s服务器
      *
      * @param h5sSession h5s 登录后 session
      * @return 返回""说明保活失败，Keepalive successfully保活成功
