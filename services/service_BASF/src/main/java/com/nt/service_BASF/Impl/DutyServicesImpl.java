@@ -172,10 +172,13 @@ public class DutyServicesImpl implements DutyServices {
         //判断是否是空值班信息
         if (objectList.get(2) != null || objectList.get(3) != null || objectList.get(4) != null
                 || objectList.get(5) != null || objectList.get(6) != null || objectList.get(7) != null) {
-            return String.valueOf(objectList.get(2)).equals("")
+            return (String.valueOf(objectList.get(2)).equals("")
                     && String.valueOf(objectList.get(3)).equals("") && String.valueOf(objectList.get(4)).equals("")
                     && String.valueOf(objectList.get(5)).equals("") && String.valueOf(objectList.get(6)).equals("")
-                    && String.valueOf(objectList.get(7)).equals("");
+                    && String.valueOf(objectList.get(7)).equals("") || String.valueOf(objectList.get(2)).equals("/")
+                    && String.valueOf(objectList.get(3)).equals("/") && String.valueOf(objectList.get(4)).equals("/")
+                    && String.valueOf(objectList.get(5)).equals("/") && String.valueOf(objectList.get(6)).equals("/")
+                    && String.valueOf(objectList.get(7)).equals("/"));
         } else
             return true;
     }
@@ -204,6 +207,8 @@ public class DutyServicesImpl implements DutyServices {
                         break;
                     case "n":
                         duty.setBackupnight(String.valueOf(dutyname.get(i)));
+                        break;
+                    case "/":
                         break;
                     case "null":
                         break;
