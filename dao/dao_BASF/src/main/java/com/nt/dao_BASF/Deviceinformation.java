@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Data
 @AllArgsConstructor
@@ -119,5 +120,7 @@ public class Deviceinformation extends BaseModel {
     private String fence;
 
 
+    @Transient
+    private Electronicfencestatus electronicfencestatus;
 
 }

@@ -5,14 +5,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
-import com.nt.dao_BASF.Deviceinformation;
-import com.nt.dao_BASF.Firealarm;
-import com.nt.dao_BASF.ServerInfo;
+import com.nt.dao_BASF.*;
 import com.nt.dao_BASF.VO.DeviceinformationVo;
 import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.FirealarmServices;
 import com.nt.service_BASF.MapBox_MapLevelServices;
 import com.nt.service_BASF.mapper.DeviceinformationMapper;
+import com.nt.service_BASF.mapper.ElectronicfencealarmMapper;
+import com.nt.service_BASF.mapper.ElectronicfencestatusMapper;
 import com.nt.service_BASF.mapper.FirealarmMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -24,11 +24,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.TextMessage;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 //import com.nt.basf.subfactory.MainTask;
 
@@ -62,8 +64,14 @@ public class BASF10105Controller {
     @Autowired
     private FirealarmMapper firealarmMapper;
 
-    @Autowired
+    @Resource
     private DeviceinformationMapper deviceinformationMapper;
+
+    @Resource
+    private ElectronicfencealarmMapper electronicfencealarmMapper;
+
+    @Resource
+    private ElectronicfencestatusMapper electronicfencestatusMapper;
 
     /**
      * @param request
@@ -84,10 +92,24 @@ public class BASF10105Controller {
     public ApiResult linkagelist(@RequestBody List<ServerInfo> serverinfolist, HttpServletRequest request) throws Exception {
         if ("ElectricShield".equals(serverinfolist.get(0).getFactoryname())) {
             // 电子围栏报警
-            // 根据回路号，找到设备，把设备推送回前端
-            List<Deviceinformation> deviceinformations = deviceinformationMapper.selectElectricShield(serverinfolist);
-            MultiThreadScheduleTask.webSocketVo.setElectricShield(deviceinformations);
+            // 根据回路号，找到电子围栏设备信息，摄像头设备信息，把设备推送回前端
+            Deviceinformation deviceinformation = deviceinformationMapper.selectElectricShield(serverinfolist.get(0).getDevline());
+            // 更新围栏报警状态
+            Electronicfencestatus electronicfencestatus = deviceinformation.getElectronicfencestatus();
+            electronicfencestatus.setWarningstatus(1);
+            electronicfencestatusMapper.updateByPrimaryKeySelective(electronicfencestatus);
+            // 先推送前台，再进行别的处理
+            MultiThreadScheduleTask.webSocketVo.setElectricShield(deviceinformation);
             WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
+            // 如果 未屏蔽报警信息 生成电子围栏报警单
+            if (electronicfencestatus.getShieldstatus() == 0) {
+                Electronicfencealarm electronicfencealarm = new Electronicfencealarm();
+                electronicfencealarm.setId(UUID.randomUUID().toString());
+                electronicfencealarm.setCREATEON(new Date());
+                electronicfencealarm.setDeviceinformationid(deviceinformation.getDeviceinformationid());
+                electronicfencealarm.setSTATUS(0);
+                electronicfencealarmMapper.insert(electronicfencealarm);
+            }
         } else {
             //serverinfolist是机柜传来的报警信息列表
             if (serverinfolist.size() > 0) {

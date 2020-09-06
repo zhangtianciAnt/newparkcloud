@@ -129,7 +129,7 @@ public class WebSocketVo {
     private List<DeviceinformationVo> deviceinformationList = new ArrayList<>();
 
     // 电子围栏报警
-    private List<Deviceinformation> electricShield;
+    private Deviceinformation electricShield;
 
     // PimsData
     private List<PimsVo> pimsVoList;

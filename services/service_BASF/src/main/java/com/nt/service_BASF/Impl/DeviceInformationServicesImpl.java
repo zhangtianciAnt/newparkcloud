@@ -2,11 +2,13 @@ package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.Application;
 import com.nt.dao_BASF.Deviceinformation;
+import com.nt.dao_BASF.Electronicfencestatus;
 import com.nt.dao_BASF.VO.DeviceinformationListVo;
 import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.MapBox_MapLevelServices;
 import com.nt.service_BASF.mapper.ApplicationMapper;
 import com.nt.service_BASF.mapper.DeviceinformationMapper;
+import com.nt.service_BASF.mapper.ElectronicfencestatusMapper;
 import com.nt.service_BASF.mapper.MapBox_MapLevelMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.CowBUtils;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.net.SocketTimeoutException;
@@ -51,6 +54,9 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
 
     @Autowired
     private CowBUtils cowBUtils;
+
+    @Resource
+    private ElectronicfencestatusMapper electronicfencestatusMapper;
 
     /**
      * @param deviceinformation
@@ -88,6 +94,7 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
     @Override
     public void insert(Deviceinformation deviceinformation, TokenModel tokenModel, String type) throws Exception {
         if (type.equals("Barricades")) {
+            // 路障
             deviceinformation.preInsert(tokenModel);
             deviceinformation.setStatus("1");
             deviceinformationMapper.insert(deviceinformation);
@@ -95,13 +102,27 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
             deviceinformation.preInsert(tokenModel);
             deviceinformation.setDeviceinformationid(UUID.randomUUID().toString());
             deviceinformationMapper.insert(deviceinformation);
-            // 如果设备是摄像头
+            // 如果设备是摄像头 创建h5s信息
             if ("BC004004".equals(deviceinformation.getDevicetype())) {
                 String insertResult = insertH5sInfomation(deviceinformation);
-                // insertResult为空说明插入h5s失败，应该throw异常
+                // todo insertResult为空说明插入h5s失败，应该throw异常
                 if (StringUtils.isEmpty(insertResult)) {
 
                 }
+            }
+            // 如果设备是电子围栏
+            else if ("BC004005".equals(deviceinformation.getDevicetype())) {
+                // 插入电子围栏状态表信息
+                Electronicfencestatus electronicfencestatus = new Electronicfencestatus();
+                electronicfencestatus.setId(UUID.randomUUID().toString());
+                electronicfencestatus.setDeviceinformationid(deviceinformation.getDeviceinformationid());
+                // 围栏对应的摄像头id
+                electronicfencestatus.setCameraid(deviceinformation.getSubordinatesystem());
+                // 围栏是否报警 初始化 0
+                electronicfencestatus.setWarningstatus(0);
+                // 围栏是否屏蔽 初始化 0
+                electronicfencestatus.setShieldstatus(0);
+                electronicfencestatusMapper.insert(electronicfencestatus);
             }
         }
     }

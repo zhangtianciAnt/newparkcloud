@@ -1,33 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_BASF.mapper.DeviceinformationMapper">
-    <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Deviceinformation">
-        <!--
-          WARNING - @mbg.generated
-        -->
-        <id column="deviceinformationid" property="deviceinformationid" jdbcType="VARCHAR"/>
-        <result column="mapid" property="mapid" jdbcType="VARCHAR"/>
-        <result column="deviceno" property="deviceno" jdbcType="VARCHAR"/>
-        <result column="devicetypesmall" property="devicetypesmall" jdbcType="VARCHAR"/>
-        <result column="devicetype" property="devicetype" jdbcType="VARCHAR"/>
-        <result column="devicename" property="devicename" jdbcType="VARCHAR"/>
-        <result column="personliable" property="personliable" jdbcType="VARCHAR"/>
-        <result column="region" property="region" jdbcType="VARCHAR"/>
-        <result column="defencearea" property="defencearea" jdbcType="VARCHAR"/>
-        <result column="device" property="device" jdbcType="VARCHAR"/>
-        <result column="floor" property="floor" jdbcType="VARCHAR"/>
-        <result column="subordinatesystem" property="subordinatesystem" jdbcType="VARCHAR"/>
-        <result column="detailedlocation" property="detailedlocation" jdbcType="VARCHAR"/>
-        <result column="GIS" property="gis" jdbcType="VARCHAR"/>
-        <result column="remark" property="remark" jdbcType="VARCHAR"/>
-        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
-        <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
-        <result column="CREATEBY" property="createby" jdbcType="VARCHAR"/>
-        <result column="MODIFYON" property="modifyon" jdbcType="TIMESTAMP"/>
-        <result column="MODIFYBY" property="modifyby" jdbcType="VARCHAR"/>
-        <result column="Owner" property="owner" jdbcType="VARCHAR"/>
-        <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
+    <!--    <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Deviceinformation">-->
+    <!--        &lt;!&ndash;-->
+    <!--          WARNING - @mbg.generated-->
+    <!--        &ndash;&gt;-->
+    <!--        <id column="deviceinformationid" property="deviceinformationid" jdbcType="VARCHAR"/>-->
+    <!--        <result column="mapid" property="mapid" jdbcType="VARCHAR"/>-->
+    <!--        <result column="deviceno" property="deviceno" jdbcType="VARCHAR"/>-->
+    <!--        <result column="devicetypesmall" property="devicetypesmall" jdbcType="VARCHAR"/>-->
+    <!--        <result column="devicetype" property="devicetype" jdbcType="VARCHAR"/>-->
+    <!--        <result column="devicename" property="devicename" jdbcType="VARCHAR"/>-->
+    <!--        <result column="personliable" property="personliable" jdbcType="VARCHAR"/>-->
+    <!--        <result column="region" property="region" jdbcType="VARCHAR"/>-->
+    <!--        <result column="defencearea" property="defencearea" jdbcType="VARCHAR"/>-->
+    <!--        <result column="device" property="device" jdbcType="VARCHAR"/>-->
+    <!--        <result column="floor" property="floor" jdbcType="VARCHAR"/>-->
+    <!--        <result column="subordinatesystem" property="subordinatesystem" jdbcType="VARCHAR"/>-->
+    <!--        <result column="detailedlocation" property="detailedlocation" jdbcType="VARCHAR"/>-->
+    <!--        <result column="GIS" property="gis" jdbcType="VARCHAR"/>-->
+    <!--        <result column="remark" property="remark" jdbcType="VARCHAR"/>-->
+    <!--        <result column="STATUS" property="status" jdbcType="VARCHAR"/>-->
+    <!--        <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>-->
+    <!--        <result column="CREATEBY" property="createby" jdbcType="VARCHAR"/>-->
+    <!--        <result column="MODIFYON" property="modifyon" jdbcType="TIMESTAMP"/>-->
+    <!--        <result column="MODIFYBY" property="modifyby" jdbcType="VARCHAR"/>-->
+    <!--        <result column="Owner" property="owner" jdbcType="VARCHAR"/>-->
+    <!--        <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>-->
+    <!--    </resultMap>-->
+
+    <resultMap id="DeviceinfomationMap" type="com.nt.dao_BASF.Deviceinformation">
+        <id property="deviceinformationid" column="deviceinformationid"></id>
+        <association property="electronicfencestatus" javaType="com.nt.dao_BASF.Electronicfencestatus">
+            <id property="id" column="electronicfencestatus_id"></id>
+            <id property="deviceinformationid" column="electronicfencestatus_deviceinformationid"></id>
+        </association>
     </resultMap>
+
 
     <select id="selectDeviceList" resultType="com.nt.dao_BASF.Deviceinformation">
         SELECT
@@ -106,13 +115,28 @@
         d.CREATEON DESC
     </select>
 
-    <select id="selectElectricShield" resultType="com.nt.dao_BASF.Deviceinformation">
-        select * from deviceinformation where `STATUS`="0"
-        and devline in
-        (
-        <foreach collection="electricShield" item="item" separator=",">
-            #{item.devline}
-        </foreach>
-        )
+    <!--根据回路号，查询电子围栏相关信息-->
+    <select id="selectElectricShield" resultMap="DeviceinfomationMap" resultType="java.lang.String">
+        SELECT
+        	deviceinformation.deviceinformationid,
+        	deviceinformation.mapid,
+        	deviceinformation.deviceno,
+        	deviceinformation.devicetype,
+        	deviceinformation.devicename,
+        	deviceinformation.fence,
+        	deviceinformation.detailedlocation,
+        	deviceinformation.GIS AS gis,
+        	electronicfencestatus.id AS electronicfencestatus_id,
+        	electronicfencestatus.deviceinformationid AS electronicfencestatus_deviceinformationid,
+        	electronicfencestatus.cameraid,
+        	electronicfencestatus.warningstatus,
+        	electronicfencestatus.shieldstatus
+        FROM
+        	deviceinformation deviceinformation
+        	LEFT JOIN electronicfencestatus electronicfencestatus ON deviceinformation.deviceinformationid = electronicfencestatus.deviceinformationid
+        WHERE
+        	`STATUS` = '0'
+        	AND deviceinformation.devline = #{devline}
+        	AND deviceinformation.devicetype = 'BC004005'
     </select>
 </mapper>
