@@ -17,6 +17,7 @@ public class Electronicfencestatus {
     private String id;
     private String deviceinformationid;
     private String cameraid;
+    private String camerano;
     private Integer warningstatus;
     private Integer shieldstatus;
 }

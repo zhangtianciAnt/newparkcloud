@@ -112,10 +112,15 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
             }
             // 如果设备是电子围栏
             else if ("BC004005".equals(deviceinformation.getDevicetype())) {
+                // 根据摄像头id（subordinatesystem）找到 摄像头设备编号
+                Deviceinformation dev = new Deviceinformation();
+                dev.setDeviceinformationid(deviceinformation.getSubordinatesystem());
+                dev = deviceinformationMapper.selectOne(dev);
                 // 插入电子围栏状态表信息
                 Electronicfencestatus electronicfencestatus = new Electronicfencestatus();
                 electronicfencestatus.setId(UUID.randomUUID().toString());
                 electronicfencestatus.setDeviceinformationid(deviceinformation.getDeviceinformationid());
+                electronicfencestatus.setCamerano(dev.getDeviceno());
                 // 围栏对应的摄像头id
                 electronicfencestatus.setCameraid(deviceinformation.getSubordinatesystem());
                 // 围栏是否报警 初始化 0
