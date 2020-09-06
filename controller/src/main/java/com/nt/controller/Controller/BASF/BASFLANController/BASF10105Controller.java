@@ -101,6 +101,7 @@ public class BASF10105Controller {
             // 先推送前台，再进行别的处理
             MultiThreadScheduleTask.webSocketVo.setElectricShield(deviceinformation);
             WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
+            MultiThreadScheduleTask.webSocketVo.setElectricShield(null);
             // 如果 未屏蔽报警信息 生成电子围栏报警单
             if (electronicfencestatus.getShieldstatus() == 0) {
                 Electronicfencealarm electronicfencealarm = new Electronicfencealarm();
