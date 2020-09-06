@@ -25,22 +25,22 @@ public class ElectronicfenceServiceImpl implements ElectronicfenceService {
     @Override
     public int createElectronicfences(Electronicfencealarm electronicfencealarm) {
         electronicfencealarm.setId(UUID.randomUUID().toString());
-        electronicfencealarm.setCREATEON(new Date());
-        electronicfencealarm.setSTATUS(0);
+        electronicfencealarm.setCreateon(new Date());
+        electronicfencealarm.setStatus(0);
         int i = electronicfencealarmMapper.insert(electronicfencealarm);
         return i;
     }
 
     @Override
     public int updateElectronicfences(Electronicfencealarm electronicfencealarm) {
-        electronicfencealarm.setMODIFYON(new Date());
+        electronicfencealarm.setModifyon(new Date());
         int i = electronicfencealarmMapper.updateByPrimaryKeySelective(electronicfencealarm);
         return i;
     }
 
     @Override
     public int delElectronicfences(Electronicfencealarm electronicfencealarm) {
-        electronicfencealarm.setSTATUS(1);
+        electronicfencealarm.setStatus(1);
         int i = electronicfencealarmMapper.updateByPrimaryKeySelective(electronicfencealarm);
         return i;
     }

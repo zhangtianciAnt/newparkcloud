@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Id;
 import java.util.Date;
 
 /**
@@ -13,12 +14,13 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Electronicfencealarm {
+    @Id
     //电子围栏报警单主键
     private String id;
     //deviceinformationid表主键
     private String deviceinformationid;
     //状态 0 可用 1 不可用
-    private Integer STATUS;
-    private Date CREATEON;
-    private Date MODIFYON;
+    private Integer status;
+    private Date createon;
+    private Date modifyon;
 }

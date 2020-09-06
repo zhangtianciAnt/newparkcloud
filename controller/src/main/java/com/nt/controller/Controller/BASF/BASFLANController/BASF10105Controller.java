@@ -97,7 +97,7 @@ public class BASF10105Controller {
             // 更新围栏报警状态
             Electronicfencestatus electronicfencestatus = deviceinformation.getElectronicfencestatus();
             electronicfencestatus.setWarningstatus(1);
-            electronicfencestatusMapper.updateByPrimaryKeySelective(electronicfencestatus);
+            int i = electronicfencestatusMapper.updateByPrimaryKeySelective(electronicfencestatus);
             // 先推送前台，再进行别的处理
             MultiThreadScheduleTask.webSocketVo.setElectricShield(deviceinformation);
             WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
@@ -105,9 +105,9 @@ public class BASF10105Controller {
             if (electronicfencestatus.getShieldstatus() == 0) {
                 Electronicfencealarm electronicfencealarm = new Electronicfencealarm();
                 electronicfencealarm.setId(UUID.randomUUID().toString());
-                electronicfencealarm.setCREATEON(new Date());
+                electronicfencealarm.setCreateon(new Date());
                 electronicfencealarm.setDeviceinformationid(deviceinformation.getDeviceinformationid());
-                electronicfencealarm.setSTATUS(0);
+                electronicfencealarm.setStatus(0);
                 electronicfencealarmMapper.insert(electronicfencealarm);
             }
         } else {

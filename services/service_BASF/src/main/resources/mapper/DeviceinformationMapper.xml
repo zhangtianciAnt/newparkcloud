@@ -31,9 +31,19 @@
 
     <resultMap id="DeviceinfomationMap" type="com.nt.dao_BASF.Deviceinformation">
         <id property="deviceinformationid" column="deviceinformationid"></id>
+        <result property="mapid" column="mapid"></result>
+        <result property="deviceno" column="deviceno"></result>
+        <result property="devicetype" column="devicetype"></result>
+        <result property="devicename" column="devicename"></result>
+        <result property="fence" column="fence"></result>
+        <result property="detailedlocation" column="detailedlocation"></result>
+        <result property="gis" column="gis"></result>
         <association property="electronicfencestatus" javaType="com.nt.dao_BASF.Electronicfencestatus">
             <id property="id" column="electronicfencestatus_id"></id>
-            <id property="deviceinformationid" column="electronicfencestatus_deviceinformationid"></id>
+            <result property="deviceinformationid" column="electronicfencestatus_deviceinformationid"></result>
+            <result property="warningstatus" column="warningstatus"></result>
+            <result property="cameraid" column="cameraid"></result>
+            <result property="shieldstatus" column="shieldstatus"></result>
         </association>
     </resultMap>
 

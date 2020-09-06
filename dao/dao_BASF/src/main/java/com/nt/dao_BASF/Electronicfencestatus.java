@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Id;
+
 /**
  * 电子围栏设备状态
  */
@@ -11,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Electronicfencestatus {
+    @Id
     private String id;
     private String deviceinformationid;
     private String cameraid;
