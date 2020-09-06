@@ -1,5 +1,8 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
+import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
+import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Electronicfencealarm;
 import com.nt.dao_BASF.Electronicfencestatus;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.socket.TextMessage;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -38,6 +42,11 @@ public class ElectronicfenceController {
     @RequestMapping(value = "/updateElectronicfencestatus", method = {RequestMethod.POST})
     public ApiResult updateElectronicfencestatus(@RequestBody Electronicfencestatus electronicfencestatus) {
         electronicfencestatusMapper.updateByPrimaryKeySelective(electronicfencestatus);
+        // 根据设备主键，找到电子围栏设备信息，摄像头设备信息，把设备推送回前端
+        Deviceinformation deviceinformation = deviceinformationMapper.selectElectricShield("", electronicfencestatus.getDeviceinformationid());
+        MultiThreadScheduleTask.webSocketVo.setElectricShield(deviceinformation);
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
+        MultiThreadScheduleTask.webSocketVo.setElectricShield(null);
         return ApiResult.success();
     }
 

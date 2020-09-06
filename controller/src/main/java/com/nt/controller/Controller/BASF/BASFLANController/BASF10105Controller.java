@@ -93,7 +93,7 @@ public class BASF10105Controller {
         if ("ElectricShield".equals(serverinfolist.get(0).getFactoryname())) {
             // 电子围栏报警
             // 根据回路号，找到电子围栏设备信息，摄像头设备信息，把设备推送回前端
-            Deviceinformation deviceinformation = deviceinformationMapper.selectElectricShield(serverinfolist.get(0).getDevline());
+            Deviceinformation deviceinformation = deviceinformationMapper.selectElectricShield(serverinfolist.get(0).getDevline(), "");
             // 更新围栏报警状态
             Electronicfencestatus electronicfencestatus = deviceinformation.getElectronicfencestatus();
             electronicfencestatus.setWarningstatus(1);

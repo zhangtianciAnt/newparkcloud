@@ -23,7 +23,7 @@ public interface DeviceinformationMapper extends MyMapper<Deviceinformation> {
     /**
      * 根据回路号，查询电子围栏相关信息
      */
-    Deviceinformation selectElectricShield(@Param("devline") String devline);
+    Deviceinformation selectElectricShield(@Param("devline") String devline, @Param("deviceinformationid") String deviceinformationid);
 
     List<Deviceinformation> selectElectricShields();
 }

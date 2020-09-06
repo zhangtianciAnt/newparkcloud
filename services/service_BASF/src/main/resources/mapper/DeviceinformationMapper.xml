@@ -44,6 +44,7 @@
             <result property="deviceinformationid" column="electronicfencestatus_deviceinformationid"></result>
             <result property="warningstatus" column="warningstatus"></result>
             <result property="cameraid" column="cameraid"></result>
+            <result property="camerano" column="camerano"></result>
             <result property="shieldstatus" column="shieldstatus"></result>
         </association>
     </resultMap>
@@ -129,27 +130,34 @@
     <!--根据回路号，查询电子围栏相关信息-->
     <select id="selectElectricShield" resultMap="DeviceinfomationMap" resultType="java.lang.String">
         SELECT
-        	deviceinformation.deviceinformationid,
-        	deviceinformation.mapid,
-        	deviceinformation.deviceno,
-        	deviceinformation.devicetype,
-        	deviceinformation.devicename,
-        	deviceinformation.subordinatesystem,
-        	deviceinformation.fence,
-        	deviceinformation.detailedlocation,
-        	deviceinformation.GIS AS gis,
-        	electronicfencestatus.id AS electronicfencestatus_id,
-        	electronicfencestatus.deviceinformationid AS electronicfencestatus_deviceinformationid,
-        	electronicfencestatus.cameraid,
-        	electronicfencestatus.warningstatus,
-        	electronicfencestatus.shieldstatus
+        deviceinformation.deviceinformationid,
+        deviceinformation.mapid,
+        deviceinformation.deviceno,
+        deviceinformation.devicetype,
+        deviceinformation.devicename,
+        deviceinformation.subordinatesystem,
+        deviceinformation.fence,
+        deviceinformation.detailedlocation,
+        deviceinformation.GIS AS gis,
+        electronicfencestatus.id AS electronicfencestatus_id,
+        electronicfencestatus.deviceinformationid AS electronicfencestatus_deviceinformationid,
+        electronicfencestatus.cameraid,
+        electronicfencestatus.camerano
+        electronicfencestatus.warningstatus,
+        electronicfencestatus.shieldstatus
         FROM
-        	deviceinformation deviceinformation
-        	LEFT JOIN electronicfencestatus electronicfencestatus ON deviceinformation.deviceinformationid = electronicfencestatus.deviceinformationid
+        deviceinformation deviceinformation
+        LEFT JOIN electronicfencestatus electronicfencestatus ON deviceinformation.deviceinformationid =
+        electronicfencestatus.deviceinformationid
         WHERE
-        	`STATUS` = '0'
+        `STATUS` = '0'
+        <if test="devline != ''">
             AND deviceinformation.devline = #{devline}
-        	AND deviceinformation.devicetype = 'BC004005'
+        </if>
+        <if test="deviceinformationid != ''">
+            AND deviceinformation.deviceinformationid = #{deviceinformationid}
+        </if>
+        AND deviceinformation.devicetype = 'BC004005'
     </select>
 
     <!--    因为之前设计有问题，造成前台已经写完了代码。为了让前台省事，所以写了一个重复的xml，以后改的兄弟别忘给这里改了-->
