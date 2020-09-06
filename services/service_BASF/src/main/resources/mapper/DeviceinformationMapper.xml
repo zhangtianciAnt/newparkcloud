@@ -35,6 +35,7 @@
         <result property="deviceno" column="deviceno"></result>
         <result property="devicetype" column="devicetype"></result>
         <result property="devicename" column="devicename"></result>
+        <result property="subordinatesystem" column="subordinatesystem"></result>
         <result property="fence" column="fence"></result>
         <result property="detailedlocation" column="detailedlocation"></result>
         <result property="gis" column="gis"></result>
@@ -133,6 +134,7 @@
         	deviceinformation.deviceno,
         	deviceinformation.devicetype,
         	deviceinformation.devicename,
+        	deviceinformation.subordinatesystem,
         	deviceinformation.fence,
         	deviceinformation.detailedlocation,
         	deviceinformation.GIS AS gis,
@@ -146,7 +148,32 @@
         	LEFT JOIN electronicfencestatus electronicfencestatus ON deviceinformation.deviceinformationid = electronicfencestatus.deviceinformationid
         WHERE
         	`STATUS` = '0'
-        	AND deviceinformation.devline = #{devline}
+            AND deviceinformation.devline = #{devline}
+        	AND deviceinformation.devicetype = 'BC004005'
+    </select>
+
+    <!--    因为之前设计有问题，造成前台已经写完了代码。为了让前台省事，所以写了一个重复的xml，以后改的兄弟别忘给这里改了-->
+    <select id="selectElectricShields" resultMap="DeviceinfomationMap" resultType="java.lang.String">
+        SELECT
+        	deviceinformation.deviceinformationid,
+        	deviceinformation.mapid,
+        	deviceinformation.deviceno,
+        	deviceinformation.devicetype,
+        	deviceinformation.devicename,
+        	deviceinformation.subordinatesystem,
+        	deviceinformation.fence,
+        	deviceinformation.detailedlocation,
+        	deviceinformation.GIS AS gis,
+        	electronicfencestatus.id AS electronicfencestatus_id,
+        	electronicfencestatus.deviceinformationid AS electronicfencestatus_deviceinformationid,
+        	electronicfencestatus.cameraid,
+        	electronicfencestatus.warningstatus,
+        	electronicfencestatus.shieldstatus
+        FROM
+        	deviceinformation deviceinformation
+        	LEFT JOIN electronicfencestatus electronicfencestatus ON deviceinformation.deviceinformationid = electronicfencestatus.deviceinformationid
+        WHERE
+        	`STATUS` = '0'
         	AND deviceinformation.devicetype = 'BC004005'
     </select>
 </mapper>

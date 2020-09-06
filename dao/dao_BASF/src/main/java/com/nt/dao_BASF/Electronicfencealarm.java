@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.util.Date;
 
 /**
@@ -23,4 +24,9 @@ public class Electronicfencealarm {
     private Integer status;
     private Date createon;
     private Date modifyon;
+
+    @Transient
+    private Electronicfencestatus electronicfencestatus;
+    @Transient
+    private Deviceinformation deviceinformation;
 }

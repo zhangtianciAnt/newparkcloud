@@ -9,12 +9,12 @@ import java.util.List;
  */
 public interface ElectronicfenceService {
     // 电子围栏报警单 增删改查 start
-    List<Electronicfencealarm> getElectronicfences(Electronicfencealarm electronicfencealarm);
+    List<Electronicfencealarm> getElectronicfences(Electronicfencealarm electronicfencealarm) throws Exception;
 
-    int createElectronicfences(Electronicfencealarm electronicfencealarm);
+    int createElectronicfences(Electronicfencealarm electronicfencealarm) throws Exception;
 
-    int updateElectronicfences(Electronicfencealarm electronicfencealarm);
+    int updateElectronicfences(Electronicfencealarm electronicfencealarm) throws Exception;
 
-    int delElectronicfences(Electronicfencealarm electronicfencealarm);
+    int delElectronicfences(Electronicfencealarm electronicfencealarm) throws Exception;
     // 电子围栏报警单 增删改查 end
 }

@@ -1,8 +1,10 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
+import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Electronicfencealarm;
 import com.nt.dao_BASF.Electronicfencestatus;
 import com.nt.service_BASF.ElectronicfenceService;
+import com.nt.service_BASF.mapper.DeviceinformationMapper;
 import com.nt.service_BASF.mapper.ElectronicfencestatusMapper;
 import com.nt.utils.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class ElectronicfenceController {
     @Resource
     private ElectronicfencestatusMapper electronicfencestatusMapper;
 
+    @Resource
+    private DeviceinformationMapper deviceinformationMapper;
+
     /**
      * 更新围栏报警信息状态
      */
@@ -43,8 +48,17 @@ public class ElectronicfenceController {
      * @return
      */
     @RequestMapping(value = "getElectronicfences", method = {RequestMethod.POST})
-    public ApiResult getElectronicfences(@RequestBody Electronicfencealarm electronicfencealarm) {
+    public ApiResult getElectronicfences(@RequestBody Electronicfencealarm electronicfencealarm) throws Exception {
         List<Electronicfencealarm> electronicfencealarmList = electronicfenceService.getElectronicfences(electronicfencealarm);
         return ApiResult.success(electronicfencealarmList);
+    }
+
+    /**
+     * 获取所有电子围栏信息
+     */
+    @RequestMapping(value = "getElectronicfencesinfos", method = {RequestMethod.POST})
+    public ApiResult getElectronicfencesinfos() {
+        List<Deviceinformation> deviceinformations = deviceinformationMapper.selectElectricShields();
+        return ApiResult.success(deviceinformations);
     }
 }

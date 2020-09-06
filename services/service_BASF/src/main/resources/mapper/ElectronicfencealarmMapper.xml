@@ -2,4 +2,51 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_BASF.mapper.ElectronicfencealarmMapper">
 
+    <resultMap id="EletronicfencelarmMap" type="com.nt.dao_BASF.Electronicfencealarm">
+        <id property="id" column="id"></id>
+        <result property="createon" column="createon"></result>
+        <association property="electronicfencestatus" javaType="com.nt.dao_BASF.Electronicfencestatus">
+            <result property="shieldstatus" column="shieldstatus"></result>
+            <result property="warningstatus" column="warningstatus"></result>
+        </association>
+        <association property="deviceinformation" javaType="com.nt.dao_BASF.Deviceinformation">
+            <result property="devicename" column="devicename"></result>
+            <result property="deviceno" column="deviceno"></result>
+            <result property="mapid" column="mapid"></result>
+            <result property="devicetype" column="devicetype"></result>
+            <result property="defencearea" column="defencearea"></result>
+            <result property="devicestatus" column="devicestatus"></result>
+            <result property="gis" column="gis"></result>
+            <result property="factoryname" column="factoryname"></result>
+            <result property="devline" column="devline"></result>
+            <result property="devrow" column="devrow"></result>
+            <result property="fence" column="fence"></result>
+        </association>
+    </resultMap>
+
+
+    <select id="getElectronicfences" resultMap="EletronicfencelarmMap" resultType="java.lang.String">
+        select
+        electronicfencealarm.id,
+        electronicfencealarm.createon,
+        electronicfencestatus.shieldstatus,
+        electronicfencestatus.warningstatus,
+        deviceinformation.devicename,
+        deviceinformation.deviceno,
+        deviceinformation.mapid,
+        deviceinformation.devicetype,
+        deviceinformation.defencearea,
+        deviceinformation.devicestatus,
+        deviceinformation.GIS as gis,
+        deviceinformation.factoryname,
+        deviceinformation.devline,
+        deviceinformation.devrow,
+        deviceinformation.fence
+        from electronicfencealarm electronicfencealarm
+        LEFT JOIN electronicfencestatus electronicfencestatus on electronicfencealarm.deviceinformationid= electronicfencestatus.deviceinformationid
+        LEFT JOIN deviceinformation deviceinformation on electronicfencealarm.deviceinformationid=deviceinformation.deviceinformationid
+        where electronicfencealarm.`STATUS`=0
+        order by electronicfencealarm.createon desc
+    </select>
+
 </mapper>

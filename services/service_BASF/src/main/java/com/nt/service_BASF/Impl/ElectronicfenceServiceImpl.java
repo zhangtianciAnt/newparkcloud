@@ -17,13 +17,13 @@ public class ElectronicfenceServiceImpl implements ElectronicfenceService {
     private ElectronicfencealarmMapper electronicfencealarmMapper;
 
     @Override
-    public List<Electronicfencealarm> getElectronicfences(Electronicfencealarm electronicfencealarm) {
-        List<Electronicfencealarm> electronicfencealarms = electronicfencealarmMapper.select(electronicfencealarm);
+    public List<Electronicfencealarm> getElectronicfences(Electronicfencealarm electronicfencealarm) throws Exception {
+        List<Electronicfencealarm> electronicfencealarms = electronicfencealarmMapper.getElectronicfences(electronicfencealarm);
         return electronicfencealarms;
     }
 
     @Override
-    public int createElectronicfences(Electronicfencealarm electronicfencealarm) {
+    public int createElectronicfences(Electronicfencealarm electronicfencealarm) throws Exception {
         electronicfencealarm.setId(UUID.randomUUID().toString());
         electronicfencealarm.setCreateon(new Date());
         electronicfencealarm.setStatus(0);
@@ -32,14 +32,14 @@ public class ElectronicfenceServiceImpl implements ElectronicfenceService {
     }
 
     @Override
-    public int updateElectronicfences(Electronicfencealarm electronicfencealarm) {
+    public int updateElectronicfences(Electronicfencealarm electronicfencealarm) throws Exception {
         electronicfencealarm.setModifyon(new Date());
         int i = electronicfencealarmMapper.updateByPrimaryKeySelective(electronicfencealarm);
         return i;
     }
 
     @Override
-    public int delElectronicfences(Electronicfencealarm electronicfencealarm) {
+    public int delElectronicfences(Electronicfencealarm electronicfencealarm) throws Exception {
         electronicfencealarm.setStatus(1);
         int i = electronicfencealarmMapper.updateByPrimaryKeySelective(electronicfencealarm);
         return i;
