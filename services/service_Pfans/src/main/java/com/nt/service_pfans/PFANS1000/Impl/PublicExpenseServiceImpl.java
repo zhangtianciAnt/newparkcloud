@@ -1002,11 +1002,11 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     List<Purchase> purchaseList = purchaseMapper.select(pu);
                     if (purchaseList.size() > 0) {
                         purchaseList.get(0).setActuarialdate(new Date());
-                        if (purchaseList.get(0).getActuarialamount() != null && !purchaseList.get(0).getActuarialamount().equals("")) {
-                            purchaseList.get(0).setActuarialamount(String.valueOf(Double.valueOf(purchaseList.get(0).getActuarialamount()) + Double.valueOf(publicExpense.getMoneys())));
-                        } else {
-                            purchaseList.get(0).setActuarialamount(publicExpense.getMoneys());
-                        }
+//                        if (purchaseList.get(0).getActuarialamount() != null && !purchaseList.get(0).getActuarialamount().equals("")) {
+//                            purchaseList.get(0).setActuarialamount(String.valueOf(Double.valueOf(purchaseList.get(0).getActuarialamount()) + Double.valueOf(publicExpense.getMoneys())));
+//                        } else {
+                        purchaseList.get(0).setActuarialamount(publicExpense.getMoneys());
+//                        }
 
                         purchaseList.get(0).preUpdate(tokenModel);
                         purchaseMapper.updateByPrimaryKey(purchaseList.get(0));
