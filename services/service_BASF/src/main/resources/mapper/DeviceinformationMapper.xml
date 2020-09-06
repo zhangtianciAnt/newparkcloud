@@ -142,7 +142,7 @@
         electronicfencestatus.id AS electronicfencestatus_id,
         electronicfencestatus.deviceinformationid AS electronicfencestatus_deviceinformationid,
         electronicfencestatus.cameraid,
-        electronicfencestatus.camerano
+        electronicfencestatus.camerano,
         electronicfencestatus.warningstatus,
         electronicfencestatus.shieldstatus
         FROM
