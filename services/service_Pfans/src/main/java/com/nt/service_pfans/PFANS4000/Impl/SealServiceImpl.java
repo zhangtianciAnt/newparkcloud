@@ -315,28 +315,28 @@ public class SealServiceImpl implements SealService {
                             toDoNoticeService.save(toDoNotice);
                         }
                     }
-                    if (countLi.get(0).getClaimconditionqh() != null && countLi.get(0).getClaimconditionqh() != "") {
-                        if (countLi.get(0).getClaimconditionqh().equals("HT011003") && countLi.get(0).getDeliveryconditionqh().equals("HT009003")) {
-                            //向财务部长（角色）发送待办
-                            List<MembersVo> rolelist = roleService.getMembers("5e7861948f43163084351132");
-                            if (rolelist.size() > 0) {
-                                for (MembersVo rt : rolelist) {
-                                    //发起人创建代办
-                                    ToDoNotice toDoNotice = new ToDoNotice();
-                                    List<String> params = new ArrayList<String>();
-                                    toDoNotice.setTitle(countLi.get(0).getContractnumber() + countLi.get(0).getClaimtype() + "作成完毕，可进行资金回收确认");
-                                    toDoNotice.setInitiator(seal.getUserid());
-                                    toDoNotice.setContent(countLi.get(0).getContractnumber() + countLi.get(0).getClaimtype() + "作成完毕，可进行资金回收确认");
-                                    toDoNotice.setDataid(countLi.get(0).getContractnumber()); //合同是按照合同编号查询
-                                    toDoNotice.setUrl("/PFANS1026FormView");
-                                    toDoNotice.setWorkflowurl("/PFANS1026View");
-                                    toDoNotice.preInsert(tokenModel);
-                                    toDoNotice.setOwner(rt.getUserid());
-                                    toDoNoticeService.save(toDoNotice);
-                                }
-                            }
-                        }
-                    }
+//                    if (countLi.get(0).getClaimconditionqh() != null && countLi.get(0).getClaimconditionqh() != "") {
+//                        if (countLi.get(0).getClaimconditionqh().equals("HT011003") && countLi.get(0).getDeliveryconditionqh().equals("HT009003")) {
+//                            //向财务部长（角色）发送待办
+//                            List<MembersVo> rolelist = roleService.getMembers("5e7861948f43163084351132");
+//                            if (rolelist.size() > 0) {
+//                                for (MembersVo rt : rolelist) {
+//                                    //发起人创建代办
+//                                    ToDoNotice toDoNotice = new ToDoNotice();
+//                                    List<String> params = new ArrayList<String>();
+//                                    toDoNotice.setTitle(countLi.get(0).getContractnumber() + countLi.get(0).getClaimtype() + "作成完毕，可进行资金回收确认");
+//                                    toDoNotice.setInitiator(seal.getUserid());
+//                                    toDoNotice.setContent(countLi.get(0).getContractnumber() + countLi.get(0).getClaimtype() + "作成完毕，可进行资金回收确认");
+//                                    toDoNotice.setDataid(countLi.get(0).getContractnumber()); //合同是按照合同编号查询
+//                                    toDoNotice.setUrl("/PFANS1026FormView");
+//                                    toDoNotice.setWorkflowurl("/PFANS1026View");
+//                                    toDoNotice.preInsert(tokenModel);
+//                                    toDoNotice.setOwner(rt.getUserid());
+//                                    toDoNoticeService.save(toDoNotice);
+//                                }
+//                            }
+//                        }
+//                    }
                 }
             }
         }
