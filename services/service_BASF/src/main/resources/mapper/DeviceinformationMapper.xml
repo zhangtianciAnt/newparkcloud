@@ -160,6 +160,7 @@
         AND deviceinformation.devicetype = 'BC004005'
     </select>
 
+    <!--    获取所有电子围栏信息-->
     <!--    因为之前设计有问题，造成前台已经写完了代码。为了让前台省事，所以写了一个重复的xml，以后改的兄弟别忘给这里改了-->
     <select id="selectElectricShields" resultMap="DeviceinfomationMap" resultType="java.lang.String">
         SELECT
