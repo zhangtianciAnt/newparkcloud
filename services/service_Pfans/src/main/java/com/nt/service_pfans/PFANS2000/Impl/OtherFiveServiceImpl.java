@@ -46,6 +46,9 @@ public class OtherFiveServiceImpl implements OtherFiveService {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUserotherfive(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
+            OtherFive five = new OtherFive();
+            five.setGiving_id(Givingid);
+            otherfiveMapper.delete(five);
             List<OtherFive> listVo = new ArrayList<OtherFive>();
             List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
@@ -59,7 +62,7 @@ public class OtherFiveServiceImpl implements OtherFiveService {
             model.add("部門");
             model.add("工号");
             model.add("姓名");
-            model.add("补充医保");
+            model.add("医疗保险");
             model.add("意外保险");
             model.add("体检");
             model.add("福祉合計");
@@ -83,91 +86,13 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                 k++;
                 if (value != null && !value.isEmpty()) {
                     //卡号 upd gbb 0727 start
-                    if (value.get(2).toString().equals("")) {
+                    if (value.get(2).toString().equals("") ||
+                        (
+                            value.get(4).toString().equals("") && value.get(5).toString().equals("") && value.get(6).toString().equals("")
+                            && value.get(8).toString().equals("") && value.get(9).toString().equals("") && value.get(10).toString().equals("")
+                        )
+                    ) {
                         continue;
-                    }
-                    //卡号 upd gbb 0727 end
-                    String click="^([0-9][0-9]*)+(.[0-9]{1,2})?$";
-                    if(value.size() > 4) {
-                        if (value.get(4).toString().length()>20) {
-                            error = error + 1;
-                            Result.add("模板第" + (k-1) + "行的补充医保长度超出范围，请输入长度为20位之内的补充医保，导入失败");
-                            continue;
-                        }
-                    }
-                    if(value.size() > 5) {
-                        if (value.get(5).toString().length()>20) {
-                            error = error + 1;
-                            Result.add("模板第" + (k-1) + "行的意外保险长度超出范围，请输入长度为20位之内的意外保险，导入失败");
-                            continue;
-                        }
-                    }
-                    if(!Pattern.matches(click, value.get(5).toString())){
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的意外保险不符合规范，请输入正确的意外保险，导入失败");
-                        continue;
-                    }
-                    if(value.size() > 6) {
-                        if (value.get(6).toString().length()>20) {
-                            error = error + 1;
-                            Result.add("模板第" + (k-1) + "行的体检长度超出范围，请输入长度为20位之内的体检，导入失败");
-                            continue;
-                        }
-                    }
-                    if(!Pattern.matches(click, value.get(6).toString())){
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的体检不符合规范，请输入正确的体检，导入失败");
-                        continue;
-                    }
-                    if(value.size() > 7) {
-                        if (value.get(7).toString().length()>20) {
-                            error = error + 1;
-                            Result.add("模板第" + (k-1) + "行的福祉合計长度超出范围，请输入长度为20位之内的福祉合計，导入失败");
-                            continue;
-                        }
-                    }
-                    if(value.size() > 8) {
-                        if (value.get(8).toString().length()>20) {
-                            error = error + 1;
-                            Result.add("模板第" + (k-1) + "行的工会福祉长度超出范围，请输入长度为20位之内的工会福祉，导入失败");
-                            continue;
-                        }
-                    }
-                    if(!Pattern.matches(click, value.get(8).toString())){
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的工会福祉不符合规范，请输入正确的工会福祉，导入失败");
-                        continue;
-                    }
-                    if(value.size() > 9) {
-                        if (value.get(9).toString().length()>20) {
-                            error = error + 1;
-                            Result.add("模板第" + (k-1) + "行的忘年会奖品长度超出范围，请输入长度为20位之内的忘年会奖品，导入失败");
-                            continue;
-                        }
-                    }
-                    if(!Pattern.matches(click, value.get(9).toString())){
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的忘年会奖品不符合规范，请输入正确的忘年会奖品，导入失败");
-                        continue;
-                    }
-                    if(value.size() > 10) {
-                        if (value.get(10).toString().length()>20) {
-                            error = error + 1;
-                            Result.add("模板第" + (k-1) + "行的組合旅游费长度超出范围，请输入长度为20位之内的組合旅游费，导入失败");
-                            continue;
-                        }
-                    }
-                    if(!Pattern.matches(click, value.get(10).toString())){
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的組合旅游费不符合规范，请输入正确的組合旅游费，导入失败");
-                        continue;
-                    }
-                    if(value.size() > 11) {
-                        if (value.get(11).toString().length()>20) {
-                            error = error + 1;
-                            Result.add("模板第" + (k-1) + "行的合計长度超出范围，请输入长度为20位之内的合計，导入失败");
-                            continue;
-                        }
                     }
                     Query query = new Query();
                     String jobnumber = value.get(2).toString();
@@ -181,6 +106,99 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                         error = error + 1;
                         Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
                         continue;
+                    }
+                    //卡号 upd gbb 0727 end
+                    String click="^(-?[1-9][0-9]*)+(.[0-9]{1,2})?$";
+                    if(value.size() > 4) {
+                        if (value.get(4).toString().length()>20) {
+                            error = error + 1;
+                            Result.add("模板第" + (k-1) + "行的医疗保险长度超出范围，请输入长度为20位之内的医疗保险，导入失败");
+                            continue;
+                        }
+                    }
+                    if(value.size() > 5) {
+                        if(!value.get(5).toString().equals("")){
+                            if (value.get(5).toString().length()>20) {
+                                error = error + 1;
+                                Result.add("模板第" + (k-1) + "行的意外保险长度超出范围，请输入长度为20位之内的意外保险，导入失败");
+                                continue;
+                            }
+                            if(!Pattern.matches(click, value.get(5).toString())){
+                                error = error + 1;
+                                Result.add("模板第" + (k - 1) + "行的意外保险不符合规范，请输入正确的意外保险，导入失败");
+                                continue;
+                            }
+                        }
+                    }
+                    if(value.size() > 6) {
+                        if(!value.get(6).toString().equals("")){
+                            if (value.get(6).toString().length()>20) {
+                                error = error + 1;
+                                Result.add("模板第" + (k-1) + "行的体检长度超出范围，请输入长度为20位之内的体检，导入失败");
+                                continue;
+                            }
+                            if(!Pattern.matches(click, value.get(6).toString())){
+                                error = error + 1;
+                                Result.add("模板第" + (k - 1) + "行的体检不符合规范，请输入正确的体检，导入失败");
+                                continue;
+                            }
+                        }
+                    }
+                    if(value.size() > 7) {
+                        if (value.get(7).toString().length()>20) {
+                            error = error + 1;
+                            Result.add("模板第" + (k-1) + "行的福祉合計长度超出范围，请输入长度为20位之内的福祉合計，导入失败");
+                            continue;
+                        }
+                    }
+                    if(value.size() > 8) {
+                        if(!value.get(8).toString().equals("")){
+                            if (value.get(8).toString().length()>20) {
+                                error = error + 1;
+                                Result.add("模板第" + (k-1) + "行的工会福祉长度超出范围，请输入长度为20位之内的工会福祉，导入失败");
+                                continue;
+                            }
+                            if(!Pattern.matches(click, value.get(8).toString())){
+                                error = error + 1;
+                                Result.add("模板第" + (k - 1) + "行的工会福祉不符合规范，请输入正确的工会福祉，导入失败");
+                                continue;
+                            }
+                        }
+                    }
+                    if(value.size() > 9) {
+                        if(!value.get(9).toString().equals("")){
+                            if (value.get(9).toString().length()>20) {
+                                error = error + 1;
+                                Result.add("模板第" + (k-1) + "行的忘年会奖品长度超出范围，请输入长度为20位之内的忘年会奖品，导入失败");
+                                continue;
+                            }
+                            if(!Pattern.matches(click, value.get(9).toString())){
+                                error = error + 1;
+                                Result.add("模板第" + (k - 1) + "行的忘年会奖品不符合规范，请输入正确的忘年会奖品，导入失败");
+                                continue;
+                            }
+                        }
+                    }
+                    if(value.size() > 10) {
+                        if(!value.get(10).toString().equals("")){
+                            if (value.get(10).toString().length()>20) {
+                                error = error + 1;
+                                Result.add("模板第" + (k-1) + "行的組合旅游费长度超出范围，请输入长度为20位之内的組合旅游费，导入失败");
+                                continue;
+                            }
+                            if(!Pattern.matches(click, value.get(10).toString())){
+                                error = error + 1;
+                                Result.add("模板第" + (k - 1) + "行的組合旅游费不符合规范，请输入正确的組合旅游费，导入失败");
+                                continue;
+                            }
+                        }
+                    }
+                    if(value.size() > 11) {
+                        if (value.get(11).toString().length()>20) {
+                            error = error + 1;
+                            Result.add("模板第" + (k-1) + "行的合計长度超出范围，请输入长度为20位之内的合計，导入失败");
+                            continue;
+                        }
                     }
                     otherfive.setGiving_id(Givingid);
                     otherfive.setDepartment_id(value.get(1).toString());

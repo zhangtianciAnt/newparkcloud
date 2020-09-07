@@ -4031,17 +4031,17 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         }
         //endregion 附加控除
 
-        //region 総合収入 comprehensiveview
+        //region 総合収入 comprehensiveview  月度賞与 + 当月応発工資（工资总额(纳税+免税)+只納税）
         //endregion 総合収入 comprehensiveview
 
-        //region 専項控除 disciplinaryview
+        //region 専項控除 disciplinaryview  専項控除累計（当月まで）
         //endregion 専項控除 disciplinaryview
 
-        //region 免税 dutyfreeview
+        //region 免税 dutyfreeview  小计3
         //endregion 免税 dutyfreeview
 
-        //region 累计税金 accumulatedtaxview
-        //endregion 累计税金 accumulatedtaxview
+        //region 累计税金 accumulatedtaxview    当月応発工資（工资总额(纳税+免税)+只納税）
+        //endregi2
 
         //endregion 本月实际工资
 

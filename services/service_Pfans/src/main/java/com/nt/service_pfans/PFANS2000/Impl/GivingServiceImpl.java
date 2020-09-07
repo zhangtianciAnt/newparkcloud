@@ -1341,19 +1341,22 @@ public class GivingServiceImpl implements GivingService {
         for (Appreciation appreciation : appreciationlist) {
             // 获取给与标准
             double rnbasesalary = Double.parseDouble(baseList.stream().filter(item -> item.getUser_id().equals(appreciation.getUser_id())).collect(Collectors.toList()).get(0).getRnbasesalary());
-
-            // 获取评价奖金百分比
-            Dictionary commentaryDic = new Dictionary();
-            commentaryDic.setValue1(appreciation.getCommentary());
-            commentaryDic.setPcode("PR056");
-            commentaryDic = dictionaryMapper.select(commentaryDic).get(0);
-            if(commentaryDic != null){
-                commentaryDic.setValue2(commentaryDic.getValue2().replace("%", ""));
-                // 奖金计算
-                // 月赏与
-                double monthAppreciation = rnbasesalary * 1.8d / 12d;
-                appreciation.setAmount(BigDecimal.valueOf(monthAppreciation
-                        * Double.parseDouble(commentaryDic.getValue2()) / 100).setScale(-1, RoundingMode.HALF_UP).toPlainString());
+            if (com.mysql.jdbc.StringUtils.isNullOrEmpty(appreciation.getAmount())) {
+                if(!appreciation.getCommentary().equals("")){
+                    // 获取评价奖金百分比
+                    Dictionary commentaryDic = new Dictionary();
+                    commentaryDic.setValue1(appreciation.getCommentary());
+                    commentaryDic.setPcode("PR056");
+                    commentaryDic = dictionaryMapper.select(commentaryDic).get(0);
+                    if(commentaryDic != null){
+                        commentaryDic.setValue2(commentaryDic.getValue2().replace("%", ""));
+                        // 奖金计算
+                        // 月赏与
+                        double monthAppreciation = rnbasesalary * 1.8d / 12d;
+                        appreciation.setAmount(BigDecimal.valueOf(monthAppreciation
+                                * Double.parseDouble(commentaryDic.getValue2()) / 100).setScale(-1, RoundingMode.HALF_UP).toPlainString());
+                    }
+                }
             }
         }
         return appreciationlist;
