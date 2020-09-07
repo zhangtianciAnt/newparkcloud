@@ -83,7 +83,10 @@ public class Pfans1012Controller {
         List<OtherDetails> otherDetailslist = (List<OtherDetails>) listsum.getOrDefault("其他费用", new ArrayList<>());
         //add-ws-7/9-禅道任务248
         String trr = "";
-        int sum1 = 0;
+        //add_fjl_0907  BigDecimal类型进行计算
+//        int sum1 = 0;
+        BigDecimal sum1 = new BigDecimal("0");
+        //add_fjl_0907  BigDecimal类型进行计算
         //交通费的预算编码
         List<TrafficDetails> tralist = pubvo.getTrafficdetails();
         if (tralist.size() > 0) {
@@ -114,9 +117,11 @@ public class Pfans1012Controller {
         if (purlist.size() > 0) {
             trr = "采购费";
             for (PurchaseDetails pl : purlist) {
+                //add_fjl_0907  BigDecimal类型进行计算
                 //add-ws-6/29-禅道171问题修正
-                sum1 = sum1 + Integer.valueOf(pl.getForeigncurrency());
+                sum1 = sum1.add(new BigDecimal(pl.getForeigncurrency()));
                 //add-ws-6/29-禅道171问题修正
+                //add_fjl_0907  BigDecimal类型进行计算
                 List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
                 for (Dictionary ite : curListT) {
                     if (ite.getCode().equals(pl.getBudgetcoding())) {
@@ -140,13 +145,18 @@ public class Pfans1012Controller {
         //其他费用明细
         List<OtherDetails> othlist = pubvo.getOtherdetails();
         String tro = "";
-        int sum = 0;
+        //add_fjl_0907  BigDecimal类型进行计算
+//        int sum = 0;
+        BigDecimal sum = new BigDecimal("0");
+        //add_fjl_0907  BigDecimal类型进行计算
         if (othlist.size() > 0) {
             tro = "其他费用";
             for (OtherDetails ol : othlist) {
+                //add_fjl_0907  BigDecimal类型进行计算
                 //add-ws-6/29-禅道171问题修正
-                sum = sum + Integer.valueOf(ol.getForeigncurrency());
+                sum = sum.add(new BigDecimal(ol.getForeigncurrency()));
                 //add-ws-6/29-禅道171问题修正
+                //add_fjl_0907  BigDecimal类型进行计算
                 List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
                 for (Dictionary ite : curListT) {
                     if (ite.getCode().equals(ol.getBudgetcoding())) {
@@ -479,13 +489,17 @@ public class Pfans1012Controller {
                 if (!pubvo.getOtherdetails().get(0).getForeigncurrency().equals("0")) {
                     if (ite.getCode().equals(pubvo.getOtherdetails().get(0).getCurrency())) {
                         currenct = ite.getValue3();
-                        int mountsum = sum + sum1;
+                        //add_fjl_0907  BigDecimal类型进行计算
+                        BigDecimal mountsum = sum.add(sum1);
+                        //add_fjl_0907  BigDecimal类型进行计算
                         currenctsum = String.valueOf(mountsum);
                     }
                 }else if(!pubvo.getPurchasedetails().get(0).getForeigncurrency().equals("0") ){
                     if (ite.getCode().equals(pubvo.getPurchasedetails().get(0).getCurrency())) {
                         currenct = ite.getValue3();
-                        int mountsum = sum + sum1;
+                        //add_fjl_0907  BigDecimal类型进行计算
+                        BigDecimal mountsum = sum.add(sum1);
+                        //add_fjl_0907  BigDecimal类型进行计算
                         currenctsum = String.valueOf(mountsum);
                     }
                 }
