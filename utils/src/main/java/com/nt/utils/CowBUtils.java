@@ -1,9 +1,13 @@
 package com.nt.utils;
 
+import cn.hutool.http.ContentType;
+import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -22,7 +26,14 @@ public class CowBUtils {
     @Value("${h5s.password}")
     private String h5sPassword;
 
+    @Value("${mh.url}")
+    private String mhUrl;
+
     private static String h5sSession = "";
+
+    @Autowired
+    private RestTemplate restTemplate;
+
 
     /**
      * 用于判断一个字符串中，是否包含多个字符串中的任意一个（例如：aabbccddeeffgg中是否包含aa,bb,cc其中任意一个，如果包含则返回true，否则false）
@@ -159,6 +170,20 @@ public class CowBUtils {
             //  插入添加设备编号不允许重复判断，并且页面添加loading不允许重复提交后，应该可以保证不会出现conf里找不到对应token的情况
         }
         return strCode;
+    }
+
+    /**
+     * 根据key，imei获取魔盒车辆最后的信息
+     *
+     * @param key
+     * @param imei
+     * @return
+     */
+    public String getMhLastinfo(String key, String imei) {
+        String result = "";
+        String url = mhUrl + "api/car/getlastinfo?imei=" + imei + "&key=" + key;
+        result = restTemplate.getForObject(url, String.class);
+        return result;
     }
 
     /**

@@ -16,6 +16,7 @@ public class VehicleManagement extends BaseModel {
     @Id
     private String vehiclemanagementid;
     private String carnum;
+    private String carno;
     private String imei;
     private String ikey;
     private String flag;

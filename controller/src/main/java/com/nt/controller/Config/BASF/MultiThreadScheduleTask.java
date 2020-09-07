@@ -1,9 +1,11 @@
 package com.nt.controller.Config.BASF;
 
 import cn.hutool.http.HttpUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.google.gson.annotations.JsonAdapter;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
 import com.nt.controller.Controller.WebSocket.WebSocketVo;
@@ -16,6 +18,7 @@ import com.nt.service_BASF.*;
 import com.nt.service_BASF.mapper.DeviceinformationMapper;
 import com.nt.service_BASF.mapper.PimsPointMapper;
 import com.nt.service_BASF.mapper.PimsdataMapper;
+import com.nt.service_BASF.mapper.VehicleManagementMapper;
 import com.nt.service_SQL.sqlMapper.BasfUserInfoMapper;
 import com.nt.utils.CowBUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,7 +169,7 @@ public class MultiThreadScheduleTask {
         return (JSONArray) jsonObject.get("data");
     }
 
-//    /**
+    //    /**
 //     * @return
 //     * @Method BASF90600_GetQueryVehiclesRegularlyInfo
 //     * @Author SKAIXX
@@ -181,12 +184,23 @@ public class MultiThreadScheduleTask {
 //        webSocketVo.setQueryVehiclesRegularlyInfoList(vehicleinformationServices.getQueryVehiclesRegularlyInfo());
 //        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
 //    }
+    @Resource
+    private VehicleManagementMapper vehicleManagementMapper;
+    @Autowired
+    private CowBUtils cowBUtils;
 
     @Async
     @Scheduled(fixedDelay = 20000)
     public void getGps() throws Exception {
-        // TODO: 2020/7/22 获取所有GPS盒子imei和key（key是鉴权码），循环调用获取GPS，都调用结束，推送前台
-        webSocketVo.setCarSet(restTemplate.getForObject("http://58.61.160.60:97/api/car/getlastinfo?imei=868500025879859&key=0F4137ED1502B5045D6083AA258B5C42", String.class));
+        //获取所有GPS盒子imei和key（key是鉴权码），循环调用获取GPS，都调用结束，推送前台
+        List<VehicleManagement> vehicleManagements = vehicleManagementMapper.select(new VehicleManagement());
+        List<MhInfo> mhInfos = new ArrayList<>();
+        for (VehicleManagement v : vehicleManagements) {
+            String obj = cowBUtils.getMhLastinfo(v.getIkey(), v.getImei());
+            MhInfo mhInfo = JSONObject.parseObject(obj, MhInfo.class);
+            mhInfos.add(mhInfo);
+        }
+        webSocketVo.setCarSet(mhInfos);
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
@@ -542,6 +556,7 @@ public class MultiThreadScheduleTask {
     @Async
     @Scheduled(fixedDelay = 60000)
     public void updatePims() throws Exception {
+        System.out.println("updatePims start");
         //获取最新PimsData
         List<Pimsdata> pimsdataList = pimsdataMapper.getLastestPims();
         pimsdataList.forEach(item -> {
@@ -552,5 +567,6 @@ public class MultiThreadScheduleTask {
         if (pimsdataList.size() > 0) {
             pimsdataMapper.insertPimsDataList(pimsdataList);
         }
+        System.out.println("updatePims end");
     }
 }

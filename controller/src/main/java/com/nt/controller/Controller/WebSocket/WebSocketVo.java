@@ -120,7 +120,7 @@ public class WebSocketVo {
     //
     private List<Switchnotifications> switchList = new ArrayList<>();
 
-    private String carSet;
+    private List<MhInfo> carSet;
 
     //大屏报警数据
     private List<Firealarm> topfirealarmList = new ArrayList<>();

@@ -49,6 +49,7 @@ public class BASFPIMSController {
 
     @RequestMapping(value = "/getData", method = {RequestMethod.POST})
     public ApiResult getData(@RequestBody List<Object> data, HttpServletRequest request) throws Exception {
+        System.out.println("getData start");
         List<PimsVo> pimsVoList = new ArrayList<>();
         List<Pimsdata> pimsdataList = new ArrayList<>();
         for (Object info : data) {
@@ -86,6 +87,7 @@ public class BASFPIMSController {
             MultiThreadScheduleTask.webSocketVo.setPimsVoList(pimsVoList);
             WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         }
+        System.out.println("getData end");
         return ApiResult.success();
     }
 }
