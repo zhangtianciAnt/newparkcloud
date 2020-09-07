@@ -61,7 +61,8 @@ public class SealServiceImpl implements SealService {
         seal.preInsert(tokenModel);
         seal.setSealid(UUID.randomUUID().toString());
         sealMapper.insert(seal);
-        Seal se = sealMapper.selectByPrimaryKey(seal);
+        //add-ws-9/3-禅道任务493
+        Seal se = sealMapper.selectByPrimaryKey(seal.getSealid());
         if (!StringUtils.isNullOrEmpty(seal.getBookid())) {
             String[] boksplit = seal.getBookid().split(",");
             if (boksplit.length > 1) {
@@ -108,6 +109,7 @@ public class SealServiceImpl implements SealService {
                     }
                 }
             }
+            //add-ws-9/3-禅道任务493
         }
     }
 

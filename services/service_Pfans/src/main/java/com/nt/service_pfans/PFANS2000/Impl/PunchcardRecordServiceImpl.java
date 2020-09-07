@@ -391,6 +391,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 if (attendanceList.size() > 0) {
                                     if (attendanceList.get(0).getRecognitionstate().equals(AuthConstants.RECOGNITION_FLAG_NO))
                                     {
+                                        attendanceList.get(0).setCenter_id(customerInfo.getUserinfo().getCentername());
+                                        attendanceList.get(0).setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                        attendanceList.get(0).setTeam_id(customerInfo.getUserinfo().getTeamname());
                                         attendanceList.get(0).setNormal("0");
                                         attendanceList.get(0).setActual(null);
                                         attendanceList.get(0).setOrdinaryindustry(null);
@@ -445,6 +448,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         if (attendanceList.size() > 0) {
                             if (attendanceList.get(0).getRecognitionstate().equals(AuthConstants.RECOGNITION_FLAG_NO))
                             {
+                                attendanceList.get(0).setCenter_id(customerInfo.getUserinfo().getCentername());
+                                attendanceList.get(0).setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                attendanceList.get(0).setTeam_id(customerInfo.getUserinfo().getTeamname());
                                 attendanceList.get(0).setNormal("0");
                                 attendanceList.get(0).setActual(null);
                                 attendanceList.get(0).setOrdinaryindustry(null);
@@ -507,6 +513,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             if (attendanceList.size() > 0) {
                                 if (attendanceList.get(0).getRecognitionstate().equals(AuthConstants.RECOGNITION_FLAG_NO) || attendanceList.get(0).getRecognitionstate().equals(""))
                                 {
+                                    attendanceList.get(0).setCenter_id(customerInfo.getUserinfo().getCentername());
+                                    attendanceList.get(0).setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                    attendanceList.get(0).setTeam_id(customerInfo.getUserinfo().getTeamname());
                                     attendanceList.get(0).setNormal("0");
                                     attendanceList.get(0).setActual(null);
                                     attendanceList.get(0).setOrdinaryindustry(null);
@@ -563,6 +572,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     List<AttendanceResignation> asList = attendanceResignationMapper.select(as);
                                     if(asList.size() > 0)
                                     {
+                                        asList.get(0).setCenter_id(customerInfo.getUserinfo().getCentername());
+                                        asList.get(0).setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                        asList.get(0).setTeam_id(customerInfo.getUserinfo().getTeamname());
                                         asList.get(0).setNormal("0");
                                         asList.get(0).setActual(null);
                                         asList.get(0).setOrdinaryindustry(null);
@@ -619,6 +631,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 attendance.setDates(sf1ymd.parse(sf1ymd.format(cal.getTime())));
                                 List<Attendance> attendanceList = attendanceMapper.select(attendance);
                                 if (attendanceList.size() > 0) {
+                                    attendanceList.get(0).setCenter_id(customerInfo.getUserinfo().getCentername());
+                                    attendanceList.get(0).setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                    attendanceList.get(0).setTeam_id(customerInfo.getUserinfo().getTeamname());
                                     attendanceList.get(0).setNormal(null);
                                     attendanceList.get(0).setActual(null);
                                     attendanceList.get(0).setOrdinaryindustry(null);
@@ -740,6 +755,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     overtime.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                                     overtime.setReserveovertimedate(ad.getDates());
                                     List<Overtime> overtimelist = overtimeMapper.select(overtime);
+                                    overtimelist = overtimelist.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
                                     List<Overtime> ovList = new ArrayList<Overtime>();
                                     //筛选审批通过的数据
                                     for (Overtime ov : overtimelist) {
@@ -1444,23 +1460,33 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setTlongsickleave(null);
                                         ad.setTabsenteeism(null);
                                     }
+                                    if (workinghours.equals("8")) {
+                                        ad.setWeekendindustry(null);
+                                        ad.setSpecialday(null);
+                                        ad.setAnnualrestday(null);
+                                        ad.setStatutoryresidue(null);
+                                    }
+
 
                                     //员工填写日志对应的实际工作时间
                                     //add ccm 有打卡记录，加班实际审批通过，日志时长为申请时长
-                                    String hours = "0";
+                                    String hoursshiji = "0";
+                                    String hoursyuji = "0";
                                     for (Overtime Ot : ovList)
                                     {
-                                        if (Ot.getStatus().equals("7")) {
-                                            //会社特别休日//周末加班/法定日加班/一齐年休日加班
-                                            if(Ot.getOvertimetype().equals("PR001005") || Ot.getOvertimetype().equals("PR001002") || Ot.getOvertimetype().equals("PR001003") || Ot.getOvertimetype().equals("PR001004") )
-                                            {
-                                                //hours = String.valueOf(Double.valueOf(hours) + Double.valueOf(Ot.getActualovertime()));
-                                                hours = df.format(
+                                        //会社特别休日//周末加班/法定日加班/一齐年休日加班
+                                        if(Ot.getOvertimetype().equals("PR001005") || Ot.getOvertimetype().equals("PR001002") || Ot.getOvertimetype().equals("PR001003") || Ot.getOvertimetype().equals("PR001004") )
+                                        {
+                                            if (Ot.getStatus().equals("7")) {
+                                                hoursshiji = df.format(
                                                         Double.valueOf(ad.getAnnualrestday() == null || ad.getAnnualrestday() =="0" ? "0":ad.getAnnualrestday())
                                                                 +Double.valueOf(ad.getSpecialday() == null || ad.getSpecialday() =="0" ? "0":ad.getSpecialday())
                                                                 +Double.valueOf(ad.getStatutoryresidue() == null || ad.getStatutoryresidue() =="0" ? "0":ad.getStatutoryresidue())
                                                                 +Double.valueOf(ad.getWeekendindustry() == null || ad.getWeekendindustry() =="0" ? "0":ad.getWeekendindustry()));
-                                                break;
+                                            }
+                                            else if(Ot.getStatus().equals("4") || Ot.getStatus().equals("5") || Ot.getStatus().equals("6"))
+                                            {
+                                                hoursyuji = df.format(Double.valueOf(Ot.getReserveovertime()));
                                             }
                                             break;
                                         }
@@ -1468,13 +1494,29 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
                                     if (workinghours.equals("0"))
                                     {
-                                        if(!hours.equals("0"))
+                                        if(!hoursshiji.equals("0"))
                                         {
-                                            ad.setOutgoinghours(df.format(Double.valueOf(hours)));
+                                            ad.setOutgoinghours(df.format(Double.valueOf(hoursshiji)));
                                         }
                                         else
                                         {
-                                            ad.setOutgoinghours(getOutgoinghours(lunchbreak_start, lunchbreak_end, PR, nomal));
+                                            String h = "0";
+                                            h = getOutgoinghours(lunchbreak_start, lunchbreak_end, PR, nomal);
+                                            if(Double.valueOf(hoursyuji)!=0)
+                                            {
+                                                if(Double.valueOf(h) > Double.valueOf(hoursyuji))
+                                                {
+                                                    ad.setOutgoinghours(df.format(Double.valueOf(hoursyuji)));
+                                                }
+                                                else
+                                                {
+                                                    ad.setOutgoinghours(getOutgoinghours(lunchbreak_start, lunchbreak_end, PR, nomal));
+                                                }
+                                            }
+                                            else
+                                            {
+                                                ad.setOutgoinghours(getOutgoinghours(lunchbreak_start, lunchbreak_end, PR, nomal));
+                                            }
                                         }
                                     }
                                     else
@@ -1496,7 +1538,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 overtime.setReserveovertimedate(ad.getDates());
                                 overtime.setStatus("7");
                                 List<Overtime> ovList = overtimeMapper.select(overtime);
-
+                                ovList = ovList.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
                                 if (ovList.size() > 0) {
                                     for (Overtime Ot : ovList) {
                                         //申请的加班時間
@@ -2154,6 +2196,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     overtime.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                                     overtime.setReserveovertimedate(ad.getDates());
                                     List<Overtime> overtimelist = overtimeMapper.select(overtime);
+                                    overtimelist = overtimelist.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
                                     List<Overtime> ovList = new ArrayList<Overtime>();
                                     //筛选审批通过的数据
                                     for (Overtime ov : overtimelist) {
@@ -2873,7 +2916,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 overtime.setReserveovertimedate(ad.getDates());
                                 overtime.setStatus("7");
                                 List<Overtime> ovList = overtimeMapper.select(overtime);
-
+                                ovList = ovList.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
                                 if (ovList.size() > 0) {
                                     for (Overtime Ot : ovList) {
                                         //申请的加班時間

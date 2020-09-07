@@ -92,7 +92,7 @@ public class AppreciationServiceImpl implements AppreciationService {
                         continue;
                     }
                     //卡号 upd gbb 0727 end
-                    String click = "^([1-9][0-9]*)+(.[0-9]{1,2})?$";
+                    String click = "^(-?[1-9][0-9]*)+(.[0-9]{1,2})?$";
 //                    if (!Pattern.matches(click, value.get(4).toString())) {
 //                        error = error + 1;
 //                        Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");

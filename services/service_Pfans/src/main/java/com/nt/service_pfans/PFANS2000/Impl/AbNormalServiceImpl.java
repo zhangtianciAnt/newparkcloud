@@ -57,13 +57,21 @@ public class AbNormalServiceImpl implements AbNormalService {
 
     @Override
     public List<AbNormal> list(AbNormal abNormal) throws Exception {
-        return abNormalMapper.select(abNormal);
+        //ADD_FJL_0904  获取status不为0的数据 status = 0 删除
+        List<AbNormal> abL = abNormalMapper.select(abNormal);
+        abL = abL.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
+        return abL;
+        //ADD_FJL_0904  获取status不为0的数据 status = 0 删除
     }
 
     //add-ws-6/8-禅道035
     @Override
     public List<AbNormal> list2(AbNormal abNormal) throws Exception {
-        return abNormalMapper.select(abNormal);
+        //ADD_FJL_0904  获取status不为0的数据 status = 0 删除
+        List<AbNormal> abL = abNormalMapper.select(abNormal);
+        abL = abL.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
+        return abL;
+        //ADD_FJL_0904  获取status不为0的数据 status = 0 删除
     }
 
     //add-ws-6/8-禅道035
@@ -94,6 +102,19 @@ public class AbNormalServiceImpl implements AbNormalService {
         abNormalMapper.insert(abNormal);
     }
 
+    //ADD_FJL_0904  添加删除data
+    @Override
+    public void delete(AbNormal abNormal, TokenModel tokenModel) throws Exception {
+        AbNormal abN = abNormalMapper.selectByPrimaryKey(abNormal.getAbnormalid());
+        if (abN != null) {
+            abN.preUpdate(tokenModel);
+            //逻辑删除
+            abN.setStatus(AuthConstants.DEL_FLAG_DELETE);
+            abNormalMapper.updateByPrimaryKey(abN);
+        }
+    }
+
+    //ADD_FJL_0904  添加删除data
     @Override
     public void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception {
         abNormal.preUpdate(tokenModel);

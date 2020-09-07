@@ -25,6 +25,8 @@ public interface AbNormalService {
 
     void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception;
 
+    void delete(AbNormal abNormal, TokenModel tokenModel) throws Exception;
+
     //根据id获取数据
     AbNormal One(String abnormalid) throws Exception;
 

@@ -72,6 +72,18 @@ public class Pfans2016Controller {
         return ApiResult.success();
     }
 
+    //ADD_FJL_0904  添加删除data
+    @RequestMapping(value = "/deleteInfo", method = {RequestMethod.POST})
+    public ApiResult deleteInformation(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
+        if (abNormal == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        abNormalService.delete(abNormal, tokenModel);
+        return ApiResult.success();
+    }
+    //ADD_FJL_0904  添加删除data
+
     @RequestMapping(value = "/oneInfo", method = {RequestMethod.POST})
     public ApiResult one(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
         if (abNormal == null) {

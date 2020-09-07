@@ -54,6 +54,9 @@ public class OtherTwoServiceImpl implements OtherTwoService {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUserothertwo(String Givingid, HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
+            OtherTwo two = new OtherTwo();
+            two.setGiving_id(Givingid);
+            othertwoMapper.delete(two);
             List<OtherTwo> listVo = new ArrayList<OtherTwo>();
             List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
@@ -83,7 +86,21 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                 k++;
                 if (value != null && !value.isEmpty()) {
                     //卡号 upd gbb 0727 start
-                    if (value.get(1).toString().equals("")) {
+                    //upd gbb 0904 添加 value.get(3).toString().equals("")
+                    if (value.get(1).toString().equals("") || value.get(3).toString().equals("")) {
+                        continue;
+                    }
+                    Query query = new Query();
+                    String jobnumber = value.get(1).toString();
+                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        othertwo.setUser_id(customerInfo.getUserid());
+                        othertwo.setJobnumber(value.get(1).toString());
+                    }
+                    if (customerInfo == null) {
+                        error = error + 1;
+                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
                         continue;
                     }
                     //卡号 upd gbb 0727 end
@@ -106,19 +123,6 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                             Result.add("模板第" + (k - 1) + "行的根拠长度超出范围，请输入长度为20位之内的根拠，导入失败");
                             continue;
                         }
-                    }
-                    Query query = new Query();
-                    String jobnumber = value.get(1).toString();
-                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
-                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
-                        othertwo.setUser_id(customerInfo.getUserid());
-                        othertwo.setJobnumber(value.get(1).toString());
-                    }
-                    if (customerInfo == null) {
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
-                        continue;
                     }
                     othertwo.setGiving_id(Givingid);
                     othertwo.setMoneys(value.get(3).toString());
