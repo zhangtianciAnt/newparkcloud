@@ -278,4 +278,9 @@ public class Purchase  extends BaseModel {
 //    @Column(name = "SPENDJUDE")
 //    private Float spendjude;
     //add_fjl_0819
+    //add_fjl_0908 start
+    //供应商名称
+    @Column(name = "SUPPLIERNAME")
+    private String suppliername;
+    //add_fjl_0908 end
 }
