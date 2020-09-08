@@ -92,7 +92,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
      * @Date 2019/11/14 13：27
      */
     @Override
-    public int getcountinformation() throws Exception {
+    public List<Vehicleinformation> getcountinformation() throws Exception {
         return vehicleinformationMapper.getcountinformation();
     }
 

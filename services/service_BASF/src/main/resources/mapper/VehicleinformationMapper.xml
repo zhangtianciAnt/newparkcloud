@@ -110,8 +110,8 @@ ORDER BY
         AND YEAR ( intime )= YEAR (now())
     </select>
 
-    <select id="getcountinformation" resultType="Integer">
-        select count(0)
+    <select id="getcountinformation" resultType="com.nt.dao_BASF.Vehicleinformation">
+        select vehicleinformationid, destination
         from vehicleinformation
         where ishazardous='0'
 				and

@@ -24,7 +24,7 @@ public interface VehicleinformationServices {
     //获取车辆信息详情
     VehicleinformationGpsArrVo one(String vehicleinformationid) throws Exception;
 
-    int getcountinformation() throws Exception;
+    List<Vehicleinformation> getcountinformation() throws Exception;
 
     //获取车辆列表(危化品车辆数用)
     //Map<Integer,String> getlistinformation()throws Exception;
