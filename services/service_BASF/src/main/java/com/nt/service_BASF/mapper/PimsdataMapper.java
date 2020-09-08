@@ -10,7 +10,7 @@ import java.util.List;
 
 @Component
 public interface PimsdataMapper extends MyMapper<Pimsdata> {
-    List<Pimsdata> getAllPimsInfo(@Param("type") String type) throws Exception;
+    List<Pimsdata> getAllPimsInfo(@Param("type") String type,@Param("hourStart") Integer hourStart,@Param("hourEnd") Integer hourEnd) throws Exception;
 
     int insertPimsDataList(List<Pimsdata> pimsdataList) throws Exception;
 
