@@ -1,18 +1,17 @@
 package com.nt.controller.Controller.PFANS;
 
-import cn.hutool.core.io.FileUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TotalCostVo;
-import com.nt.dao_Pfans.PFANS3000.Purchase;
-import com.nt.service_Org.DictionaryService;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
+import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.UserService;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_pfans.PFANS1000.JudgementService;
-
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
 import com.nt.service_pfans.PFANS1000.mapper.LoanApplicationMapper;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import com.nt.service_Org.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -249,15 +247,15 @@ public class Pfans1012Controller {
             List<LoanApplication> list = loanapplicationMapper.select(loanapplication);
             if (list.size() > 0) {
                 pubvo.getPublicexpense().setJudgement_name(list.get(0).getLoanapno());
-                if(list.get(0).getPaymentmethod().equals("PJ015002")){
-                    if(list.get(0).getUser_name()!=null){
+                if (list.get(0).getPaymentmethod().equals("PJ015002")) {
+                    if (list.get(0).getUser_name() != null) {
                         query.addCriteria(Criteria.where("userid").is(list.get(0).getUser_name()));
                         customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                         if (customerInfo != null) {
                             username = customerInfo.getUserinfo().getCustomername();
                         }
                     }
-                }else{
+                } else {
                     username = list.get(0).getAccountpayeename();
                 }
             }
@@ -266,46 +264,52 @@ public class Pfans1012Controller {
         SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
         String checkdata = sf.format(pubvo.getPublicexpense().getCreateon());
         //add-ws-禅道103任务2
+        int rol = 0;
         StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
         startWorkflowVo.setDataId(pubvo.getPublicexpense().getPublicexpenseid());
         List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
         if (wfList.size() > 0) {
+            //UPD_FJL_0908 修改打印印章显示与流程不符 start
             //UPD-WS-6/12-禅道105
-            if (Integer.valueOf(checkdata) >= 20200624) {
-                query = new Query();
-                if (bd7.intValue() >= 20000.00) {
-                    query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
-                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
-                        wfList7 = customerInfo.getUserinfo().getCustomername();
-                        wfList7 = sign.startGraphics2D(wfList7);
-                    }
-                    query = new Query();
-                    query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
-                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
-                        wfList1 = customerInfo.getUserinfo().getCustomername();
-                        wfList1 = sign.startGraphics2D(wfList1);
-                    }
-                    query = new Query();
-                    query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
-                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
-                        wfList2 = customerInfo.getUserinfo().getCustomername();
-                        wfList2 = sign.startGraphics2D(wfList2);
-                    }
-                    if (wfList.get(3).getRemark() != null) {
-                        if (wfList.get(3).getRemark().equals("系统自动跳过")) {
-                            wfList3 = "";
-                        } else {
-                            query = new Query();
-                            query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
-                            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                            if (customerInfo != null) {
-                                wfList3 = customerInfo.getUserinfo().getCustomername();
-                                wfList3 = sign.startGraphics2D(wfList3);
-                            }
+//            if (Integer.valueOf(checkdata) >= 20200624) {
+            query = new Query();
+            query.addCriteria(Criteria.where("_id").is(wfList.get(0).getUserId()));
+            UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
+            if (account != null) {
+                if (account.getRoles().size() > 0) {
+                    for (int a = 0; a < account.getRoles().size(); a++) {
+                        if (account.getRoles().get(a).getRolename().equals("总经理")) {
+                            rol++;
+                            break;
                         }
+                    }
+                }
+            }
+            if (bd7.intValue() >= 20000.00 && rol > 0) {
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList7 = customerInfo.getUserinfo().getCustomername();
+                    wfList7 = sign.startGraphics2D(wfList7);
+                }
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList1 = customerInfo.getUserinfo().getCustomername();
+                    wfList1 = sign.startGraphics2D(wfList1);
+                }
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList2 = customerInfo.getUserinfo().getCustomername();
+                    wfList2 = sign.startGraphics2D(wfList2);
+                }
+                if (wfList.get(3).getRemark() != null) {
+                    if (wfList.get(3).getRemark().equals("系统自动跳过")) {
+                        wfList3 = "";
                     } else {
                         query = new Query();
                         query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
@@ -315,18 +319,18 @@ public class Pfans1012Controller {
                             wfList3 = sign.startGraphics2D(wfList3);
                         }
                     }
-                    if (wfList.get(4).getRemark() != null) {
-                        if (wfList.get(4).getRemark().equals("系统自动跳过")) {
-                            wfList4 = "";
-                        } else {
-                            query = new Query();
-                            query.addCriteria(Criteria.where("userid").is(wfList.get(4).getUserId()));
-                            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                            if (customerInfo != null) {
-                                wfList4 = customerInfo.getUserinfo().getCustomername();
-                                wfList4 = sign.startGraphics2D(wfList4);
-                            }
-                        }
+                } else {
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        wfList3 = customerInfo.getUserinfo().getCustomername();
+                        wfList3 = sign.startGraphics2D(wfList3);
+                    }
+                }
+                if (wfList.get(4).getRemark() != null) {
+                    if (wfList.get(4).getRemark().equals("系统自动跳过")) {
+                        wfList4 = "";
                     } else {
                         query = new Query();
                         query.addCriteria(Criteria.where("userid").is(wfList.get(4).getUserId()));
@@ -336,69 +340,18 @@ public class Pfans1012Controller {
                             wfList4 = sign.startGraphics2D(wfList4);
                         }
                     }
-
-
                 } else {
                     query = new Query();
-                    query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(4).getUserId()));
                     customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
-                        wfList1 = customerInfo.getUserinfo().getCustomername();
-                        wfList1 = sign.startGraphics2D(wfList1);
-                    }
-                    query = new Query();
-                    query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
-                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
-                        wfList2 = customerInfo.getUserinfo().getCustomername();
-                        wfList2 = sign.startGraphics2D(wfList2);
-                    }
-                    if (wfList.get(2).getRemark() != null) {
-                        if (wfList.get(2).getRemark().equals("系统自动跳过")) {
-                            wfList3 = "";
-                        } else {
-                            query = new Query();
-                            query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
-                            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                            if (customerInfo != null) {
-                                wfList3 = customerInfo.getUserinfo().getCustomername();
-                                wfList3 = sign.startGraphics2D(wfList3);
-                            }
-                        }
-                    } else {
-                        query = new Query();
-                        query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
-                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                        if (customerInfo != null) {
-                            wfList3 = customerInfo.getUserinfo().getCustomername();
-                            wfList3 = sign.startGraphics2D(wfList3);
-                        }
-                    }
-                    if (wfList.get(3).getRemark() != null) {
-                        if (wfList.get(3).getRemark().equals("系统自动跳过")) {
-                            wfList4 = "";
-                        } else {
-                            query = new Query();
-                            query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
-                            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                            if (customerInfo != null) {
-                                wfList4 = customerInfo.getUserinfo().getCustomername();
-                                wfList4 = sign.startGraphics2D(wfList4);
-                            }
-                        }
-                    } else {
-                        query = new Query();
-                        query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
-                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                        if (customerInfo != null) {
-                            wfList4 = customerInfo.getUserinfo().getCustomername();
-                            wfList4 = sign.startGraphics2D(wfList4);
-                        }
+                        wfList4 = customerInfo.getUserinfo().getCustomername();
+                        wfList4 = sign.startGraphics2D(wfList4);
                     }
                 }
-            } else {
-                query = new Query();
 
+
+            } else {
                 query = new Query();
                 query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
                 customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -456,6 +409,67 @@ public class Pfans1012Controller {
                     }
                 }
             }
+//            } else {
+//                query = new Query();
+//
+//                query = new Query();
+//                query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+//                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                if (customerInfo != null) {
+//                    wfList1 = customerInfo.getUserinfo().getCustomername();
+//                    wfList1 = sign.startGraphics2D(wfList1);
+//                }
+//                query = new Query();
+//                query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+//                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                if (customerInfo != null) {
+//                    wfList2 = customerInfo.getUserinfo().getCustomername();
+//                    wfList2 = sign.startGraphics2D(wfList2);
+//                }
+//                if (wfList.get(2).getRemark() != null) {
+//                    if (wfList.get(2).getRemark().equals("系统自动跳过")) {
+//                        wfList3 = "";
+//                    } else {
+//                        query = new Query();
+//                        query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+//                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                        if (customerInfo != null) {
+//                            wfList3 = customerInfo.getUserinfo().getCustomername();
+//                            wfList3 = sign.startGraphics2D(wfList3);
+//                        }
+//                    }
+//                } else {
+//                    query = new Query();
+//                    query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+//                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                    if (customerInfo != null) {
+//                        wfList3 = customerInfo.getUserinfo().getCustomername();
+//                        wfList3 = sign.startGraphics2D(wfList3);
+//                    }
+//                }
+//                if (wfList.get(3).getRemark() != null) {
+//                    if (wfList.get(3).getRemark().equals("系统自动跳过")) {
+//                        wfList4 = "";
+//                    } else {
+//                        query = new Query();
+//                        query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+//                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                        if (customerInfo != null) {
+//                            wfList4 = customerInfo.getUserinfo().getCustomername();
+//                            wfList4 = sign.startGraphics2D(wfList4);
+//                        }
+//                    }
+//                } else {
+//                    query = new Query();
+//                    query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
+//                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                    if (customerInfo != null) {
+//                        wfList4 = customerInfo.getUserinfo().getCustomername();
+//                        wfList4 = sign.startGraphics2D(wfList4);
+//                    }
+//                }
+//            }
+            //UPD_FJL_0908 修改打印印章显示与流程不符 end
         }
         //UPD-WS-6/12-禅道105
         Map<String, Object> data = new HashMap<>();
@@ -485,7 +499,7 @@ public class Pfans1012Controller {
 
         List<Dictionary> curListsum = dictionaryService.getForSelect("PG019");
         for (Dictionary ite : curListsum) {
-            if(pubvo.getOtherdetails().size()>0){
+            if (pubvo.getOtherdetails().size() > 0) {
                 if (!pubvo.getOtherdetails().get(0).getForeigncurrency().equals("0")) {
                     if (ite.getCode().equals(pubvo.getOtherdetails().get(0).getCurrency())) {
                         currenct = ite.getValue3();
@@ -494,7 +508,7 @@ public class Pfans1012Controller {
                         //add_fjl_0907  BigDecimal类型进行计算
                         currenctsum = String.valueOf(mountsum);
                     }
-                }else if(!pubvo.getPurchasedetails().get(0).getForeigncurrency().equals("0") ){
+                } else if (!pubvo.getPurchasedetails().get(0).getForeigncurrency().equals("0")) {
                     if (ite.getCode().equals(pubvo.getPurchasedetails().get(0).getCurrency())) {
                         currenct = ite.getValue3();
                         //add_fjl_0907  BigDecimal类型进行计算
@@ -519,8 +533,8 @@ public class Pfans1012Controller {
 //        List<PurchaseDetails> PurchasedetailsList = pubvo.getPurchasedetails();
 
         trafficlist = trafficlist.stream().filter(item -> (!item.getRmb().equals("0.00"))).collect(Collectors.toList());
-        purchasedetailslist = purchasedetailslist.stream().filter(item -> (!item.getRmb().equals("0.00"))||(!item.getForeigncurrency().equals("0.00")) ).collect(Collectors.toList());
-        otherDetailslist = otherDetailslist.stream().filter(item -> (!item.getRmb().equals("0.00"))||(!item.getForeigncurrency().equals("0.00"))).collect(Collectors.toList());
+        purchasedetailslist = purchasedetailslist.stream().filter(item -> (!item.getRmb().equals("0.00")) || (!item.getForeigncurrency().equals("0.00"))).collect(Collectors.toList());
+        otherDetailslist = otherDetailslist.stream().filter(item -> (!item.getRmb().equals("0.00")) || (!item.getForeigncurrency().equals("0.00"))).collect(Collectors.toList());
 
 
 //        PurchasedetailsList = PurchasedetailsList.stream().filter(item -> (!item.getRmb().equals("0")) || (!item.getForeigncurrency().equals("0"))).collect(Collectors.toList());
@@ -544,7 +558,7 @@ public class Pfans1012Controller {
         data.put("pur", purchasedetailslist);
         data.put("otd", otherDetailslist);
 
-        if (bd7.intValue() >= 20000) {
+        if (bd7.intValue() >= 20000 && rol > 0) {
             if (pubvo.getTrafficdetails().size() > 0) {
                 //add_fjl_0826  添加如果是多行明细的时候，明细放到第二页  start
                 if (trafficlist.size() >= 6) {
@@ -600,10 +614,10 @@ public class Pfans1012Controller {
         String aa[] = publicExpense.getPublicexpenseid().split(",");
         if (aa.length > 0) {
             for (int i = 0; i < aa.length; i++) {
-                PublicExpense publicexpense =new PublicExpense();
+                PublicExpense publicexpense = new PublicExpense();
                 publicexpense.setPublicexpenseid(aa[i]);
                 List<PublicExpense> publics = publicExpenseMapper.select(publicexpense);
-                publicexpenselist.addAll(0,publics);
+                publicexpenselist.addAll(0, publics);
             }
         }
         return ApiResult.success(publicexpenselist);
@@ -617,6 +631,7 @@ public class Pfans1012Controller {
         publicExpense.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(publicExpenseService.get(publicExpense));
     }
+
     // add-ws-8/20-禅道469
     @RequestMapping(value = "/loanapplication", method = {RequestMethod.GET})
     public ApiResult loanapplication(HttpServletRequest request) throws Exception {
@@ -711,7 +726,7 @@ public class Pfans1012Controller {
     }
 
     //add ccm 0728  精算时关联多个暂借款
-    @RequestMapping(value = "/getLoanApplicationList",method={RequestMethod.GET})
+    @RequestMapping(value = "/getLoanApplicationList", method = {RequestMethod.GET})
     public ApiResult getLoanApplicationList(String loanapno, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(loanapplicationService.getLoanApplicationList(loanapno));
@@ -719,8 +734,8 @@ public class Pfans1012Controller {
     //add ccm 0728  精算时关联多个暂借款
 
     //采购业务数据流程查看详情
-    @RequestMapping(value="/getworkfolwPurchaseData",method = {RequestMethod.POST})
-    public ApiResult getworkfolwPurchaseData(@RequestBody PublicExpense publicExpense, HttpServletRequest request) throws Exception{
+    @RequestMapping(value = "/getworkfolwPurchaseData", method = {RequestMethod.POST})
+    public ApiResult getworkfolwPurchaseData(@RequestBody PublicExpense publicExpense, HttpServletRequest request) throws Exception {
         if (publicExpense == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
