@@ -142,6 +142,7 @@ public class BASF10702Controller {
             String supplier,
             String transporter,
             String transtype,
+            String destination,
             String linkdepartment,
             String goodsname,
             String weight,
@@ -161,6 +162,7 @@ public class BASF10702Controller {
         vehicleinformation.setTranstype(transtype);
         vehicleinformation.setLinkdepartment(linkdepartment);
         vehicleinformation.setGoodsname(goodsname);
+        vehicleinformation.setDestination(destination);
         vehicleinformation.setWeight(weight);
         ishazardous = ishazardous.equals("是") ? "0" : "1";
         vehicleinformation.setIshazardous(ishazardous);
