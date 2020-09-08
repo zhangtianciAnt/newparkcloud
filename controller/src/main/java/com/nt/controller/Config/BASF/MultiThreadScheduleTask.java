@@ -554,7 +554,7 @@ public class MultiThreadScheduleTask {
 //    }
 //
     @Async
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(fixedDelay = 100000)
     public void updatePims() throws Exception {
         System.out.println("updatePims start");
         //获取最新PimsData
