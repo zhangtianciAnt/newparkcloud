@@ -20,7 +20,7 @@
         MAX(dcode.equipment) equipment,
         detail.pimspointname pimspointname,
         group_concat(detail.pimsdata) pimsdata,
-        group_concat(MINUTE(detail.CREATEON) ORDER BY detail.CREATEON) CREATEON,
+        group_concat(detail.time ORDER BY detail.CREATEON) CREATEON,
         MAX(detail.type) type
         FROM
         (
@@ -39,7 +39,11 @@
         MAX(point.pimspointname) pimspointname,
         IF(LOCATE(",",group_concat( pd.pimsdata ORDER BY pd.CREATEON desc )) = 0,group_concat( pd.pimsdata ORDER BY pd.CREATEON desc ),SUBSTRING_INDEX(group_concat( pd.pimsdata ORDER BY pd.CREATEON desc ),",",1)) pimsdata,
         MAX( pd.CREATEON ) CREATEON,
-        MAX( point.type ) type
+        MAX( point.type ) type,
+        DATE_FORMAT(
+        concat( date(MAX( pd.CREATEON )), ' ', HOUR (MAX( pd.CREATEON )), ':', floor( MINUTE (MAX( pd.CREATEON )) / 10 ) * 10 ),
+        '%H:%i'
+        ) AS time
         FROM
         pimsdata pd
         LEFT JOIN
@@ -48,11 +52,15 @@
         WHERE
         TO_DAYS( pd.CREATEON ) = TO_DAYS(
         NOW())
-        AND HOUR(pd.CREATEON) = HOUR(NOW())
+        AND HOUR(pd.CREATEON) &gt;= ${hourStart}
+        AND HOUR(pd.CREATEON) &lt;= ${hourEnd}
         AND point.type = #{type}
         GROUP BY
         pd.monitoringpoint,
-        MINUTE ( pd.CREATEON )
+        DATE_FORMAT(
+        concat( date(pd.CREATEON), ' ', HOUR (pd.CREATEON), ':', floor( MINUTE (pd.CREATEON) / 10 ) * 10 ),
+        '%H:%i'
+        )
         ) detail ON dcode.equipment = detail.equipment
         WHERE detail.monitoringpoint IS NOT NULL
         GROUP BY detail.pimspointname

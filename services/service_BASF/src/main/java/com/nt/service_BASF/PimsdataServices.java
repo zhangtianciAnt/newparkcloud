@@ -20,7 +20,7 @@ public interface PimsdataServices {
     void insert(List<Pimsdata> pimsdata) throws Exception;
 
     //获取大屏环境相关信息
-    List<Pimsdata> getAllPimsInfo(String type) throws Exception;
+    List<Pimsdata> getAllPimsInfo(String type,Integer hour) throws Exception;
 
     void createPimsPoint(Pimspoint pimsPoint) throws Exception;
 

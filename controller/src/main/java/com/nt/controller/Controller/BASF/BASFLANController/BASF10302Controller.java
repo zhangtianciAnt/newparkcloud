@@ -70,7 +70,7 @@ public class BASF10302Controller {
      * @Date: 2020/8/19
      */
     @RequestMapping(value = "/getAllPimsInfo", method = {RequestMethod.GET})
-    public ApiResult getAllPimsInfo(String type, HttpServletRequest request) throws Exception {
-        return ApiResult.success(pimsdataServices.getAllPimsInfo(type));
+    public ApiResult getAllPimsInfo(String type, Integer hour, HttpServletRequest request) throws Exception {
+        return ApiResult.success(pimsdataServices.getAllPimsInfo(type,hour));
     }
 }

@@ -30,7 +30,7 @@ public interface VehicleinformationMapper extends MyMapper<Vehicleinformation> {
     List<Vehicleinformation> getlistinformation() throws Exception;
 
     //获取危化品车数量
-    Integer getcountinformation() throws Exception;
+    List<Vehicleinformation> getcountinformation() throws Exception;
 
     //获取本月车辆出入统计
     List<VehicleAccessStatisticsVo> getAccessStatistics() throws Exception;
