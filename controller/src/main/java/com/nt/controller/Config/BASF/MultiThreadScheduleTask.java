@@ -502,7 +502,7 @@ public class MultiThreadScheduleTask {
     @Async
     @Scheduled(fixedDelay = 40000)
     public void BASF90800_GetVehicleinformationCount() throws Exception {
-        //获取车辆列表(危化品车辆数用)
+        //获取车辆列表(事故区域 危化品车辆数用 zqu)
         webSocketVo.setCountdangerousgoods(vehicleinformationServices.getcountinformation());
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
