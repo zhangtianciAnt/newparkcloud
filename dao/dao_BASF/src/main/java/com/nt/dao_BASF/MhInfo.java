@@ -3,8 +3,12 @@ package com.nt.dao_BASF;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
+import javax.persistence.Transient;
+
 @Data
 public class MhInfo {
+    @Transient
+    private VehicleManagement vehicleManagement;
     //平台接收时间
     private String ComTime;
     //IMEI(gps编号)

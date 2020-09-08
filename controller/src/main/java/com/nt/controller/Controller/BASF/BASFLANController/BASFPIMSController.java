@@ -47,6 +47,14 @@ public class BASFPIMSController {
 
 //    private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
 
+    /**
+     * 获取opc数据
+     *
+     * @param data
+     * @param request
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/getData", method = {RequestMethod.POST})
     public ApiResult getData(@RequestBody List<Object> data, HttpServletRequest request) throws Exception {
         System.out.println("getData start");
