@@ -56,7 +56,9 @@ FROM
 	vehicleinformation AS v
 WHERE
 	ifnull(outtime,'') = ''
--- 	 and TO_DAYS(CREATEON) = TO_DAYS(now())
+and v.intime = (
+		select MAX(intime) from vehicleinformation where vehiclenumber = v.vehiclenumber and ifnull(outtime,'') = ''
+)
 ORDER BY
 	v.intime and v.speed>'15' DESC
     </select>
@@ -88,9 +90,11 @@ ORDER BY
     <!--    获取在场车辆类别统计-->
     <select id="getInsideVehicleType" resultType="com.nt.dao_BASF.VO.InsideVehicleTypeVo">
         select count(*) as cnt,vehicletype
-        from vehicleinformation
+        from vehicleinformation v
         where ifnull(outtime,'') = ''
---         and TO_DAYS(CREATEON) = TO_DAYS(now())
+        and intime = (
+            select MAX(intime) from vehicleinformation where vehiclenumber = v.vehiclenumber and ifnull(outtime,'') = ''
+        )
         group by vehicletype
     </select>
 

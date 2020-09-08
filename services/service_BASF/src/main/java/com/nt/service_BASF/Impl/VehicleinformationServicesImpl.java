@@ -1,5 +1,7 @@
 package com.nt.service_BASF.Impl;
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.nt.dao_BASF.VO.*;
 import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.service_BASF.VehicleinformationServices;
@@ -9,10 +11,19 @@ import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -33,6 +44,9 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
 
     @Autowired
     private VehicleinformationMapper vehicleinformationMapper;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     /**
      * @param
@@ -198,7 +212,42 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
      */
     @Override
     public List<Vehicleinformation> getDailyVehicleInfo() throws Exception {
-        return vehicleinformationMapper.getDailyVehicleInfo();
+        String urlToken = "http://gatecheck.dowann.cn/api/ws/token?username=bachapi&password=123456";
+        String urlDailyInfo = "http://gatecheck.dowann.cn/api/out/dailyInfo";
+        // 获取token
+        ResponseEntity<String> rst = restTemplate.exchange(urlToken, HttpMethod.GET, null, String.class);
+        String value = rst.getBody();
+        JSONObject string_to_json = JSONUtil.parseObj(value);
+        String token = string_to_json.get("access_token").toString();
+        System.out.println("token:" + token);
+
+        // 通过token获取实时车辆信息
+        List<HttpMessageConverter<?>> httpMessageConverters = restTemplate.getMessageConverters();
+        httpMessageConverters.forEach(httpMessageConverter -> {
+            if(httpMessageConverter instanceof StringHttpMessageConverter){
+                StringHttpMessageConverter messageConverter = (StringHttpMessageConverter) httpMessageConverter;
+                messageConverter.setDefaultCharset(StandardCharsets.UTF_8);
+            }
+        });
+        String json = "{\"json\":\"object\"}";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", String.format("Bearer %s", token));
+        HttpEntity<String> requestEntity = new HttpEntity<String>(json, headers);
+        rst = restTemplate.exchange(urlDailyInfo, HttpMethod.GET, requestEntity, String.class);
+        value = rst.getBody();
+        string_to_json = JSONUtil.parseObj(value);
+        List<VehicleinfoForDowann> vehicleinfoForDowannList = JSONUtil.toList(JSONUtil.parseArray(string_to_json.get("data")), VehicleinfoForDowann.class);
+        List<Vehicleinformation> vehicleinformationList = new ArrayList<>();
+        vehicleinfoForDowannList.forEach(item -> {
+            Vehicleinformation vehicleinformation = new Vehicleinformation();
+            vehicleinformation.setDriver(item.getDrivername());
+            vehicleinformation.setIntime(item.getEnterDateTime());
+            vehicleinformation.setVehiclenumber(item.getTruckNo());
+            vehicleinformation.setGoodsname(item.getGoodsName());
+            vehicleinformation.setVehicletype(item.getVehicle());
+            vehicleinformationList.add(vehicleinformation);
+        });
+        return vehicleinformationList;
     }
 
     /**
