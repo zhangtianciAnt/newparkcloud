@@ -66,8 +66,9 @@ public class PimadataServicesImpl implements PimsdataServices {
      * @Date: 2020/8/19
      */
     @Override
-    public List<Pimsdata> getAllPimsInfo(String type) throws Exception {
-        return pimsdataMapper.getAllPimsInfo(type);
+    public List<Pimsdata> getAllPimsInfo(String type,Integer hourStart) throws Exception {
+        Integer hourEnd = hourStart + 8;
+        return pimsdataMapper.getAllPimsInfo(type,hourStart,hourEnd);
     }
 
     @Override
