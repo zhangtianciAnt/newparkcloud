@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -224,7 +223,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         // 通过token获取实时车辆信息
         List<HttpMessageConverter<?>> httpMessageConverters = restTemplate.getMessageConverters();
         httpMessageConverters.forEach(httpMessageConverter -> {
-            if(httpMessageConverter instanceof StringHttpMessageConverter){
+            if (httpMessageConverter instanceof StringHttpMessageConverter) {
                 StringHttpMessageConverter messageConverter = (StringHttpMessageConverter) httpMessageConverter;
                 messageConverter.setDefaultCharset(StandardCharsets.UTF_8);
             }
@@ -316,10 +315,12 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
 
     @Override
     public void checkVehicle(Vehicleinformation vehicleinformation) throws Exception {
-        vehicleinformation = vehicleinformationMapper.checkVehicle(vehicleinformation.getVehiclenumber(), vehicleinformation.getMeid());
-        if (vehicleinformation != null) {
+        List<Vehicleinformation> vehicleinformationList = vehicleinformationMapper.checkVehicle(vehicleinformation.getVehiclenumber(), vehicleinformation.getMeid());
+        if (vehicleinformationList.size() > 0) {
             // 更新出场时间
-            updateouttime(vehicleinformation);
+            for (Vehicleinformation tmp : vehicleinformationList) {
+                updateouttime(tmp);
+            }
         }
     }
 
