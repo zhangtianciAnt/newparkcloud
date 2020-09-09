@@ -8,6 +8,8 @@ import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Firealarm;
 import com.nt.dao_BASF.VO.DeviceinformationVo;
+import com.nt.dao_BASF.VO.FireAlarmStatisticsVo;
+import com.nt.dao_BASF.VO.FireAlarmVo;
 import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.FirealarmServices;
 import com.nt.service_BASF.MapBox_MapLevelServices;
@@ -72,12 +74,16 @@ public class BASF10201Controller {
 
     @RequestMapping(value = "/getFireAlarmStatistics", method = {RequestMethod.POST})
     public ApiResult getFireAlarmStatistics(HttpServletRequest request) throws Exception {
-        return ApiResult.success(firealarmServices.getFireAlarmStatistics());
+        List<FireAlarmStatisticsVo> fireAlarmStatisticsVoList = firealarmServices.getFireAlarmStatistics();
+        MultiThreadScheduleTask.webSocketVo.setFireAlarmStatisticsVoList(fireAlarmStatisticsVoList);
+        return ApiResult.success(fireAlarmStatisticsVoList);
     }
 
     @RequestMapping(value = "/getFireAlarm", method = {RequestMethod.POST})
     public ApiResult getFireAlarm(HttpServletRequest request) throws Exception {
-        return ApiResult.success(firealarmServices.getFireAlarm());
+        List<FireAlarmVo> fireAlarmVoList =firealarmServices.getFireAlarm();
+        MultiThreadScheduleTask.webSocketVo.setFireAlarmList(fireAlarmVoList);
+        return ApiResult.success(fireAlarmVoList);
     }
 
     /**
