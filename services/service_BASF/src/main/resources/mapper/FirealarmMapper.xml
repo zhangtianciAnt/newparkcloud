@@ -49,7 +49,7 @@ FROM
 	FROM
 		firealarm
 	WHERE
-	    STATUS = 0
+	    ifnull(STATUS, '0') = '0'
 		AND completesta = '1'
 		AND MONTH ( policetim )= MONTH (
 		NOW())
@@ -75,7 +75,7 @@ ORDER BY
         where
         firealarm.policetim is not null
         and
-		firealarm.`STATUS` = 0
+		ifnull(firealarm.`STATUS`, '0') = 0
         AND firealarm.completesta = '1'
         order by firealarm.alarmtimes desc
     </select>
