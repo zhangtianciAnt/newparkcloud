@@ -179,6 +179,8 @@ public class Commandrecord extends BaseModel {
         private String gasEnvironmental;
         //水合格时间
         private String waterEnvironmental;
+
+        private String remarks;
     }
 
     //指挥指令
