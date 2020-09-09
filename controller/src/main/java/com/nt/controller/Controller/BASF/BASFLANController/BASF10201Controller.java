@@ -72,6 +72,13 @@ public class BASF10201Controller {
         return ApiResult.success(firealarmServices.list());
     }
 
+    /**
+     * 火灾消防-本月接警数据
+     *
+     * @param request
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/getFireAlarmStatistics", method = {RequestMethod.POST})
     public ApiResult getFireAlarmStatistics(HttpServletRequest request) throws Exception {
         List<FireAlarmStatisticsVo> fireAlarmStatisticsVoList = firealarmServices.getFireAlarmStatistics();
@@ -79,9 +86,16 @@ public class BASF10201Controller {
         return ApiResult.success(fireAlarmStatisticsVoList);
     }
 
+    /**
+     * 火灾消防-接警事件记录
+     *
+     * @param request
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/getFireAlarm", method = {RequestMethod.POST})
     public ApiResult getFireAlarm(HttpServletRequest request) throws Exception {
-        List<FireAlarmVo> fireAlarmVoList =firealarmServices.getFireAlarm();
+        List<FireAlarmVo> fireAlarmVoList = firealarmServices.getFireAlarm();
         MultiThreadScheduleTask.webSocketVo.setFireAlarmList(fireAlarmVoList);
         return ApiResult.success(fireAlarmVoList);
     }
