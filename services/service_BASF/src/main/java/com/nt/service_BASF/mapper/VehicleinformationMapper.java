@@ -50,5 +50,5 @@ public interface VehicleinformationMapper extends MyMapper<Vehicleinformation> {
     //增量更新GPS点位信息
     void updategps(@Param("vehicleinformationid") String vehicleinformationid,@Param("gps") String gps, @Param("modifyon") Date modifyon,@Param("speed")String speed) throws Exception;
 
-    Vehicleinformation checkVehicle(@Param("vehiclenumber") String vehiclenumber, @Param("meid") String meid) throws Exception;
+    List<Vehicleinformation> checkVehicle(@Param("vehiclenumber") String vehiclenumber, @Param("meid") String meid) throws Exception;
 }
