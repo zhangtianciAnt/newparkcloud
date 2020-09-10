@@ -94,22 +94,26 @@ public class BASF10105Controller {
             // 电子围栏报警
             // 根据回路号，找到电子围栏设备信息，摄像头设备信息，把设备推送回前端
             Deviceinformation deviceinformation = deviceinformationMapper.selectElectricShield(serverinfolist.get(0).getDevline(), "");
-            // 更新围栏报警状态
-            Electronicfencestatus electronicfencestatus = deviceinformation.getElectronicfencestatus();
-            electronicfencestatus.setWarningstatus(1);
-            int i = electronicfencestatusMapper.updateByPrimaryKeySelective(electronicfencestatus);
-            // 先推送前台，再进行别的处理
-            MultiThreadScheduleTask.webSocketVo.setElectricShield(deviceinformation);
-            WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
-            MultiThreadScheduleTask.webSocketVo.setElectricShield(null);
-            // 如果 未屏蔽报警信息 生成电子围栏报警单
-            if (electronicfencestatus.getShieldstatus() == 0) {
-                Electronicfencealarm electronicfencealarm = new Electronicfencealarm();
-                electronicfencealarm.setId(UUID.randomUUID().toString());
-                electronicfencealarm.setCreateon(new Date());
-                electronicfencealarm.setDeviceinformationid(deviceinformation.getDeviceinformationid());
-                electronicfencealarm.setStatus(0);
-                electronicfencealarmMapper.insert(electronicfencealarm);
+            if (deviceinformation != null) {
+                // 更新围栏报警状态
+                Electronicfencestatus electronicfencestatus = deviceinformation.getElectronicfencestatus();
+                electronicfencestatus.setWarningstatus(1);
+                int i = electronicfencestatusMapper.updateByPrimaryKeySelective(electronicfencestatus);
+                // 先推送前台，再进行别的处理
+                MultiThreadScheduleTask.webSocketVo.setElectricShield(deviceinformation);
+                WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
+                MultiThreadScheduleTask.webSocketVo.setElectricShield(null);
+                // 如果 未屏蔽报警信息 生成电子围栏报警单
+                if (electronicfencestatus.getShieldstatus() == 0) {
+                    Electronicfencealarm electronicfencealarm = new Electronicfencealarm();
+                    electronicfencealarm.setId(UUID.randomUUID().toString());
+                    electronicfencealarm.setCreateon(new Date());
+                    electronicfencealarm.setDeviceinformationid(deviceinformation.getDeviceinformationid());
+                    electronicfencealarm.setStatus(0);
+                    electronicfencealarmMapper.insert(electronicfencealarm);
+                }
+            } else {
+                return ApiResult.fail("未在数据库中发现该回路号的电子围栏内");
             }
         } else {
             //serverinfolist是机柜传来的报警信息列表
