@@ -554,7 +554,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             orgId = user.getCustomerInfo().getUserinfo().getGroupid();
         } else if (nodeName.toUpperCase().contains("CENTER")) {
             orgId = user.getCustomerInfo().getUserinfo().getCenterid();
-        } else if (nodeName.toUpperCase().contains("一次上司") || nodeName.toUpperCase().contains("二次上司")) {
+        } else if (nodeName.toUpperCase().contains("一次上司") || nodeName.toUpperCase().contains("二次上司")|| nodeName.toUpperCase().contains("三次上司")) {
             if (StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getTeamid())) {
                 orgId = user.getCustomerInfo().getUserinfo().getTeamid();
             } else if (StrUtil.isNotBlank(user.getCustomerInfo().getUserinfo().getGroupid())) {
@@ -577,13 +577,23 @@ public class WorkflowServicesImpl implements WorkflowServices {
             if (upOrgs != null) {
                 userId = upOrgs.getUser();
 
-                if (nodeName.toUpperCase().contains("二次上司")){
+                if (nodeName.toUpperCase().contains("二次上司") || nodeName.toUpperCase().contains("三次上司")){
                     upFlg = "0";
                     upOrgs = upCurrentOrg(orgs, upOrgs.get_id());
                     if (upOrgs != null) {
                         userId = upOrgs.getUser();
                     }else{
                         userId = "";
+                    }
+
+                    if(nodeName.toUpperCase().contains("三次上司")){
+                        upFlg = "0";
+                        upOrgs = upCurrentOrg(orgs, upOrgs.get_id());
+                        if (upOrgs != null) {
+                            userId = upOrgs.getUser();
+                        }else{
+                            userId = "";
+                        }
                     }
                 }
             }
