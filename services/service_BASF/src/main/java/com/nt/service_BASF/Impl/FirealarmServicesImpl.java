@@ -178,7 +178,7 @@ public class FirealarmServicesImpl implements FirealarmServices {
         List<FireAlarmStatisticsVo> buildVo = new ArrayList<>();
         for (int i = 0; i < daySum; i++) {
             FireAlarmStatisticsVo f = new FireAlarmStatisticsVo();
-            f.setDate(String.valueOf(i + 1));
+            f.setDate(String.valueOf(i + 1) + "日");
             f.setCnt(0);
             for (FireAlarmStatisticsVo a : fireAlarmStatisticsVos) {
                 if (a.getDate().equals(String.valueOf(i + 1))) {

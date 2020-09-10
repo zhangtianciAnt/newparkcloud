@@ -113,6 +113,9 @@ public class OrgTreeServiceImpl implements OrgTreeService {
         OrgListVo orgListVo = new OrgListVo();
         orgListVo.setValue(orgTree.get_id());
         orgListVo.setLabel(orgTree.getTitle());
+        orgListVo.setDepartmentemail(orgTree.getDepartmentemail());
+        orgListVo.setDevicemanageremail(orgTree.getDevicemanageremail());
+        orgListVo.setCostcenter(orgTree.getCostcenter());
         orgListVoList.add(orgListVo);
         getOrgChildren(orgListVoList,orgTree);
         return orgListVoList;
@@ -123,6 +126,9 @@ public class OrgTreeServiceImpl implements OrgTreeService {
             OrgListVo tmp = new OrgListVo();
             tmp.setValue(item.get_id());
             tmp.setLabel(item.getTitle());
+            tmp.setDepartmentemail(item.getDepartmentemail());
+            tmp.setDevicemanageremail(item.getDevicemanageremail());
+            tmp.setCostcenter(item.getCostcenter());
             orgListVoList.add(tmp);
             if(item.getOrgs() != null && item.getOrgs().size() > 0){
                 getOrgChildren(orgListVoList,item);
