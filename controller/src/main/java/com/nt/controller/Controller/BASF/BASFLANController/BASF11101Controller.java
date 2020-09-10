@@ -105,11 +105,10 @@ public class BASF11101Controller {
     @PostMapping("/insertRiskassessments")
     public ApiResult insertRiskassessments(@RequestBody Riskassessments riskassessments, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        riskassessmentsServices.insertRiskassessments(riskassessments, tokenModel);
         //获取风险研判信息（MySql）
         MultiThreadScheduleTask.webSocketVo.setRiskassessmentsList(riskassessmentsServices.writeList());
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
-        return ApiResult.success();
+        return ApiResult.success(riskassessmentsServices.insertRiskassessments(riskassessments, tokenModel));
     }
 
     //根据id查找风险研判数据
