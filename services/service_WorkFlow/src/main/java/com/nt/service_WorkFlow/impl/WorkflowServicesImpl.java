@@ -600,13 +600,23 @@ public class WorkflowServicesImpl implements WorkflowServices {
         } else {
             userId = currentOrg.getUser();
 
-            if (nodeName.toUpperCase().contains("二次上司")){
+            if (nodeName.toUpperCase().contains("二次上司")|| nodeName.toUpperCase().contains("三次上司")){
                 upFlg = "0";
                 OrgTree upOrgs = upCurrentOrg(orgs, orgId);
                 if (upOrgs != null) {
                     userId = upOrgs.getUser();
                 }else{
                     userId = "";
+                }
+
+                if(nodeName.toUpperCase().contains("三次上司")){
+                    upFlg = "0";
+                    upOrgs = upCurrentOrg(orgs, upOrgs.get_id());
+                    if (upOrgs != null) {
+                        userId = upOrgs.getUser();
+                    }else{
+                        userId = "";
+                    }
                 }
             }
         }
