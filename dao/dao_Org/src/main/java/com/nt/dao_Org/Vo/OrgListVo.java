@@ -18,4 +18,10 @@ public class OrgListVo {
     private String value;
 
     private String label;
+
+    private String departmentemail;
+
+    private String devicemanageremail;
+
+    private String costcenter;
 }
