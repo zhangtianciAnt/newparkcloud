@@ -89,8 +89,10 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         String processingstatus = loanapplication.getProcessingstatus();
         BeanUtils.copyProperties(loanapplication, loanapp);
         loanapp.preUpdate(tokenModel);
-        if(status.equals("4")&&processingstatus.equals("1")){
-            loanapp.setModifyon(modeon);
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(loanapplication.getProcessingstatus())) {
+            if (status.equals("4") && processingstatus.equals("1")) {
+                loanapp.setModifyon(modeon);
+            }
         }
         loanapplicationMapper.updateByPrimaryKey(loanapp);
         //upd-8/20-ws-禅道468任务

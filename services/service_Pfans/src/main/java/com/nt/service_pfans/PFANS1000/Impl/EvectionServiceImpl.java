@@ -758,8 +758,10 @@ public class EvectionServiceImpl implements EvectionService {
         //upd-8/20-ws-禅道468任务
         evection.preUpdate(tokenModel);
         //upd-8/20-ws-禅道468任务
-        if(status.equals("4")&&processingstatus.equals("1")){
-            evection.setModifyon(modeon);
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(evection.getProcessingstatus())) {
+            if (status.equals("4") && processingstatus.equals("1")) {
+                evection.setModifyon(modeon);
+            }
         }
         //upd-8/20-ws-禅道468任务
         evectionMapper.updateByPrimaryKey(evection);

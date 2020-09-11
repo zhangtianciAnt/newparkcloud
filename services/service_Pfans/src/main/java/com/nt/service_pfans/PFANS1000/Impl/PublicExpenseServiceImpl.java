@@ -859,8 +859,10 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         //upd-8/20-ws-禅道468任务
         publicExpense.preUpdate(tokenModel);
         //upd-8/20-ws-禅道468任务
-        if(status.equals("4")&&processingstatus.equals("1")){
-            publicExpense.setModifyon(modeon);
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpense.getProcessingstatus())) {
+            if (status.equals("4") && processingstatus.equals("1")) {
+                publicExpense.setModifyon(modeon);
+            }
         }
         //upd-8/20-ws-禅道468任务
         publicExpenseMapper.updateByPrimaryKey(publicExpense);
