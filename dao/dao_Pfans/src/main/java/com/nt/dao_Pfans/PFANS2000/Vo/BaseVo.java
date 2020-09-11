@@ -293,4 +293,6 @@ public class BaseVo {
     private String ykbz;
 
     private String ykbzjs;
+
+    private String jobnumber;
 }
