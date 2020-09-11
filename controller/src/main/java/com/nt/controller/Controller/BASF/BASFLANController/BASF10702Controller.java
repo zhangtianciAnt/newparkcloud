@@ -239,7 +239,6 @@ public class BASF10702Controller {
         List<VehicleinformationGpsArrVo> vehicleinformationGpsArrVos = vehicleinformationServices.getQueryVehiclesRegularlyInfo();
         MultiThreadScheduleTask.webSocketVo.setQueryVehiclesRegularlyInfoList(vehicleinformationGpsArrVos);
         return ApiResult.success(vehicleinformationGpsArrVos);
-//        return ApiResult.success();
     }
 
     //    mounted 车辆定位-在厂车辆

@@ -128,15 +128,16 @@ ORDER BY
         select *
         from vehicleinformation
         where
-        gps is not null
-        and
+--         gps is not null
+--         and
         status = 0
 
-        and(
+        and
+--         (
         outtime is null
-        or
-        round((UNIX_TIMESTAMP(now())-UNIX_TIMESTAMP(outtime))/60) &lt; 3
-        )
+--         or
+--         round((UNIX_TIMESTAMP(now())-UNIX_TIMESTAMP(outtime))/60) &lt; 3
+--         )
     </select>
 
     <select id="checkVehicle" resultType="com.nt.dao_BASF.Vehicleinformation">
