@@ -239,7 +239,13 @@ public class UserController {
         return ApiResult.success(userService.getAccountCustomer2(orgid, orgtype,tokenModel));
     }
 
-
+    //add-ws-9/12-财务人员编码处理
+    @RequestMapping(value = "/getAccountCustomer3", method = {RequestMethod.GET})
+    public ApiResult getAccountCustomer3(String orgid, String orgtype, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(userService.getAccountCustomer3(orgid, orgtype,tokenModel));
+    }
+    //add-ws-9/12-财务人员编码处理
     /**
      * @方法名：getAccountCustomerById
      * @描述：根据用户id获取用户账号及用户信息
