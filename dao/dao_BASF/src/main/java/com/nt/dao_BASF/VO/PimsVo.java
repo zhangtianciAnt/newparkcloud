@@ -1,6 +1,7 @@
 package com.nt.dao_BASF.VO;
 
 import com.nt.dao_BASF.Deviceinformation;
+import com.nt.dao_BASF.Pimsalarm;
 import com.nt.dao_BASF.Pimsdata;
 import com.nt.dao_BASF.Pimspoint;
 import lombok.AllArgsConstructor;
@@ -23,4 +24,5 @@ public class PimsVo {
     private Pimspoint pimspoint;
 
     private Deviceinformation deviceinformation;
+
 }

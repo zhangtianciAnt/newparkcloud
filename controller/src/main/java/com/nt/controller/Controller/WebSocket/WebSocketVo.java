@@ -134,4 +134,10 @@ public class WebSocketVo {
     // PimsData
     private List<PimsVo> pimsVoList;
 
+    // pims 正常数据推送
+    private List<Pimspoint> pimspoints;
+
+    //pims 报警状态发生改变推送
+    private Pimsalarm pimsalarm;
+
 }

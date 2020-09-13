@@ -34,7 +34,6 @@ public class CowBUtils {
     @Autowired
     private RestTemplate restTemplate;
 
-
     /**
      * 用于判断一个字符串中，是否包含多个字符串中的任意一个（例如：aabbccddeeffgg中是否包含aa,bb,cc其中任意一个，如果包含则返回true，否则false）
      *

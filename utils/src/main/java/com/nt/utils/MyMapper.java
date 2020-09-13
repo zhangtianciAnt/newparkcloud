@@ -4,6 +4,7 @@ package com.nt.utils;
 import java.util.List;
 
 import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.session.RowBounds;
@@ -74,4 +75,13 @@ public interface MyMapper<T> extends
     @UpdateProvider(type = SelectWithAuth.class, method = "dynamicSQL")
     //@Options(useCache = false, useGeneratedKeys = false)
     int updateByPrimaryKey(T record);
+
+    /**
+     * 批量插入数据库，所有字段都插入，包括主键（mybatis默认的insertList，数据库主键必须时自增长的）
+     * zqu 2020-4-9
+     * @return
+     */
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    @InsertProvider(type = SelectWithAuth.class, method = "insertListAllCols")
+    int insertListAllCols(List<T> recordList);
 }

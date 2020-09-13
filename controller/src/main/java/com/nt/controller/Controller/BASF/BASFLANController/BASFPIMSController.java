@@ -3,15 +3,14 @@ package com.nt.controller.Controller.BASF.BASFLANController;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
 import com.nt.controller.Controller.WebSocket.WebSocket;
-import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
-import com.nt.dao_BASF.Deviceinformation;
-import com.nt.dao_BASF.Pimsdata;
-import com.nt.dao_BASF.Pimspoint;
+import com.nt.dao_BASF.*;
 import com.nt.dao_BASF.VO.PimsVo;
-import com.nt.service_BASF.mapper.DeviceinformationMapper;
+import com.nt.service_BASF.mapper.PimsAlarmDetailMapper;
+import com.nt.service_BASF.mapper.PimsAlarmMapper;
 import com.nt.service_BASF.mapper.PimsPointMapper;
 import com.nt.service_BASF.mapper.PimsdataMapper;
 import com.nt.utils.ApiResult;
+import com.nt.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,12 +18,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.TextMessage;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @Classname BASFTestController
@@ -42,13 +39,19 @@ public class BASFPIMSController {
     @Autowired
     private PimsdataMapper pimsdataMapper;
 
-    @Autowired
-    private DeviceinformationMapper deviceinformationMapper;
+    @Resource
+    private PimsAlarmMapper pimsAlarmMapper;
+
+    @Resource
+    private PimsAlarmDetailMapper pimsAlarmDetailMapper;
+
+//    @Autowired
+//    private DeviceinformationMapper deviceinformationMapper;
 
 //    private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
 
     /**
-     * 获取opc数据
+     * 获取opc正常数据
      *
      * @param data
      * @param request
@@ -57,45 +60,107 @@ public class BASFPIMSController {
      */
     @RequestMapping(value = "/getData", method = {RequestMethod.POST})
     public ApiResult getData(@RequestBody List<Object> data, HttpServletRequest request) throws Exception {
-        System.out.println("getData start");
+        // 用于 推送大屏socket
         List<PimsVo> pimsVoList = new ArrayList<>();
+        // 用于 数据插入数据库
         List<Pimsdata> pimsdataList = new ArrayList<>();
+        // 用于 根据opc传来的信息查询点位
+        List<Pimspoint> pimspoints = new ArrayList<>();
+        // 用于 查询条件 key：name value:value
+        Map<String, String> pimspointMap = new HashMap<String, String>();
+
+        // 根据名称获取点位信息
+        Pimspoint pimspoint = null;
         for (Object info : data) {
             String name = ((LinkedHashMap) info).get("key").toString();
             String value = ((LinkedHashMap) info).get("value").toString();
-            // 通过name获取pimsponitname
-            Pimspoint pimspoint = new Pimspoint();
+            pimspoint = new Pimspoint();
             pimspoint.setPimspointname(name);
-            pimspoint = pimsPointMapper.selectOne(pimspoint);
-            //将Pims数据插入到Pimsdata
-            if (pimspoint != null) {
-                Pimsdata pimsdata = new Pimsdata();
-                pimsdata.setPimsid(UUID.randomUUID().toString());
-                pimsdata.setMonitoringpoint(pimspoint.getId());
-                pimsdata.setPimsdata(BigDecimal.valueOf(Double.parseDouble(value)));
-                pimsdata.preInsert();
-                pimsdataList.add(pimsdata);
-                // 获取deviceinformation
-                Deviceinformation deviceinformation = new Deviceinformation();
-                deviceinformation.setDeviceno(pimspoint.getPimspointname());
-                deviceinformation = deviceinformationMapper.selectOne(deviceinformation);
-                PimsVo pimsVo = new PimsVo();
-                pimsVo.setPimsdata(pimsdata);
-                pimsVo.setDeviceinformation(deviceinformation);
-                pimsVo.setPimspoint(pimspoint);
-                pimsVoList.add(pimsVo);
-            }
+            pimspoints.add(pimspoint);
+            pimspointMap.put(name, value);
+        }
+        pimspoints = pimsPointMapper.getPimsPoint(pimspoints, pimspointMap);
+        // 插入opc传来的数据
+        Pimsdata pimsdata = null;
+        for (Pimspoint p : pimspoints) {
+            pimsdata = new Pimsdata();
+            pimsdata.setMonitoringpoint(p.getId());
+            pimsdata.setPimsid(UUID.randomUUID().toString());
+            pimsdata.setPimsdata(BigDecimal.valueOf
+                    (Double.parseDouble(
+                            pimspointMap.get(p.getPimspointname()))
+                    )
+            );
+            p.setPimsdata(pimsdata);
+            pimsdataList.add(pimsdata);
+
         }
         if (pimsdataList.size() > 0) {
             pimsdataMapper.insertPimsDataList(pimsdataList);
         }
-
         // websocket推送数据到大屏
-        if (pimsVoList.size() > 0) {
-            MultiThreadScheduleTask.webSocketVo.setPimsVoList(pimsVoList);
+        if (pimsdataList.size() > 0) {
+            MultiThreadScheduleTask.webSocketVo.setPimspoints(pimspoints);
             WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         }
-        System.out.println("getData end");
+        return ApiResult.success();
+    }
+
+    /**
+     * 接收opc报警信息
+     *
+     * @param data
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/getAlarm", method = {RequestMethod.POST})
+    public ApiResult getAlarm(@RequestBody List<Object> data) throws Exception {
+        String name = ((LinkedHashMap) data.get(0)).get("key").toString();
+        String value = ((LinkedHashMap) data.get(0)).get("value").toString();
+        String status = "";
+        // 根据点位名称，查询点位信息
+        String point = name.substring(1);
+        Pimspoint pimspoint = new Pimspoint();
+        pimspoint.setPimspointname(point);
+        pimspoint = pimsPointMapper.selectOne(pimspoint);
+        if (pimspoint == null) {
+            return ApiResult.fail("未找到该点位信息。" + name);
+        }
+        // 根据点位名称，获取报警单。
+        Pimsalarm pimsalarm = new Pimsalarm();
+        pimsalarm.setPimspointid(pimspoint.getId());
+        pimsalarm = pimsAlarmMapper.selectOne(pimsalarm);
+        if ("1".equals(value)) {
+            // 报警，生成报警单，推送socket
+            // 截取点位第一位字符，用于判断报警类型
+            status = PimsAlarmStatus.getStatus(name.substring(0, 1));
+            // 判断报警单是否存在
+            if (pimsalarm == null) {
+                // 先生成报警单
+                pimsalarm = new Pimsalarm(UUID.randomUUID().toString(), pimspoint.getId(), status);
+                pimsalarm.preInsert();
+                pimsAlarmMapper.insert(pimsalarm);
+            } else {
+                pimsalarm.setAlarm(status);
+            }
+            // 插入明细
+            Pimsalarmdetail pimsalarmdetail = new Pimsalarmdetail(UUID.randomUUID().toString(), pimsalarm.getId(), status, new Date());
+            pimsAlarmDetailMapper.insert(pimsalarmdetail);
+            // 设置推送socket信息
+            MultiThreadScheduleTask.webSocketVo.setPimsalarm(pimsalarm);
+        } else {
+            status = PimsAlarmStatus.getStatus("4");
+            // 判断报警单是否存在
+            if (pimsalarm != null) {
+                // 修改报警单-当前报警状态字断
+                pimsalarm.setAlarm(status);
+                pimsAlarmMapper.updateByPrimaryKeySelective(pimsalarm);
+                // 设置推送socket信息
+                MultiThreadScheduleTask.webSocketVo.setPimsalarm(pimsalarm);
+            }
+        }
+        // 推送
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 }
