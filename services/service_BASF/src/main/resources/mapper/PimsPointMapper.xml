@@ -9,6 +9,7 @@
         <result property="unit" column="unit"></result>
         <result property="type" column="type"></result>
         <association property="deviceinformation" javaType="com.nt.dao_BASF.Deviceinformation">
+            <id property="deviceinformationid" column="deviceinformationid"></id>
             <result property="devicename" column="devicename"></result>
             <result property="deviceno" column="deviceno"></result>
             <result property="mapid" column="mapid"></result>
@@ -18,15 +19,44 @@
             <result property="gis" column="gis"></result>
             <result property="factoryname" column="factoryname"></result>
         </association>
+        <association property="pimsdata" javaType="com.nt.dao_BASF.Pimsdata">
+            <id property="pimsid" column="pimsid"></id>
+            <result property="pimsdata" column="pimsdata"></result>
+            <result property="createon" column="CREATEON"></result>
+        </association>
     </resultMap>
 
     <select id="getPimsPoint" resultMap="PimsPointMap" resultType="java.lang.String">
         select * from pimspoint
         LEFT JOIN deviceinformation ON deviceinformation.deviceno = pimspoint.id
-        where pimspoint.pimspointname in (
-        <foreach collection="pimspointMap" item="value" index="key" separator=",">
-            #{key}
-        </foreach>
-        )
+        <if test="pimspointMap!=null">
+            where pimspoint.pimspointname in (
+            <foreach collection="pimspointMap" item="value" index="key" separator=",">
+                #{key}
+            </foreach>
+            )
+        </if>
     </select>
+
+    <select id="getAllPimsPointData" resultMap="PimsPointMap" resultType="java.lang.String">
+        select
+        pimsdata.pimsid as pimsid,
+        pimsdata.pimsdata as pimsdata,
+        pimsdata.CREATEON as CREATEON,
+        pimspoint.equipment as equipment,
+        pimspoint.pimspointname as pimspointname,
+        pimspoint.unit as unit,
+        deviceinformation.deviceinformationid as deviceinformationid,
+        deviceinformation.deviceno as deviceno,
+        deviceinformation.GIS as gis,
+        deviceinformation.devicename as devicename
+        from
+        (select * from pimsdata ORDER BY CREATEON) pimsdata
+        LEFT JOIN pimspoint pimspoint ON pimspoint.id = pimsdata.monitoringpoint
+        LEFT JOIN deviceinformation deviceinformation ON pimsdata.monitoringpoint = deviceinformation.deviceno
+        WHERE pimsdata.`STATUS` ='0'
+        GROUP BY monitoringpoint
+    </select>
+
+
 </mapper>

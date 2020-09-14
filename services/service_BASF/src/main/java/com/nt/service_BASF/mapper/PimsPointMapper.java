@@ -11,5 +11,7 @@ import java.util.Map;
 
 @Component
 public interface PimsPointMapper extends MyMapper<Pimspoint> {
-    List<Pimspoint> getPimsPoint(@Param("pimspoints") List<Pimspoint> pimspoints, @Param("pimspointMap") Map<String, String> pimspointMap);
+    List<Pimspoint> getPimsPoint(@Param("pimspointMap") Map<String, String> pimspointMap);
+
+    List<Pimspoint> getAllPimsPointData();
 }

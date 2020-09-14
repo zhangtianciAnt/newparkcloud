@@ -45,11 +45,6 @@ public class BASFPIMSController {
     @Resource
     private PimsAlarmDetailMapper pimsAlarmDetailMapper;
 
-//    @Autowired
-//    private DeviceinformationMapper deviceinformationMapper;
-
-//    private WebSocketDeviceinfoVo webSocketDeviceinfoVo = new WebSocketDeviceinfoVo();
-
     /**
      * 获取opc正常数据
      *
@@ -68,7 +63,6 @@ public class BASFPIMSController {
         List<Pimspoint> pimspoints = new ArrayList<>();
         // 用于 查询条件 key：name value:value
         Map<String, String> pimspointMap = new HashMap<String, String>();
-
         // 根据名称获取点位信息
         Pimspoint pimspoint = null;
         for (Object info : data) {
@@ -79,7 +73,7 @@ public class BASFPIMSController {
             pimspoints.add(pimspoint);
             pimspointMap.put(name, value);
         }
-        pimspoints = pimsPointMapper.getPimsPoint(pimspoints, pimspointMap);
+        pimspoints = pimsPointMapper.getPimsPoint(pimspointMap);
         // 插入opc传来的数据
         Pimsdata pimsdata = null;
         for (Pimspoint p : pimspoints) {
@@ -97,9 +91,6 @@ public class BASFPIMSController {
         }
         if (pimsdataList.size() > 0) {
             pimsdataMapper.insertPimsDataList(pimsdataList);
-        }
-        // websocket推送数据到大屏
-        if (pimsdataList.size() > 0) {
             MultiThreadScheduleTask.webSocketVo.setPimspoints(pimspoints);
             WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         }
@@ -162,5 +153,10 @@ public class BASFPIMSController {
         // 推送
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "getAllPimsPointData", method = {RequestMethod.GET})
+    public ApiResult getAllPimsPointData() {
+        return ApiResult.success(pimsPointMapper.getAllPimsPointData());
     }
 }
