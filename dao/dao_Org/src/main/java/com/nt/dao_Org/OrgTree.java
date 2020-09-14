@@ -1,6 +1,7 @@
 package com.nt.dao_Org;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,7 @@ public class OrgTree extends BaseModel {
     /**
      * 数据主键ID
      */
+    @JSONField(name="_id")
     private String _id;
     /**
      * 组织ID	ORGID

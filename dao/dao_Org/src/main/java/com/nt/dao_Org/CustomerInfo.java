@@ -1,5 +1,6 @@
 package com.nt.dao_Org;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
@@ -33,6 +34,7 @@ public class CustomerInfo extends BaseModel {
     /**
      * 数据主键ID
      */
+    @JSONField(name="_id")
     private String _id;
     /**
      * 客户ID
@@ -64,6 +66,7 @@ public class CustomerInfo extends BaseModel {
         /**
          * 数据主键ID
          */
+        @JSONField(name="_id")
         private String _id;
         /**
          * 姓名
@@ -449,6 +452,7 @@ public class CustomerInfo extends BaseModel {
         /**
          * 数据主键ID
          */
+        @JSONField(name="_id")
         private String _id;
         /**
          * 企业名称
@@ -499,6 +503,7 @@ public class CustomerInfo extends BaseModel {
             /**
              * 数据主键ID
              */
+            @JSONField(name="_id")
             private String _id;
             /**
              * 企业LOGO
@@ -538,6 +543,7 @@ public class CustomerInfo extends BaseModel {
             /**
              * 数据主键ID
              */
+            @JSONField(name="_id")
             private String _id;
             /**
              * 姓名
@@ -573,6 +579,7 @@ public class CustomerInfo extends BaseModel {
             /**
              * 数据主键ID
              */
+            @JSONField(name="_id")
             private String _id;
             /**
              * 开户行
@@ -603,6 +610,7 @@ public class CustomerInfo extends BaseModel {
             /**
              * 数据主键ID
              */
+            @JSONField(name="_id")
             private String _id;
             /**
              * 统一社会信息代码
