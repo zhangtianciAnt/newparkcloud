@@ -132,7 +132,10 @@ public class BASFPIMSController {
                 pimsalarm.preInsert();
                 pimsAlarmMapper.insert(pimsalarm);
             } else {
+                // 更新报警单
+                pimsalarm.preUpdate();
                 pimsalarm.setAlarm(status);
+                pimsAlarmMapper.updateByPrimaryKeySelective(pimsalarm);
             }
             // 插入明细
             Pimsalarmdetail pimsalarmdetail = new Pimsalarmdetail(UUID.randomUUID().toString(), pimsalarm.getId(), status, new Date());
@@ -145,6 +148,7 @@ public class BASFPIMSController {
             if (pimsalarm != null) {
                 // 修改报警单-当前报警状态字断
                 pimsalarm.setAlarm(status);
+                pimsalarm.preUpdate();
                 pimsAlarmMapper.updateByPrimaryKeySelective(pimsalarm);
                 // 设置推送socket信息
                 MultiThreadScheduleTask.webSocketVo.setPimsalarm(pimsalarm);
