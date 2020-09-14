@@ -82,6 +82,7 @@ public class BASFPIMSController {
                             pimspointMap.get(p.getPimspointname()))
                     )
             );
+            pimsdata.preInsert();
             p.setPimsdata(pimsdata);
             pimsdataList.add(pimsdata);
 
