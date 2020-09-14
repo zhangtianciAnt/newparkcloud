@@ -143,4 +143,6 @@ public class WebSocketVo {
     // 环保工艺图表数据
     private List<EpChartVo> epChartVoList;
 
+    // 环保工艺报警列表
+    private List<Pimsalarm> pimsalarmList;
 }
