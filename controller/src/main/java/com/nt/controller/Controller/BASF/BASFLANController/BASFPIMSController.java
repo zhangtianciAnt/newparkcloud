@@ -163,7 +163,7 @@ public class BASFPIMSController {
      *
      * @return
      */
-    @RequestMapping(value = "getAllPimsPointData", method = {RequestMethod.GET})
+    @RequestMapping(value = "/getAllPimsPointData", method = {RequestMethod.GET})
     public ApiResult getAllPimsPointData() {
         return ApiResult.success(pimsPointMapper.getAllPimsPointData());
     }
@@ -174,11 +174,11 @@ public class BASFPIMSController {
      * @param type 0:查询所有，1：查询正在报警的
      * @return
      */
-    @RequestMapping(value = "getAllPimsAlarm", method = {RequestMethod.GET})
+    @RequestMapping(value = "/getAllPimsAlarm", method = {RequestMethod.GET})
     public ApiResult getAllPimsAlarm(@RequestParam String type) {
         List<Pimsalarm> pimsalarmList = pimsAlarmMapper.getAllPimsAlarm(type);
         MultiThreadScheduleTask.webSocketVo.setPimsalarmList(pimsalarmList);
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
-        return ApiResult.success();
+        return ApiResult.success(pimsalarmList);
     }
 }
