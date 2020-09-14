@@ -12,10 +12,7 @@ import com.nt.service_BASF.mapper.PimsdataMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.socket.TextMessage;
 
 import javax.annotation.Resource;
@@ -159,8 +156,24 @@ public class BASFPIMSController {
         return ApiResult.success();
     }
 
+    /**
+     * 用于大屏初始化获取所有点位最新的数据
+     *
+     * @return
+     */
     @RequestMapping(value = "getAllPimsPointData", method = {RequestMethod.GET})
     public ApiResult getAllPimsPointData() {
         return ApiResult.success(pimsPointMapper.getAllPimsPointData());
+    }
+
+    /**
+     * 获取报警单及报警详情
+     *
+     * @param type 0:查询所有，1：查询正在报警的
+     * @return
+     */
+    @RequestMapping(value = "getAllPimsAlarm", method = {RequestMethod.GET})
+    public ApiResult getAllPimsAlarm(@RequestParam String type) {
+        return ApiResult.success(pimsAlarmMapper.getAllPimsAlarm(type));
     }
 }

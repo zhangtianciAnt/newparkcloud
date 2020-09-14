@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
+import javax.persistence.Transient;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -15,4 +17,16 @@ public class Pimsalarm extends BaseModel {
     private String id;
     private String pimspointid;
     private String alarm;
+
+    public Pimsalarm(String id, String pimspointid, String alarm) {
+        this.id = id;
+        this.pimspointid = pimspointid;
+        this.alarm = alarm;
+    }
+
+    @Transient
+    private Pimspoint pimspoint;
+
+    @Transient
+    private List<Pimsalarmdetail> pimsalarmdetails;
 }

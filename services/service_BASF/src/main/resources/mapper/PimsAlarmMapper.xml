@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_BASF.mapper.PimsAlarmMapper">
+
+    <resultMap id="PimsAlarmMap" type="com.nt.dao_BASF.Pimsalarm">
+        <id property="id" column="pimsalarmid"></id>
+        <result property="pimspointid" column="pimsalarmpimspointid"></result>
+        <result property="alarm" column="pimsalarmalarm"></result>
+        <result property="modifyon" column="modifyon"></result>
+        <association property="pimspoint" javaType="com.nt.dao_BASF.Pimspoint">
+            <id property="id" column="pimspointid"></id>
+            <result property="equipment" column="equipment"></result>
+            <result property="pimspointname" column="pimspointname"></result>
+            <result property="devicename" column="devicename"></result>
+        </association>
+        <collection property="pimsalarmdetails" ofType="com.nt.dao_BASF.Pimsalarmdetail">
+            <id property="id" column="pimsalarmdetailsid"/>
+            <result property="pimsalarmid" column="pimsalarmdetailspimsalarmid"/>
+            <result property="alarm" column="pimsalarmdetailsalarm"/>
+            <result property="createon" column="createon"/>
+        </collection>
+    </resultMap>
+
+    <select id="getAllPimsAlarm" resultMap="PimsAlarmMap" resultType="java.lang.String">
+        SELECT
+        pimsalarm.id as pimsalarmid,
+        pimsalarm.pimspointid as pimsalarmpimspointid,
+        pimsalarm.alarm as pimsalarmalarm,
+        pimsalarm.modifyon as modifyon,
+        pimspoint.id as pimspointid,
+        pimspoint.equipment as equipment,
+        pimspoint.pimspointname as pimspointname,
+        pimspoint.devicename as devicename,
+        pimsalarmdetail.id as pimsalarmdetailsid,
+        pimsalarmdetail.pimsalarmid as pimsalarmdetailspimsalarmid,
+        pimsalarmdetail.alarm as pimsalarmdetailsalarm,
+        pimsalarmdetail.createon as createon
+        FROM
+        pimsalarm pimsalarm
+        LEFT JOIN pimsalarmdetail pimsalarmdetail ON pimsalarm.id = pimsalarmdetail.pimsalarmid
+        LEFT JOIN pimspoint pimspoint ON pimspoint.id = pimsalarm.pimspointid
+        where
+        pimsalarm.`STATUS`='0'
+        <if test="type == '0'.toString()">
+            and pimsalarm.alarm <![CDATA[ = ]]> '正常'
+        </if>
+        <if test="type == '1'.toString()">
+            and pimsalarm.alarm <![CDATA[ <> ]]> '正常'
+        </if>
+    </select>
+</mapper>
