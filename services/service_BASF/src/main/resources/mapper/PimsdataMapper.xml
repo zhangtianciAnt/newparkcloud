@@ -36,13 +36,13 @@
         SELECT
         MAX(point.equipment) equipment,
         pd.monitoringpoint,
-        MAX(point.pimspointname) pimspointname,
+        MAX(point.devicename) pimspointname,
         IF(LOCATE(",",group_concat( pd.pimsdata ORDER BY pd.CREATEON desc )) = 0,group_concat( pd.pimsdata ORDER BY pd.CREATEON desc ),SUBSTRING_INDEX(group_concat( pd.pimsdata ORDER BY pd.CREATEON desc ),",",1)) pimsdata,
         MAX( pd.CREATEON ) CREATEON,
         MAX( point.type ) type,
         DATE_FORMAT(
-        concat( date(MAX( pd.CREATEON )), ' ', HOUR (MAX( pd.CREATEON )), ':', floor( MINUTE (MAX( pd.CREATEON )) / 10 ) * 10 ),
-        '%H:%i'
+        concat( date(MAX( pd.CREATEON )), ' ', HOUR (MAX( pd.CREATEON )), ':', floor( MINUTE (MAX( pd.CREATEON )) / 5 ) * 5 ),
+        '%Y/%m/%d %H:%i'
         ) AS time
         FROM
         pimsdata pd
@@ -58,7 +58,7 @@
         GROUP BY
         pd.monitoringpoint,
         DATE_FORMAT(
-        concat( date(pd.CREATEON), ' ', HOUR (pd.CREATEON), ':', floor( MINUTE (pd.CREATEON) / 10 ) * 10 ),
+        concat( date(pd.CREATEON), ' ', HOUR (pd.CREATEON), ':', floor( MINUTE (pd.CREATEON) / 5 ) * 5 ),
         '%H:%i'
         )
         ) detail ON dcode.equipment = detail.equipment
