@@ -49,5 +49,6 @@
         <if test="type == '1'.toString()">
             and pimsalarm.alarm <![CDATA[ <> ]]> '正常'
         </if>
+        order by pimsalarm.modifyon desc, pimsalarmdetail.createon desc
     </select>
 </mapper>
