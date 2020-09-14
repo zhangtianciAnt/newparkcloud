@@ -3,6 +3,7 @@ package com.nt.service_BASF.mapper;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.ServerInfo;
 import com.nt.dao_BASF.VO.DeviceinformationVo;
+import com.nt.dao_BASF.VO.EpChartVo;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -26,4 +27,7 @@ public interface DeviceinformationMapper extends MyMapper<Deviceinformation> {
     Deviceinformation selectElectricShield(@Param("devline") String devline, @Param("deviceinformationid") String deviceinformationid);
 
     List<Deviceinformation> selectElectricShields();
+
+    // 环保工艺图表数据
+    List<EpChartVo> getEpChartVo();
 }

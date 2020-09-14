@@ -2,6 +2,7 @@ package com.nt.service_BASF;
 
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.VO.DeviceinformationListVo;
+import com.nt.dao_BASF.VO.EpChartVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.lang.reflect.Array;
@@ -35,4 +36,7 @@ public interface DeviceInformationServices {
 
     //查询设备列表（GIS专用）
     DeviceinformationListVo deviceList(String mapid, String[] devicetype, String[] devicetypesmall, String devicename, Integer pageindex, Integer pagesize) throws Exception;
+
+    //获取环保工艺图表数据
+    List<EpChartVo> getEpChartVo() throws Exception;
 }

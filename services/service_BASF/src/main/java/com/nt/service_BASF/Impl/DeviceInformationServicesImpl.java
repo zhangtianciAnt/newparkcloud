@@ -4,6 +4,7 @@ import com.nt.dao_BASF.Application;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.Electronicfencestatus;
 import com.nt.dao_BASF.VO.DeviceinformationListVo;
+import com.nt.dao_BASF.VO.EpChartVo;
 import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.MapBox_MapLevelServices;
 import com.nt.service_BASF.mapper.ApplicationMapper;
@@ -255,5 +256,10 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
         lv.setTotal(deviceinformationMapper.selectDeviceListcount(mapidList, devicetype, devicetypesmall, devicename));
         return lv;
 
+    }
+
+    @Override
+    public List<EpChartVo> getEpChartVo() throws Exception {
+        return deviceinformationMapper.getEpChartVo();
     }
 }

@@ -233,6 +233,8 @@ public class BASF10105Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         deviceinFormationServices.insert(deviceinformation, tokenModel, "");
+        MultiThreadScheduleTask.webSocketVo.setEpChartVoList(deviceinFormationServices.getEpChartVo());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 
@@ -253,6 +255,8 @@ public class BASF10105Controller {
         }
         deviceinformation.setStatus(AuthConstants.DEL_FLAG_DELETE);
         deviceinFormationServices.delete(deviceinformation);
+        MultiThreadScheduleTask.webSocketVo.setEpChartVoList(deviceinFormationServices.getEpChartVo());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 

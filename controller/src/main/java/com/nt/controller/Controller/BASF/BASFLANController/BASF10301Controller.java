@@ -1,7 +1,12 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
+import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.dao_BASF.Environment;
+import com.nt.dao_BASF.VO.EpChartVo;
+import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.EnvironmentServices;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -11,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 /**
@@ -32,6 +39,8 @@ public class BASF10301Controller {
     private EnvironmentServices environmentServices;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private DeviceInformationServices deviceInformationServices;
 
     /**
      * @param request
@@ -123,5 +132,13 @@ public class BASF10301Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         environmentServices.update(environment, tokenModel);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/getEpChartVo", method = {RequestMethod.GET})
+    public ApiResult getEpChartVo(HttpServletRequest request) throws Exception {
+        List<EpChartVo> epChartVoList = deviceInformationServices.getEpChartVo();
+        MultiThreadScheduleTask.webSocketVo.setEpChartVoList(epChartVoList);
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
+        return ApiResult.success(epChartVoList);
     }
 }
