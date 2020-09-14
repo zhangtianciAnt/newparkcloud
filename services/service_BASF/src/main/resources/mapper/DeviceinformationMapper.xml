@@ -49,6 +49,21 @@
         </association>
     </resultMap>
 
+    <!-- 环保工艺图表数据 -->
+    <select id="getEpChartVo" resultType="com.nt.dao_BASF.VO.EpChartVo">
+        SELECT
+            count(*) AS cnt,
+            dictionary.VALUE1 AS `name`
+        FROM
+            deviceinformation
+            INNER JOIN dictionary ON dictionary.`CODE` = deviceinformation.devicetypesmall
+            AND dictionary.`CODE` IN ( 'BC043001', 'BC043002' )
+        WHERE
+            ifnull(deviceinformation.`status`, '0') = '0'
+        GROUP BY
+            deviceinformation.devicetypesmall
+    </select>
+
 
     <select id="selectDeviceList" resultType="com.nt.dao_BASF.Deviceinformation">
         SELECT

@@ -140,4 +140,7 @@ public class WebSocketVo {
     //pims 报警状态发生改变推送
     private Pimsalarm pimsalarm;
 
+    // 环保工艺图表数据
+    private List<EpChartVo> epChartVoList;
+
 }
