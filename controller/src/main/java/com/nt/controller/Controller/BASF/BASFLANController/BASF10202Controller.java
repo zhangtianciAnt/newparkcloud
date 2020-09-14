@@ -50,7 +50,7 @@ public class BASF10202Controller {
 
     @RequestMapping(value = "/get", method = {RequestMethod.POST})
     public ApiResult get(@RequestBody Application application) throws Exception {
-        return ApiResult.success(applicationServices.get(application));
+        return ApiResult.success(applicationServices.get());
     }
 
     @RequestMapping(value = "/getone", method = {RequestMethod.POST})

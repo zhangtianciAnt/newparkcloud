@@ -14,11 +14,11 @@
         <result column="customername" property="customername" jdbcType="VARCHAR"/>
         <result column="applicationstatus" property="applicationstatus" jdbcType="VARCHAR"/>
         <result column="workcontent" property="workcontent" jdbcType="VARCHAR"/>
-<!--        <result column="devicename" property="devicename" jdbcType="VARCHAR"/>-->
-<!--        <result column="deviceinformationid" property="deviceinformationid" jdbcType="VARCHAR"/>-->
-<!--        <result column="region" property="region" jdbcType="VARCHAR"/>-->
-<!--        <result column="device" property="device" jdbcType="VARCHAR"/>-->
-<!--        <result column="floor" property="floor" jdbcType="VARCHAR"/>-->
+        <!--        <result column="devicename" property="devicename" jdbcType="VARCHAR"/>-->
+        <!--        <result column="deviceinformationid" property="deviceinformationid" jdbcType="VARCHAR"/>-->
+        <!--        <result column="region" property="region" jdbcType="VARCHAR"/>-->
+        <!--        <result column="device" property="device" jdbcType="VARCHAR"/>-->
+        <!--        <result column="floor" property="floor" jdbcType="VARCHAR"/>-->
         <result column="STATUS" property="status" jdbcType="VARCHAR"/>
         <result column="CREATEON" property="createon" jdbcType="TIMESTAMP"/>
         <result column="CREATEBY" property="createby" jdbcType="VARCHAR"/>
@@ -26,7 +26,10 @@
         <result column="MODIFYBY" property="modifyby" jdbcType="VARCHAR"/>
         <result column="Owner" property="owner" jdbcType="VARCHAR"/>
         <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
+        <result column="devicestatus" property="devicestatus" jdbcType="VARCHAR"/>
     </resultMap>
+
+
     <sql id="selectApplicationVo">
 		SELECT
 		ap.applicationid,
@@ -78,6 +81,15 @@ WHERE
 	AND a.applicationtype = '03702'
 	AND DATEDIFF(a.returntime,CURRENT_DATE ())>=0
 	AND DATEDIFF(CURRENT_DATE (),a.applicationtime)>=0
+    </select>
+
+    <select id="getAllInfo" resultType="com.nt.dao_BASF.Application">
+    select
+    application.*,
+    (select VALUE1 from dictionary where `CODE`=deviceinformation.devicestatus) as devicestatus
+    from application application
+    LEFT JOIN deviceinformation deviceinformation ON deviceinformation.deviceinformationid = application.deviceinformationid
+    where application.`STATUS`='0'
     </select>
 </mapper>
 

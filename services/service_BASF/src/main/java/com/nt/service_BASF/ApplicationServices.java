@@ -17,7 +17,7 @@ import java.util.List;
 
 public interface ApplicationServices {
 
-    List<Application> get(Application application) throws Exception;
+    List<Application> get() throws Exception;
 
     ApplicationVo getone(Application application) throws Exception;
 

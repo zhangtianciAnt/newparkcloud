@@ -8,6 +8,7 @@ package com.nt.dao_BASF;
  * @CreateDate: 2019/11/04
  * @Version: 1.0
  */
+
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Data
 @AllArgsConstructor
@@ -25,27 +27,27 @@ public class Application extends BaseModel {
     private String applicationid;
 
     /**
-     *申请类别
+     * 申请类别
      */
     private String applicationtype;
 
     /**
-     *具体位置
+     * 具体位置
      */
     private String specificlocation;
 
     /**
-     *申请设备
+     * 申请设备
      */
     private String applicationdevice;
 
     /**
-     *申请时间
+     * 申请时间
      */
     private String applicationtime;
 
     /**
-     *复原/归还时间
+     * 复原/归还时间
      */
     private String returntime;
 
@@ -83,4 +85,7 @@ public class Application extends BaseModel {
      * 设备id
      */
     private String deviceinformationid;
+
+    @Transient
+    private String devicestatus;
 }

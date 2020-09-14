@@ -36,8 +36,8 @@ public class ApplicationServiceImpl implements ApplicationServices {
     private WorkflowinstanceMapper workflowinstanceMapper;
 
     @Override
-    public List<Application> get(Application application) throws Exception {
-        return applicationMapper.select(application);
+    public List<Application> get() throws Exception {
+        return applicationMapper.getAllInfo();
     }
 
     public ApplicationVo getone(Application application) throws Exception{
