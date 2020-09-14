@@ -127,6 +127,7 @@ public class BASFPIMSController {
                 // 先生成报警单
                 pimsalarm = new Pimsalarm(UUID.randomUUID().toString(), pimspoint.getId(), status);
                 pimsalarm.preInsert();
+                pimsalarm.preUpdate();
                 pimsAlarmMapper.insert(pimsalarm);
             } else {
                 // 更新报警单
