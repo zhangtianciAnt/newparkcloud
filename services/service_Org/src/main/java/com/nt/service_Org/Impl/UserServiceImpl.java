@@ -201,7 +201,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public CustomerInfo addAccountCustomer(UserVo userVo) throws Exception {
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
         UserAccount userAccount = new UserAccount();
         BeanUtils.copyProperties(userVo.getUserAccount(), userAccount);
 //        add_fjl_06/12 start -- 新员工添加默认正式社员的角色
@@ -223,6 +223,15 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userVo.getCustomerInfo(), customerInfo);
         CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
         BeanUtils.copyProperties(userVo.getCustomerInfo().getUserinfo(), userInfo);
+        //add-ws-9/14-禅道任务518
+        if (userInfo.getEnterday().indexOf("Z")  != -1) {
+            String enterday = userInfo.getEnterday().substring(0, 10).replace("-", "/");
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(sf.parse(enterday));//设置起时间
+            cal.add(Calendar.DATE, +1);
+            userInfo.setEnterday(sf.format(cal.getTime()));
+        }
+        //add-ws-9/14-禅道任务518
         int flg1 = 0;
         int flg2 = 0;
         int flg3 = 0;
