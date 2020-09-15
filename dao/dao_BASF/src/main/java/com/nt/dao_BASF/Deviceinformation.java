@@ -119,8 +119,11 @@ public class Deviceinformation extends BaseModel {
      */
     private String fence;
 
+    private String isai;
 
     @Transient
     private Electronicfencestatus electronicfencestatus;
 
+    @Transient
+    private AiCamera aiCamera;
 }

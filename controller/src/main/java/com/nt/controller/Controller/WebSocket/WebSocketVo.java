@@ -143,4 +143,7 @@ public class WebSocketVo {
     // 环保工艺图表数据
     private List<EpChartVo> epChartVoList;
 
+    //AI摄像头
+    private List<Deviceinformation> ais;
+
 }

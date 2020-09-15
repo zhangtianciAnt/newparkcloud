@@ -545,15 +545,14 @@ public class MultiThreadScheduleTask {
 //        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
 //    }
 //
-//    @Async
-//    @Scheduled(fixedDelay = 30000)
-//    public void SENDEMAIL_Listswitch() throws Exception {
-//        //主备服务通知表
-//        Switchnotifications switchnotifications = new Switchnotifications();
-//        webSocketVo.setSwitchList(switchnotificationsServices.list(switchnotifications));
-//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-//    }
-//
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void SENDEMAIL_Listswitch() throws Exception {
+        //主备服务通知表
+        Switchnotifications switchnotifications = new Switchnotifications();
+        webSocketVo.setSwitchList(switchnotificationsServices.list(switchnotifications));
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
     @Async
     @Scheduled(fixedDelay = 60000)
     public void updatePims() throws Exception {

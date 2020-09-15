@@ -200,4 +200,21 @@
         	`STATUS` = '0'
         	AND deviceinformation.devicetype = 'BC004005'
     </select>
+
+    <select id="getAiDeviceInfomation" resultType="com.nt.dao_BASF.Deviceinformation">
+        select * from deviceinformation
+        where devicetype = 'BC004004' and isai= '0'
+        and deviceno in (
+        <foreach collection="list" item="item" index="index" separator=",">
+            #{item.deviceno}
+        </foreach>
+        )
+    </select>
+
+    <update id="updateAiDeviceInfomation">
+        <foreach collection="list" item="item" separator=";">
+            update deviceinformation set devicestatus = #{item.devicestatus}
+            where deviceinformationid =#{item.deviceinformationid}
+        </foreach>
+    </update>
 </mapper>

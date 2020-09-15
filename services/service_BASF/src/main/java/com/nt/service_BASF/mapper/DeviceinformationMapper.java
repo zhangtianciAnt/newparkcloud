@@ -1,5 +1,6 @@
 package com.nt.service_BASF.mapper;
 
+import com.nt.dao_BASF.AIRequest;
 import com.nt.dao_BASF.Deviceinformation;
 import com.nt.dao_BASF.ServerInfo;
 import com.nt.dao_BASF.VO.DeviceinformationVo;
@@ -30,4 +31,10 @@ public interface DeviceinformationMapper extends MyMapper<Deviceinformation> {
 
     // 环保工艺图表数据
     List<EpChartVo> getEpChartVo();
+
+    // AI查询
+    List<Deviceinformation> getAiDeviceInfomation(List<Deviceinformation> deviceinformations);
+
+    // AI批量更新
+    int updateAiDeviceInfomation(List<Deviceinformation> deviceinformations);
 }
