@@ -146,4 +146,6 @@ public class WebSocketVo {
     //AI摄像头
     private List<Deviceinformation> ais;
 
+    // 环保工艺报警列表
+    private List<Pimsalarm> pimsalarmList;
 }

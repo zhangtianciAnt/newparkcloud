@@ -2,6 +2,7 @@ package com.nt.utils;
 
 import cn.hutool.core.io.resource.ClassPathResource;
 import com.nt.utils.jxlsUtil.JxlsBuilder;
+import com.nt.utils.jxlsUtil.JxlsConfig;
 import org.apache.poi.ss.formula.functions.T;
 
 import javax.servlet.ServletOutputStream;
@@ -17,7 +18,8 @@ public class ExcelOutPutUtil {
 
         ClassPathResource resource = new ClassPathResource("jxls_templates");
 
-        String imgRoot = resource.getPath();
+//        String imgRoot = resource.getPath();
+          String imgRoot = JxlsConfig.getImageRoot();
 //        response.setContentType("application/vnd.ms-excel;charset=utf-8");
         response.setContentType(java.net.URLEncoder.encode(fileName, "UTF-8"));
 //        response.setHeader("Content-Disposition","attachment;filename="+fileName+".xlsx");

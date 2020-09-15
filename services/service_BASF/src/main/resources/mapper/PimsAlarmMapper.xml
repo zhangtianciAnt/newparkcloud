@@ -12,6 +12,7 @@
             <result property="equipment" column="equipment"></result>
             <result property="pimspointname" column="pimspointname"></result>
             <result property="devicename" column="devicename"></result>
+            <result property="type" column="type"></result>
         </association>
         <collection property="pimsalarmdetails" ofType="com.nt.dao_BASF.Pimsalarmdetail">
             <id property="id" column="pimsalarmdetailsid"/>
@@ -31,6 +32,7 @@
         pimspoint.equipment as equipment,
         pimspoint.pimspointname as pimspointname,
         pimspoint.devicename as devicename,
+        pimspoint.type as type,
         pimsalarmdetail.id as pimsalarmdetailsid,
         pimsalarmdetail.pimsalarmid as pimsalarmdetailspimsalarmid,
         pimsalarmdetail.alarm as pimsalarmdetailsalarm,
@@ -47,5 +49,6 @@
         <if test="type == '1'.toString()">
             and pimsalarm.alarm <![CDATA[ <> ]]> '正常'
         </if>
+        order by pimsalarm.modifyon desc, pimsalarmdetail.createon desc
     </select>
 </mapper>

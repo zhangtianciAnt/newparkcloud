@@ -10,7 +10,6 @@ import com.nt.service_BASF.mapper.PimsAlarmMapper;
 import com.nt.service_BASF.mapper.PimsPointMapper;
 import com.nt.service_BASF.mapper.PimsdataMapper;
 import com.nt.utils.ApiResult;
-import com.nt.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.socket.TextMessage;
@@ -153,6 +152,7 @@ public class BASFPIMSController {
                 MultiThreadScheduleTask.webSocketVo.setPimsalarm(pimsalarm);
             }
         }
+        MultiThreadScheduleTask.webSocketVo.setPimsalarmList(pimsAlarmMapper.getAllPimsAlarm("1"));
         // 推送
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
@@ -163,7 +163,7 @@ public class BASFPIMSController {
      *
      * @return
      */
-    @RequestMapping(value = "getAllPimsPointData", method = {RequestMethod.GET})
+    @RequestMapping(value = "/getAllPimsPointData", method = {RequestMethod.GET})
     public ApiResult getAllPimsPointData() {
         return ApiResult.success(pimsPointMapper.getAllPimsPointData());
     }
@@ -174,8 +174,11 @@ public class BASFPIMSController {
      * @param type 0:查询所有，1：查询正在报警的
      * @return
      */
-    @RequestMapping(value = "getAllPimsAlarm", method = {RequestMethod.GET})
+    @RequestMapping(value = "/getAllPimsAlarm", method = {RequestMethod.GET})
     public ApiResult getAllPimsAlarm(@RequestParam String type) {
-        return ApiResult.success(pimsAlarmMapper.getAllPimsAlarm(type));
+        List<Pimsalarm> pimsalarmList = pimsAlarmMapper.getAllPimsAlarm(type);
+        MultiThreadScheduleTask.webSocketVo.setPimsalarmList(pimsalarmList);
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
+        return ApiResult.success(pimsalarmList);
     }
 }
