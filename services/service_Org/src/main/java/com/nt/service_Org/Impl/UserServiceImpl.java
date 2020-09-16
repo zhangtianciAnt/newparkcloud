@@ -232,6 +232,15 @@ public class UserServiceImpl implements UserService {
             userInfo.setEnterday(sf.format(cal.getTime()));
         }
         //add-ws-9/14-禅道任务518
+        //add-ws-9/14-禅道任务525
+        if (userInfo.getEnddate().indexOf("Z")  != -1) {
+            String enddate = userInfo.getEnddate().substring(0, 10).replace("-", "/");
+            Calendar cal1 = Calendar.getInstance();
+            cal1.setTime(sf.parse(enddate));//设置起时间
+            cal1.add(Calendar.DATE, +1);
+            userInfo.setEnddate(sf.format(cal1.getTime()));
+        }
+        //add-ws-9/14-禅道任务525
         int flg1 = 0;
         int flg2 = 0;
         int flg3 = 0;
@@ -1336,7 +1345,17 @@ public class UserServiceImpl implements UserService {
                 //        zy-7/6-禅道207/231任务 start
                 //退职日
                 if (item.get("退职日") != null) {
-                    userinfo.setResignation_date(item.get("退职日").toString());
+                    //upd_fjl_0916 修改退职日的保存格式 start
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String regindate = item.get("退职日●").toString();
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(sdf.parse(regindate));//设置起时间
+                    cal.add(Calendar.DATE, -1);//减1天
+                    String aaa = "T16:00:00.000Z";
+                    regindate = sdf.format(cal.getTime()) + aaa;
+                    userinfo.setResignation_date(regindate);
+//                    userinfo.setResignation_date(item.get("退职日").toString());
+                    //upd_fjl_0916 修改退职日的保存格式 end
                 }
                 //        zy-7/6-禅道207/231任务 end
                 //退职理由
@@ -1867,7 +1886,17 @@ public class UserServiceImpl implements UserService {
                     //        zy-7/6-禅道207/231任务 start
                     //退职日
                     if (item.get("退职日●") != null) {
-                        customerInfoList.get(0).getUserinfo().setResignation_date(item.get("退职日●").toString());
+                        //upd_fjl_0916 修改退职日的保存格式 start
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        String regindate = item.get("退职日●").toString();
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTime(sdf.parse(regindate));//设置起时间
+                        cal.add(Calendar.DATE, -1);//减1天
+                        String aaa = "T16:00:00.000Z";
+                        regindate = sdf.format(cal.getTime()) + aaa;
+                        customerInfoList.get(0).getUserinfo().setResignation_date(regindate);
+//                        customerInfoList.get(0).getUserinfo().setResignation_date(item.get("退职日●").toString());
+                        //upd_fjl_0916 修改退职日的保存格式 end
                     }
                     //        zy-7/6-禅道207/231任务 end
                     //退职理由
