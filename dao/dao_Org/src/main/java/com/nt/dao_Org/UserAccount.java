@@ -2,6 +2,7 @@ package com.nt.dao_Org;
 
 
 import cn.hutool.core.codec.Base64;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.nt.dao_Auth.Role;
 import com.nt.utils.StringUtils;
@@ -38,6 +39,7 @@ public class UserAccount extends BaseModel {
     /**
      * 数据主键ID
      */
+    @JSONField(name="_id")
     private String _id;
     /**
      * 用户ID
