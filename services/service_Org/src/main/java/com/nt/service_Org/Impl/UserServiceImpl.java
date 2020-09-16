@@ -1336,7 +1336,17 @@ public class UserServiceImpl implements UserService {
                 //        zy-7/6-禅道207/231任务 start
                 //退职日
                 if (item.get("退职日") != null) {
-                    userinfo.setResignation_date(item.get("退职日").toString());
+                    //upd_fjl_0916 修改退职日的保存格式 start
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String regindate = item.get("退职日●").toString();
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(sdf.parse(regindate));//设置起时间
+                    cal.add(Calendar.DATE, -1);//减1天
+                    String aaa = "T16:00:00.000Z";
+                    regindate = sdf.format(cal.getTime()) + aaa;
+                    userinfo.setResignation_date(regindate);
+//                    userinfo.setResignation_date(item.get("退职日").toString());
+                    //upd_fjl_0916 修改退职日的保存格式 end
                 }
                 //        zy-7/6-禅道207/231任务 end
                 //退职理由
@@ -1867,7 +1877,17 @@ public class UserServiceImpl implements UserService {
                     //        zy-7/6-禅道207/231任务 start
                     //退职日
                     if (item.get("退职日●") != null) {
-                        customerInfoList.get(0).getUserinfo().setResignation_date(item.get("退职日●").toString());
+                        //upd_fjl_0916 修改退职日的保存格式 start
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        String regindate = item.get("退职日●").toString();
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTime(sdf.parse(regindate));//设置起时间
+                        cal.add(Calendar.DATE, -1);//减1天
+                        String aaa = "T16:00:00.000Z";
+                        regindate = sdf.format(cal.getTime()) + aaa;
+                        customerInfoList.get(0).getUserinfo().setResignation_date(regindate);
+//                        customerInfoList.get(0).getUserinfo().setResignation_date(item.get("退职日●").toString());
+                        //upd_fjl_0916 修改退职日的保存格式 end
                     }
                     //        zy-7/6-禅道207/231任务 end
                     //退职理由
