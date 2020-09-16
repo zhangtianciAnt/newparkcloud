@@ -408,7 +408,7 @@ public class GivingServiceImpl implements GivingService {
         List<Base> bases = new ArrayList<>();
         Dictionary dictionary = new Dictionary();
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
         dictionary.setPcode("PR042");
         List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
         /*获取基数 type-lxx*/
@@ -545,12 +545,14 @@ public class GivingServiceImpl implements GivingService {
                 /*group id -lxx*/
                 /*试用期截止日 -lxx*/
                 //add-ws-9/15-禅道任务525
-                if (customer.getUserinfo().getEnddate().indexOf("Z")  != -1) {
-                    String enddate = customer.getUserinfo().getEnddate().substring(0, 10).replace("-", "/");
-                    Calendar cal1 = Calendar.getInstance();
-                    cal1.setTime(sf.parse(enddate));//设置起时间
-                    cal1.add(Calendar.DATE, +1);
-                    customer.getUserinfo().setEnddate(sf.format(cal1.getTime()));
+                if(customer.getUserinfo().getEnddate()!="" && customer.getUserinfo().getEnddate()!=null){
+                    if (customer.getUserinfo().getEnddate().indexOf("Z")  != -1) {
+                        String enddate = customer.getUserinfo().getEnddate().substring(0, 10).replace("-", "/");
+                        Calendar cal1 = Calendar.getInstance();
+                        cal1.setTime(sf.parse(enddate));//设置起时间
+                        cal1.add(Calendar.DATE, +1);
+                        customer.getUserinfo().setEnddate(sf.format(cal1.getTime()));
+                    }
                 }
                 //add-ws-9/15-禅道任务525
                 base.setEnddate(customer.getUserinfo().getEnddate());
