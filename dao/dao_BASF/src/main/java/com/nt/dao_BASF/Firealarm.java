@@ -143,5 +143,10 @@ public class Firealarm extends BaseModel {
      */
     private String misinformation;
 
+    /**
+     * 是否演习 0：非；1：是
+     */
+    private String checkedforshow;
+
 
 }
