@@ -48,4 +48,6 @@ public class MhInfo {
     //3：离线
     private Integer RunStatus;
     private MhAddr Addr;
+
+    private String flag;
 }

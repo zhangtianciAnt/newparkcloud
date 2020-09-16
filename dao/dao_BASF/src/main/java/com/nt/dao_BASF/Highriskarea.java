@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -20,6 +21,16 @@ public class Highriskarea extends BaseModel {
      * 高风险区域名称
      */
     private String highriskareaname;
+
+    private String equipment;
+
+    private String highriskareatype;
+
+    private Date starttime;
+    private Date endtime;
+    private String person;
+
+    private String remark;
 
     /**
      * 详细位置
@@ -40,5 +51,7 @@ public class Highriskarea extends BaseModel {
      * 坐标
      */
     private String highriskareadetailedlist;
+
+    private String type;
 
 }

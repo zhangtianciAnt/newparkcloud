@@ -84,12 +84,16 @@ WHERE
     </select>
 
     <select id="getAllInfo" resultType="com.nt.dao_BASF.Application">
-    select
-    application.*,
-    (select VALUE1 from dictionary where `CODE`=deviceinformation.devicestatus) as devicestatus
-    from application application
-    LEFT JOIN deviceinformation deviceinformation ON deviceinformation.deviceinformationid = application.deviceinformationid
-    where application.`STATUS`='0'
+        select
+        application.*,
+        (select VALUE1 from dictionary where `CODE`=deviceinformation.devicestatus) as devicestatus
+        from application application
+        LEFT JOIN deviceinformation deviceinformation ON deviceinformation.deviceinformationid =
+        application.deviceinformationid
+        where application.`STATUS`='0'
+        <if test="applicationtype != null">
+            and applicationtype=#{applicationtype}
+        </if>
     </select>
 </mapper>
 

@@ -199,6 +199,7 @@ public class MultiThreadScheduleTask {
             String obj = cowBUtils.getMhLastinfo(v.getIkey(), v.getImei());
             MhInfo mhInfo = JSONObject.parseObject(obj, MhInfo.class);
             mhInfo.setVehicleManagement(v);
+            mhInfo.setFlag(v.getFlag());
             mhInfos.add(mhInfo);
         }
         webSocketVo.setCarSet(mhInfos);
@@ -536,15 +537,15 @@ public class MultiThreadScheduleTask {
 //    }
 
     // endregion
-//
-//    @Async
-//    @Scheduled(fixedDelay = 30000)
-//    public void BASF90620_GetRoadClosed() throws Exception {
-//        //道路占用/临时封闭区域列表
-//        webSocketVo.setRoadClosed(applicationServices.roadClosed());
-//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-//    }
-//
+
+    @Async
+    @Scheduled(fixedDelay = 30000)
+    public void BASF90620_GetRoadClosed() throws Exception {
+        //道路占用/临时封闭区域列表
+        webSocketVo.setRoadClosed(applicationServices.roadClosed());
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+    }
+
     @Async
     @Scheduled(fixedDelay = 30000)
     public void SENDEMAIL_Listswitch() throws Exception {
@@ -553,6 +554,7 @@ public class MultiThreadScheduleTask {
         webSocketVo.setSwitchList(switchnotificationsServices.list(switchnotifications));
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
+
     @Async
     @Scheduled(fixedDelay = 60000)
     public void updatePims() throws Exception {

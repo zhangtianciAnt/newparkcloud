@@ -3,6 +3,7 @@ package com.nt.service_BASF.mapper;
 import com.nt.dao_BASF.VO.ApplicationVo;
 import com.nt.dao_BASF.Application;
 import com.nt.utils.MyMapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,5 +16,5 @@ public interface ApplicationMapper extends MyMapper<Application> {
 
     List<Application> roadClosed() throws Exception;
 
-    List<Application> getAllInfo();
+    List<Application> getAllInfo(@Param("applicationtype") String applicationtype);
 }

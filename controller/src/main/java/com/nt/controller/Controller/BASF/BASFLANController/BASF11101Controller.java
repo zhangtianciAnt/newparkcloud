@@ -73,7 +73,6 @@ public class BASF11101Controller {
     public ApiResult noticeUpdata(String notice, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         riskassessmentServices.noticeUpdata(notice, tokenModel);
-
         //获取风险判研信息(MongoDB)
         MultiThreadScheduleTask.webSocketVo.setRiskassessment(riskassessmentServices.getData());
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
@@ -153,8 +152,8 @@ public class BASF11101Controller {
     @RequestMapping(value = "/insert", method = {RequestMethod.POST})
     public ApiResult insert(@RequestBody Highriskarea highriskarea, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
+        highriskarea.setType("0");
         riskassessmentservices.insert(tokenModel, highriskarea);
-
         // 获取高风险作业清单
         MultiThreadScheduleTask.webSocketVo.setHighriskareaList(highriskareaServices.list());
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
@@ -166,7 +165,6 @@ public class BASF11101Controller {
     public ApiResult update(@RequestBody Highriskarea highriskarea, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         riskassessmentservices.update(tokenModel, highriskarea);
-
         // 获取高风险作业清单
         MultiThreadScheduleTask.webSocketVo.setHighriskareaList(highriskareaServices.list());
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
@@ -177,7 +175,7 @@ public class BASF11101Controller {
     @RequestMapping(value = "/delete", method = {RequestMethod.POST})
     public ApiResult delete(@RequestBody Highriskarea highriskarea, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        highriskarea.setStatus(AuthConstants.DEL_FLAG_DELETE);
+        highriskarea.setType(AuthConstants.DEL_FLAG_DELETE);
         riskassessmentservices.delete(tokenModel, highriskarea);
         return ApiResult.success();
     }
