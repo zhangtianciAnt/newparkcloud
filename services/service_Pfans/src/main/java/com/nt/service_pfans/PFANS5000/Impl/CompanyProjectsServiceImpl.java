@@ -1191,7 +1191,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         List<Projectsystem> projeclist = projectsystemMapper.getProsysList();
         if (projeclist != null && projeclist.size() > 0) {
             for (Projectsystem ps : projeclist) {
-                if (ps.getPosition().toUpperCase().equals("PL")) {
+                if (StringUtils.isNotEmpty(ps.getPosition()) && ps.getPosition().toUpperCase().equals("PL")) {
                     Query query = new Query();
                     query.addCriteria(Criteria.where("userid").is(ps.getName()));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
