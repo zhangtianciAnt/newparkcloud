@@ -49,5 +49,5 @@ public class MhInfo {
     private Integer RunStatus;
     private MhAddr Addr;
 
-    private String flag;
+    private String enable;
 }

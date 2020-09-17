@@ -199,7 +199,7 @@ public class MultiThreadScheduleTask {
             String obj = cowBUtils.getMhLastinfo(v.getIkey(), v.getImei());
             MhInfo mhInfo = JSONObject.parseObject(obj, MhInfo.class);
             mhInfo.setVehicleManagement(v);
-            mhInfo.setFlag(v.getFlag());
+            mhInfo.setEnable(v.getEnable());
             mhInfos.add(mhInfo);
         }
         webSocketVo.setCarSet(mhInfos);
