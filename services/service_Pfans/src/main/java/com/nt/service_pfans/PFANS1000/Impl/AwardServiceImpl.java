@@ -51,7 +51,7 @@ public class AwardServiceImpl implements AwardService {
     @Override
     public List<Award> get(Award award) throws Exception {
         List<Award> awardlist = awardMapper.select(award);
-        if (awardlist.size()  > 0) {
+        if (awardlist.size() > 0) {
             awardlist = awardlist.stream().sorted(Comparator.comparing(Award::getCreateon).reversed()).collect(Collectors.toList());
         }
         return awardlist;
@@ -118,15 +118,14 @@ public class AwardServiceImpl implements AwardService {
         String contractnumber = award.getContractnumber();
         String status = award.getStatus();
         if (status.equals("4")) {
-            int scale = 2;//设置位数
-            int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
-            PolicyContract policy3 = new PolicyContract();
-            policy3.setPolicycontract_id(award.getPolicycontract_id());
-            List<PolicyContract> policycontractlist = policycontractmapper.select(policy3);
-            if(policycontractlist.size()>0){
+            //upd-ws-9/17-禅道任务530提交
+            if (award.getPolicycontract_id() != "" && award.getPolicycontract_id() != null) {
+                int scale = 2;//设置位数
+                int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+                PolicyContract policycontractlist = policycontractmapper.selectByPrimaryKey(award.getPolicycontract_id());
                 PolicyContract policy = new PolicyContract();
                 PolicyContract policy2 = new PolicyContract();
-                BeanUtils.copyProperties(policycontractlist.get(0), policy);
+                BeanUtils.copyProperties(policycontractlist, policy);
                 policy2.setPolicycontract_id(policy.getPolicycontract_id());
                 policycontractmapper.delete(policy2);
                 BigDecimal bd = new BigDecimal(policy.getModifiedamount());
@@ -140,8 +139,8 @@ public class AwardServiceImpl implements AwardService {
                 policy.setNewamountcase(String.valueOf(bd1.add(bd2)));
                 policycontractmapper.insertSelective(policy);
             }
-            if(award.getMaketype().equals("9"))
-            {
+            //upd-ws-9/17-禅道任务530提交
+            if (award.getMaketype().equals("9")) {
                 //合同担当
                 List<MembersVo> rolelist = roleService.getMembers("5e7862618f43163084351135");
                 if (rolelist.size() > 0) {
