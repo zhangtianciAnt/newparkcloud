@@ -218,6 +218,24 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
 
             }
         }
+        // 如果设备是电子围栏
+        else if ("BC004005".equals(deviceinformation.getDevicetype())) {
+            // 根据摄像头id（subordinatesystem）找到 摄像头设备编号
+            Deviceinformation dev = new Deviceinformation();
+            dev.setDeviceinformationid(deviceinformation.getSubordinatesystem());
+            dev = deviceinformationMapper.selectOne(dev);
+            // 根据设备主键更新，电子围栏状态表信息
+            Electronicfencestatus electronicfencestatus = new Electronicfencestatus();
+            electronicfencestatus.setDeviceinformationid(deviceinformation.getDeviceinformationid());
+            electronicfencestatus.setCamerano(dev.getDeviceno());
+            // 围栏对应的摄像头id
+            electronicfencestatus.setCameraid(dev.getDeviceinformationid());
+            // 围栏是否报警 初始化 0
+            electronicfencestatus.setWarningstatus(0);
+            // 围栏是否屏蔽 初始化 0
+            electronicfencestatus.setShieldstatus(0);
+            electronicfencestatusMapper.updateByPrimaryKeySelective(electronicfencestatus);
+        }
     }
 
     /**
