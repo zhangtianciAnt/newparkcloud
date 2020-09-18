@@ -223,24 +223,24 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userVo.getCustomerInfo(), customerInfo);
         CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
         BeanUtils.copyProperties(userVo.getCustomerInfo().getUserinfo(), userInfo);
-//        //add-ws-9/14-禅道任务518
-//        if (userInfo.getEnterday().indexOf("Z")  != -1) {
-//            String enterday = userInfo.getEnterday().substring(0, 10).replace("-", "/");
-//            Calendar cal = Calendar.getInstance();
-//            cal.setTime(sf.parse(enterday));//设置起时间
-//            cal.add(Calendar.DATE, +1);
-//            userInfo.setEnterday(sf.format(cal.getTime()));
-//        }
-//        //add-ws-9/14-禅道任务518
-//        //add-ws-9/14-禅道任务525
-//        if (userInfo.getEnddate().indexOf("Z")  != -1) {
-//            String enddate = userInfo.getEnddate().substring(0, 10).replace("-", "/");
-//            Calendar cal1 = Calendar.getInstance();
-//            cal1.setTime(sf.parse(enddate));//设置起时间
-//            cal1.add(Calendar.DATE, +1);
-//            userInfo.setEnddate(sf.format(cal1.getTime()));
-//        }
-//        //add-ws-9/14-禅道任务525
+        //add-ws-9/14-禅道任务518
+        if (userInfo.getEnterday().indexOf("Z")  != -1) {
+            String enterday = userInfo.getEnterday().substring(0, 10).replace("-", "/");
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(sf.parse(enterday));//设置起时间
+            cal.add(Calendar.DATE, +1);
+            userInfo.setEnterday(sf.format(cal.getTime()));
+        }
+        //add-ws-9/14-禅道任务518
+        //add-ws-9/14-禅道任务525
+        if (userInfo.getEnddate().indexOf("Z")  != -1) {
+            String enddate = userInfo.getEnddate().substring(0, 10).replace("-", "/");
+            Calendar cal1 = Calendar.getInstance();
+            cal1.setTime(sf.parse(enddate));//设置起时间
+            cal1.add(Calendar.DATE, +1);
+            userInfo.setEnddate(sf.format(cal1.getTime()));
+        }
+        //add-ws-9/14-禅道任务525
         int flg1 = 0;
         int flg2 = 0;
         int flg3 = 0;
