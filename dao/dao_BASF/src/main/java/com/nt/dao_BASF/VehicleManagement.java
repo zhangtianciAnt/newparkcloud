@@ -20,4 +20,5 @@ public class VehicleManagement extends BaseModel {
     private String imei;
     private String ikey;
     private String flag;
+    private String enable;
 }

@@ -10,11 +10,13 @@ package com.nt.service_BASF.Impl;
  */
 import com.nt.dao_BASF.Application;
 import com.nt.dao_BASF.Deviceinformation;
+import com.nt.dao_BASF.VO.DeviceinfomationVo;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_BASF.ApplicationServices;
 import com.nt.service_BASF.mapper.ApplicationMapper;
 import com.nt.service_BASF.mapper.DeviceinformationMapper;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -99,5 +101,34 @@ public class ApplicationServiceImpl implements ApplicationServices {
     @Override
     public List<Application> roadClosed() throws Exception{
         return applicationMapper.roadClosed();
+    }
+
+    @Override
+    public void returnBack(String applicationId) throws Exception {
+        // 系统服务自动归还
+        if (StringUtils.isEmpty(applicationId)) {
+            List<Application> applicationList = applicationMapper.getAllReturnBack();
+            applicationList.forEach(this::returnLogic);
+        } else {    // 手动归还指定设备
+            Application application = applicationMapper.selectByPrimaryKey(applicationId);
+            returnLogic(application);
+        }
+    }
+
+    private void returnLogic(Application application) {
+        // 逻辑删除Application数据
+        application.setStatus("1");
+        applicationMapper.updateByPrimaryKey(application);
+
+        // 重置设备状态
+        Deviceinformation deviceinfomation = deviceinformationMapper.selectByPrimaryKey(application.getDeviceinformationid());
+        if (deviceinfomation != null) {
+            if (deviceinfomation.getDevicename().equals("虚拟路桩")) {
+                deviceinfomation.setStatus("1");
+            } else {
+                deviceinfomation.setDevicestatus("BC011001");
+            }
+            deviceinformationMapper.updateByPrimaryKey(deviceinfomation);
+        }
     }
 }

@@ -199,7 +199,7 @@ public class MultiThreadScheduleTask {
             String obj = cowBUtils.getMhLastinfo(v.getIkey(), v.getImei());
             MhInfo mhInfo = JSONObject.parseObject(obj, MhInfo.class);
             mhInfo.setVehicleManagement(v);
-            mhInfo.setFlag(v.getFlag());
+            mhInfo.setEnable(v.getEnable());
             mhInfos.add(mhInfo);
         }
         webSocketVo.setCarSet(mhInfos);
@@ -570,5 +570,10 @@ public class MultiThreadScheduleTask {
             pimsdataMapper.insertPimsDataList(pimsdataList);
         }
         System.out.println("updatePims end");
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void returnBackDevice() throws Exception {
+        applicationServices.returnBack("");
     }
 }

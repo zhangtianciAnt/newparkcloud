@@ -17,4 +17,7 @@ public interface ApplicationMapper extends MyMapper<Application> {
     List<Application> roadClosed() throws Exception;
 
     List<Application> getAllInfo(@Param("applicationtype") String applicationtype);
+
+    // 系统服务，获取所有待归还数据
+    List<Application> getAllReturnBack() throws Exception;
 }
