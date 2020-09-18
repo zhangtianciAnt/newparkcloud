@@ -36,6 +36,6 @@ public interface ApplicationServices {
     List<Application> roadClosed() throws Exception;
 
     // 路障&消防水到期归还
-    void returnBack(String applicationId) throws Exception;
+    void returnBack(String deviceinformationId) throws Exception;
 
 }

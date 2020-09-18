@@ -8,9 +8,10 @@ package com.nt.service_BASF.Impl;
  * @Date: 2019/11/15
  * @Version: 1.0
  */
+
 import com.nt.dao_BASF.Application;
 import com.nt.dao_BASF.Deviceinformation;
-import com.nt.dao_BASF.VO.DeviceinfomationVo;
+import com.nt.dao_BASF.VO.ApplicationVo;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_BASF.ApplicationServices;
 import com.nt.service_BASF.mapper.ApplicationMapper;
@@ -20,10 +21,10 @@ import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.nt.dao_BASF.VO.ApplicationVo;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ApplicationServiceImpl implements ApplicationServices {
@@ -42,12 +43,12 @@ public class ApplicationServiceImpl implements ApplicationServices {
         return applicationMapper.getAllInfo(application.getApplicationtype());
     }
 
-    public ApplicationVo getone(Application application) throws Exception{
+    public ApplicationVo getone(Application application) throws Exception {
 
         Workflowinstance workflowinstance = new Workflowinstance();
         workflowinstance.setDataid(application.getApplicationid());
-        List wf =  workflowinstanceMapper.select(workflowinstance);
-        String wfname = ((Workflowinstance)wf.get(0)).getWorkflowname();
+        List wf = workflowinstanceMapper.select(workflowinstance);
+        String wfname = ((Workflowinstance) wf.get(0)).getWorkflowname();
 
         ApplicationVo applicationVo = new ApplicationVo();
         List applicationlist = applicationMapper.select(application);
@@ -55,10 +56,6 @@ public class ApplicationServiceImpl implements ApplicationServices {
         applicationVo.setWorkflowname(wfname);
         return applicationVo;
     }
-
-
-
-
 
 
     public List<ApplicationVo> getList() throws Exception {
@@ -99,19 +96,24 @@ public class ApplicationServiceImpl implements ApplicationServices {
 
     //前端大屏道路占用/临时封闭区域列表（审批通过的并且使用时间≤系统时间≤归还时间）
     @Override
-    public List<Application> roadClosed() throws Exception{
+    public List<Application> roadClosed() throws Exception {
         return applicationMapper.roadClosed();
     }
 
     @Override
-    public void returnBack(String applicationId) throws Exception {
+    public void returnBack(String deviceinformationId) throws Exception {
         // 系统服务自动归还
-        if (StringUtils.isEmpty(applicationId)) {
+        if (StringUtils.isEmpty(deviceinformationId)) {
             List<Application> applicationList = applicationMapper.getAllReturnBack();
             applicationList.forEach(this::returnLogic);
         } else {    // 手动归还指定设备
-            Application application = applicationMapper.selectByPrimaryKey(applicationId);
-            returnLogic(application);
+            Application application = new Application();
+            application.setDeviceinformationid(deviceinformationId);
+            List<Application> applicationList = applicationMapper.select(application).stream().filter(item -> !"1".equals(item.getStatus())).collect(Collectors.toList());
+            if (applicationList.size() > 0) {
+                application = applicationList.get(0);
+                returnLogic(application);
+            }
         }
     }
 
