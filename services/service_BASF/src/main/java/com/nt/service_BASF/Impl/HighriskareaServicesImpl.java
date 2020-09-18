@@ -39,6 +39,7 @@ public class HighriskareaServicesImpl implements HighriskareaServices {
     @Override
     public List<Highriskarea> list() throws Exception {
         Highriskarea highriskarea = new Highriskarea();
+        highriskarea.setType("0");
         return highriskareaMapper.select(highriskarea);
     }
 }
