@@ -260,12 +260,12 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
             //获取符合要求的虚拟路障的设备信息表的id
             List<Application> applicationList = applicationMapper.selectBarricades();
             //更新路障信息
-            for (Application application : applicationList) {
-                Deviceinformation deviceinformation = new Deviceinformation();
-                deviceinformation.setDeviceinformationid(application.getDeviceinformationid());
-                deviceinformation.setStatus("0");
-                deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
-            }
+//            for (Application application : applicationList) {
+//                Deviceinformation deviceinformation = new Deviceinformation();
+//                deviceinformation.setDeviceinformationid(application.getDeviceinformationid());
+//                deviceinformation.setStatus("0");
+//                deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
+//            }
         }
         List<String> mapidList = mapBox_mapLevelServices.getChildrensStr(mapid);
         DeviceinformationListVo lv = new DeviceinformationListVo();

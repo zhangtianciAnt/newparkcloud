@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component(value = "ApplicationMapper")
+//@Component(value = "ApplicationMapper")
 public interface ApplicationMapper extends MyMapper<Application> {
     List<ApplicationVo> selectApplicationVoList() throws Exception;
 
