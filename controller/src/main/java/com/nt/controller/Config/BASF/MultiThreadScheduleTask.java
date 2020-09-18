@@ -571,4 +571,9 @@ public class MultiThreadScheduleTask {
         }
         System.out.println("updatePims end");
     }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void returnBackDevice() throws Exception {
+        applicationServices.returnBack("");
+    }
 }

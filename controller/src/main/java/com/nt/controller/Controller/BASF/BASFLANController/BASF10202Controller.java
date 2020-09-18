@@ -134,4 +134,13 @@ public class BASF10202Controller {
         }
         return ApiResult.success(applicationServices.one(applicationid));
     }
+
+    @RequestMapping(value = "/returnBack", method = {RequestMethod.GET})
+    public ApiResult returnBack(String applicationid, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(applicationid)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        applicationServices.returnBack(applicationid);
+        return ApiResult.success();
+    }
 }

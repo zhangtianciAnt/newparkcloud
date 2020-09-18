@@ -35,4 +35,7 @@ public interface ApplicationServices {
     //前端大屏道路占用/临时封闭区域列表（审批通过的并且使用时间≤系统时间≤归还时间）
     List<Application> roadClosed() throws Exception;
 
+    // 路障&消防水到期归还
+    void returnBack(String applicationId) throws Exception;
+
 }
