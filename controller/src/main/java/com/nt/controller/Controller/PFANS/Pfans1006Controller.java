@@ -242,6 +242,9 @@ public class Pfans1006Controller {
             } else {
                 loanApplication.setMoneys("0.00");
             }
+            if(loanApplication.getPaymentmethod().equals("PJ015001")){
+                loanApplication.setAccountpayeename("");
+            }
             data.put("wfList1", wfList1);
             data.put("wfList2", wfList2);
             data.put("wfList3", wfList3);
