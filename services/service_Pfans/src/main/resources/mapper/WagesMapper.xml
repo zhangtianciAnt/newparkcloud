@@ -318,7 +318,7 @@
         @YKBZ :=
         CASE
         WHEN ( @TYPE &lt;=> '2' ) THEN
-        round( ( base.THISMONTHSUITDAYS * base.DIC_YKBZSY / 21.75 + ( @CXDAYS - base.THISMONTHSUITDAYS ) * base.DIC_YKBZZS ), 2 )
+        round( ( base.THISMONTHSUITDAYS * base.DIC_YKBZSY / 21.75 + ( @CXDAYS - base.THISMONTHSUITDAYS ) * base.DIC_YKBZZS / 21.75 ), 2 )
         WHEN ( @TYPE &lt;=> '1' ) THEN
         base.INDUCTION_LUNCH
         WHEN ( @TYPE &lt;=> '4' ) THEN

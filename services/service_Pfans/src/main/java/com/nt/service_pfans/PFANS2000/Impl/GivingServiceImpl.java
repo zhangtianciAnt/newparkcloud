@@ -617,12 +617,6 @@ public class GivingServiceImpl implements GivingService {
                 userinfo.setResignation_date(formatStringDate(userinfo.getResignation_date().substring(0,10)));
             }
             calResignationDate.setTime(sf.parse(userinfo.getResignation_date().replace("Z", " UTC")));
-            //add-ws-9/18-退至日减一天，因为计算一括补助得时候天数算多了
-            int day = calResignationDate.get(Calendar.DAY_OF_WEEK);
-            if (!(day == Calendar.SUNDAY || day == Calendar.SATURDAY)) {
-                calResignationDate.add(Calendar.DATE, -1);
-            }
-            //add-ws-9/18-退至日减一天，因为计算一括补助得时候天数算多了
         } else {
             calResignationDate.setTime(calNowLast.getTime());
         }
