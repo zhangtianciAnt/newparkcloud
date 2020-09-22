@@ -288,16 +288,34 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         int day = cal.get(Calendar.DATE);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String no = "";
-        if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null) {
-            int count = publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()));
+        if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002002"))){
+            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()) , "GL");
             no = String.format("%2d", count + 1).replace(" ", "0");
-        } else {
+            String month1 = String.format("%2d", month).replace(" ", "0");
+            String day1 = String.format("%2d", day).replace(" ", "0");
+            invoiceNo = "DL4GL" + year + month1 + day1 + no;
+        } else if(publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002001"))){
+            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()) , "AP");
+            no = String.format("%2d", count + 1).replace(" ", "0");
+            String month1 = String.format("%2d", month).replace(" ", "0");
+            String day1 = String.format("%2d", day).replace(" ", "0");
+            invoiceNo = "DL4AP" + year + month1 + day1 + no;
+        }else if(publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002003"))){
+            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()) , "AR");
+            no = String.format("%2d", count + 1).replace(" ", "0");
+            String month1 = String.format("%2d", month).replace(" ", "0");
+            String day1 = String.format("%2d", day).replace(" ", "0");
+            invoiceNo = "DL4AR" + year + month1 + day1 + no;
+        } else{
             no = "01";
+            String month1 = String.format("%2d", month).replace(" ", "0");
+            String day1 = String.format("%2d", day).replace(" ", "0");
+            invoiceNo = "DL4AP" + year + month1 + day1 + no;
         }
 
-        String month1 = String.format("%2d", month).replace(" ", "0");
-        String day1 = String.format("%2d", day).replace(" ", "0");
-        invoiceNo = "DL4AP" + year + month1 + day1 + no;
+//        String month1 = String.format("%2d", month).replace(" ", "0");
+//        String day1 = String.format("%2d", day).replace(" ", "0");
+//        invoiceNo = "DL4AP" + year + month1 + day1 + no;
 
         String publicexpenseid = UUID.randomUUID().toString();
         PublicExpense publicExpense = new PublicExpense();

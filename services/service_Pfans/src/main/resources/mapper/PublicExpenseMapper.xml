@@ -7,6 +7,11 @@
         group by REIMBURSEMENTDATE
     </select>
 
+    <select id="getAporGlNo" resultType="Integer">
+         select count(*) from publicexpense
+        where REIMBURSEMENTDATE = #{reimbursementDate} and INVOICENO like CONCAT('%',#{AporGl},'%')
+    </select>
+
     <select id="getpublicelist"  resultType="com.nt.dao_Pfans.PFANS1000.PublicExpense">
      select * from publicexpense where JUDGEMENT like CONCAT('%',#{code},'%')
     </select>
