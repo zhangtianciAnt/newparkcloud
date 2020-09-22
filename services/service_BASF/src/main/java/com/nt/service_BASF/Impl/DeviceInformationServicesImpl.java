@@ -249,23 +249,23 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
     @Override
     public DeviceinformationListVo deviceList(String mapid, String[] devicetype, String[] devicetypesmall, String devicename, Integer pageindex, Integer pagesize) throws Exception {
         if (Arrays.asList(devicetype).contains("BC004006")) {
-            //查询更新路障信息
-            Deviceinformation deviceinformation0 = new Deviceinformation();
-            deviceinformation0.setDevicetype("BC004006");
-            deviceinformation0.setStatus("0");
-            for (Deviceinformation deviceinformation : deviceinformationMapper.select(deviceinformation0)) {
-                deviceinformation.setStatus(AuthConstants.DEL_FLAG_DELETE);
-                deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
-            }
+//            //查询更新路障信息
+//            Deviceinformation deviceinformation0 = new Deviceinformation();
+//            deviceinformation0.setDevicetype("BC004006");
+//            deviceinformation0.setStatus("0");
+//            for (Deviceinformation deviceinformation : deviceinformationMapper.select(deviceinformation0)) {
+//                deviceinformation.setStatus(AuthConstants.DEL_FLAG_DELETE);
+//                deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
+//            }
             //获取符合要求的虚拟路障的设备信息表的id
-            List<Application> applicationList = applicationMapper.selectBarricades();
+//            List<Application> applicationList = applicationMapper.selectBarricades();
             //更新路障信息
-            for (Application application : applicationList) {
-                Deviceinformation deviceinformation = new Deviceinformation();
-                deviceinformation.setDeviceinformationid(application.getDeviceinformationid());
-                deviceinformation.setStatus("0");
-                deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
-            }
+//            for (Application application : applicationList) {
+//                Deviceinformation deviceinformation = new Deviceinformation();
+//                deviceinformation.setDeviceinformationid(application.getDeviceinformationid());
+//                deviceinformation.setStatus("0");
+//                deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
+//            }
         }
         List<String> mapidList = mapBox_mapLevelServices.getChildrensStr(mapid);
         DeviceinformationListVo lv = new DeviceinformationListVo();
