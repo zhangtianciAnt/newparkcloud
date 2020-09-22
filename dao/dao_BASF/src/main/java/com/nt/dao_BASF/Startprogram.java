@@ -105,4 +105,7 @@ public class Startprogram extends BaseModel {
 
     //实际开班日期（即：确认开班的时间）
     private java.sql.Date actualstartdate;
+
+    //备注
+    private String remarks;
 }
