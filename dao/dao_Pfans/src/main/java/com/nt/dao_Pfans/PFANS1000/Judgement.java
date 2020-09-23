@@ -149,6 +149,12 @@ public class Judgement extends BaseModel {
     private String addbook;
 
     /**
+     * 添付書類
+     */
+    @Column(name = "VALUE1")
+    private String value1;
+
+    /**
      * 出售报价单
      */
     @Column(name = "SALEQUOTATION")

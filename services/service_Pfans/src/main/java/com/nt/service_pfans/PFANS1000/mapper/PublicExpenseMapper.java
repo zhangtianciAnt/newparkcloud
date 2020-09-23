@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface PublicExpenseMapper extends MyMapper<PublicExpense> {
     Integer getInvoiceNo(String reimbursementDate);
+    Integer getAporGlNo(String reimbursementDate , @Param("AporGl") String AporGl);
     List<PublicExpense> getpublicelist(@Param("code") String publicexpenseid);
 }

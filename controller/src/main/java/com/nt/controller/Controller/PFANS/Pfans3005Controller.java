@@ -1,8 +1,10 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Pfans.PFANS3000.Vo.PurchaseVo;
 import com.nt.dao_Pfans.PFANS6000.CoststatisticsVo;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -31,6 +33,8 @@ public class Pfans3005Controller {
     private PurchaseService  purchaseService;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @RequestMapping(value="/get",method = {RequestMethod.GET})
     public ApiResult getPurchase(HttpServletRequest request)throws  Exception{
@@ -85,6 +89,14 @@ public class Pfans3005Controller {
         SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy/MM/dd");
         List<Purchase> list = purchaseVo.getPurchase();
         Map<String, Object> data = new HashMap<>();
+//        if(list.get(0).getBudgetnumber().indexOf("JY") != -1){
+//            List<Dictionary> curList = dictionaryService.getForSelect(list.get(0).getBudgetnumber().substring(0,4));
+//            for (Dictionary item : curList) {
+//                if (item.getCode().equals(list.get(0).getBudgetnumber())) {
+//                    list.get(0).setBudgetnumber(item.getValue1() + "_" + item.getValue3());
+//                }
+//            }
+//        }
         data.put("cgList", list);
         ExcelOutPutUtil.OutPutPdf("领取验收单", "lingquyanshoudan.xlsx", data, response);
         ExcelOutPutUtil.deleteDir("E:\\PFANS\\image");

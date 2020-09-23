@@ -49,9 +49,9 @@ public class Pfans2005Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         //add gbb 0805 生成工资时check考试数据 start
         Integer attcount = givingService.attendancecheck(tokenModel);
-        if(attcount > 0){
-            return ApiResult.fail("有未审批通过的考勤数据，请确认！");
-        }
+//        if(attcount > 0){
+//            return ApiResult.fail("有未审批通过的考勤数据，请确认！");
+//        }
         //add gbb 0805 生成工资时check考试数据 end
         givingService.insert(generation, tokenModel);
         return ApiResult.success();
