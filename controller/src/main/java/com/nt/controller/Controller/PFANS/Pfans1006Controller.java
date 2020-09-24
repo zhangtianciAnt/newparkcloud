@@ -242,9 +242,21 @@ public class Pfans1006Controller {
             } else {
                 loanApplication.setMoneys("0.00");
             }
-            if(loanApplication.getPaymentmethod().equals("PJ015001")){
-                loanApplication.setAccountpayeename("");
+            //add_fjl_0924 收款方全称
+            String pa = "";
+            String pan = "";
+            //转账支票
+            if (loanApplication.getPaymentmethod().equals("PJ015003")) {
+                pa = loanApplication.getPayeename();
+                loanApplication.setPayeecode("");
+                loanApplication.setPayeebankaccount("");
+                loanApplication.setPayeebankaccountnumber("");
             }
+            //网上银行付款
+            if (loanApplication.getPaymentmethod().equals("PJ015001")) {
+                pan = loanApplication.getPayeename();
+            }
+            //add_fjl_0924 转账支票-收款方全称
             data.put("wfList1", wfList1);
             data.put("wfList2", wfList2);
             data.put("wfList3", wfList3);
@@ -252,6 +264,8 @@ public class Pfans1006Controller {
             data.put("wfList7", wfList7);
             data.put("taa", taa);
             data.put("tan", tan);
+            data.put("pa", pa);
+            data.put("pan", pan);
             data.put("userim", userim);
             data.put("loan", loanApplication);
 
