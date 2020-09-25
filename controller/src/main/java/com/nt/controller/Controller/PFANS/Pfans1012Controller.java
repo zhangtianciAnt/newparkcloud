@@ -486,22 +486,15 @@ public class Pfans1012Controller {
 //add-ws-6/29-禅道171问题修正
         String currenct = "";
         String currenctsum = "";
-        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(pubvo.getPublicexpense().getMoneys())) {
-            BigDecimal bd = new BigDecimal(pubvo.getPublicexpense().getMoneys());
-            str_format = df.format(bd);
-            if (str_format.equals(".00")) {
-                str_format = "0.00";
-            }
-            pubvo.getPublicexpense().setMoneys(str_format);
-        } else {
-            pubvo.getPublicexpense().setMoneys("0.00");
-        }
-
+        //add-ws-9/27-禅道任务556
+        int checkcurrenct = 0;
+        //add-ws-9/27-禅道任务556
         List<Dictionary> curListsum = dictionaryService.getForSelect("PG019");
         for (Dictionary ite : curListsum) {
             if (pubvo.getOtherdetails().size() > 0) {
                 if (!pubvo.getOtherdetails().get(0).getForeigncurrency().equals("0")) {
                     if (ite.getCode().equals(pubvo.getOtherdetails().get(0).getCurrency())) {
+                        checkcurrenct = checkcurrenct + 1;
                         currenct = ite.getValue3();
                         //add_fjl_0907  BigDecimal类型进行计算
                         BigDecimal mountsum = sum.add(sum1);
@@ -510,6 +503,7 @@ public class Pfans1012Controller {
                     }
                 } else if (!pubvo.getPurchasedetails().get(0).getForeigncurrency().equals("0")) {
                     if (ite.getCode().equals(pubvo.getPurchasedetails().get(0).getCurrency())) {
+                        checkcurrenct = checkcurrenct + 1;
                         currenct = ite.getValue3();
                         //add_fjl_0907  BigDecimal类型进行计算
                         BigDecimal mountsum = sum.add(sum1);
@@ -519,7 +513,22 @@ public class Pfans1012Controller {
                 }
             }
         }
-
+        //upd-ws-9/27-禅道任务556
+        if (checkcurrenct != 0) {
+            pubvo.getPublicexpense().setMoneys("");
+        } else {
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(pubvo.getPublicexpense().getMoneys())) {
+                BigDecimal bd = new BigDecimal(pubvo.getPublicexpense().getMoneys());
+                str_format = df.format(bd);
+                if (str_format.equals(".00")) {
+                    str_format = "0.00";
+                }
+                pubvo.getPublicexpense().setMoneys(str_format);
+            } else {
+                pubvo.getPublicexpense().setMoneys("0.00");
+            }
+        }
+        //upd-ws-9/27-禅道任务556
 //add-ws-6/29-禅道171问题修正
         for (int k = 0; k < pubvo.getTrafficdetails().size(); k++) {
             if (pubvo.getTrafficdetails().get(k).getRmb() != null) {
