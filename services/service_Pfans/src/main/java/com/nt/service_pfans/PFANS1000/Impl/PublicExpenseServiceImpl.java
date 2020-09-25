@@ -248,6 +248,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         }
         return resultMap;
     }
+
     //add-ws-7/9-禅道任务248
     //列表查询
     @Override
@@ -277,6 +278,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     public Float aFloat(Float a) {
         return a > 0 ? a : -a;
     }
+
     //新建
     @Override
     public void insert(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception {
@@ -288,25 +290,25 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         int day = cal.get(Calendar.DATE);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String no = "";
-        if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002002"))){
-            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()) , "GL");
+        if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002002"))) {
+            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "GL");
             no = String.format("%2d", count + 1).replace(" ", "0");
             String month1 = String.format("%2d", month).replace(" ", "0");
             String day1 = String.format("%2d", day).replace(" ", "0");
             invoiceNo = "DL4GL" + year + month1 + day1 + no;
-        } else if(publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002001"))){
-            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()) , "AP");
+        } else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002001"))) {
+            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AP");
             no = String.format("%2d", count + 1).replace(" ", "0");
             String month1 = String.format("%2d", month).replace(" ", "0");
             String day1 = String.format("%2d", day).replace(" ", "0");
             invoiceNo = "DL4AP" + year + month1 + day1 + no;
-        }else if(publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002003"))){
-            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()) , "AR");
+        } else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002003"))) {
+            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AR");
             no = String.format("%2d", count + 1).replace(" ", "0");
             String month1 = String.format("%2d", month).replace(" ", "0");
             String day1 = String.format("%2d", day).replace(" ", "0");
             invoiceNo = "DL4AR" + year + month1 + day1 + no;
-        } else{
+        } else {
             no = "01";
             String month1 = String.format("%2d", month).replace(" ", "0");
             String day1 = String.format("%2d", day).replace(" ", "0");
@@ -316,7 +318,21 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 //        String month1 = String.format("%2d", month).replace(" ", "0");
 //        String day1 = String.format("%2d", day).replace(" ", "0");
 //        invoiceNo = "DL4AP" + year + month1 + day1 + no;
-
+        //add-ws-9/25-禅道567
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpenseVo.getPublicexpense().getJudgement())) {
+            Award award1 = new Award();
+            String[] aa = publicExpenseVo.getPublicexpense().getJudgement().split(",");
+            award1.setAward_id(aa[0]);
+            List<Award> award = awardMapper.select(award1);
+            if (award.size() > 0) {
+                String statuspublic1 = publicExpenseVo.getPublicexpense().getJudgement_name();
+                String statuspublic2 = award.get(0).getStatuspublic();
+                String statuspublic3 = statuspublic1 + ',' + statuspublic2 ;
+                award.get(0).setStatuspublic(statuspublic3);
+                awardMapper.updateByPrimaryKey(award.get(0));
+            }
+        }
+        //add-ws-9/25-禅道567
         String publicexpenseid = UUID.randomUUID().toString();
         PublicExpense publicExpense = new PublicExpense();
         BeanUtils.copyProperties(publicExpenseVo.getPublicexpense(), publicExpense);
@@ -885,18 +901,18 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         //upd-8/20-ws-禅道468任务
         publicExpenseMapper.updateByPrimaryKey(publicExpense);
 
-        if(publicExpense.getStatus().equals("4")){
+        if (publicExpense.getStatus().equals("4")) {
             String[] loa = publicExpense.getLoan().split(",");
-            if(loa.length > 0){
-                for(int i = 0; i < loa.length; i ++){
+            if (loa.length > 0) {
+                for (int i = 0; i < loa.length; i++) {
                     LoanApplication loanApplication = new LoanApplication();
                     loanApplication.setLoanapplication_id(loa[i]);
                     LoanApplication loantion = loanApplicationMapper.selectByPrimaryKey(loanApplication);
-                    if(loantion != null){
+                    if (loantion != null) {
                         loantion.setCanafver("1");
-                        if(loantion.getCanafvermoney() != null){
+                        if (loantion.getCanafvermoney() != null) {
                             loantion.setCanafvermoney(BigDecimal.valueOf(Double.parseDouble(loantion.getCanafvermoney()) + Double.parseDouble(publicExpense.getMoneys())).setScale(2, RoundingMode.HALF_UP).toPlainString());
-                        }else{
+                        } else {
                             loantion.setCanafvermoney(publicExpense.getMoneys());
                         }
                         loanApplicationMapper.updateByPrimaryKey(loantion);
@@ -1088,46 +1104,34 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         return pubVo;
     }
 
-    public Map<String, String> getworkfolwPurchaseData(PublicExpense publicExpense) throws Exception
-    {
+    public Map<String, String> getworkfolwPurchaseData(PublicExpense publicExpense) throws Exception {
         Map<String, String> getpurchaseMap = new HashMap<String, String>();
         Map<String, String> getpurchaseMapsub = new HashMap<String, String>();
         publicExpense = publicExpenseMapper.selectByPrimaryKey(publicExpense.getPublicexpenseid());
-        if(publicExpense.getJudgement_name()!=null && !publicExpense.getJudgement_name().equals(""))
-        {
+        if (publicExpense.getJudgement_name() != null && !publicExpense.getJudgement_name().equals("")) {
             String[] pusname = publicExpense.getJudgement_name().split(",");
             String[] pusid = publicExpense.getJudgement().split(",");
-            if(pusname.length>0)
-            {
-                for(int i=0;i<pusname.length;i++)
-                {
-                    if(pusname[i].substring(0,2).equals("CG"))
-                    {
-                        Purchase purchase =new Purchase();
+            if (pusname.length > 0) {
+                for (int i = 0; i < pusname.length; i++) {
+                    if (pusname[i].substring(0, 2).equals("CG")) {
+                        Purchase purchase = new Purchase();
                         purchase.setPurnumbers(pusname[i]);
                         List<Purchase> purchaseList = new ArrayList<Purchase>();
                         purchaseList = purchaseMapper.select(purchase);
-                        if(purchaseList.size()>0)
-                        {
+                        if (purchaseList.size() > 0) {
                             //采购决裁
-                            if(getpurchaseMap.containsKey("purchase"))
-                            {
-                                String val= getpurchaseMap.get("purchase")+";"+purchaseList.get(0).getPurchase_id() +","+purchaseList.get(0).getStatus();
-                                getpurchaseMap.put("purchase",val);
-                            }
-                            else
-                            {
-                                getpurchaseMap.put("purchase",purchaseList.get(0).getPurchase_id() +","+purchaseList.get(0).getStatus());
+                            if (getpurchaseMap.containsKey("purchase")) {
+                                String val = getpurchaseMap.get("purchase") + ";" + purchaseList.get(0).getPurchase_id() + "," + purchaseList.get(0).getStatus();
+                                getpurchaseMap.put("purchase", val);
+                            } else {
+                                getpurchaseMap.put("purchase", purchaseList.get(0).getPurchase_id() + "," + purchaseList.get(0).getStatus());
                             }
                             //精算
-                            if(getpurchaseMap.containsKey("publicExpense"))
-                            {
-                                String val= getpurchaseMap.get("publicExpense")+";"+publicExpense.getPublicexpenseid() +","+ publicExpense.getStatus();
-                                getpurchaseMap.put("publicExpense",val);
-                            }
-                            else
-                            {
-                                getpurchaseMap.put("publicExpense",publicExpense.getPublicexpenseid() +","+ publicExpense.getStatus());
+                            if (getpurchaseMap.containsKey("publicExpense")) {
+                                String val = getpurchaseMap.get("publicExpense") + ";" + publicExpense.getPublicexpenseid() + "," + publicExpense.getStatus();
+                                getpurchaseMap.put("publicExpense", val);
+                            } else {
+                                getpurchaseMap.put("publicExpense", publicExpense.getPublicexpenseid() + "," + publicExpense.getStatus());
                             }
                         }
                     }

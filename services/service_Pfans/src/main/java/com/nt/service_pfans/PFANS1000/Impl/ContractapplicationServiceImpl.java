@@ -657,7 +657,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             //add-ws-7/1-禅道152任务
                             awardlist2 = io.getAward_id();
                             //add-ws-7/1-禅道152任
-                            io.setStatuspublic("0");
+//                            io.setStatuspublic("0");
                             io.setContracttype(contractapp.getContracttype());
                             io.setCustojapanese(contractapp.getCustojapanese());
                             io.setCustochinese(contractapp.getCustochinese());
@@ -686,7 +686,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         award.setContractnumber(contractnumber);
                         //13
                         award.setDates(contractapp.getDates());
-                        award.setStatuspublic("0");
+//                        award.setStatuspublic("0");
                         award.setContracttype(contractapp.getContracttype());
                         award.setCustojapanese(contractapp.getCustojapanese());
                         award.setCustochinese(contractapp.getCustochinese());
@@ -739,7 +739,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             io.setContractnumber(contractnumber);
 
                             awardlist3 = io.getAward_id();
-                            io.setStatuspublic("0");
+//                            io.setStatuspublic("0");
                             io.setContracttype(contractapp.getContracttype());
                             io.setCustojapanese(contractapp.getCustojapanese());
                             io.setCustochinese(contractapp.getCustochinese());
@@ -766,7 +766,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
                         award.setContractnumber(contractnumber);
                         //13
-                        award.setStatuspublic("0");
+//                        award.setStatuspublic("0");
                         award.setContracttype(contractapp.getContracttype());
                         award.setCustojapanese(contractapp.getCustojapanese());
                         award.setCustochinese(contractapp.getCustochinese());
