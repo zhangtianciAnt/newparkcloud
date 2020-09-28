@@ -738,7 +738,7 @@ public class Pfans1012Controller {
     @RequestMapping(value = "/getLoanApplicationList", method = {RequestMethod.GET})
     public ApiResult getLoanApplicationList(String loanapno, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(loanapplicationService.getLoanApplicationList(loanapno));
+        return ApiResult.success(loanapplicationService.getLoanApplicationList(loanapno,tokenModel));
     }
     //add ccm 0728  精算时关联多个暂借款
 
