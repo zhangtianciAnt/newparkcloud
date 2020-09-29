@@ -185,7 +185,7 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
             mapBox_mapLevelMapper.updateByPrimaryKeySelective(mapBox_mapLevel);
             String[] parentidList = mapBox_mapLevel.getCascids().split("/");
             if (parentidList.length >= 2) {
-                for (int i = 1; i < parentidList.length; i++) {
+                for (int i = 0; i < parentidList.length; i++) {
                     MapBox_MapLevel mapBox_mapLevel1 = mapBox_mapLevelMapper.selectByPrimaryKey(parentidList[i]);
                     if (mapBox_mapLevel1 != null) {
                         mapBox_mapLevel1.setRemark(zeroOrOne == true ? "1" : "0");
