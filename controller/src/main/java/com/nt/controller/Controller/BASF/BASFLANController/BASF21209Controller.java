@@ -1,9 +1,7 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
-import com.nt.dao_BASF.EmailConfig;
-import com.nt.dao_BASF.SendEmail;
-import com.nt.dao_BASF.Startprogram;
-import com.nt.dao_BASF.Trainjoinlist;
+import cn.hutool.core.util.StrUtil;
+import com.nt.dao_BASF.*;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_BASF.EmailConfigServices;
 import com.nt.service_BASF.SendEmailServices;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.UUID;
 
@@ -260,5 +259,15 @@ public class BASF21209Controller {
     @RequestMapping(value = "/getFutureProgram", method = {RequestMethod.POST})
     public ApiResult getFutureProgram(HttpServletRequest request) throws Exception {
         return ApiResult.success(startprogramServices.getFutureProgram());
+    }
+
+    @RequestMapping(value = "/exportSignin", method = {RequestMethod.GET})
+    public void excelout(String noStartRowid, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        //判断传来的参数是否存在
+        if (StrUtil.isEmpty(noStartRowid)) {
+            //不存在，返回错误提示
+            return;
+        }
+        startprogramServices.exportSignin(noStartRowid,response);
     }
 }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 /**
@@ -108,4 +109,7 @@ public class Startprogram extends BaseModel {
 
     //备注
     private String remarks;
+
+    @Transient
+    private String date;
 }

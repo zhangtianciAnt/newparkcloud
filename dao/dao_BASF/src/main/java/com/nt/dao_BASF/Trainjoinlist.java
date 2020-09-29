@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 /**
@@ -115,4 +116,7 @@ public class Trainjoinlist extends BaseModel {
      * 备注
      */
     private String remark;
+
+    @Transient
+    private Integer index;
 }

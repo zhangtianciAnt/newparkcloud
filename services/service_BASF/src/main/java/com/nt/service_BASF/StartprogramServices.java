@@ -6,6 +6,7 @@ import com.nt.dao_BASF.VO.StartprogramVo;
 import com.nt.dao_BASF.VO.TrainEducationPerVo;
 import com.nt.utils.dao.TokenModel;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -60,4 +61,7 @@ public interface StartprogramServices {
 
     //大屏培训信息推送列表
     List<Startprogram> getFutureProgram() throws Exception;
+
+    //导出签到单
+    void exportSignin(String noStartRowid, HttpServletResponse response) throws Exception;
 }

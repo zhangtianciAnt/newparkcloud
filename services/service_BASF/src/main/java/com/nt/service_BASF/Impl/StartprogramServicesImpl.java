@@ -2,15 +2,20 @@ package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.Programlist;
 import com.nt.dao_BASF.Startprogram;
+import com.nt.dao_BASF.Trainjoinlist;
 import com.nt.dao_BASF.VO.PassingRateVo;
 import com.nt.dao_BASF.VO.StartprogramVo;
 import com.nt.dao_BASF.VO.TrainEducationPerVo;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_BASF.ProgramlistServices;
 import com.nt.service_BASF.StartprogramServices;
 import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.service_BASF.mapper.ProgramlistMapper;
 import com.nt.service_BASF.mapper.StartprogramMapper;
+import com.nt.service_Org.UserService;
+import com.nt.utils.ExcelOutPutUtil;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -18,9 +23,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import javax.servlet.http.HttpServletResponse;
+import java.util.*;
 
 /**
  * @ProjectName: BASF应急平台
@@ -47,6 +51,9 @@ public class StartprogramServicesImpl implements StartprogramServices {
     private ProgramlistMapper programlistMapper;
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private UserService userService;
 
     //获取未开班培训列表
     @Override
@@ -184,5 +191,39 @@ public class StartprogramServicesImpl implements StartprogramServices {
         return startprogramMapper.getFutureProgram();
     }
 
+    //导出签到单
+    @Override
+    public void exportSignin(String noStartRowid, HttpServletResponse response) throws Exception{
+        //获取申请详情
+        Startprogram startprogram = one(noStartRowid);
+        Query queryOwner = new Query();
+        if (StringUtils.isNotEmpty(startprogram.getProgramhard())) {
+            queryOwner.addCriteria(Criteria.where("userid").is(startprogram.getProgramhard()));
+            CustomerInfo customerInfo = mongoTemplate.findOne(queryOwner, CustomerInfo.class);
+            startprogram.setOwner(customerInfo.getUserinfo().getCustomername());
+        }
+        Calendar rightNow = Calendar.getInstance();
+        Integer month = rightNow.get(Calendar.MONTH) + 1;
+        String now = rightNow.get(Calendar.YEAR) + "年" + month + "月" + rightNow.get(rightNow.DAY_OF_MONTH) + "日";
+        startprogram.setDate(now);
+        //获取培训申请人员名单
+        List<Trainjoinlist> joinlist = trainjoinlistServices.joinlists(noStartRowid);
+        int index = 0;
+        for (Trainjoinlist trainjoinlist : joinlist){
+            index++;
+            trainjoinlist.setIndex(index);
+            Query query = new Query();
+            if (StringUtils.isNotEmpty(trainjoinlist.getPersonnelid())) {
+                query.addCriteria(Criteria.where("_id").is(trainjoinlist.getPersonnelid()));
+                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                trainjoinlist.setCustomername(customerInfo.getUserinfo().getCustomername());
+            }
+        }
+        Map<String, Object> data = new HashMap<>();
+        data.put("startprogram", startprogram);
+        data.put("joinlist", joinlist);
+        ExcelOutPutUtil.OutPut(startprogram.getProgramname(), "signin.xlsx", data, response);
+
+    }
 
 }
