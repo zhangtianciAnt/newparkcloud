@@ -129,7 +129,7 @@ public class BASF21209Controller {
             //培训名称
             String programname = startprogramlist.get(0).getProgramname();
             //线上/线下
-            String isonline = startprogramlist.get(0).getIsonline() == "BC032001" ? "线上" : "线下";
+            String isonline = startprogramlist.get(0).getIsonline().equals("BC032001") ? "线上" : "线下";
             String startprogramid = startprogramlist.get(0).getStartprogramid();
             //发信人
             List<EmailConfig> emailconfig = emailConfigServices.get();
@@ -152,17 +152,22 @@ public class BASF21209Controller {
                         "您好：<br>【" + programname + "/" + isonline + "】考核结果已发布，您装置/部门的培训人员的考核结果如下：<br>" +
                                 "<table width=\"100%\" border=\"1\" cellspacing=\"0\" cellpadding=\"2\">"
                                 + "<tr>" +
-                                //"<td width=\"10%\">ID</td>" +
                                 "<td>姓名</td>" +
                                 "<td>员工号</td>" +
-                                "<td>成绩</td>" +
                                 "<td>通过状态</td>" +
+                                "<td>理论成绩</td>" +
+                                "<td>实操成绩</td>" +
+                                "<td>证书编号</td>" +
+                                "<td>发证日期</td>" +
                                 "</tr>";
                 StringBuilder neirong = new StringBuilder();
                 for (Trainjoinlist departmentidlist : Departmentidlists) {
                     String customername = departmentidlist.getCustomername();
                     String documentnumber = departmentidlist.getJobnumber();
-                    String performance = departmentidlist.getPerformance();
+                    String performance = departmentidlist.getPerformance(); // 理论成绩
+                    String actualperformance = departmentidlist.getActualperformance(); // 实操成绩
+                    String certificateno = departmentidlist.getCertificateno(); // 证书编号
+                    String issuedate = departmentidlist.getIssuedate(); // 发证日期
                     String throughtype = departmentidlist.getThroughtype();
 
                     if (customername == null) {
@@ -177,8 +182,25 @@ public class BASF21209Controller {
                     if (throughtype == null) {
                         throughtype = " ";
                     }
+                    if (actualperformance == null) {
+                        actualperformance = " ";
+                    }
+                    if (certificateno == null) {
+                        certificateno = " ";
+                    }
+                    if (issuedate == null) {
+                        issuedate = " ";
+                    }
 
-                    neirong.append("<tr>").append("<td>").append(customername).append("</td>").append("<td>").append(documentnumber).append("</td>").append("<td>").append(performance).append("</td>").append("<td>").append(throughtype).append("</td>").append("</tr>");
+                    neirong.append("<tr>")
+                            .append("<td>").append(customername).append("</td>")
+                            .append("<td>").append(documentnumber).append("</td>")
+                            .append("<td>").append(throughtype).append("</td>")
+                            .append("<td>").append(performance).append("</td>")
+                            .append("<td>").append(actualperformance).append("</td>")
+                            .append("<td>").append(certificateno).append("</td>")
+                            .append("<td>").append(issuedate).append("</td>")
+                            .append("</tr>");
                 }
                 EMAILCONTENT = EMAILCONTENT + neirong + "</table>";
                 SendEmail sendemail = new SendEmail();
