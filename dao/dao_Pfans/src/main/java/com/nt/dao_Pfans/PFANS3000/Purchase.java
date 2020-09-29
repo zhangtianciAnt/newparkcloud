@@ -283,4 +283,8 @@ public class Purchase  extends BaseModel {
     @Column(name = "SUPPLIERNAME")
     private String suppliername;
     //add_fjl_0908 end
+
+    //废弃理由
+    @Column(name = "TRASHREASON")
+    private String trashreason;
 }
