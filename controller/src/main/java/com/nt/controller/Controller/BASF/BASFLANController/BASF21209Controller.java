@@ -15,7 +15,6 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @ProjectName: BASF应急平台
@@ -76,6 +76,40 @@ public class BASF21209Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        if (!("BC039004").equals(startprogram.getProgramtype()) && !("BC039003").equals(startprogram.getProgramtype())) {
+            Startprogram tmp = startprogramServices.one(startprogram.getStartprogramid());
+            startprogram.setProgramtype(tmp.getProgramtype());
+            startprogram.setIsonline(tmp.getIsonline());
+            // 线下可开班状态
+            if (startprogram.getIsonline().equals("BC032002")) {
+                switch (startprogram.getProgramtype()) {
+                    case "BC039001":
+                        startprogram.setProgramtype("BC039005");
+                        break;
+                    case "BC039005":
+                        Startprogram tmp02 = startprogramServices.one(startprogram.getStartprogramid());
+                        tmp02.setProgramname(startprogram.getProgramname() + "02");
+                        tmp02.setStartprogramid(UUID.randomUUID().toString());
+                        tmp02.setProgramtype("BC039002");
+                        tmp02.setInformpeople(startprogram.getInformpeople());
+                        tmp02.setStarttheorydate(startprogram.getStarttheorydate());
+                        tmp02.setTheorysite(startprogram.getTheorysite());
+                        tmp02.setStartoperationdate(startprogram.getStartoperationdate());
+                        tmp02.setOperationsite(startprogram.getOperationsite());
+                        tmp02.setExpirationdate(startprogram.getExpirationdate());
+                        tmp02.setMaterialsexpirationdate(startprogram.getMaterialsexpirationdate());
+                        tmp02.setInformperson(startprogram.getInformperson());
+                        tmp02.setIsfirst(startprogram.getIsfirst());
+                        startprogramServices.insert(tmp02, tokenModel);
+                        if ("BC039005".equals(tmp.getProgramtype())) {
+                            tmp.setProgramtype("BC039002");
+                        }
+                        tmp.setProgramname(tmp.getProgramname() + "01");
+                        startprogramServices.update(tmp, tokenModel);
+                        return ApiResult.success();
+                }
+            }
+        }
         startprogramServices.update(startprogram, tokenModel);
         return ApiResult.success();
     }
@@ -88,84 +122,77 @@ public class BASF21209Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         List<Startprogram> startprogramlist = startprogramServices.select(startprogram);
+        if (startprogramlist.size() > 0) {
+            //通知人员list
+            String ePersonlist = startprogramlist.get(0).getInformperson();
+            String[] notifyPerson = ePersonlist.split(",");
+            //培训名称
+            String programname = startprogramlist.get(0).getProgramname();
+            //线上/线下
+            String isonline = startprogramlist.get(0).getIsonline() == "BC032001" ? "线上" : "线下";
+            String startprogramid = startprogramlist.get(0).getStartprogramid();
+            //发信人
+            List<EmailConfig> emailconfig = emailConfigServices.get();
 
-        //通知人员list
-        String ePersonlist = startprogramlist.get(0).getInformperson();
-        String[] notifyPerson = ePersonlist.split(",");
-        //培训名称
-        String programname = startprogramlist.get(0).getProgramname();
-        //线上/线下
-        String isonline = startprogramlist.get(0).getIsonline() == "BC032001" ? "线上" : "线下";
-        String startprogramid = startprogramlist.get(0).getStartprogramid();
-        //发信人
-        List<EmailConfig> emailconfig = emailConfigServices.get();
+            for (String person : notifyPerson) {
+                String useremail = "";
+                UserVo uservo = userService.getAccountCustomerById(person);
+                String depid = uservo.getCustomerInfo().getUserinfo().getDepartmentid().get(0);
+                if (StringUtils.isNotEmpty(uservo.getCustomerInfo().getUserinfo().getEmail())) {
+                    useremail = uservo.getCustomerInfo().getUserinfo().getEmail();
+                } else {
+                    continue;
+                }
+                Trainjoinlist trainjoilist = new Trainjoinlist();
+                trainjoilist.setDepartmentid(depid);
+                trainjoilist.setStartprogramid(startprogramid);
+                List<Trainjoinlist> Departmentidlists = trainjoinlistServices.addUserName(trainjoinlistMapper.select(trainjoilist));
 
-        for (int l = 0; l < notifyPerson.length; l++) {
-            String useremail="";
-            UserVo uservo = userService.getAccountCustomerById(notifyPerson[l]);
-            String depid = uservo.getCustomerInfo().getUserinfo().getDepartmentid().get(0);
-            if(StringUtils.isNotEmpty(uservo.getCustomerInfo().getUserinfo().getEmail())){
-                 useremail = uservo.getCustomerInfo().getUserinfo().getEmail();
+                String EMAILCONTENT =
+                        "您好：<br>【" + programname + "/" + isonline + "】考核结果已发布，您装置/部门的培训人员的考核结果如下：<br>" +
+                                "<table width=\"100%\" border=\"1\" cellspacing=\"0\" cellpadding=\"2\">"
+                                + "<tr>" +
+                                //"<td width=\"10%\">ID</td>" +
+                                "<td>姓名</td>" +
+                                "<td>员工号</td>" +
+                                "<td>成绩</td>" +
+                                "<td>通过状态</td>" +
+                                "</tr>";
+                StringBuilder neirong = new StringBuilder();
+                for (Trainjoinlist departmentidlist : Departmentidlists) {
+                    String customername = departmentidlist.getCustomername();
+                    String documentnumber = departmentidlist.getJobnumber();
+                    String performance = departmentidlist.getPerformance();
+                    String throughtype = departmentidlist.getThroughtype();
+
+                    if (customername == null) {
+                        customername = " ";
+                    }
+                    if (documentnumber == null) {
+                        documentnumber = " ";
+                    }
+                    if (performance == null) {
+                        performance = " ";
+                    }
+                    if (throughtype == null) {
+                        throughtype = " ";
+                    }
+
+                    neirong.append("<tr>").append("<td>").append(customername).append("</td>").append("<td>").append(documentnumber).append("</td>").append("<td>").append(performance).append("</td>").append("<td>").append(throughtype).append("</td>").append("</tr>");
+                }
+                EMAILCONTENT = EMAILCONTENT + neirong + "</table>";
+                SendEmail sendemail = new SendEmail();
+                sendemail.setUserName(emailconfig.get(0).getUsername());
+                sendemail.setPassword(emailconfig.get(0).getPassword());
+                sendemail.setHost(emailconfig.get(0).getHost());
+                sendemail.setPort(emailconfig.get(0).getPort());
+                sendemail.setFromAddress(emailconfig.get(0).getFromaddress());
+                sendemail.setContextType(emailconfig.get(0).getContexttype());
+                sendemail.setToAddress(useremail);
+                sendemail.setSubject("【培训结果发布】");
+                sendemail.setContext(EMAILCONTENT);
+                sendEmailServices.sendmail(tokenModel, sendemail);
             }
-            else {
-                continue;
-            }
-            Trainjoinlist trainjoilist = new Trainjoinlist();
-            trainjoilist.setDepartmentid(depid);
-            trainjoilist.setStartprogramid(startprogramid);
-            List<Trainjoinlist> Departmentidlists = trainjoinlistServices.addUserName(trainjoinlistMapper.select(trainjoilist));
-
-            String EMAILCONTENT =
-                    "您好：<br>【" + programname + "/" + isonline + "】考核结果已发布，您装置/部门的培训人员的考核结果如下：<br>" +
-                            "<table width=\"100%\" border=\"1\" cellspacing=\"0\" cellpadding=\"2\">"
-                            + "<tr>" +
-                            //"<td width=\"10%\">ID</td>" +
-                            "<td>姓名</td>" +
-                            "<td>员工号</td>" +
-                            "<td>成绩</td>" +
-                            "<td>通过状态</td>" +
-                            "</tr>";
-            String neirong = "";
-            for (int i = 0; i < Departmentidlists.size(); i++) {
-                String customername = Departmentidlists.get(i).getCustomername();
-                String documentnumber = Departmentidlists.get(i).getJobnumber();
-                String performance = Departmentidlists.get(i).getPerformance();
-                String throughtype = Departmentidlists.get(i).getThroughtype();
-
-                if (customername == null) {
-                    customername = " ";
-                }
-                if (documentnumber == null) {
-                    documentnumber = " ";
-                }
-                if (performance == null) {
-                    performance = " ";
-                }
-                if (throughtype == null) {
-                    throughtype = " ";
-                }
-
-                neirong = neirong +
-                        "<tr>" +
-                        "<td>" + customername + "</td>" +
-                        "<td>" + documentnumber + "</td>" +
-                        "<td>" + performance + "</td>" +
-                        "<td>" + throughtype + "</td>" +
-                        "</tr>";
-            }
-            EMAILCONTENT = EMAILCONTENT + neirong + "</table>";
-
-            SendEmail sendemail = new SendEmail();
-            sendemail.setUserName(emailconfig.get(0).getUsername());
-            sendemail.setPassword(emailconfig.get(0).getPassword());
-            sendemail.setHost(emailconfig.get(0).getHost());
-            sendemail.setPort(emailconfig.get(0).getPort());
-            sendemail.setFromAddress(emailconfig.get(0).getFromaddress());
-            sendemail.setContextType(emailconfig.get(0).getContexttype());
-            sendemail.setToAddress(useremail);
-            sendemail.setSubject("【培训结果发布】");
-            sendemail.setContext(EMAILCONTENT);
-            sendEmailServices.sendmail(tokenModel, sendemail);
         }
         return ApiResult.success();
     }
