@@ -2,7 +2,6 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.*;
-import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
@@ -81,6 +80,12 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     }
 
     @Override
+    public List<PublicExpense> getpublice(String loanapplication_id) throws Exception {
+        List<PublicExpense> pb = publicExpenseMapper.getLoan(loanapplication_id);
+        return pb;
+    }
+
+    @Override
     public void updateLoanApplication(LoanApplication loanapplication, TokenModel tokenModel) throws Exception {
      //upd-8/20-ws-禅道468任务
         LoanApplication loanapp = new LoanApplication();
@@ -94,6 +99,124 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 loanapp.setModifyon(modeon);
             }
         }
+        //add_fjl_0929  添加作废时决裁数据回滚  start
+        if (StringUtils.isNotEmpty(loanapplication.getProcessingstatus()) && loanapplication.getProcessingstatus().equals("2")) {
+            String dic = "";
+            List<Dictionary> curList1 = dictionaryService.getForSelect("HT014");
+            for (Dictionary item : curList1) {
+                dic += item.getValue2() + ",";
+            }
+            if (StringUtils.isNotEmpty(loanapplication.getJudgements_name())) {
+                if (dic != "") {
+                    if (dic.contains(loanapplication.getJudgements_name().substring(0, 2))) //委托决裁
+                    {
+                        String[] pur = loanapplication.getJudgements_name().split(",");
+                        for (String p : pur) {
+                            Award award = new Award();
+                            award.setContractnumber(p);
+                            List<Award> awardList = awardMapper.select(award);
+                            if (awardList.size() > 0) {
+                                if (StringUtils.isNotEmpty(awardList.get(0).getLoanapno()) && awardList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
+                                    awardList.get(0).setLoanapno(awardList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
+                                    awardList.get(0).setLoanapplication_id(awardList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
+                                }
+                                awardList.get(0).preUpdate(tokenModel);
+                                awardMapper.updateByPrimaryKey(awardList.get(0));
+                            }
+                        }
+                    }
+                }
+            }
+            if (loanapplication.getJudgements_name().substring(0, 2).equals("CG")) //采购
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    Purchase purchase = new Purchase();
+                    purchase.setPurnumbers(p);
+                    List<Purchase> purchaseList = purchaseMapper.select(purchase);
+                    if (purchaseList.size() > 0) {
+                        if (StringUtils.isNotEmpty(purchaseList.get(0).getLoanapno()) && purchaseList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
+                            purchaseList.get(0).setLoanapno(purchaseList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
+                            purchaseList.get(0).setLoanapplication_id(purchaseList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
+                        }
+
+                        purchaseList.get(0).preUpdate(tokenModel);
+                        purchaseMapper.updateByPrimaryKey(purchaseList.get(0));
+                    }
+                }
+            } else if (loanapplication.getJudgements_name().substring(0, 3).equals("JJF"))//交际费
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    Communication communication = new Communication();
+                    communication.setNumbercation(p);
+                    List<Communication> communicationList = communicationMapper.select(communication);
+                    if (communicationList.size() > 0) {
+                        if (StringUtils.isNotEmpty(communicationList.get(0).getLoanapno()) && communicationList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
+                            communicationList.get(0).setLoanapno(communicationList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
+                            communicationList.get(0).setLoanapplication_id(communicationList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
+                        }
+
+                        communicationList.get(0).preUpdate(tokenModel);
+                        communicationMapper.updateByPrimaryKey(communicationList.get(0));
+                    }
+                }
+            } else if (loanapplication.getJudgements_name().substring(0, 2).equals("JC") || loanapplication.getJudgements_name().substring(0, 2).equals("WC"))//其他业务//无偿设备
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    Judgement judgement = new Judgement();
+                    judgement.setJudgnumbers(p);
+                    List<Judgement> judgementList = judgementMapper.select(judgement);
+                    if (judgementList.size() > 0) {
+                        if (StringUtils.isNotEmpty(judgementList.get(0).getLoanapno()) && judgementList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
+                            judgementList.get(0).setLoanapno(judgementList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
+                            judgementList.get(0).setLoanapplication_id(judgementList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
+                        }
+                        judgementList.get(0).preUpdate(tokenModel);
+                        judgementMapper.updateByPrimaryKey(judgementList.get(0));
+                    }
+                }
+            } else if (loanapplication.getJudgements_name().substring(0, 2).equals("QY"))//千元费用
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    PurchaseApply purchaseapply = new PurchaseApply();
+                    purchaseapply.setPurchasenumbers(p);
+                    List<PurchaseApply> purchaseapplyList = purchaseapplyMapper.select(purchaseapply);
+                    if (purchaseapplyList.size() > 0) {
+                        if (StringUtils.isNotEmpty(purchaseapplyList.get(0).getLoanapno()) && purchaseapplyList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
+                            purchaseapplyList.get(0).setLoanapno(purchaseapplyList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
+                            purchaseapplyList.get(0).setLoanapplication_id(purchaseapplyList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
+                        }
+
+                        purchaseapplyList.get(0).preUpdate(tokenModel);
+                        purchaseapplyMapper.updateByPrimaryKey(purchaseapplyList.get(0));
+                    }
+                }
+            } else if (loanapplication.getJudgements_name().substring(0, 1).equals("C"))//境内外出差
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    Business business = new Business();
+                    business.setBusiness_number(p);
+                    List<Business> businessList = businessMapper.select(business);
+                    if (businessList.size() > 0) {
+                        if (StringUtils.isNotEmpty(businessList.get(0).getLoanapno()) && businessList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
+                            businessList.get(0).setLoanapno(businessList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
+                            businessList.get(0).setLoanapplication_id(businessList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
+                        }
+                        businessList.get(0).preUpdate(tokenModel);
+                        businessMapper.updateByPrimaryKey(businessList.get(0));
+                    }
+                }
+            }
+            loanapp.setJudgements("");
+            loanapp.setJudgements_name("");
+            loanapp.setJudgements_moneys("");
+            loanapp.setJudgements_type("");
+        }
+        //add_fjl_0929  添加作废时决裁数据回滚  end
         loanapplicationMapper.updateByPrimaryKey(loanapp);
         //upd-8/20-ws-禅道468任务
     }

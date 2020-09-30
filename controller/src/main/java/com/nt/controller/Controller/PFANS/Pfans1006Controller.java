@@ -286,4 +286,15 @@ public class Pfans1006Controller {
         return ApiResult.success(loanapplicationService.getworkfolwPurchaseData(loanapplication));
     }
     //采购业务数据流程查看详情
+
+    //add_fjl_0929  添加公共费用中暂借款查询 start
+    @RequestMapping(value = "/getpublice", method = {RequestMethod.POST})
+    public ApiResult getpublice(@RequestBody LoanApplication loanapplication, HttpServletRequest request) throws Exception {
+        if (loanapplication == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(loanapplicationService.getpublice(loanapplication.getLoanapplication_id()));
+    }
+    //add_fjl_0929  添加公共费用中暂借款查询 end
 }

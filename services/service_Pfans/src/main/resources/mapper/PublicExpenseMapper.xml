@@ -16,5 +16,9 @@
      select * from publicexpense where JUDGEMENT like CONCAT('%',#{code},'%')
     </select>
 
+    <select id="getLoan" resultType="com.nt.dao_Pfans.PFANS1000.PublicExpense">
+     select * from publicexpense where LOAN like CONCAT('%',#{loan},'%')
+    </select>
+
 
 </mapper>

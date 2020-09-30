@@ -222,4 +222,9 @@ public class LoanApplication extends BaseModel {
     @Column(name = "BALANCE")
     private String balance;
     // add-ws-8/20-禅道469
+
+    //add_fjl_0928 报废原因
+    @Column(name = "REASONVOID")
+    private String reasonvoid;
+    //add_fjl_0928 报废原因
 }
