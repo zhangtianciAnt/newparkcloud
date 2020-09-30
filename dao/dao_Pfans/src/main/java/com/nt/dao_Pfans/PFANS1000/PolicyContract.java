@@ -100,6 +100,13 @@ public class PolicyContract extends BaseModel {
     @Column(name = "APPLICATIONDATE")
     private Date applicationdate;
 
+
+    /**
+     * 附件
+     */
+    @Column(name = "UPLOADFILE")
+    private String uploadfile;
+
     /**
      * 决裁关联请求金额合计
      */

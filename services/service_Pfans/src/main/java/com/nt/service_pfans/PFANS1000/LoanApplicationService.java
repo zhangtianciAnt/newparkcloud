@@ -22,7 +22,7 @@ public interface LoanApplicationService {
     public void updateLoanApplication(LoanApplication loanapplication, TokenModel tokenModel)throws  Exception;
 
     //add ccm 0728  精算时关联多个暂借款
-    List<LoanApplication> getLoanApplicationList(String loanappno)throws Exception;
+    List<LoanApplication> getLoanApplicationList(String loanappno,TokenModel tokenModel)throws Exception;
     //add ccm 0728  精算时关联多个暂借款
 
     Map<String, String> getworkfolwPurchaseData(LoanApplication loanapplication) throws Exception;
