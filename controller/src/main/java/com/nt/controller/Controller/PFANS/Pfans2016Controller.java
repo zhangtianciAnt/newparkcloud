@@ -10,6 +10,8 @@ import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import java.util.stream.Collectors;
@@ -24,31 +26,51 @@ public class Pfans2016Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value = "/list", method = {RequestMethod.GET})
-    public ApiResult list(HttpServletRequest request,@RequestParam String dates) throws Exception {
+    @RequestMapping(value = "/list", method = {RequestMethod.POST})
+    public ApiResult list(@RequestBody AbNormal ab, HttpServletRequest request) throws Exception {
+        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+        List<AbNormal> abnormallist = new ArrayList<>();
         TokenModel tokenModel = tokenService.getToken(request);
         AbNormal abNormal = new AbNormal();
         abNormal.setOwners(tokenModel.getOwnerList());
         List<AbNormal> AbNormalList = abNormalService.list(abNormal);
-        //add-gbb-6/28-禅道166 添加申请日期筛选
-        if(!dates.equals("Invalid date")){
-            AbNormalList = AbNormalList.stream().filter(item -> DateUtil.format(item.getApplicationdate(),"yyyy-MM").equals(dates)).collect(Collectors.toList());
+        //add-ws-9/29-禅道任务547
+        for (AbNormal list : AbNormalList) {
+            if (Integer.valueOf(list.getStatus()) > 4) {
+                list.setOccurrencedate(list.getReoccurrencedate());
+                list.setFinisheddate(list.getRefinisheddate());
+            }
+            if (Integer.valueOf(sf.format(ab.getOccurrencedate())) <= Integer.valueOf(sf.format(list.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate()))) {
+                abnormallist.add(list);
+            } else if (Integer.valueOf(sf.format(ab.getOccurrencedate())) <= Integer.valueOf(sf.format(list.getOccurrencedate())) && Integer.valueOf(sf.format(ab.getFinisheddate())) > Integer.valueOf(sf.format(list.getOccurrencedate())) && Integer.valueOf(sf.format(ab.getFinisheddate())) <= Integer.valueOf(sf.format(list.getFinisheddate()))) {
+                abnormallist.add(list);
+            } else if (Integer.valueOf(sf.format(list.getOccurrencedate())) > Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate())) && Integer.valueOf(sf.format(list.getFinisheddate())) > Integer.valueOf(sf.format(ab.getOccurrencedate()))) {
+                abnormallist.add(list);
+            }
         }
+
+        //add-ws-9/29-禅道任务547
         //add-gbb-6/28-禅道166 添加申请日期筛选
-        return ApiResult.success(AbNormalList);
+//        if(!dates.equals("Invalid date")){
+//            AbNormalList = AbNormalList.stream().filter(item -> DateUtil.format(item.getApplicationdate(),"yyyy-MM").equals(dates)).collect(Collectors.toList());
+//        }
+        //add-gbb-6/28-禅道166 添加申请日期筛选
+        return ApiResult.success(abnormallist);
     }
+
     //add-ws-6/8-禅道035
     @RequestMapping(value = "/list2", method = {RequestMethod.POST})
-    public ApiResult list2(@RequestBody AbNormal abNormal,HttpServletRequest request) throws Exception {
+    public ApiResult list2(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         List<AbNormal> abNormalList = abNormalService.list2(abNormal);
 //        abNormalList = abNormalList.stream().filter(item -> (item.getUser_id().equals(tokenModel.getUserId()))).collect(Collectors.toList());
         return ApiResult.success(abNormalList);
     }
+
     //add-ws-6/8-禅道035
     @RequestMapping(value = "/insertInfo", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
-        try{
+        try {
             if (abNormal == null) {
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
             }
@@ -57,7 +79,7 @@ public class Pfans2016Controller {
             abNormal.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
             abNormalService.insert(abNormal, tokenModel);
             return ApiResult.success();
-        }catch(Exception e){
+        } catch (Exception e) {
             return ApiResult.fail(e.getMessage());
         }
     }
