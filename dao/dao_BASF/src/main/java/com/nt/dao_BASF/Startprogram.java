@@ -112,4 +112,10 @@ public class Startprogram extends BaseModel {
 
     @Transient
     private String date;
+
+    @Transient
+    private String personnelid;
+
+    @Transient
+    private String departmentname;
 }
