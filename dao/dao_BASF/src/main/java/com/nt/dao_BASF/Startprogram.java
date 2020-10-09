@@ -136,4 +136,7 @@ public class Startprogram extends BaseModel {
      */
     @Transient
     private String publishdate;
+
+    @Transient
+    private String personnelid;
 }

@@ -45,4 +45,7 @@ public interface StartprogramMapper extends MyMapper<Startprogram> {
     //大屏培训信息推送列表
     List<Startprogram> getFutureProgram() throws Exception;
 
+    //即将到期人员的一览
+    List<Startprogram> getUsersEnd() throws Exception;
+
 }
