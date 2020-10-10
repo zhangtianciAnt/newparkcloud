@@ -226,4 +226,10 @@ public class StartprogramServicesImpl implements StartprogramServices {
 
     }
 
+    //即将到期人员的一览
+    @Override
+    public List<Startprogram> getUsersEnd() throws Exception {
+        return startprogramMapper.getUsersEnd();
+    }
+
 }

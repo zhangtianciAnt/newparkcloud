@@ -292,4 +292,10 @@ public class BASF21209Controller {
         }
         startprogramServices.exportSignin(noStartRowid,response);
     }
+
+    //即将到期人员的一览
+    @RequestMapping(value = "/getUsersEnd", method = {RequestMethod.POST})
+    public ApiResult getUsersEnd(HttpServletRequest request) throws Exception {
+        return ApiResult.success(startprogramServices.getUsersEnd());
+    }
 }

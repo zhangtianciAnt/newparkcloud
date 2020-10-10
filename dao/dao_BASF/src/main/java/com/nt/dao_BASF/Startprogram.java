@@ -112,4 +112,31 @@ public class Startprogram extends BaseModel {
 
     @Transient
     private String date;
+
+    /**
+     * 部门名称（所属装置）
+     */
+    @Transient
+    private String departmentname;
+
+    /**
+     * 培训时间
+     */
+    @Transient
+    private String traindate;
+
+    /**
+     * 通过状态
+     */
+    @Transient
+    private String throughtype;
+
+    /**
+     * 培训结束日期
+     */
+    @Transient
+    private String publishdate;
+
+    @Transient
+    private String personnelid;
 }

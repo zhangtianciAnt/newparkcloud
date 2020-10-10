@@ -64,4 +64,7 @@ public interface StartprogramServices {
 
     //导出签到单
     void exportSignin(String noStartRowid, HttpServletResponse response) throws Exception;
+
+    //即将到期人员的一览
+    List<Startprogram> getUsersEnd() throws Exception;
 }

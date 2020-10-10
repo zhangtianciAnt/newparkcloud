@@ -44,6 +44,14 @@
         s.programname,
         s.informpeople,
         s.starttheorydate,
+        t.departmentname,
+        CASE
+        s.isonline
+        WHEN 'BC032001' THEN
+        t.finallyexamdate ELSE
+        s.starttheorydate end as traindate,
+        t.throughtype,
+        s.MODIFYON as publishdate,
         s.theorysite,
         s.startoperationdate,
         s.operationsite,
@@ -67,7 +75,16 @@
         s.programtype,
         s.actualstartdate,
         -- 在这里用MODIFYON作为到期时间，可以少写一个vo
-        DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ) AS MODIFYON
+        CASE
+        s.isonline
+        WHEN 'BC032001' THEN
+        DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ) ELSE (
+        CASE
+        WHEN t.issuedate IS NULL THEN
+        DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ) ELSE DATE_ADD( t.issuedate, INTERVAL s.validity MONTH )
+        END
+        )
+        END AS MODIFYON
         FROM
         startprogram AS s
         INNER JOIN
@@ -173,7 +190,9 @@
         s.programtype,
         s.actualstartdate,
         -- 在这里用MODIFYON作为到期时间，可以少写一个vo
-        DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ) AS MODIFYON
+        CASE WHEN t.issuedate IS NULL THEN
+        DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ) ELSE DATE_ADD( t.issuedate, INTERVAL s.validity MONTH )
+		END AS MODIFYON
         FROM
         startprogram AS s
         INNER JOIN
@@ -190,8 +209,18 @@
         AND s.starttheorydate IS NOT NULL
         AND s.programtype in ('BC039004')
         AND s.isonline='BC032002'
-        AND DATEDIFF(DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ),CURRENT_DATE ()) >0
-        AND DATEDIFF(CURRENT_DATE (),DATE_SUB( DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH )) >=0
+        AND DATEDIFF((
+			CASE
+					WHEN t.issuedate IS NULL THEN
+					DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ) ELSE DATE_ADD( t.issuedate, INTERVAL s.validity MONTH )
+				END
+				),CURRENT_DATE ()) >0
+        AND DATEDIFF(CURRENT_DATE (),DATE_SUB( (
+					CASE
+							WHEN t.issuedate IS NULL THEN
+							DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ) ELSE DATE_ADD( t.issuedate, INTERVAL s.validity MONTH )
+						END
+						), INTERVAL s.remindtime MONTH )) >=0
         )
         ORDER BY
 		MODIFYON ASC
@@ -301,5 +330,109 @@ WHERE
         s.`STATUS` = '0'
         AND s.programtype = 'BC039002'
             AND DATEDIFF(s.starttheorydate,CURRENT_DATE ()) > 0
+    </select>
+
+    <!--    即将到期人员的一览-->
+    <select id="getUsersEnd" resultType="com.nt.dao_BASF.Startprogram">
+        ( SELECT
+        s.startprogramid,
+        s.programlistid,
+        s.programname,
+        s.informpeople,
+        s.starttheorydate,
+        s.theorysite,
+        s.startoperationdate,
+        s.operationsite,
+        s.expirationdate,
+        s.materialsexpirationdate,
+        s.informperson,
+        s.programcode,
+        s.programhard,
+        s.insideoutside,
+        s.mandatory,
+        s.isonline,
+        s.thelength,
+        s.validity,
+        s.money,
+        s.remindtime,
+        s.isfirst,
+        s.applydata,
+        s.applydataurl,
+        s.standard,
+        s.questionnum,
+        s.programtype,
+        s.actualstartdate,-- 在这里用MODIFYON作为到期时间，可以少写一个vo
+        DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ) AS MODIFYON,
+        t.personnelid,
+        t.departmentname
+        FROM
+        trainjoinlist AS t
+        INNER JOIN startprogram AS s ON s.startprogramid = t.startprogramid
+        WHERE
+        t.`STATUS` = '0'
+        AND t.jointype = '正常'
+        AND t.throughtype = '通过'
+        AND t.finallyexamdate IS NOT NULL
+        AND s.starttheorydate IS NOT NULL
+        AND s.programtype IN ( 'BC039004' )
+        AND s.isonline = 'BC032001'
+        AND DATEDIFF(
+        DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ),
+        CURRENT_DATE ()) > 0
+        AND DATEDIFF(
+        CURRENT_DATE (),
+        DATE_SUB( DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH )) >= 0
+        ) UNION ALL
+        (
+        SELECT
+        s.startprogramid,
+        s.programlistid,
+        s.programname,
+        s.informpeople,
+        s.starttheorydate,
+        s.theorysite,
+        s.startoperationdate,
+        s.operationsite,
+        s.expirationdate,
+        s.materialsexpirationdate,
+        s.informperson,
+        s.programcode,
+        s.programhard,
+        s.insideoutside,
+        s.mandatory,
+        s.isonline,
+        s.thelength,
+        s.validity,
+        s.money,
+        s.remindtime,
+        s.isfirst,
+        s.applydata,
+        s.applydataurl,
+        s.standard,
+        s.questionnum,
+        s.programtype,
+        s.actualstartdate,-- 在这里用MODIFYON作为到期时间，可以少写一个vo
+        DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ) AS MODIFYON,
+        t.personnelid,
+        t.departmentname
+        FROM
+        trainjoinlist AS t
+        INNER JOIN startprogram AS s ON s.startprogramid = t.startprogramid
+        WHERE
+        t.`STATUS` = '0'
+        AND t.jointype = '正常'
+        AND t.throughtype = '通过'
+        AND s.starttheorydate IS NOT NULL
+        AND s.programtype IN ( 'BC039004' )
+        AND s.isonline = 'BC032002'
+        AND DATEDIFF(
+        DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ),
+        CURRENT_DATE ()) > 0
+        AND DATEDIFF(
+        CURRENT_DATE (),
+        DATE_SUB( DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH )) >= 0
+        )
+        ORDER BY
+        MODIFYON ASC
     </select>
 </mapper>
