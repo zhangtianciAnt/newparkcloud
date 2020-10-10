@@ -148,4 +148,7 @@ public class WebSocketVo {
 
     // 环保工艺报警列表
     private List<Pimsalarm> pimsalarmList;
+
+    // 是否有新的消防报警单Flg
+    private boolean newFireAlarm = true;
 }

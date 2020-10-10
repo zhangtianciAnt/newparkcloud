@@ -4,7 +4,6 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
 import com.nt.controller.Controller.WebSocket.WebSocket;
-import com.nt.controller.Controller.WebSocket.WebSocketDeviceinfoVo;
 import com.nt.dao_BASF.*;
 import com.nt.dao_BASF.VO.DeviceinformationVo;
 import com.nt.service_BASF.DeviceInformationServices;
@@ -189,6 +188,7 @@ public class BASF10105Controller {
                     }
                 }
                 MultiThreadScheduleTask.webSocketVo.setTopfirealarmList(firealarms);
+                MultiThreadScheduleTask.webSocketVo.setNewFireAlarm(true);
 
                 //更新mapbox_maplevel中的remark为1，并一直追设到对应的level2
                 mapBox_mapLevelServices.remarkSet(alarmMapidList, true, null);
