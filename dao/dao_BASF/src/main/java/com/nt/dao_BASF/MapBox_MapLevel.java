@@ -78,6 +78,7 @@ public class MapBox_MapLevel extends BaseModel {
     @Transient
     private List<MapBox_MapLevel> children;
     private String devicecode;
+    private String flagdir;
 
     @Transient
     private List<Riskassessments> riskassessmentsList;
