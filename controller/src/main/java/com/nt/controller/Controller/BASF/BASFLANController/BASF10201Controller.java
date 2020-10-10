@@ -235,4 +235,17 @@ public class BASF10201Controller {
         MultiThreadScheduleTask.webSocketVo.setDeviceinformationList(list);
         ws.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
     }
+
+    @RequestMapping(value = "/updateList", method = {RequestMethod.POST})
+    public ApiResult updateList(@RequestBody List<Firealarm> firealarmlist, HttpServletRequest request) throws Exception {
+        for(Firealarm firealarm : firealarmlist){
+            TokenModel tokenModel = tokenService.getToken(request);
+            firealarmServices.update(firealarm, tokenModel);
+            pushMessage(tokenModel);
+            MultiThreadScheduleTask.webSocketVo.setFireAlarmList(firealarmServices.getFireAlarm());
+            MultiThreadScheduleTask.webSocketVo.setFireAlarmStatisticsVoList(firealarmServices.getFireAlarmStatistics());
+            WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
+        }
+        return ApiResult.success();
+    }
 }
