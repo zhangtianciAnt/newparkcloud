@@ -69,6 +69,7 @@ public class DictionaryController {
         firealarmnew.setCompletesta("0");
         firealarmnew.setMisinformation("0");
         List<Firealarm> firealarms = firealarmServices.list(firealarmnew);
+        MultiThreadScheduleTask.webSocketVo.setNewFireAlarm(true);
         MultiThreadScheduleTask.webSocketVo.setTopfirealarmList(firealarms);
 
         //设置剩余的报警层级状态

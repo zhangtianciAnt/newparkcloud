@@ -115,7 +115,6 @@ public class BASF10105Controller {
                 return ApiResult.fail("未在数据库中发现该回路号的电子围栏内");
             }
         } else {
-            boolean newFireAlarm = false;
             //serverinfolist是机柜传来的报警信息列表
             if (serverinfolist.size() > 0) {
 //            TokenModel tokenModel = tokenService.getToken(request);
@@ -169,7 +168,6 @@ public class BASF10105Controller {
                         firealarm.setProno(linkagelist.get(0).getDevrow());
                         firealarm.setProtype(linkagelist.get(0).getDevicename());
                         String firealarmuuid = firealarmServices.insert(firealarm, null);
-                        newFireAlarm = true;
                     }
                 }
 
@@ -190,7 +188,7 @@ public class BASF10105Controller {
                     }
                 }
                 MultiThreadScheduleTask.webSocketVo.setTopfirealarmList(firealarms);
-                MultiThreadScheduleTask.webSocketVo.setNewFireAlarm(newFireAlarm);
+                MultiThreadScheduleTask.webSocketVo.setNewFireAlarm(true);
 
                 //更新mapbox_maplevel中的remark为1，并一直追设到对应的level2
                 mapBox_mapLevelServices.remarkSet(alarmMapidList, true, null);
