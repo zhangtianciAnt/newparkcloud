@@ -226,7 +226,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             }
         }
         //会社特别休日加班
-        int count = replacerestMapper.updateDateList();
+//        int count = replacerestMapper.updateDateList();
     }
     //新建
     @Override

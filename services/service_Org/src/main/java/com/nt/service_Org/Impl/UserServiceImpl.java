@@ -437,7 +437,7 @@ public class UserServiceImpl implements UserService {
             item.getUserinfo().setFixedate("");
 //            item.getUserinfo().setEnterday("");
             item.getUserinfo().setUpgraded("");
-            item.getUserinfo().setEnddate("");
+//            item.getUserinfo().setEnddate("");
             item.getUserinfo().setAnnualyear("");
             item.getUserinfo().setAnnuallastyear("");
             item.getUserinfo().setWelfareyear("");
