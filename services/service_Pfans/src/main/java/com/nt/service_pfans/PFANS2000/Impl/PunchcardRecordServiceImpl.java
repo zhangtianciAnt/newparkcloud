@@ -1494,23 +1494,31 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
                                     if (workinghours.equals("0"))
                                     {
+                                        //有效打卡时长
+                                        String h = "0";
+                                        h = getOutgoinghours(lunchbreak_start, lunchbreak_end, PR, nomal);
                                         if(!hoursshiji.equals("0"))
                                         {
-                                            ad.setOutgoinghours(df.format(Double.valueOf(hoursshiji)));
+                                            if(Double.valueOf(h)<=Double.valueOf(hoursshiji))
+                                            {
+                                                ad.setOutgoinghours(df.format(Double.valueOf(hoursshiji)));
+                                            }
+                                            else
+                                            {
+                                                ad.setOutgoinghours(df.format(Double.valueOf(h)));
+                                            }
                                         }
                                         else
                                         {
-                                            String h = "0";
-                                            h = getOutgoinghours(lunchbreak_start, lunchbreak_end, PR, nomal);
                                             if(Double.valueOf(hoursyuji)!=0)
                                             {
-                                                if(Double.valueOf(h) > Double.valueOf(hoursyuji))
+                                                if(Double.valueOf(h) <= Double.valueOf(hoursyuji))
                                                 {
                                                     ad.setOutgoinghours(df.format(Double.valueOf(hoursyuji)));
                                                 }
                                                 else
                                                 {
-                                                    ad.setOutgoinghours(getOutgoinghours(lunchbreak_start, lunchbreak_end, PR, nomal));
+                                                    ad.setOutgoinghours(df.format(Double.valueOf(h)));
                                                 }
                                             }
                                             else
