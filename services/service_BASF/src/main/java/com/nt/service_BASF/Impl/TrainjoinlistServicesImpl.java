@@ -411,26 +411,38 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                             } catch (Exception e) {
                                 trainjoinlist.setActualperformance("");
                             }
-                            if (!StringUtils.isNotBlank(olist.get(7).toString())) {
+                            //补考理论成绩
+                            try {
+                                trainjoinlist.setResitperformance(olist.get(7).toString());
+                            } catch (Exception e) {
+                                trainjoinlist.setPerformance("");
+                            }
+                            //补考实操成绩
+                            try {
+                                trainjoinlist.setResitactualperformance(olist.get(8).toString());
+                            } catch (Exception e) {
+                                trainjoinlist.setActualperformance("");
+                            }
+                            if (!StringUtils.isNotBlank(olist.get(9).toString())) {
                                 result.add("成绩表" + k + "行数据异常，导入系统失败！");
                                 errorCount += 1;
                                 continue;
                             }else {
                                 //参加状态
-                                trainjoinlist.setJointype(olist.get(7).toString());
+                                trainjoinlist.setJointype(olist.get(9).toString());
                             }
                             //通过状态
                             try {
-                                if (olist.get(7).toString().trim().equals("正常")) {
-                                    if (StringUtils.isEmpty(olist.get(8).toString())) {
+                                if (olist.get(9).toString().trim().equals("正常")) {
+                                    if (StringUtils.isEmpty(olist.get(10).toString())) {
 
                                     } else {
-                                        if (!olist.get(8).toString().trim().equals("通过") && !olist.get(8).toString().trim().equals("未通过")) {
+                                        if (!olist.get(10).toString().trim().equals("通过") && !olist.get(10).toString().trim().equals("未通过")) {
                                             result.add("成绩表" + k + "行数据异常，通过状态错误，导入系统失败！");
                                             errorCount += 1;
                                             continue;
                                         } else
-                                            trainjoinlist.setThroughtype(olist.get(8).toString());
+                                            trainjoinlist.setThroughtype(olist.get(10).toString());
                                     }
                                 }
                             } catch (Exception e) {
@@ -438,19 +450,19 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                             }
                             //证书编号
                             try {
-                                trainjoinlist.setCertificateno(olist.get(9).toString());
+                                trainjoinlist.setCertificateno(olist.get(11).toString());
                             } catch (Exception e) {
                                 trainjoinlist.setCertificateno("");
                             }
                             //发证日期
                             try {
-                                trainjoinlist.setIssuedate(olist.get(10).toString());
+                                trainjoinlist.setIssuedate(olist.get(12).toString());
                             } catch (Exception e) {
                                 trainjoinlist.setIssuedate("");
                             }
                             //备注
                             try {
-                                trainjoinlist.setRemark(olist.get(11).toString());
+                                trainjoinlist.setRemark(olist.get(13).toString());
                             } catch (Exception e) {
                                 trainjoinlist.setRemark("");
                             }
