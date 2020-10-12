@@ -2104,7 +2104,7 @@ public class GivingServiceImpl implements GivingService {
         DecimalFormat df = new DecimalFormat("0.00");
         df.setRoundingMode(RoundingMode.HALF_UP);
         // 正社员工開始日
-        String staffStartDate = "";
+        //String staffStartDate = "";  add 20201010
         // 納付率表抽取相关数据
         Dictionary dictionary = new Dictionary();
         dictionary.setPcode("PR042");
@@ -2137,6 +2137,8 @@ public class GivingServiceImpl implements GivingService {
                 if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getResignation_date())) {
                     continue;
                 }
+                // 正社员工開始日
+                String staffStartDate = "";
                 Induction induction = new Induction();
                 induction.setGiving_id(givingId);
                 // 上月工资结算时点过后入职没发工资的人（包含上月入职和本月入职的员工）

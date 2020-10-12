@@ -298,11 +298,12 @@ public class WagesServiceImpl implements WagesService {
                 wage.setWages_id(UUID.randomUUID().toString());
                 wage.setCreateonym(DateUtil.format(new Date(), "YYYY-MM"));
                 wage.setActual(actual);
-                if(actual.equals("1")){
-                    List<CustomerInfo> customerinfo = customerInfoList.stream().filter(coi -> (coi.getUserid().contains(wage.getUser_id()))).collect(Collectors.toList());
-                    if(customerinfo.size() > 0){
+                List<CustomerInfo> customerinfo = customerInfoList.stream().filter(coi -> (coi.getUserid().contains(wage.getUser_id()))).collect(Collectors.toList());
+                if(customerinfo.size() > 0){
+                    if(actual.equals("1")){
                         wage.setDepartment_id(customerinfo.get(0).getUserinfo().getBudgetunit());
                     }
+                    wage.setJobnumber(customerinfo.get(0).getUserinfo().getJobnumber());
                 }
                 wage.preInsert(tokenModel);
             }
