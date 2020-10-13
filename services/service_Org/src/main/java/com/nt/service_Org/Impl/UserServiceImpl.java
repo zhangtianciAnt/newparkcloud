@@ -198,6 +198,20 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userVo.getUserAccount(), userAccount);
         //判断空
         //非空后获取用户名，用户名非空的话，赋用户名，密码
+        Query query2 = new Query();
+        query2.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+        query2.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+        List<UserAccount> userAcco = mongoTemplate.find(query2, UserAccount.class);
+        if (userAcco.size() == 0) {
+            List<Role> rl = new ArrayList<>();
+            Role role = new Role();
+            role.set_id("5eba6780e52fa718db63268e");
+            role.setRolename("个人基础角色");
+            role.setDescription("个人基础角色");
+            role.setDefaultrole("true");
+            rl.add(role);
+            userAccount.setRoles(rl);
+        }
         mongoTemplate.save(userAccount);
         Query query = new Query();
         query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
