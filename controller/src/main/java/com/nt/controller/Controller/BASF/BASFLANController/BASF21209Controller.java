@@ -113,6 +113,17 @@ public class BASF21209Controller {
         return ApiResult.success();
     }
 
+    //更新培训项目补考状态
+    @RequestMapping(value = "/updateMakeup", method = {RequestMethod.GET})
+    public ApiResult updateMakeup(String startprogramid, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Startprogram startprogram = new Startprogram();
+        startprogram.setStartprogramid(startprogramid);
+        startprogram.setMakeup("1");    // 已补考
+        startprogramServices.update(startprogram, tokenModel);
+        return ApiResult.success();
+    }
+
     //发送邮件通知
     @RequestMapping(value = "/resultsEmail", method = {RequestMethod.POST})
     public ApiResult updateResultsEmail(@RequestBody Startprogram startprogram, HttpServletRequest request) throws Exception {
