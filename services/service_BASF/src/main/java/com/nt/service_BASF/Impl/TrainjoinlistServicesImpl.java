@@ -377,6 +377,11 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
             return result;
         }
         try {
+            //非补考时
+            int tempindex = 7;
+            if(list.get(0).size() == 14){
+                tempindex = 9;
+            }
             //循环获取成绩信息
             for (int i = 1; i < list.size(); i++) {
                 k += 1;
@@ -411,38 +416,40 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                             } catch (Exception e) {
                                 trainjoinlist.setActualperformance("");
                             }
-                            //补考理论成绩
-                            try {
-                                trainjoinlist.setResitperformance(olist.get(7).toString());
-                            } catch (Exception e) {
-                                trainjoinlist.setPerformance("");
+                            if(tempindex == 9){
+                                //补考理论成绩
+                                try {
+                                    trainjoinlist.setResitperformance(olist.get(7).toString());
+                                } catch (Exception e) {
+                                    trainjoinlist.setResitperformance("");
+                                }
+                                //补考实操成绩
+                                try {
+                                    trainjoinlist.setResitactualperformance(olist.get(8).toString());
+                                } catch (Exception e) {
+                                    trainjoinlist.setResitactualperformance("");
+                                }
                             }
-                            //补考实操成绩
-                            try {
-                                trainjoinlist.setResitactualperformance(olist.get(8).toString());
-                            } catch (Exception e) {
-                                trainjoinlist.setActualperformance("");
-                            }
-                            if (!StringUtils.isNotBlank(olist.get(9).toString())) {
+                            if (!StringUtils.isNotBlank(olist.get(tempindex).toString())) {
                                 result.add("成绩表" + k + "行数据异常，导入系统失败！");
                                 errorCount += 1;
                                 continue;
                             }else {
                                 //参加状态
-                                trainjoinlist.setJointype(olist.get(9).toString());
+                                trainjoinlist.setJointype(olist.get(tempindex).toString());
                             }
                             //通过状态
                             try {
-                                if (olist.get(9).toString().trim().equals("正常")) {
-                                    if (StringUtils.isEmpty(olist.get(10).toString())) {
+                                if (olist.get(tempindex).toString().trim().equals("正常")) {
+                                    if (StringUtils.isEmpty(olist.get(tempindex + 1).toString())) {
 
                                     } else {
-                                        if (!olist.get(10).toString().trim().equals("通过") && !olist.get(10).toString().trim().equals("未通过")) {
+                                        if (!olist.get(tempindex + 1).toString().trim().equals("通过") && !olist.get(tempindex + 1).toString().trim().equals("未通过")) {
                                             result.add("成绩表" + k + "行数据异常，通过状态错误，导入系统失败！");
                                             errorCount += 1;
                                             continue;
                                         } else
-                                            trainjoinlist.setThroughtype(olist.get(10).toString());
+                                            trainjoinlist.setThroughtype(olist.get(tempindex + 1).toString());
                                     }
                                 }
                             } catch (Exception e) {
@@ -450,19 +457,19 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
                             }
                             //证书编号
                             try {
-                                trainjoinlist.setCertificateno(olist.get(11).toString());
+                                trainjoinlist.setCertificateno(olist.get(tempindex + 2).toString());
                             } catch (Exception e) {
                                 trainjoinlist.setCertificateno("");
                             }
                             //发证日期
                             try {
-                                trainjoinlist.setIssuedate(olist.get(12).toString());
+                                trainjoinlist.setIssuedate(olist.get(tempindex + 3).toString());
                             } catch (Exception e) {
                                 trainjoinlist.setIssuedate("");
                             }
                             //备注
                             try {
-                                trainjoinlist.setRemark(olist.get(13).toString());
+                                trainjoinlist.setRemark(olist.get(tempindex + 4).toString());
                             } catch (Exception e) {
                                 trainjoinlist.setRemark("");
                             }
