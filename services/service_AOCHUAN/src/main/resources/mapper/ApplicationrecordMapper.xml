@@ -40,7 +40,7 @@
         p.ENGLISHNAME as productus,
         t.customerid,
         c.CUSTOMERNAMEEN as customer,
-        concat(l.CNAME, l.ENAME, l.JNAME, l.KNAME ) as linkmanname,
+        concat(IFNULL(l.CNAME,''),IFNULL(l.ENAME,''),IFNULL(l.JNAME,''),IFNULL(l.KNAME,'')) as linkmanname,
         t.country as country,
         date_format(t.firstordertime, '%Y-%m-%d %T')as firstordertime,
         s.unitprice as unitprice,
