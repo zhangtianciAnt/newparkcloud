@@ -88,6 +88,9 @@ public class SalesExportVo {
     //    订单要求
     private String orders;
 
+    //到款时间
+    private String ep_date;
+
     //    数据字典
     private String value1;
 
