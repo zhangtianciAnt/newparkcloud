@@ -1,5 +1,6 @@
 package com.nt.dao_BASF;
 
+import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import javax.persistence.Transient;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "pimspoint")
-public class Pimspoint {
+public class Pimspoint extends BaseModel {
     @Id
     private String id;
     /**

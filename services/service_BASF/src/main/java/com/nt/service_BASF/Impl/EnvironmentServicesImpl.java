@@ -1,8 +1,10 @@
 package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.Environment;
+import com.nt.dao_BASF.Pimspoint;
 import com.nt.service_BASF.EnvironmentServices;
 import com.nt.service_BASF.mapper.EnvironmentMapper;
+import com.nt.service_BASF.mapper.PimsPointMapper;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,88 +32,51 @@ public class EnvironmentServicesImpl implements EnvironmentServices {
     private static Logger log = LoggerFactory.getLogger(EnvironmentServicesImpl.class);
 
     @Autowired
-    private EnvironmentMapper environmentMapper;
+    private PimsPointMapper pimsPointMapper;
 
     /**
-     * @param Environment
      * @Method list
-     * @Author WXL
+     * @Author MYT
      * @Version 1.0
-     * @Description 获取监控数据列表
+     * @Description 获取PIMS点位信息列表
      * @Return java.util.List<Environment>
      * @Date 2019/11/14 15:54
      */
     @Override
-    public List<Environment> list() throws Exception {
-        Environment environment = new Environment();
-        return environmentMapper.select(environment);
+    public List<Pimspoint> list() throws Exception {
+        Pimspoint pimspoint = new Pimspoint();
+        return pimsPointMapper.select(pimspoint);
     }
 
-
     /**
-     * @param environment
-     * @param tokenModel
-     * @Method insert
-     * @Author Wxz
-     * @Version 1.0
-     * @Description 创建监控数据
-     * @Return void
-     * @Date 2019/11/14 15:55
-     */
-    @Override
-    public void insert(Environment environment, TokenModel tokenModel) throws Exception {
-        environment.preInsert(tokenModel);
-        environment.setEnvironmentid(UUID.randomUUID().toString());
-        environmentMapper.insert(environment);
-    }
-
-
-    /**
-     * @param environment
-     * @Method Delete
-     * @Author WXL
-     * @Version 1.0
-     * @Description 删除监控数据
-     * @Return void
-     * @Date 2019/11/14 16：06
-     */
-    @Override
-    public void delete(Environment environment) throws Exception {
-        //逻辑删除（status -> "1"）
-        environmentMapper.updateByPrimaryKeySelective(environment);
-    }
-
-
-    /**
-     * @param environmentid
+     * @param pimspointId
      * @Method one
      * @Author Wxz
      * @Version 1.0
-     * @Description 获取数据监控详情
+     * @Description 获取PIMS点位信息详情
      * @Return com.nt.dao_BASF.Environment
      * @Date 2019/11/12 11：07
      */
     @Override
-    public Environment one(String environmentid) throws Exception {
-        return environmentMapper.selectByPrimaryKey(environmentid);
+    public Pimspoint one(String pimspointid) throws Exception {
+        return pimsPointMapper.selectByPrimaryKey(pimspointid);
     }
 
 
     /**
-     * @param environment
+     * @param pimspoint
      * @param tokenModel
      * @Method update
      * @Author Wxz
      * @Version 1.0
-     * @Description 更新接警单详情
+     * @Description 更新PIMS点位信息
      * @Return void
      * @Date 2019/11/12 11：07
      */
     @Override
-    public void update(Environment environment, TokenModel tokenModel) throws Exception {
-        environment.preUpdate(tokenModel);
-        environmentMapper.updateByPrimaryKey(environment);
-
+    public void update(Pimspoint pimspoint, TokenModel tokenModel) throws Exception {
+        pimspoint.preUpdate(tokenModel);
+        pimsPointMapper.updateByPrimaryKey(pimspoint);
     }
 
 }
