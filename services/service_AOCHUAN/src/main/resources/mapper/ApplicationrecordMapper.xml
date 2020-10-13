@@ -40,7 +40,7 @@
         p.ENGLISHNAME as productus,
         t.customerid,
         c.CUSTOMERNAMEEN as customer,
-        concat(l.CNAME, l.ENAME, l.JNAME, l.KNAME ) as linkmanname,
+        concat(IFNULL(l.CNAME,''),IFNULL(l.ENAME,''),IFNULL(l.JNAME,''),IFNULL(l.KNAME,'')) as linkmanname,
         t.country as country,
         date_format(t.firstordertime, '%Y-%m-%d %T')as firstordertime,
         s.unitprice as unitprice,
@@ -54,7 +54,8 @@
         t.signback as signback,
         t.saleresponsibility as saleresponsibility,
         d4.VALUE1 as payment,
-        t.orders as orders
+        t.orders as orders,
+        t.EP_DATE as ep_date
       FROM  transportgood t
         INNER JOIN saledetails s ON t.transportgood_id = s.transportgood_id
         LEFT JOIN receivablesrecord r ON r.productid = s.productid and r.transportgood_id = t.transportgood_id
