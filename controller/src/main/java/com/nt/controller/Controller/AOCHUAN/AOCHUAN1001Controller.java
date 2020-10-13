@@ -9,6 +9,7 @@ import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.service_AOCHUAN.AOCHUAN1000.LinkmanService;
 import com.nt.service_AOCHUAN.AOCHUAN1000.SupplierbaseinforService;
 import com.nt.service_AOCHUAN.AOCHUAN1000.SupplierproductrelationService;
+import com.nt.service_AOCHUAN.AOCHUAN1000.mapper.SupplierbaseinforMapper;
 import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
 import com.nt.utils.*;
 import com.nt.utils.services.TokenService;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +35,22 @@ public class AOCHUAN1001Controller {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private SupplierbaseinforMapper supplierbaseinforMapper;
+
     private String baseinfoId;
+
+    // add-ws-10/13-禅道任务459
+    @RequestMapping(value = "/getDataList", method = {RequestMethod.POST})
+    public ApiResult getDataList1(@RequestBody Supplierbaseinfor supplierbaseinfor, HttpServletRequest request) throws Exception {
+        if (supplierbaseinfor == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        SimpleDateFormat sf = new SimpleDateFormat("YYYYMM");
+        List<Supplierbaseinfor> list = supplierbaseinforMapper.selectlist(sf.format(supplierbaseinfor.getCreateon()));
+        return ApiResult.success(list);
+    }
+    // add-ws-10/13-禅道任务459
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
