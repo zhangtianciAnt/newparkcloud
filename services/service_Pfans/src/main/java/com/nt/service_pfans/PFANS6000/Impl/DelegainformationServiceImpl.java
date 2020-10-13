@@ -120,7 +120,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
         List<DelegainformationVo> Vo = delegainformationMapper.getYears(year,group_id,Integer.parseInt(list.get(0)),Integer.parseInt(list.get(1)),
                 Integer.parseInt(list.get(2)),Integer.parseInt(list.get(3)),
                 Integer.parseInt(list.get(4)),Integer.parseInt(list.get(5)),
-                Integer.parseInt(list.get(5)),Integer.parseInt(list.get(7)),
+                Integer.parseInt(list.get(6)),Integer.parseInt(list.get(7)),
                 Integer.parseInt(list.get(8)),Integer.parseInt(list.get(9)),
                 Integer.parseInt(list.get(10)),Integer.parseInt(list.get(11)));
 
