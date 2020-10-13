@@ -1,7 +1,9 @@
 package com.nt.controller.Controller.AOCHUAN;
 
+import cn.hutool.core.date.DateUtil;
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
+import com.nt.service_AOCHUAN.AOCHUAN4000.mapper.ProductsMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -9,18 +11,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
 
 public class AOCHUAN4001Controller {
-
+    @Autowired
+    private ProductsMapper productsMapper;
     @Autowired
     private TokenService tokenService;
 
     @Autowired
     private ProductsService productsService;
-
+    // add-ws-10/13-禅道任务429
+    @RequestMapping(value = "/getDataList1", method = {RequestMethod.POST})
+    public ApiResult getDataList1(@RequestBody Products products, HttpServletRequest request) throws Exception {
+        if (products == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        SimpleDateFormat sf = new SimpleDateFormat("YYYYMM");
+        List<Products> list = productsMapper.selectlist(sf.format(products.getCreateon()));
+        return ApiResult.success(list);
+    }
+    // add-ws-10/13-禅道任务429
     @RequestMapping(value="/getList",method = {RequestMethod.GET})
     public ApiResult getList(HttpServletRequest request)throws  Exception{
         TokenModel tokenModel = tokenService.getToken(request);
