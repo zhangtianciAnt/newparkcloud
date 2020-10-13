@@ -277,4 +277,9 @@ public class DutyServicesImpl implements DutyServices {
         }
         return null;
     }
+
+    @Override
+    public List<Duty> getList() throws Exception {
+        return dutyMapper.selectCurrentMon();
+    }
 }
