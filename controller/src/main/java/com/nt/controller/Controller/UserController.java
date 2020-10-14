@@ -191,6 +191,7 @@ public class UserController {
 
         } else {
             userVo.getUserAccount().preInsert(tokenModel);
+            userVo.getUserAccount().setAccount(userVo.getCustomerInfo().getUserinfo().getMobilenumber());
             userVo.getUserAccount().setPassword(userVo.getCustomerInfo().getUserinfo().getMobilenumber());
             info = userService.addAccountCustomer(userVo);
 //            annualLeaveService.insertannualLeave(info);
