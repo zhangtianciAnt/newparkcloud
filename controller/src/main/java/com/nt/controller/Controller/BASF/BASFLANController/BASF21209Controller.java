@@ -154,7 +154,7 @@ public class BASF21209Controller {
                     continue;
                 }
                 Trainjoinlist trainjoilist = new Trainjoinlist();
-                trainjoilist.setDepartmentid(depid);
+//                trainjoilist.setDepartmentid(depid);
                 trainjoilist.setStartprogramid(startprogramid);
                 List<Trainjoinlist> Departmentidlists = trainjoinlistServices.addUserName(trainjoinlistMapper.select(trainjoilist));
 
