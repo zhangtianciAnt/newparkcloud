@@ -209,7 +209,7 @@ public class MultiThreadScheduleTask {
 //            mhInfos.add(mhInfo);
 //        }
 //        webSocketVo.setCarSet(mhInfos);
-//        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+////        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
 //    }
 
     private HttpEntity<String> getResponse(Map<String, Object> requestMap) {

@@ -42,7 +42,11 @@ public class VehicleManagementServicesImpl implements VehicleManagementServices 
      */
     @Override
     public List<VehicleManagement> list(VehicleManagement vehicleManagement) throws Exception {
-        return vehicleManagementMapper.select(vehicleManagement);
+        if (vehicleManagement == null) {
+            return vehicleManagementMapper.selectAll();
+        } else {
+            return vehicleManagementMapper.select(vehicleManagement);
+        }
     }
 
     @Override

@@ -96,7 +96,7 @@ public class BASF10204Controller {
     public ApiResult sendGps(@RequestBody VehicleManagement vehicleManagement) throws Exception {
         vehicleManagementServices.update(vehicleManagement, null);
         // 查询所有消防车最后的gps信息返回给前端
-        List<VehicleManagement> vehicleManagements = vehicleManagementServices.list(vehicleManagement);
+        List<VehicleManagement> vehicleManagements = vehicleManagementServices.list(null);
         List<MhInfo> mhInfos = new ArrayList<>();
         for (VehicleManagement v : vehicleManagements) {
             MhInfo mhInfo = new MhInfo();
