@@ -39,54 +39,54 @@ public class HomePageServiceImpl implements HomePageServices {
 
             if ("1".equals(str.getHomepageshowflg())) {
                 //首页
-                homepagereturn = setHomepage("首页", "el-icon-platform-eleme", 0);
+                homepagereturn = setHomepage("首页", "首页.png", 0);
                 homepagereturnList.add(homepagereturn);
             }
 
             if ("1".equals(str.getFireshowflg())) {
                 //火灾消防
-                homepagereturn = setHomepage("火灾消防", "el-icon-s-tools", 1);
+                homepagereturn = setHomepage("火灾消防", "火灾消防.png", 1);
                 homepagereturnList.add(homepagereturn);
             }
 
             if ("1".equals(str.getSafeshowflg())) {
                 //环保安全
-                homepagereturn = setHomepage("环保安全", "el-icon-user-solid", 2);
+                homepagereturn = setHomepage("环保安全", "环保安全.png", 2);
                 homepagereturnList.add(homepagereturn);
             }
 
             if ("1".equals(str.getOnsiteshowflg())) {
                 //现场监控
-                homepagereturn = setHomepage("现场监控", "el-icon-s-goods", 3);
+                homepagereturn = setHomepage("现场监控", "现场监控.png", 3);
                 homepagereturnList.add(homepagereturn);
             }
 
             if ("1".equals(str.getPersonnelshowflg())) {
                 //人员清点
-                homepagereturn = setHomepage("人员清点", "el-icon-question", 4);
+                homepagereturn = setHomepage("人员清点", "人员清点.png", 4);
                 homepagereturnList.add(homepagereturn);
             }
 
             if ("1".equals(str.getVehicleshowflg())) {
                 //车辆定位
-                homepagereturn = setHomepage("车辆定位", "el-icon-zoom-in", 5);
+                homepagereturn = setHomepage("车辆定位", "车辆定位.png", 5);
                 homepagereturnList.add(homepagereturn);
             }
 
             if ("1".equals(str.getEmergencyshowflg())) {
-                homepagereturn = setHomepage("应急档案", "el-icon-s-help", 6);
+                homepagereturn = setHomepage("应急档案", "应急档案.png", 6);
                 homepagereturnList.add(homepagereturn);
             }
 
             if ("1".equals(str.getTrainingshowflg())) {
                 //培训教育
-                homepagereturn = setHomepage("培训教育", "el-icon-s-promotion", 7);
+                homepagereturn = setHomepage("培训教育", "培训教育.png", 7);
                 homepagereturnList.add(homepagereturn);
             }
 
             if ("1".equals(str.getRiskshowflg())) {
                 //风险研判
-                homepagereturn = setHomepage("风险研判", "el-icon-platform-eleme", 8);
+                homepagereturn = setHomepage("风险研判", "风险研判.png", 8);
                 homepagereturnList.add(homepagereturn);
             }
 
