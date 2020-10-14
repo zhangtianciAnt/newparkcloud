@@ -64,7 +64,9 @@ public class VehicleManagementServicesImpl implements VehicleManagementServices 
      */
     @Override
     public void update(VehicleManagement vehicleManagement, TokenModel tokenModel) throws Exception {
-        vehicleManagement.preUpdate(tokenModel);
-        vehicleManagementMapper.updateByPrimaryKey(vehicleManagement);
+        if (tokenModel != null) {
+            vehicleManagement.preUpdate(tokenModel);
+        }
+        vehicleManagementMapper.updateByPrimaryKeySelective(vehicleManagement);
     }
 }

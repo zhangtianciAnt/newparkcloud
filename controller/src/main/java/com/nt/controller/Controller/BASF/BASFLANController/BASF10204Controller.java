@@ -1,5 +1,9 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
+import com.alibaba.fastjson.JSONObject;
+import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
+import com.nt.controller.Controller.WebSocket.WebSocket;
+import com.nt.dao_BASF.MhInfo;
 import com.nt.dao_BASF.VehicleManagement;
 import com.nt.service_BASF.VehicleManagementServices;
 import com.nt.utils.ApiResult;
@@ -13,8 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.socket.TextMessage;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @ProjectName: BASF应急平台
@@ -44,7 +51,7 @@ public class BASF10204Controller {
      * @Date 2019/11/13 16：33
      */
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request,@RequestBody VehicleManagement vehicleManagement) throws Exception {
+    public ApiResult list(HttpServletRequest request, @RequestBody VehicleManagement vehicleManagement) throws Exception {
         return ApiResult.success(vehicleManagementServices.list(vehicleManagement));
     }
 
@@ -76,6 +83,33 @@ public class BASF10204Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         vehicleManagementServices.update(vehicleManagement, tokenModel);
+        return ApiResult.success();
+    }
+
+    /**
+     * 根据id更新车辆gps信息
+     *
+     * @param vehicleManagement
+     * @return
+     */
+    @RequestMapping(value = "/sendGps", method = {RequestMethod.POST})
+    public ApiResult sendGps(@RequestBody VehicleManagement vehicleManagement) throws Exception {
+        vehicleManagementServices.update(vehicleManagement, null);
+        // 查询所有消防车最后的gps信息返回给前端
+        List<VehicleManagement> vehicleManagements = vehicleManagementServices.list(vehicleManagement);
+        List<MhInfo> mhInfos = new ArrayList<>();
+        for (VehicleManagement v : vehicleManagements) {
+            MhInfo mhInfo = new MhInfo();
+            mhInfo.setVehicleManagement(v);
+            mhInfo.setEnable(v.getEnable());
+            //因为现在没有app和后台的心跳线，所以返回默认所有车都是在线状态
+            mhInfo.setRunStatus(1);
+            mhInfo.setLat(Double.valueOf(v.getLat()));
+            mhInfo.setLng(Double.valueOf(v.getLng()));
+            mhInfos.add(mhInfo);
+        }
+        MultiThreadScheduleTask.webSocketVo.setCarSet(mhInfos);
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
         return ApiResult.success();
     }
 }
