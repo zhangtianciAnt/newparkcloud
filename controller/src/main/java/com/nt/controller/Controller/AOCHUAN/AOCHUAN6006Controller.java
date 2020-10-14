@@ -161,18 +161,25 @@ public class  AOCHUAN6006Controller {
                     reimbursementDetail.setReimbursement_no(reimbursement.getReimbursement_no());
                     reimbursementService.delete(reimbursementDetail,tokenService.getToken(request));
                 }else{
-                    for(ReimbursementDetail reimbursementDetail:reimDetailList){
+
+                    ReimbursementDetail reimbursementDetail1 = new ReimbursementDetail();
+                    reimbursementDetail1.setReimbursement_no(reimbursement.getReimbursement_no());
+                    reimbursementService.delete(reimbursementDetail1,tokenService.getToken(request));
+
+                    for( ReimbursementDetail reimbursementDetail:reimDetailList){
 
                         reimbursementDetail.setReimbursement_no(reimbursement.getReimbursement_no());
 
                         //存在Check
-                        if (reimbursementService.existCheck(reimbursementDetail)) {
-                            reimbursementService.update(reimbursementDetail, tokenService.getToken(request));
-                        }else{
+//                        if (reimbursementService.existCheck(reimbursementDetail)) {
+//                            reimbursementService.update(reimbursementDetail, tokenService.getToken(request));
+//                        }
+//                        else{
+
                             String id= UUID.randomUUID().toString();
                             reimbursementDetail.setReimbursement_detail_id(id);
                             reimbursementService.insert(reimbursementDetail,tokenService.getToken(request));
-                        }
+//                        }
                     }
                 }
 
