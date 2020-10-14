@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_BASF.mapper.DutyMapper">
+    <select id="selectCurrentMon" resultType="com.nt.dao_BASF.Duty">
+        SELECT
+            *
+        FROM
+            duty
+        WHERE
+            DATE_FORMAT(dutytime,'%Y%m') = DATE_FORMAT(CURRENT_DATE, '%Y%m')
+    </select>
+</mapper>

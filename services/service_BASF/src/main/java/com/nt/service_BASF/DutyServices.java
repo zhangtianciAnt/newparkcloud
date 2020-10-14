@@ -24,4 +24,6 @@ public interface DutyServices {
     //当天值班人员查询
     DutyVo selectDayDuty() throws Exception;
 
+    // 获取当月值班人员信息一览
+    List<Duty> getList() throws Exception;
 }

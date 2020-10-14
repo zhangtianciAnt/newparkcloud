@@ -19,5 +19,5 @@ import java.util.List;
  */
 @Component(value = "DutyMapper")
 public interface DutyMapper extends MyMapper<Duty> {
-
+    List<Duty> selectCurrentMon();
 }

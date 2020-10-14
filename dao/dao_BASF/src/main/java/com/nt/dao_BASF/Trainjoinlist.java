@@ -87,6 +87,16 @@ public class Trainjoinlist extends BaseModel {
     private String actualperformance;
 
     /**
+     * 补考理论成绩
+     */
+    private String resitperformance;
+
+    /**
+     * 补考实操成绩
+     */
+    private String resitactualperformance;
+
+    /**
      * 通过状态
      */
     private String throughtype;

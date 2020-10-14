@@ -66,4 +66,10 @@ public class BASF10206Controller {
         //返回当天值班信息
         return ApiResult.success(dutyServices.selectDayDuty());
     }
+
+    @RequestMapping(value = "/getList", method = {RequestMethod.GET})
+    public ApiResult getList(HttpServletRequest request) throws Exception {
+        //返回当天值班信息
+        return ApiResult.success(dutyServices.getList());
+    }
 }

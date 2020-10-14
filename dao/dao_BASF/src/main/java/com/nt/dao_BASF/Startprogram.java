@@ -110,6 +110,11 @@ public class Startprogram extends BaseModel {
     //备注
     private String remarks;
 
+    /**
+     * 补考
+     */
+    private String makeup;
+
     @Transient
     private String date;
 

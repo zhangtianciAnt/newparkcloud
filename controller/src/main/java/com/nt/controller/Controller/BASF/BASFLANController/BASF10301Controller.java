@@ -4,12 +4,14 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
 import com.nt.controller.Controller.WebSocket.WebSocket;
-import com.nt.dao_BASF.Environment;
+import com.nt.dao_BASF.Pimspoint;
 import com.nt.dao_BASF.VO.EpChartVo;
 import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.EnvironmentServices;
-import com.nt.utils.*;
-import com.nt.utils.dao.TokenModel;
+import com.nt.utils.ApiResult;
+import com.nt.utils.MessageUtil;
+import com.nt.utils.MsgConstants;
+import com.nt.utils.RequestUtils;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,47 +59,7 @@ public class BASF10301Controller {
     }
 
     /**
-     * @param environment
-     * @param request
-     * @Method create
-     * @Author Wxz
-     * @Version 1.0
-     * @Description 创建接警单
-     * @Return com.nt.utils.ApiResult
-     * @Date 2019/11/12 13:20
-     */
-    @RequestMapping(value = "/create", method = {RequestMethod.POST})
-    public ApiResult create(@RequestBody Environment environment, HttpServletRequest request) throws Exception {
-        if (environment == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        environmentServices.insert(environment, tokenModel);
-        return ApiResult.success();
-    }
-
-    /**
-     * @param environment
-     * @param request
-     * @Method delete
-     * @Author Wxz
-     * @Version 1.0
-     * @Description 删除接警单
-     * @Return com.nt.utils.ApiResult
-     * @Date 2019/11/12 13：31
-     */
-    @RequestMapping(value = "/delete", method = {RequestMethod.POST})
-    public ApiResult delete(@RequestBody Environment environment, HttpServletRequest request) throws Exception {
-        if (environment == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        environment.setStatus(AuthConstants.DEL_FLAG_DELETE);
-        environmentServices.delete(environment);
-        return ApiResult.success();
-    }
-
-    /**
-     * @param environmentid
+     * @param pimspointid
      * @param request
      * @Method selectById
      * @Author WXL
@@ -107,15 +69,15 @@ public class BASF10301Controller {
      * @Date 2019/11/12 13:35
      */
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
-    public ApiResult selectById(String environmentid, HttpServletRequest request) throws Exception {
-        if (StrUtil.isEmpty(environmentid)) {
+    public ApiResult selectById(String pimspointid, HttpServletRequest request) throws Exception {
+        if (StrUtil.isEmpty(pimspointid)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(environmentServices.one(environmentid));
+        return ApiResult.success(environmentServices.one(pimspointid));
     }
 
     /**
-     * @param environment
+     * @param pimspoint
      * @param request
      * @Method update
      * @Author Wxz
@@ -125,12 +87,13 @@ public class BASF10301Controller {
      * @Date 2019/11/12 13:38
      */
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult update(@RequestBody Environment environment, HttpServletRequest request) throws Exception {
-        if (environment == null) {
+    public ApiResult update(@RequestBody Pimspoint pimspoint, HttpServletRequest request) throws Exception {
+        if (pimspoint == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        environmentServices.update(environment, tokenModel);
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        environmentServices.update(pimspoint, tokenModel);
+        environmentServices.update(pimspoint);
         return ApiResult.success();
     }
 

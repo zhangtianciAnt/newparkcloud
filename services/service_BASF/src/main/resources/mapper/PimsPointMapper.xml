@@ -46,6 +46,7 @@
         pimspoint.equipment as equipment,
         pimspoint.pimspointname as pimspointname,
         pimspoint.unit as unit,
+        pimspoint.ranges as ranges,
         deviceinformation.deviceinformationid as deviceinformationid,
         deviceinformation.deviceno as deviceno,
         deviceinformation.GIS as gis,
