@@ -1056,18 +1056,23 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         toDoNotice.setWorkflowurl("/PFANS3005View");
                         toDoNotice.preInsert(tokenModel);
                         //财务担当
-                        List<MembersVo> rolelist = roleService.getMembers("5e78645a8f4316308435113c");
+                        List<MembersVo> rolelist = roleService.getMembers("5f868d0eae75a93b18224788");
                         if (rolelist.size() > 0) {
-                            toDoNotice.setOwner(rolelist.get(0).getUserid());
+                            for(int i = 0; i < rolelist.size();i++){
+                                toDoNotice.setOwner(rolelist.get(i).getUserid());
+                                toDoNoticeService.save(toDoNotice);
+                            }
                         }
-                        toDoNoticeService.save(toDoNotice);
+
 
                         //IT
-                        List<MembersVo> rolelist1 = roleService.getMembers("5e78630d8f43163084351137");
+                        List<MembersVo> rolelist1 = roleService.getMembers("5f868d28ae75a93b18224789");
                         if (rolelist1.size() > 0) {
-                            toDoNotice.setOwner(rolelist1.get(0).getUserid());
+                            for(int t = 0; t < rolelist1.size(); t ++){
+                                toDoNotice.setOwner(rolelist1.get(t).getUserid());
+                                toDoNoticeService.save(toDoNotice);
+                            }
                         }
-                        toDoNoticeService.save(toDoNotice);
                     }
                 }
             }
