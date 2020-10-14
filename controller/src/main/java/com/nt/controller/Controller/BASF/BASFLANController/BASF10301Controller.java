@@ -4,13 +4,14 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
 import com.nt.controller.Controller.WebSocket.WebSocket;
-import com.nt.dao_BASF.Environment;
 import com.nt.dao_BASF.Pimspoint;
 import com.nt.dao_BASF.VO.EpChartVo;
 import com.nt.service_BASF.DeviceInformationServices;
 import com.nt.service_BASF.EnvironmentServices;
-import com.nt.utils.*;
-import com.nt.utils.dao.TokenModel;
+import com.nt.utils.ApiResult;
+import com.nt.utils.MessageUtil;
+import com.nt.utils.MsgConstants;
+import com.nt.utils.RequestUtils;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -90,8 +91,9 @@ public class BASF10301Controller {
         if (pimspoint == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        environmentServices.update(pimspoint, tokenModel);
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        environmentServices.update(pimspoint, tokenModel);
+        environmentServices.update(pimspoint);
         return ApiResult.success();
     }
 

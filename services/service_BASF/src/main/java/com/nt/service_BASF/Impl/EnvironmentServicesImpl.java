@@ -1,11 +1,8 @@
 package com.nt.service_BASF.Impl;
 
-import com.nt.dao_BASF.Environment;
 import com.nt.dao_BASF.Pimspoint;
 import com.nt.service_BASF.EnvironmentServices;
-import com.nt.service_BASF.mapper.EnvironmentMapper;
 import com.nt.service_BASF.mapper.PimsPointMapper;
-import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 
 /**
@@ -49,7 +45,7 @@ public class EnvironmentServicesImpl implements EnvironmentServices {
     }
 
     /**
-     * @param pimspointId
+     * @param pimspointid
      * @Method one
      * @Author Wxz
      * @Version 1.0
@@ -65,7 +61,6 @@ public class EnvironmentServicesImpl implements EnvironmentServices {
 
     /**
      * @param pimspoint
-     * @param tokenModel
      * @Method update
      * @Author Wxz
      * @Version 1.0
@@ -74,8 +69,8 @@ public class EnvironmentServicesImpl implements EnvironmentServices {
      * @Date 2019/11/12 11：07
      */
     @Override
-    public void update(Pimspoint pimspoint, TokenModel tokenModel) throws Exception {
-        pimspoint.preUpdate(tokenModel);
+    public void update(Pimspoint pimspoint) throws Exception {
+//        pimspoint.preUpdate(tokenModel);
         pimsPointMapper.updateByPrimaryKey(pimspoint);
     }
 

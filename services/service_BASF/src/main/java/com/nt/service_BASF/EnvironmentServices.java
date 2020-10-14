@@ -1,8 +1,6 @@
 package com.nt.service_BASF;
 
-import com.nt.dao_BASF.Environment;
 import com.nt.dao_BASF.Pimspoint;
-import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
 
@@ -24,6 +22,6 @@ public interface EnvironmentServices {
     Pimspoint one(String pimspointid) throws Exception;
 
     //更新监控数据
-    void update(Pimspoint pimspoint, TokenModel tokenModel) throws Exception;
+    void update(Pimspoint pimspoint) throws Exception;
 
 }
