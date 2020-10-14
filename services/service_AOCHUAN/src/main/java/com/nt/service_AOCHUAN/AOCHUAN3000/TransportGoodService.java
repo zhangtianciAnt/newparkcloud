@@ -33,4 +33,6 @@ public interface TransportGoodService {
 
     //    导出
     boolean setExport(HttpServletResponse response , List<TransportGood> exportVo) throws Exception;
+
+    List<TransportGood> getTransportInfo(String id) throws Exception;
 }

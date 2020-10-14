@@ -128,4 +128,13 @@ public class AOCHUAN3002Controller {
     }
 
 
+    @RequestMapping(value = "/getTransportInfo", method = {RequestMethod.GET})
+    public ApiResult getTransportInfo(@RequestParam String id, HttpServletRequest request) throws Exception {
+        if (!StringUtils.isNotBlank(id)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(transportGoodService.getTransportInfo(id));
+    }
+
+
 }
