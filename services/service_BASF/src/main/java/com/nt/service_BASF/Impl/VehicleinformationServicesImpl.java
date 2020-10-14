@@ -123,13 +123,15 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         List<Vehicleinformation> getInformatoinlist = vehicleinformationMapper.getlistinformation();
         List<VehicleinformationVo> infoList = new ArrayList<>();
         VehicleinformationVo vehicleinformationVo;
-        String month = "";
         int data[] = new int[12];
+        Calendar cal = Calendar.getInstance();
         for (int i = 0; i < getInformatoinlist.size(); i++) {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            month = dateFormat.format(getInformatoinlist.get(i).getIntime());
-            month = month.substring(6, 7);
-            data[Integer.parseInt(month) - 1] = data[Integer.parseInt(month) - 1] + 1;
+//            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//            month = dateFormat.format(getInformatoinlist.get(i).getIntime());
+//            month = month.substring(6, 7);
+            cal.setTime(getInformatoinlist.get(i).getIntime());
+            int month = cal.get(Calendar.MONTH);
+            data[month] = data[month] + 1;
         }
         for (int j = 0; j < data.length; j++) {
             int m = 1;
