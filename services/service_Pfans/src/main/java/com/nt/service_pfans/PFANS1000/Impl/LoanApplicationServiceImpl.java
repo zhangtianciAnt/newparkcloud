@@ -88,6 +88,20 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         return loaList;
     }
 
+    @Override
+    public List<LoanApplication> getLoanApplicationList2(String loanappno, TokenModel tokenModel) {
+        String[] loa = loanappno.split(",");
+        List<LoanApplication> loaList = new ArrayList<LoanApplication>();
+        LoanApplication lo = new LoanApplication();
+        for (String l : loa) {
+            lo = loanapplicationMapper.selectByPrimaryKey(l);
+            if (lo != null && !loaList.contains(lo)) {
+                loaList.add(lo);
+            }
+        }
+        return loaList;
+    }
+
 
     @Override
     public List<LoanApplication> getLoapp() throws Exception {

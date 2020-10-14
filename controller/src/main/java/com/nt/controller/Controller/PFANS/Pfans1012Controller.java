@@ -742,6 +742,12 @@ public class Pfans1012Controller {
     }
     //add ccm 0728  精算时关联多个暂借款
 
+    @RequestMapping(value = "/getLoanApplicationList2", method = {RequestMethod.GET})
+    public ApiResult getLoanApplicationList2(String loanapno, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(loanapplicationService.getLoanApplicationList2(loanapno,tokenModel));
+    }
+
     //采购业务数据流程查看详情
     @RequestMapping(value = "/getworkfolwPurchaseData", method = {RequestMethod.POST})
     public ApiResult getworkfolwPurchaseData(@RequestBody PublicExpense publicExpense, HttpServletRequest request) throws Exception {

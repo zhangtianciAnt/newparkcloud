@@ -23,6 +23,8 @@ public interface LoanApplicationService {
 
     //add ccm 0728  精算时关联多个暂借款
     List<LoanApplication> getLoanApplicationList(String loanappno,TokenModel tokenModel)throws Exception;
+
+    List<LoanApplication> getLoanApplicationList2(String loanappno,TokenModel tokenModel)throws Exception;
     //add ccm 0728  精算时关联多个暂借款
 
     Map<String, String> getworkfolwPurchaseData(LoanApplication loanapplication) throws Exception;
