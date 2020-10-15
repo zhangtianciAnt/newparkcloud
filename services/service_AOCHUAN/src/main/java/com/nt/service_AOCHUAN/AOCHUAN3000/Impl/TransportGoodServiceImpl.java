@@ -472,6 +472,34 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         return isSuccess;
     }
 
+    @Override
+    public List<TransportGood> getTransportInfo(String id) throws Exception {
+        List<TransportGood> transportGood = new ArrayList<>();
+        List<TransportGood> transportGo = new ArrayList<>();
+//        TransportGood trans= new TransportGood();
+        Saledetails sds = new Saledetails();
+        sds.setSupplierid(id);
+        List<Saledetails> saledetailsList = saledetailsMapper.select(sds);
+        if(saledetailsList.size() >0){
+            for(Saledetails s : saledetailsList){
+                if(StringUtils.isNotEmpty(s.getTransportgood_id())){
+                    TransportGood good =  transportGoodMapper.selectByPrimaryKey(s.getTransportgood_id());
+                    if(good != null){
+                        transportGood.add(good);
+                    }
+                }
+            }
+        }
+        if(transportGood.size()>0){
+            for (TransportGood item : transportGood) {
+                if (transportGo.stream().filter(item2 -> item2.getTransportgood_id().equals(item.getTransportgood_id())).count() == 0) {
+                    transportGo.add(item);
+                }
+            }
+        }
+        return transportGo;
+    }
+
 
     /**
      * 业务逻辑把数据存到Map中
