@@ -189,22 +189,28 @@ public class MultiThreadScheduleTask {
     @Autowired
     private CowBUtils cowBUtils;
 
-    @Async
-    @Scheduled(fixedDelay = 20000)
-    public void getGps() throws Exception {
-        //获取所有GPS盒子imei和key（key是鉴权码），循环调用获取GPS，都调用结束，推送前台
-        List<VehicleManagement> vehicleManagements = vehicleManagementMapper.select(new VehicleManagement());
-        List<MhInfo> mhInfos = new ArrayList<>();
-        for (VehicleManagement v : vehicleManagements) {
-            String obj = cowBUtils.getMhLastinfo(v.getIkey(), v.getImei());
-            MhInfo mhInfo = JSONObject.parseObject(obj, MhInfo.class);
-            mhInfo.setVehicleManagement(v);
-            mhInfo.setEnable(v.getEnable());
-            mhInfos.add(mhInfo);
-        }
-        webSocketVo.setCarSet(mhInfos);
-        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
-    }
+
+    /**
+     * 获取消防车定位
+     *
+     * @throws Exception
+     */
+//    @Async
+//    @Scheduled(fixedDelay = 20000)
+//    public void getGps() throws Exception {
+//        //获取所有GPS盒子imei和key（key是鉴权码），循环调用获取GPS，都调用结束，推送前台
+//        List<VehicleManagement> vehicleManagements = vehicleManagementMapper.select(new VehicleManagement());
+//        List<MhInfo> mhInfos = new ArrayList<>();
+//        for (VehicleManagement v : vehicleManagements) {
+//            String obj = cowBUtils.getMhLastinfo(v.getIkey(), v.getImei());
+//            MhInfo mhInfo = JSONObject.parseObject(obj, MhInfo.class);
+//            mhInfo.setVehicleManagement(v);
+//            mhInfo.setEnable(v.getEnable());
+//            mhInfos.add(mhInfo);
+//        }
+//        webSocketVo.setCarSet(mhInfos);
+////        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
+//    }
 
     private HttpEntity<String> getResponse(Map<String, Object> requestMap) {
         HttpHeaders headers = new HttpHeaders();

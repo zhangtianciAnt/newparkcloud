@@ -122,9 +122,7 @@ public class BASF10105Controller {
                 List<String> alarmMapidList = new ArrayList<>();
                 //存储发送到websocket中的信息
                 List<DeviceinformationVo> list = new ArrayList<>();
-
                 for (int i = 0; i < serverinfolist.size(); i++) {
-
                     //根据设备总厂/分厂名称、回路号/寄存器地址、设备地址/寄存器位查询唯一对应设备
                     ServerInfo serverinfo = serverinfolist.get(i);
                     Deviceinformation deviceinformation = new Deviceinformation();
@@ -132,12 +130,10 @@ public class BASF10105Controller {
                     deviceinformation.setDevline(serverinfo.getDevline());
                     deviceinformation.setDevrow(serverinfo.getDevrow());
                     List<Deviceinformation> linkagelist = deviceinFormationServices.list(deviceinformation);
-
                     //添加需要更改remark的报警设备的Mapid
                     if (linkagelist.size() == 1) {
                         alarmMapidList.add(linkagelist.get(0).getMapid());
                     }
-
                     //创建消防报警单
                     if (linkagelist.size() == 1) {
                         Firealarm firealarm = new Firealarm();
@@ -170,7 +166,6 @@ public class BASF10105Controller {
                         String firealarmuuid = firealarmServices.insert(firealarm, null);
                     }
                 }
-
                 //获取并立即推送非误报且未完成的消防报警单
                 Firealarm firealarm = new Firealarm();
                 firealarm.setCompletesta("0");
@@ -187,16 +182,14 @@ public class BASF10105Controller {
                         list.add(linkagelistVo);
                     }
                 }
+                // 报警铃铛内容
                 MultiThreadScheduleTask.webSocketVo.setTopfirealarmList(firealarms);
                 MultiThreadScheduleTask.webSocketVo.setNewFireAlarm(true);
-
                 //更新mapbox_maplevel中的remark为1，并一直追设到对应的level2
                 mapBox_mapLevelServices.remarkSet(alarmMapidList, true, null);
-
                 // 推送报警设备信息
                 MultiThreadScheduleTask.webSocketVo.setDeviceinformationList(list);
                 WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
-
                 MultiThreadScheduleTask.webSocketVo.setFireAlarmList(firealarmServices.getFireAlarm());
                 MultiThreadScheduleTask.webSocketVo.setFireAlarmStatisticsVoList(firealarmServices.getFireAlarmStatistics());
                 WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));

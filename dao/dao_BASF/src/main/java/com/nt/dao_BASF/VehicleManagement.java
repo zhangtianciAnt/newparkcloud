@@ -21,4 +21,6 @@ public class VehicleManagement extends BaseModel {
     private String ikey;
     private String flag;
     private String enable;
+    private String Lat;
+    private String Lng;
 }
