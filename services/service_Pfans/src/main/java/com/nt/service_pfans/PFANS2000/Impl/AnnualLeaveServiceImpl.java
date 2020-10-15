@@ -600,7 +600,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         insertattendancebp(-1,"","");
     }
 
-    @Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add
+    //@Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertpunchcardTask()throws Exception {
         //处理异常和加班数据
         //上月1号
