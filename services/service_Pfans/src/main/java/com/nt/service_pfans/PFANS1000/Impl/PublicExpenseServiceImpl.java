@@ -325,9 +325,14 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             award1.setAward_id(aa[0]);
             List<Award> award = awardMapper.select(award1);
             if (award.size() > 0) {
+                String statuspublic3 = "";
                 String statuspublic1 = publicExpenseVo.getPublicexpense().getJudgement_name();
                 String statuspublic2 = award.get(0).getStatuspublic();
-                String statuspublic3 = statuspublic1 + ',' + statuspublic2 ;
+                if(com.mysql.jdbc.StringUtils.isNullOrEmpty(statuspublic2)){
+                     statuspublic3 = statuspublic1 ;
+                }else{
+                     statuspublic3 = statuspublic1 + ',' + statuspublic2 ;
+                }
                 award.get(0).setStatuspublic(statuspublic3);
                 awardMapper.updateByPrimaryKey(award.get(0));
             }
