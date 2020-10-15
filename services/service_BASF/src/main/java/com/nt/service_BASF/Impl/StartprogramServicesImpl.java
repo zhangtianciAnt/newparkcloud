@@ -157,6 +157,11 @@ public class StartprogramServicesImpl implements StartprogramServices {
     }
 
     @Override
+    public List<Startprogram> selectProgramForErc() throws Exception {
+        return startprogramMapper.selectProgramForErc();
+    }
+
+    @Override
     public List<PassingRateVo> getMandatoryInfo() throws Exception {
         return startprogramMapper.getMandatoryInfo();
     }

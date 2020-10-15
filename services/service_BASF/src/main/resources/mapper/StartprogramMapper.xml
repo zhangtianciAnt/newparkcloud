@@ -108,6 +108,71 @@
         </if>
     </select>
 
+    <select id="selectProgramForErc" resultType="com.nt.dao_BASF.Startprogram">
+        SELECT
+        t.personnelid,
+        s.startprogramid,
+        s.programlistid,
+        s.programname,
+        s.informpeople,
+        s.starttheorydate,
+        t.departmentname,
+        CASE
+        s.isonline
+        WHEN 'BC032001' THEN
+        t.finallyexamdate ELSE
+        s.starttheorydate end as traindate,
+        t.throughtype,
+        s.MODIFYON as publishdate,
+        s.theorysite,
+        s.startoperationdate,
+        s.operationsite,
+        s.expirationdate,
+        s.materialsexpirationdate,
+        s.informperson,
+        s.programcode,
+        s.programhard,
+        s.insideoutside,
+        s.mandatory,
+        s.isonline,
+        s.thelength,
+        s.validity,
+        s.money,
+        s.remindtime,
+        s.isfirst,
+        s.applydata,
+        s.applydataurl,
+        s.standard,
+        s.questionnum,
+        s.programtype,
+        s.actualstartdate,
+        -- 在这里用MODIFYON作为到期时间，可以少写一个vo
+        CASE
+        s.isonline
+        WHEN 'BC032001' THEN
+        DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ) ELSE (
+        CASE
+        WHEN t.issuedate IS NULL THEN
+        DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ) ELSE DATE_ADD( t.issuedate, INTERVAL s.validity MONTH )
+        END
+        )
+        END AS MODIFYON
+        FROM
+        startprogram AS s
+        INNER JOIN
+        trainjoinlist AS t
+        ON
+        s.startprogramid = t.startprogramid
+        WHERE
+        t.`STATUS` = '0'
+        AND
+        t.jointype = '正常'
+        AND
+        ( t.throughtype = '通过' OR t.throughtype = '未通过' )
+        AND
+        s.programtype in ('BC039004')
+    </select>
+
     <!--    通过人员id查询即将到期的培训-->
     <select id="onlineOverdue" resultType="com.nt.dao_BASF.Startprogram">
         (SELECT

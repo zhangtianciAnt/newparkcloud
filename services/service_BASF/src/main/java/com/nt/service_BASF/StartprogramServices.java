@@ -50,6 +50,8 @@ public interface StartprogramServices {
     //by人员id查询培训项目
     List<Startprogram> selectbyuserid(String userid, String selecttype) throws Exception;
 
+    List<Startprogram> selectProgramForErc() throws Exception;
+
     //获取强制的通过/未通过
     List<PassingRateVo> getMandatoryInfo() throws Exception;
 
