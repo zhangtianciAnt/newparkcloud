@@ -11,6 +11,7 @@ import com.nt.dao_Pfans.PFANS1000.PublicExpense;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
+import com.nt.service_Org.mapper.TodoNoticeMapper;
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
 import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
@@ -18,6 +19,7 @@ import com.nt.service_pfans.PFANS1000.mapper.LoanApplicationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PublicExpenseMapper;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,9 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Autowired
     private PurchaseMapper purchaseMapper;
+
+    @Autowired
+    private TodoNoticeMapper todoNoticeMapper;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -205,7 +210,9 @@ public class PurchaseServiceImpl implements PurchaseService {
             //审批结束，精算完成，资产管理番号更新
             purchase.preUpdate(tokenModel);
             purchaseMapper.updateByPrimaryKey(purchase);
+            toDoNoticeService.delToDoNotice2(purchase.getPurchase_id(),tokenModel);
         }
+        //处理状态
         if(purchase.getStatus().equals("4") && purchase.getAcceptstatus() != null && !purchase.getAcceptstatus().equals("")){
             purchase.preUpdate(tokenModel);
             purchaseMapper.updateByPrimaryKey(purchase);
