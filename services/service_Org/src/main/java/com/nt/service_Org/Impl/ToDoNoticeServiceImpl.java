@@ -142,6 +142,21 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
     }
     //    ADD_FJL_05/25  -- 删除驳回之后无用代办
 
+    public void delToDoNotice2(String dataid, TokenModel tokenModel) throws Exception {
+        ToDoNotice toDoNotice = new ToDoNotice();
+        toDoNotice.setDataid(dataid);
+        List<ToDoNotice> toDoNoticeList = todoNoticeMapper.select(toDoNotice);
+        if(toDoNoticeList.size() > 0){
+            for(int i = 0; i < toDoNoticeList.size(); i++){
+                if(toDoNoticeList.get(i).getTitle().equals("【有采购申请需您维护资产信息】")){
+                    toDoNoticeList.get(i).preUpdate(tokenModel);
+                    toDoNoticeList.get(i).setStatus(AuthConstants.TODO_STATUS_DONE);
+                    todoNoticeMapper.updateByPrimaryKeySelective(toDoNoticeList.get(i));
+                }
+            }
+        }
+    }
+
     private MessageHeaders createHeaders(String sessionId) {
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.create(SimpMessageType.MESSAGE);
         headerAccessor.setSessionId(sessionId);
