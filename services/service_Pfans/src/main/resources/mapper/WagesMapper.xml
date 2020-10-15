@@ -296,6 +296,8 @@
         CASE
         WHEN ( @TYPE &lt;=> '2' ) THEN
         round( ( @BASETHISMONTHBASIC / 21.75 * @CXDAYS ), 2)
+        WHEN ( @TYPE &lt;=> '3' ) THEN
+        round( ( @THISMONTH - @BASETHISMONTHBASIC / 21.75 * @CXDAYS ), 2)
         WHEN ( @TYPE &lt;=> '1' ) THEN
         round(base.INDUCTION_GIVE,2)
         WHEN ( @TYPE &lt;=> '4' ) THEN
@@ -323,17 +325,33 @@
         base.INDUCTION_LUNCH
         WHEN ( @TYPE &lt;=> '4' ) THEN
         round(base.RETIRE_LUNCH - @YKBZJS / 21.75 / 8 * (@SHORTDEFICIENCY + @CHRONICDEFICIENCY + @DILIGENCE),2)
+        WHEN (base.LASTMONTHSUITDAYS &lt;> 0.0) THEN
+        round(
+        IF
+        (
+        base.LASTMONTHSUITDAYS &lt;=> 0.0,
+        0,
+        base.DIC_YKBZSY / 21.75 / 8 * ( base.LASTMONTHSUITDAYS * 8 - base.LASTDILIGENCETRY - base.LASTSHORTDEFICIENCYTRY - base.LASTCHRONICDEFICIENCYTRY )
+        ) +
+        IF
+        (
+        base.LASTMONTHDAYS &lt;=> 0.0,
+        0,
+        base.DIC_YKBZZS / 21.75 / 8 * ( base.LASTMONTHDAYS * 8 - base.LASTDILIGENCEFORMAL - base.LASTSHORTDEFICIENCYFORMAL - base.LASTCHRONICDEFICIENCYFORMAL )
+        ),
+        2
+        )
         ELSE
         round(
         IF
         (
-        base.LASTMONTHSUITDAYS &lt;=> 0,
+        base.LASTMONTHSUITDAYS &lt;=> 0.0,
         0,
         base.DIC_YKBZSY * ( base.LASTMONTHSUITDAYS * 8 - base.LASTDILIGENCETRY - base.LASTSHORTDEFICIENCYTRY - base.LASTCHRONICDEFICIENCYTRY ) / ( base.LASTMONTHSUITDAYS * 8 )
         ) +
         IF
         (
-        base.LASTMONTHDAYS &lt;=> 0,
+        base.LASTMONTHDAYS &lt;=> 0.0,
         0,
         base.DIC_YKBZZS * ( 168 - base.LASTDILIGENCEFORMAL - base.LASTSHORTDEFICIENCYFORMAL - base.LASTCHRONICDEFICIENCYFORMAL ) / 168
         ),
