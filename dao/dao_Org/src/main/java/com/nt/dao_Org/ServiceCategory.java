@@ -1,5 +1,6 @@
 package com.nt.dao_Org;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,7 @@ public class ServiceCategory extends BaseModel {
     /**
      * 数据主键ID
      */
+    @JSONField(name="_id")
     private String _id;
     private String servicename;  //根节点名称   固定：维修内容分类
     private String type;

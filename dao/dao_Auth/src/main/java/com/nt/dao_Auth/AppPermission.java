@@ -1,5 +1,6 @@
 package com.nt.dao_Auth;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,6 +30,7 @@ public class AppPermission extends BaseModel {
     /**
      * 数据主键ID
      */
+    @JSONField(name="_id")
     private String _id;
 
     /**
@@ -63,6 +65,7 @@ public class AppPermission extends BaseModel {
         /**
          * 菜单ID
          */
+        @JSONField(name="_id")
         private String _id;
 
         /**
@@ -107,6 +110,7 @@ public class AppPermission extends BaseModel {
             /**
              * 主键
              */
+            @JSONField(name="_id")
             private String _id;
             /**
              * 功能类型

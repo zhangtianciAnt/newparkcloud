@@ -1,5 +1,6 @@
 package com.nt.dao_Auth;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,6 +30,7 @@ public class Role extends BaseModel {
     /**
      * 数据主键ID
      */
+    @JSONField(name="_id")
     private String _id;
 
     /**

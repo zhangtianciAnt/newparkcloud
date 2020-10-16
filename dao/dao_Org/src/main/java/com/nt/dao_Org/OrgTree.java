@@ -89,6 +89,7 @@ public class OrgTree extends BaseModel {
     @Data
     public static class Invoiceinfo extends BaseModel {
 
+        @JSONField(name="_id")
         private String _id;
         private String companyname;
         private String dutynumber;
@@ -111,6 +112,7 @@ public class OrgTree extends BaseModel {
     @Data
     public static class Bankinfo extends BaseModel {
 
+        @JSONField(name="_id")
         private String _id;
         private String bankname;
         private String bankbranch;

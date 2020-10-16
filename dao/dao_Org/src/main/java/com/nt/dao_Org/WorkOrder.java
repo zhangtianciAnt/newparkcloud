@@ -1,5 +1,6 @@
 package com.nt.dao_Org;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,7 @@ public class WorkOrder extends BaseModel {
     /**
      * 数据主键ID
      */
+    @JSONField(name="_id")
     private String _id;//工单ID
     private String workorderno;  //工单编号
     private String source;  //来源  1.PC后台；2.微信服务号
@@ -102,6 +104,7 @@ public class WorkOrder extends BaseModel {
 
     @Data
     public static class Replymsg extends BaseModel {
+        @JSONField(name="_id")
         private String _id;
         private String msg;   //消息内容   支持文字及照片
         private String msgtype;   //消息类型   1.客户方；2.处理方

@@ -1,5 +1,6 @@
 package com.nt.dao_Org;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,7 @@ public class Information extends BaseModel {
     /**
      * 数据主键ID
      */
+    @JSONField(name="_id")
     private String _id;
     private String occasion;  //场景。1.PC端；2.微信服务号
     private String title;  //标题
@@ -49,6 +51,7 @@ public class Information extends BaseModel {
 
     @Data
     public static class Activityinfo extends BaseModel {
+        @JSONField(name="_id")
         private String _id;
         private Date starttime;   //开始时间
         private Date endtime;   //结束时间
@@ -86,6 +89,7 @@ public class Information extends BaseModel {
 
     @Data
     public static class Signupinfo extends BaseModel {
+        @JSONField(name="_id")
         private String _id;
         private String companyname;   //公司名称
         private String name;          //姓名
@@ -94,6 +98,7 @@ public class Information extends BaseModel {
 
     @Data
     public static class Fieldmeetinfo extends BaseModel {
+        @JSONField(name="_id")
         private String _id;
         private String address; //地址
         private String cost;  //费用
@@ -106,6 +111,7 @@ public class Information extends BaseModel {
 
     @Data
     public static class Businessdocking extends BaseModel {
+        @JSONField(name="_id")
         private String _id;
         private String industry;   //行业
         private String transactionplace;   //交易地点

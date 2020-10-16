@@ -1,5 +1,6 @@
 package com.nt.dao_Org;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.nt.utils.dao.BaseModel;
 import com.nt.utils.dao.TokenModel;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ public class Log extends BaseModel {
     /**
      * 数据主键ID
      */
+    @JSONField(name="_id")
     private String _id;
     /**
      * 分类
@@ -71,6 +73,7 @@ public class Log extends BaseModel {
         /**
          * 数据主键ID
          */
+        @JSONField(name="_id")
         private String _id;
         /**
          * 登录IP

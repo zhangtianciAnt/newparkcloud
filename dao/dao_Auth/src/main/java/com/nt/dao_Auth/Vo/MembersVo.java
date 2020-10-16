@@ -1,5 +1,6 @@
 package com.nt.dao_Auth.Vo;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class MembersVo {
     /**
      * 用户主键ID
      */
+    @JSONField(name="_id")
     private String _id;
     /**
      * 姓名
