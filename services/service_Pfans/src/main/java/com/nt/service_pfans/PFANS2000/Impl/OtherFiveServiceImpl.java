@@ -123,10 +123,12 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                                 Result.add("模板第" + (k-1) + "行的意外保险长度超出范围，请输入长度为20位之内的意外保险，导入失败");
                                 continue;
                             }
-                            if(!Pattern.matches(click, value.get(5).toString())){
-                                error = error + 1;
-                                Result.add("模板第" + (k - 1) + "行的意外保险不符合规范，请输入正确的意外保险，导入失败");
-                                continue;
+                            if(!value.get(5).toString().equals("0")){
+                                if(!Pattern.matches(click, value.get(5).toString())){
+                                    error = error + 1;
+                                    Result.add("模板第" + (k - 1) + "行的意外保险不符合规范，请输入正确的意外保险，导入失败");
+                                    continue;
+                                }
                             }
                         }
                     }
@@ -137,10 +139,12 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                                 Result.add("模板第" + (k-1) + "行的体检长度超出范围，请输入长度为20位之内的体检，导入失败");
                                 continue;
                             }
-                            if(!Pattern.matches(click, value.get(6).toString())){
-                                error = error + 1;
-                                Result.add("模板第" + (k - 1) + "行的体检不符合规范，请输入正确的体检，导入失败");
-                                continue;
+                            if(!value.get(6).toString().equals("0")){
+                                if(!Pattern.matches(click, value.get(6).toString())){
+                                    error = error + 1;
+                                    Result.add("模板第" + (k - 1) + "行的体检不符合规范，请输入正确的体检，导入失败");
+                                    continue;
+                                }
                             }
                         }
                     }
@@ -158,10 +162,12 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                                 Result.add("模板第" + (k-1) + "行的工会福祉长度超出范围，请输入长度为20位之内的工会福祉，导入失败");
                                 continue;
                             }
-                            if(!Pattern.matches(click, value.get(8).toString())){
-                                error = error + 1;
-                                Result.add("模板第" + (k - 1) + "行的工会福祉不符合规范，请输入正确的工会福祉，导入失败");
-                                continue;
+                            if(!value.get(8).toString().equals("0")){
+                                if(!Pattern.matches(click, value.get(8).toString())){
+                                    error = error + 1;
+                                    Result.add("模板第" + (k - 1) + "行的工会福祉不符合规范，请输入正确的工会福祉，导入失败");
+                                    continue;
+                                }
                             }
                         }
                     }
@@ -172,10 +178,12 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                                 Result.add("模板第" + (k-1) + "行的忘年会奖品长度超出范围，请输入长度为20位之内的忘年会奖品，导入失败");
                                 continue;
                             }
-                            if(!Pattern.matches(click, value.get(9).toString())){
-                                error = error + 1;
-                                Result.add("模板第" + (k - 1) + "行的忘年会奖品不符合规范，请输入正确的忘年会奖品，导入失败");
-                                continue;
+                            if(!value.get(9).toString().equals("0")){
+                                if(!Pattern.matches(click, value.get(9).toString())){
+                                    error = error + 1;
+                                    Result.add("模板第" + (k - 1) + "行的忘年会奖品不符合规范，请输入正确的忘年会奖品，导入失败");
+                                    continue;
+                                }
                             }
                         }
                     }
@@ -186,10 +194,12 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                                 Result.add("模板第" + (k-1) + "行的組合旅游费长度超出范围，请输入长度为20位之内的組合旅游费，导入失败");
                                 continue;
                             }
-                            if(!Pattern.matches(click, value.get(10).toString())){
-                                error = error + 1;
-                                Result.add("模板第" + (k - 1) + "行的組合旅游费不符合规范，请输入正确的組合旅游费，导入失败");
-                                continue;
+                            if(!value.get(10).toString().equals("0")){
+                                if(!Pattern.matches(click, value.get(10).toString())){
+                                    error = error + 1;
+                                    Result.add("模板第" + (k - 1) + "行的組合旅游费不符合规范，请输入正确的組合旅游费，导入失败");
+                                    continue;
+                                }
                             }
                         }
                     }
