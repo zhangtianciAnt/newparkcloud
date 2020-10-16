@@ -35,7 +35,8 @@
         else occurrence_date end) occurrencedate,
         MAX(case when status = '7' then re_finished_date
         else finished_date end) finisheddate,
-        my_WorkingDays(date_format(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y%m'))/ 8 as worktime
+        my_WorkingDays(date_format(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y%m'))/ 8 as worktime,
+        my_AttendanceDays(date_format(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y%m'))/ 8 as relengthtime
         from abnormal
         where status >= 4
         and error_type = 'PR013012'
@@ -50,7 +51,8 @@
         else occurrence_date end) occurrencedate,
         MAX(case when status = '7' then re_finished_date
         else finished_date end) finisheddate,
-        my_WorkingDays(date_format(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y%m'))/ 8 as worktime
+        my_WorkingDays(date_format(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y%m'))/ 8 as worktime,
+        my_AttendanceDays(date_format(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y%m'))/ 8 as relengthtime
         from abnormal
         where status >= 4
         and error_type = 'PR013013'
