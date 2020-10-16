@@ -1,6 +1,7 @@
 package com.nt.service_BASF.mapper;
 
 import com.nt.dao_BASF.Startprogram;
+import com.nt.dao_BASF.VO.PassVo;
 import com.nt.dao_BASF.VO.PassingRateVo;
 import com.nt.dao_BASF.VO.TrainEducationPerVo;
 import com.nt.utils.MyMapper;
@@ -50,5 +51,11 @@ public interface StartprogramMapper extends MyMapper<Startprogram> {
 
     //即将到期人员的一览
     List<Startprogram> getUsersEnd() throws Exception;
+
+    // ERC大屏强制培训通过率
+    List<PassVo> getForcePass() throws Exception;
+
+    // ERC大屏非强制培训通过率
+    List<PassVo> getUnForcePass() throws Exception;
 
 }

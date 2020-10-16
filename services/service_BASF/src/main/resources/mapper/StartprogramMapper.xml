@@ -500,4 +500,44 @@ WHERE
         ORDER BY
         MODIFYON ASC
     </select>
+
+    <select id="getForcePass" resultType="com.nt.dao_BASF.VO.PassVo">
+        SELECT
+        tl.departmentname,
+        YEAR ( tl.issuedate ) AS YEAR,
+        count( tl1.throughtype ) / count( tl.throughtype ) AS pass
+        FROM
+        startprogram sp
+        LEFT JOIN trainjoinlist tl ON sp.startprogramid = tl.startprogramid
+        LEFT JOIN trainjoinlist tl1 ON tl.trainjoinlistid = tl1.trainjoinlistid
+        AND tl1.throughtype = '通过'
+        WHERE
+        sp.programtype = 'BC039004'
+        AND sp.mandatory = 'BC033001'
+        AND ifnull( tl.departmentname, '' ) <![CDATA[ <> ]]> ''
+        GROUP BY
+        tl.departmentname,
+        YEAR (
+        tl.issuedate)
+    </select>
+
+    <select id="getUnForcePass" resultType="com.nt.dao_BASF.VO.PassVo">
+        SELECT
+        tl.departmentname,
+        YEAR ( tl.issuedate ) AS year,
+        count( tl1.throughtype ) / count( tl.throughtype ) AS pass
+        FROM
+        startprogram sp
+        LEFT JOIN trainjoinlist tl ON sp.startprogramid = tl.startprogramid
+        LEFT JOIN trainjoinlist tl1 ON tl.trainjoinlistid = tl1.trainjoinlistid
+        AND tl1.throughtype = '通过'
+        WHERE
+        sp.programtype = 'BC039004'
+        AND sp.mandatory = 'BC033002'
+        AND ifnull( tl.departmentname, '' ) <![CDATA[ <> ]]> ''
+        GROUP BY
+        tl.departmentname,
+        YEAR (
+        tl.issuedate)
+    </select>
 </mapper>

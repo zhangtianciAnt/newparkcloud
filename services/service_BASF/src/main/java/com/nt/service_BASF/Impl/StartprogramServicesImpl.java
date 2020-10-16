@@ -14,6 +14,7 @@ import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.service_BASF.mapper.ProgramlistMapper;
 import com.nt.service_BASF.mapper.StartprogramMapper;
 import com.nt.service_Org.UserService;
+import com.nt.utils.ApiResult;
 import com.nt.utils.ExcelOutPutUtil;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
@@ -237,4 +238,14 @@ public class StartprogramServicesImpl implements StartprogramServices {
         return startprogramMapper.getUsersEnd();
     }
 
+    @Override
+    public ApiResult getPass(String type) throws Exception {
+        if (type.equals("1")) {
+            // 获取强制通过率
+            return ApiResult.success(startprogramMapper.getForcePass());
+        } else {
+            // 获取非强制通过率
+            return ApiResult.success(startprogramMapper.getUnForcePass());
+        }
+    }
 }

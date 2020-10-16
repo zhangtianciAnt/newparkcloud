@@ -4,6 +4,7 @@ import com.nt.dao_BASF.Startprogram;
 import com.nt.dao_BASF.VO.PassingRateVo;
 import com.nt.dao_BASF.VO.StartprogramVo;
 import com.nt.dao_BASF.VO.TrainEducationPerVo;
+import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletResponse;
@@ -69,4 +70,7 @@ public interface StartprogramServices {
 
     //即将到期人员的一览
     List<Startprogram> getUsersEnd() throws Exception;
+
+    // ERC大屏获取培训图表
+    ApiResult getPass(String type) throws Exception;
 }
