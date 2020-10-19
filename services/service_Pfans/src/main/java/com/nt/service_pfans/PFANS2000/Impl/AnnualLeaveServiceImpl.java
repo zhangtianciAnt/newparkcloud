@@ -328,23 +328,28 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd");
         DateUtil.format(calendar.getTime(),"yyyy-MM-dd");
 
-        /*
-        //Ⅰ.途中入职：本事业年度在职期间/12个月*15天
+
+        //Ⅰ.途中入职：本事业年度在职期间/365天*当年度法定年休天数
         if(StringUtil.isEmpty(resignationDateendCal))
         {
             if(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enterdaystartCal)))).compareTo(calendar.getTime())>=0 && sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enterdaystartCal)))).compareTo(calendar_a.getTime())<=0)
             {
+                int year = getYears(workdaystartCal);
                 //有工作经验者
-                if(!(customer.getUserinfo().getEnddate() == null || customer.getUserinfo().getEnddate().isEmpty()))
+                if(year>=1)
                 {
                     //入职日
                     calendar.setTime(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enterdaystartCal))).toString().replace("Z"," UTC")));
                     annual_leave_thisyear=dateLeave(calendar,calendar_a,annual_leave_thisyear);
                     annual_leave_thisyear =(new BigDecimal(annual_leave_thisyear.intValue())).setScale(2);
                 }
+                else
+                {
+                    annual_leave_thisyear = new BigDecimal(0);
+                }
             }
         }
-
+/*
         //Ⅱ.途中离职：本事业年度在职期间/12个月*当年年休天数
         if(StringUtil.isNotEmpty(resignationDateendCal))
         {
