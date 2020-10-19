@@ -19,4 +19,8 @@ public interface WorkingDayMapper extends MyMapper<WorkingDay> {
     String getHoliday(@Param("year") int year,@Param("mouth") int mouth,@Param("day") int day);
 
     Integer getHolidayExceptWeekend(@Param("start") Date start,@Param("end") Date end);
+
+    //ccm 1019 计算一个月出勤多少小时
+    List<WorkingDay> getBymonth(@Param("startDate") String startDate,@Param("endDate") String endDate, @Param("year") String year);
+    //ccm 1019 计算一个月出勤多少小时
 }

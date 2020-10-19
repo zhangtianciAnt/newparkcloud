@@ -52,4 +52,8 @@ public interface AnnualLeaveService {
 
     //每月最后一天计算实际工资
     void getrealwages() throws Exception;
+
+    //ccm 1019 计算一个月出勤多少小时
+    String workDayBymonth(String startDate,String endDate,String year) throws Exception;
+    //ccm 1019 计算一个月出勤多少小时
 }

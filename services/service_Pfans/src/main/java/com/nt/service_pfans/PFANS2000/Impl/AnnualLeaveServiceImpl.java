@@ -3292,6 +3292,88 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         return workDayYear;
     }
 
+    //ccm 1019 计算一个月出勤多少小时
+    public String workDayBymonth(String startDate,String endDate,String year) throws Exception
+    {
+        String workDaymonth = "0";
+        SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
+        //工作日表
+        List<WorkingDay> workingDaysList = workingDayMapper.getBymonth(startDate,endDate,year);
+
+        List<WorkingDay> workingDaysListqu = new ArrayList<WorkingDay>();
+        workingDaysListqu = workingDaysList.stream().filter(p->(!p.getType().equals("4"))).collect(Collectors.toList());
+
+        // 当年度当月的所有日期集合
+        List<String> days = new ArrayList<String>();
+        List<String> tempdays = new ArrayList<String>();
+        Calendar tempStart = Calendar.getInstance();
+        tempStart.setTime(sfymd.parse(startDate));
+        Calendar tempEnd = Calendar.getInstance();
+        tempEnd.setTime(sfymd.parse(endDate));
+        tempEnd.add(Calendar.DAY_OF_YEAR,1);
+
+        while (tempStart.before(tempEnd)) {
+            days.add(sfymd.format(tempStart.getTime()));
+            tempStart.add(Calendar.DAY_OF_YEAR, 1);
+        }
+
+        for(WorkingDay workingDay : workingDaysListqu)
+        {
+            //从当月的日期中删除假期
+            days.remove(sfymd.format(workingDay.getWorkingdate()));
+        }
+
+        List<WorkingDay> workingDaysListbao = new ArrayList<WorkingDay>();
+        workingDaysListbao = workingDaysList.stream().filter(p->(p.getType().equals("4"))).collect(Collectors.toList());
+
+        for(String d : days)
+        {
+            Calendar saturorsunday = Calendar.getInstance();
+            saturorsunday.setTime(sfymd.parse(d));
+            List<WorkingDay> wList = new ArrayList<WorkingDay>();
+            wList = workingDaysListbao.stream().filter(p->(sfymd.format(p.getWorkingdate()).equals(d))).collect(Collectors.toList());
+
+            if (wList.size() == 0 && (saturorsunday.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || saturorsunday.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY))
+            {
+                tempdays.add(d);
+            }
+        }
+        days.removeAll(tempdays);
+        //3.8   5.4  的判断
+        boolean w = false;
+        boolean y = false;
+        String womenday = String.valueOf(Integer.valueOf(year)+1) + "-03-08";
+        //当前剩余日期中包含3月8日，出勤振替日中不包含3月8日
+        if(days.contains(womenday) && !workingDaysListbao.contains(womenday))
+        {
+            w = true;
+        }
+        String youngday = year + "-05-04";
+        //当前剩余日期中包含5月4日，出勤振替日中不包含5月4日
+        if(days.contains(youngday) && !workingDaysListbao.contains(youngday))
+        {
+            y = true;
+        }
+
+        //最终返回天数
+        if(w && y)
+        {
+            workDaymonth = String.valueOf(days.size() - 1);
+        }
+        else if(w || y)
+        {
+            workDaymonth = String.valueOf(days.size() - 0.5);
+        }
+        else
+        {
+            workDaymonth = String.valueOf(days.size());
+        }
+        return workDaymonth;
+    }
+    //ccm 1019 计算一个月出勤多少小时
+
+
+
     //系统服务-每月最后一天计算实际工资  GBB add
     public void getrealwages()throws Exception {
         TokenModel tokenModel = new TokenModel();

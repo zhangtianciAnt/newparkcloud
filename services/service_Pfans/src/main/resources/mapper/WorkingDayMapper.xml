@@ -36,4 +36,12 @@
         from workingday
         where WORKINGDATE BETWEEN #{start} AND #{end}
     </select>
+
+    <select id="getBymonth" resultType="com.nt.dao_Pfans.PFANS8000.WorkingDay">
+        SELECT * FROM workingday
+        WHERE  YEARS =  #{year}
+        AND WORKINGDATE BETWEEN date_format( #{startDate}, '%Y-%m-%d')
+        AND  date_format( #{endDate}, '%Y-%m-%d')
+        AND STATUS='0'
+    </select>
 </mapper>

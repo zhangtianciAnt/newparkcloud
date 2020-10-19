@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * @name 年度休假一览
@@ -41,4 +43,29 @@ public class Pfans2013Controller {
         annualLeave.setYears(this_year);
         return ApiResult.success(annualLeaveService.getDataList(tokenModel));
     }
+
+    //ccm 1019 计算一个月出勤多少小时
+    @RequestMapping(value = "/getDataHours", method={RequestMethod.GET})
+    public ApiResult getDataList(String year,String month, HttpServletRequest request) throws Exception{
+        SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
+        TokenModel tokenModel = tokenService.getToken(request);
+        String years = year;
+        if(Integer.valueOf(month) < 4)
+        {
+            years = String.valueOf(Integer.valueOf(year)-1);
+        }
+        String startDate = year + "-" + month + "-01";
+
+        Calendar tempEnd = Calendar.getInstance();
+
+        tempEnd.setTime(sfymd.parse(startDate));
+        tempEnd.add(Calendar.MONTH, 1);
+        tempEnd.add(Calendar.DAY_OF_YEAR,-1);
+        String endDate = sfymd.format(tempEnd.getTime());
+        Double hours = 0d;
+        String Days = annualLeaveService.workDayBymonth(startDate,endDate,years);
+        hours = Double.valueOf(Days)*8;
+        return ApiResult.success(hours);
+    }
+    //ccm 1019 计算一个月出勤多少小时
 }
