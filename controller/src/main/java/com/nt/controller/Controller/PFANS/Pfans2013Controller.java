@@ -46,7 +46,7 @@ public class Pfans2013Controller {
 
     //ccm 1019 计算一个月出勤多少小时
     @RequestMapping(value = "/getDataHours", method={RequestMethod.GET})
-    public ApiResult getDataList(String year,String month, HttpServletRequest request) throws Exception{
+    public ApiResult getDataHours(String year,String month, HttpServletRequest request) throws Exception{
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         TokenModel tokenModel = tokenService.getToken(request);
         String years = year;
