@@ -29,7 +29,8 @@ public class Pfans3006Controller {
     public ApiResult getAppointmentCar(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         AppointmentCar appointmentcar = new AppointmentCar();
-        appointmentcar.setOwners(tokenModel.getOwnerList());
+        //禅道595 社用车信息对全员开放
+//        appointmentcar.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(appointmentcarService.getAppointmentCar(appointmentcar));
     }
 
