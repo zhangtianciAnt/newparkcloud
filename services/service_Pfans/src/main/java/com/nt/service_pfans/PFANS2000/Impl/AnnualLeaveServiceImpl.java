@@ -222,6 +222,16 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 }
                 //ccm 202000702 to
                 insertannualLeave(customer);
+//                //ccm 临时测试接口
+//                AnnualLeave a = new AnnualLeave();
+//                a.setYears("2020");
+//                a.setUser_id(customer.getUserid());
+//                List<AnnualLeave> annualLeaveList = annualLeaveMapper.select(a);
+//                if(annualLeaveList.size()==0)
+//                {
+//                    insertannualLeave(customer);
+//                }
+//                //ccm 临时测试接口
                 //}
             }
         }
@@ -232,6 +242,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     @Override
     public void insertannualLeave(CustomerInfo customer) throws Exception {
         AnnualLeave annualLeave = new AnnualLeave();
+        SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         calendar.add(Calendar.YEAR, -1);
@@ -275,12 +286,19 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         annualLeave.setRemaining_annual_leave_lastyear(remaining_annual_leave_lastyear);
 
         //////////////////////本年度//////////////////////
-        //入社年月日
-        String enterdaystartCal = customer.getUserinfo().getEnterday();
-        if (StringUtil.isEmpty(enterdaystartCal)) {
-            enterdaystartCal = "1980-02-29";
-        }
-        enterdaystartCal = enterdaystartCal.substring(0,10);
+//        //入社年月日
+//        String enterdaystartCal = customer.getUserinfo().getEnterday();
+//        if (StringUtil.isEmpty(enterdaystartCal)) {
+//            enterdaystartCal = "1980-02-29";
+//        }
+//        enterdaystartCal = enterdaystartCal.substring(0,10);
+//        if(customer.getUserinfo().getEnterday().length()>=24)
+//        {
+//            Calendar calendar_ent = Calendar.getInstance();
+//            calendar_ent.setTime(Convert.toDate(enterdaystartCal));
+//            calendar_ent.add(Calendar.DAY_OF_YEAR, 1);
+//            enterdaystartCal = sfymd.format(calendar_ent.getTime());
+//        }
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
         //仕事开始年月日
         String workdaystartCal = customer.getUserinfo().getWorkday();
@@ -319,29 +337,73 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         }
 
         //员工入职/离职时，年休计算
+        //入社年月日
+        String enterdaystartCal = customer.getUserinfo().getEnterday();
+        if (StringUtil.isEmpty(enterdaystartCal)) {
+            enterdaystartCal = "1980-02-29";
+        }
+        enterdaystartCal = enterdaystartCal.substring(0,10);
+        Calendar calendar_start = Calendar.getInstance();
+        calendar_start.setTime(Convert.toDate(enterdaystartCal));
+        if(customer.getUserinfo().getEnterday().length()>=24)
+        {
+            calendar_start.setTime(Convert.toDate(enterdaystartCal));
+            calendar_start.add(Calendar.DAY_OF_YEAR, 1);
+            enterdaystartCal = sfymd.format(calendar_start.getTime());
+        }
         //离社年月日
-        String resignationDateendCal = customer.getUserinfo().getResignation_date();
+        String resignationDateendCal = "";
+        if (!StringUtil.isEmpty(customer.getUserinfo().getResignation_date()))
+        {
+             resignationDateendCal = customer.getUserinfo().getResignation_date().substring(0, 10);
+            if(customer.getUserinfo().getResignation_date().length()>=24)
+            {
+                Calendar rightNow = Calendar.getInstance();
+                rightNow.setTime(Convert.toDate(resignationDateendCal));
+                rightNow.add(Calendar.DAY_OF_YEAR, 1);
+                resignationDateendCal = sfymd.format(rightNow.getTime());
+            }
+        }
         //事业年度开始（4月1日）
-        Calendar calendar_a = Calendar.getInstance();
-        calendar_a.setTime(new Date());
-        calendar_a.add(Calendar.DAY_OF_YEAR,-1);
-        DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd");
-        DateUtil.format(calendar.getTime(),"yyyy-MM-dd");
+
+        String shi_start = enterdaystartCal.substring(0,4) + "-04-01";
+        if(Integer.valueOf(enterdaystartCal.substring(5,7)) < 4)
+        {
+            shi_start = String.valueOf(Integer.valueOf(shi_start)-1) + "-04-01";
+        }
+        Calendar start = Calendar.getInstance();
+        start.setTime(Convert.toDate(shi_start));
+        DateUtil.format(start.getTime(),"yyyy-MM-dd");
+
+        Calendar end = Calendar.getInstance();
+        end.setTime(Convert.toDate(shi_start));
+        end.add(Calendar.YEAR,1);
+        end.add(Calendar.DAY_OF_YEAR,-1);
+        DateUtil.format(end.getTime(),"yyyy-MM-dd");
+//        Calendar calendar_a = Calendar.getInstance();
+//        calendar_a.setTime(new Date());
+//        calendar_a.add(Calendar.DAY_OF_YEAR,-1);
+//        DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd");
+//        DateUtil.format(calendar.getTime(),"yyyy-MM-dd");
 
 
         //Ⅰ.途中入职：本事业年度在职期间/365天*当年度法定年休天数
         if(StringUtil.isEmpty(resignationDateendCal))
         {
-            if(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enterdaystartCal)))).compareTo(calendar.getTime())>=0 && sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enterdaystartCal)))).compareTo(calendar_a.getTime())<=0)
+            //入职日期>=事业年度开始日期 && 入职日期<=事业年度结束日期
+            //途中入职
+            if(calendar_start.getTime().compareTo(start.getTime())>=0 && calendar_start.getTime().compareTo(end.getTime())<=0)
             {
                 int year = getYears(workdaystartCal);
                 //有工作经验者
                 if(year>=1)
                 {
-                    //入职日
-                    calendar.setTime(sf1.parse(Convert.toStr(sf1.format(Convert.toDate(enterdaystartCal))).toString().replace("Z"," UTC")));
-                    annual_leave_thisyear=dateLeave(calendar,calendar_a,annual_leave_thisyear);
-                    annual_leave_thisyear =(new BigDecimal(annual_leave_thisyear.intValue())).setScale(2);
+                    //入职日 > 事业年度开始日
+                    if(calendar_start.getTime().compareTo(start.getTime())>0)
+                    {
+                        annual_leave_thisyear=dateLeave(calendar_start,end,annual_leave_thisyear);
+                        annual_leave_thisyear =(new BigDecimal(annual_leave_thisyear.intValue())).setScale(2);
+                    }
                 }
                 else
                 {
@@ -372,87 +434,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             }
         }
         */
-
-        //有以下情形的，不能享受该事业年度的年休：
-        //1年以上10年未满  因病休假2个月以上的
-        if (StringUtil.isNotEmpty(workdaystartCal)) {
-            int year = getYears(workdaystartCal);
-            BigDecimal hours = BigDecimal.ZERO;
-            AbNormal abNormal = new AbNormal();
-            abNormal.setUser_id(customer.getUserid());
-            abNormal.setStatus("4");
-
-            calendar.setTime(new Date());
-            calendar.add(Calendar.YEAR,-1);
-            calendar_a.setTime(new Date());
-            calendar_a.add(Calendar.DAY_OF_YEAR,-1);
-
-            DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd");
-            DateUtil.format(calendar.getTime(),"yyyy-MM-dd");
-            abNormal.setOccurrencedate(calendar.getTime());
-            abNormal.setFinisheddate(calendar_a.getTime());
-            List<AbNormal> abNormalList = abNormalMapper.selectAbNormalThisYear(abNormal);
-            if(abNormalList!=null)
-            {
-                for(AbNormal abNormalinfo : abNormalList)
-                {
-                    calendar.setTime(new Date());
-                    calendar.add(Calendar.YEAR,-1);
-                    calendar_a.setTime(new Date());
-                    calendar_a.add(Calendar.DAY_OF_YEAR,-1);
-
-                    DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd");
-                    DateUtil.format(calendar.getTime(),"yyyy-MM-dd");
-                    if(abNormalinfo.getErrortype().equals("PR013010") || abNormalinfo.getErrortype().equals("PR013009"))//病休
-                    {
-                        if(abNormalinfo.getOccurrencedate().compareTo(calendar.getTime())>=0 && abNormalinfo.getOccurrencedate().compareTo(calendar_a.getTime())<=0
-                                && abNormalinfo.getFinisheddate().compareTo(calendar.getTime())>=0 && abNormalinfo.getFinisheddate().compareTo(calendar_a.getTime())<=0)
-                        {
-                            hours = hours.add(BigDecimal.valueOf(Double.valueOf(abNormalinfo.getLengthtime())));
-                        }
-                        else if(abNormalinfo.getOccurrencedate().compareTo(calendar.getTime())>=0 && abNormalinfo.getOccurrencedate().compareTo(calendar_a.getTime())<=0)
-                        {
-                            //开始日
-                            calendar.setTime(abNormalinfo.getOccurrencedate());
-                            DateUtil.format(calendar.getTime(),"yyyy-MM-dd");
-                            DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd");
-                            long days= (calendar_a.getTimeInMillis()-calendar.getTimeInMillis())/(1000*3600*24);
-                            hours = hours.add(BigDecimal.valueOf(days*8));
-
-                        }
-                        else
-                        {
-                            //终了日
-                            calendar_a.setTime(abNormalinfo.getFinisheddate());
-                            DateUtil.format(calendar.getTime(),"yyyy-MM-dd");
-                            DateUtil.format(calendar_a.getTime(),"yyyy-MM-dd");
-                            long days= (calendar_a.getTimeInMillis()-calendar.getTimeInMillis())/(1000*3600*24);
-                            hours = hours.add(BigDecimal.valueOf(days*8));
-                        }
-                    }
-                }
-                BigDecimal eight =new  BigDecimal(0);
-                hours.divide(BigDecimal.valueOf(8));
-                if(year >= 1 && year < 10){
-                    if( hours.divide(BigDecimal.valueOf(8)).compareTo( BigDecimal.valueOf(60))>-1)
-                    {
-                        annual_leave_thisyear = BigDecimal.ZERO;
-                    }
-                }
-                if(year >= 10 && year < 20){
-                    if( hours.divide(BigDecimal.valueOf(8)).compareTo( BigDecimal.valueOf(90))>-1)
-                    {
-                        annual_leave_thisyear = BigDecimal.ZERO;
-                    }
-                }
-                if(year >= 20){
-                    if( hours.divide(BigDecimal.valueOf(8)).compareTo( BigDecimal.valueOf(120))>-1)
-                    {
-                        annual_leave_thisyear = BigDecimal.ZERO;
-                    }
-                }
-            }
-        }
 
         //法定年假(本年度)
         annualLeave.setAnnual_leave_thisyear(annual_leave_thisyear);
@@ -503,7 +484,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         Calendar endCalendar = Calendar.getInstance();
         startCalendar.setTime(startDate);
         endCalendar.setTime(endDate);
-        if (endCalendar.compareTo(startCalendar) > 0) {
+        if (endCalendar.compareTo(startCalendar) >= 0) {
             int day = endCalendar.get(Calendar.DAY_OF_MONTH) - startCalendar.get(Calendar.DAY_OF_MONTH);
             int month = endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH);
             year = endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR);

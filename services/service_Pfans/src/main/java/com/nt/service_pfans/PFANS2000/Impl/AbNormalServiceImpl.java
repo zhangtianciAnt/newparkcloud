@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import ch.qos.logback.core.joran.spi.ElementSelector;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
@@ -14,6 +15,7 @@ import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.AuthConstants;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -21,6 +23,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.util.StringUtil;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -94,12 +97,36 @@ public class AbNormalServiceImpl implements AbNormalService {
         String strtus = abNormal.getStatus();
 
         abNormal.preInsert(tokenModel);
-//        //总经理新建自动通过
-//        if(strtus.equals(AuthConstants.APPROVED_FLAG_YES)){
-//            abNormal.setStatus(AuthConstants.APPROVED_FLAG_YES);
-//        }
         abNormal.setAbnormalid(UUID.randomUUID().toString());
         abNormalMapper.insert(abNormal);
+    }
+
+    public int getYears(String startCal) throws Exception {
+        int year = 0;
+        startCal = startCal.substring(0,10);
+        Calendar cal = Calendar.getInstance();
+        String this_year = String.valueOf(cal.get(cal.YEAR));
+        String endCal = this_year + "-04-01";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date startDate = sdf.parse(Convert.toStr(sdf.format(Convert.toDate(startCal))));
+        Date endDate = sdf.parse(endCal);
+        Calendar startCalendar = Calendar.getInstance();
+        Calendar endCalendar = Calendar.getInstance();
+        startCalendar.setTime(startDate);
+        endCalendar.setTime(endDate);
+        if (endCalendar.compareTo(startCalendar) >= 0) {
+            int day = endCalendar.get(Calendar.DAY_OF_MONTH) - startCalendar.get(Calendar.DAY_OF_MONTH);
+            int month = endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH);
+            year = endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR);
+            if (day < 0) {
+                month --;
+            }
+            if (month < 0) {
+                month += 12;
+                year --;
+            }
+        }
+        return year;
     }
 
     //ADD_FJL_0904  添加删除data
@@ -167,6 +194,85 @@ public class AbNormalServiceImpl implements AbNormalService {
         }
 
         //add ccm 2020708 异常实时反应
+
+        SimpleDateFormat sf1 = new SimpleDateFormat("MM");
+        SimpleDateFormat sf2 = new SimpleDateFormat("yyyy");
+        BigDecimal annual_leave_thisyear = BigDecimal.ZERO;
+        AnnualLeave annualLeave = new AnnualLeave();
+        //有以下情形的，不能享受该事业年度的年休：
+        //1年以上10年未满  因病休假2个月以上的
+        if(abNormal.getErrortype().equals("PR013009") && (abNormal.getStatus().equals("4") || abNormal.getStatus().equals("7")))
+        {
+            List<CustomerInfo> customerInfoList = mongoTemplate.find(new Query(Criteria.where("userid").is(abNormal.getUser_id())), CustomerInfo.class);
+            if(customerInfoList.size()>0)
+            {
+                String workdaystartCal = customerInfoList.get(0).getUserinfo().getWorkday();
+                if (StringUtil.isNotEmpty(workdaystartCal)) {
+                    int year = getYears(workdaystartCal);
+                    BigDecimal hours = BigDecimal.ZERO;
+
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(new Date());
+
+                    String month = sf1.format(calendar.getTime());
+                    String years = sf2.format(calendar.getTime());
+                    if(Integer.valueOf(month)<4)
+                    {
+                        years = String.valueOf(Integer.valueOf(years)-1);
+                    }
+
+                    Double a = abNormalMapper.selectAbNormalThisYear(customerInfoList.get(0).getUserid(),years);
+                    if(a!=null && a!=0)
+                    {
+                        hours = new BigDecimal(a);
+                        hours = hours.divide(BigDecimal.valueOf(8));
+
+                        annualLeave.setUser_id(customerInfoList.get(0).getUserid());
+                        annualLeave.setYears(years);
+                        List<AnnualLeave> annualLeavelist = annualLeaveMapper.select(annualLeave);
+                        annual_leave_thisyear = annualLeavelist.get(0).getAnnual_leave_thisyear();
+                        if(year >= 1)
+                        {
+                            if(year >= 1 && year < 10){
+                                if( hours.compareTo( BigDecimal.valueOf(60))>-1)
+                                {
+                                    annual_leave_thisyear = BigDecimal.ZERO;
+                                }
+                            }
+                            if(year >= 10 && year < 20){
+                                if( hours.compareTo( BigDecimal.valueOf(90))>-1)
+                                {
+                                    annual_leave_thisyear = BigDecimal.ZERO;
+                                }
+                            }
+                            if(year >= 20){
+                                if( hours.compareTo( BigDecimal.valueOf(120))>-1)
+                                {
+                                    annual_leave_thisyear = BigDecimal.ZERO;
+                                }
+                            }
+
+                            if( hours.compareTo( BigDecimal.valueOf(60))>-1)
+                            {
+                                //法定年假(本年度)
+                                annualLeavelist.get(0).setAnnual_leave_thisyear(annual_leave_thisyear);
+                                //法定年假剩余(本年度)
+                                annualLeavelist.get(0).setRemaining_annual_leave_thisyear(annual_leave_thisyear);
+                                annualLeavelist.get(0).preUpdate(tokenModel);
+                                annualLeaveMapper.updateByPrimaryKeySelective(annualLeavelist.get(0));
+
+                                //更新人员信息
+                                //今年年休数
+                                customerInfoList.get(0).getUserinfo().setAnnualyear(String.valueOf(annual_leave_thisyear));
+                                //今年法定年休数
+                                customerInfoList.get(0).getUserinfo().setRestyear(String.valueOf(annual_leave_thisyear));
+                                mongoTemplate.save(customerInfoList.get(0));
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
     }
 
