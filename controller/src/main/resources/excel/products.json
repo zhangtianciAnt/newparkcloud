@@ -1,0 +1,51 @@
+
+{
+  "NumberSearch": "true",
+  "ValidateFlag": "true",
+  "IsDeleteEntry": "true",
+  "IsEntryBatchFill": "true",
+  "NeedUpDateFields": [],
+  "NeedReturnFields": [],
+  "SubSystemId": "",
+  "InterationFlags": "",
+  "Model": {
+    "FMATERIALID": "kisid",
+    "FNumber": "products_id",
+    "FName": "chinaname",
+    "SubHeadEntity": {
+      "FErpClsID": "1",
+      "FBaseUnitId": {
+        "FNumber": "Pcs"
+      },
+      "FIsAsset": "0"
+    },
+    "SubHeadEntity1": {
+      "FStoreUnitID": {
+        "FNumber": "Pcs"
+      },
+      "FIsBatchManage": "0"
+    },
+    "SubHeadEntity2": {
+      "FSaleUnitId": {
+        "FNumber": "Pcs"
+      },
+      "FSalePriceUnitId": {
+        "FNumber": "Pcs"
+      }
+    },
+    "SubHeadEntity3": {
+      "FPurchaseUnitId": {
+        "FNumber": "Pcs"
+      },
+      "FPurchasePriceUnitId": {
+        "FNumber": "Pcs"
+      }
+    },
+    "SubHeadEntity5": {
+      "FMinIssueUnitId": {
+        "FNUMBER": "Pcs"
+      }
+    }
+  },
+  "BatchCount": 0
+}
