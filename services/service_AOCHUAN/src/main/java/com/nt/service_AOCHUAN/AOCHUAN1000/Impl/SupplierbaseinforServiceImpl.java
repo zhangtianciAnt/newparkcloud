@@ -53,6 +53,13 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
     public String insert(Supplierbaseinfor supplierbaseinfor, TokenModel tokenModel) throws Exception {
         String id = UUID.randomUUID().toString();
         supplierbaseinfor.setSupplierbaseinfor_id(id);
+        //add_fjl_1021  添加编码
+        int number = 100000;
+        int seleocount = supplierbaseinforMapper.allselectCount();
+        String  num = String.valueOf(number + seleocount);
+        num = num.substring(1,6);
+        supplierbaseinfor.setSupnumber("VEN"+num);
+        //add_fjl_1021  添加编码
         supplierbaseinfor.preInsert(tokenModel);
         supplierbaseinforMapper.insert(supplierbaseinfor);
         return id;
