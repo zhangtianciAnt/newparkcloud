@@ -4,4 +4,5 @@ import com.nt.dao_AOCHUAN.AOCHUAN2000.Customerbaseinfor;
 import com.nt.utils.MyMapper;
 
 public interface CustomerbaseinforMapper extends MyMapper<Customerbaseinfor> {
+    int allselectCount();
 }

@@ -24,4 +24,7 @@
         WHERE STATUS !='1'
         )
     </select>
+    <select id="allselectCount" resultType="int">
+            SELECT count(*) from products
+    </select>
 </mapper>

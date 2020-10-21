@@ -16,4 +16,6 @@ public interface ProductsMapper extends MyMapper<Products> {
     public List<Products>  getProdutsExceptUniqueInReg();
     @Select("select * from products where date_format(products.CREATEON, '%Y%m') = #{createon} order by createon desc")
     public List<Products>  selectlist(@Param("createon") String createon);
+
+    int allselectCount();
 }

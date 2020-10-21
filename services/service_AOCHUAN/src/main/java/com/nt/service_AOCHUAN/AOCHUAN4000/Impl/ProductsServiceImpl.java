@@ -79,6 +79,13 @@ public class ProductsServiceImpl implements ProductsService {
         }
         else {
             products.setProducts_id(UUID.randomUUID().toString());
+            //add_fjl_1021  添加编码
+            int number = 100001;
+            int seleocount = productsMapper.allselectCount();
+            String  num = String.valueOf(number + seleocount);
+            num = num.substring(1,6);
+            products.setPronumber("CH"+num);
+            //add_fjl_1021  添加编码
             productsMapper.insert(products);
             List<Marketproducts> marketproductsList = products.getScTable();
             for(Marketproducts m : marketproductsList){

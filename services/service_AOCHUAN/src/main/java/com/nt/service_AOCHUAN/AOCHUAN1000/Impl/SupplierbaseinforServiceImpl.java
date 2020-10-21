@@ -54,7 +54,7 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
         String id = UUID.randomUUID().toString();
         supplierbaseinfor.setSupplierbaseinfor_id(id);
         //add_fjl_1021  添加编码
-        int number = 100000;
+        int number = 100001;
         int seleocount = supplierbaseinforMapper.allselectCount();
         String  num = String.valueOf(number + seleocount);
         num = num.substring(1,6);

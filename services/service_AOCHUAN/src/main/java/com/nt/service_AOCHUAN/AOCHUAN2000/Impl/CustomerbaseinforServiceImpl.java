@@ -1,6 +1,8 @@
 package com.nt.service_AOCHUAN.AOCHUAN2000.Impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.nt.dao_AOCHUAN.AOCHUAN2000.Customerbaseinfor;
 import com.nt.service_AOCHUAN.AOCHUAN2000.CustomerbaseinforService;
 import com.nt.service_AOCHUAN.AOCHUAN2000.mapper.CustomerbaseinforMapper;
@@ -11,15 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
-import java.io.*;
-import java.util.*;
-import java.util.List;
-import java.util.Scanner;
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.JSON;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.UUID;
+import java.io.File;
+import java.util.*;
 
 @Service
 public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
@@ -50,6 +47,13 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
     @Override
     public String insert(Customerbaseinfor customerbaseinfor, TokenModel tokenModel) throws Exception {
         String id = UUID.randomUUID().toString();
+        //add_fjl_1021  添加编码
+        int number = 10001;
+        int seleocount = customerbaseinforMapper.allselectCount();
+        String  num = String.valueOf(number + seleocount);
+        num = num.substring(1,5);
+        customerbaseinfor.setCustnumber("CUST"+num);
+        //add_fjl_1021  添加编码
         customerbaseinfor.setCustomerbaseinfor_id(id);
         customerbaseinfor.preInsert(tokenModel);
         customerbaseinforMapper.insert(customerbaseinfor);
