@@ -1,0 +1,19 @@
+{
+    "NumberSearch": "true",
+    "ValidateFlag": "true",
+    "IsDeleteEntry": "true",
+    "IsEntryBatchFill": "true",
+    "NeedUpDateFields": [],
+    "NeedReturnFields": [],
+    "SubSystemId": "",
+    "InterationFlags": "",
+    "Model": {
+	"FSupplierId":0,                 
+                        "FNumber":"",                   
+                        "FName":"",                
+                        "FGroup":{
+		"FNumber":"", 
+		}   
+	},
+    "BatchCount": 0
+}
