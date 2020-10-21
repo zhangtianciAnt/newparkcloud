@@ -13,4 +13,6 @@ public interface CustomerbaseinforService {
     String insert(Customerbaseinfor customerbaseinfor, TokenModel tokenModel)throws Exception;
 
     void delete(String id) throws Exception;
+
+    void pushKingdee(List<Customerbaseinfor> list,TokenModel tokenModel) throws Exception;
 }

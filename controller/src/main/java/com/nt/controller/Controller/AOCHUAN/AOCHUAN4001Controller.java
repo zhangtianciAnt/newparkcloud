@@ -130,6 +130,17 @@ public class AOCHUAN4001Controller {
     }
 
 
+    @RequestMapping(value = "/pushKingdee", method = {RequestMethod.POST})
+    public ApiResult pushKingdee(@RequestBody List<Products> list, HttpServletRequest request) throws Exception {
+        if (list == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        productsService.pushKingdee(list,tokenService.getToken(request));
+
+        return ApiResult.success();
+    }
+
+
 
 
 }

@@ -247,4 +247,17 @@ public class AOCHUAN2001Controller {
         }
         return ApiResult.success(productList);
     }
+
+
+    @RequestMapping(value = "/pushKingdee", method = {RequestMethod.POST})
+    public ApiResult pushKingdee(@RequestBody List<Customerbaseinfor> list, HttpServletRequest request) throws Exception {
+        if (list == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        customerbaseinforService.pushKingdee(list,tokenService.getToken(request));
+
+        return ApiResult.success();
+    }
+
+
 }

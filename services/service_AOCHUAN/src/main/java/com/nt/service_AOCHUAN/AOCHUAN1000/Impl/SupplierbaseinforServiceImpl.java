@@ -145,10 +145,12 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
         if(supplierbaseinforList.size() > 0){
             int kis = 0;
             for(Supplierbaseinfor su :supplierbaseinforList){
-                if(StringUtils.isNotEmpty(su.getKisid())){
-                    kis = Integer.valueOf(su.getKisid());
+                Supplierbaseinfor supplierbaseinfor = supplierbaseinforMapper.selectByPrimaryKey(su.getSupplierbaseinfor_id());
+                if(supplierbaseinfor != null){
+                    if(StringUtils.isNotEmpty(supplierbaseinfor.getKisid())){
+                        kis = Integer.valueOf(supplierbaseinfor.getKisid());
+                    }
                 }
-//                Supplierbaseinfor supplierbaseinfor = supplierbaseinforMapper.selectByPrimaryKey(su.getSupplierbaseinfor_id());
                 basic = JSON.parseObject(jsonData);
                 Map<String,Object> model = (Map<String, Object>) basic.get("Model");
                 Map<String,Object> fGroup = (Map<String, Object>) ((Map<String, Object>) basic.get("Model")).get("FGroup");

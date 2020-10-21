@@ -118,4 +118,7 @@ public class Customerbaseinfor extends BaseModel {
     //    英文名
     private String ename;
 
+    //add_wxl_1021  编码
+    private String custnumber;
+
 }

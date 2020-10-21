@@ -225,6 +225,12 @@ public class Products extends BaseModel {
     @Column(name = "APPROVALPROGRESS")
     private String approvalprogress;
 
+    @Column(name = "KISID")
+    private String kisid;
+
+    @Column(name = "PRONUMBER")
+    private String pronumber;
+
     @Transient
     private List<Marketproducts> scTable;
 

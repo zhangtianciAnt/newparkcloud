@@ -53,4 +53,6 @@ public interface ProductsService {
      * @throws Exception
      */
     List<Products> getProdutsExceptUniqueInReg() throws Exception;
+
+    void pushKingdee(List<Products> list,TokenModel tokenModel) throws Exception;
 }
