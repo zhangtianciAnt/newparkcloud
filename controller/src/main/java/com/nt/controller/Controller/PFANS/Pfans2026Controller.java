@@ -270,7 +270,8 @@ public class Pfans2026Controller {
         Workflowinstance workflowinstance = new Workflowinstance();
         workflowinstance.setOwner(userid);
         List<Workflowinstance> Workflowinstancelist = workflowinstanceMapper.select(workflowinstance);
-        Workflowinstancelist = Workflowinstancelist.stream().filter(item -> (item.getStatus().equals("0") || item.getStatus().equals("3"))).collect(Collectors.toList());
+        Workflowinstancelist = Workflowinstancelist.stream().filter(item -> (item.getStatus().equals("0"))).collect(Collectors.toList());
+
         return ApiResult.success(Workflowinstancelist);
     }
 
