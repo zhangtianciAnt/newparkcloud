@@ -1,0 +1,20 @@
+
+{
+  "NumberSearch": "true",
+  "ValidateFlag": "true",
+  "IsDeleteEntry": "true",
+  "IsEntryBatchFill": "true",
+  "NeedUpDateFields": [],
+  "NeedReturnFields": [],
+  "SubSystemId": "",
+  "InterationFlags": "",
+  "Model": {
+      "FCUSTID":0,
+      "FNumber": "",
+       "FName":"FName",
+       "FGroup": {
+         "FNumber" :"nation"
+          }
+        },
+  "BatchCount": 0
+}
