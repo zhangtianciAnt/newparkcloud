@@ -8,12 +8,12 @@
     "SubSystemId": "",
     "InterationFlags": "",
     "Model": {
-	"FSupplierId":0,                 
-                        "FNumber":"",                   
-                        "FName":"",                
+	"FSupplierId":0,
+                        "FNumber":"",
+                        "FName":"",
                         "FGroup":{
-		"FNumber":"", 
-		}   
+		"FNumber":""
+		}
 	},
     "BatchCount": 0
 }
