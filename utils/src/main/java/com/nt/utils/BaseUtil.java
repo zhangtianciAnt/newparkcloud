@@ -3,8 +3,10 @@ package com.nt.utils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  * @date 2020/10/20 15:58
@@ -41,8 +43,8 @@ public class BaseUtil {
 //     * @param attr 物料规格属性
      * @return
      */
-    public static String buildMaterial(String template,String formid){
-        JSONObject basic = JSON.parseObject(template);
+    public static String buildMaterial(JSONObject template,String formid){
+//        JSONObject basic = JSON.parseObject(template);
 //        Map<String,Object> model = (Map<String, Object>) basic.get("Model");
 //        model.put("FNumber",code);
 //        model.put("FName",name);
@@ -52,7 +54,7 @@ public class BaseUtil {
 //        JSONObject jsonObject = new JSONObject();
         Map<String,Object> param = new HashMap<>(2);
         param.put("formid",formid);
-        param.put("data",JSON.toJSONString(basic));
+        param.put("data",JSON.toJSONString(template));
         return JSON.toJSONString(param);
     }
 
@@ -77,4 +79,21 @@ public class BaseUtil {
         return JSON.toJSONString(jsonObject);
     }
 
+    public static String jsonRead(File file){
+        Scanner scanner = null;
+        StringBuilder buffer = new StringBuilder();
+        try {
+            scanner = new Scanner(file, "utf-8");
+            while (scanner.hasNextLine()) {
+                buffer.append(scanner.nextLine());
+            }
+        } catch (Exception e) {
+
+        } finally {
+            if (scanner != null) {
+                scanner.close();
+            }
+        }
+        return buffer.toString();
+    }
 }
