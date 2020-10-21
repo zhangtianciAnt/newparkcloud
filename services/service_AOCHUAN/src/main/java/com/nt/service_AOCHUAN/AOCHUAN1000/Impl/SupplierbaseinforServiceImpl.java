@@ -15,8 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.File;
 import java.util.*;
 
 @Service
@@ -56,6 +58,7 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
         return id;
     }
     //add_fjl_1021 推送KIS
+    //金蝶login
     public ResultVo login(String url,String content) {
 
         ResponseEntity<String> responseEntity = HttpUtil.httpPost(url, content);
@@ -83,6 +86,7 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
         return ResultUtil.error(result.get("Message").toString());
     }
 
+    //金蝶批量保存
     public ResultVo batchSave(String url,String cookie, String content,TokenModel tokenModel) throws Exception {
         //保存
         Map<String, Object> header = new HashMap<>();
@@ -109,7 +113,7 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
     }
 
     @Override
-    public void login1(String Model,TokenModel tokenModel) throws Exception {
+    public void login1(List<Supplierbaseinfor> supplierbaseinforList,TokenModel tokenModel) throws Exception {
 
         String loginParam = BaseUtil.buildLogin("5f4f0eaa667840", "Administrator", "888888", 2052);
 
@@ -124,8 +128,38 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
         Map<String, Object> map = (Map<String, Object>) login.getData();
         String cookie = map.get("cookie").toString();
 
-        //构造物料接口数据
-        String supplier = BaseUtil.buildMaterial(Model,KDFormIdEnum.SUPPLIER.getFormid());
+        //获取供应商数据模板
+        File file = null;
+        file = ResourceUtils.getFile("classpath:excel/supplier.json");
+        String jsonData = BaseUtil.jsonRead(file);
+        List<Map<String,Object>> listmap = new ArrayList();
+        JSONObject basic = null;
+        //推送data
+        if(supplierbaseinforList.size() > 0){
+            int kis = 0;
+            for(Supplierbaseinfor su :supplierbaseinforList){
+                if(StringUtils.isNotEmpty(su.getKisid())){
+                    kis = Integer.valueOf(su.getKisid());
+                }
+//                Supplierbaseinfor supplierbaseinfor = supplierbaseinforMapper.selectByPrimaryKey(su.getSupplierbaseinfor_id());
+                basic = JSON.parseObject(jsonData);
+                Map<String,Object> model = (Map<String, Object>) basic.get("Model");
+                Map<String,Object> fGroup = (Map<String, Object>) ((Map<String, Object>) basic.get("Model")).get("FGroup");
+                model.put("FSupplierId",kis);//主键ID
+//                model.put("FCreateOrgId","");//创建组织
+//                model.put("FUseOrgId",""); //使用组织
+                model.put("FNumber",su.getSupnumber());//编码
+                model.put("FName",su.getSuppliernamecn());//名称
+                fGroup.put("FNumber","");//供应商分组
+                model.put("FGroup",fGroup);//名称
+                listmap.add(model);
+            }
+            basic.put("Model",listmap);
+
+        }
+
+        //构造供应商接口数据
+        String supplier = BaseUtil.buildMaterial(basic,KDFormIdEnum.SUPPLIER.getFormid());
 
         ResultVo save = batchSave(k3CloundConfig.url + k3CloundConfig.batchSave, cookie, supplier,tokenModel);
         if (save.getCode() != ResultEnum.SUCCESS.getCode()) {

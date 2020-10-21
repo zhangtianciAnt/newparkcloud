@@ -53,11 +53,11 @@ public class AOCHUAN1001Controller {
     // add-ws-10/13-禅道任务459
     //add_fjl_1021 推送KIS
     @RequestMapping(value = "/toKisData", method = {RequestMethod.POST})
-    public ApiResult toKisData(@RequestBody String Model, HttpServletRequest request) throws Exception {
-        if (Model == null) {
+    public ApiResult toKisData(@RequestBody List<Supplierbaseinfor> supplierbaseinforList, HttpServletRequest request) throws Exception {
+        if (supplierbaseinforList == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        supplierbaseinforService.login1(Model, tokenService.getToken(request));
+        supplierbaseinforService.login1(supplierbaseinforList, tokenService.getToken(request));
         return ApiResult.success();
     }
     //add_fjl_1021 推送KIS
