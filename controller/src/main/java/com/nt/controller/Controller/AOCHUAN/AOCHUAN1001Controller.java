@@ -51,7 +51,16 @@ public class AOCHUAN1001Controller {
         return ApiResult.success(list);
     }
     // add-ws-10/13-禅道任务459
-
+    //add_fjl_1021 推送KIS
+    @RequestMapping(value = "/toKisData", method = {RequestMethod.POST})
+    public ApiResult toKisData(@RequestBody String Model, HttpServletRequest request) throws Exception {
+        if (Model == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        supplierbaseinforService.login1(Model, tokenService.getToken(request));
+        return ApiResult.success();
+    }
+    //add_fjl_1021 推送KIS
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
         return ApiResult.success(supplierbaseinforService.get());

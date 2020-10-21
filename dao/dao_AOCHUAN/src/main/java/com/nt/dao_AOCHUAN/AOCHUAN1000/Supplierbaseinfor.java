@@ -82,4 +82,6 @@ public class Supplierbaseinfor extends BaseModel {
 
     //联系人手机号
     private String mobilephone;
+    //add_fjl_1021  编码
+    private String supnumber;
 }

@@ -1,28 +1,33 @@
 package com.nt.service_AOCHUAN.AOCHUAN1000.Impl;
 
-import cn.hutool.poi.excel.ExcelReader;
-import cn.hutool.poi.excel.ExcelUtil;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierbaseinfor;
-import com.nt.dao_Org.CustomerInfo;
 import com.nt.service_AOCHUAN.AOCHUAN1000.SupplierbaseinforService;
 import com.nt.service_AOCHUAN.AOCHUAN1000.mapper.SupplierbaseinforMapper;
-import com.nt.utils.LogicalException;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
     @Autowired
     private SupplierbaseinforMapper supplierbaseinforMapper;
+
+    @Autowired
+    private K3CloundConfig k3CloundConfig;
+    @Autowired
+    private RestTemplate restTemplate;
 
 
     @Override
@@ -50,7 +55,101 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
         supplierbaseinforMapper.insert(supplierbaseinfor);
         return id;
     }
+    //add_fjl_1021 推送KIS
+    public ResultVo login(String url,String content) {
 
+        ResponseEntity<String> responseEntity = HttpUtil.httpPost(url, content);
+        //获取登录cookie
+        if(responseEntity.getStatusCode()== HttpStatus.OK){
+            String login_cookie = "";
+            Set<String> keys = responseEntity.getHeaders().keySet();
+            for(String key:keys){
+                if (key.equalsIgnoreCase("Set-Cookie")) {
+                    List<String> cookies = responseEntity.getHeaders().get(key);
+                    for(String cookie:cookies){
+                        if(cookie.startsWith("kdservice-sessionid")){
+                            login_cookie=cookie;
+                            break;
+                        }
+                    }
+                }
+            }
+            Map<String,Object> map = new HashMap<>();
+            map.put("cookie",login_cookie);
+            return ResultUtil.success(map);
+        }
+
+        Map<String,Object> result = JSON.parseObject(responseEntity.getBody());
+        return ResultUtil.error(result.get("Message").toString());
+    }
+
+    public ResultVo batchSave(String url,String cookie, String content,TokenModel tokenModel) throws Exception {
+        //保存
+        Map<String, Object> header = new HashMap<>();
+        header.put("Cookie", cookie);
+        String result = HttpUtil.httpPost(url, header, content);
+        JSONObject jsonObject = JSON.parseObject(result);
+        Map<String, Object> map = (Map<String, Object>) jsonObject.get("Result");
+        Map<String, Object> responseStatus = (Map<String, Object>) map.get("ResponseStatus");
+        Boolean isSuccess = (Boolean) responseStatus.get("IsSuccess");
+
+        if (isSuccess) {
+            //获取返回值   kisid
+            Object ob = responseStatus.get("SuccessEntitys");
+            for(int i = 0; i < ((JSONArray) ob).size();i++){
+                Integer kisid = (Integer)((JSONObject) ((JSONArray) ob).get(i)).get("Id");
+                String number = (String)((JSONObject) ((JSONArray) ob).get(i)).get("Number");
+                updKisid(kisid,number,tokenModel);
+            }
+            return ResultUtil.success();
+        } else {
+            List<Map<String, Object>> errors = (List<Map<String, Object>>) responseStatus.get("Errors");
+            return ResultUtil.error(JSON.toJSONString(errors));
+        }
+    }
+
+    @Override
+    public void login1(String Model,TokenModel tokenModel) throws Exception {
+
+        String loginParam = BaseUtil.buildLogin("5f4f0eaa667840", "Administrator", "888888", 2052);
+
+        ResultVo login = login(k3CloundConfig.url + k3CloundConfig.login, loginParam);
+
+        if (login.getCode() != ResultEnum.SUCCESS.getCode()) {
+//            log.error("【登录金蝶系统失败】：{}", login.getMsg());
+            throw new LogicalException("登录金蝶系统失败");
+//            return;
+        }
+
+        Map<String, Object> map = (Map<String, Object>) login.getData();
+        String cookie = map.get("cookie").toString();
+
+        //构造物料接口数据
+        String supplier = BaseUtil.buildMaterial(Model,KDFormIdEnum.SUPPLIER.getFormid());
+
+        ResultVo save = batchSave(k3CloundConfig.url + k3CloundConfig.batchSave, cookie, supplier,tokenModel);
+        if (save.getCode() != ResultEnum.SUCCESS.getCode()) {
+//            log.error("【保存出错】：{}", save.getMsg());
+            throw new LogicalException("保存出错");
+//            return;
+        }
+
+
+    }
+
+    //返回kisid更新回去
+    public void updKisid(Integer kisid, String number, TokenModel tokenModel) throws Exception {
+        Supplierbaseinfor supplierbaseinfor = new Supplierbaseinfor();
+        supplierbaseinfor.setSupnumber(number);
+        List<Supplierbaseinfor> sup = supplierbaseinforMapper.select(supplierbaseinfor);
+        if (sup.size() > 0) {
+            supplierbaseinfor.preUpdate(tokenModel);
+            sup.get(0).setKisid(kisid.toString());
+            supplierbaseinforMapper.updateByPrimaryKeySelective(sup.get(0));
+        }
+
+    }
+    //add_fjl_1021 推送KIS
     @Override
     public void delete(String id) throws Exception {
         supplierbaseinforMapper.deleteByPrimaryKey(id);
