@@ -1377,6 +1377,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         }
 //        }
 //        if(staffexitprocedureVo.getStaffexitprocedure().getStage().equals("1") && staffexitprocedureVo.getStaffexitprocedure().getStatus().equals("4")) {
+        staffexitprocedureVo.getStaffexitproce().setVersion(staffexitprocedureVo.getStaffexitproce().getVersion() + 1);
         BeanUtils.copyProperties(staffexitprocedureVo.getStaffexitproce(), staffexitproce);
         staffexitproce.preUpdate(tokenModel);
         staffexitproceMapper.updateByPrimaryKey(staffexitproce);

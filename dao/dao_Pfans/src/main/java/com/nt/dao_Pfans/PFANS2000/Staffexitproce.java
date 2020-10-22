@@ -5,7 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Version;
 import java.util.Date;
 
 @Data
@@ -58,4 +61,7 @@ public class Staffexitproce extends BaseModel {
     private String remarkworkfolw;
 //    private Date newhope_exit_date;
 //    private String newreason;
+
+
+    private int version;
 }

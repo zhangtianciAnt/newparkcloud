@@ -18,7 +18,9 @@ import com.nt.service_Org.UserService;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS2000.StaffexitprocedureService;
+import com.nt.service_pfans.PFANS2000.mapper.StaffexitproceMapper;
 import com.nt.utils.*;
+import com.nt.utils.LockingFailure.RetryOnOptimisticLockingFailure;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -44,6 +44,9 @@ public class Pfans2026Controller {
 
     @Autowired
     private WorkflowinstanceMapper workflowinstanceMapper;
+
+    @Autowired
+    private StaffexitproceMapper staffexitproceMapper;
 
     @Autowired
     private OrgTreeService orgTreeService;
@@ -275,15 +278,48 @@ public class Pfans2026Controller {
         return ApiResult.success(Workflowinstancelist);
     }
 
+
     @RequestMapping(value = "/update2", method = {RequestMethod.POST})
     public ApiResult update2(@RequestBody StaffexitprocedureVo staffexitprocedureVo, HttpServletRequest request) throws Exception {
+        Staffexitproce Staff = staffexitproceMapper.selectByPrimaryKey(staffexitprocedureVo.getStaffexitproce().getStaffexitproce_id());
         if (staffexitprocedureVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        staffexitprocedureService.update2(staffexitprocedureVo, tokenModel);
-        return ApiResult.success();
+        }else if(staffexitprocedureVo.getStaffexitproce().getVersion() != Staff.getVersion()){
+//            数据库取值
+            List<String> listPassive = new ArrayList<String>();
+            String[] passiveAnt = Staff.getCondate().split(",");
+            for(String p : passiveAnt){
+                listPassive.add(p);
+            }
+//            画面入值
+            List<String> listActive = new ArrayList<String>();
+            String[] activeAnt = staffexitprocedureVo.getStaffexitproce().getCondate().split(",");
+            for(String a : activeAnt){
 
+                listActive.add(a);
+            }
+            List<String> lastAnt = new ArrayList<String>();
+            for(int i = 0; i < listActive.size(); i ++){
+                if(listPassive.get(i).equals(listActive.get(i))){
+                    lastAnt.add(listPassive.get(i));
+                }else{
+                    if(listPassive.get(i).length() > listActive.get(i).length()){
+                        lastAnt.add(listPassive.get(i));
+                    }else{
+                        lastAnt.add(listActive.get(i));
+                    }
+                }
+            }
+            String lastStr = StringUtils.join(lastAnt.toArray(), ",");
+            staffexitprocedureVo.getStaffexitproce().setCondate(lastStr);
+            TokenModel tokenModel = tokenService.getToken(request);
+            staffexitprocedureService.update2(staffexitprocedureVo, tokenModel);
+            return ApiResult.success();
+        }else{
+            TokenModel tokenModel = tokenService.getToken(request);
+            staffexitprocedureService.update2(staffexitprocedureVo, tokenModel);
+            return ApiResult.success();
+        }
     }
 
     /**
