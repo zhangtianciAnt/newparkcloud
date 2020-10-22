@@ -16,7 +16,7 @@ public interface AbNormalMapper extends MyMapper<AbNormal> {
     List<AbNormal> selectAbNormal(@Param("now") String now);
 
     List<AbNormal> selectAbNormalGiving(@Param("now") String now);
-    List<AbNormal> selectAbNormalThisYear(AbNormal abNormal);
+    Double selectAbNormalThisYear(@Param("user_id") String user_id,@Param("year") String year);
     Double selectAbNormalDate(@Param("userid") String userid);
     List<AbNormal> selectAbNormalParent(@Param("userid") String userid);
 
@@ -40,4 +40,8 @@ public interface AbNormalMapper extends MyMapper<AbNormal> {
     //add ccm 0812 考情管理查看当天的异常申请数据
     List<AbNormal> getabnormalByuseridandDate(@Param("userid") String userid,@Param("dates") String dates);
     //add ccm 0812 考情管理查看当天的异常申请数据
+
+    Double selectAttenSumSick(Attendance attendance);
+    List<AbNormal> selectAttenSumSick1(Attendance attendance);
+    List<AbNormal> selectAttenSumSick2(Attendance attendance);
 }

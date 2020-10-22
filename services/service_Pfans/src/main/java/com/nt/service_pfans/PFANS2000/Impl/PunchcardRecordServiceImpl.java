@@ -414,6 +414,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         attendanceList.get(0).setTshortsickleave(null);
                                         attendanceList.get(0).setTlongsickleave(null);
                                         attendanceList.get(0).setTabsenteeism(null);
+                                        attendanceList.get(0).setTcompassionateleave(null);
                                         tokenModel.setUserId(attendanceList.get(0).getUser_id());
                                         tokenModel.setExpireDate(new Date());
                                         saveAttendance(attendanceList.get(0), "0", tokenModel);
@@ -471,6 +472,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 attendanceList.get(0).setTshortsickleave(null);
                                 attendanceList.get(0).setTlongsickleave(null);
                                 attendanceList.get(0).setTabsenteeism(null);
+                                attendanceList.get(0).setTcompassionateleave(null);
                                 tokenModel.setUserId(attendanceList.get(0).getUser_id());
                                 tokenModel.setExpireDate(new Date());
                                 saveAttendance(attendanceList.get(0), "0", tokenModel);
@@ -536,6 +538,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     attendanceList.get(0).setTshortsickleave(null);
                                     attendanceList.get(0).setTlongsickleave(null);
                                     attendanceList.get(0).setTabsenteeism(null);
+                                    attendanceList.get(0).setTcompassionateleave(null);
                                     attendanceList.get(0).setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                                     tokenModel.setUserId(attendanceList.get(0).getUser_id());
                                     tokenModel.setExpireDate(new Date());
@@ -595,6 +598,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         asList.get(0).setTshortsickleave(null);
                                         asList.get(0).setTlongsickleave(null);
                                         asList.get(0).setTabsenteeism(null);
+                                        asList.get(0).setTcompassionateleave(null);
                                         tokenModel.setUserId(asList.get(0).getUser_id());
                                         tokenModel.setExpireDate(new Date());
                                         saveAttendance_resignation(asList.get(0), "0", tokenModel);
@@ -654,6 +658,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     attendanceList.get(0).setTshortsickleave(null);
                                     attendanceList.get(0).setTlongsickleave(null);
                                     attendanceList.get(0).setTabsenteeism(null);
+                                    attendanceList.get(0).setTcompassionateleave(null);
                                     attendanceList.get(0).setRecognitionstate("");
                                     tokenModel.setUserId(attendanceList.get(0).getUser_id());
                                     tokenModel.setExpireDate(new Date());
@@ -740,7 +745,72 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             Attendance attendSumSick = new Attendance();
                             attendSumSick.setDates(ad.getDates());
                             attendSumSick.setUser_id(ad.getUser_id());
-                            Double sumSick = attendanceMapper.selectAttenSumSick(attendSumSick);
+
+                            //ccm add 1020 短病假变长病假
+                            Double sumSick0 = 0d;
+                            Double sumSick1 = 0d;
+                            Double sumSick2 = 0d;
+                            sumSick0 = abNormalMapper.selectAttenSumSick(attendSumSick);
+                            if(sumSick0 == null )
+                            {
+                                sumSick0 = 0d;
+                            }
+                            Calendar start = Calendar.getInstance();
+                            start.setTime(Convert.toDate(ad.getDates()));
+                            long startL = start.getTimeInMillis();
+                            Calendar end = Calendar.getInstance();
+                            end.setTime(Convert.toDate(ad.getDates()));
+                            end.add(Calendar.YEAR,-1);
+                            long endL = end.getTimeInMillis();
+                            List<AbNormal> a1List = abNormalMapper.selectAttenSumSick1(attendSumSick);
+                            for(AbNormal a1 : a1List)
+                            {
+                                Calendar endabnomal = Calendar.getInstance();
+                                if(a1.getStatus().equals("7"))
+                                {
+                                    if(!a1.getRelengthtime().equals("0"))
+                                    {
+                                        endabnomal.setTime(Convert.toDate(a1.getRefinisheddate()));
+                                        long endabnomalL = endabnomal.getTimeInMillis();
+                                        sumSick1 = sumSick1 + ((double) (endabnomalL-endL)/(1000*3600*24) * 8) + 8;
+                                    }
+                                }
+                                else
+                                {
+                                    if(!a1.getLengthtime().equals("0"))
+                                    {
+                                        endabnomal.setTime(Convert.toDate(a1.getFinisheddate()));
+                                        long endabnomalL = endabnomal.getTimeInMillis();
+                                        sumSick1 = sumSick1 + ((double) (endabnomalL-endL)/(1000*3600*24) * 8) + 8;
+                                    }
+                                }
+                            }
+                            List<AbNormal> a2List = abNormalMapper.selectAttenSumSick2(attendSumSick);
+                            for(AbNormal a2 : a2List)
+                            {
+                                Calendar startabnomal = Calendar.getInstance();
+                                if(a2.getStatus().equals("7"))
+                                {
+                                    if(!a2.getRelengthtime().equals("0"))
+                                    {
+                                        startabnomal.setTime(Convert.toDate(a2.getReoccurrencedate()));
+                                        long startabnomalL = startabnomal.getTimeInMillis();
+                                        sumSick2 = sumSick2 + ((double) (startL-startabnomalL)/(1000*3600*24) * 8) + 8;
+                                    }
+                                }
+                                else
+                                {
+                                    if(!a2.getLengthtime().equals("0"))
+                                    {
+                                        startabnomal.setTime(Convert.toDate(a2.getOccurrencedate()));
+                                        long startabnomalL = startabnomal.getTimeInMillis();
+                                        sumSick2 = sumSick2 + ((double) (startL-startabnomalL)/(1000*3600*24) * 8) + 8;
+                                    }
+                                }
+                            }
+                            Double sumSick = sumSick0 + sumSick1 + sumSick2;
+                            //ccm add 1020 短病假变长病假
+
                             // if有打卡记录  else 没有打卡记录
                             if (punchcardRecordlist.size() > 0) {
                                 for (PunchcardRecord PR : punchcardRecordlist) {
@@ -1040,30 +1110,39 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ad.setCompassionateleave(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(compassionateleave)) * Double.valueOf(compassionateleave) + Double.valueOf(compassionateleave)));
                                                 }
                                             } else if (ab.getErrortype().equals("PR013009")) {//短期病休
-//                                                if (ab.getStatus().equals("7")) {
+                                                if (Double.valueOf(strlengthtime) > 0) {
                                                     if (ad.getShortsickleave() != null && !ad.getShortsickleave().isEmpty()) {
                                                         //前一年病假满足30天
-                                                        if (sumSick + Double.valueOf(ad.getShortsickleave()) + Double.valueOf(strlengthtime) > 240 && Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave()) > 0) {
-                                                            ad.setShortsickleave(df.format(Double.valueOf(ad.getShortsickleave()) + sumSick + Double.valueOf(strlengthtime) - 240));
-                                                            if (ad.getLongsickleave() != null && !ad.getLongsickleave().isEmpty()) {
-                                                                ad.setLongsickleave(df.format(Double.valueOf(ad.getLongsickleave()) + Double.valueOf(strlengthtime) - Double.valueOf(ad.getShortsickleave())));
-                                                            } else {
-                                                                ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) - Double.valueOf(ad.getShortsickleave())));
+                                                        if (sumSick > 240) {
+                                                            if(sumSick - 240 > 8)
+                                                            {
+                                                                ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
                                                             }
-
+                                                            else
+                                                            {
+                                                                ad.setLongsickleave(df.format(Double.valueOf(sumSick) - 240));
+                                                                ad.setShortsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave()) - Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
+                                                            }
                                                         } else {
                                                             ad.setShortsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave())));
                                                         }
                                                     } else {
                                                         //前一年病假满足30天
-                                                        if (sumSick + Double.valueOf(strlengthtime) > 240 && Double.valueOf(strlengthtime) > 0) {
-                                                            ad.setShortsickleave(df.format(sumSick + Double.valueOf(strlengthtime) - 240));
-                                                            ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) - Double.valueOf(ad.getShortsickleave())));
+                                                        if (sumSick > 240) {
+                                                            if(sumSick - 240 > 8)
+                                                            {
+                                                                ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
+                                                            }
+                                                            else
+                                                            {
+                                                                ad.setLongsickleave(df.format(Double.valueOf(sumSick) - 240));
+                                                                ad.setShortsickleave(df.format(Double.valueOf(strlengthtime)  - Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
+                                                            }
                                                         } else {
                                                             ad.setShortsickleave(df.format(Double.valueOf(strlengthtime)));
                                                         }
                                                     }
-//                                                }
+                                                }
                                             } else if (ab.getErrortype().equals("PR013012") || ab.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
 //                                                if (ab.getStatus().equals("7")) {
                                                     if (ad.getNursingleave() != null && !ad.getNursingleave().isEmpty()) {
@@ -1128,7 +1207,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setAnnualrest(ad.getAnnualrest() == null ? "0" : ad.getAnnualrest());
                                     ad.setDaixiu(ad.getDaixiu() == null ? "0" : ad.getDaixiu());
                                     ad.setCompassionateleave(ad.getCompassionateleave() == null ? "0" : ad.getCompassionateleave());
-                                    ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : ad.getShortsickleave());
+                                    ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : (Double.valueOf(ad.getShortsickleave())<0 ? "0" : ad.getShortsickleave()));
                                     ad.setLongsickleave(ad.getLongsickleave() == null ? "0" : ad.getLongsickleave());
                                     ad.setNursingleave(ad.getNursingleave() == null ? "0" : ad.getNursingleave());
                                     ad.setWelfare(ad.getWelfare() == null ? "0" : ad.getWelfare());
@@ -1431,6 +1510,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setTshortsickleave(ad.getShortsickleave());
                                         ad.setTlongsickleave(ad.getLongsickleave());
                                         ad.setTabsenteeism(ad.getAbsenteeism());
+                                        ad.setTcompassionateleave(ad.getCompassionateleave());
+                                        ad.setCompassionateleave(null);
                                         ad.setShortsickleave(null);
                                         ad.setLongsickleave(null);
                                         ad.setAbsenteeism(null);
@@ -1440,6 +1521,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             ad.setTshortsickleave(ad.getShortsickleave());
                                             ad.setTlongsickleave(ad.getLongsickleave());
                                             ad.setTabsenteeism(ad.getAbsenteeism());
+                                            ad.setTcompassionateleave(ad.getCompassionateleave());
+                                            ad.setCompassionateleave(null);
                                             ad.setShortsickleave(null);
                                             ad.setLongsickleave(null);
                                             ad.setAbsenteeism(null);
@@ -1459,6 +1542,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setTshortsickleave(null);
                                         ad.setTlongsickleave(null);
                                         ad.setTabsenteeism(null);
+                                        ad.setTcompassionateleave(null);
                                     }
                                     if (workinghours.equals("8")) {
                                         ad.setWeekendindustry(null);
@@ -1538,7 +1622,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     punchcardrecordMapper.updateByPrimaryKey(PR);
                                     saveAttendance(ad, "0", token);
                                 }
-                            } else {
+                            }
+                            else {
                                 //---------处理昨日审批通过的加班申请start-------
                                 Overtime overtime = new Overtime();
                                 overtime.setUserid(ad.getUser_id());
@@ -1769,31 +1854,39 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 ad.setCompassionateleave(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
                                             }
                                         } else if (ab.getErrortype().equals("PR013009")) {//短期病休
-//                                            if (ab.getStatus().equals("7")) {
-                                                if (ad.getShortsickleave() != null && !ad.getShortsickleave().isEmpty()) {
-                                                    //前一年病假满足30天
-                                                    if (sumSick + Double.valueOf(ad.getShortsickleave()) + Double.valueOf(strlengthtime) > 240 && Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave()) > 0) {
-                                                        ad.setShortsickleave(df.format(Double.valueOf(ad.getShortsickleave()) + sumSick + Double.valueOf(strlengthtime) - 240));
-                                                        if (ad.getLongsickleave() != null && !ad.getLongsickleave().isEmpty()) {
-                                                            ad.setLongsickleave(df.format(Double.valueOf(ad.getLongsickleave()) + Double.valueOf(strlengthtime) - Double.valueOf(ad.getShortsickleave())));
-                                                        } else {
-                                                            ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) - Double.valueOf(ad.getShortsickleave())));
-                                                        }
-
-                                                    } else {
-                                                        ad.setShortsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave())));
+                                            if (Double.valueOf(strlengthtime) > 0) {
+                                            if (ad.getShortsickleave() != null && !ad.getShortsickleave().isEmpty()) {
+                                                //前一年病假满足30天
+                                                if (sumSick > 240) {
+                                                    if(sumSick - 240 > 8)
+                                                    {
+                                                        ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
+                                                    }
+                                                    else
+                                                    {
+                                                        ad.setLongsickleave(df.format(Double.valueOf(sumSick) - 240));
+                                                        ad.setShortsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave()) - Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
                                                     }
                                                 } else {
-                                                    //前一年病假满足30天   240小时
-                                                    if (sumSick + Double.valueOf(strlengthtime) > 240 && Double.valueOf(strlengthtime) > 0) {
-                                                        ad.setShortsickleave(df.format(sumSick + Double.valueOf(strlengthtime) - 240));
-                                                        ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) - Double.valueOf(ad.getShortsickleave())));
-                                                    } else {
-                                                        ad.setShortsickleave(df.format(Double.valueOf(strlengthtime)));
-                                                    }
+                                                    ad.setShortsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave())));
                                                 }
-//                                            }
-
+                                            } else {
+                                                //前一年病假满足30天
+                                                if (sumSick > 240) {
+                                                    if(sumSick - 240 > 8)
+                                                    {
+                                                        ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
+                                                    }
+                                                    else
+                                                    {
+                                                        ad.setLongsickleave(df.format(Double.valueOf(sumSick) - 240));
+                                                        ad.setShortsickleave(df.format(Double.valueOf(strlengthtime)  - Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
+                                                    }
+                                                } else {
+                                                    ad.setShortsickleave(df.format(Double.valueOf(strlengthtime)));
+                                                }
+                                            }
+                                          }
                                         } else if (ab.getErrortype().equals("PR013012") || ab.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
                                             //産休（女）//産休看護休暇（男）
 //                                            if (ab.getStatus().equals("7")) {
@@ -1860,7 +1953,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 ad.setAnnualrest(ad.getAnnualrest() == null ? "0" : ad.getAnnualrest());
                                 ad.setDaixiu(ad.getDaixiu() == null ? "0" : ad.getDaixiu());
                                 ad.setCompassionateleave(ad.getCompassionateleave() == null ? "0" : ad.getCompassionateleave());
-                                ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : ad.getShortsickleave());
+                                ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : (Double.valueOf(ad.getShortsickleave())<0 ? "0" : ad.getShortsickleave()));
                                 ad.setLongsickleave(ad.getLongsickleave() == null ? "0" : ad.getLongsickleave());
                                 ad.setNursingleave(ad.getNursingleave() == null ? "0" : ad.getNursingleave());
                                 ad.setWelfare(ad.getWelfare() == null ? "0" : ad.getWelfare());
@@ -1972,6 +2065,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setTshortsickleave(ad.getShortsickleave());
                                     ad.setTlongsickleave(ad.getLongsickleave());
                                     ad.setTabsenteeism(ad.getAbsenteeism());
+                                    ad.setTcompassionateleave(ad.getCompassionateleave());
+                                    ad.setCompassionateleave(null);
                                     ad.setShortsickleave(null);
                                     ad.setLongsickleave(null);
                                     ad.setAbsenteeism(null);
@@ -1981,6 +2076,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setTshortsickleave(ad.getShortsickleave());
                                         ad.setTlongsickleave(ad.getLongsickleave());
                                         ad.setTabsenteeism(ad.getAbsenteeism());
+                                        ad.setTcompassionateleave(ad.getCompassionateleave());
+                                        ad.setCompassionateleave(null);
                                         ad.setShortsickleave(null);
                                         ad.setLongsickleave(null);
                                         ad.setAbsenteeism(null);
@@ -1999,6 +2096,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setTshortsickleave(null);
                                     ad.setTlongsickleave(null);
                                     ad.setTabsenteeism(null);
+                                    ad.setTcompassionateleave(null);
                                 }
                                 PunchcardRecord phr = new PunchcardRecord();
                                 //员工填写日志对应的实际工作时间
@@ -2021,6 +2119,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 //                        }
                     } catch (Exception e) {
                         System.out.println("考勤数据生成异常:" + ad.getUser_id());
+                        System.out.println(e);
                         continue;
                     }
                     //---------不定时考勤人员(非不定时考勤人员才计算)end-------
@@ -2189,7 +2288,72 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             Attendance attendSumSick = new Attendance();
                             attendSumSick.setDates(ad.getDates());
                             attendSumSick.setUser_id(ad.getUser_id());
-                            Double sumSick = attendanceMapper.selectAttenSumSick(attendSumSick);
+
+                            //ccm add 1020 短病假变长病假
+                            Double sumSick0 = 0d;
+                            Double sumSick1 = 0d;
+                            Double sumSick2 = 0d;
+                            sumSick0 = abNormalMapper.selectAttenSumSick(attendSumSick);
+                            if(sumSick0 == null )
+                            {
+                                sumSick0 = 0d;
+                            }
+                            Calendar start = Calendar.getInstance();
+                            start.setTime(Convert.toDate(ad.getDates()));
+                            long startL = start.getTimeInMillis();
+                            Calendar end = Calendar.getInstance();
+                            end.setTime(Convert.toDate(ad.getDates()));
+                            end.add(Calendar.YEAR,-1);
+                            long endL = end.getTimeInMillis();
+                            List<AbNormal> a1List = abNormalMapper.selectAttenSumSick1(attendSumSick);
+                            for(AbNormal a1 : a1List)
+                            {
+                                Calendar endabnomal = Calendar.getInstance();
+                                if(a1.getStatus().equals("7"))
+                                {
+                                    if(!a1.getRelengthtime().equals("0"))
+                                    {
+                                        endabnomal.setTime(Convert.toDate(a1.getRefinisheddate()));
+                                        long endabnomalL = endabnomal.getTimeInMillis();
+                                        sumSick1 = sumSick1 + ((double) (endabnomalL-endL)/(1000*3600*24) * 8) + 8;
+                                    }
+                                }
+                                else
+                                {
+                                    if(!a1.getLengthtime().equals("0"))
+                                    {
+                                        endabnomal.setTime(Convert.toDate(a1.getFinisheddate()));
+                                        long endabnomalL = endabnomal.getTimeInMillis();
+                                        sumSick1 = sumSick1 + ((double) (endabnomalL-endL)/(1000*3600*24) * 8) + 8;
+                                    }
+                                }
+                            }
+                            List<AbNormal> a2List = abNormalMapper.selectAttenSumSick2(attendSumSick);
+                            for(AbNormal a2 : a2List)
+                            {
+                                Calendar startabnomal = Calendar.getInstance();
+                                if(a2.getStatus().equals("7"))
+                                {
+                                    if(!a2.getRelengthtime().equals("0"))
+                                    {
+                                        startabnomal.setTime(Convert.toDate(a2.getReoccurrencedate()));
+                                        long startabnomalL = startabnomal.getTimeInMillis();
+                                        sumSick2 = sumSick2 + ((double) (startL-startabnomalL)/(1000*3600*24) * 8) + 8;
+                                    }
+                                }
+                                else
+                                {
+                                    if(!a2.getLengthtime().equals("0"))
+                                    {
+                                        startabnomal.setTime(Convert.toDate(a2.getOccurrencedate()));
+                                        long startabnomalL = startabnomal.getTimeInMillis();
+                                        sumSick2 = sumSick2 + ((double) (startL-startabnomalL)/(1000*3600*24) * 8) + 8;
+                                    }
+                                }
+                            }
+                            Double sumSick = sumSick0 + sumSick1 + sumSick2;
+                            //ccm add 1020 短病假变长病假
+
                             // if有打卡记录  else 没有打卡记录
                             if (punchcardRecordlist.size() > 0) {
                                 for (PunchcardRecord PR : punchcardRecordlist) {
@@ -2489,30 +2653,39 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ad.setCompassionateleave(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(compassionateleave)) * Double.valueOf(compassionateleave) + Double.valueOf(compassionateleave)));
                                                 }
                                             } else if (ab.getErrortype().equals("PR013009")) {//短期病休
-//                                                if (ab.getStatus().equals("7")) {
-                                                if (ad.getShortsickleave() != null && !ad.getShortsickleave().isEmpty()) {
-                                                    //前一年病假满足30天
-                                                    if (sumSick + Double.valueOf(ad.getShortsickleave()) + Double.valueOf(strlengthtime) > 240 && Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave()) > 0) {
-                                                        ad.setShortsickleave(df.format(Double.valueOf(ad.getShortsickleave()) + sumSick + Double.valueOf(strlengthtime) - 240));
-                                                        if (ad.getLongsickleave() != null && !ad.getLongsickleave().isEmpty()) {
-                                                            ad.setLongsickleave(df.format(Double.valueOf(ad.getLongsickleave()) + Double.valueOf(strlengthtime) - Double.valueOf(ad.getShortsickleave())));
+                                                if (Double.valueOf(strlengthtime) > 0) {
+                                                    if (ad.getShortsickleave() != null && !ad.getShortsickleave().isEmpty()) {
+                                                        //前一年病假满足30天
+                                                        if (sumSick > 240) {
+                                                            if(sumSick - 240 > 8)
+                                                            {
+                                                                ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
+                                                            }
+                                                            else
+                                                            {
+                                                                ad.setLongsickleave(df.format(Double.valueOf(sumSick) - 240));
+                                                                ad.setShortsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave()) - Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
+                                                            }
                                                         } else {
-                                                            ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) - Double.valueOf(ad.getShortsickleave())));
+                                                            ad.setShortsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave())));
                                                         }
-
                                                     } else {
-                                                        ad.setShortsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave())));
-                                                    }
-                                                } else {
-                                                    //前一年病假满足30天
-                                                    if (sumSick + Double.valueOf(strlengthtime) > 240 && Double.valueOf(strlengthtime) > 0) {
-                                                        ad.setShortsickleave(df.format(sumSick + Double.valueOf(strlengthtime) - 240));
-                                                        ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) - Double.valueOf(ad.getShortsickleave())));
-                                                    } else {
-                                                        ad.setShortsickleave(df.format(Double.valueOf(strlengthtime)));
+                                                        //前一年病假满足30天
+                                                        if (sumSick > 240) {
+                                                            if(sumSick - 240 > 8)
+                                                            {
+                                                                ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
+                                                            }
+                                                            else
+                                                            {
+                                                                ad.setLongsickleave(df.format(Double.valueOf(sumSick) - 240));
+                                                                ad.setShortsickleave(df.format(Double.valueOf(strlengthtime)  - Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
+                                                            }
+                                                        } else {
+                                                            ad.setShortsickleave(df.format(Double.valueOf(strlengthtime)));
+                                                        }
                                                     }
                                                 }
-//                                                }
                                             } else if (ab.getErrortype().equals("PR013012") || ab.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
 //                                                if (ab.getStatus().equals("7")) {
                                                 if (ad.getNursingleave() != null && !ad.getNursingleave().isEmpty()) {
@@ -2577,7 +2750,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setAnnualrest(ad.getAnnualrest() == null ? "0" : ad.getAnnualrest());
                                     ad.setDaixiu(ad.getDaixiu() == null ? "0" : ad.getDaixiu());
                                     ad.setCompassionateleave(ad.getCompassionateleave() == null ? "0" : ad.getCompassionateleave());
-                                    ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : ad.getShortsickleave());
+                                    ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : (Double.valueOf(ad.getShortsickleave())<0 ? "0" : ad.getShortsickleave()));
                                     ad.setLongsickleave(ad.getLongsickleave() == null ? "0" : ad.getLongsickleave());
                                     ad.setNursingleave(ad.getNursingleave() == null ? "0" : ad.getNursingleave());
                                     ad.setWelfare(ad.getWelfare() == null ? "0" : ad.getWelfare());
@@ -2878,6 +3051,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setTshortsickleave(ad.getShortsickleave());
                                         ad.setTlongsickleave(ad.getLongsickleave());
                                         ad.setTabsenteeism(ad.getAbsenteeism());
+                                        ad.setTcompassionateleave(ad.getCompassionateleave());
+                                        ad.setCompassionateleave(null);
                                         ad.setShortsickleave(null);
                                         ad.setLongsickleave(null);
                                         ad.setAbsenteeism(null);
@@ -2887,6 +3062,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             ad.setTshortsickleave(ad.getShortsickleave());
                                             ad.setTlongsickleave(ad.getLongsickleave());
                                             ad.setTabsenteeism(ad.getAbsenteeism());
+                                            ad.setTcompassionateleave(ad.getCompassionateleave());
+                                            ad.setCompassionateleave(null);
                                             ad.setShortsickleave(null);
                                             ad.setLongsickleave(null);
                                             ad.setAbsenteeism(null);
@@ -2906,6 +3083,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setTshortsickleave(null);
                                         ad.setTlongsickleave(null);
                                         ad.setTabsenteeism(null);
+                                        ad.setTcompassionateleave(null);
                                     }
 
                                     //员工填写日志对应的实际工作时间
@@ -2916,7 +3094,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     punchcardrecordMapper.updateByPrimaryKey(PR);
                                     saveAttendance_resignation(ad, "0", token);
                                 }
-                            } else {
+                            }
+                            else {
                                 //---------处理昨日审批通过的加班申请start-------
                                 Overtime overtime = new Overtime();
                                 overtime.setUserid(ad.getUser_id());
@@ -3147,30 +3326,39 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 ad.setCompassionateleave(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
                                             }
                                         } else if (ab.getErrortype().equals("PR013009")) {//短期病休
-//                                            if (ab.getStatus().equals("7")) {
-                                            if (ad.getShortsickleave() != null && !ad.getShortsickleave().isEmpty()) {
-                                                //前一年病假满足30天
-                                                if (sumSick + Double.valueOf(ad.getShortsickleave()) + Double.valueOf(strlengthtime) > 240 && Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave()) > 0) {
-                                                    ad.setShortsickleave(df.format(Double.valueOf(ad.getShortsickleave()) + sumSick + Double.valueOf(strlengthtime) - 240));
-                                                    if (ad.getLongsickleave() != null && !ad.getLongsickleave().isEmpty()) {
-                                                        ad.setLongsickleave(df.format(Double.valueOf(ad.getLongsickleave()) + Double.valueOf(strlengthtime) - Double.valueOf(ad.getShortsickleave())));
+                                            if (Double.valueOf(strlengthtime) > 0) {
+                                                if (ad.getShortsickleave() != null && !ad.getShortsickleave().isEmpty()) {
+                                                    //前一年病假满足30天
+                                                    if (sumSick > 240) {
+                                                        if(sumSick - 240 > 8)
+                                                        {
+                                                            ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
+                                                        }
+                                                        else
+                                                        {
+                                                            ad.setLongsickleave(df.format(Double.valueOf(sumSick) - 240));
+                                                            ad.setShortsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave()) - Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
+                                                        }
                                                     } else {
-                                                        ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) - Double.valueOf(ad.getShortsickleave())));
+                                                        ad.setShortsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave())));
                                                     }
-
                                                 } else {
-                                                    ad.setShortsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getShortsickleave())));
-                                                }
-                                            } else {
-                                                //前一年病假满足30天   240小时
-                                                if (sumSick + Double.valueOf(strlengthtime) > 240 && Double.valueOf(strlengthtime) > 0) {
-                                                    ad.setShortsickleave(df.format(sumSick + Double.valueOf(strlengthtime) - 240));
-                                                    ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) - Double.valueOf(ad.getShortsickleave())));
-                                                } else {
-                                                    ad.setShortsickleave(df.format(Double.valueOf(strlengthtime)));
+                                                    //前一年病假满足30天
+                                                    if (sumSick > 240) {
+                                                        if(sumSick - 240 > 8)
+                                                        {
+                                                            ad.setLongsickleave(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
+                                                        }
+                                                        else
+                                                        {
+                                                            ad.setLongsickleave(df.format(Double.valueOf(sumSick) - 240));
+                                                            ad.setShortsickleave(df.format(Double.valueOf(strlengthtime)  - Double.valueOf(ad.getLongsickleave() == null || ad.getLongsickleave() =="" ? "0":ad.getLongsickleave())));
+                                                        }
+                                                    } else {
+                                                        ad.setShortsickleave(df.format(Double.valueOf(strlengthtime)));
+                                                    }
                                                 }
                                             }
-//                                            }
 
                                         } else if (ab.getErrortype().equals("PR013012") || ab.getErrortype().equals("PR013013")) { //産休（女） 护理假（男）
                                             //産休（女）//産休看護休暇（男）
@@ -3238,7 +3426,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 ad.setAnnualrest(ad.getAnnualrest() == null ? "0" : ad.getAnnualrest());
                                 ad.setDaixiu(ad.getDaixiu() == null ? "0" : ad.getDaixiu());
                                 ad.setCompassionateleave(ad.getCompassionateleave() == null ? "0" : ad.getCompassionateleave());
-                                ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : ad.getShortsickleave());
+                                ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : (Double.valueOf(ad.getShortsickleave())<0 ? "0" : ad.getShortsickleave()));
                                 ad.setLongsickleave(ad.getLongsickleave() == null ? "0" : ad.getLongsickleave());
                                 ad.setNursingleave(ad.getNursingleave() == null ? "0" : ad.getNursingleave());
                                 ad.setWelfare(ad.getWelfare() == null ? "0" : ad.getWelfare());
@@ -3323,6 +3511,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setTshortsickleave(ad.getShortsickleave());
                                     ad.setTlongsickleave(ad.getLongsickleave());
                                     ad.setTabsenteeism(ad.getAbsenteeism());
+                                    ad.setTcompassionateleave(ad.getCompassionateleave());
+                                    ad.setCompassionateleave(null);
                                     ad.setShortsickleave(null);
                                     ad.setLongsickleave(null);
                                     ad.setAbsenteeism(null);
@@ -3332,6 +3522,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setTshortsickleave(ad.getShortsickleave());
                                         ad.setTlongsickleave(ad.getLongsickleave());
                                         ad.setTabsenteeism(ad.getAbsenteeism());
+                                        ad.setTcompassionateleave(ad.getCompassionateleave());
+                                        ad.setCompassionateleave(null);
                                         ad.setShortsickleave(null);
                                         ad.setLongsickleave(null);
                                         ad.setAbsenteeism(null);
@@ -3350,6 +3542,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setTshortsickleave(null);
                                     ad.setTlongsickleave(null);
                                     ad.setTabsenteeism(null);
+                                    ad.setTcompassionateleave(null);
                                 }
                                 PunchcardRecord phr = new PunchcardRecord();
                                 //员工填写日志对应的实际工作时间

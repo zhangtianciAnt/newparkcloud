@@ -40,21 +40,28 @@
         and (error_type = 'PR013012' or error_type = 'PR013012')
         group by USER_ID
     </select>
-    <select id="selectAbNormalThisYear" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+    <select id="selectAbNormalThisYear" resultType="Double">
         select
-        ERROR_TYPE errortype,
-        LENGTHTIME lengthtime,
-        OCCURRENCE_DATE occurrencedate,
-        FINISHED_DATE finisheddate,
-        PERIOD_START  periodstart,
-        PERIOD_END  periodend
-        from abnormal
-        where ((abnormal.occurrence_date >= #{occurrencedate}
-        and abnormal.occurrence_date &lt;= #{finisheddate})
-        or (abnormal.FINISHED_DATE &gt;= #{occurrencedate}
-        and abnormal.FINISHED_DATE &lt;= #{finisheddate}))
-        and abnormal.user_id = #{user_id}
-        and abnormal.status = #{status}
+        sum(
+            case when a.STATUS = 7
+                 then CONVERT(a.RE_LENGTHTIME,DECIMAL(10,1))
+			else
+			     CONVERT(a.LENGTHTIME,DECIMAL(10,1))
+			END) as Hours
+        from abnormal a
+        where (((date_format(a.RE_OCCURRENCE_DATE,'%Y-%m') BETWEEN date_format( concat( #{year}, '-04-01' ) ,'%Y-%m')
+																		 AND  date_format( concat(  CONVERT(#{year}, SIGNED) + 1 , '-03-31' ),'%Y-%m'))
+								and
+							   (date_format(a.RE_FINISHED_DATE,'%Y-%m') BETWEEN date_format( concat( #{year}, '-04-01' ) ,'%Y-%m')
+																		 AND  date_format( concat(  CONVERT(#{year}, SIGNED) + 1 , '-03-31' ),'%Y-%m')))
+	        or ((date_format(a.OCCURRENCE_DATE,'%Y-%m') BETWEEN date_format( concat( #{year}, '-04-01' ) ,'%Y-%m')
+																	AND  date_format( concat(  CONVERT(#{year}, SIGNED) + 1 , '-03-31' ),'%Y-%m'))
+						  and
+						  (date_format(a.FINISHED_DATE,'%Y-%m') BETWEEN date_format( concat( #{year}, '-04-01' ) ,'%Y-%m')
+																	AND  date_format( concat(  CONVERT(#{year}, SIGNED) + 1 , '-03-31' ),'%Y-%m'))))
+        and user_id = #{user_id}
+        and status >= 4
+        and (error_type = 'PR013010' or error_type = 'PR013009')
     </select>
     <select id="selectAbNormal1"  resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
         SELECT
@@ -181,5 +188,90 @@ and a.user_id = #{userid}
         and #{dates} between date_format(a.RE_OCCURRENCE_DATE,'%Y-%m-%d') and date_format(a.RE_FINISHED_DATE,'%Y-%m-%d')
         and a.user_id = #{userid}
     </select>
+
+    <select id="selectAttenSumSick" parameterType="com.nt.dao_Pfans.PFANS2000.Attendance" resultType="java.lang.Double">
+        select
+        sum(
+        case when a.STATUS = 7
+        then
+        case when (a.RE_OCCURRENCE_DATE >= DATE_FORMAT(DATE_SUB(#{dates},INTERVAL 1 YEAR),'%Y-%m-%d') and a.RE_FINISHED_DATE &lt;= DATE_FORMAT(#{dates},'%Y-%m-%d'))
+        then CONVERT(a.RE_LENGTHTIME,DECIMAL(10,1))
+        else 0
+        end
+        else
+        case when (a.OCCURRENCE_DATE >= DATE_FORMAT(DATE_SUB(#{dates},INTERVAL 1 YEAR),'%Y-%m-%d') and a.FINISHED_DATE &lt;= DATE_FORMAT(#{dates},'%Y-%m-%d'))
+        then CONVERT(a.LENGTHTIME,DECIMAL(10,1))
+        else 0
+        end
+        END) as Hours
+        from abnormal a
+        where
+        ERROR_TYPE='PR013009'
+        and user_id = #{user_id}
+        and status >=4
+    </select>
+
+    <select id="selectAttenSumSick1" parameterType="com.nt.dao_Pfans.PFANS2000.Attendance" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        select
+            status as status,
+            OCCURRENCE_DATE as occurrencedate,
+            FINISHED_DATE as finisheddate,
+            RE_OCCURRENCE_DATE as reoccurrencedate,
+            RE_FINISHED_DATE as refinisheddate,
+            case when a.STATUS = 7
+            then
+            case when (a.RE_OCCURRENCE_DATE &lt; DATE_FORMAT(DATE_SUB(#{dates},INTERVAL 1 YEAR),'%Y-%m-%d') and a.RE_FINISHED_DATE > DATE_FORMAT(DATE_SUB(#{dates},INTERVAL 1 YEAR),'%Y-%m-%d'))
+            then CONVERT(a.RE_LENGTHTIME,DECIMAL(10,1))
+            else 0
+            end
+            else
+            0
+            end as RELENGTHTIME,
+            case when a.STATUS = 4 or 	a.STATUS = 5 or a.STATUS = 6
+            then
+            case when (a.OCCURRENCE_DATE &lt; DATE_FORMAT(DATE_SUB(#{dates},INTERVAL 1 YEAR),'%Y-%m-%d') and a.FINISHED_DATE > DATE_FORMAT(DATE_SUB(#{dates},INTERVAL 1 YEAR),'%Y-%m-%d'))
+            then CONVERT(a.LENGTHTIME,DECIMAL(10,1))
+            else 0
+            end
+            else 0
+            END as LENGTHTIME
+        from abNormal a
+        where status >=4 and user_id = #{user_id}
+        and ERROR_TYPE='PR013009'
+    </select>
+
+    <select id="selectAttenSumSick2" parameterType="com.nt.dao_Pfans.PFANS2000.Attendance" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        select
+            status as status,
+            OCCURRENCE_DATE as occurrencedate,
+            FINISHED_DATE as finisheddate,
+            RE_OCCURRENCE_DATE as reoccurrencedate,
+            RE_FINISHED_DATE as refinisheddate,
+            case when a.STATUS = 7
+            then
+            case when (a.RE_OCCURRENCE_DATE &lt; DATE_FORMAT(#{dates},'%Y-%m-%d') and a.RE_FINISHED_DATE > DATE_FORMAT(#{dates},'%Y-%m-%d'))
+            then CONVERT(a.RE_LENGTHTIME,DECIMAL(10,1))
+            else 0
+            end
+            else
+            0
+            end as RELENGTHTIME,
+            case when a.STATUS = 4 or 	a.STATUS = 5 or a.STATUS = 6
+            then
+            case when (a.OCCURRENCE_DATE &lt; DATE_FORMAT(#{dates},'%Y-%m-%d') and a.FINISHED_DATE > DATE_FORMAT(#{dates},'%Y-%m-%d'))
+            then CONVERT(a.LENGTHTIME,DECIMAL(10,1))
+            else 0
+            end
+            else 0
+            END as LENGTHTIME
+        from abNormal a
+        where status >=4 and user_id = #{user_id}
+        and ERROR_TYPE='PR013009'
+    </select>
+
+
+
+
+
 </mapper>
 
