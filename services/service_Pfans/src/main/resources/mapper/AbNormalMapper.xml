@@ -37,7 +37,19 @@
         else finished_date end) finisheddate
         from abnormal
         where status >= 4
-        and (error_type = 'PR013012' or error_type = 'PR013012')
+        and error_type = 'PR013012'
+        group by USER_ID
+        union all
+        select
+		USER_ID,
+        error_type as errortype,
+        MIN(case when status = '7' then re_occurrence_date
+        else occurrence_date end) occurrencedate,
+        MAX(case when status = '7' then re_finished_date
+        else finished_date end) finisheddate
+        from abnormal
+        where status >= 4
+        and error_type = 'PR013013'
         group by USER_ID
     </select>
     <select id="selectAbNormalThisYear" resultType="Double">

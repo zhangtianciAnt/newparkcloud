@@ -378,8 +378,6 @@ public class GivingServiceImpl implements GivingService {
                         otherOne.setEnddate(abNor.getFinisheddate());
                         Integer days = getDaysforOtherOne(abNor.getOccurrencedate(), abNor.getFinisheddate());
                         otherOne.setVacation(days.toString());
-                        double intLengthtime = Double.valueOf(abNor.getLengthtime()) / 8;
-                        String strLengthtime = String.valueOf(intLengthtime);
                         long beginMillisecond = notNull(beginTime).equals("0") ? (long) 0 : format.parse(beginTime.replace("/", "-")).getTime();
                         if (beginMillisecond >= endMillisecond) {
                             otherOne.setHandsupport(days.toString());
@@ -793,6 +791,7 @@ public class GivingServiceImpl implements GivingService {
                     }
                     lastMonthSuitDays = getWorkDaysExceptWeekend(tempStart, calLast.getTime());
                     //本月试用天数
+                    calSuitDate.add(Calendar.DATE, 1);
                     thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), calSuitDate.getTime());
                 }
 
@@ -1009,12 +1008,12 @@ public class GivingServiceImpl implements GivingService {
             插入其他相关表数据
          */
         // 2020/03/11 add by myt start
-        insertInduction(givingid, tokenModel);
-        insertRetire(givingid, tokenModel);
+        insertInduction(givingid, tokenModel);//0.7
+        insertRetire(givingid, tokenModel);//0.3
         // 2020/03/14 add by myt end
-        insertBase(givingid, tokenModel);
-        insertContrast(givingid, tokenModel);
-        insertOtherTwo(givingid, tokenModel);
+        insertBase(givingid, tokenModel);//0.6
+        insertContrast(givingid, tokenModel);//4
+        insertOtherTwo(givingid, tokenModel);//0.1
         insertOtherOne(givingid, tokenModel);
         insertLackattendance(givingid, tokenModel);
         insertResidual(givingid, tokenModel);
@@ -2271,9 +2270,16 @@ public class GivingServiceImpl implements GivingService {
             }
         }
         // 一括补助
-        //上月试用工作日数 / 21.75 * 500 + 上月正式工作日数 / 21.75 * 1000 + 今月試用社員出勤日数 / 21.75 * 500 + 本月正式工作日数 / 21.75 * 1000
-        induction.setLunch(df.format(lastMonthSuitDays / dateBase * trialSubsidy + lastMonthDays / dateBase * officialSubsidy +
-                thisMonthSuitDays / dateBase * trialSubsidy + thisMonthDays / dateBase * officialSubsidy));
+        //本月转正判断
+        if(induction.getStartdate() != null){
+            //ROUND(1000-500/21.75*I3,2)
+            induction.setLunch(df.format(officialSubsidy - trialSubsidy / 21.75 * thisMonthSuitDays));
+        }
+        else{
+            //上月试用工作日数 / 21.75 * 500 + 上月正式工作日数 / 21.75 * 1000 + 今月試用社員出勤日数 / 21.75 * 500 + 本月正式工作日数 / 21.75 * 1000
+            induction.setLunch(df.format(lastMonthSuitDays / dateBase * trialSubsidy + lastMonthDays / dateBase * officialSubsidy +
+                    thisMonthSuitDays / dateBase * trialSubsidy + thisMonthDays / dateBase * officialSubsidy));
+        }
     }
 
     //退职

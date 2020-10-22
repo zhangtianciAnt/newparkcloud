@@ -162,14 +162,14 @@
      WHEN base.TYPE = 2 then 105/21.75*otherone.attendance-105/21.75/8*(IFNULL(lackattendance.LASTSHORTDEFICIENCY,0) + IFNULL(lackattendance.THISSHORTDEFICIENCY,0)+IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)+IFNULL(lackattendance.thisdiligence,0))
      WHEN base.TYPE = 0 then induction.lunch-105/21.75/8*(IFNULL(lackattendance.THISSHORTDEFICIENCY,0)+IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)+IFNULL(lackattendance.thisdiligence,0))
      WHEN base.TYPE = 1 then retire.lunch-105/21.75/8*(IFNULL(lackattendance.THISSHORTDEFICIENCY,0)+IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)+IFNULL(lackattendance.thisdiligence,0))
-     ELSE 105*(168-IFNULL(lackattendance.THISSHORTDEFICIENCY,0)-IFNULL(lackattendance.lastchronicdeficiency,0)-IFNULL(lackattendance.thischronicdeficiency,0)-IFNULL(lackattendance.thisdiligence,0))/168 END,2)) as lunchsubsidy,
+     ELSE 105*(168-IFNULL(lackattendance.THISSHORTDEFICIENCY,0)-IFNULL(lackattendance.lastchronicdeficiency,0)-IFNULL(lackattendance.thischronicdeficiency,0)-IFNULL(lackattendance.thisdiligence,0))/184 END,2)) as lunchsubsidy,
      IFNULL(residual.SUBSIDY,0) as overtimesubsidy,
      IF(base.TYPE = 2,otherone.other1,0) as other1,
      IF(base.user_id = null,0,ROUND(case when base.TYPE = 3 then 84-84/21.75*otherone.vacation - 84/21.75/8*(IFNULL(lackattendance.LASTSHORTDEFICIENCY,0) + IFNULL(lackattendance.THISSHORTDEFICIENCY,0)+IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)+IFNULL(lackattendance.thisdiligence,0))
      WHEN base.TYPE = 2 then 84/21.75*otherone.attendance-84/21.75/8*(IFNULL(lackattendance.LASTSHORTDEFICIENCY,0) + IFNULL(lackattendance.THISSHORTDEFICIENCY,0)+IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)+IFNULL(lackattendance.thisdiligence,0))
      WHEN base.TYPE = 0 then induction.traffic-84/21.75/8*(IFNULL(lackattendance.THISSHORTDEFICIENCY,0)+IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)+IFNULL(lackattendance.thisdiligence,0))
      WHEN base.TYPE = 1 then retire.traffic-105/21.75/8*(IFNULL(lackattendance.THISSHORTDEFICIENCY,0)+IFNULL(lackattendance.lastchronicdeficiency,0) + IFNULL(lackattendance.thischronicdeficiency,0)+IFNULL(lackattendance.thisdiligence,0))
-     ELSE 84*(168-IFNULL(lackattendance.THISSHORTDEFICIENCY,0)-IFNULL(lackattendance.lastchronicdeficiency,0)-IFNULL(lackattendance.thischronicdeficiency,0))/168 END,2)) as traffic,
+     ELSE 84*(168-IFNULL(lackattendance.THISSHORTDEFICIENCY,0)-IFNULL(lackattendance.lastchronicdeficiency,0)-IFNULL(lackattendance.thischronicdeficiency,0))/184 END,2)) as traffic,
      IF((base.SEX = 1 and base.THISMONTH!=0),35,0) as washingtheory,
      IFNULL(othertwo2.moneys,0) as other2,
      IFNULL(appreciation.amount,0) as appreciation,
@@ -272,7 +272,7 @@
         @WORKDATE := base.WORKDATE AS WORKDATE,#base表 入社日
         base.SEX AS SEX,#base表 性别  PR019001 男  PR019002 女
         @ONLYCHILD := base.ONLYCHILD AS ONLYCHILD,#base表 是否独生子女 1:是  2：不是
-        @TYPE := base.TYPE AS TYPE,#base表 入/退職/産休 1入 4退職 2女産休 3男看护
+        @TYPE := base.TYPE AS TYPE,#base表 1入职 2女産休 3男看护 4退職
         @BONUS := base.BONUS AS BONUS,#base表 奨金計上
         @SOCIOLOGY := base.SOCIOLOGY AS SOCIOLOGY,#base表 是否1999年前社会人 1是 2不是
         @REGISTERED := base.REGISTERED AS REGISTERED,#base表 是否大連戸籍    1是 2不是
@@ -294,12 +294,12 @@
         @CXDAYS := round(base.ATTENDANCE,2) AS BIRTHREST,# 其他1表 産休出勤日数(看護休暇日数)
         @THISMONTHBASICBASIC :=
         CASE
+        WHEN ( @TYPE &lt;=> '1' ) THEN
+        round(base.INDUCTION_GIVE,2)
         WHEN ( @TYPE &lt;=> '2' ) THEN
         round( ( @BASETHISMONTHBASIC / 21.75 * @CXDAYS ), 2)
         WHEN ( @TYPE &lt;=> '3' ) THEN
         round( ( @THISMONTH - @BASETHISMONTHBASIC / 21.75 * @CXDAYS ), 2)
-        WHEN ( @TYPE &lt;=> '1' ) THEN
-        round(base.INDUCTION_GIVE,2)
         WHEN ( @TYPE &lt;=> '4' ) THEN
         round(base.LACKATTENDANCE_GIVE,2)
         ELSE
@@ -317,46 +317,34 @@
         @THISMONTHBASICGEI := IF(@TYPE &lt;=> '-',round((@BASETHISMONTHBASIC + @LACKATTENDANCE_GIVE),2),round((@THISMONTHBASICBASIC + @LACKATTENDANCE_GIVE),2)) as THISMONTHBASICGEI, #本月基本给
         round( @BASE_SJJE - @THISMONTHBASICGEI, 2 ) AS THISMONTHDUTYGEI,#本月职责给
         @YKBZJS := base.DIC_YKBZZS AS YKBZJS, # 一括补助基本給
+        @KCYKBZQQ := IF
+        (
+        base.LASTMONTHSUITDAYS &lt;=> 0.0,
+        0,
+        base.DIC_YKBZSY / 21.75 / 8 * (base.LASTDILIGENCETRY + base.LASTSHORTDEFICIENCYTRY + base.LASTCHRONICDEFICIENCYTRY )
+        ) +
+        IF
+        (
+        base.LASTMONTHDAYS &lt;=> 0.0,
+        0,
+        base.DIC_YKBZZS / 21.75 / 8 * (base.LASTDILIGENCEFORMAL + base.LASTSHORTDEFICIENCYFORMAL + base.LASTCHRONICDEFICIENCYFORMAL )
+        ) AS KCYKBZQQ,#扣除欠勤(一括补助用)
         @YKBZ :=
         CASE
-        WHEN ( @TYPE &lt;=> '2' ) THEN
-        round( ( base.THISMONTHSUITDAYS * base.DIC_YKBZSY / 21.75 + ( @CXDAYS - base.THISMONTHSUITDAYS ) * base.DIC_YKBZZS / 21.75 ), 2 )
         WHEN ( @TYPE &lt;=> '1' ) THEN
-        base.INDUCTION_LUNCH
+        round(base.INDUCTION_LUNCH - @KCYKBZQQ,2)
+        WHEN ( @TYPE &lt;=> '2' ) THEN
+        round( base.DIC_YKBZZS / 21.75 * @CXDAYS - @KCYKBZQQ , 2 )
+        WHEN ( @TYPE &lt;=> '3' ) THEN
+        round( base.DIC_YKBZZS - ( base.DIC_YKBZZS / 21.75 * @CXDAYS) - @KCYKBZQQ, 2 )
         WHEN ( @TYPE &lt;=> '4' ) THEN
-        round(base.RETIRE_LUNCH - @YKBZJS / 21.75 / 8 * (@SHORTDEFICIENCY + @CHRONICDEFICIENCY + @DILIGENCE),2)
+        round(base.RETIRE_LUNCH - @KCYKBZQQ,2)
         WHEN (base.LASTMONTHSUITDAYS &lt;> 0.0) THEN
-        round(
-        IF
-        (
-        base.LASTMONTHSUITDAYS &lt;=> 0.0,
-        0,
-        base.DIC_YKBZSY / 21.75 / 8 * ( base.LASTMONTHSUITDAYS * 8 - base.LASTDILIGENCETRY - base.LASTSHORTDEFICIENCYTRY - base.LASTCHRONICDEFICIENCYTRY )
-        ) +
-        IF
-        (
-        base.LASTMONTHDAYS &lt;=> 0.0,
-        0,
-        base.DIC_YKBZZS / 21.75 / 8 * ( base.LASTMONTHDAYS * 8 - base.LASTDILIGENCEFORMAL - base.LASTSHORTDEFICIENCYFORMAL - base.LASTCHRONICDEFICIENCYFORMAL )
-        ),
-        2
-        )
+        round(base.DIC_YKBZZS - @KCYKBZQQ,2)
         ELSE
         round(
-        IF
-        (
-        base.LASTMONTHSUITDAYS &lt;=> 0.0,
-        0,
-        base.DIC_YKBZSY * ( base.LASTMONTHSUITDAYS * 8 - base.LASTDILIGENCETRY - base.LASTSHORTDEFICIENCYTRY - base.LASTCHRONICDEFICIENCYTRY ) / ( base.LASTMONTHSUITDAYS * 8 )
-        ) +
-        IF
-        (
-        base.LASTMONTHDAYS &lt;=> 0.0,
-        0,
-        base.DIC_YKBZZS * ( 168 - base.LASTDILIGENCEFORMAL - base.LASTSHORTDEFICIENCYFORMAL - base.LASTCHRONICDEFICIENCYFORMAL ) / 168
-        ),
-        2
-        ) END AS YKBZ,#一括补助
+        base.DIC_YKBZZS * ( 184 - base.LASTDILIGENCEFORMAL - base.LASTSHORTDEFICIENCYFORMAL - base.LASTCHRONICDEFICIENCYFORMAL ) / 184,2)
+        END AS YKBZ,#一括补助
         @JBBZ := (IF(@TYPE = '4',base.SUBSIDY,base.LASTTOTALY)) AS OVERTIMESUBSIDY,# 加班补助 gbb base.SUBSIDY
         @XJ1 := round( ( @BASE_SJJE + @JBBZ + @YKBZ ), 2 ) AS TOTAL1,# 小计1(基本給+补助)
         @OTHER2 := round(base.OTHERTWO_MONEYS,2) AS OTHER2,#其他2
@@ -408,12 +396,12 @@
         DATE_FORMAT(@WORKDATE,'%Y') - DATE_FORMAT(NOW(),'%Y') = 0,
         round(
         (
-        @YEARSTOTAL12 - base.DIC_LJYNSSDECS * ( MONTH ( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) - 1- MONTH ( DATE_FORMAT(@WORKDATE,'%Y-%m-%d') ) + 1 ) - @ZXKCLJ - @ADDITIONAL_TOTAL - @DUTYFREE_CUMULATIVE
+        @YEARSTOTAL12 - base.DIC_LJYNSSDECS * ( MONTH ( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) - 0 - MONTH ( DATE_FORMAT(@WORKDATE,'%Y-%m-%d') ) + 1 ) - @ZXKCLJ - @ADDITIONAL_TOTAL - @DUTYFREE_CUMULATIVE
         ),
         2
         ),
         round(
-        ( @YEARSTOTAL12 - base.DIC_LJYNSSDECS * ( MONTH ( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) - 1 ) - @ZXKCLJ - @ADDITIONAL_TOTAL - @DUTYFREE_CUMULATIVE ),
+        ( @YEARSTOTAL12 - base.DIC_LJYNSSDECS * ( MONTH ( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) - 0 ) - @ZXKCLJ - @ADDITIONAL_TOTAL - @DUTYFREE_CUMULATIVE ),
         2
         )
         )
@@ -485,7 +473,7 @@
         )
         END
         ) AS THISMONTHADJUSTMENT,#本月应扣缴所得税
-        round( ( @GZZE - @GRHJ - @BYYKJSDS ), 2 ) AS REALWAGES,#当月实发工资  需要在画面加其他6字段
+        round( ( @GZZE - @GRHJ - @BYYKJSDS ), 2 ) AS REALWAGES,#当月实发工资
         @YLBXHS := round( @YANGLAOJS * DIC_YLBXHSFDHS, 2 ) AS COMENDOWMENTINSURANCE,#养老保险
         @YILIAOBXHS := round( @YILIAOJS * DIC_YILIAOBXGRFDHS, 2 ) AS COMMEDICALINSURANCE,#医疗保险
         @SYBXGRFDHS := round( @SHIYEJS * DIC_SYBXGRFDHS, 2 ) AS COMUNEMPLOYMENTINSURANCE,#失业保险
