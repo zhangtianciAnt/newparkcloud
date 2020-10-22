@@ -5,6 +5,9 @@
     <resultMap id="EletronicfencelarmMap" type="com.nt.dao_BASF.Electronicfencealarm">
         <id property="id" column="id"></id>
         <result property="createon" column="createon"></result>
+        <result property="type" column="type"></result>
+        <result property="result" column="result"></result>
+        <result property="remark" column="remark"></result>
         <association property="electronicfencestatus" javaType="com.nt.dao_BASF.Electronicfencestatus">
             <result property="shieldstatus" column="shieldstatus"></result>
             <result property="warningstatus" column="warningstatus"></result>
@@ -29,6 +32,9 @@
         select
         electronicfencealarm.id,
         electronicfencealarm.createon,
+        electronicfencealarm.type,
+        electronicfencealarm.result,
+        electronicfencealarm.remark,
         electronicfencestatus.shieldstatus,
         electronicfencestatus.warningstatus,
         deviceinformation.devicename,

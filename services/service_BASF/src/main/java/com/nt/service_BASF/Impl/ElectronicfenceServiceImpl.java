@@ -22,14 +22,14 @@ public class ElectronicfenceServiceImpl implements ElectronicfenceService {
         return electronicfencealarms;
     }
 
-    @Override
-    public int createElectronicfences(Electronicfencealarm electronicfencealarm) throws Exception {
-        electronicfencealarm.setId(UUID.randomUUID().toString());
-        electronicfencealarm.setCreateon(new Date());
-        electronicfencealarm.setStatus(0);
-        int i = electronicfencealarmMapper.insert(electronicfencealarm);
-        return i;
-    }
+//    @Override
+//    public int createElectronicfences(Electronicfencealarm electronicfencealarm) throws Exception {
+//        electronicfencealarm.setId(UUID.randomUUID().toString());
+//        electronicfencealarm.setCreateon(new Date());
+//        electronicfencealarm.setStatus(0);
+//        int i = electronicfencealarmMapper.insert(electronicfencealarm);
+//        return i;
+//    }
 
     @Override
     public int updateElectronicfences(Electronicfencealarm electronicfencealarm) throws Exception {

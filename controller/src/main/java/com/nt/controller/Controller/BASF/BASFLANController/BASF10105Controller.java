@@ -86,6 +86,14 @@ public class BASF10105Controller {
         return ApiResult.success(deviceinFormationServices.list(deviceinformation));
     }
 
+    @RequestMapping(value = "/createElectronicfenceAlarmInfo", method = {RequestMethod.POST})
+    public ApiResult createElectronicfenceAlarmInfo(@RequestBody Electronicfencealarm electronicfencealarm) {
+        electronicfencealarm.setId(UUID.randomUUID().toString());
+        electronicfencealarm.setCreateon(new Date());
+        electronicfencealarm.setStatus(0);
+        electronicfencealarmMapper.insert(electronicfencealarm);
+        return ApiResult.success();
+    }
 
     @RequestMapping(value = "/linkagelist", method = {RequestMethod.POST})
     public ApiResult linkagelist(@RequestBody List<ServerInfo> serverinfolist, HttpServletRequest request) throws Exception {
@@ -103,14 +111,14 @@ public class BASF10105Controller {
                 WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
                 MultiThreadScheduleTask.webSocketVo.setElectricShield(null);
                 // 如果 未屏蔽报警信息 生成电子围栏报警单
-                if (electronicfencestatus.getShieldstatus() == 0) {
-                    Electronicfencealarm electronicfencealarm = new Electronicfencealarm();
-                    electronicfencealarm.setId(UUID.randomUUID().toString());
-                    electronicfencealarm.setCreateon(new Date());
-                    electronicfencealarm.setDeviceinformationid(deviceinformation.getDeviceinformationid());
-                    electronicfencealarm.setStatus(0);
-                    electronicfencealarmMapper.insert(electronicfencealarm);
-                }
+//                if (electronicfencestatus.getShieldstatus() == 0) {
+//                    Electronicfencealarm electronicfencealarm = new Electronicfencealarm();
+//                    electronicfencealarm.setId(UUID.randomUUID().toString());
+//                    electronicfencealarm.setCreateon(new Date());
+//                    electronicfencealarm.setDeviceinformationid(deviceinformation.getDeviceinformationid());
+//                    electronicfencealarm.setStatus(0);
+//                    electronicfencealarmMapper.insert(electronicfencealarm);
+//                }
             } else {
                 return ApiResult.fail("未在数据库中发现该回路号的电子围栏内");
             }

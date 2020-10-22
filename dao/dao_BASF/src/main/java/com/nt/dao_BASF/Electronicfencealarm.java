@@ -25,6 +25,10 @@ public class Electronicfencealarm {
     private Date createon;
     private Date modifyon;
 
+    private Integer type;
+    private String result;
+    private String remark;
+
     @Transient
     private Electronicfencestatus electronicfencestatus;
     @Transient
