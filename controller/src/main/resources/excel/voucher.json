@@ -1,0 +1,47 @@
+{
+  "NumberSearch": "true",
+  "ValidateFlag": "true",
+  "IsDeleteEntry": "true",
+  "IsEntryBatchFill": "true",
+  "NeedUpDateFields": [],
+  "NeedReturnFields": [],
+  "SubSystemId": "",
+  "InterationFlags": "",
+  "Model":{
+    "FVOUCHERID": 0,
+    "FAccountBookID": {
+      "FNumber": "001"
+    },
+    "FDate": "",
+    "FBUSDATE": "",
+    "FVOUCHERGROUPID": {
+      "FNumber": "PRE001"
+    },
+    "FVOUCHERGROUPNO": 0,
+    "FATTACHMENTS": 0,
+    "FISADJUSTVOUCHER": false,
+    "FDocumentStatus": "Z",
+    "FYEAR": 2020,
+    "FSourceBillKey": {
+      "FNumber": "78050206-2fa6-40e3-b7c8-bd608146fa38"
+    },
+    "FPERIOD": 8,
+    "FEntity": {
+      "FEntryID": 0,
+        "FEXPLANATION": "测试1022",
+        "FACCOUNTID": {
+          "FNumber": "1002.03"
+        },
+        "FCURRENCYID": {
+          "FNumber": "PRE001"
+        },
+        "FEXCHANGERATETYPE": {
+          "FNumber": "HLTX01_SYS"
+        },
+        "FEXCHANGERATE": 1.0,
+        "FAMOUNTFOR": 30.0,
+        "FDEBIT": 30.0
+      }
+  },
+  "BatchCount": 0
+}

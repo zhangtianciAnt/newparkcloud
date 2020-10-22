@@ -1,18 +1,14 @@
 package com.nt.controller.Controller.AOCHUAN;
 
-import cn.hutool.json.JSON;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.CredentialInformation;
-import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.CrdlInfo;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinCrdlInfoService;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinPurchaseSerivce;
-import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinPurchaseMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
 import com.nt.utils.RequestUtils;
 import com.nt.utils.services.TokenService;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,4 +90,15 @@ public class AOCHUAN5004Controller {
         }
         return ApiResult.success();
     }
+
+    //add_fjl_1021 推送KIS
+    @RequestMapping(value = "/toKisData", method = {RequestMethod.POST})
+    public ApiResult toKisData(@RequestBody List<CredentialInformation> credentialInformationList, HttpServletRequest request) throws Exception {
+        if (credentialInformationList == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        finCrdlInfoService.login1(credentialInformationList, tokenService.getToken(request));
+        return ApiResult.success();
+    }
+    //add_fjl_1021 推送KIS
 }
