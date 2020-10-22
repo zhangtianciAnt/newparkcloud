@@ -1,5 +1,8 @@
 package com.nt.service_AOCHUAN.AOCHUAN5000.Impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.AcctgRul;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.AuxAcctg;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.CredentialInformation;
@@ -9,12 +12,17 @@ import com.nt.service_AOCHUAN.AOCHUAN5000.FinCrdlInfoService;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinAcctgRulMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinAuxAcctgMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinCrdlInfoMapper;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import java.util.UUID;
+import org.springframework.util.ResourceUtils;
 
-import java.util.List;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
@@ -28,10 +36,147 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
     @Autowired
     private FinAuxAcctgMapper finAuxAcctgMapper;
 
+    @Autowired
+    private K3CloundConfig k3CloundConfig;
+
     //获取凭证信息
     @Override
     public List<CredentialInformation> getCrdlInfo(CredentialInformation credentialInformation) throws Exception {
         return finCrdlInfoMapper.select(credentialInformation);
+    }
+    //add_fjl_1021 推送KIS
+    //金蝶login
+    public ResultVo login(String url,String content) {
+
+        ResponseEntity<String> responseEntity = HttpUtil.httpPost(url, content);
+        //获取登录cookie
+        if(responseEntity.getStatusCode()== HttpStatus.OK){
+            String login_cookie = "";
+            Set<String> keys = responseEntity.getHeaders().keySet();
+            for(String key:keys){
+                if (key.equalsIgnoreCase("Set-Cookie")) {
+                    List<String> cookies = responseEntity.getHeaders().get(key);
+                    for(String cookie:cookies){
+                        if(cookie.startsWith("kdservice-sessionid")){
+                            login_cookie=cookie;
+                            break;
+                        }
+                    }
+                }
+            }
+            Map<String,Object> map = new HashMap<>();
+            map.put("cookie",login_cookie);
+            return ResultUtil.success(map);
+        }
+
+        Map<String,Object> result = JSON.parseObject(responseEntity.getBody());
+        return ResultUtil.error(result.get("Message").toString());
+    }
+
+    //金蝶批量保存
+    public ResultVo batchSave(String url,String cookie, String content) throws Exception {
+        //保存
+        Map<String, Object> header = new HashMap<>();
+        header.put("Cookie", cookie);
+        String result = HttpUtil.httpPost(url, header, content);
+        JSONObject jsonObject = JSON.parseObject(result);
+        Map<String, Object> map = (Map<String, Object>) jsonObject.get("Result");
+        Map<String, Object> responseStatus = (Map<String, Object>) map.get("ResponseStatus");
+        Boolean isSuccess = (Boolean) responseStatus.get("IsSuccess");
+
+        if (isSuccess) {
+            //获取返回值   kisid
+            Object ob = responseStatus.get("SuccessEntitys");
+            for(int i = 0; i < ((JSONArray) ob).size(); i++){
+                Integer kisid = (Integer)((JSONObject) ((JSONArray) ob).get(i)).get("Id");
+                String number = (String)((JSONObject) ((JSONArray) ob).get(i)).get("Number");
+//                updKisid(kisid,number);
+            }
+            return ResultUtil.success();
+        } else {
+            List<Map<String, Object>> errors = (List<Map<String, Object>>) responseStatus.get("Errors");
+            return ResultUtil.error(JSON.toJSONString(errors));
+        }
+    }
+
+    @Override
+    public void login1(List<CredentialInformation> credentialInformation,TokenModel tokenModel) throws Exception {
+
+        String loginParam = BaseUtil.buildLogin("5f4f0eaa667840", "Administrator", "888888", 2052);
+
+        ResultVo login = login(k3CloundConfig.url + k3CloundConfig.login, loginParam);
+
+        if (login.getCode() != ResultEnum.SUCCESS.getCode()) {
+//            log.error("【登录金蝶系统失败】：{}", login.getMsg());
+            throw new LogicalException("登录金蝶系统失败");
+//            return;
+        }
+
+        Map<String, Object> map = (Map<String, Object>) login.getData();
+        String cookie = map.get("cookie").toString();
+
+        //获取供应商数据模板
+        File file = null;
+        file = ResourceUtils.getFile("classpath:excel/voucher.json");
+        String jsonData = BaseUtil.jsonRead(file);
+        List<Map<String,Object>> listmap = new ArrayList();
+        JSONObject basic = null;
+        SimpleDateFormat stf = new SimpleDateFormat("yyyy/MM/dd");
+        if(credentialInformation.size() > 0){
+            for(CredentialInformation cinfo : credentialInformation){
+                List<Map<String,Object>> listmapFentity = new ArrayList();
+                AccountingRule accountingRule = new AccountingRule();
+                accountingRule.setCrdlinfo_fid(cinfo.getCrdlinfo_id());
+                List<AccountingRule> accountingRuleList = finAcctgRulMapper.getAcctgEntrInfoByCrdl_id(cinfo.getCrdlinfo_id());
+                basic = JSON.parseObject(jsonData);
+                Map<String, Object> model = (Map<String, Object>)basic.get("Model");//单据头
+                if(accountingRuleList.size() > 0){
+                    for(AccountingRule ar : accountingRuleList){
+                        Map<String, Object> fentity = (Map<String, Object>)((Map<String, Object>) basic.get("Model")).get("FEntity");//单据体
+                        Map<String, Object> faccountid = (Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic.get("Model")).get("FEntity")).get("FACCOUNTID");//科目编码
+                        Map<String, Object> fcurrencyid = (Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic.get("Model")).get("FEntity")).get("FCURRENCYID");//币种
+                        fentity.put("FEXPLANATION",ar.getRemarks());//摘要
+//                        faccountid.put("FNumber",ar.getAcct_code()); //科目编码
+//                        fcurrencyid.put("FNumber",ar.getCurrency());//币别
+                        fentity.put("FEXCHANGERATE",ar.getEx_rate());//汇率
+                        fentity.put("FAMOUNTFOR",ar.getOricurrency_amount());//原币金额
+                        if(StringUtils.isNotEmpty(ar.getDebit())){//借方科目
+                            fentity.put("FDEBIT",ar.getAmount());//借方金额
+                        } else {
+                            fentity.put("FCREDIT",ar.getAmount());//贷方金额
+                        }
+
+                        listmapFentity.add(fentity);
+                    }
+
+                }
+//                model.put("FVOUCHERGROUPNO",cinfo.getCrdlword());//凭证号
+                if(cinfo.getBus_date() != null){
+//                    Date date = new Date(stf.format(cinfo.getBus_date()));
+//                    model.put("FDate",stf.format(cinfo.getBus_date()));//业务日期
+//                    model.put("FYEAR",String.format("%tY", date));//会计年度
+//                    model.put("FPERIOD",Integer.valueOf(String.format("%tm", date)));//期间
+                    model.put("FDate","2020-08-01");//业务日期
+                    model.put("FYEAR","2020");//会计年度
+                    model.put("FPERIOD","8");//期间
+                }
+                model.put("FATTACHMENTS",cinfo.getAttachments());//附件数
+                model.put("FEntity",listmapFentity);//单据体
+                listmap.add(model);
+            }
+        }
+        basic.put("Model",listmap);
+
+        //构造凭证接口数据
+        String voucher = BaseUtil.buildMaterial(basic, KDFormIdEnum.VOUCHER.getFormid());
+
+        ResultVo save = batchSave(k3CloundConfig.url + k3CloundConfig.batchSave, cookie, voucher);
+        if (save.getCode() != ResultEnum.SUCCESS.getCode()) {
+//            log.error("【保存出错】：{}", save.getMsg());
+            throw new LogicalException("保存出错"+save.getMsg());
+//            return;
+        }
+
     }
 
     //获取分录-辅助项目数据

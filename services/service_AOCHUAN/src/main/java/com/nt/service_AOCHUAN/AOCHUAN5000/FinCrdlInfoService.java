@@ -25,4 +25,6 @@ public interface FinCrdlInfoService {
     Boolean insert(CrdlInfo crdlInfo, TokenModel tokenModel) throws  Exception;
 
     CredentialInformation getForm(String id) throws  Exception;
+
+    void login1(List<CredentialInformation> credentialInformationList,TokenModel tokenModel) throws Exception;
 }
