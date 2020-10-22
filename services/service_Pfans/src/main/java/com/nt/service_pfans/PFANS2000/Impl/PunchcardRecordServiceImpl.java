@@ -414,6 +414,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         attendanceList.get(0).setTshortsickleave(null);
                                         attendanceList.get(0).setTlongsickleave(null);
                                         attendanceList.get(0).setTabsenteeism(null);
+                                        attendanceList.get(0).setTcompassionateleave(null);
                                         tokenModel.setUserId(attendanceList.get(0).getUser_id());
                                         tokenModel.setExpireDate(new Date());
                                         saveAttendance(attendanceList.get(0), "0", tokenModel);
@@ -471,6 +472,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 attendanceList.get(0).setTshortsickleave(null);
                                 attendanceList.get(0).setTlongsickleave(null);
                                 attendanceList.get(0).setTabsenteeism(null);
+                                attendanceList.get(0).setTcompassionateleave(null);
                                 tokenModel.setUserId(attendanceList.get(0).getUser_id());
                                 tokenModel.setExpireDate(new Date());
                                 saveAttendance(attendanceList.get(0), "0", tokenModel);
@@ -536,6 +538,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     attendanceList.get(0).setTshortsickleave(null);
                                     attendanceList.get(0).setTlongsickleave(null);
                                     attendanceList.get(0).setTabsenteeism(null);
+                                    attendanceList.get(0).setTcompassionateleave(null);
                                     attendanceList.get(0).setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                                     tokenModel.setUserId(attendanceList.get(0).getUser_id());
                                     tokenModel.setExpireDate(new Date());
@@ -595,6 +598,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         asList.get(0).setTshortsickleave(null);
                                         asList.get(0).setTlongsickleave(null);
                                         asList.get(0).setTabsenteeism(null);
+                                        asList.get(0).setTcompassionateleave(null);
                                         tokenModel.setUserId(asList.get(0).getUser_id());
                                         tokenModel.setExpireDate(new Date());
                                         saveAttendance_resignation(asList.get(0), "0", tokenModel);
@@ -654,6 +658,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     attendanceList.get(0).setTshortsickleave(null);
                                     attendanceList.get(0).setTlongsickleave(null);
                                     attendanceList.get(0).setTabsenteeism(null);
+                                    attendanceList.get(0).setTcompassionateleave(null);
                                     attendanceList.get(0).setRecognitionstate("");
                                     tokenModel.setUserId(attendanceList.get(0).getUser_id());
                                     tokenModel.setExpireDate(new Date());
@@ -742,9 +747,14 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             attendSumSick.setUser_id(ad.getUser_id());
 
                             //ccm add 1020 短病假变长病假
-                            Double sumSick0 = abNormalMapper.selectAttenSumSick(attendSumSick);
+                            Double sumSick0 = 0d;
                             Double sumSick1 = 0d;
                             Double sumSick2 = 0d;
+                            sumSick0 = abNormalMapper.selectAttenSumSick(attendSumSick);
+                            if(sumSick0 == null )
+                            {
+                                sumSick0 = 0d;
+                            }
                             Calendar start = Calendar.getInstance();
                             start.setTime(Convert.toDate(ad.getDates()));
                             long startL = start.getTimeInMillis();
@@ -1197,7 +1207,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setAnnualrest(ad.getAnnualrest() == null ? "0" : ad.getAnnualrest());
                                     ad.setDaixiu(ad.getDaixiu() == null ? "0" : ad.getDaixiu());
                                     ad.setCompassionateleave(ad.getCompassionateleave() == null ? "0" : ad.getCompassionateleave());
-                                    ad.setShortsickleave(Double.valueOf(ad.getShortsickleave() == null ? "0" : ad.getShortsickleave()) < 0 ? "0" :ad.getShortsickleave());
+                                    ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : (Double.valueOf(ad.getShortsickleave())<0 ? "0" : ad.getShortsickleave()));
                                     ad.setLongsickleave(ad.getLongsickleave() == null ? "0" : ad.getLongsickleave());
                                     ad.setNursingleave(ad.getNursingleave() == null ? "0" : ad.getNursingleave());
                                     ad.setWelfare(ad.getWelfare() == null ? "0" : ad.getWelfare());
@@ -1500,6 +1510,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setTshortsickleave(ad.getShortsickleave());
                                         ad.setTlongsickleave(ad.getLongsickleave());
                                         ad.setTabsenteeism(ad.getAbsenteeism());
+                                        ad.setTcompassionateleave(ad.getCompassionateleave());
+                                        ad.setCompassionateleave(null);
                                         ad.setShortsickleave(null);
                                         ad.setLongsickleave(null);
                                         ad.setAbsenteeism(null);
@@ -1509,6 +1521,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             ad.setTshortsickleave(ad.getShortsickleave());
                                             ad.setTlongsickleave(ad.getLongsickleave());
                                             ad.setTabsenteeism(ad.getAbsenteeism());
+                                            ad.setTcompassionateleave(ad.getCompassionateleave());
+                                            ad.setCompassionateleave(null);
                                             ad.setShortsickleave(null);
                                             ad.setLongsickleave(null);
                                             ad.setAbsenteeism(null);
@@ -1528,6 +1542,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setTshortsickleave(null);
                                         ad.setTlongsickleave(null);
                                         ad.setTabsenteeism(null);
+                                        ad.setTcompassionateleave(null);
                                     }
                                     if (workinghours.equals("8")) {
                                         ad.setWeekendindustry(null);
@@ -1937,8 +1952,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 ad.setNormal(ad.getNormal() == null ? "0" : ad.getNormal());
                                 ad.setAnnualrest(ad.getAnnualrest() == null ? "0" : ad.getAnnualrest());
                                 ad.setDaixiu(ad.getDaixiu() == null ? "0" : ad.getDaixiu());
-                                ad.setCompassionateleave(ad.getCompassionateleave() == null ? "0" : ad.getCompassionateleave());
-                                ad.setShortsickleave(Double.valueOf(ad.getShortsickleave() == null ? "0" : ad.getShortsickleave()) < 0 ? "0" :ad.getShortsickleave());
+                                ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : (Double.valueOf(ad.getShortsickleave())<0 ? "0" : ad.getShortsickleave()));
                                 ad.setLongsickleave(ad.getLongsickleave() == null ? "0" : ad.getLongsickleave());
                                 ad.setNursingleave(ad.getNursingleave() == null ? "0" : ad.getNursingleave());
                                 ad.setWelfare(ad.getWelfare() == null ? "0" : ad.getWelfare());
@@ -2050,6 +2064,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setTshortsickleave(ad.getShortsickleave());
                                     ad.setTlongsickleave(ad.getLongsickleave());
                                     ad.setTabsenteeism(ad.getAbsenteeism());
+                                    ad.setTcompassionateleave(ad.getCompassionateleave());
+                                    ad.setCompassionateleave(null);
                                     ad.setShortsickleave(null);
                                     ad.setLongsickleave(null);
                                     ad.setAbsenteeism(null);
@@ -2059,6 +2075,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setTshortsickleave(ad.getShortsickleave());
                                         ad.setTlongsickleave(ad.getLongsickleave());
                                         ad.setTabsenteeism(ad.getAbsenteeism());
+                                        ad.setTcompassionateleave(ad.getCompassionateleave());
+                                        ad.setCompassionateleave(null);
                                         ad.setShortsickleave(null);
                                         ad.setLongsickleave(null);
                                         ad.setAbsenteeism(null);
@@ -2077,6 +2095,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setTshortsickleave(null);
                                     ad.setTlongsickleave(null);
                                     ad.setTabsenteeism(null);
+                                    ad.setTcompassionateleave(null);
                                 }
                                 PunchcardRecord phr = new PunchcardRecord();
                                 //员工填写日志对应的实际工作时间
@@ -2270,9 +2289,14 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             attendSumSick.setUser_id(ad.getUser_id());
 
                             //ccm add 1020 短病假变长病假
-                            Double sumSick0 = abNormalMapper.selectAttenSumSick(attendSumSick);
+                            Double sumSick0 = 0d;
                             Double sumSick1 = 0d;
                             Double sumSick2 = 0d;
+                            sumSick0 = abNormalMapper.selectAttenSumSick(attendSumSick);
+                            if(sumSick0 == null )
+                            {
+                                sumSick0 = 0d;
+                            }
                             Calendar start = Calendar.getInstance();
                             start.setTime(Convert.toDate(ad.getDates()));
                             long startL = start.getTimeInMillis();
@@ -2725,7 +2749,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setAnnualrest(ad.getAnnualrest() == null ? "0" : ad.getAnnualrest());
                                     ad.setDaixiu(ad.getDaixiu() == null ? "0" : ad.getDaixiu());
                                     ad.setCompassionateleave(ad.getCompassionateleave() == null ? "0" : ad.getCompassionateleave());
-                                    ad.setShortsickleave(Double.valueOf(ad.getShortsickleave() == null ? "0" : ad.getShortsickleave()) < 0 ? "0" :ad.getShortsickleave());
+                                    ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : (Double.valueOf(ad.getShortsickleave())<0 ? "0" : ad.getShortsickleave()));
                                     ad.setLongsickleave(ad.getLongsickleave() == null ? "0" : ad.getLongsickleave());
                                     ad.setNursingleave(ad.getNursingleave() == null ? "0" : ad.getNursingleave());
                                     ad.setWelfare(ad.getWelfare() == null ? "0" : ad.getWelfare());
@@ -3026,6 +3050,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setTshortsickleave(ad.getShortsickleave());
                                         ad.setTlongsickleave(ad.getLongsickleave());
                                         ad.setTabsenteeism(ad.getAbsenteeism());
+                                        ad.setTcompassionateleave(ad.getCompassionateleave());
+                                        ad.setCompassionateleave(null);
                                         ad.setShortsickleave(null);
                                         ad.setLongsickleave(null);
                                         ad.setAbsenteeism(null);
@@ -3035,6 +3061,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             ad.setTshortsickleave(ad.getShortsickleave());
                                             ad.setTlongsickleave(ad.getLongsickleave());
                                             ad.setTabsenteeism(ad.getAbsenteeism());
+                                            ad.setTcompassionateleave(ad.getCompassionateleave());
+                                            ad.setCompassionateleave(null);
                                             ad.setShortsickleave(null);
                                             ad.setLongsickleave(null);
                                             ad.setAbsenteeism(null);
@@ -3054,6 +3082,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setTshortsickleave(null);
                                         ad.setTlongsickleave(null);
                                         ad.setTabsenteeism(null);
+                                        ad.setTcompassionateleave(null);
                                     }
 
                                     //员工填写日志对应的实际工作时间
@@ -3396,7 +3425,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 ad.setAnnualrest(ad.getAnnualrest() == null ? "0" : ad.getAnnualrest());
                                 ad.setDaixiu(ad.getDaixiu() == null ? "0" : ad.getDaixiu());
                                 ad.setCompassionateleave(ad.getCompassionateleave() == null ? "0" : ad.getCompassionateleave());
-                                ad.setShortsickleave(Double.valueOf(ad.getShortsickleave() == null ? "0" : ad.getShortsickleave()) < 0 ? "0" :ad.getShortsickleave());
+                                ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : (Double.valueOf(ad.getShortsickleave())<0 ? "0" : ad.getShortsickleave()));
                                 ad.setLongsickleave(ad.getLongsickleave() == null ? "0" : ad.getLongsickleave());
                                 ad.setNursingleave(ad.getNursingleave() == null ? "0" : ad.getNursingleave());
                                 ad.setWelfare(ad.getWelfare() == null ? "0" : ad.getWelfare());
@@ -3481,6 +3510,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setTshortsickleave(ad.getShortsickleave());
                                     ad.setTlongsickleave(ad.getLongsickleave());
                                     ad.setTabsenteeism(ad.getAbsenteeism());
+                                    ad.setTcompassionateleave(ad.getCompassionateleave());
+                                    ad.setCompassionateleave(null);
                                     ad.setShortsickleave(null);
                                     ad.setLongsickleave(null);
                                     ad.setAbsenteeism(null);
@@ -3490,6 +3521,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setTshortsickleave(ad.getShortsickleave());
                                         ad.setTlongsickleave(ad.getLongsickleave());
                                         ad.setTabsenteeism(ad.getAbsenteeism());
+                                        ad.setTcompassionateleave(ad.getCompassionateleave());
+                                        ad.setCompassionateleave(null);
                                         ad.setShortsickleave(null);
                                         ad.setLongsickleave(null);
                                         ad.setAbsenteeism(null);
@@ -3508,6 +3541,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setTshortsickleave(null);
                                     ad.setTlongsickleave(null);
                                     ad.setTabsenteeism(null);
+                                    ad.setTcompassionateleave(null);
                                 }
                                 PunchcardRecord phr = new PunchcardRecord();
                                 //员工填写日志对应的实际工作时间
