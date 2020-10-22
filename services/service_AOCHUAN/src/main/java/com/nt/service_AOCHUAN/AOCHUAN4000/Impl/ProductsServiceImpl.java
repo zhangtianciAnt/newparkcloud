@@ -327,14 +327,15 @@ public class ProductsServiceImpl implements ProductsService {
         Map<String, Object> responseStatus = (Map<String, Object>) map.get("ResponseStatus");
         Boolean isSuccess = (Boolean) responseStatus.get("IsSuccess");
 
+        //获取返回值   kisid
+        Object ob = responseStatus.get("SuccessEntitys");
+        for(int i = 0; i < ((JSONArray) ob).size(); i++){
+            Integer kisid = (Integer)((JSONObject) ((JSONArray) ob).get(i)).get("Id");
+            String number = (String)((JSONObject) ((JSONArray) ob).get(i)).get("Number");
+            updKisid(kisid,number,tokenModel);
+        }
+
         if (isSuccess) {
-            //获取返回值   kisid
-            Object ob = responseStatus.get("SuccessEntitys");
-            for(int i = 0; i < ((JSONArray) ob).size(); i++){
-                Integer kisid = (Integer)((JSONObject) ((JSONArray) ob).get(i)).get("Id");
-                String number = (String)((JSONObject) ((JSONArray) ob).get(i)).get("Number");
-                updKisid(kisid,number,tokenModel);
-            }
             return ResultUtil.success();
         } else {
             List<Map<String, Object>> errors = (List<Map<String, Object>>) responseStatus.get("Errors");
