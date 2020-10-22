@@ -20,7 +20,6 @@ import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS2000.StaffexitprocedureService;
 import com.nt.service_pfans.PFANS2000.mapper.StaffexitproceMapper;
 import com.nt.utils.*;
-import com.nt.utils.LockingFailure.RetryOnOptimisticLockingFailure;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
