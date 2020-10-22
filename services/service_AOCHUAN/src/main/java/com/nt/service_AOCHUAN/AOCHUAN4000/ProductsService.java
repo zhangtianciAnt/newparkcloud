@@ -13,6 +13,8 @@ import java.util.List;
 
 public interface ProductsService {
 
+    void zhengtishuju() throws Exception;
+
     List<Products> get(Products products) throws Exception;
 
     public void insert(Products offshore, TokenModel tokenModel)throws  Exception;

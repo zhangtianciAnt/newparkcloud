@@ -195,7 +195,11 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
     //add_fjl_1021 推送KIS
     @Override
     public void delete(String id) throws Exception {
-        supplierbaseinforMapper.deleteByPrimaryKey(id);
+        Supplierbaseinfor supplierbaseinfor = new Supplierbaseinfor();
+        supplierbaseinfor.setSupplierbaseinfor_id(id);
+        supplierbaseinfor.setStatus("1");
+//        supplierbaseinforMapper.deleteByPrimaryKey(id);
+        supplierbaseinforMapper.updateByPrimaryKeySelective(supplierbaseinfor);
     }
 
     @Override

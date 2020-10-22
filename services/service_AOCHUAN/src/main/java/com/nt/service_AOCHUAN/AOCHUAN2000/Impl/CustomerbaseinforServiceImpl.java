@@ -30,7 +30,7 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
 
     @Override
     public List<Customerbaseinfor> get() throws Exception {
-        return customerbaseinforMapper.selectAll();
+        return customerbaseinforMapper.selectALLcust();
     }
 
     @Override
@@ -62,7 +62,11 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
 
     @Override
     public void delete(String id) throws Exception {
-        customerbaseinforMapper.deleteByPrimaryKey(id);
+        Customerbaseinfor customerbaseinfor = new Customerbaseinfor();
+        customerbaseinfor.setCustomerbaseinfor_id(id);
+        customerbaseinfor.setStatus("1");
+        customerbaseinforMapper.updateByPrimaryKeySelective(customerbaseinfor);
+//        customerbaseinforMapper.deleteByPrimaryKey(id);
     }
 
     @Override

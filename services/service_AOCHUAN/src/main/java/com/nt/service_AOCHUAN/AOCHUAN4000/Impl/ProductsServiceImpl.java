@@ -109,7 +109,6 @@ public class ProductsServiceImpl implements ProductsService {
             List<Marketproducts> list = marketproductsMapper.select(m);
             products.setScTable(list);
         }
-//        zhengtishuju();
         return products;
     }
 
@@ -136,8 +135,8 @@ public class ProductsServiceImpl implements ProductsService {
         Products products = new Products();
         products.setProducts_id(id);
         products.setStatus("1");
-        productsMapper.updateByPrimaryKey(products);
-        productsMapper.deleteByPrimaryKey(id);
+        productsMapper.updateByPrimaryKeySelective(products);
+//        productsMapper.deleteByPrimaryKey(id);
     }
 //获取供应商
     @Override
@@ -356,19 +355,43 @@ public class ProductsServiceImpl implements ProductsService {
 
     }
 
-//    public void zhengtishuju(){
-//        List<Products> list = productsMapper.selectAll();
-//        int a = 10000;
+    @Override
+    public void zhengtishuju(){
+        //添加加产品编码数据
+//        List<Products> list = productsMapper.selectProlist();
+//        int a = 100000;
 //        for(Products products : list){
 //            a ++;
-//            String String.valueOf(a);
-//            Products prod = new Products();
-//            prod.setProducts_id(products.getProducts_id());
-//            prod.setPronumber("CH" + a);
-//            productsMapper.updateByPrimaryKeySelective(prod);
+//            String ss = String.valueOf(a).substring(1,String.valueOf(a).length());
+////            Products prod = new Products();
+////            prod.setProducts_id(products.getProducts_id());
+//            products.setPronumber("CH" + ss);
+//            productsMapper.updateByPrimaryKeySelective(products);
 //        }
+
+        //添加客户编码数据
+//        List<Customerbaseinfor> cu = customerbaseinforMapper.selectCustomerlist();
 //
-//    }
+//        int b = 10000;
+//        for(Customerbaseinfor u : cu){
+//            b ++;
+//            String ss = String.valueOf(b).substring(1,String.valueOf(b).length());
+//            u.setCustnumber("CUST" + ss);
+//            customerbaseinforMapper.updateByPrimaryKeySelective(u);
+//        }
+
+
+        //添加供应商编码数据
+        List<Supplierbaseinfor> cu = supplierbaseinforMapper.selectSupplierlist();
+
+        int b = 100000;
+        for(Supplierbaseinfor u : cu){
+            b ++;
+            String ss = String.valueOf(b).substring(1,String.valueOf(b).length());
+            u.setSupnumber("VEN" + ss);
+            supplierbaseinforMapper.updateByPrimaryKeySelective(u);
+        }
+    }
 
 
 }

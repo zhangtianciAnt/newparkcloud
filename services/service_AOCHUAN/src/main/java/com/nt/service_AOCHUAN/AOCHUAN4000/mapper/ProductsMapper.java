@@ -14,8 +14,11 @@ public interface ProductsMapper extends MyMapper<Products> {
     public List<Products>  getProdutsExceptUnique();
     //获取不在注册表中的数据
     public List<Products>  getProdutsExceptUniqueInReg();
-    @Select("select * from products where date_format(products.CREATEON, '%Y%m') = #{createon} order by createon desc")
+    @Select("select * from products where  NOT(`STATUS` = '1') and date_format(products.CREATEON, '%Y%m') = #{createon} order by createon desc")
     public List<Products>  selectlist(@Param("createon") String createon);
+
+    @Select("select * from products order by createon asc")
+    List<Products> selectProlist();
 
     int allselectCount();
 }

@@ -18,9 +18,12 @@ public interface SupplierbaseinforMapper extends MyMapper<Supplierbaseinfor> {
     @Select("select SUPPLIERBASEINFOR_ID,suppliernamecn,industryinvolved,address1,linkman,mobilephone from supplierbaseinfor  ORDER BY createon DESC")
     List<Supplierbaseinfor> allSelect();
     // add-ws-10/13-禅道任务459
-    @Select("select SUPPLIERBASEINFOR_ID,suppliernamecn,industryinvolved,address1,linkman,mobilephone,kisid,supnumber from supplierbaseinfor where date_format(supplierbaseinfor.CREATEON, '%Y%m') = #{createon} order by createon desc")
+    @Select("select SUPPLIERBASEINFOR_ID,suppliernamecn,industryinvolved,address1,linkman,mobilephone,kisid,supnumber from supplierbaseinfor where NOT(`STATUS` = '1') and date_format(supplierbaseinfor.CREATEON, '%Y%m') = #{createon} order by createon desc")
     public List<Supplierbaseinfor>  selectlist(@Param("createon") String createon);
     // add-ws-10/13-禅道任务459
 
     int allselectCount();
+
+    @Select("select * from supplierbaseinfor order by createon asc")
+    List<Supplierbaseinfor> selectSupplierlist();
 }
