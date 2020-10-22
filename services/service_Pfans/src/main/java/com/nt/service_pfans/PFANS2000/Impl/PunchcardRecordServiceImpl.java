@@ -1952,6 +1952,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 ad.setNormal(ad.getNormal() == null ? "0" : ad.getNormal());
                                 ad.setAnnualrest(ad.getAnnualrest() == null ? "0" : ad.getAnnualrest());
                                 ad.setDaixiu(ad.getDaixiu() == null ? "0" : ad.getDaixiu());
+                                ad.setCompassionateleave(ad.getCompassionateleave() == null ? "0" : ad.getCompassionateleave());
                                 ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : (Double.valueOf(ad.getShortsickleave())<0 ? "0" : ad.getShortsickleave()));
                                 ad.setLongsickleave(ad.getLongsickleave() == null ? "0" : ad.getLongsickleave());
                                 ad.setNursingleave(ad.getNursingleave() == null ? "0" : ad.getNursingleave());
