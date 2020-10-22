@@ -815,7 +815,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             if (punchcardRecordlist.size() > 0) {
                                 for (PunchcardRecord PR : punchcardRecordlist) {
                                     String time_start = sdf.format(PR.getTime_start());
-                                    String time_end = sdf.format(PR.getTime_end());
+                                    String time_end = time_start;
+                                    if(PR.getTime_end() != null)
+                                    {
+                                        time_end = sdf.format(PR.getTime_end());
+                                    }
                                     int i = 0; // 代休-特殊
                                     int j = 0; // 年休
                                     String nomal = "0";//申请的外出时间
@@ -2138,10 +2142,15 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         if (PR.getUser_id() == null || PR.getUser_id() == "") {
             outgoinghours = nomal;
         } else {
-            if (sdf.format(PR.getTime_start()).equals(sdf.format(PR.getTime_end()))) {
+            Date time_end = PR.getTime_start();
+            if(PR.getTime_end() != null)
+            {
+                time_end = PR.getTime_end();
+            }
+            if (sdf.format(PR.getTime_start()).equals(sdf.format(time_end))) {
                 outgoinghours = nomal;
             } else {
-                outgoinghours = timeLength(sdf.format(PR.getTime_start()), sdf.format(PR.getTime_end()), lunchbreak_start, lunchbreak_end);
+                outgoinghours = timeLength(sdf.format(PR.getTime_start()), sdf.format(time_end), lunchbreak_start, lunchbreak_end);
                 outgoinghours = String.valueOf(Double.valueOf(outgoinghours) + Double.valueOf(nomal) - Double.valueOf(PR.getOutgoinghours() == null || PR.getOutgoinghours() == "" ? "0" : PR.getOutgoinghours()));
             }
         }
@@ -2358,7 +2367,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             if (punchcardRecordlist.size() > 0) {
                                 for (PunchcardRecord PR : punchcardRecordlist) {
                                     String time_start = sdf.format(PR.getTime_start());
-                                    String time_end = sdf.format(PR.getTime_end());
+                                    String time_end = time_start;
+                                    if(PR.getTime_end() != null)
+                                    {
+                                        time_end = sdf.format(PR.getTime_end());
+                                    }
                                     int i = 0; // 代休-特殊
                                     int j = 0; // 年休
                                     String nomal = "0";//申请的外出时间
@@ -4086,9 +4099,13 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 }
                 PR.setTime_start(Time_start);
                 PR.setTime_end(Time_end);
-                String time_end_temp = sdhm.format(PR.getTime_end());
                 String time_start_temp = sdhm.format(PR.getTime_start());
-                if (Double.valueOf(sdhm.parse(sdhm.format(PR.getTime_end())).getTime()) >= Double.valueOf(sdhm.parse(closingtime_end).getTime())) {
+                String time_end_temp = time_start_temp;
+                if(PR.getTime_end() != null)
+                {
+                    time_end_temp = sdhm.format(PR.getTime_end());
+                }
+                if (Double.valueOf(sdhm.parse(time_end_temp).getTime()) >= Double.valueOf(sdhm.parse(closingtime_end).getTime())) {
                     time_end_temp = closingtime_end;
                 }
                 if (Double.valueOf(sdhm.parse(sdhm.format(PR.getTime_start())).getTime()) <= Double.valueOf(sdhm.parse(workshift_start).getTime())) {

@@ -223,14 +223,32 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 //ccm 202000702 to
                 insertannualLeave(customer);
 //                //ccm 临时测试接口
-//                AnnualLeave a = new AnnualLeave();
-//                a.setYears("2020");
-//                a.setUser_id(customer.getUserid());
-//                List<AnnualLeave> annualLeaveList = annualLeaveMapper.select(a);
-//                if(annualLeaveList.size()==0)
+//                SimpleDateFormat s1 = new SimpleDateFormat("yyyy-MM-dd");
+//                String enterdate = customer.getUserinfo().getEnterday().substring(0, 10);
+//                Calendar rightNow1 = Calendar.getInstance();
+//                rightNow1.setTime(Convert.toDate(enterdate));
+//                Calendar calendar1 = Calendar.getInstance();
+//                calendar1.setTime(Convert.toDate("2020-04-04"));
+//                if(customer.getUserinfo().getEnterday().length() >= 24)
 //                {
-//                    insertannualLeave(customer);
+//                    rightNow1.setTime(Convert.toDate(enterdate));
+//                    rightNow1.add(Calendar.DAY_OF_YEAR, 1);
+//                    enterdate = s1.format(rightNow1.getTime());
 //                }
+//                if(s1.parse(s1.format(rightNow1.getTime())).getTime() > s1.parse(s1.format(calendar1.getTime())).getTime())
+//                {
+//                    AnnualLeave a = new AnnualLeave();
+//                    a.setYears("2020");
+//                    a.setUser_id(customer.getUserid());
+//                    List<AnnualLeave> annualLeaveList = annualLeaveMapper.select(a);
+//                    if(annualLeaveList.size()>0)
+//                    {
+//                        annualLeaveMapper.deleteByPrimaryKey(annualLeaveList.get(0).getAnnualleave_id());
+//                        insertannualLeave(customer);
+//                    }
+//                }
+//
+//
 //                //ccm 临时测试接口
                 //}
             }
@@ -366,15 +384,20 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         }
         //事业年度开始（4月1日）
 
-        String shi_start = enterdaystartCal.substring(0,4) + "-04-01";
-        if(Integer.valueOf(enterdaystartCal.substring(5,7)) < 4)
-        {
-            shi_start = String.valueOf(Integer.valueOf(shi_start)-1) + "-04-01";
-        }
         Calendar start = Calendar.getInstance();
-        start.setTime(Convert.toDate(shi_start));
+        start.setTime(Convert.toDate(enterdaystartCal));
+        String shi_start = "";
+        shi_start = sfymd.format(start.getTime());
+        if(Integer.valueOf(shi_start.substring(5,7)) < 4)
+        {
+            shi_start = String.valueOf(Integer.valueOf(shi_start.substring(0,4))-1) + "-04-01";
+        }
+        else
+        {
+            shi_start = shi_start.substring(0,4) + "-04-01";
+        }
         DateUtil.format(start.getTime(),"yyyy-MM-dd");
-
+        start.setTime(Convert.toDate(shi_start));
         Calendar end = Calendar.getInstance();
         end.setTime(Convert.toDate(shi_start));
         end.add(Calendar.YEAR,1);
