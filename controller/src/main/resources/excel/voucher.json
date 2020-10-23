@@ -27,10 +27,9 @@
     },
     "FPERIOD": 8,
     "FEntity": {
-      "FEntryID": 0,
-        "FEXPLANATION": "测试1022",
+        "FEXPLANATION": "",
         "FACCOUNTID": {
-          "FNumber": "1002.03"
+          "FNumber": "1001"
         },
         "FCURRENCYID": {
           "FNumber": "PRE001"
@@ -38,9 +37,7 @@
         "FEXCHANGERATETYPE": {
           "FNumber": "HLTX01_SYS"
         },
-        "FEXCHANGERATE": 1.0,
-        "FAMOUNTFOR": 30.0,
-        "FDEBIT": 30.0
+        "FEXCHANGERATE": 1
       }
   },
   "BatchCount": 0

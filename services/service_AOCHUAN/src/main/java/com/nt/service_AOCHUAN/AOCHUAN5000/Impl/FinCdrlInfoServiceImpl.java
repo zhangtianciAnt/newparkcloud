@@ -74,7 +74,7 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
     }
 
     //金蝶批量保存
-    public ResultVo batchSave(String url,String cookie, String content) throws Exception {
+    public ResultVo batchSave(String url,String cookie, String content,TokenModel tokenModel,List<CredentialInformation> credentialInformationList) throws Exception {
         //保存
         Map<String, Object> header = new HashMap<>();
         header.put("Cookie", cookie);
@@ -90,7 +90,11 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
             for(int i = 0; i < ((JSONArray) ob).size(); i++){
                 Integer kisid = (Integer)((JSONObject) ((JSONArray) ob).get(i)).get("Id");
                 String number = (String)((JSONObject) ((JSONArray) ob).get(i)).get("Number");
-//                updKisid(kisid,number);
+                System.out.println("=============================");
+                System.out.println("kisid:"+kisid);
+                System.out.println("number:"+number);
+                System.out.println("=============================");
+                updKisid(kisid,number,tokenModel,credentialInformationList.get(i));
             }
             return ResultUtil.success();
         } else {
@@ -157,15 +161,11 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                     }
 
                 }
-//                model.put("FVOUCHERGROUPNO",cinfo.getCrdlword());//凭证号
-                if(cinfo.getBus_date() != null){
-//                    Date date = new Date(stf.format(cinfo.getBus_date()));
-//                    model.put("FDate",stf.format(cinfo.getBus_date()));//业务日期
-//                    model.put("FYEAR",String.format("%tY", date));//会计年度
-//                    model.put("FPERIOD",Integer.valueOf(String.format("%tm", date)));//期间
-                    model.put("FDate","2020-08-01");//业务日期
-                    model.put("FYEAR","2020");//会计年度
-                    model.put("FPERIOD","8");//期间
+                if(cinfo.getAcct_date() != null){
+                    Date date = new Date(stf.format(cinfo.getAcct_date()));
+                    model.put("FDate",stf.format(cinfo.getAcct_date()));//记账日期
+                    model.put("FYEAR",String.format("%tY", date));//会计年度
+                    model.put("FPERIOD",Integer.valueOf(String.format("%tm", date)));//期间
                 }
                 model.put("FATTACHMENTS",cinfo.getAttachments());//附件数
                 model.put("FEntity",listmapFentity);//单据体
@@ -177,7 +177,7 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
         //构造凭证接口数据
         String voucher = BaseUtil.buildMaterial(basic, KDFormIdEnum.VOUCHER.getFormid());
 
-        ResultVo save = batchSave(k3CloundConfig.url + k3CloundConfig.batchSave, cookie, voucher);
+        ResultVo save = batchSave(k3CloundConfig.url + k3CloundConfig.batchSave, cookie, voucher,tokenModel,credentialInformation);
         if (save.getCode() != ResultEnum.SUCCESS.getCode()) {
 //            log.error("【保存出错】：{}", save.getMsg());
             throw new LogicalException("保存出错"+save.getMsg());
@@ -185,7 +185,16 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
         }
 
     }
-
+    //返回kisid更新回去
+    public void updKisid(Integer kisid, String number, TokenModel tokenModel,CredentialInformation credentialInformation) throws Exception {
+        CredentialInformation sup = finCrdlInfoMapper.selectByPrimaryKey(credentialInformation.getCrdlinfo_id());
+        if (sup != null) {
+            sup.preUpdate(tokenModel);
+            sup.setCrdlkis_num(kisid.toString());
+            sup.setPush_status("PZ005002");//已推送
+            finCrdlInfoMapper.updateByPrimaryKeySelective(sup);
+        }
+    }
     //获取分录-辅助项目数据
     @Override
     public List<AccountingRule> getAcctgEntrInfoByCrdl_id(CredentialInformation credentialInformation) throws Exception {
