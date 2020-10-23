@@ -22,7 +22,7 @@ public interface SupplierbaseinforService {
 
 //    ResultVo login(String url, String content) throws Exception;
 
-    void login1(List<Supplierbaseinfor> supplierbaseinforList,TokenModel tokenModel) throws Exception;
+    void login1(List<Supplierbaseinfor> supplierbaseinforList,TokenModel tokenModel,Boolean flg) throws Exception;
 
 //    ResultVo batchSave(String url, String cookie, String content) throws Exception;
 }

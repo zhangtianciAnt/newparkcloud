@@ -57,7 +57,7 @@ public class AOCHUAN1001Controller {
         if (supplierbaseinforList == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        supplierbaseinforService.login1(supplierbaseinforList, tokenService.getToken(request));
+        supplierbaseinforService.login1(supplierbaseinforList, tokenService.getToken(request),false);
         return ApiResult.success();
     }
     //add_fjl_1021 推送KIS
