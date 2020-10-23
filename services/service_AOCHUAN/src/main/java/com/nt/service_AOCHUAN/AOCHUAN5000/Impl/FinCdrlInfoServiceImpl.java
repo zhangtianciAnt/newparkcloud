@@ -132,9 +132,16 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                 Map<String, Object> model = (Map<String, Object>)basic.get("Model");//单据头
                 if(accountingRuleList.size() > 0){
                     for(AccountingRule ar : accountingRuleList){
-                        Map<String, Object> fentity = (Map<String, Object>)((Map<String, Object>) basic.get("Model")).get("FEntity");//单据体
-                        Map<String, Object> faccountid = (Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic.get("Model")).get("FEntity")).get("FACCOUNTID");//科目编码
-                        Map<String, Object> fcurrencyid = (Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic.get("Model")).get("FEntity")).get("FCURRENCYID");//币种
+
+                        //获取供应商数据模板
+                        File file1 = null;
+                        file1 = ResourceUtils.getFile("classpath:excel/voucher.json");
+                        String jsonData1 = BaseUtil.jsonRead(file1);
+                        JSONObject basic1 = null;
+                        basic1 = JSON.parseObject(jsonData1);
+                        Map<String, Object> fentity = (Map<String, Object>)((Map<String, Object>) basic1.get("Model")).get("FEntity");//单据体
+                        Map<String, Object> faccountid = (Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FACCOUNTID");//科目编码
+                        Map<String, Object> fcurrencyid = (Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FCURRENCYID");//币种
                         fentity.put("FEXPLANATION",ar.getRemarks());//摘要
 //                        faccountid.put("FNumber",ar.getAcct_code()); //科目编码
 //                        fcurrencyid.put("FNumber",ar.getCurrency());//币别
