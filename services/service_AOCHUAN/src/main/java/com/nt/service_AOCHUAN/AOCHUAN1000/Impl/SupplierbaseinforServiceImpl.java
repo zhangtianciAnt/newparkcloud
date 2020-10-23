@@ -145,8 +145,8 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
         JSONObject basic = null;
         //推送data
         if(supplierbaseinforList.size() > 0){
-            int kis = 0;
             for(Supplierbaseinfor su :supplierbaseinforList){
+                int kis = 0;
                 if(flg){ //true: 系统服务
                     if(StringUtils.isNotEmpty(su.getKisid())){
                         kis = Integer.valueOf(su.getKisid());
