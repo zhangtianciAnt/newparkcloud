@@ -48,8 +48,7 @@ public class GlobalAop {
     public void doAfterReturning(Object ret) throws Throwable {
 //        encoder
         AES aes = new AES();
-        ((ApiResult) ret).setData(aes.encrypt(JSONObject.toJSONString(((ApiResult) ret).getData(), SerializerFeature.WriteMapNullValue,
-                SerializerFeature.WriteNullStringAsEmpty)));
+        ((ApiResult) ret).setData(aes.encrypt(JSONObject.toJSONString(((ApiResult) ret).getData(), SerializerFeature.WriteMapNullValue)));
         //处理完请求，返回内容
 //        if( ret !=null && ((ApiResult)ret).getData() != null){
 //            log.info("返回值 : " + JSONUtil.parse(((ApiResult) ret).getData()).toStringPretty());
