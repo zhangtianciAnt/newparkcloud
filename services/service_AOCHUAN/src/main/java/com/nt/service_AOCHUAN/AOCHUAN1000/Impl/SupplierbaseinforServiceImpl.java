@@ -11,6 +11,7 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -121,7 +122,7 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
     }
 
     @Override
-    public void login1(List<Supplierbaseinfor> supplierbaseinforList,TokenModel tokenModel) throws Exception {
+    public void login1(List<Supplierbaseinfor> supplierbaseinforList,TokenModel tokenModel,Boolean flg) throws Exception {
 
         String loginParam = BaseUtil.buildLogin("5f4f0eaa667840", "Administrator", "888888", 2052);
 
@@ -146,10 +147,16 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
         if(supplierbaseinforList.size() > 0){
             int kis = 0;
             for(Supplierbaseinfor su :supplierbaseinforList){
-                Supplierbaseinfor supplierbaseinfor = supplierbaseinforMapper.selectByPrimaryKey(su.getSupplierbaseinfor_id());
-                if(supplierbaseinfor != null){
-                    if(StringUtils.isNotEmpty(supplierbaseinfor.getKisid())){
-                        kis = Integer.valueOf(supplierbaseinfor.getKisid());
+                if(flg){ //true: 系统服务
+                    if(StringUtils.isNotEmpty(su.getKisid())){
+                        kis = Integer.valueOf(su.getKisid());
+                    }
+                } else { //false: 手动
+                    Supplierbaseinfor supplierbaseinfor = supplierbaseinforMapper.selectByPrimaryKey(su.getSupplierbaseinfor_id());
+                    if(supplierbaseinfor != null){
+                        if(StringUtils.isNotEmpty(supplierbaseinfor.getKisid())){
+                            kis = Integer.valueOf(supplierbaseinfor.getKisid());
+                        }
                     }
                 }
                 basic = JSON.parseObject(jsonData);
@@ -179,6 +186,15 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
         }
 
 
+    }
+
+    //系统服务
+    @Scheduled(cron = "0 0 2 * * ?")
+    public void pullKis() throws Exception {
+        TokenModel tokenModel = new TokenModel();
+        Supplierbaseinfor supplierbaseinfor = new Supplierbaseinfor();
+        List<Supplierbaseinfor> supplierbaseinforList = supplierbaseinforMapper.select(supplierbaseinfor);
+        login1(supplierbaseinforList,tokenModel,true);
     }
 
     //返回kisid更新回去
