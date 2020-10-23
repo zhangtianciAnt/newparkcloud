@@ -85,7 +85,7 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
         //获取客户数据模板
         File file = null;
         file = ResourceUtils.getFile("classpath:excel/customer.json");
-        String jsonData = this.jsonRead(file);
+        String jsonData = BaseUtil.jsonRead(file);;
         List<Map<String,Object>> listmap = new ArrayList();
         JSONObject basic = null;
         for(Customerbaseinfor customerbaseinfor : list){
@@ -119,23 +119,6 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
         }
     }
 
-    private String jsonRead(File file){
-        Scanner scanner = null;
-        StringBuilder buffer = new StringBuilder();
-        try {
-            scanner = new Scanner(file, "utf-8");
-            while (scanner.hasNextLine()) {
-                buffer.append(scanner.nextLine());
-            }
-        } catch (Exception e) {
-
-        } finally {
-            if (scanner != null) {
-                scanner.close();
-            }
-        }
-        return buffer.toString();
-    }
 
 
     //add_wxl_1021 推送KIS

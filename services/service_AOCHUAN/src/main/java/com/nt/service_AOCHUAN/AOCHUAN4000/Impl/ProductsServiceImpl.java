@@ -254,12 +254,14 @@ public class ProductsServiceImpl implements ProductsService {
         JSONObject basic = null;
         //推送data
         if(list.size() > 0){
-            int kis = 0;
+
             for(Products su :list){
+                int kis = 0;
                 Products products = productsMapper.selectByPrimaryKey(su.getProducts_id());
                 if(StringUtils.isNotEmpty(products.getKisid())){
                     kis = Integer.valueOf(products.getKisid());
                 }
+                System.out.println(kis);
 
                 basic = JSON.parseObject(jsonData);
                 Map<String,Object> model = (Map<String, Object>) basic.get("Model");
@@ -345,6 +347,8 @@ public class ProductsServiceImpl implements ProductsService {
 
     //返回kisid更新回去
     public void updKisid(Integer kisid, String number, TokenModel tokenModel) throws Exception {
+        System.out.println(kisid);
+        System.out.println(number);
         Products products = new Products();
         products.setPronumber(number);
         List<Products> sup = productsMapper.select(products);
