@@ -239,4 +239,10 @@ public class Base extends BaseModel {
      */
     @Column(name = "RNBASESALARY")
     private String rnbasesalary;
+
+    /**
+     * 年月
+     */
+    @Column(name = "MONTHS")
+    private String months;
 }
