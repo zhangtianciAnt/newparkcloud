@@ -11,7 +11,6 @@ import com.nt.service_AOCHUAN.AOCHUAN1000.SupplierproductrelationService;
 import com.nt.service_AOCHUAN.AOCHUAN2000.CustomerbaseinforService;
 import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
 import com.nt.utils.*;
-import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -254,7 +253,7 @@ public class AOCHUAN2001Controller {
         if (list == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        customerbaseinforService.pushKingdee(list,tokenService.getToken(request));
+        customerbaseinforService.pushKingdee(list,tokenService.getToken(request),false);
 
         return ApiResult.success();
     }

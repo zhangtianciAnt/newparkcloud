@@ -23,11 +23,11 @@ public class HttpUtil {
     /**
      * 连接超时时间
      */
-    private static final int CONN_TIMEOUT = 30000;
+    private static final int CONN_TIMEOUT = 3000000;
     /**
      * 请求超时时间
      */
-    private static final int READ_TIMEOUT = 30000;
+    private static final int READ_TIMEOUT = 3000000;
 
     private static RestTemplate restTemplate = null;
 

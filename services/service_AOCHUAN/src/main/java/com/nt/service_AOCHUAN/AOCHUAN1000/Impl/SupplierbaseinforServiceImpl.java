@@ -95,7 +95,7 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
     }
 
     //金蝶批量保存
-    public ResultVo batchSave(String url,String cookie, String content,TokenModel tokenModel) throws Exception {
+    public ResultVo batchSave(String url,String cookie, String content,TokenModel tokenModel,List<Supplierbaseinfor> supplierbaseinforList,Boolean flg) throws Exception {
         //保存
         Map<String, Object> header = new HashMap<>();
         header.put("Cookie", cookie);
@@ -110,7 +110,7 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
         for(int i = 0; i < ((JSONArray) ob).size();i++){
             Integer kisid = (Integer)((JSONObject) ((JSONArray) ob).get(i)).get("Id");
             String number = (String)((JSONObject) ((JSONArray) ob).get(i)).get("Number");
-            updKisid(kisid,number,tokenModel);
+            updKisid(kisid,number,tokenModel,supplierbaseinforList.get(i),flg);
         }
 
         if (isSuccess) {
@@ -178,10 +178,10 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
         //构造供应商接口数据
         String supplier = BaseUtil.buildMaterial(basic,KDFormIdEnum.SUPPLIER.getFormid());
 
-        ResultVo save = batchSave(k3CloundConfig.url + k3CloundConfig.batchSave, cookie, supplier,tokenModel);
+        ResultVo save = batchSave(k3CloundConfig.url + k3CloundConfig.batchSave, cookie, supplier,tokenModel,supplierbaseinforList,flg);
         if (save.getCode() != ResultEnum.SUCCESS.getCode()) {
 //            log.error("【保存出错】：{}", save.getMsg());
-            throw new LogicalException("保存出错");
+            throw new LogicalException("保存出错"+save.getMsg());
 //            return;
         }
 
@@ -189,25 +189,31 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
     }
 
     //系统服务
-    @Scheduled(cron = "0 0 2 * * ?")
+    @Scheduled(cron = "0 20 0 1 * ?")
     public void pullKis() throws Exception {
         TokenModel tokenModel = new TokenModel();
-        Supplierbaseinfor supplierbaseinfor = new Supplierbaseinfor();
-        List<Supplierbaseinfor> supplierbaseinforList = supplierbaseinforMapper.select(supplierbaseinfor);
+        List<Supplierbaseinfor> supplierbaseinforList = supplierbaseinforMapper.allselectData();
         login1(supplierbaseinforList,tokenModel,true);
     }
 
     //返回kisid更新回去
-    public void updKisid(Integer kisid, String number, TokenModel tokenModel) throws Exception {
-        Supplierbaseinfor supplierbaseinfor = new Supplierbaseinfor();
-        supplierbaseinfor.setSupnumber(number);
-        List<Supplierbaseinfor> sup = supplierbaseinforMapper.select(supplierbaseinfor);
-        if (sup.size() > 0) {
-            supplierbaseinfor.preUpdate(tokenModel);
-            sup.get(0).setKisid(kisid.toString());
-            supplierbaseinforMapper.updateByPrimaryKeySelective(sup.get(0));
+    public void updKisid(Integer kisid, String number, TokenModel tokenModel,Supplierbaseinfor su,Boolean flg) throws Exception {
+        if(su != null){
+            if(flg){  //true:系统服务
+                su.preUpdate(tokenModel);
+                su.setKisid(kisid.toString());
+                su.setSupnumber(number);
+                supplierbaseinforMapper.updateByPrimaryKeySelective(su);
+            } else {   //false:手动
+                Supplierbaseinfor sup = supplierbaseinforMapper.selectByPrimaryKey(su.getSupplierbaseinfor_id());
+                if (sup != null) {
+                    sup.preUpdate(tokenModel);
+                    sup.setKisid(kisid.toString());
+                    sup.setSupnumber(number);
+                    supplierbaseinforMapper.updateByPrimaryKeySelective(sup);
+                }
+            }
         }
-
     }
     //add_fjl_1021 推送KIS
     @Override

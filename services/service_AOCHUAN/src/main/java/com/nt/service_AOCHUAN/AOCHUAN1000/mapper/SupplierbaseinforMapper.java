@@ -23,6 +23,7 @@ public interface SupplierbaseinforMapper extends MyMapper<Supplierbaseinfor> {
     // add-ws-10/13-禅道任务459
 
     int allselectCount();
+    List<Supplierbaseinfor> allselectData();
 
     @Select("select * from supplierbaseinfor order by createon asc")
     List<Supplierbaseinfor> selectSupplierlist();

@@ -11,6 +11,7 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
@@ -70,7 +71,7 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
     }
 
     @Override
-    public void pushKingdee(List<Customerbaseinfor> list,TokenModel tokenModel) throws Exception {
+    public void pushKingdee(List<Customerbaseinfor> list,TokenModel tokenModel,Boolean flg) throws Exception {
 
         String loginParam = BaseUtil.buildLogin("5f4f0eaa667840", "Administrator", "888888", 2052);
         ResultVo login = login(k3CloundConfig.url + k3CloundConfig.login, loginParam);
@@ -89,17 +90,23 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
         List<Map<String,Object>> listmap = new ArrayList();
         JSONObject basic = null;
         for(Customerbaseinfor customerbaseinfor : list){
-            Customerbaseinfor customerbaseinfor1 = customerbaseinforMapper.selectByPrimaryKey(customerbaseinfor.getCustomerbaseinfor_id());
-
             basic = JSON.parseObject(jsonData);
             Map<String,Object> model = (Map<String, Object>) basic.get("Model");
             Map<String,Object> fGroup = (Map<String, Object>) ((Map<String, Object>) basic.get("Model")).get("FGroup");
-            if(StringUtils.isNotEmpty(customerbaseinfor1.getKisid())){
-                model.put("FCUSTID",customerbaseinfor1.getKisid());
+            int kis = 0;
+            if(flg){ //true: 系统服务
+                if(StringUtils.isNotEmpty(customerbaseinfor.getKisid())){
+                    kis = Integer.valueOf(customerbaseinfor.getKisid());
+                }
+            } else { //false: 手动
+                Customerbaseinfor customerbaseinfor1 = customerbaseinforMapper.selectByPrimaryKey(customerbaseinfor.getCustomerbaseinfor_id());
+                if(customerbaseinfor1 != null){
+                    if(StringUtils.isNotEmpty(customerbaseinfor1.getKisid())){
+                        kis = Integer.valueOf(customerbaseinfor1.getKisid());
+                    }
+                }
             }
-            else{
-                model.put("FCUSTID",0);
-            }
+            model.put("FCUSTID",kis);
             model.put("FNumber",customerbaseinfor.getCustnumber());
             model.put("FName",customerbaseinfor.getCustomernameen());
             fGroup.put("FNumber",customerbaseinfor.getNation());
@@ -110,7 +117,7 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
 
         //构造供应商接口数据
         String customer = BaseUtil.buildMaterial(basic,KDFormIdEnum.CUSTOMER.getFormid());
-        ResultVo save = batchSave(k3CloundConfig.url + k3CloundConfig.batchSave, cookie, customer,tokenModel);
+        ResultVo save = batchSave(k3CloundConfig.url + k3CloundConfig.batchSave, cookie, customer,tokenModel,list,flg);
 
         if (save.getCode() != ResultEnum.SUCCESS.getCode()) {
 //            log.error("【保存出错】：{}", save.getMsg());
@@ -151,7 +158,7 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
     }
 
     //金蝶批量保存
-    public ResultVo batchSave(String url,String cookie, String content,TokenModel tokenModel) throws Exception {
+    public ResultVo batchSave(String url,String cookie, String content,TokenModel tokenModel,List<Customerbaseinfor> customerbaseinforList,Boolean flg) throws Exception {
         //保存
         Map<String, Object> header = new HashMap<>();
         header.put("Cookie", cookie);
@@ -166,7 +173,7 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
         for(int i = 0; i < ((JSONArray) ob).size(); i++){
             Integer kisid = (Integer)((JSONObject) ((JSONArray) ob).get(i)).get("Id");
             String number = (String)((JSONObject) ((JSONArray) ob).get(i)).get("Number");
-            updKisid(kisid,number,tokenModel);
+            updKisid(kisid,number,tokenModel,customerbaseinforList.get(i),flg);
         }
 
         if (isSuccess) {
@@ -177,17 +184,30 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
         }
     }
 
-    //返回kisid更新回去
-    public void updKisid(Integer kisid, String number, TokenModel tokenModel) throws Exception {
-        Customerbaseinfor customerbaseinfor = new Customerbaseinfor();
-        customerbaseinfor.setCustnumber(number);
-        List<Customerbaseinfor> cust = customerbaseinforMapper.select(customerbaseinfor);
-        if (cust.size() > 0) {
-            customerbaseinfor.preUpdate(tokenModel);
-            cust.get(0).setKisid(kisid.toString());
-            customerbaseinforMapper.updateByPrimaryKeySelective(cust.get(0));
-        }
-
+    //系统服务
+    @Scheduled(cron = "0 0 0 1 * ?")
+    public void pullKis() throws Exception {
+        TokenModel tokenModel = new TokenModel();
+        List<Customerbaseinfor> customerbaseinforList = customerbaseinforMapper.allselectData();
+        pushKingdee(customerbaseinforList,tokenModel,true);
     }
-
+    //返回kisid更新回去
+    public void updKisid(Integer kisid, String number, TokenModel tokenModel,Customerbaseinfor customerbaseinfor,Boolean flg) throws Exception {
+        if(customerbaseinfor != null){
+            if(flg){  //true:系统服务
+                customerbaseinfor.preUpdate(tokenModel);
+                customerbaseinfor.setKisid(kisid.toString());
+                customerbaseinfor.setCustnumber(number);
+                customerbaseinforMapper.updateByPrimaryKeySelective(customerbaseinfor);
+            } else {  //false:手动
+                Customerbaseinfor cust = customerbaseinforMapper.selectByPrimaryKey(customerbaseinfor.getCustomerbaseinfor_id());
+                if (cust != null) {
+                    cust.preUpdate(tokenModel);
+                    cust.setKisid(kisid.toString());
+                    cust.setCustnumber(number);
+                    customerbaseinforMapper.updateByPrimaryKeySelective(cust);
+                }
+            }
+        }
+    }
 }

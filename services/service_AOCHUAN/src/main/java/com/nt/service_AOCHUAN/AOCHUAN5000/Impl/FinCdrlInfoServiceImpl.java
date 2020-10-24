@@ -147,7 +147,7 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                         Map<String, Object> faccountid = (Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FACCOUNTID");//科目编码
                         Map<String, Object> fcurrencyid = (Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FCURRENCYID");//币种
                         fentity.put("FEXPLANATION",ar.getRemarks());//摘要
-//                        faccountid.put("FNumber",ar.getAcct_code()); //科目编码
+                        faccountid.put("FNumber",ar.getAcct_code()); //科目编码
 //                        fcurrencyid.put("FNumber",ar.getCurrency());//币别
                         fentity.put("FEXCHANGERATE",ar.getEx_rate());//汇率
                         fentity.put("FAMOUNTFOR",ar.getOricurrency_amount());//原币金额

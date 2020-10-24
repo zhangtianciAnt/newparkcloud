@@ -14,5 +14,5 @@ public interface CustomerbaseinforService {
 
     void delete(String id) throws Exception;
 
-    void pushKingdee(List<Customerbaseinfor> list,TokenModel tokenModel) throws Exception;
+    void pushKingdee(List<Customerbaseinfor> list,TokenModel tokenModel,Boolean flg) throws Exception;
 }

@@ -18,4 +18,6 @@ public interface CustomerbaseinforMapper extends MyMapper<Customerbaseinfor> {
 //添加客户编码
     @Select("select * from customerbaseinfor order by createon asc")
     List<Customerbaseinfor> selectCustomerlist();
+
+    List<Customerbaseinfor> allselectData();
 }

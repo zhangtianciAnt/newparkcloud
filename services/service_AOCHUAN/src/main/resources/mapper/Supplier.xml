@@ -4,4 +4,8 @@
     <select id="allselectCount"  resultType="int">
             SELECT COUNT(*) from supplierbaseinfor
     </select>
+    <select id="allselectData"  resultType="com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierbaseinfor">
+            SELECT * from supplierbaseinfor
+            where kisid is null
+    </select>
 </mapper>
