@@ -49,11 +49,11 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
     public String insert(Customerbaseinfor customerbaseinfor, TokenModel tokenModel) throws Exception {
         String id = UUID.randomUUID().toString();
         //add_fjl_1021  添加编码
-        int number = 10001;
-        int seleocount = customerbaseinforMapper.allselectCount();
-        String  num = String.valueOf(number + seleocount);
-        num = num.substring(1,5);
-        customerbaseinfor.setCustnumber("CUST"+num);
+//        int number = 10001;
+//        int seleocount = customerbaseinforMapper.allselectCount();
+//        String  num = String.valueOf(number + seleocount);
+//        num = num.substring(1,5);
+//        customerbaseinfor.setCustnumber("CUST"+num);
         //add_fjl_1021  添加编码
         customerbaseinfor.setCustomerbaseinfor_id(id);
         customerbaseinfor.preInsert(tokenModel);
