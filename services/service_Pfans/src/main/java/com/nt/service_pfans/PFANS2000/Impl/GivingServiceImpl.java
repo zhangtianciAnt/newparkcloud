@@ -409,6 +409,8 @@ public class GivingServiceImpl implements GivingService {
         Dictionary dictionary = new Dictionary();
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
+        SimpleDateFormat sfym = new SimpleDateFormat("yyyyMM");
+        String strTemp = sfym.format(new Date());
         dictionary.setPcode("PR042");
         List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
         /*获取基数 type-lxx*/
@@ -443,6 +445,7 @@ public class GivingServiceImpl implements GivingService {
                 } else {
                     base.preInsert();
                 }
+                base.setMonths(strTemp);
                 base.setBase_id(baseid);
                 base.setGiving_id(givingid);
                 base.setUser_id(customer.getUserid());  //名字
@@ -1714,19 +1717,23 @@ public class GivingServiceImpl implements GivingService {
         // 欠勤费用-正式
         total += Double.parseDouble(ifNull(lackattendance.getThisdiligenceformal())) * currentSalaryPerHour;
         // 欠勤费用-试用
-        total += Double.parseDouble(ifNull(lackattendance.getThisdiligencetry())) * currentSalaryPerHour * 0.9d;
+        //total += Double.parseDouble(ifNull(lackattendance.getThisdiligencetry())) * currentSalaryPerHour * 0.9d;
+        total += Double.parseDouble(ifNull(lackattendance.getThisdiligencetry())) * currentSalaryPerHour;
 
         // 短病欠-正式
         total += Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencyformal())) * currentSalaryPerHour
                 * Double.parseDouble(shortDictionary.getValue2());
         // 短病欠-试用
-        total += Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencytry())) * currentSalaryPerHour * 0.9d
+//        total += Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencytry())) * currentSalaryPerHour * 0.9d
+//                * Double.parseDouble(shortDictionary.getValue2());
+        total += Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencytry())) * currentSalaryPerHour
                 * Double.parseDouble(shortDictionary.getValue2());
 
         // 长病欠-正式
         total += Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencyformal())) * longSalary;
         // 长病欠-试用
-        total += Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary * 0.9d;
+        //total += Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary * 0.9d;
+        total += Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary;
         lackattendance.setThistotal(new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString());
         lackattendance.setGive(new BigDecimal(lackattendance.getThistotal()).add(new BigDecimal(lackattendance.getLasttotal())).setScale(2, RoundingMode.HALF_UP).toPlainString());
         return lackattendance;
@@ -1935,7 +1942,8 @@ public class GivingServiceImpl implements GivingService {
             double Lastdiligenceformal = Double.parseDouble(ifNull(lackattendance.getLastdiligenceformal())) * preSalaryPerHour;
             // 欠勤费用-试用
             //total += Double.parseDouble(ifNull(lackattendance.getLastdiligencetry())) * preSalaryPerHour * 0.9d;
-            double Lastdiligencetry = Double.parseDouble(ifNull(lackattendance.getLastdiligencetry())) * preSalaryPerHour * 0.9d;
+            //double Lastdiligencetry = Double.parseDouble(ifNull(lackattendance.getLastdiligencetry())) * preSalaryPerHour * 0.9d;
+            double Lastdiligencetry = Double.parseDouble(ifNull(lackattendance.getLastdiligencetry())) * preSalaryPerHour;
             // 短病欠-正式
 //            total += Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencyformal())) * preSalaryPerHour
 //                    * Double.parseDouble(shortDictionary.getValue2());
@@ -1944,7 +1952,9 @@ public class GivingServiceImpl implements GivingService {
             // 短病欠-试用
 //            total += Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencytry())) * preSalaryPerHour * 0.9d
 //                    * Double.parseDouble(shortDictionary.getValue2());
-            double Lastshortdeficiencytry = Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencytry())) * preSalaryPerHour * 0.9d
+//            double Lastshortdeficiencytry = Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencytry())) * preSalaryPerHour * 0.9d
+//                    * Double.parseDouble(shortDictionary.getValue2());
+            double Lastshortdeficiencytry = Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencytry())) * preSalaryPerHour
                     * Double.parseDouble(shortDictionary.getValue2());
 
             // 长病欠-正式
@@ -1952,7 +1962,8 @@ public class GivingServiceImpl implements GivingService {
             double Lastchronicdeficiencyformal = Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencyformal())) * longSalary;
             // 长病欠-试用
             //total += Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencytry())) * longSalary * 0.9d;
-            double Lastchronicdeficiencytry = Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencytry())) * longSalary * 0.9d;
+            //double Lastchronicdeficiencytry = Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencytry())) * longSalary * 0.9d;
+            double Lastchronicdeficiencytry = Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencytry())) * longSalary;
 
             //费用-正式
             double totala = - Lastdiligenceformal - Lastshortdeficiencyformal - Lastchronicdeficiencyformal;
@@ -1965,7 +1976,8 @@ public class GivingServiceImpl implements GivingService {
             double Thisdiligenceformal = Double.parseDouble(ifNull(lackattendance.getThisdiligenceformal())) * currentSalaryPerHour;
             // 欠勤费用-试用
             //total += Double.parseDouble(ifNull(lackattendance.getThisdiligencetry())) * currentSalaryPerHour * 0.9d;
-            double Thisdiligencetry = Double.parseDouble(ifNull(lackattendance.getThisdiligencetry())) * currentSalaryPerHour * 0.9d;
+            //double Thisdiligencetry = Double.parseDouble(ifNull(lackattendance.getThisdiligencetry())) * currentSalaryPerHour * 0.9d;
+            double Thisdiligencetry = Double.parseDouble(ifNull(lackattendance.getThisdiligencetry())) * currentSalaryPerHour;
 
             // 短病欠-正式
             total += Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencyformal())) * currentSalaryPerHour
@@ -1975,7 +1987,9 @@ public class GivingServiceImpl implements GivingService {
             // 短病欠-试用
 //            total += Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencytry())) * currentSalaryPerHour * 0.9d
 //                    * Double.parseDouble(shortDictionary.getValue2());
-            double Thisshortdeficiencytry = Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencytry())) * currentSalaryPerHour * 0.9d
+//            double Thisshortdeficiencytry = Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencytry())) * currentSalaryPerHour * 0.9d
+//                    * Double.parseDouble(shortDictionary.getValue2());
+            double Thisshortdeficiencytry = Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencytry())) * currentSalaryPerHour
                     * Double.parseDouble(shortDictionary.getValue2());
 
             // 长病欠-正式
@@ -1983,7 +1997,8 @@ public class GivingServiceImpl implements GivingService {
             double Thischronicdeficiencyformal = Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencyformal())) * longSalary;
             // 长病欠-试用
             //total += Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary * 0.9d;
-            double Thischronicdeficiencytry = Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary * 0.9d;
+            //double Thischronicdeficiencytry = Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary * 0.9d;
+            double Thischronicdeficiencytry = Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary;
             //费用-正式
             double totala = - Thisdiligenceformal - Thisshortdeficiencyformal - Thisshortdeficiencytry;
             //费用-试用

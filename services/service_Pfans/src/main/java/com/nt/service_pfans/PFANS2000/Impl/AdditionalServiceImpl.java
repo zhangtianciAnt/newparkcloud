@@ -47,6 +47,9 @@ public class AdditionalServiceImpl implements AdditionalService {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUseradditional(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
+            Additional additional = new Additional();
+            additional.setGiving_id(Givingid);
+            additionalMapper.delete(additional);
             List<Additional> listVo = new ArrayList<Additional>();
             List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
@@ -75,7 +78,7 @@ public class AdditionalServiceImpl implements AdditionalService {
             int accesscount = 0;
             int error = 0;
             for (int i = 1; i < list.size() - 1; i++) {
-                Additional additional = new Additional();
+                additional = new Additional();
                 List<Object> value = list.get(k);
                 k++;
                 if (value != null && !value.isEmpty()) {

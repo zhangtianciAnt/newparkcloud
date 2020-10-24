@@ -50,6 +50,7 @@
         where JOBNUMBER = #{jobnumber}
         and USER_ID = #{user_id}
         and  date_format(PUNCHCARDRECORD_DATE, '%Y-%m-%d') = #{punchcardrecord_date}
+        and (TENANTID = '' or TENANTID is null)
         order by PUNCHCARDRECORD_DATE
     </select>
 

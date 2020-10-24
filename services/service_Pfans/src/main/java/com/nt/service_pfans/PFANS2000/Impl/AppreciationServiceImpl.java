@@ -53,6 +53,9 @@ public class AppreciationServiceImpl implements AppreciationService {
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importUserappreciation(String Givingid,HttpServletRequest request, TokenModel tokenModel) throws Exception {
         try {
+            Appreciation appreciation = new Appreciation();
+            appreciation.setGiving_id(Givingid);
+            appreciationMapper.delete(appreciation);
             List<Appreciation> listVo = new ArrayList<Appreciation>();
             List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
@@ -83,7 +86,7 @@ public class AppreciationServiceImpl implements AppreciationService {
             int accesscount = 0;
             int error = 0;
             for (int i = 1; i < list.size() - 1; i++) {
-                Appreciation appreciation = new Appreciation();
+                appreciation = new Appreciation();
                 List<Object> value = list.get(k);
                 k++;
                 if (value != null && !value.isEmpty()) {

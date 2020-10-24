@@ -585,6 +585,8 @@ public class WagesServiceImpl implements WagesService {
         Dictionary dictionary = new Dictionary();
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
+        SimpleDateFormat sfym = new SimpleDateFormat("yyyyMM");
+        String strTemp = sfym.format(new Date());
         dictionary.setPcode("PR042");
         List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
         /*获取基数 type-lxx*/
@@ -619,6 +621,7 @@ public class WagesServiceImpl implements WagesService {
                 } else {
                     base.preInsert();
                 }
+                base.setMonths(strTemp);
                 base.setBase_id(baseid);
                 base.setGiving_id(givingid);
                 base.setUser_id(customer.getUserid());  //名字
