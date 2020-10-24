@@ -1,6 +1,5 @@
 package com.nt.controller.Controller.AOCHUAN;
 
-import cn.hutool.core.date.DateUtil;
 import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.service_AOCHUAN.AOCHUAN4000.ProductsService;
 import com.nt.service_AOCHUAN.AOCHUAN4000.mapper.ProductsMapper;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
@@ -135,7 +133,7 @@ public class AOCHUAN4001Controller {
         if (list == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        productsService.pushKingdee(list,tokenService.getToken(request));
+        productsService.pushKingdee(list,tokenService.getToken(request),false);
 
         return ApiResult.success();
     }

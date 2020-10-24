@@ -25,6 +25,7 @@ import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ResourceUtils;
@@ -235,7 +236,7 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     @Override
-    public void pushKingdee(List<Products> list, TokenModel tokenModel) throws Exception {
+    public void pushKingdee(List<Products> list, TokenModel tokenModel,Boolean flg) throws Exception {
         String loginParam = BaseUtil.buildLogin("5f4f0eaa667840", "Administrator", "888888", 2052);
         ResultVo login = login(k3CloundConfig.url + k3CloundConfig.login, loginParam);
         if (login.getCode() != ResultEnum.SUCCESS.getCode()) {
@@ -254,15 +255,20 @@ public class ProductsServiceImpl implements ProductsService {
         JSONObject basic = null;
         //推送data
         if(list.size() > 0){
-
             for(Products su :list){
                 int kis = 0;
-                Products products = productsMapper.selectByPrimaryKey(su.getProducts_id());
-                if(StringUtils.isNotEmpty(products.getKisid())){
-                    kis = Integer.valueOf(products.getKisid());
+                if(flg){ //true: 系统服务
+                    if(StringUtils.isNotEmpty(su.getKisid())){
+                        kis = Integer.valueOf(su.getKisid());
+                    }
+                } else { //false: 手动
+                    Products products = productsMapper.selectByPrimaryKey(su.getProducts_id());
+                    if(products != null){
+                        if(StringUtils.isNotEmpty(products.getKisid())){
+                            kis = Integer.valueOf(products.getKisid());
+                        }
+                    }
                 }
-                System.out.println(kis);
-
                 basic = JSON.parseObject(jsonData);
                 Map<String,Object> model = (Map<String, Object>) basic.get("Model");
 
@@ -278,7 +284,7 @@ public class ProductsServiceImpl implements ProductsService {
         //构造供应商接口数据
         String producter = BaseUtil.buildMaterial(basic,KDFormIdEnum.MATERIAL.getFormid());
 
-        ResultVo save = batchSave(k3CloundConfig.url + k3CloundConfig.batchSave, cookie, producter,tokenModel);
+        ResultVo save = batchSave(k3CloundConfig.url + k3CloundConfig.batchSave, cookie, producter,tokenModel,list,flg);
         if (save.getCode() != ResultEnum.SUCCESS.getCode()) {
 //            log.error("【保存出错】：{}", save.getMsg());
             throw new LogicalException("保存出错"+save.getMsg());
@@ -319,7 +325,7 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     //金蝶批量保存
-    public ResultVo batchSave(String url,String cookie, String content,TokenModel tokenModel) throws Exception {
+    public ResultVo batchSave(String url,String cookie, String content,TokenModel tokenModel,List<Products> productsList,Boolean flg) throws Exception {
         //保存
         Map<String, Object> header = new HashMap<>();
         header.put("Cookie", cookie);
@@ -334,7 +340,7 @@ public class ProductsServiceImpl implements ProductsService {
         for(int i = 0; i < ((JSONArray) ob).size(); i++){
             Integer kisid = (Integer)((JSONObject) ((JSONArray) ob).get(i)).get("Id");
             String number = (String)((JSONObject) ((JSONArray) ob).get(i)).get("Number");
-            updKisid(kisid,number,tokenModel);
+            updKisid(kisid,number,tokenModel,productsList.get(i),flg);
         }
 
         if (isSuccess) {
@@ -345,19 +351,32 @@ public class ProductsServiceImpl implements ProductsService {
         }
     }
 
-    //返回kisid更新回去
-    public void updKisid(Integer kisid, String number, TokenModel tokenModel) throws Exception {
-        System.out.println(kisid);
-        System.out.println(number);
-        Products products = new Products();
-        products.setPronumber(number);
-        List<Products> sup = productsMapper.select(products);
-        if (sup.size() > 0) {
-            products.preUpdate(tokenModel);
-            sup.get(0).setKisid(kisid.toString());
-            productsMapper.updateByPrimaryKeySelective(sup.get(0));
-        }
+    //系统服务
+    @Scheduled(cron = "0 0 0 1 * ?")
+    public void pullKis() throws Exception {
+        TokenModel tokenModel = new TokenModel();
+        List<Products> productsList = productsMapper.allselectData();
+        pushKingdee(productsList,tokenModel,true);
+    }
 
+    //返回kisid更新回去
+    public void updKisid(Integer kisid, String number, TokenModel tokenModel,Products products,Boolean flg) throws Exception {
+        if(products != null){
+            if(flg){
+                products.preUpdate(tokenModel);
+                products.setKisid(kisid.toString());
+                products.setPronumber(number);
+                productsMapper.updateByPrimaryKeySelective(products);
+            } else {
+                Products pro = productsMapper.selectByPrimaryKey(products.getProducts_id());
+                if (pro != null) {
+                    pro.preUpdate(tokenModel);
+                    pro.setKisid(kisid.toString());
+                    pro.setPronumber(number);
+                    productsMapper.updateByPrimaryKeySelective(pro);
+                }
+            }
+        }
     }
 
     @Override

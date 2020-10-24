@@ -5,7 +5,7 @@
             SELECT count(*) from customerbaseinfor
     </select>
     <select id="allselectData"  resultType="com.nt.dao_AOCHUAN.AOCHUAN2000.Customerbaseinfor">
-            SELECT * from supplierbaseinfor
+            SELECT * from customerbaseinfor
             where kisid is null
     </select>
 </mapper>

@@ -27,4 +27,8 @@
     <select id="allselectCount" resultType="int">
             SELECT count(*) from products
     </select>
+    <select id="allselectData"  resultType="com.nt.dao_AOCHUAN.AOCHUAN4000.Products">
+            SELECT * from products
+            where kisid is null
+    </select>
 </mapper>

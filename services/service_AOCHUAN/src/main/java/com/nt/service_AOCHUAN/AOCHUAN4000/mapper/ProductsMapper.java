@@ -21,4 +21,5 @@ public interface ProductsMapper extends MyMapper<Products> {
     List<Products> selectProlist();
 
     int allselectCount();
+    List<Products> allselectData();
 }
