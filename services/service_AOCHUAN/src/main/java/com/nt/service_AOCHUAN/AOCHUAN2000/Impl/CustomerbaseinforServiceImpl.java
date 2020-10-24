@@ -120,8 +120,21 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
         ResultVo save = batchSave(k3CloundConfig.url + k3CloundConfig.batchSave, cookie, customer,tokenModel,list,flg);
 
         if (save.getCode() != ResultEnum.SUCCESS.getCode()) {
+            String mes = save.getMsg();
+            String[] messageArr = mes.split("},");
+            String[] messages = new String[messageArr.length];
+            for(int a = 0 ; a < messageArr.length; a++){
+                messages[a] = messageArr[a].split("\",\"FieldName\"")[0];
+            }
+            System.out.println(messages);
+            String diamessage = "";
+            for(int a = 0 ; a < messages.length; a ++){
+                diamessage = diamessage +"第"+ (a+1)+"条"+messages[a];
+            }
+
+
 //            log.error("【保存出错】：{}", save.getMsg());
-            throw new LogicalException("保存出错" + save.getMsg());
+            throw new LogicalException("共有" +messages.length +"条数据推送出错 ：" + diamessage);
 //            return;
         }
     }
