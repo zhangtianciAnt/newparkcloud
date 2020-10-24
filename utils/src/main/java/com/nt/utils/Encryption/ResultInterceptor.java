@@ -106,8 +106,14 @@ public class ResultInterceptor implements Interceptor {
                                 // 进行解密
                                 String encryptData = Base64.decodeStr(fieldValue);
 
-                                // 将值反射到对象中
-                                field.set(t, encryptData);
+                                if(encryptData.indexOf("�") < 0){
+                                    // 将值反射到对象中
+                                    field.set(t, encryptData);
+                                }
+                                else{
+                                    // 将值反射到对象中
+                                    field.set(t, fieldValue);
+                                }
                             } else {
                                 // 不能解密的情况下，就不对这个对象做任何操作，即默认显示元数据
                             }
@@ -147,8 +153,16 @@ public class ResultInterceptor implements Interceptor {
                                 // 不为空时，就进行加密
                                 field.set(t, Base64.encode(fieldValue));
                             }else{
-                                // 不为空时，就进行加密
-                                field.set(t, fieldValue);
+                                // 进行解密特殊字符串不识别base64的处理
+                                String encryptData = Base64.decodeStr(fieldValue);
+                                if(encryptData.indexOf("�") < 0){
+                                    // 不为空时，就进行加密
+                                    field.set(t, fieldValue);
+                                }
+                                else{
+                                    // 不为空时，就进行加密
+                                    field.set(t, Base64.encode(fieldValue));
+                                }
                             }
 
                         } catch (IllegalAccessException e) {
