@@ -3,20 +3,24 @@ package com.nt.service_AOCHUAN.AOCHUAN2000.Impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.aliyuncs.utils.IOUtils;
 import com.nt.dao_AOCHUAN.AOCHUAN2000.Customerbaseinfor;
 import com.nt.service_AOCHUAN.AOCHUAN2000.CustomerbaseinforService;
 import com.nt.service_AOCHUAN.AOCHUAN2000.mapper.CustomerbaseinforMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.*;
 
 @Service
@@ -83,9 +87,33 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
         Map<String, Object> map = (Map<String, Object>) login.getData();
         String cookie = map.get("cookie").toString();
 
-        //获取客户数据模板
+        /**
+         @author Yangshubo
+         @see 客户数据模板
+         创建一个文件
+         读取源文件
+         生成流对象
+         创建并写入一个临时文件中
+         在读取写入的新文件
+         */
         File file = null;
-        file = ResourceUtils.getFile("classpath:excel/customer.json");
+        //file = ResourceUtils.getFile("classpath:excel/customer.json");
+        ClassPathResource resource  = new ClassPathResource("excel/customer.json");
+        //判断是否存在
+        if (resource.exists()) {
+            //获取流
+            InputStream inputStream = resource.getInputStream();
+            Date now = new Date();
+            //创建一个json格式的临时文件
+            file = File.createTempFile(now.getTime() + "", ".json");
+            try {
+                //将流写入到你创建的新文件中
+                byte[] bdata = FileCopyUtils.copyToByteArray(resource.getInputStream());
+                FileCopyUtils.copy(bdata, file);
+            } finally {
+                IOUtils.closeQuietly(inputStream);
+            }
+        }
         String jsonData = BaseUtil.jsonRead(file);;
         List<Map<String,Object>> listmap = new ArrayList();
         JSONObject basic = null;
