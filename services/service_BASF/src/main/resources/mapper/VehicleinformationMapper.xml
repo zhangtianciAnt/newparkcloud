@@ -149,12 +149,20 @@ ORDER BY
 
     <!--    增量更新GPS点位信息-->
     <update id="updategps">
-UPDATE vehicleinformation
-SET `gps` = CONCAT( IFNULL(`gps`,''), IFNULL(#{gps},'') ),
-`MODIFYON` =#{modifyon},
-`speed`=#{speed}
-WHERE
-	`vehicleinformationid` = #{vehicleinformationid};
+        UPDATE vehicleinformation
+        <set>
+            `MODIFYON` =#{modifyon},
+            `speed`=#{speed},
+            <if test="speed gt 15">
+                `errorgps` = CONCAT( IFNULL(`errorgps`,''), IFNULL(#{gps},'') ),
+            </if>
+
+            <if test="speed lt 15">
+                `gps` = CONCAT( IFNULL(`gps`,''), IFNULL(#{gps},'') ),
+            </if>
+        </set>
+        WHERE
+        `vehicleinformationid` = #{vehicleinformationid};
     </update>
 
 </mapper>
