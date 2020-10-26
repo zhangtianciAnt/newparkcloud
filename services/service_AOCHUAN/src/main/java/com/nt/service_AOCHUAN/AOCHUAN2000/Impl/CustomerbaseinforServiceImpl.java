@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -76,7 +75,8 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
 
     @Override
     public void pushKingdee(List<Customerbaseinfor> list,TokenModel tokenModel,Boolean flg) throws Exception {
-
+        //正式dbid：5f1533095ad35e
+        //测试dbid：5f4f0eaa667840
         String loginParam = BaseUtil.buildLogin("5f4f0eaa667840", "Administrator", "888888", 2052);
         ResultVo login = login(k3CloundConfig.url + k3CloundConfig.login, loginParam);
         if (login.getCode() != ResultEnum.SUCCESS.getCode()) {
