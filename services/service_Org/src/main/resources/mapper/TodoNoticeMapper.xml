@@ -4,5 +4,6 @@
     <select id="getDataList" resultType="com.nt.dao_Org.ToDoNotice">
 SELECT * FROM todonotice
 			 WHERE #{STATUS} = STATUS
+			 and owner = #{userid}
 </select>
 </mapper>
