@@ -109,7 +109,8 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
 
     @Override
     public void login1(List<CredentialInformation> credentialInformation,TokenModel tokenModel) throws Exception {
-
+        //正式dbid：5f1533095ad35e
+        //测试dbid：5f4f0eaa667840
         String loginParam = BaseUtil.buildLogin("5f4f0eaa667840", "Administrator", "888888", 2052);
 
         ResultVo login = login(k3CloundConfig.url + k3CloundConfig.login, loginParam);
