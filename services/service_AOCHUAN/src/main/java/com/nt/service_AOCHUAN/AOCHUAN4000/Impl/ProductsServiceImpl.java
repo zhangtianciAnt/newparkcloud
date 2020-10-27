@@ -27,11 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -260,7 +258,7 @@ public class ProductsServiceImpl implements ProductsService {
          创建并写入一个临时文件中
          在读取写入的新文件
          */
-        //获取供应商数据模板
+        //获取产品数据模板
         File file = null;
 //        file = ResourceUtils.getFile("classpath:excel/products.json");
         ClassPathResource resource  = new ClassPathResource("excel/products.json");
@@ -310,7 +308,7 @@ public class ProductsServiceImpl implements ProductsService {
 
         }
 
-        //构造供应商接口数据
+        //构造产品接口数据
         String producter = BaseUtil.buildMaterial(basic,KDFormIdEnum.MATERIAL.getFormid());
 
         ResultVo save = batchSave(k3CloundConfig.url + k3CloundConfig.batchSave, cookie, producter,tokenModel,list,flg);
@@ -394,7 +392,7 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     //系统服务
-    @Scheduled(cron = "0 0 0 1 * ?")
+//    @Scheduled(cron = "0 0 0 1 * ?")
     public void pullKis() throws Exception {
         TokenModel tokenModel = new TokenModel();
         List<Products> productsList = productsMapper.allselectData();

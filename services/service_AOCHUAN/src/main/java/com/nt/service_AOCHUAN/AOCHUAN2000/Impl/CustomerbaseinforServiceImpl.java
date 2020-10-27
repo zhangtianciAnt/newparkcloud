@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.client.RestTemplate;
@@ -143,7 +142,7 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
         }
         basic.put("Model",listmap);
 
-        //构造供应商接口数据
+        //构造客户接口数据
         String customer = BaseUtil.buildMaterial(basic,KDFormIdEnum.CUSTOMER.getFormid());
         ResultVo save = batchSave(k3CloundConfig.url + k3CloundConfig.batchSave, cookie, customer,tokenModel,list,flg);
 
@@ -226,7 +225,7 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
     }
 
     //系统服务
-    @Scheduled(cron = "0 0 0 1 * ?")
+//    @Scheduled(cron = "0 0 0 1 * ?")
     public void pullKis() throws Exception {
         TokenModel tokenModel = new TokenModel();
         List<Customerbaseinfor> customerbaseinforList = customerbaseinforMapper.allselectData();

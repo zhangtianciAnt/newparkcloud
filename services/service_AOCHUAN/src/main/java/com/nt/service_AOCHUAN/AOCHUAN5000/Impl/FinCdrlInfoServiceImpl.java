@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -123,7 +122,7 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
         Map<String, Object> map = (Map<String, Object>) login.getData();
         String cookie = map.get("cookie").toString();
 
-        //获取供应商数据模板
+        //获取凭证数据模板
         File file = null;
 //        file = ResourceUtils.getFile("classpath:excel/voucher.json");
         ClassPathResource resource  = new ClassPathResource("excel/voucher.json");
@@ -157,9 +156,25 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                 if(accountingRuleList.size() > 0){
                     for(AccountingRule ar : accountingRuleList){
 
-                        //获取供应商数据模板
+                        //获取凭证数据模板
                         File file1 = null;
-                        file1 = ResourceUtils.getFile("classpath:excel/voucher.json");
+//                        file1 = ResourceUtils.getFile("classpath:excel/voucher.json");
+                        ClassPathResource resource1  = new ClassPathResource("excel/voucher.json");
+                        //判断是否存在
+                        if (resource1.exists()) {
+                            //获取流
+                            InputStream inputStream = resource1.getInputStream();
+                            Date now = new Date();
+                            //创建一个json格式的临时文件
+                            file = File.createTempFile(now.getTime() + "", ".json");
+                            try {
+                                //将流写入到你创建的新文件中
+                                byte[] bdata = FileCopyUtils.copyToByteArray(resource1.getInputStream());
+                                FileCopyUtils.copy(bdata, file);
+                            } finally {
+                                IOUtils.closeQuietly(inputStream);
+                            }
+                        }
                         String jsonData1 = BaseUtil.jsonRead(file1);
                         JSONObject basic1 = null;
                         basic1 = JSON.parseObject(jsonData1);

@@ -13,13 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -209,7 +207,7 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
     }
 
     //系统服务
-    @Scheduled(cron = "0 20 0 1 * ?")
+//    @Scheduled(cron = "0 20 0 1 * ?")
     public void pullKis() throws Exception {
         TokenModel tokenModel = new TokenModel();
         List<Supplierbaseinfor> supplierbaseinforList = supplierbaseinforMapper.allselectData();
