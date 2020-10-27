@@ -475,10 +475,38 @@ public class Pfans1012Controller {
         Map<String, Object> data = new HashMap<>();
         if ("PJ004004".equals(pubvo.getPublicexpense().getPaymentmethod())) {
             String payeeName = "";
-            LoanApplication loanApplication = new LoanApplication();
-            loanApplication = loanapplicationMapper.selectByPrimaryKey(pubvo.getPublicexpense().getLoan());
-            payeeName = loanApplication.getPayeename();
-            data.put("payeeName", payeeName);
+//            LoanApplication loanApplication = new LoanApplication();
+//            loanApplication = loanapplicationMapper.selectByPrimaryKey(pubvo.getPublicexpense().getLoan());
+//            payeeName = loanApplication.getPayeename();
+//            data.put("payeeName", payeeName);
+            String loanid[] = pubvo.getPublicexpense().getLoan().split(",");
+            for(String id:loanid)
+            {
+                LoanApplication loanApplication = new LoanApplication();
+                loanApplication = loanapplicationMapper.selectByPrimaryKey(id);
+                payeeName = loanApplication.getPayeename();
+                if(payeeName==null || payeeName .equals(""))
+                {
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(loanApplication.getUser_name()));
+                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if(customerInfo!=null)
+                    {
+                        payeeName = customerInfo.getUserinfo().getCustomername();
+                    }
+                }
+                if(!data.containsKey("payeeName"))
+                {
+                    data.put("payeeName", payeeName);
+                }
+                else
+                {
+                    if(!data.containsValue(payeeName))
+                    {
+                        data.put("payeeName", data.get("payeeName") + ","+payeeName);
+                    }
+                }
+            }
         }
         String str_format = "";
         DecimalFormat df = new DecimalFormat("###,###.00");
