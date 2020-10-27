@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_BASF.mapper.ExisttrainarchivesMapper">
+    <resultMap id="BaseResultMap" type="com.nt.dao_BASF.Existtrainarchives">
+
+        <!--
+  WARNING - @mbg.generated
+-->
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="department" property="department" jdbcType="VARCHAR"/>
+        <result column="employeename" property="employeename" jdbcType="VARCHAR"/>
+        <result column="managername" property="managername" jdbcType="VARCHAR"/>
+        <result column="trainingprograms" property="trainingprograms" jdbcType="VARCHAR"/>
+        <result column="certificatenumber" property="certificatenumber" jdbcType="VARCHAR"/>
+        <result column="approvaldate" property="approvaldate" jdbcType="TIMESTAMP"/>
+        <result column="effectivedate" property="effectivedate" jdbcType="TIMESTAMP"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="STATUS" property="STATUS" jdbcType="VARCHAR"/>
+        <result column="CREATEON" property="CREATEON" jdbcType="TIMESTAMP"/>
+        <result column="CREATEBY" property="CREATEBY" jdbcType="VARCHAR"/>
+        <result column="MODIFYON" property="MODIFYON" jdbcType="TIMESTAMP"/>
+        <result column="MODIFYBY" property="MODIFYBY" jdbcType="VARCHAR"/>
+        <result column="Owner" property="Owner" jdbcType="VARCHAR"/>
+        <result column="TENANTID" property="TENANTID" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getAllList" resultType="com.nt.dao_BASF.VO.ExisttrainarchivesVo">
+        SELECT
+            id,
+            department,
+            employeename,
+            managername,
+            trainingprograms,
+            certificatenumber,
+            approvaldate,
+            effectivedate,
+            remark
+        FROM
+            existtrainarchives
+        WHERE
+            `STATUS` = '0'
+    </select>
+
+    <select id="getExisttrainarchivesInfoById" resultType="com.nt.dao_BASF.VO.ExisttrainarchivesVo">
+        SELECT
+            id,
+            department,
+            employeename,
+            managername,
+            trainingprograms,
+            certificatenumber,
+            approvaldate,
+            effectivedate,
+            remark
+        FROM
+            existtrainarchives
+        WHERE
+            id = #{id}
+            AND `STATUS` = '0'
+    </select>
+</mapper>
