@@ -167,11 +167,11 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                             InputStream inputStream = resource1.getInputStream();
                             Date now = new Date();
                             //创建一个json格式的临时文件
-                            file = File.createTempFile(now.getTime() + "", ".json");
+                            file1 = File.createTempFile(now.getTime() + "", ".json");
                             try {
                                 //将流写入到你创建的新文件中
                                 byte[] bdata = FileCopyUtils.copyToByteArray(resource1.getInputStream());
-                                FileCopyUtils.copy(bdata, file);
+                                FileCopyUtils.copy(bdata, file1);
                             } finally {
                                 IOUtils.closeQuietly(inputStream);
                             }
