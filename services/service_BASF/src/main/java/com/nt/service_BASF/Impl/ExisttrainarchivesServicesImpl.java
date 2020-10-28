@@ -8,6 +8,7 @@ import com.nt.service_BASF.ExisttrainarchivesServices;
 import com.nt.service_BASF.mapper.ExisttrainarchivesMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,13 +108,15 @@ public class ExisttrainarchivesServicesImpl implements ExisttrainarchivesService
             return result;
         }
         List<Object> model = new ArrayList<Object>();
+        model.add("标识符");
         model.add("部门");
         model.add("姓名");
-        model.add("培训项目");
         model.add("负责人");
+        model.add("培训项目");
         model.add("证件编号");
         model.add("批准日期");
         model.add("有效日期");
+        model.add("备考");
         List<Object> key = list.get(0);
         for (int i = 0; i < key.size(); i++) {
             if (!key.get(i).toString().trim().equals(model.get(i))) {
@@ -131,9 +134,15 @@ public class ExisttrainarchivesServicesImpl implements ExisttrainarchivesService
                 Existtrainarchives existtrainarchives = new Existtrainarchives();
                 SimpleDateFormat formatter = new SimpleDateFormat( "yyyyMMdd");
                 List<Object> value = list.get(i);
+                //标识
+                try {
+                    existtrainarchives.setId(value.get(0).toString());
+                } catch (Exception e) {
+                    existtrainarchives.setId("");
+                }
                 //部门
                 try {
-                    existtrainarchives.setDepartment(value.get(0).toString());
+                    existtrainarchives.setDepartment(value.get(1).toString());
                 } catch (Exception e) {
                     result.add("导入模板第 " + k + " 行，部门名称数据异常，导入系统失败！");
                     errorCount += 1;
@@ -141,17 +150,9 @@ public class ExisttrainarchivesServicesImpl implements ExisttrainarchivesService
                 }
                 //姓名
                 try {
-                    existtrainarchives.setEmployeename(value.get(1).toString());
+                    existtrainarchives.setEmployeename(value.get(2).toString());
                 } catch (Exception e) {
                     result.add("导入模板第 " + k + "行，姓名数据异常，导入系统失败！");
-                    errorCount += 1;
-                    continue;
-                }
-                //培训项目
-                try {
-                    existtrainarchives.setTrainingprograms(value.get(2).toString());
-                } catch (Exception e) {
-                    result.add("导入模板第 " + k + "行，培训项目数据异常，导入系统失败！");
                     errorCount += 1;
                     continue;
                 }
@@ -163,9 +164,17 @@ public class ExisttrainarchivesServicesImpl implements ExisttrainarchivesService
                     errorCount += 1;
                     continue;
                 }
+                //培训项目
+                try {
+                    existtrainarchives.setTrainingprograms(value.get(4).toString());
+                } catch (Exception e) {
+                    result.add("导入模板第 " + k + "行，培训项目数据异常，导入系统失败！");
+                    errorCount += 1;
+                    continue;
+                }
                 //证件编号
                 try {
-                    existtrainarchives.setCertificatenumber(value.get(4).toString().trim());
+                    existtrainarchives.setCertificatenumber(value.get(5).toString().trim());
                 } catch (Exception e) {
                     result.add("导入模板第 " + k + "行，证件编号数据异常，导入系统失败！");
                     errorCount += 1;
@@ -173,8 +182,8 @@ public class ExisttrainarchivesServicesImpl implements ExisttrainarchivesService
                 }
                 //批准日期
                 try {
-                    String approvaldate = value.get(5).toString().trim();
-                    existtrainarchives.setApprovaldate(formatter.parse(approvaldate.replace("-","")));
+                    String approvaldate = value.get(6).toString().trim();
+                    existtrainarchives.setApprovaldate(formatter.parse(approvaldate.replace("/","")));
                 } catch (Exception e) {
                     result.add("导入模板第 " + k + "行，批准日期数据异常，导入系统失败！");
                     errorCount += 1;
@@ -182,18 +191,28 @@ public class ExisttrainarchivesServicesImpl implements ExisttrainarchivesService
                 }
                 //有效日期
                 try {
-                    String effectivedate = value.get(6).toString().trim();
-                    existtrainarchives.setEffectivedate(formatter.parse(effectivedate.replace("-","")));
+                    String effectivedate = value.get(7).toString().trim();
+                    existtrainarchives.setEffectivedate(formatter.parse(effectivedate.replace("/","")));
                 } catch (Exception e) {
                     result.add("导入模板第 " + k + "行，有效日期数据异常，导入系统失败！");
                     errorCount += 1;
                     continue;
                 }
+                //备考
+                try {
+                    existtrainarchives.setRemark(value.get(8).toString().trim());
+                } catch (Exception e) {
+                    existtrainarchives.setRemark("");
+                }
                 existtrainarchives.preInsert(tokenModel);
-                existtrainarchives.setId(UUID.randomUUID().toString());
                 existtrainarchives.setStatus(AuthConstants.DEL_FLAG_NORMAL);
                 try {
-                    existtrainarchivesMapper.insert(existtrainarchives);
+                    if (StringUtils.isNotEmpty(existtrainarchives.getId())) {
+                        existtrainarchivesMapper.updateByPrimaryKey(existtrainarchives);
+                    } else {
+                        existtrainarchives.setId(UUID.randomUUID().toString());
+                        existtrainarchivesMapper.insert(existtrainarchives);
+                    }
                     successCount += 1;
                 } catch (Exception e) {
                     result.add("导入模板第 " + k + "行存储到数据库异常，导入系统失败！");
