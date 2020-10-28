@@ -110,67 +110,99 @@
 
     <select id="selectProgramForErc" resultType="com.nt.dao_BASF.Startprogram">
         SELECT
-        t.personnelid,
-        s.startprogramid,
-        s.programlistid,
-        s.programname,
-        s.informpeople,
-        s.starttheorydate,
-        t.departmentname,
+            t.personnelid,
+            s.startprogramid,
+            s.programlistid,
+            s.programname,
+            s.informpeople,
+            s.starttheorydate,
+            t.departmentname,
         CASE
-        s.isonline
-        WHEN 'BC032001' THEN
-        t.finallyexamdate ELSE
-        s.starttheorydate end as traindate,
-        t.throughtype,
-        s.MODIFYON as publishdate,
-        s.theorysite,
-        s.startoperationdate,
-        s.operationsite,
-        s.expirationdate,
-        s.materialsexpirationdate,
-        s.informperson,
-        s.programcode,
-        s.programhard,
-        s.insideoutside,
-        s.mandatory,
-        s.isonline,
-        s.thelength,
-        s.validity,
-        s.money,
-        s.remindtime,
-        s.isfirst,
-        s.applydata,
-        s.applydataurl,
-        s.standard,
-        s.questionnum,
-        s.programtype,
-        s.actualstartdate,
-        -- 在这里用MODIFYON作为到期时间，可以少写一个vo
+            s.isonline
+            WHEN 'BC032001' THEN
+            t.finallyexamdate ELSE s.starttheorydate
+            END AS traindate,
+            t.throughtype,
+            s.MODIFYON AS publishdate,
+            s.theorysite,
+            s.startoperationdate,
+            s.operationsite,
+            s.expirationdate,
+            s.materialsexpirationdate,
+            s.informperson,
+            s.programcode,
+            s.programhard,
+            s.insideoutside,
+            s.mandatory,
+            s.isonline,
+            s.thelength,
+            s.validity,
+            s.money,
+            s.remindtime,
+            s.isfirst,
+            s.applydata,
+            s.applydataurl,
+            s.standard,
+            s.questionnum,
+            s.programtype,
+            s.actualstartdate,-- 在这里用MODIFYON作为到期时间，可以少写一个vo
         CASE
-        s.isonline
-        WHEN 'BC032001' THEN
-        DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ) ELSE (
+            s.isonline
+            WHEN 'BC032001' THEN
+            DATE_ADD( t.finallyexamdate, INTERVAL s.validity MONTH ) ELSE (
         CASE
-        WHEN t.issuedate IS NULL THEN
-        DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ) ELSE DATE_ADD( t.issuedate, INTERVAL s.validity MONTH )
+
+            WHEN t.issuedate IS NULL THEN
+            DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ) ELSE DATE_ADD( t.issuedate, INTERVAL s.validity MONTH )
         END
-        )
-        END AS MODIFYON
+            )
+            END AS MODIFYON,
+            '' AS employeename
         FROM
-        startprogram AS s
-        INNER JOIN
-        trainjoinlist AS t
-        ON
-        s.startprogramid = t.startprogramid
+            startprogram AS s
+            INNER JOIN trainjoinlist AS t ON s.startprogramid = t.startprogramid
         WHERE
-        t.`STATUS` = '0'
-        AND
-        t.jointype = '正常'
-        AND
-        ( t.throughtype = '通过' OR t.throughtype = '未通过' )
-        AND
-        s.programtype in ('BC039004')
+            t.`STATUS` = '0'
+            AND t.jointype = '正常'
+            AND ( t.throughtype = '通过' OR t.throughtype = '未通过' )
+            AND s.programtype IN ( 'BC039004' ) UNION ALL
+        SELECT
+            '' AS personnelid,
+            '' AS startprogramid,
+            '' AS programlistid,
+            trainingprograms AS programname,
+            '' AS informpeople,
+            null AS starttheorydate,
+            department AS departmentname,
+            null AS traindate,
+            '' AS throughtype,
+            null AS publishdate,
+            '' AS theorysite,
+            null AS startoperationdate,
+            '' AS operationsite,
+            null AS expirationdate,
+            null AS materialsexpirationdate,
+            '' AS informperson,
+            '' AS programcode,
+            '' AS programhard,
+            '' AS insideoutside,
+            '' AS mandatory,
+            '' AS isonline,
+            '' AS thelength,
+            '' AS validity,
+            '' AS money,
+            '' AS remindtime,
+            '' AS isfirst,
+            '' AS applydata,
+            '' AS applydataurl,
+            '' AS standard,
+            '' AS questionnum,
+            '' AS programtype,
+            null AS actualstartdate,
+            effectivedate AS MODIFYON,
+            employeename AS employeename
+        FROM
+        existtrainarchives
     </select>
 
     <!--    通过人员id查询即将到期的培训-->

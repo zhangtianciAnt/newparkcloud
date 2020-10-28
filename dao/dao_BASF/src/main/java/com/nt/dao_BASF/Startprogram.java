@@ -144,4 +144,7 @@ public class Startprogram extends BaseModel {
 
     @Transient
     private String personnelid;
+
+    @Transient
+    private String employeename;
 }
