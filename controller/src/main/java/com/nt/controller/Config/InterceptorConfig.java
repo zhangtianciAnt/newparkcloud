@@ -29,6 +29,7 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
                 .excludePathPatterns("/pims/getAlarm")
                 .excludePathPatterns("/AI/sendAIMessage")
                 .excludePathPatterns("/BASF10204/sendGps")
+                .excludePathPatterns("/BASF10204/update")
                 .excludePathPatterns("/BASF10204/list")
         ;
     }
