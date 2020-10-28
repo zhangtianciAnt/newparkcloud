@@ -2,14 +2,21 @@ package com.nt.service_pfans.PFANS6000.Impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
+import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Vo.DelegainformationVo;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
+import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS6000.DeleginformationService;
 import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
+import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +25,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -29,6 +37,15 @@ public class DelegainformationServiceImpl implements DeleginformationService {
 
     @Autowired
     private WorkingDayMapper workingdayMapper;
+
+    @Autowired
+    private DictionaryService dictionaryService;
+
+    @Autowired
+    private OrgTreeService orgTreeService;
+
+    @Autowired
+    private ExpatriatesinforMapper expatriatesinforMapper;
 
 
 //    @Override
@@ -225,4 +242,123 @@ public class DelegainformationServiceImpl implements DeleginformationService {
         // 不是周六和周日的都认为是工作日
         return week != Calendar.SUNDAY && week != Calendar.SATURDAY;
     }
+
+    //add ccm 1027 定时任务  每月工数统计截止日第二天自动保存工数
+    @Scheduled(cron="0 0 3 * * ?")
+    public void saveDelegaTask()throws Exception {
+        SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
+        List<Dictionary> dictionaryL = dictionaryService.getForSelect("BP026");
+        TokenModel tokenModel = new TokenModel();
+        if(dictionaryL.size()>0)
+        {
+            String ymd = sfymd.format(new Date());
+            String y = ymd.substring(0,4);
+            String mm = ymd.substring(5,7);
+            String dd = ymd.substring(8,10);
+
+            if(Integer.valueOf(dd) == Integer.valueOf(dictionaryL.get(0).getValue1()) + 1)
+            {
+                List<DelegainformationVo> delvoList = new ArrayList<DelegainformationVo>();
+                List<Delegainformation> delList = new ArrayList<Delegainformation>();
+                List<String> a = new ArrayList<String>();
+                List<OrgTree> orgsList =  orgTreeService.getById(new OrgTree());
+                for(OrgTree orgTree:orgsList)
+                {
+                    for(OrgTree org:orgTree.getOrgs())
+                    {
+                        for(OrgTree or:org.getOrgs())
+                        {
+                            if(or.getType().equals("2"))
+                            {
+                                delvoList = getYears(y,or.get_id(),a);
+                                for(DelegainformationVo vo : delvoList)
+                                {
+                                    Delegainformation del = new Delegainformation();
+                                    del.setDelegainformation_id(vo.getDelegainformation_id());
+                                    //四月
+                                    del.setApril(vo.getApril());
+                                    if(StringUtils.isNullOrEmpty(vo.getApril()))
+                                    {
+                                        del.setApril("0");
+                                    }
+                                    //五月
+                                    del.setMay(vo.getMay());
+                                    if(StringUtils.isNullOrEmpty(vo.getMay()))
+                                    {
+                                        del.setMay("0");
+                                    }
+                                    //六月
+                                    del.setJune(vo.getJune());
+                                    if(StringUtils.isNullOrEmpty(vo.getJune()))
+                                    {
+                                        del.setJune("0");
+                                    }
+                                    //七月
+                                    del.setJuly(vo.getJuly());
+                                    if(StringUtils.isNullOrEmpty(vo.getJuly()))
+                                    {
+                                        del.setJuly("0");
+                                    }
+                                    //八月
+                                    del.setAugust(vo.getAugust());
+                                    if(StringUtils.isNullOrEmpty(vo.getAugust()))
+                                    {
+                                        del.setAugust("0");
+                                    }
+                                    //九月
+                                    del.setSeptember(vo.getSeptember());
+                                    if(StringUtils.isNullOrEmpty(vo.getSeptember()))
+                                    {
+                                        del.setSeptember("0");
+                                    }
+                                    //十月
+                                    del.setOctober(vo.getOctober());
+                                    if(StringUtils.isNullOrEmpty(vo.getOctober()))
+                                    {
+                                        del.setOctober("0");
+                                    }
+                                    //十一月
+                                    del.setNovember(vo.getNovember());
+                                    if(StringUtils.isNullOrEmpty(vo.getNovember()))
+                                    {
+                                        del.setNovember("0");
+                                    }
+                                    //十二月
+                                    del.setDecember(vo.getDecember());
+                                    if(StringUtils.isNullOrEmpty(vo.getDecember()))
+                                    {
+                                        del.setDecember("0");
+                                    }
+                                    //明年一月
+                                    del.setJanuary(vo.getJanuary());
+                                    if(StringUtils.isNullOrEmpty(vo.getJanuary()))
+                                    {
+                                        del.setJanuary("0");
+                                    }
+                                    //明年二月
+                                    del.setFebruary(vo.getFebruary());
+                                    if(StringUtils.isNullOrEmpty(vo.getFebruary()))
+                                    {
+                                        del.setFebruary("0");
+                                    }
+                                    //明年三月
+                                    del.setMarch(vo.getMarch());
+                                    if(StringUtils.isNullOrEmpty(vo.getMarch()))
+                                    {
+                                        del.setMarch("0");
+                                    }
+                                    del.setYear(vo.getYear());
+                                    del.setAccount(vo.getAccount());
+                                    del.setGroup_id(vo.getGroup_id());
+                                    delList.add(del);
+                                }
+                                updateDeleginformation(delList,tokenModel);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    //add ccm 1027 定时任务  每月工数统计截止日第二天自动保存工数
 }
