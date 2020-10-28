@@ -292,6 +292,20 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
                 }
                 vehicleinformationGpsArrVo.setGpsArr(arrayList);
             }
+            if (StringUtils.isNotEmpty(vehicleinformationGpsArrVo.getErrorgps())) {
+                ArrayList arrayList = new ArrayList();
+                String[] spiltTemp = vehicleinformationGpsArrVo.getErrorgps().split(";");
+                for (int i = 0; i < spiltTemp.length; i++) {
+                    ArrayList arrayList1 = new ArrayList();
+                    String[] splitTempB = spiltTemp[i].split(",");
+                    for (int j = 0; j < splitTempB.length; j++) {
+                        BigDecimal a = new BigDecimal(splitTempB[j]);
+                        arrayList1.add(Arrays.asList(a));
+                    }
+                    arrayList.add(arrayList1);
+                }
+                vehicleinformationGpsArrVo.setErrorGpsArr(arrayList);
+            }
         }
         return list;
     }

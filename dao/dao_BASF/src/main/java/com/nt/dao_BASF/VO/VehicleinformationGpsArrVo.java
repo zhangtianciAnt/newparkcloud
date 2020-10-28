@@ -21,5 +21,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VehicleinformationGpsArrVo extends Vehicleinformation {
+    ArrayList errorGpsArr;
     ArrayList gpsArr;
 }
