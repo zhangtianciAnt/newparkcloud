@@ -4,12 +4,15 @@ import cn.hutool.core.date.DateUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Pfans.PFANS6000.Coststatistics;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Vo.DelegainformationVo;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
+import com.nt.service_pfans.PFANS6000.CompanyStatisticsService;
+import com.nt.service_pfans.PFANS6000.CoststatisticsService;
 import com.nt.service_pfans.PFANS6000.DeleginformationService;
 import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
@@ -45,7 +48,8 @@ public class DelegainformationServiceImpl implements DeleginformationService {
     private OrgTreeService orgTreeService;
 
     @Autowired
-    private ExpatriatesinforMapper expatriatesinforMapper;
+    private CoststatisticsService coststatisticsService;
+
 
 
 //    @Override
@@ -353,6 +357,8 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                                     delList.add(del);
                                 }
                                 updateDeleginformation(delList,tokenModel);
+                                Coststatistics coststatistics = new Coststatistics();
+                                coststatisticsService.insertCoststatistics(or.get_id(),coststatistics,tokenModel);
                             }
                         }
                     }
