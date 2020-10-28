@@ -202,7 +202,9 @@
             effectivedate AS MODIFYON,
             employeename AS employeename
         FROM
-        existtrainarchives
+            existtrainarchives
+        WHERE
+            `STATUS` = '0'
     </select>
 
     <!--    通过人员id查询即将到期的培训-->

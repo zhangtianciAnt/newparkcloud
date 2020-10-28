@@ -77,6 +77,19 @@
         AND DATEDIFF(DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ),CURRENT_DATE ()) >0
         AND DATEDIFF(CURRENT_DATE (),DATE_SUB( DATE_ADD( s.starttheorydate, INTERVAL s.validity MONTH ), INTERVAL s.remindtime MONTH )) >=0
         )
+        UNION ALL
+        SELECT
+        '' AS trainjoinlistid,
+        '' AS personnelid,
+        employeename AS customername,
+        department AS departmentname,
+        trainingprograms AS programname,
+        effectivedate AS dueDate
+        FROM
+        existtrainarchives
+        WHERE
+        `STATUS` = '0'
+        AND DATEDIFF ( SUBDATE( effectivedate, INTERVAL 3 MONTH ), CURDATE( ) ) &lt;= 0
         ORDER BY
         dueDate ASC
     </select>

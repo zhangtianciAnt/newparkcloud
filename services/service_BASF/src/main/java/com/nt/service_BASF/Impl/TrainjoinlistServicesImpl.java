@@ -515,13 +515,15 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
         List<OverduePersonnelListVo> overduePersonnelListVoList = trainjoinlistMapper.OverduePersonnelList();
 
         for (int i = 0; i < overduePersonnelListVoList.size(); i++) {
-            //填充姓名
-            Query query = new Query();
-            query.addCriteria(Criteria.where("_id").is(overduePersonnelListVoList.get(i).getPersonnelid()));
-            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            if (customerInfo != null) {
-                if (StringUtils.isNotBlank(customerInfo.getUserinfo().getCustomername())) {
-                    overduePersonnelListVoList.get(i).setCustomername(customerInfo.getUserinfo().getCustomername());
+            if (StringUtils.isNotEmpty(overduePersonnelListVoList.get(i).getPersonnelid())) {
+                //填充姓名
+                Query query = new Query();
+                query.addCriteria(Criteria.where("_id").is(overduePersonnelListVoList.get(i).getPersonnelid()));
+                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    if (StringUtils.isNotBlank(customerInfo.getUserinfo().getCustomername())) {
+                        overduePersonnelListVoList.get(i).setCustomername(customerInfo.getUserinfo().getCustomername());
+                    }
                 }
             }
         }
