@@ -56,10 +56,10 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
     }
 
     @Override
-    public List<ToDoNotice> getDataList(String status) throws Exception {
+    public List<ToDoNotice> getDataList(String status,String userid) throws Exception {
         String STATUS = status;
-        List<ToDoNotice> todonotice = todoNoticeMapper.getDataList(STATUS);
-        if (todonotice.isEmpty()) {
+        List<ToDoNotice> todonotice = todoNoticeMapper.getDataList(STATUS,userid);
+        if (todonotice.size()==0) {
             return null;
         }
         return todonotice;

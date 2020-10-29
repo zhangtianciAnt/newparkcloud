@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface TodoNoticeMapper extends MyMapper<ToDoNotice> {
 
-    List<ToDoNotice> getDataList(@Param("STATUS") String STATUS);
+    List<ToDoNotice> getDataList(@Param("STATUS") String STATUS,@Param("userid") String userid);
 
 }

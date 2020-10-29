@@ -7,6 +7,7 @@ import com.nt.dao_Pfans.PFANS2000.Punchcard;
 import com.nt.service_Auth.AuthService;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
+import com.nt.service_pfans.PFANS6000.DeleginformationService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -43,6 +44,10 @@ public class AuthController {
 
     @Autowired
     private AnnualLeaveService annualLeaveService;
+
+    @Autowired
+    private DeleginformationService deleginformationService;
+
     /**
      * @方法名：getActionsAuth
      * @描述：获取按钮权限（新建，编辑，删除）
@@ -138,6 +143,13 @@ public class AuthController {
     @RequestMapping(value = "/getrealwages",method={RequestMethod.GET})
     public ApiResult getrealwages(HttpServletRequest request) throws Exception {
         annualLeaveService.getrealwages();
+        return ApiResult.success();
+    }
+
+    //每天的定时任务，工数截止日+1 > 当前日期,执行
+    @RequestMapping(value = "/saveDelegaTask",method={RequestMethod.GET})
+    public ApiResult saveDelegaTask(HttpServletRequest request) throws Exception {
+        deleginformationService.saveDelegaTask();
         return ApiResult.success();
     }
 }
