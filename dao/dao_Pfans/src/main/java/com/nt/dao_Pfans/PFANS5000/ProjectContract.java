@@ -24,6 +24,9 @@ public class ProjectContract extends BaseModel {
     @Column(name = "PROJECTCONTRACT_ID")
     private String projectcontract_id;
 
+    @Column(name = "CONTRACTNUMBERCOUNT_ID")
+    private String contractnumbercount_id;
+
     /**
      * 所属公司项目
      */

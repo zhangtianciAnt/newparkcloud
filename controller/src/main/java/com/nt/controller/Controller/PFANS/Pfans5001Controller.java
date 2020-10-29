@@ -1,14 +1,18 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS5000.ProjectContract;
 import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.dao_Pfans.PFANS6000.Customerinfor;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
+import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
+import com.nt.service_pfans.PFANS5000.mapper.ProjectContractMapper;
 import com.nt.service_pfans.PFANS6000.CustomerinforService;
 import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
 import com.nt.service_pfans.PFANS6000.SupplierinforService;
@@ -18,7 +22,11 @@ import com.nt.utils.MsgConstants;
 import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,6 +55,13 @@ public class Pfans5001Controller {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private ContractnumbercountMapper contractnumbercountMapper;
+
+    @Autowired
+    private ProjectContractMapper projectcontractMapper;
+
 
     /**
      * 查看
@@ -173,6 +188,90 @@ public class Pfans5001Controller {
         }
         TokenModel tokenModel=tokenService.getToken(request);
         companyProjectsService.update(companyProjectsVo,tokenModel);
+        return ApiResult.success();
+    }
+
+    /**
+     *
+     * 修改
+     */
+//    合同号+请求回数
+    @RequestMapping(value = "/upcnpro01", method = {RequestMethod.GET})
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public ApiResult upcnpro(TokenModel tokenModel) throws Exception {
+        List<Contractnumbercount> contractnumbercountList = contractnumbercountMapper.selectAll();
+        List<ProjectContract> projectContractsList = projectcontractMapper.selectAll();
+        for (int i = 0; i < contractnumbercountList.size(); i++) {
+            if (contractnumbercountList.get(i).getClaimtype() != null) {
+                for (int h = 0; h < projectContractsList.size(); h++) {
+                    if (projectContractsList.get(h).getClaimtype() != null ) {
+                        ProjectContract projectContract = new ProjectContract();
+                        BeanUtils.copyProperties(projectContractsList.get(h), projectContract);
+                        if (projectContractsList.get(h).getContract().equals(contractnumbercountList.get(i).getContractnumber())
+                                && projectContractsList.get(h).getClaimtype().equals(contractnumbercountList.get(i).getClaimtype())) {
+                            projectContract.setProjectcontract_id(projectContractsList.get(h).getProjectcontract_id());
+                            projectContract.setContractnumbercount_id(contractnumbercountList.get(i).getContractnumbercount_id());
+                            projectcontractMapper.updateByPrimaryKey(projectContract);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return ApiResult.success();
+    }
+
+
+
+//    合同号+金额
+    @RequestMapping(value = "/upcnpro02", method = {RequestMethod.GET})
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public ApiResult upcnpro02(TokenModel tokenModel) throws Exception{
+        List<Contractnumbercount> contractnumbercountList = contractnumbercountMapper.selectAll();
+        List<ProjectContract> projectContractsList = projectcontractMapper.selectAll();
+        for(int i = 0;i < contractnumbercountList.size(); i ++){
+            if (contractnumbercountList.get(i).getClaimamount() != null) {
+                for (int h = 0; h < projectContractsList.size(); h++) {
+                    if (projectContractsList.get(h).getContractrequestamount() != null) {
+                        ProjectContract projectContract = new ProjectContract();
+                        BeanUtils.copyProperties(projectContractsList.get(h), projectContract);
+                        if (projectContractsList.get(h).getContract().equals(contractnumbercountList.get(i).getContractnumber())
+                                && projectContractsList.get(h).getContractrequestamount().equals(contractnumbercountList.get(i).getClaimamount())) {
+                            projectContract.setProjectcontract_id(projectContractsList.get(h).getProjectcontract_id());
+                            projectContract.setContractnumbercount_id(contractnumbercountList.get(i).getContractnumbercount_id());
+                            projectcontractMapper.updateByPrimaryKey(projectContract);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return ApiResult.success();
+    }
+
+//    合同号+devilfinshdate
+    @RequestMapping(value = "/upcnpro03", method = {RequestMethod.GET})
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public ApiResult upcnpro03(TokenModel tokenModel) throws Exception{
+        List<Contractnumbercount> contractnumbercountList = contractnumbercountMapper.selectAll();
+        List<ProjectContract> projectContractsList = projectcontractMapper.selectAll();
+        for(int i = 0;i < contractnumbercountList.size(); i ++){
+            if (contractnumbercountList.get(i).getDeliveryfinshdate() != null) {
+                for (int h = 0; h < projectContractsList.size(); h++) {
+                    if (projectContractsList.get(h).getDeliveryfinshdate() != null && (!projectContractsList.get(h).getContract().equals("NS1911310010"))) {
+                        ProjectContract projectContract = new ProjectContract();
+                        BeanUtils.copyProperties(projectContractsList.get(h), projectContract);
+                        if (projectContractsList.get(h).getContract().equals(contractnumbercountList.get(i).getContractnumber())
+                                && projectContractsList.get(h).getDeliveryfinshdate().equals(contractnumbercountList.get(i).getDeliveryfinshdate())) {
+                            projectContract.setProjectcontract_id(projectContractsList.get(h).getProjectcontract_id());
+                            projectContract.setContractnumbercount_id(contractnumbercountList.get(i).getContractnumbercount_id());
+                            projectcontractMapper.updateByPrimaryKey(projectContract);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
         return ApiResult.success();
     }
 
