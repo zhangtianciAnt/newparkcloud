@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
@@ -521,7 +522,7 @@ public class WagesServiceImpl implements WagesService {
                     if (cust.size() > 0) {
                         otherOne.setDepartment_id(cust.get(0).getUserinfo().getCenterid()); //部门
                         otherOne.setSex(cust.get(0).getUserinfo().getSex()); //性别
-                        otherOne.setWorkdate(cust.get(0).getUserinfo().getEnterday()); //入职日
+                        otherOne.setWorkdate(formatStringDateadd(cust.get(0).getUserinfo().getEnterday())); //入职日
                         beginTime = cust.get(0).getUserinfo().getEnterday();
                     }
                     if (abNor.getErrortype().equals("PR013012")) {
@@ -713,7 +714,7 @@ public class WagesServiceImpl implements WagesService {
                 }
 
                 //入社日
-                base.setWorkdate(customer.getUserinfo().getEnterday());
+                base.setWorkdate(formatStringDateadd(customer.getUserinfo().getEnterday()));
                 base.setRowindex(rowindex);
                 /*group id -lxx*/
                 base.setGroupid(customer.getUserinfo().getGroupid());
@@ -2220,6 +2221,24 @@ public class WagesServiceImpl implements WagesService {
         return date;
     }
 
+    /**
+     * 时间格式化
+     *
+     * @param date
+     * @return
+     */
+    private String formatStringDateadd(String date) {
+        if (date.indexOf("Z") > 0) {
+            date = date.replace("-", "/").substring(0, 10);
+            Calendar rightNow = Calendar.getInstance();
+            SimpleDateFormat ymd = new SimpleDateFormat("yyyy/MM/dd");
+            rightNow.setTime(Convert.toDate(date));
+            rightNow.add(Calendar.DAY_OF_YEAR, 1);
+            date = ymd.format(rightNow.getTime());
+        }
+        return date;
+    }
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> importWages(HttpServletRequest request,TokenModel tokenModel) throws Exception {
@@ -2365,12 +2384,9 @@ public class WagesServiceImpl implements WagesService {
                     wages.setUser_id(customerInfo.getUserid());
                     //upd_fjl_0910
 //                    wages.setWorkdate(customerInfo.getUserinfo().getEnterday());//入社时间
-                    String resignationDate = customerInfo.getUserinfo().getEnterday();
-                    if (customerInfo.getUserinfo().getEnterday().indexOf("Z") > 0) {
-                        resignationDate = resignationDate.replace("-", "/").substring(0, 10);
-                    }
+                    String resignationDate = formatStringDateadd(customerInfo.getUserinfo().getEnterday());
                     //upd_fjl_0910
-                    wages.setWorkdate(resignationDate);//入社时间
+                    wages.setWorkdate(formatStringDateadd(customerInfo.getUserinfo().getEnterday()));//入社时间
                     wages.setSex(customerInfo.getUserinfo().getSex());  //性别
 
                     wages.setBonus(customerInfo.getUserinfo().getDifference());//奨金計上

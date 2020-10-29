@@ -291,15 +291,23 @@
 	    @LASTMONTH := round( base.LASTMONTHTOTAL, 2 ) AS LASTMONTH,# base表上个月
 	    @THISMONTH := round( base.THISMONTHTOTAL, 2 ) AS THISMONTH,# base表本月
 	    @RNBASESALARY := round(base.RNBASESALARY,2) AS RNBASESALARY,#RN基本工资
-        @CXDAYS := round(base.ATTENDANCE,2) AS BIRTHREST,# 其他1表 産休出勤日数(看護休暇日数)
+        @CXDAYS :=
+        CASE
+        WHEN ( @TYPE &lt;=> '2' ) THEN
+        round(base.ATTENDANCE,2)
+        WHEN ( @TYPE &lt;=> '3' ) THEN
+        round(base.HANDSUPPORT,2)
+        ELSE
+        round(0,2)
+        END AS BIRTHREST,# 其他1表 産休出勤日数(看護休暇日数)
         @THISMONTHBASICBASIC :=
         CASE
         WHEN ( @TYPE &lt;=> '1' ) THEN
         round(base.INDUCTION_GIVE,2)
         WHEN ( @TYPE &lt;=> '2' ) THEN
-        round( ( @BASETHISMONTHBASIC / 21.75 * @CXDAYS ), 2)
+        round( ( @THISMONTH / 21.75 * @CXDAYS ), 2)
         WHEN ( @TYPE &lt;=> '3' ) THEN
-        round( ( @THISMONTH - @BASETHISMONTHBASIC / 21.75 * @CXDAYS ), 2)
+        round( ( @THISMONTH - @LASTMONTH / 21.75 * @CXDAYS ), 2)
         WHEN ( @TYPE &lt;=> '4' ) THEN
         round(base.LACKATTENDANCE_GIVE,2)
         ELSE
@@ -310,25 +318,24 @@
 	    @CHRONICDEFICIENCY := round(base.CHRONICDEFICIENCY,2) AS LONGILLNESS,#长病欠時数
 	    @DILIGENCE := round(base.DILIGENCE,2) AS OWEDILIGENCE,#欠勤時数
         @LACKATTENDANCE_GIVE := base.LACKATTENDANCE_GIVE AS OWINGCONTROL,#病欠/欠勤控除
-        @BASE_SJJE := (
-        IF
+        @BASE_SJJE := ( IF
         ( @TYPE &lt;=> '-', ROUND( @THISMONTH + @LACKATTENDANCE_GIVE, 2 ), ROUND( base.RTCXBASE + @LACKATTENDANCE_GIVE, 2 ) )
         ) AS ACTUALAMOUNT,#基本給实际金额
         @THISMONTHBASICGEI := IF(@TYPE &lt;=> '-',round((@BASETHISMONTHBASIC + @LACKATTENDANCE_GIVE),2),round((@THISMONTHBASICBASIC + @LACKATTENDANCE_GIVE),2)) as THISMONTHBASICGEI, #本月基本给
         round( @BASE_SJJE - @THISMONTHBASICGEI, 2 ) AS THISMONTHDUTYGEI,#本月职责给
         @YKBZJS := base.DIC_YKBZZS AS YKBZJS, # 一括补助基本給
-        @KCYKBZQQ := IF
-        (
-        base.LASTMONTHSUITDAYS &lt;=> 0.0,
-        0,
+        @KCYKBZQQ := IF (base.LASTMONTHSUITDAYS &lt;=> 0.0,0,
         base.DIC_YKBZSY / 21.75 / 8 * (base.LASTDILIGENCETRY + base.LASTSHORTDEFICIENCYTRY + base.LASTCHRONICDEFICIENCYTRY )
         ) +
-        IF
-        (
-        base.LASTMONTHDAYS &lt;=> 0.0,
-        0,
+        IF (base.LASTMONTHDAYS &lt;=> 0.0,0,
         base.DIC_YKBZZS / 21.75 / 8 * (base.LASTDILIGENCEFORMAL + base.LASTSHORTDEFICIENCYFORMAL + base.LASTCHRONICDEFICIENCYFORMAL )
         ) AS KCYKBZQQ,#扣除欠勤(一括补助用)
+        @KCYKBZQQDY := IF (base.LASTMONTHSUITDAYS &lt;=> 0.0,0,
+        base.DIC_YKBZSY / 21.75 / 8 * (base.THISDILIGENCETRY + base.THISSHORTDEFICIENCYTRY+ base.THISCHRONICDEFICIENCYTRY
+        )) +
+        IF (base.LASTMONTHDAYS &lt;=> 0.0,0,
+        base.DIC_YKBZZS / 21.75 / 8 * (base.THISDILIGENCEFORMAL + base.THISSHORTDEFICIENCYFORMAL+ base.THISCHRONICDEFICIENCYFORMAL
+        )) AS KCYKBZQQDY,#当月扣除欠勤(一括补助用)
         @YKBZ :=
         CASE
         WHEN ( @TYPE &lt;=> '1' ) THEN
@@ -338,7 +345,7 @@
         WHEN ( @TYPE &lt;=> '3' ) THEN
         round( base.DIC_YKBZZS - ( base.DIC_YKBZZS / 21.75 * @CXDAYS) - @KCYKBZQQ, 2 )
         WHEN ( @TYPE &lt;=> '4' ) THEN
-        round(base.RETIRE_LUNCH - @KCYKBZQQ,2)
+        round(base.RETIRE_LUNCH - @KCYKBZQQ - @KCYKBZQQDY,2)
         WHEN (base.LASTMONTHSUITDAYS &lt;> 0.0) THEN
         round(base.DIC_YKBZZS - @KCYKBZQQ,2)
         ELSE
@@ -406,55 +413,40 @@
         )
         )
         ) AS SHOULDPAYTAXES,#累計应纳税所得额
-        base.DIC_0JE,
-        base.DIC_1JE,
-        base.DIC_0SL,
-        base.DIC_1SL,
-        base.DIC_2SL,
-        base.DIC_3SL,
-        base.DIC_4SL,
-        base.DIC_5SL,
-        base.DIC_6SL,
-        base.DIC_0SSKC,
-        base.DIC_1SSKC,
-        base.DIC_2SSKC,
-        base.DIC_3SSKC,
-        base.DIC_4SSKC,
-        base.DIC_5SSKC,
-        base.DIC_6SSKC,
+        base.DIC_0JE,base.DIC_1JE,base.DIC_0SL,base.DIC_1SL,base.DIC_2SL,base.DIC_3SL,base.DIC_4SL,base.DIC_5SL,base.DIC_6SL,
+        base.DIC_0SSKC,base.DIC_1SSKC,base.DIC_2SSKC,base.DIC_3SSKC,base.DIC_4SSKC,base.DIC_5SSKC,base.DIC_6SSKC,
         @BYYKJSDS := (
         CASE
-
-        WHEN ( @LJYNSSDE >= base.DIC_0JE AND @LJYNSSDE &lt;= base.DIC_1JE ) THEN
+        WHEN ( @LJYNSSDE >= base.DIC_0JE AND CAST(@LJYNSSDE AS DECIMAL(10,0)) &lt;= CAST(base.DIC_1JE AS DECIMAL(10,0))) THEN
         (
         IF
         (
         round( ( @LJYNSSDE * base.DIC_0SL - base.DIC_0SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, round(0,2), round(@LJYNSSDE * base.DIC_0SL - base.DIC_0SSKC - @ACCUMUKATEDTAX_YEARTAXES ,2)) ) WHEN ( @LJYNSSDE > 36000
-        AND @LJYNSSDE &lt;= base.DIC_2JE
+        AND CAST(@LJYNSSDE AS DECIMAL(10,0)) &lt;= CAST(base.DIC_2JE AS DECIMAL(10,0))
         ) THEN
         (
         IF
         (
         round( ( @LJYNSSDE * base.DIC_1SL - base.DIC_1SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, round(0,2), round(@LJYNSSDE * base.DIC_1SL - base.DIC_1SSKC - @ACCUMUKATEDTAX_YEARTAXES,2) ) ) WHEN ( @LJYNSSDE > 144000
-        AND @LJYNSSDE &lt;= base.DIC_3JE
+        AND CAST(@LJYNSSDE AS DECIMAL(10,0)) &lt;= CAST(base.DIC_3JE AS DECIMAL(10,0))
         ) THEN#20%
         (
         IF
         (
         round( ( @LJYNSSDE * base.DIC_2SL - base.DIC_2SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, round(0,2), round(@LJYNSSDE * base.DIC_2SL - base.DIC_2SSKC - @ACCUMUKATEDTAX_YEARTAXES,2) ) ) WHEN ( @LJYNSSDE > 300000
-        AND @LJYNSSDE &lt;= base.DIC_4JE
+        AND CAST(@LJYNSSDE AS DECIMAL(10,0)) &lt;= CAST(base.DIC_4JE AS DECIMAL(10,0))
         ) THEN#25%
         (
         IF
         (
         round( ( @LJYNSSDE * base.DIC_3SL - base.DIC_3SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, round(0,2), round(@LJYNSSDE * base.DIC_3SL - base.DIC_3SSKC - @ACCUMUKATEDTAX_YEARTAXES,2) ) ) WHEN ( @LJYNSSDE > 420000
-        AND @LJYNSSDE &lt;= base.DIC_5JE
+        AND CAST(@LJYNSSDE AS DECIMAL(10,0)) &lt;= CAST(base.DIC_5JE AS DECIMAL(10,0))
         ) THEN#30%
         (
         IF
         (
         round( ( @LJYNSSDE * base.DIC_4SL - base.DIC_4SSKC - @ACCUMUKATEDTAX_YEARTAXES ), 2 ) &lt; 0, round(0,2), round(@LJYNSSDE * base.DIC_4SL - base.DIC_4SSKC - @ACCUMUKATEDTAX_YEARTAXES,2) ) ) WHEN ( @LJYNSSDE > 660000
-        AND @LJYNSSDE &lt;= base.DIC_6JE
+        AND CAST(@LJYNSSDE AS DECIMAL(10,0)) &lt;= CAST(base.DIC_6JE AS DECIMAL(10,0))
         ) THEN#35%
         (
         IF
