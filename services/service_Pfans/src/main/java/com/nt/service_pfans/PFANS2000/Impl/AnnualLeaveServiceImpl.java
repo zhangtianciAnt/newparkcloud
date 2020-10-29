@@ -1600,7 +1600,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     }
 
     //系统服务--取当天打卡记录//正式时间每天下午4点45分执行  GBB add
-    //@Scheduled(cron="0 45 16 * * ?")
     public void selectattendance() throws Exception {
             TokenModel tokenModel = new TokenModel();
             List<PunchcardRecordDetail> punDetaillist = new ArrayList<PunchcardRecordDetail>();
