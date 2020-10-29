@@ -38,6 +38,9 @@
         from abnormal
         where status >= 4
         and error_type = 'PR013012'
+        and date_format(finished_date,'%Y%m') > date_format(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y%m')
+        and DAYOFWEEK(date_format(finished_date,'%Y%m%d')) != 7 #不等于周六（待考虑）
+        and DAYOFWEEK(date_format(finished_date,'%Y%m%d')) != 1 #不等于周日（待考虑）
         group by USER_ID
         union all
         select
@@ -50,6 +53,8 @@
         from abnormal
         where status >= 4
         and error_type = 'PR013013'
+        and DATE_FORMAT(abnormal.occurrence_date,'%Y%m') &lt;= DATE_FORMAT( DATE_SUB(NOW(), interval 1 MONTH),'%Y%m')
+        and DATE_FORMAT(abnormal.finished_date,'%Y%m') >= DATE_FORMAT( DATE_SUB(NOW(), interval 1 MONTH),'%Y%m')
         group by USER_ID
     </select>
     <select id="selectAbNormalThisYear" resultType="Double">

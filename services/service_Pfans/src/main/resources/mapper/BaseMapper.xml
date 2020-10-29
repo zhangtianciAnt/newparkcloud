@@ -25,14 +25,11 @@
         UNION ALL
         SELECT USER_ID,'2' type
         FROM abnormal
-        where
-        (ERROR_TYPE = 'PR013012')
-        and (abnormal.occurrence_date &lt;= NOW()
-        and abnormal.FINISHED_DATE &gt;= NOW()
-        or (YEAR(abnormal.occurrence_date) = YEAR(NOW())
-        and MONTH(abnormal.occurrence_date) = MONTH(NOW()))
-        or (YEAR(abnormal.FINISHED_DATE) = YEAR(NOW())
-        and MONTH(abnormal.FINISHED_DATE) = MONTH(NOW())))
+        where status >= 4
+        and error_type = 'PR013012'
+        and date_format(finished_date,'%Y%m') > date_format(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y%m')
+        and DAYOFWEEK(date_format(finished_date,'%Y%m%d')) != 7 #不等于周六（待考虑）
+        and DAYOFWEEK(date_format(finished_date,'%Y%m%d')) != 1 #不等于周日（待考虑）
         UNION ALL
         SELECT USER_ID,'3' type
         FROM abnormal

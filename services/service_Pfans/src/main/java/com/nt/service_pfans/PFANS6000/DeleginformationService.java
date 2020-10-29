@@ -14,4 +14,5 @@ public interface DeleginformationService {
 //    List<DelegainformationVo> getDelegainformation() throws Exception;
 
     List<DelegainformationVo> getYears(String year,String group_id,List<String> owners) throws Exception;
+    void saveDelegaTask()throws Exception ;
 }

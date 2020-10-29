@@ -1,11 +1,13 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.druid.sql.visitor.functions.Isnull;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.*;
+import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
@@ -343,7 +345,7 @@ public class GivingServiceImpl implements GivingService {
                     if (cust.size() > 0) {
                         otherOne.setDepartment_id(cust.get(0).getUserinfo().getCenterid()); //部门
                         otherOne.setSex(cust.get(0).getUserinfo().getSex()); //性别
-                        otherOne.setWorkdate(cust.get(0).getUserinfo().getEnterday()); //入职日
+                        otherOne.setWorkdate(formatStringDateadd(cust.get(0).getUserinfo().getEnterday())); //入职日
                         beginTime = cust.get(0).getUserinfo().getEnterday();
                     }
                     if (abNor.getErrortype().equals("PR013012")) {
@@ -376,7 +378,7 @@ public class GivingServiceImpl implements GivingService {
                         otherOne.setRowindex(rowindexMan);
                         otherOne.setStartdate(abNor.getOccurrencedate());
                         otherOne.setEnddate(abNor.getFinisheddate());
-                        Integer days = getDaysforOtherOne(abNor.getOccurrencedate(), abNor.getFinisheddate());
+                        Integer days = getDaysforOtherOneman(abNor.getOccurrencedate(), abNor.getFinisheddate());
                         otherOne.setVacation(days.toString());
                         long beginMillisecond = notNull(beginTime).equals("0") ? (long) 0 : format.parse(beginTime.replace("/", "-")).getTime();
                         if (beginMillisecond >= endMillisecond) {
@@ -536,7 +538,7 @@ public class GivingServiceImpl implements GivingService {
                 }
 
                 //入社日
-                base.setWorkdate(customer.getUserinfo().getEnterday());
+                base.setWorkdate(formatStringDateadd(customer.getUserinfo().getEnterday()));
                 base.setRowindex(rowindex);
                 /*group id -lxx*/
                 base.setGroupid(customer.getUserinfo().getGroupid());
@@ -633,14 +635,14 @@ public class GivingServiceImpl implements GivingService {
                 if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
                     temp = calNowLast.getTime();
                 }
-                thisMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), temp);
+                thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calEnterDay.getTime(), temp);
                 //本月正式天数
                 thisMonthDays = 0;
             }
             //入职日是上月
             else if (calLast.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calLast.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
                 //上月试用天数
-                lastMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), calLast.getTime());
+                lastMonthSuitDays = getTrialWorkDaysExceptWeekend(calEnterDay.getTime(), calLast.getTime());
                 //上月正式天数
                 lastMonthDays = 0;
                 //本月试用天数
@@ -649,14 +651,14 @@ public class GivingServiceImpl implements GivingService {
                 if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
                     temp = calNowLast.getTime();
                 }
-                thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), temp);
                 //本月正式天数
                 thisMonthDays = 0;
             }
             //其他
             else {
                 //上月试用天数
-                lastMonthSuitDays = getWorkDaysExceptWeekend(calLastOne.getTime(), calLast.getTime());
+                lastMonthSuitDays = getTrialWorkDaysExceptWeekend(calLastOne.getTime(), calLast.getTime());
                 //上月正式天数
                 lastMonthDays = 0;
                 //本月试用天数
@@ -665,7 +667,7 @@ public class GivingServiceImpl implements GivingService {
                 if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
                     temp = calNowLast.getTime();
                 }
-                thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), temp);
                 //本月正式天数
                 thisMonthDays = 0;
             }
@@ -678,7 +680,7 @@ public class GivingServiceImpl implements GivingService {
                 userinfo.setEnddate(formatStringDate(userinfo.getEnddate()));
             }
             calSuitDate.setTime(sf.parse(userinfo.getEnddate().replace("Z", " UTC")));
-            calSuitDate.add(Calendar.DATE, -1);
+            //calSuitDate.add(Calendar.DATE, -1);
             //试用截止日
             Calendar calOfficialDate = Calendar.getInstance();
             if (userinfo.getEnddate().indexOf("Z") < 0) {
@@ -699,14 +701,14 @@ public class GivingServiceImpl implements GivingService {
                     if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
                         temp = calNowLast.getTime();
                     }
-                    thisMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), temp);
+                    thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calEnterDay.getTime(), temp);
                     //本月正式天数
                     thisMonthDays = 0;
                 }
                 //入职日是上月
                 else if (calLast.get(Calendar.YEAR) == calEnterDay.get(Calendar.YEAR) && calLast.get(Calendar.MONTH) == calEnterDay.get(Calendar.MONTH)) {
                     //上月试用天数
-                    lastMonthSuitDays = getWorkDaysExceptWeekend(calEnterDay.getTime(), calLast.getTime());
+                    lastMonthSuitDays = getTrialWorkDaysExceptWeekend(calEnterDay.getTime(), calLast.getTime());
                     //上月正式天数
                     lastMonthDays = 0;
                     //本月试用天数
@@ -715,14 +717,14 @@ public class GivingServiceImpl implements GivingService {
                     if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
                         temp = calNowLast.getTime();
                     }
-                    thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                    thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), temp);
                     //本月正式天数
                     thisMonthDays = 0;
                 }
                 //其他
                 else {
                     //上月试用天数
-                    lastMonthSuitDays = getWorkDaysExceptWeekend(calLastOne.getTime(), calLast.getTime());
+                    lastMonthSuitDays = getTrialWorkDaysExceptWeekend(calLastOne.getTime(), calLast.getTime());
                     //上月正式天数
                     lastMonthDays = 0;
                     //本月试用天数
@@ -731,7 +733,7 @@ public class GivingServiceImpl implements GivingService {
                     if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
                         temp = calNowLast.getTime();
                     }
-                    thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                    thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), temp);
                     //本月正式天数
                     thisMonthDays = 0;
                 }
@@ -741,7 +743,7 @@ public class GivingServiceImpl implements GivingService {
                 //上月试用天数
                 lastMonthSuitDays = 0;
                 //上月正式天数
-                lastMonthDays = getWorkDaysExceptWeekend(calLastOne.getTime(), calLast.getTime());
+                lastMonthDays = getTrialWorkDaysExceptWeekend(calLastOne.getTime(), calLast.getTime());
                 //本月试用天数
                 thisMonthSuitDays = 0;
                 //本月正式天数
@@ -750,7 +752,7 @@ public class GivingServiceImpl implements GivingService {
                 if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
                     temp = calNowLast.getTime();
                 }
-                thisMonthDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                thisMonthDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), temp);
             }
             //试用截止日是上月
             else if (calLast.get(Calendar.YEAR) == calOfficialDate.get(Calendar.YEAR) && calLast.get(Calendar.MONTH) == calOfficialDate.get(Calendar.MONTH)) {
@@ -760,9 +762,9 @@ public class GivingServiceImpl implements GivingService {
                 if (calEnterDay.getTime().getTime() > calLastOne.getTime().getTime()) {
                     tempStart = calEnterDay.getTime();
                 }
-                lastMonthSuitDays = getWorkDaysExceptWeekend(tempStart, calSuitDate.getTime());
+                lastMonthSuitDays = getTrialWorkDaysExceptWeekend(tempStart, calSuitDate.getTime());
                 //上月正式天数
-                lastMonthDays = getWorkDaysExceptWeekend(calOfficialDate.getTime(), calLast.getTime());
+                lastMonthDays = getTrialWorkDaysExceptWeekend(calOfficialDate.getTime(), calLast.getTime());
                 //本月试用天数
                 thisMonthSuitDays = 0;
                 //本月正式天数
@@ -770,7 +772,7 @@ public class GivingServiceImpl implements GivingService {
                 if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
                     temp = calNowLast.getTime();
                 }
-                thisMonthDays = getWorkDaysExceptWeekend(calNowOne.getTime(), temp);
+                thisMonthDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), temp);
             }
             //试用截止日是本月
             else if (calNowLast.get(Calendar.YEAR) == calOfficialDate.get(Calendar.YEAR) && calNowLast.get(Calendar.MONTH) == calOfficialDate.get(Calendar.MONTH)) {
@@ -789,10 +791,8 @@ public class GivingServiceImpl implements GivingService {
                     if (calEnterDay.getTime().getTime() > calLastOne.getTime().getTime()) {
                         tempStart = calEnterDay.getTime();
                     }
-                    lastMonthSuitDays = getWorkDaysExceptWeekend(tempStart, calLast.getTime());
-                    //本月试用天数
-                    calSuitDate.add(Calendar.DATE, 1);
-                    thisMonthSuitDays = getWorkDaysExceptWeekend(calNowOne.getTime(), calSuitDate.getTime());
+                    lastMonthSuitDays = getTrialWorkDaysExceptWeekend(tempStart, calLast.getTime());
+                    thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), calSuitDate.getTime());
                 }
 
                 //上月正式天数
@@ -802,7 +802,7 @@ public class GivingServiceImpl implements GivingService {
                 if (calNowLast.getTime().getTime() < calResignationDate.getTime().getTime()) {
                     temp = calNowLast.getTime();
                 }
-                thisMonthDays = getWorkDaysExceptWeekend(calOfficialDate.getTime(), temp);
+                thisMonthDays = getTrialWorkDaysExceptWeekend(calOfficialDate.getTime(), temp);
             }
         }
 
@@ -1994,8 +1994,36 @@ public class GivingServiceImpl implements GivingService {
         return new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).toPlainString();
     }
 
-    //计算 其他1 当月应出勤天数-lxx
+    //计算 其他1（女产休） 当月应出勤天数-lxx
     private int getDaysforOtherOne(Date start, Date end) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, 0);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        Calendar calEnd = Calendar.getInstance();
+        calEnd.set(Calendar.DAY_OF_MONTH, calEnd.getActualMaximum(Calendar.DAY_OF_MONTH));
+        //int monthDays = getWorkDaysExceptWeekend(cal.getTime(), calEnd.getTime());
+        int monthDays = getWorkDaysExceptWeekendVacation(cal.getTime(), calEnd.getTime());
+        Date statrd = new Date();
+        Date endd = new Date();
+
+        if (start.getTime() < cal.getTime().getTime()) {
+            statrd = cal.getTime();
+        } else {
+            statrd = start;
+        }
+        if (end.getTime() > calEnd.getTime().getTime()) {
+            endd = calEnd.getTime();
+        } else {
+            endd = end;
+        }
+        //int restDays = getWorkDaysExceptWeekend(statrd, endd);
+        int restDays = getWorkDaysExceptWeekendVacation(statrd, endd);
+
+        return (monthDays - restDays);
+    }
+
+    //计算 其他1（男看护） 当月应出勤天数-lxx
+    private int getDaysforOtherOneman(Date start, Date end) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, 0);
         cal.set(Calendar.DAY_OF_MONTH, 1);
@@ -2015,13 +2043,13 @@ public class GivingServiceImpl implements GivingService {
         } else {
             endd = end;
         }
-        int restDays = getWorkDaysExceptWeekend(statrd, endd);
+        int restDays = getWorkDaysExceptWeekend(start, end);
 
-        return (monthDays - restDays);
+        return restDays;
     }
 
-    //获取工作日-lxx
-    private int getWorkDaysExceptWeekend(Date start, Date end) {
+    //试用天数计算
+    private int getTrialWorkDaysExceptWeekend(Date start, Date end) {
         int workDays = 0;
         if (end.getTime() > start.getTime()) {
             //        Integer holi = workingDayMapper.getHolidayExceptWeekend(start, end);
@@ -2039,6 +2067,71 @@ public class GivingServiceImpl implements GivingService {
             }
         }
         return workDays;
+    }
+
+    //获取工作日(产休)-lxx
+    private int getWorkDaysExceptWeekendVacation(Date start, Date end) {
+        int workDays = 0;
+        if (end.getTime() > start.getTime()) {
+            //        Integer holi = workingDayMapper.getHolidayExceptWeekend(start, end);
+            Calendar calStar = Calendar.getInstance();
+            calStar.setTime(start);
+            Calendar calEnd = Calendar.getInstance();
+            calEnd.setTime(end);
+            for (int i = calStar.get(Calendar.DATE); i <= calEnd.get(Calendar.DATE); i++) {
+                Calendar cal = Calendar.getInstance();
+                cal.set(calStar.get(Calendar.YEAR), calStar.get(Calendar.MONTH), i);
+                int day = cal.get(Calendar.DAY_OF_WEEK);
+                if (!(day == Calendar.SUNDAY || day == Calendar.SATURDAY)) {
+                    workDays++;
+                }
+            }
+        }
+        return workDays;
+    }
+
+    //获取工作日-lxx
+    private int getWorkDaysExceptWeekend(Date start, Date end) {
+        int workDays = 0;
+        int count = 0;
+        if (end.getTime() > start.getTime()) {
+            //        Integer holi = workingDayMapper.getHolidayExceptWeekend(start, end);
+            Calendar calStar = Calendar.getInstance();
+            calStar.setTime(start);
+            Calendar calEnd = Calendar.getInstance();
+            calEnd.setTime(end);
+//            for (int i = calStar.get(Calendar.DATE); i <= calEnd.get(Calendar.DATE); i++) {
+//                Calendar cal = Calendar.getInstance();
+//                cal.set(calStar.get(Calendar.YEAR), calStar.get(Calendar.MONTH), i);
+//                int day = cal.get(Calendar.DAY_OF_WEEK);
+//                if (!(day == Calendar.SUNDAY || day == Calendar.SATURDAY)) {
+//                    workDays++;
+//                }
+//            }
+            while (calStar.compareTo(calEnd) <= 0) {
+                if (calStar.get(Calendar.DAY_OF_WEEK) != 7 && calStar.get(Calendar.DAY_OF_WEEK) != 1) {
+                    workDays++;
+                }
+                calStar.add(Calendar.DAY_OF_MONTH, 1);
+            }
+        }
+        SimpleDateFormat ymd = new SimpleDateFormat("yyyy-MM-dd");
+        //工作日表
+        List<WorkingDay> workingDaysList = workingDayMapper.getWorkingday(ymd.format(start),ymd.format(end));
+        int workingDayscount = workingDaysList.size();
+        for (int i = 0; i < workingDaysList.size(); i++) {
+            Date bdate = workingDaysList.get(i).getWorkingdate();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(bdate);
+            if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
+                workingDayscount = workingDayscount - 1;
+            }
+        }
+        //振替出勤日
+        List<WorkingDay> workingDaysList1 = new ArrayList<WorkingDay>();
+        workingDaysList1 = workingDaysList.stream().filter(p->(p.getType().equals("4"))).collect(Collectors.toList());
+        workingDayscount = workingDayscount + workingDaysList1.size();
+        return workDays - workingDayscount;
     }
 
     // region 入职和离职 BY Cash
@@ -2217,12 +2310,36 @@ public class GivingServiceImpl implements GivingService {
         induction.setUser_id(customerInfo.getUserid());
         // 工号
         induction.setJobnumber(customerInfo.getUserinfo().getJobnumber());
+
+        Calendar calEnterday = Calendar.getInstance();
+        Calendar calEnddate = Calendar.getInstance();
+        String strEnterday = customerInfo.getUserinfo().getEnterday();
+
+        //本月最后一天
+        SimpleDateFormat format = new SimpleDateFormat("dd");
+        Calendar cale = null;
+        cale = Calendar.getInstance();
+        cale = Calendar.getInstance();
+        cale.add(Calendar.MONTH, 1);
+        cale.set(Calendar.DAY_OF_MONTH, 0);
+        String lastday = format.format(cale.getTime());
+
         // 入社日 客户导入日期是yy-mm-dd hh:mm:ss
         if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getEnterday())){
             if (customerInfo.getUserinfo().getEnterday().indexOf("Z") < 0) {
+                strEnterday = formatStringDate(customerInfo.getUserinfo().getEnterday().substring(0,10));
                 customerInfo.getUserinfo().setEnterday(formatStringDate(customerInfo.getUserinfo().getEnterday()));
             }
             induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnterday().replace("Z", " UTC")));
+            calEnterday.setTime(sf.parse(customerInfo.getUserinfo().getEnterday().replace("Z", " UTC")));
+        }
+        //试用期截止日
+        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getEnddate())){
+            if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
+                customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
+            }
+            induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC")));
+            calEnddate.setTime(sf.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC")));
         }
         // 本月基本工资
         String thisMonthSalary = getSalary(customerInfo, 1);
@@ -2248,17 +2365,45 @@ public class GivingServiceImpl implements GivingService {
         induction.setTrial(String.valueOf(thisMonthSuitDays));
         // 給料
         if (StringUtils.isNotEmpty(staffStartDate)) {
-            induction.setGive(df.format(Double.parseDouble(thisMonthSalary) - (Double.parseDouble(thisMonthSalary) / dateBase * thisMonthSuitDays * wageDeductionProportion)));
+            //没有试用期的情况
+            if (calEnterday.get(Calendar.YEAR) == calEnddate.get(Calendar.YEAR)
+                    && calEnterday.get(Calendar.MONTH) == calEnddate.get(Calendar.MONTH)
+                    && calEnterday.get(Calendar.DATE) == calEnddate.get(Calendar.DATE) + 1) {
+                induction.setGive(df.format((Double.parseDouble(thisMonthSalary) / dateBase * thisMonthDays)));
+            }
+            else{
+
+                //试用期截止日为当月最后一天的话也算是当月试用，当月未转正
+                if((DateUtil.format(new Date(), "yyyyMM").equals(DateUtil.format(induction.getWorddate(), "yyyyMM"))
+                        && DateUtil.format(induction.getWorddate(), "dd").equals(lastday))){
+                    // 上月試用社員出勤日数
+                    lastAttendanceDays = 0d;
+                    induction.setAttendance(String.valueOf(""));
+                    // 今月試用社員出勤日数
+                    thisMonthSuitDays = 0d;
+                    induction.setTrial(String.valueOf(""));
+                    induction.setGive(df.format(Double.parseDouble(thisMonthSalary)));
+                }
+                else{
+                    induction.setGive(df.format(Double.parseDouble(thisMonthSalary) - (Double.parseDouble(thisMonthSalary) / dateBase * thisMonthSuitDays * wageDeductionProportion)));
+                }
+
+            }
+
         } else {
             //本月之前的试用人员当月无转正的情况:【先月出勤日数】/【今月試用社員出勤日数】设空值（kang）
             if(!DateUtil.format(new Date(), "yyyyMM").equals(DateUtil.format(induction.getWorddate(), "yyyyMM"))){
-                // 今月試用社員出勤日数
+                // 上月試用社員出勤日数
                 lastAttendanceDays = 0d;
                 induction.setAttendance(String.valueOf(""));
-                // 今月試用社員出勤日数
-                thisMonthSuitDays = 0d;
-                induction.setTrial(String.valueOf(""));
+                strEnterday = strEnterday.replace("/","").replace("-","").substring(0,6);
+                if(!DateUtil.format(new Date(), "yyyyMM").equals(strEnterday)){
+                    // 今月試用社員出勤日数
+                    thisMonthSuitDays = 0d;
+                    induction.setTrial(String.valueOf(""));
+                }
             }
+
             if (lastAttendanceDays > 0) {
                 induction.setGive(df.format(Double.parseDouble(lastMonthSalary) / dateBase * lastAttendanceDays + Double.parseDouble(thisMonthSalary)));
             } else {
@@ -2272,8 +2417,23 @@ public class GivingServiceImpl implements GivingService {
         // 一括补助
         //本月转正判断
         if(induction.getStartdate() != null){
-            //ROUND(1000-500/21.75*I3,2)
-            induction.setLunch(df.format(officialSubsidy - trialSubsidy / 21.75 * thisMonthSuitDays));
+            //没有试用期的情况
+            if (calEnterday.get(Calendar.YEAR) == calEnddate.get(Calendar.YEAR)
+                    && calEnterday.get(Calendar.MONTH) == calEnddate.get(Calendar.MONTH)
+                    && calEnterday.get(Calendar.DATE) == calEnddate.get(Calendar.DATE) + 1) {
+                induction.setLunch(df.format(officialSubsidy / 21.75 * thisMonthDays));
+            }
+            else if (DateUtil.format(new Date(), "yyyy").equals(String.valueOf(calEnddate.get(Calendar.YEAR)))
+                && DateUtil.format(new Date(), "M").equals(String.valueOf(calEnddate.get(Calendar.MONTH) + 1))
+                && lastday.equals(String.valueOf(calEnddate.get(Calendar.DATE)))) {
+                    //calEnddate.get(Calendar.MONTH) 取出的月份月份少一个月
+                    induction.setLunch(df.format(trialSubsidy));
+            }
+            else{
+                //ROUND(1000-500/21.75*I3,2)
+                induction.setLunch(df.format(officialSubsidy - trialSubsidy / 21.75 * thisMonthSuitDays));
+            }
+
         }
         else{
             //上月试用工作日数 / 21.75 * 500 + 上月正式工作日数 / 21.75 * 1000 + 今月試用社員出勤日数 / 21.75 * 500 + 本月正式工作日数 / 21.75 * 1000
@@ -2398,6 +2558,24 @@ public class GivingServiceImpl implements GivingService {
     private String formatStringDate(String date) {
         date = date.replace("/", "-");
         date = date.concat("T00:00:00.000Z");
+        return date;
+    }
+
+    /**
+     * 时间格式化
+     *
+     * @param date
+     * @return
+     */
+    private String formatStringDateadd(String date) {
+        if (date.indexOf("Z") > 0) {
+            date = date.replace("-", "/").substring(0, 10);
+            Calendar rightNow = Calendar.getInstance();
+            SimpleDateFormat ymd = new SimpleDateFormat("yyyy/MM/dd");
+            rightNow.setTime(Convert.toDate(date));
+            rightNow.add(Calendar.DAY_OF_YEAR, 1);
+            date = ymd.format(rightNow.getTime());
+        }
         return date;
     }
 
