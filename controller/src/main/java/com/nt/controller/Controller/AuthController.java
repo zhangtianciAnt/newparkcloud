@@ -119,9 +119,9 @@ public class AuthController {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/creatAnnualLeaveAn",method={RequestMethod.GET})
-    public ApiResult creatAnnualLeaveAn(HttpServletRequest request) throws Exception {
-        annualLeaveService.insert();
+    @RequestMapping(value = "/insertAnnualImport",method={RequestMethod.GET})
+    public ApiResult insertAnnualImport(HttpServletRequest request) throws Exception {
+        annualLeaveService.insertAnnualImport();
         return ApiResult.success();
     }
 
