@@ -3,7 +3,6 @@ package com.nt.service_pfans.PFANS5000.Impl;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Auth.Role;
-import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
@@ -17,21 +16,15 @@ import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo3;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
-import com.nt.dao_Pfans.PFANS6000.Priceset;
-import com.nt.dao_Workflow.Vo.StartWorkflowVo;
-import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.UserService;
-import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.mapper.*;
 import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
-import com.nt.utils.AuthConstants;
-import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
@@ -44,7 +37,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -192,6 +184,13 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             }
         }
         return companyProjectList;
+    }
+
+    @Override
+    public Contractnumbercount selectConnumList(String contractnumbercount_id) throws Exception {
+        Contractnumbercount contractnumbercount = new Contractnumbercount();
+        contractnumbercount = contractnumbercountMapper.selectByPrimaryKey(contractnumbercount_id);
+        return contractnumbercount;
     }
 
 

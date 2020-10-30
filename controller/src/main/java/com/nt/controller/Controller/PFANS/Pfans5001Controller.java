@@ -73,6 +73,16 @@ public class Pfans5001Controller {
         }
         return ApiResult.success(companyProjectsService.selectById(companyprojectsid));
     }
+    /**
+     * 查看
+     */
+    @RequestMapping(value = "/selectConnumList", method = {RequestMethod.GET})
+    public ApiResult selectConnumList(String contractnumbercount_id, HttpServletRequest request) throws Exception {
+        if(contractnumbercount_id==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(companyProjectsService.selectConnumList(contractnumbercount_id));
+    }
 
     @RequestMapping(value = "/selectAll", method = {RequestMethod.GET})
     public ApiResult selectAll(HttpServletRequest request) throws Exception {

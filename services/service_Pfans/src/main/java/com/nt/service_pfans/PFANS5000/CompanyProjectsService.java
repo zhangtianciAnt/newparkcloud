@@ -1,11 +1,11 @@
 package com.nt.service_pfans.PFANS5000;
 
+import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo3;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
-import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +34,8 @@ public interface CompanyProjectsService {
 
     //按id查询
     CompanyProjectsVo selectById(String companyprojectsid) throws Exception;
+
+    Contractnumbercount selectConnumList(String contractnumbercount_id) throws Exception;
 
     List<ProjectContract> selectAll() throws Exception;
     List<StageInformation> getstageInformation(StageInformation stageInformation) throws Exception;
