@@ -23,10 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @ProjectName: newparkcloud
@@ -203,7 +200,11 @@ public class UserController {
     public ApiResult importUser( HttpServletRequest request) throws Exception {
         try {
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(userService.importUser(request, tokenModel));
+            List<String> stringList =  userService.importUser(request, tokenModel);
+            //add 导入人员计算年休 20201030
+            annualLeaveService.insertAnnualImport();
+            //add 导入人员计算年休 20201030
+            return ApiResult.success(stringList);
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {
