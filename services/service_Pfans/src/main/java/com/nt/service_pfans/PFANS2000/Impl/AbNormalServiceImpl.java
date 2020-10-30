@@ -382,10 +382,28 @@ public class AbNormalServiceImpl implements AbNormalService {
                 if (list.size() > 0) {
                     //upd ccm 2020/6/9
                     annual_avg_remaing = list.get(0).getAnnual_avg_remaining();
+                    Double sumercishenqingday = list.get(0).getAnnual_leave_shenqingzhong().doubleValue();
+                    if(list.get(0).getAnnual_leave_shenqingzhong().doubleValue()>0)
+                    {
+                        List<AbNormal> abnormalone = abNormalMapper.selectfinishAnnuel1(abNormal.getUser_id(),String.valueOf(year));
+                        for(AbNormal a :abnormalone)
+                        {
+                            if(a.getStatus().equals("5"))
+                            {
+                                Double cha = 0d;
+                                if(Double.valueOf(a.getRelengthtime()) - Double.valueOf(a.getLengthtime()) >0 )
+                                {
+                                    cha = Double.valueOf(a.getRelengthtime()) - Double.valueOf(a.getLengthtime());
+                                }
+                                sumercishenqingday = sumercishenqingday - Double.valueOf(a.getRelengthtime())/8 + cha/8;
+                            }
+                        }
+                    }
+
                     if(annual_avg_remaing!=null && !annual_avg_remaing.isEmpty() && !annual_avg_remaing.equals("-"))
                     {
-                        if ((Double.valueOf(annual_avg_remaing) - list.get(0).getAnnual_leave_shenqingzhong().doubleValue()) >= lengths) {
-                            String Timecheck = String.valueOf(Double.valueOf(annual_avg_remaing) - list.get(0).getAnnual_leave_shenqingzhong().doubleValue());
+                        if ((Double.valueOf(annual_avg_remaing) - sumercishenqingday) >= lengths) {
+                            String Timecheck = String.valueOf(Double.valueOf(annual_avg_remaing) - sumercishenqingday);
                             rst.put("dat", Timecheck);
                             rst.put("error", abNormal.getErrortype());
                             rst.put("can", "yes");
@@ -396,8 +414,8 @@ public class AbNormalServiceImpl implements AbNormalService {
                     }
                     else
                     {
-                        if ((list.get(0).getRemaining_annual_leave_thisyear().doubleValue() - list.get(0).getAnnual_leave_shenqingzhong().doubleValue()) >= lengths) {
-                            String Timecheck = String.valueOf(list.get(0).getRemaining_annual_leave_thisyear().doubleValue() - list.get(0).getAnnual_leave_shenqingzhong().doubleValue());
+                        if ((list.get(0).getRemaining_annual_leave_thisyear().doubleValue() - sumercishenqingday) >= lengths) {
+                            String Timecheck = String.valueOf(list.get(0).getRemaining_annual_leave_thisyear().doubleValue() - sumercishenqingday);
                             rst.put("dat", Timecheck);
                             rst.put("error", abNormal.getErrortype());
                             rst.put("can", "yes");
