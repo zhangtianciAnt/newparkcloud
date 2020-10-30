@@ -192,7 +192,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         insert();
     }
     //系统服务--事业年度开始获取年休
-//    @Scheduled(cron="0 0 0 1 4 *")//正式时间每年4月1日零时执行
     @Override
     public void insert() throws Exception {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
@@ -609,7 +608,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         insertattendancebp(-1,"","");
     }
 
-    //@Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add
+    @Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add
     public void insertpunchcardTask()throws Exception {
         //处理异常和加班数据
         //上月1号
@@ -1925,7 +1924,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     }
 
     //系统服务--取当天打卡记录BP//正式时间每天下午4点50分执行  GBB add
-    //@Scheduled(cron="0 50 16 * * ?")
     public void selectattendancebp() throws Exception {
         TokenModel tokenModel = new TokenModel();
         List<PunchcardRecordDetailbp> punDetaillist = new ArrayList<PunchcardRecordDetailbp>();
