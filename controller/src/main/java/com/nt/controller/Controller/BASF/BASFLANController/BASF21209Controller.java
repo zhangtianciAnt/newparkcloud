@@ -293,6 +293,12 @@ public class BASF21209Controller {
         return ApiResult.success(startprogramServices.selectProgramForErc());
     }
 
+    //获取参加人员信息（ById）
+    @RequestMapping(value = "/gettrainjoinlistById", method = {RequestMethod.GET})
+    public ApiResult trainjoinlistById(String trainjoinlistid, HttpServletRequest request) throws Exception {
+        return ApiResult.success(trainjoinlistServices.trainjoinlistById(trainjoinlistid));
+    }
+
     //未来三个月培训信息
     @RequestMapping(value = "/getFutureProgram", method = {RequestMethod.POST})
     public ApiResult getFutureProgram(HttpServletRequest request) throws Exception {
@@ -318,5 +324,16 @@ public class BASF21209Controller {
     @RequestMapping(value = "/getUsersEnd", method = {RequestMethod.POST})
     public ApiResult getUsersEnd(HttpServletRequest request) throws Exception {
         return ApiResult.success(startprogramServices.getUsersEnd());
+    }
+
+    //更新培训清单
+    @RequestMapping(value = "/updateSigninandreults", method = {RequestMethod.POST})
+    public ApiResult updateSigninandreults(@RequestBody Trainjoinlist trainjoinlist, HttpServletRequest request) throws Exception {
+        if (trainjoinlist == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        trainjoinlistServices.updateSigninandreults(trainjoinlist, tokenModel);
+        return ApiResult.success();
     }
 }

@@ -23,4 +23,6 @@ public interface DictionaryService {
 
     //新增小分类
     void insertCodes(List<Dictionary> dictionaries, TokenModel tokenModel) throws Exception;
+
+    String getCodeValue(String code) throws Exception;
 }

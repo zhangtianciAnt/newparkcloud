@@ -48,6 +48,10 @@ public interface TrainjoinlistServices {
     //获取培训申请人员名单
     List<Trainjoinlist> joinlists(String startprogramid) throws Exception;
 
+    List<Trainjoinlist> trainjoinlistById(String trainjoinlistid) throws Exception;
+
+    void updateSigninandreults(Trainjoinlist trainjoinlist,TokenModel tokenModel)throws Exception;
+
     //根据人员id获取培训列表id
     List<Trainjoinlist> startprogramidList(String personnelid) throws Exception;
 

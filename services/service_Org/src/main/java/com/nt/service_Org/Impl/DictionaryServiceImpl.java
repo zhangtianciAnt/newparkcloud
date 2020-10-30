@@ -98,4 +98,16 @@ public class DictionaryServiceImpl implements DictionaryService {
             dictionaryMapper.insert(d);
         }
     }
+
+    /**
+     * @Method insertCodes
+     * @Author 王哲
+     * @Version 1.0
+     * @Description 新增小分类
+     * @Date 2019/12/13 13:18
+     */
+    @Override
+    public String getCodeValue(String code) throws Exception {
+        return dictionaryMapper.getCodeValue(code);
+    }
 }

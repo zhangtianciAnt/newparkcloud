@@ -59,4 +59,14 @@ WHERE
     AND
 	d.PCODE LIKE #{code}
     </select>
+
+	<select id="getCodeValue" parameterType="java.lang.String" resultType="String">
+        SELECT
+            VALUE1
+        FROM
+            dictionary
+        WHERE
+            CODE = #{code}
+            AND `STATUS` = '0'
+    </select>
 </mapper>

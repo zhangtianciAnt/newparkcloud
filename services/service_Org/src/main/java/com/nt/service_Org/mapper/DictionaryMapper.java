@@ -15,4 +15,6 @@ public interface DictionaryMapper extends MyMapper<Dictionary> {
 
     //查询字典大分类中的小分类
     List<Dictionary> smallAtbig(@Param("code") String code);
+
+    String getCodeValue(@Param("code") String code);
 }

@@ -9,12 +9,14 @@ import com.nt.dao_BASF.VO.OverduePersonnelListVo;
 import com.nt.dao_BASF.VO.TrainingRecordsExportVo;
 import com.nt.dao_BASF.VO.TrainjoinlistVo;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
 import com.nt.service_BASF.TrainjoinlistServices;
 import com.nt.service_BASF.mapper.ProgramlistMapper;
 import com.nt.service_BASF.mapper.StartprogramMapper;
 import com.nt.service_BASF.mapper.TrainingRecordsExportMapper;
 import com.nt.service_BASF.mapper.TrainjoinlistMapper;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
@@ -63,6 +65,9 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
 
     @Autowired
     private OrgTreeService orgTreeService;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
     String updepid = "";
     public String getupDepid (List<OrgTree> orgs, String departmentid) {
@@ -251,6 +256,31 @@ public class TrainjoinlistServicesImpl implements TrainjoinlistServices {
         trainjoinlist.setStatus("0");
         List<Trainjoinlist> trainjoinlists = trainjoinlistMapper.select(trainjoinlist);
         return trainjoinlists;
+    }
+
+    //获取培训申请人信息
+    @Override
+    public List<Trainjoinlist> trainjoinlistById(String trainjoinlistid) throws Exception {
+        Trainjoinlist trainjoinlist = new Trainjoinlist();
+        trainjoinlist.setTrainjoinlistid(trainjoinlistid);
+        trainjoinlist.setStatus("0");
+        List<Trainjoinlist> trainjoinlists = trainjoinlistMapper.select(trainjoinlist);
+        return trainjoinlists;
+    }
+
+    @Override
+    public void updateSigninandreults(Trainjoinlist trainjoinlist, TokenModel tokenModel) throws Exception {
+        String jointype = dictionaryService.getCodeValue(trainjoinlist.getJointype());
+        if(StringUtils.isNotEmpty(jointype)){
+            trainjoinlist.setJointype(jointype);
+        }
+        String throughtype = dictionaryService.getCodeValue(trainjoinlist.getThroughtype());
+        if(StringUtils.isNotEmpty(throughtype)){
+            trainjoinlist.setThroughtype(throughtype);
+        }
+        trainjoinlist.setStatus("0");
+        trainjoinlist.preUpdate(tokenModel);
+        trainjoinlistMapper.updateByPrimaryKey(trainjoinlist);
     }
 
     //根据人员id获取培训列表id
