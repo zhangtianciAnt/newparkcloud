@@ -1,14 +1,11 @@
 package com.nt.dao_AOCHUAN.AOCHUAN5000.Vo;
 
-import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
-import jxl.write.DateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import java.util.Date;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -37,6 +34,11 @@ public class FinReport {
     //客户名称
     @Column(name = "CUSTOMERNAMECN")
     private String customernamecn;
+    //add_fjl_1102 添加客户名称在财务报表显示 start
+    //客户名称
+    @Column(name = "CUSTOMERNAMEEN")
+    private String customernameen;
+    //add_fjl_1102 添加客户名称在财务报表显示 end
     //国家
     @Column(name = "COUNTRY")
     private String country;

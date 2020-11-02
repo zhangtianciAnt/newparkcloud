@@ -203,6 +203,9 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                     model.put("FYEAR",String.format("%tY", date));//会计年度
                     model.put("FPERIOD",Integer.valueOf(String.format("%tm", date)));//期间
                 }
+                if(cinfo.getBus_date() != null){
+                    model.put("FBUSDATE",stf.format(cinfo.getBus_date()));//业务日期
+                }
                 model.put("FATTACHMENTS",cinfo.getAttachments());//附件数
                 model.put("FEntity",listmapFentity);//单据体
                 listmap.add(model);
@@ -229,7 +232,7 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
 
 
 //            log.error("【保存出错】：{}", save.getMsg());
-            throw new LogicalException("数据推送出错 ：" + diamessage);
+            throw new LogicalException("数据推送出错 ：" +save.getMsg());
 //            return;
         }
 
