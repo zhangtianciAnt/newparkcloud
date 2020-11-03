@@ -9,7 +9,10 @@ import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessVo;
+import com.nt.dao_Pfans.PFANS2000.PunchcardRecord;
+import com.nt.dao_Pfans.PFANS2000.PunchcardRecordDetail;
 import com.nt.dao_Pfans.PFANS3000.Tickets;
+import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
 import com.nt.dao_Workflow.Workflowinstance;
@@ -22,11 +25,16 @@ import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper;
+import com.nt.service_pfans.PFANS2000.mapper.PunchcardRecordDetailMapper;
+import com.nt.service_pfans.PFANS2000.mapper.PunchcardRecordMapper;
 import com.nt.service_pfans.PFANS3000.mapper.TicketsMapper;
+import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -36,10 +44,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,7 +81,12 @@ public class BusinessServiceImpl implements BusinessService {
     private BusinessMapper businessMapper;
     @Autowired
     private TravelContentMapper travelcontentMapper;
-
+    @Autowired
+    private WorkingDayMapper workingDayMapper;
+    @Autowired
+    private PunchcardRecordDetailMapper punmapper;
+    @Autowired
+    private PunchcardRecordMapper punchcardrecordMapper;
     @Override
     public List<Business> get(Business business) throws Exception {
         return businessMapper.select(business);
@@ -243,6 +253,37 @@ public class BusinessServiceImpl implements BusinessService {
                 travelcontentMapper.insertSelective(travelcontent);
             }
         }
+
+        //region gbb 20201029 禅道601 取消出差时删除打卡记录 start
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userid").is(Bus.getUser_id()));
+        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+        Date start = Bus.getStartdate();
+        Date end = Bus.getEnddate();
+        Calendar calStar = Calendar.getInstance();
+        calStar.setTime(start);
+        Calendar calEnd = Calendar.getInstance();
+        calEnd.setTime(end);
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        while (calStar.compareTo(calEnd) <= 0) {
+            //刪除考勤列表記錄
+            PunchcardRecord punchcardrecord = new PunchcardRecord();
+            punchcardrecord.setPunchcardrecord_date(calStar.getTime());
+            punchcardrecord.setTenantid("1");
+            punchcardrecord.setJobnumber(customerInfo.getUserinfo().getJobnumber());
+            punchcardrecordMapper.delete(punchcardrecord);
+
+            //刪除考勤詳細記錄
+            PunchcardRecordDetail punchcardrecorddetail = new PunchcardRecordDetail();
+            punchcardrecorddetail.setDates(calStar.getTime());
+            punchcardrecorddetail.setTenantid("1");
+            punchcardrecorddetail.setJobnumber(customerInfo.getUserinfo().getJobnumber());
+            punmapper.delete(punchcardrecorddetail);
+
+            calStar.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        //endregion gbb 20201029 禅道601 取消出差时删除打卡记录 end
+
         return businessMapper.select(business);
     }
     private OrgTree getCurrentOrg(OrgTree org, String orgId) throws Exception {
@@ -307,6 +348,68 @@ public class BusinessServiceImpl implements BusinessService {
                 travelcontentMapper.insertSelective(travelcontent);
             }
         }
+
+        //region gbb 20201029 禅道601 审批通过时将出差期间工作日的考勤设为因公外出 start
+        if(business.getStatus().equals("4")){
+            Query query = new Query();
+            query.addCriteria(Criteria.where("userid").is(business.getUser_id()));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            //特殊的工作日(星期六、日工作)
+            List<String> SPECIAL_WORK_DAYS = new ArrayList<>();
+            //特殊的休息日(星期一到五休息)
+            List<String> SPECIAL_REST_DAYS = new ArrayList<>();
+            SimpleDateFormat ymd = new SimpleDateFormat("yyyy-MM-dd");
+            Date start = business.getStartdate();
+            Date end = business.getEnddate();
+            //工作日表
+            List<WorkingDay> workingDaysList = workingDayMapper.getWorkingday(ymd.format(start),ymd.format(end));
+            int workingDayscount = workingDaysList.size();
+            for (int i = 0; i < workingDaysList.size(); i++) {
+                Date workingdate = workingDaysList.get(i).getWorkingdate();
+                String type = workingDaysList.get(i).getType();
+                if(type.equals("4")){
+                    //振替出勤日
+                    SPECIAL_WORK_DAYS.add(ymd.format(workingdate));
+                }
+                else{
+                    //其他节假日
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(workingdate);
+                    if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
+                        continue;
+                    }
+                    SPECIAL_REST_DAYS.add(ymd.format(workingdate));
+                }
+            }
+
+            Calendar calStar = Calendar.getInstance();
+            calStar.setTime(start);
+            Calendar calEnd = Calendar.getInstance();
+            calEnd.setTime(end);
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            while (calStar.compareTo(calEnd) <= 0) {
+                //如果不是周六或者周日则工作日
+                if (calStar.get(Calendar.DAY_OF_WEEK) != 7 && calStar.get(Calendar.DAY_OF_WEEK) != 1) {
+                    //如果不是周六或者周日，但是该日属于国家法定节假日或者特殊放假日则-1
+                    if (SPECIAL_REST_DAYS.contains(DateFormatUtils.format(calStar.getTime(), "yyyy-MM-dd"))) {
+                        continue;
+                    }
+                    //添加打卡记录
+                    insertpun(calStar,customerInfo,tokenModel);
+                }
+                //如果是周六或者周日，但是该日属于需要工作的日子则 +1
+                if (SPECIAL_WORK_DAYS.contains(DateFormatUtils.format(calStar.getTime(), "yyyy-MM-dd"))) {
+                    //如果不是周六或者周日，但是该日属于国家法定节假日或者特殊放假日则-1
+                    if (SPECIAL_REST_DAYS.contains(DateFormatUtils.format(calStar.getTime(), "yyyy-MM-dd"))) {
+                        continue;
+                    }
+                    //添加打卡记录
+                    insertpun(calStar,customerInfo,tokenModel);
+                }
+                calStar.add(Calendar.DAY_OF_MONTH, 1);
+            }
+        }
+        //endregion gbb 20201029 禅道601 审批通过时将出差期间工作日的考勤设为因公外出 end
     }
 
     @Override
@@ -355,6 +458,68 @@ public class BusinessServiceImpl implements BusinessService {
                 travelcontentMapper.insertSelective(travelcontent);
             }
         }
+    }
+
+    //添加打卡记录
+    public void insertpun(Calendar calStar,CustomerInfo customerInfo,TokenModel tokenModel) throws Exception {
+
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String userid = customerInfo.getUserid();
+        String jobnumber = customerInfo.getUserinfo().getJobnumber();
+        String username = customerInfo.getUserinfo().getCustomername();
+        Calendar calendcreate = Calendar.getInstance();
+        calendcreate.setTime(calStar.getTime());
+        calendcreate.add(Calendar.DATE,1);
+        Date createdate = sf.parse(DateFormatUtils.format(calendcreate.getTime(), "yyyy-MM-dd") + " 00:30:00");
+
+        //region 添加打卡详细
+        PunchcardRecordDetail punchcardrecorddetail = new PunchcardRecordDetail();
+        //卡号
+        punchcardrecorddetail.setJobnumber(jobnumber);
+        punchcardrecorddetail.setDates(calStar.getTime());
+        punchcardrecorddetail.setUser_id(username);
+        punchcardrecorddetail.preInsert(tokenModel);
+        punchcardrecorddetail.setCreateon(createdate);
+        punchcardrecorddetail.setCreateby(userid);
+        punchcardrecorddetail.setTenantid("1");//判断打卡记录数据来源
+
+        //进门
+        punchcardrecorddetail.setEventno("1");
+        //打卡时间
+        Date date1 = sf.parse(DateFormatUtils.format(calStar.getTime(), "yyyy-MM-dd") + " 09:00:00");
+        punchcardrecorddetail.setPunchcardrecord_date(date1);
+        punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
+        punmapper.insert(punchcardrecorddetail);
+        //出门
+        punchcardrecorddetail.setEventno("2");
+        //打卡时间
+        Date date2 = sf.parse(DateFormatUtils.format(calStar.getTime(), "yyyy-MM-dd") + " 18:00:00");
+        punchcardrecorddetail.setPunchcardrecord_date(date2);
+        punchcardrecorddetail.setPunchcardrecorddetail_id(UUID.randomUUID().toString());
+        punmapper.insert(punchcardrecorddetail);
+        //endregion
+
+        //region 添加打卡
+        PunchcardRecord punchcardrecord = new PunchcardRecord();
+        punchcardrecord.setPunchcardrecord_date(calStar.getTime());
+        punchcardrecord.setTeam_id(customerInfo.getUserinfo().getTeamname());
+        punchcardrecord.setGroup_id(customerInfo.getUserinfo().getGroupname());
+        punchcardrecord.setCenter_id(customerInfo.getUserinfo().getCentername());
+        punchcardrecord.setUser_id(userid);
+        punchcardrecord.setJobnumber(jobnumber);
+        punchcardrecord.setWorktime("0.0");
+        punchcardrecord.setAbsenteeismam("0.0");
+        punchcardrecord.setOutgoinghours("0.0");
+        punchcardrecord.setEffectiveduration("8.0");
+        punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
+        punchcardrecord.setTime_start(date1);
+        punchcardrecord.setTime_end(date2);
+        punchcardrecord.preInsert(tokenModel);
+        punchcardrecord.setCreateon(createdate);
+        punchcardrecord.setOwner(userid);
+        punchcardrecord.setTenantid("1");//判断打卡记录数据来源
+        punchcardrecordMapper.insert(punchcardrecord);
+        //endregion
     }
 
 }
