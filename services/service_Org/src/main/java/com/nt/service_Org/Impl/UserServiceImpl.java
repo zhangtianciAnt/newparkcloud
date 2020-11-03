@@ -1304,6 +1304,10 @@ public class UserServiceImpl implements UserService {
                 if (item.get("仕事开始年月日") != null) {
                     userinfo.setWorkday(item.get("仕事开始年月日").toString());
                 }
+                //试用期截止日
+                if (item.get("试用期截止日") != null) {
+                    userinfo.setEnddate(item.get("试用期截止日").toString());
+                }
 
                 //        ws-6/28-禅道141任务
                 //离职理由分类
@@ -2004,6 +2008,9 @@ public class UserServiceImpl implements UserService {
                     }
                     if (item.get("仕事开始年月日●") != null) {
                         customerInfoList.get(0).getUserinfo().setWorkday(item.get("仕事开始年月日●").toString());
+                    }
+                    if (item.get("试用期截止日●") != null) {
+                        customerInfoList.get(0).getUserinfo().setEnddate(item.get("试用期截止日●").toString());
                     }
                     if (item.get("员工ID●") != null) {
                         customerInfoList.get(0).getUserinfo().setPersonalcode(item.get("员工ID●").toString());
