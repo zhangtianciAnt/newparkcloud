@@ -1354,7 +1354,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 time_start_temp = workshift_start;
                                             }
                                             String shijiworkHours = shijiworkLength(time_start_temp, time_end_temp, lunchbreak_start, lunchbreak_end, PR);
-                                            shijiworkHours = df.format(Math.floor(Double.valueOf(shijiworkHours) / ((Double.valueOf(strovertime)) / 60 / 60 / 1000)) * ((Double.valueOf(strovertime)) / 60 / 60 / 1000));
+                                            //shijiworkHours = df.format(Math.floor(Double.valueOf(shijiworkHours) / ((Double.valueOf(strovertime)) / 60 / 60 / 1000)) * ((Double.valueOf(strovertime)) / 60 / 60 / 1000));
 
                                             if (Double.valueOf(sdf.parse(time_start_temp).getTime()) >= Double.valueOf(sdf.parse(time_end_temp).getTime())) {
                                                 shijiworkHours = "0";
@@ -2905,7 +2905,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 time_start_temp = workshift_start;
                                             }
                                             String shijiworkHours = shijiworkLength(time_start_temp, time_end_temp, lunchbreak_start, lunchbreak_end, PR);
-                                            shijiworkHours = df.format(Math.floor(Double.valueOf(shijiworkHours) / ((Double.valueOf(strovertime)) / 60 / 60 / 1000)) * ((Double.valueOf(strovertime)) / 60 / 60 / 1000));
+//                                            shijiworkHours = df.format(Math.floor(Double.valueOf(shijiworkHours) / ((Double.valueOf(strovertime)) / 60 / 60 / 1000)) * ((Double.valueOf(strovertime)) / 60 / 60 / 1000));
 
                                             if (Double.valueOf(sdf.parse(time_start_temp).getTime()) >= Double.valueOf(sdf.parse(time_end_temp).getTime())) {
                                                 shijiworkHours = "0";
