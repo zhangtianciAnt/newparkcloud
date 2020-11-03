@@ -138,10 +138,14 @@ public class InventoryplanServiceImpl implements InventoryplanService {
     }
 
     @Override
-    public List<InventoryResults> selectByResult(String inventoryresultsid) throws Exception {
-        InventoryResults inventoryResults = new InventoryResults();
-        inventoryResults.setInventoryplan_id(inventoryresultsid);
-        return inventoryResultsMapper.select(inventoryResults);
+    public List<InventoryResults> selectByResult(List<List<String>> inventoryrangeidlist) throws Exception {
+        List<InventoryResults> inventoryResultsList = new ArrayList<>();
+        for(int i = 0; i < inventoryrangeidlist.size(); i++){
+            InventoryResults inventoryResults = new InventoryResults();
+            inventoryResults = inventoryResultsMapper.selectInResults(inventoryrangeidlist.get(i).get(0),inventoryrangeidlist.get(i).get(1));
+            inventoryResultsList.add(inventoryResults);
+        }
+        return inventoryResultsList;
     }
 
     @Override

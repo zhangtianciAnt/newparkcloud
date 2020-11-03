@@ -1,12 +1,15 @@
 package com.nt.service_Assets;
 
 import com.nt.dao_Assets.Assets;
+import com.nt.dao_Assets.InventoryRange;
 import com.nt.dao_Assets.Inventoryplan;
 import com.nt.dao_Assets.Vo.InventoryRangeVo;
 import com.nt.dao_Assets.InventoryResults;
 import com.nt.utils.dao.TokenModel;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface InventoryplanService {
 
@@ -22,7 +25,7 @@ public interface InventoryplanService {
 
     InventoryRangeVo selectById(String inventoryrangeid) throws Exception;
 
-    List<InventoryResults> selectByResult(String inventoryresultsid) throws Exception;
+    List<InventoryResults> selectByResult(List<List<String>> inventoryrangeidlist) throws Exception;
 
     int check(Inventoryplan inventoryplan) throws Exception;
 }

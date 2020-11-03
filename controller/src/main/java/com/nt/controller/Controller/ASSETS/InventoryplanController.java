@@ -8,12 +8,11 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/inventoryplan")
@@ -88,13 +87,14 @@ public class InventoryplanController {
         return ApiResult.success(inventoryplanService.selectById(inventoryRangeid));
     }
 
-    @RequestMapping(value = "/selectByResult", method = {RequestMethod.GET})
-    public ApiResult selectByResult(String inventoryresultsid, HttpServletRequest request) throws Exception {
-        if (inventoryresultsid == null) {
+    @RequestMapping(value = "/selectByResult", method = {RequestMethod.POST})
+    public ApiResult selectByResult(@RequestBody List<List<String>> inventoryrangeidlist, HttpServletRequest request) throws Exception {
+        if (inventoryrangeidlist == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(inventoryplanService.selectByResult(inventoryresultsid));
+        return ApiResult.success(inventoryplanService.selectByResult(inventoryrangeidlist));
     }
+
 
     @RequestMapping(value = "/check", method = {RequestMethod.POST})
     public ApiResult check(@RequestBody Inventoryplan inventoryplan, HttpServletRequest request) throws Exception {
