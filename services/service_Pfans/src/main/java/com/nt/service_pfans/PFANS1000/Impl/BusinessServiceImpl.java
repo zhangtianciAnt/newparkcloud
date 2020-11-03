@@ -386,7 +386,6 @@ public class BusinessServiceImpl implements BusinessService {
             calStar.setTime(start);
             Calendar calEnd = Calendar.getInstance();
             calEnd.setTime(end);
-            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             while (calStar.compareTo(calEnd) <= 0) {
                 //如果不是周六或者周日则工作日
                 if (calStar.get(Calendar.DAY_OF_WEEK) != 7 && calStar.get(Calendar.DAY_OF_WEEK) != 1) {
@@ -471,6 +470,20 @@ public class BusinessServiceImpl implements BusinessService {
         calendcreate.setTime(calStar.getTime());
         calendcreate.add(Calendar.DATE,1);
         Date createdate = sf.parse(DateFormatUtils.format(calendcreate.getTime(), "yyyy-MM-dd") + " 00:30:00");
+
+        //刪除考勤列表記錄
+        PunchcardRecord pun = new PunchcardRecord();
+        pun.setPunchcardrecord_date(calStar.getTime());
+        pun.setTenantid("1");
+        pun.setJobnumber(jobnumber);
+        punchcardrecordMapper.delete(pun);
+
+        //刪除考勤詳細記錄
+        PunchcardRecordDetail pundetail = new PunchcardRecordDetail();
+        pundetail.setDates(calStar.getTime());
+        pundetail.setTenantid("1");
+        pundetail.setJobnumber(jobnumber);
+        punmapper.delete(pundetail);
 
         //region 添加打卡详细
         PunchcardRecordDetail punchcardrecorddetail = new PunchcardRecordDetail();
