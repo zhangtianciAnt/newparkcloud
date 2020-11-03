@@ -7,6 +7,7 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
@@ -71,7 +72,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
     @Override
     public List<PunchcardRecord> list(PunchcardRecord punchcardrecord, TokenModel tokenModel) throws Exception {
-        return punchcardrecordMapper.select(punchcardrecord);
+        List<PunchcardRecord> punlist = punchcardrecordMapper.select(punchcardrecord);
+        punlist = punlist.stream().filter(item -> (StringUtils.isNullOrEmpty(item.getTenantid()))).collect(Collectors.toList());
+        return punlist;
     }
 
     @Override
