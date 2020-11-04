@@ -117,33 +117,37 @@ public class Pfans2023Controller {
 
         StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
         startWorkflowVo.setDataId(goalmanagement.getGoalmanagement_id());
-        List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
-
-        String me ="";
-        String wfList2="";
-
-        if("3".equals(gmt.getStage()) && "4".equals(gmt.getStatus())){
-            if (wfList.size() > 0) {
-                query = new Query();
-                query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
-                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                if (customerInfo != null) {
-                    wfList2 = customerInfo.getUserinfo().getCustomername();
-                    wfList2 = sign.startGraphics2D(wfList2);
-                }
-            }
-            me = sign.startGraphics2D(CustomerInfolist.get(0).getUserinfo().getCustomername());
-            data.put("me", me);
-            data.put("up", wfList2);
-        }
+//        禅道613 印章删掉 ztc start
+//        List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
+//        String me ="";
+//        String wfList2="";
+//
+//        if("3".equals(gmt.getStage()) && "4".equals(gmt.getStatus())){
+//            if (wfList.size() > 0) {
+//                query = new Query();
+//                query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+//                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                if (customerInfo != null) {
+//                    wfList2 = customerInfo.getUserinfo().getCustomername();
+//                    wfList2 = sign.startGraphics2D(wfList2);
+//                }
+//            }
+//            me = sign.startGraphics2D(CustomerInfolist.get(0).getUserinfo().getCustomername());
+//            data.put("me", me);
+//            data.put("up", wfList2);
+//        }
+//        禅道613 印章删掉 ztc end
 
         data.put("now", DateUtil.year(new Date()));
         ExcelOutPutUtil.OutPutPdf("目标管理", "mubiaoguanli.xlsx", data, response);
 
-        if("3".equals(gmt.getStage()) && "4".equals(gmt.getStatus())){
-            FileUtil.del(AuthConstants.FILE_DIRECTORY + me);
-            FileUtil.del(AuthConstants.FILE_DIRECTORY + wfList2);
-        }
+
+//        禅道613 印章删掉 ztc start
+//        if("3".equals(gmt.getStage()) && "4".equals(gmt.getStatus())){
+//            FileUtil.del(AuthConstants.FILE_DIRECTORY + me);
+//            FileUtil.del(AuthConstants.FILE_DIRECTORY + wfList2);
+//        }
+        //        禅道613 印章删掉 ztc end
 
     }
 }
