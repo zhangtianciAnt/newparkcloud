@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -348,6 +349,28 @@ public class EvectionServiceImpl implements EvectionService {
         // 发票日期，条件日期
         Date date = new Date();
         SimpleDateFormat myFormatter = new SimpleDateFormat("ddMMMyyyy", Locale.ENGLISH);
+        //        ztc 禅道558 6.2-6.9 start
+        String placeAnt = "";
+        if(evectionVo.getEvection().getRegionname() != "" && evectionVo.getEvection().getRegionname() != null){
+            placeAnt = evectionVo.getEvection().getRegionname();
+        }else{
+            placeAnt = evectionVo.getEvection().getPlace();
+        }
+        DateFormat formatterAnt = new SimpleDateFormat("yyyy-MM-dd");
+        String startStr = formatterAnt.format(evectionVo.getEvection().getStartdate());
+        Date startDate = formatterAnt.parse(startStr);
+        Calendar calendarSta = Calendar.getInstance();
+        calendarSta.setTime(startDate);
+        String monthSStr = String.valueOf(calendarSta.get(calendarSta.MONTH));
+        String daySStr = String.valueOf(calendarSta.get(calendarSta.DATE));
+
+        String endStr = formatterAnt.format(evectionVo.getEvection().getEnddate());
+        Date endDate = formatterAnt.parse(endStr);
+        Calendar calendarEnd = Calendar.getInstance();
+        calendarEnd.setTime(endDate);
+        String monthSEnd = String.valueOf(calendarEnd.get(calendarEnd.MONTH));
+        String daySEnd = String.valueOf(calendarEnd.get(calendarEnd.DATE));
+        //        ztc 禅道558 6.2-6.9 end
         date = myFormatter.parse(myFormatter.format(date));
         //通过字典查取税率
         List<com.nt.dao_Org.Dictionary> dictionaryList = dictionaryService.getForSelect("PJ071");
@@ -445,9 +468,9 @@ public class EvectionServiceImpl implements EvectionService {
                 //add_fjl_添加发票说明的专票场合判断
                 if (!StringUtils.isNullOrEmpty(insertInfo.getRemarks())) {
                     if (insertInfo.getRemarks().contains("专票")) {
-                        insertInfo.setRemarks(userName + insertInfo.getRemarks());
+                        insertInfo.setRemarks(userName + placeAnt + "出差" + monthSStr + "." + daySStr + "~" + monthSEnd + "." + daySEnd);
                     } else {
-                        insertInfo.setRemarks(userName + accountCodeMap.getOrDefault(insertInfo.getRemarks(), ""));
+                        insertInfo.setRemarks(userName + placeAnt + "出差" + monthSStr + "." + daySStr + "~" + monthSEnd + "." + daySEnd);
                     }
                 }
                 //add_fjl_添加发票说明的专票场合判断
