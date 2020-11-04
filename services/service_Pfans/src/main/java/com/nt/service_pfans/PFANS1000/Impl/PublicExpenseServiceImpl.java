@@ -915,7 +915,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     LoanApplication loantion = loanApplicationMapper.selectByPrimaryKey(loanApplication);
                     if (loantion != null) {
                         loantion.setCanafver("1");
-                        if (loantion.getCanafvermoney() != null) {
+                        if (loantion.getCanafvermoney() != null && loantion.getCanafvermoney() != "") {
                             loantion.setCanafvermoney(BigDecimal.valueOf(Double.parseDouble(loantion.getCanafvermoney()) + Double.parseDouble(publicExpense.getMoneys())).setScale(2, RoundingMode.HALF_UP).toPlainString());
                         } else {
                             loantion.setCanafvermoney(publicExpense.getMoneys());
