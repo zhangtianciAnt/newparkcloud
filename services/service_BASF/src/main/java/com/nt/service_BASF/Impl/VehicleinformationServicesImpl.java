@@ -80,6 +80,15 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
             }
             arrayList.add(arrayList1);
         }
+        ArrayList errorGpsArrayList = new ArrayList();
+        for (int i = 0; i < list.get(0).getErrorgps().split(";").length; i++) {
+            ArrayList tempList = new ArrayList();
+            for (int j = 0; j < list.get(0).getErrorgps().split(";")[i].split(",").length; j++) {
+                BigDecimal a = new BigDecimal(list.get(0).getErrorgps().split(";")[i].split(",")[j]);
+                tempList.add(Arrays.asList(a));
+            }
+            errorGpsArrayList.add(tempList);
+        }
         listarr.setVehicleinformationid(list.get(0).getVehicleinformationid());
         listarr.setVehiclenumber(list.get(0).getVehiclenumber());
         listarr.setDriver(list.get(0).getDriver());
@@ -92,6 +101,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         listarr.setCreateby(list.get(0).getCreateby());
         listarr.setCreateon(list.get(0).getCreateon());
         listarr.setGpsArr(arrayList);
+        listarr.setErrorGpsArr(errorGpsArrayList);
         return listarr;
     }
 
