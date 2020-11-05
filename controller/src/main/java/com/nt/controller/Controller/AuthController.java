@@ -101,6 +101,12 @@ public class AuthController {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/insertHistoricalCard",method={RequestMethod.GET})
+    public ApiResult insertHistoricalCard(String strStartDate,String strendDate,String strFlg,String strJobnumber,HttpServletRequest request) throws Exception {
+        annualLeaveService.insertHistoricalCard(strStartDate,strendDate,strFlg,strJobnumber);
+        return ApiResult.success();
+    }
+
     @RequestMapping(value = "/getattendanceByuser",method={RequestMethod.GET})
     public ApiResult getattendanceByuser(String userid,HttpServletRequest request) throws Exception {
         annualLeaveService.getattendanceByuser(userid);

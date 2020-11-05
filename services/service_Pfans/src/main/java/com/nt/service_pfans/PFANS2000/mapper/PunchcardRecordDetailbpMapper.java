@@ -14,7 +14,7 @@ public interface PunchcardRecordDetailbpMapper extends MyMapper<PunchcardRecordD
 
     List<PunchcardRecordDetailbp> getPunDetailbp(@Param("jobnumber") String jobnumber, @Param("user_id") String user_id,@Param("punchcardrecord_date") String punchcardrecord_date);
 
-    void deletetepunbp(@Param("punchcardrecord_date") String punchcardrecord_date,@Param("staffNo") String staffNo);
+    void deletetepunbp(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("staffNo") String staffNo);
 
-    void deletetepundetbp(@Param("punchcardrecord_date") String punchcardrecord_date,@Param("staffNo") String staffNo);
+    void deletetepundetbp(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("staffNo") String staffNo);
 }

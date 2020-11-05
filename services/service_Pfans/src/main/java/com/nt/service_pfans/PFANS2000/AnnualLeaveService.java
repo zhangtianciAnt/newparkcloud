@@ -28,6 +28,8 @@ public interface AnnualLeaveService {
 
     void insertpunchcard(int diffday) throws Exception;
 
+    void insertHistoricalCard(String strStartDate,String strendDate,String strFlg,String strJobnumber) throws Exception;
+
     void getattendanceByuser(String userid) throws Exception;
 
     void selectattendance() throws Exception;

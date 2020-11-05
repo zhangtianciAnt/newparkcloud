@@ -24,7 +24,7 @@
 
     <delete id="deletetepunbp">
         DELETE FROM punchcardrecordbp
-        WHERE date_format(punchcardrecord_date, '%Y-%m-%d') = #{punchcardrecord_date}
+        WHERE date_format(punchcardrecord_date, '%Y-%m-%d') BETWEEN #{startDate} and #{endDate}
         <if test="staffNo != null and staffNo != ''" >
             AND jobnumber = #{staffNo,jdbcType=VARCHAR}
         </if>
@@ -32,7 +32,7 @@
 
     <delete id="deletetepundetbp">
         DELETE FROM punchcardrecorddetailbp
-        WHERE date_format(punchcardrecord_date, '%Y-%m-%d') = #{punchcardrecord_date}
+        WHERE date_format(punchcardrecord_date, '%Y-%m-%d') BETWEEN #{startDate} and #{endDate}
         <if test="staffNo != null and staffNo != ''" >
             AND jobnumber = #{staffNo,jdbcType=VARCHAR}
         </if>
