@@ -1629,7 +1629,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     public void insertHistoricalCard(String strStartDate,String strendDate,String strFlg,String staffNo) throws Exception {
 
         String [] jobnumber = staffNo.split(",");
-        if(jobnumber.length>0)
+        if(jobnumber.length != 1)
         {
             for(int i=0;i<jobnumber.length;i++){
 
@@ -1647,6 +1647,22 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //删除昨天的临时数据
                     punchcardrecorddetailbpmapper.deletetepundetbp(strStartDate,strendDate,jobnumber[i]);
                 }
+            }
+        }
+        else{
+            //社内人员//
+            if(strFlg.equals("1")){
+                //删除昨天的临时数据
+                punchcardrecorddetailmapper.deletetepun(strStartDate,strendDate,staffNo);
+                //删除昨天的临时数据
+                punchcardrecorddetailmapper.deletetepundet(strStartDate,strendDate,staffNo);
+            }
+            else{
+                //外驻人员
+                //删除昨天的临时数据
+                punchcardrecorddetailbpmapper.deletetepunbp(strStartDate,strendDate,staffNo);
+                //删除昨天的临时数据
+                punchcardrecorddetailbpmapper.deletetepundetbp(strStartDate,strendDate,staffNo);
             }
         }
 

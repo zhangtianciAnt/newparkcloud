@@ -102,8 +102,8 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/insertHistoricalCard",method={RequestMethod.GET})
-    public ApiResult insertHistoricalCard(String strStartDate,String strendDate,String strFlg,String strJobnumber,HttpServletRequest request) throws Exception {
-        annualLeaveService.insertHistoricalCard(strStartDate,strendDate,strFlg,strJobnumber);
+    public ApiResult insertHistoricalCard(String strStartDate,String strendDate,String strFlg,String staffNo,HttpServletRequest request) throws Exception {
+        annualLeaveService.insertHistoricalCard(strStartDate,strendDate,strFlg,staffNo);
         return ApiResult.success();
     }
 
