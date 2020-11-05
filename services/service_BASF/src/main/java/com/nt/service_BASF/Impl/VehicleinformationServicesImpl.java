@@ -23,7 +23,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -71,24 +70,34 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
 
         VehicleinformationGpsArrVo listarr = new VehicleinformationGpsArrVo();
 
-        ArrayList arrayList = new ArrayList();
-        for (int i = 0; i < list.get(0).getGps().split(";").length; i++) {
-            ArrayList arrayList1 = new ArrayList();
-            for (int j = 0; j < list.get(0).getGps().split(";")[i].split(",").length; j++) {
-                BigDecimal a = new BigDecimal(list.get(0).getGps().split(";")[i].split(",")[j]);
-                arrayList1.add(Arrays.asList(a));
+        String gps = list.get(0).getGps();
+        if(StringUtils.isNotEmpty(gps)){
+            ArrayList arrayList = new ArrayList();
+            for (int i = 0; i < gps.split(";").length; i++) {
+                ArrayList arrayList1 = new ArrayList();
+                for (int j = 0; j < gps.split(";")[i].split(",").length; j++) {
+                    BigDecimal a = new BigDecimal(gps.split(";")[i].split(",")[j]);
+                    arrayList1.add(Arrays.asList(a));
+                }
+                arrayList.add(arrayList1);
             }
-            arrayList.add(arrayList1);
+            listarr.setGpsArr(arrayList);
         }
-        ArrayList errorGpsArrayList = new ArrayList();
-        for (int i = 0; i < list.get(0).getErrorgps().split(";").length; i++) {
-            ArrayList tempList = new ArrayList();
-            for (int j = 0; j < list.get(0).getErrorgps().split(";")[i].split(",").length; j++) {
-                BigDecimal a = new BigDecimal(list.get(0).getErrorgps().split(";")[i].split(",")[j]);
-                tempList.add(Arrays.asList(a));
+
+        String errorGps = list.get(0).getErrorgps();
+        if(StringUtils.isNotEmpty(errorGps)){
+            ArrayList errorGpsArrayList = new ArrayList();
+            for (int i = 0; i < errorGps.split(";").length; i++) {
+                ArrayList tempList = new ArrayList();
+                for (int j = 0; j < errorGps.split(";")[i].split(",").length; j++) {
+                    BigDecimal a = new BigDecimal(errorGps.split(";")[i].split(",")[j]);
+                    tempList.add(Arrays.asList(a));
+                }
+                errorGpsArrayList.add(tempList);
             }
-            errorGpsArrayList.add(tempList);
+            listarr.setErrorGpsArr(errorGpsArrayList);
         }
+
         listarr.setVehicleinformationid(list.get(0).getVehicleinformationid());
         listarr.setVehiclenumber(list.get(0).getVehiclenumber());
         listarr.setDriver(list.get(0).getDriver());
@@ -100,8 +109,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         listarr.setStatus(list.get(0).getStatus());
         listarr.setCreateby(list.get(0).getCreateby());
         listarr.setCreateon(list.get(0).getCreateon());
-        listarr.setGpsArr(arrayList);
-        listarr.setErrorGpsArr(errorGpsArrayList);
+
         return listarr;
     }
 
@@ -147,7 +155,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
             int m = 1;
             vehicleinformationVo = new VehicleinformationVo();
             vehicleinformationVo.setCnt(data[j]);
-            vehicleinformationVo.setDate(String.valueOf(m + j) + "月");
+            vehicleinformationVo.setDate((m + j) + "月");
             infoList.add(vehicleinformationVo);
         }
 
