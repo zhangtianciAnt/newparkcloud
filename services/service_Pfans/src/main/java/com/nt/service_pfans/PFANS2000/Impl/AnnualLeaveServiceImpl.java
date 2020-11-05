@@ -722,9 +722,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             String thisDate = DateUtil.format(cal.getTime(),"yyyy-MM-dd");
             //String thisDate = DateUtil.format(new Date(),"yyyy-MM-dd");
             //删除昨天的临时数据
-            punchcardrecorddetailmapper.deletetepun(thisDate,staffNo);
+            punchcardrecorddetailmapper.deletetepun(thisDate,thisDate,staffNo);
             //删除昨天的临时数据
-            punchcardrecorddetailmapper.deletetepundet(thisDate,staffNo);
+            punchcardrecorddetailmapper.deletetepundet(thisDate,thisDate,staffNo);
             //正式
             String doorIDList = "34,16,17,80,81,83,84";//34:自动门；16：1F子母门-左；17：1F子母门-右；80：B2南侧；81：B2北侧；83：B1北侧；84：B2南侧；
             String url = "";
@@ -3468,9 +3468,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 StaffNoList = info.getUserinfo().getJobnumber();
 
                 //删除昨天的临时数据
-                punchcardrecorddetailmapper.deletetepun(thisDate,StaffNoList);
+                punchcardrecorddetailmapper.deletetepun(thisDate,thisDate,StaffNoList);
                 //删除昨天的临时数据
-                punchcardrecorddetailmapper.deletetepundet(thisDate,StaffNoList);
+                punchcardrecorddetailmapper.deletetepundet(thisDate,thisDate,StaffNoList);
 
                 //正式
                 String doorIDList = "34,16,17,80,81,83,84";//34:自动门；16：1F子母门-左；17：1F子母门-右；80：B2南侧；81：B2北侧；83：B1北侧；84：B2南侧；
