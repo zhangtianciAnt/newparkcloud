@@ -64,7 +64,10 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         for (String l : loa) {
             lo = loanapplicationMapper.selectByPrimaryKey(l);
             if (lo != null && !loaList.contains(lo)) {
-                loaList.add(lo);
+                if(lo.getStatus().equals("4"))
+                {
+                    loaList.add(lo);
+                }
             }
         }
         //add-ws-8/24-禅道任务544
@@ -79,6 +82,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 loanapplication.setCenter_id(customerInfo.getUserinfo().getCenterid());
             }
             loanapplication.setPublicradio("1");
+            loanapplication.setStatus("4");
             List<LoanApplication> LoanApplicationlist = loanapplicationMapper.select(loanapplication);
             for(LoanApplication loan :LoanApplicationlist){
                 loaList.add(loan);
@@ -96,7 +100,10 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         for (String l : loa) {
             lo = loanapplicationMapper.selectByPrimaryKey(l);
             if (lo != null && !loaList.contains(lo)) {
-                loaList.add(lo);
+                if(lo.getStatus().equals("4"))
+                {
+                    loaList.add(lo);
+                }
             }
         }
         return loaList;
