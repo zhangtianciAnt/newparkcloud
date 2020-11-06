@@ -1304,9 +1304,9 @@ public class UserServiceImpl implements UserService {
                 if (item.get("仕事开始年月日") != null) {
                     userinfo.setWorkday(item.get("仕事开始年月日").toString());
                 }
-                //试用期截止日
-                if (item.get("试用期截止日") != null) {
-                    userinfo.setEnddate(item.get("试用期截止日").toString());
+                //转正日
+                if (item.get("转正日") != null) {
+                    userinfo.setEnddate(item.get("转正日").toString());
                 }
 
                 //        ws-6/28-禅道141任务
@@ -2009,8 +2009,8 @@ public class UserServiceImpl implements UserService {
                     if (item.get("仕事开始年月日●") != null) {
                         customerInfoList.get(0).getUserinfo().setWorkday(item.get("仕事开始年月日●").toString());
                     }
-                    if (item.get("试用期截止日●") != null) {
-                        customerInfoList.get(0).getUserinfo().setEnddate(item.get("试用期截止日●").toString());
+                    if (item.get("转正日●") != null) {
+                        customerInfoList.get(0).getUserinfo().setEnddate(formatStringDateadd(item.get("转正日●").toString()));
                     }
                     if (item.get("员工ID●") != null) {
                         customerInfoList.get(0).getUserinfo().setPersonalcode(item.get("员工ID●").toString());
@@ -2472,5 +2472,21 @@ public class UserServiceImpl implements UserService {
             }
         }
         return logslist;
+    }
+
+    /**
+     * 时间格式化
+     *
+     * @param date
+     * @return
+     */
+    private String formatStringDateadd(String date) {
+        date = date.replace("-", "/").substring(0, 10);
+        Calendar rightNow = Calendar.getInstance();
+        SimpleDateFormat ymd = new SimpleDateFormat("yyyy/MM/dd");
+        rightNow.setTime(Convert.toDate(date));
+        rightNow.add(Calendar.DAY_OF_YEAR, -1);
+        date = ymd.format(rightNow.getTime());
+        return date;
     }
 }
