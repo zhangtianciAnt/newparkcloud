@@ -40,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -348,9 +349,15 @@ public class BusinessServiceImpl implements BusinessService {
                 travelcontentMapper.insertSelective(travelcontent);
             }
         }
+        //endregion gbb 20201029 禅道601 审批通过时将出差期间工作日的考勤设为因公外出 end
+    }
 
-        //region gbb 20201029 禅道601 审批通过时将出差期间工作日的考勤设为因公外出 start
-        if(business.getStatus().equals("4")){
+    @Scheduled(cron="0 1 0 * * ?")
+    public void saveDaka()throws Exception {
+        TokenModel tokenModel = new TokenModel();
+        List<Business> businessList = businessMapper.getBusList();
+        for(Business business : businessList){
+            //region gbb 20201029 禅道601 审批通过时将出差期间工作日的考勤设为因公外出 start
             Query query = new Query();
             query.addCriteria(Criteria.where("userid").is(business.getUser_id()));
             CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -408,7 +415,6 @@ public class BusinessServiceImpl implements BusinessService {
                 calStar.add(Calendar.DAY_OF_MONTH, 1);
             }
         }
-        //endregion gbb 20201029 禅道601 审批通过时将出差期间工作日的考勤设为因公外出 end
     }
 
     @Override
