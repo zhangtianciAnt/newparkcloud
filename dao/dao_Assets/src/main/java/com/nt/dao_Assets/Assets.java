@@ -357,4 +357,21 @@ public class Assets extends BaseModel {
      */
     @Column(name = "psdcdreturndate")
     private String psdcdreturndate;
+
+    //联系电话
+    @Column(name = "PSDCDPHONE")
+    private String psdcdphone;
+
+    //实际归还日
+    @Column(name = "PSDCDSHIJIDATE")
+    private String psdcdshijidate;
+
+    //借用合同
+    @Column(name = "LOANCONTRACT")
+    private String loancontract;
+
+    //借用合同编号
+    @Column(name = "LOANCONTRACTNO")
+    private String loancontractno;
+
 }

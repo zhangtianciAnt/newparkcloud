@@ -135,7 +135,14 @@ public class AssetsController {
         } else  if ( "2".equals(type) ) {
             templateName = "gudingzichan.xlsx";
             fileName = "固定资产";
+        }else  if ( "3".equals(type) ) {
+            templateName = "wuxingzichan.xlsx";
+            fileName = "无形资产";
+        }else  if ( "4".equals(type) ) {
+            templateName = "bowaizichan.xlsx";
+            fileName = "簿外资产";
         }
+
         if (templateName != null ) {
             ExcelOutPutUtil.OutPut(fileName,templateName,data,response);
         }
