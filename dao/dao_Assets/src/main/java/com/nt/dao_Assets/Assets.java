@@ -374,4 +374,12 @@ public class Assets extends BaseModel {
     @Column(name = "LOANCONTRACTNO")
     private String loancontractno;
 
+    //资产说明
+    @Column(name = "REMARKS1")
+    private String remarks1;
+
+    //备考1
+    @Column(name = "REMARKS2")
+    private String remarks2;
+
 }
