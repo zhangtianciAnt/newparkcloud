@@ -386,7 +386,7 @@ public class AssetsServiceImpl implements AssetsService {
                     if (!StringUtils.isEmpty(trim(value.get(8)))) {
                         String tValue = trim(value.get(8));
                         if (PA002Map.containsKey(tValue)) {
-                            assets.setAssetstatus(PA002Map.get(tValue));
+                            assets.setStockstatus(PA002Map.get(tValue));
                         } else {
                             error++;
                             Result.add("模板第" + lineNo + "行的资产状态没有找到，导入失败");
