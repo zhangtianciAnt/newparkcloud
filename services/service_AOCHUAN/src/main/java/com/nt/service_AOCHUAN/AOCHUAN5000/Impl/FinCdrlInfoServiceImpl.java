@@ -148,6 +148,13 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
         SimpleDateFormat stf = new SimpleDateFormat("yyyy/MM/dd");
         if(credentialInformation.size() > 0){
             for(CredentialInformation cinfo : credentialInformation){
+                int kis = 0;
+                CredentialInformation creinfo = finCrdlInfoMapper.selectByPrimaryKey(cinfo.getCrdlinfo_id());
+                if(creinfo != null){
+                    if(StringUtils.isNotEmpty(creinfo.getCrdlkis_num())){
+                        kis = Integer.valueOf(creinfo.getCrdlkis_num());
+                    }
+                }
                 List<Map<String,Object>> listmapFentity = new ArrayList();
                 AccountingRule accountingRule = new AccountingRule();
                 accountingRule.setCrdlinfo_fid(cinfo.getCrdlinfo_id());
@@ -156,7 +163,6 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                 Map<String, Object> model = (Map<String, Object>)basic.get("Model");//单据头
                 if(accountingRuleList.size() > 0){
                     for(AccountingRule ar : accountingRuleList){
-
                         //获取凭证数据模板
                         File file1 = null;
 //                        file1 = ResourceUtils.getFile("classpath:excel/voucher.json");
@@ -197,6 +203,7 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                     }
 
                 }
+                model.put("FVOUCHERID",kis);//金蝶主键
                 if(cinfo.getAcct_date() != null){
                     Date date = new Date(stf.format(cinfo.getAcct_date()));
                     model.put("FDate",stf.format(cinfo.getAcct_date()));//记账日期
