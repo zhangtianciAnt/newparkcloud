@@ -16,4 +16,6 @@ public interface PunchcardRecordDetailMapper extends MyMapper<PunchcardRecordDet
     void deletetepun(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("staffNo") String staffNo);
 
     void deletetepundet(@Param("startDate") String startDate,@Param("endDate") String endDate,@Param("staffNo") String staffNo);
+
+    void deletetravel();
 }
