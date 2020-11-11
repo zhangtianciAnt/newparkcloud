@@ -1627,58 +1627,48 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     //系统服务--获取指定人和日期的打卡记录
     @Override
     public void insertHistoricalCard(String strStartDate,String strendDate,String strFlg,String staffNo) throws Exception {
-
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         String [] jobnumber = staffNo.split(",");
-        if(jobnumber.length != 1)
-        {
-            for(int i=0;i<jobnumber.length;i++){
+        for(int i=0;i<jobnumber.length;i++){
 
-                //社内人员//
-                if(strFlg.equals("1")){
-                    //删除昨天的临时数据
-                    punchcardrecorddetailmapper.deletetepun(strStartDate,strendDate,jobnumber[i]);
-                    //删除昨天的临时数据
-                    punchcardrecorddetailmapper.deletetepundet(strStartDate,strendDate,jobnumber[i]);
-                }
-                else{
-                    //外驻人员
-                    //删除昨天的临时数据
-                    punchcardrecorddetailbpmapper.deletetepunbp(strStartDate,strendDate,jobnumber[i]);
-                    //删除昨天的临时数据
-                    punchcardrecorddetailbpmapper.deletetepundetbp(strStartDate,strendDate,jobnumber[i]);
-                }
-            }
-        }
-        else{
             //社内人员//
             if(strFlg.equals("1")){
                 //删除昨天的临时数据
-                punchcardrecorddetailmapper.deletetepun(strStartDate,strendDate,staffNo);
+                punchcardrecorddetailmapper.deletetepun(strStartDate,strendDate,jobnumber[i]);
                 //删除昨天的临时数据
-                punchcardrecorddetailmapper.deletetepundet(strStartDate,strendDate,staffNo);
+                punchcardrecorddetailmapper.deletetepundet(strStartDate,strendDate,jobnumber[i]);
             }
             else{
                 //外驻人员
                 //删除昨天的临时数据
-                punchcardrecorddetailbpmapper.deletetepunbp(strStartDate,strendDate,staffNo);
+                punchcardrecorddetailbpmapper.deletetepunbp(strStartDate,strendDate,jobnumber[i]);
                 //删除昨天的临时数据
-                punchcardrecorddetailbpmapper.deletetepundetbp(strStartDate,strendDate,staffNo);
+                punchcardrecorddetailbpmapper.deletetepundetbp(strStartDate,strendDate,jobnumber[i]);
             }
-        }
+            Calendar cl1 = Calendar.getInstance();
+            Calendar cl2 = Calendar.getInstance();
+            cl1.setTime(df.parse(strStartDate));
+            cl2.setTime(df.parse(strendDate));
+            while (cl1.compareTo(cl2) <= 0) {
 
-        //正式
-        String doorIDList = "34,16,17,80,81,83,84";//34:自动门；16：1F子母门-左；17：1F子母门-右；80：B2南侧；81：B2北侧；83：B1北侧；84：B2南侧；
-        String url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByStaffNoList?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + strStartDate + "&endDate=" + strendDate + "&doorIDList=" + doorIDList + "&StaffNoList=" + staffNo;
+                //打卡时间
+                String StartDate = df.format(cl1.getTime());
+                //正式
+                String doorIDList = "34,16,17,80,81,83,84";//34:自动门；16：1F子母门-左；17：1F子母门-右；80：B2南侧；81：B2北侧；83：B1北侧；84：B2南侧；
+                String url = "http://192.168.2.202:80/KernelService/Admin/QueryRecordByStaffNoList?userName=admin&password=admin&pageIndex=1&pageSize=999999&startDate=" + StartDate + "&endDate=" + StartDate + "&doorIDList=" + doorIDList + "&StaffNoList=" + jobnumber[i];
 
-        //請求接口
-        ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
-        Object obj = JSON.toJSON(getresult.getData());
-        JSONArray jsonArray = JSONArray.parseArray(obj.toString());
-        if(strFlg.equals("1")){
-            insertattendanceMethod(jsonArray);
-        }
-        else{
-            insertattendancebpMethod(jsonArray,"",0);
+                //請求接口
+                ApiResult getresult = this.restTemplate.getForObject(url, ApiResult.class);
+                Object obj = JSON.toJSON(getresult.getData());
+                JSONArray jsonArray = JSONArray.parseArray(obj.toString());
+                if(strFlg.equals("1")){
+                    insertattendanceMethod(jsonArray);
+                }
+                else{
+                    insertattendancebpMethod(jsonArray,"",0);
+                }
+                cl1.add(Calendar.DAY_OF_MONTH, 1);
+            }
         }
     }
 
