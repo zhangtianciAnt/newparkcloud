@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -133,5 +134,14 @@ public class AnnualLeave extends BaseModel {
 
     //年休剩余(离职)
     private String annual_avg_remaining;
+
+    //入职日
+    private Date enterday;
+
+    //仕事开始日
+    private Date workday;
+
+    //转正日
+    private Date enddate;
 
 }

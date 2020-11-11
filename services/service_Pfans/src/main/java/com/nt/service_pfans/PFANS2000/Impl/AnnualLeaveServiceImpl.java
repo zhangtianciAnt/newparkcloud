@@ -4,6 +4,7 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
@@ -151,10 +152,52 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             List<CustomerInfo> customerinfo = mongoTemplate.find(new Query(Criteria.where("userid").is(annualLeave.getUser_id())), CustomerInfo.class);
             if(customerinfo.size()>0)
             {
+                SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+                String enterday = null;
+                String workday = null;
+                String enddate = null;
+                //入职日
+                if(StrUtil.isNotBlank(customerinfo.get(0).getUserinfo().getEnterday()))
+                {
+                    enterday = customerinfo.get(0).getUserinfo().getEnterday().substring(0, 10);
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(Convert.toDate(enterday));
+                    if(customerinfo.get(0).getUserinfo().getEnterday().length() >= 24)
+                    {
+                        cal.add(Calendar.DAY_OF_YEAR, 1);
+                    }
+                    enterday = s.format(cal.getTime());
+                }
+                //仕事开始日
+                if(StrUtil.isNotBlank(customerinfo.get(0).getUserinfo().getWorkday()))
+                {
+                    workday = customerinfo.get(0).getUserinfo().getWorkday().substring(0, 10);
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(Convert.toDate(workday));
+                    if(customerinfo.get(0).getUserinfo().getWorkday().length() >= 24)
+                    {
+                        cal.add(Calendar.DAY_OF_YEAR, 1);
+                    }
+                    workday = s.format(cal.getTime());
+                }
+                //转正日
+                if(StrUtil.isNotBlank(customerinfo.get(0).getUserinfo().getEnddate()))
+                {
+                    enddate = customerinfo.get(0).getUserinfo().getEnddate().substring(0, 10);
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(Convert.toDate(enddate));
+                    if(customerinfo.get(0).getUserinfo().getEnddate().length() >= 24)
+                    {
+                        cal.add(Calendar.DAY_OF_YEAR, 1);
+                    }
+                    cal.add(Calendar.DAY_OF_YEAR, 1);
+                    enddate = s.format(cal.getTime());
+                }
+
                 //生成年休时，去除已离职人员
                 if(customerinfo.get(0).getUserinfo() .getResignation_date() != null && !customerinfo.get(0).getUserinfo() .getResignation_date().isEmpty())
                 {
-                    SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+
                     String resignationdate = customerinfo.get(0).getUserinfo().getResignation_date().substring(0, 10);
                     Calendar rightNow = Calendar.getInstance();
                     Calendar cal = Calendar.getInstance();
@@ -174,12 +217,72 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     {
                         BigDecimal b = new BigDecimal(remainingAnnual(annualLeave.getUser_id(),String.valueOf(year)));
                         annualLeave.setAnnual_avg_remaining(b.toString());
+
+                        //年休一览添加入职日，仕事开始日，转正日 fr
+                        //入职日
+                        if(enterday == null)
+                        {
+                            annualLeave.setEnterday(null);
+                        }
+                        else
+                        {
+                            annualLeave.setEnterday(s.parse(enterday));
+                        }
+                        //仕事开始日，
+                        if(workday == null)
+                        {
+                            annualLeave.setWorkday(null);
+                        }
+                        else
+                        {
+                            annualLeave.setWorkday(s.parse(workday));
+                        }
+                        //转正日
+                        if(enddate == null)
+                        {
+                            annualLeave.setEnddate(null);
+                        }
+                        else
+                        {
+                            annualLeave.setEnddate(s.parse(enddate));
+                        }
+                        //年休一览添加入职日，仕事开始日，转正日 to
+
                         tempannualLeaveList.add(annualLeave);
                     }
                 }
                 else
                 {
                     annualLeave.setAnnual_avg_remaining("-");
+                    //年休一览添加入职日，仕事开始日，转正日 fr
+                    //入职日
+                    if(enterday == null)
+                    {
+                        annualLeave.setEnterday(null);
+                    }
+                    else
+                    {
+                        annualLeave.setEnterday(s.parse(enterday));
+                    }
+                    //仕事开始日，
+                    if(workday == null)
+                    {
+                        annualLeave.setWorkday(null);
+                    }
+                    else
+                    {
+                        annualLeave.setWorkday(s.parse(workday));
+                    }
+                    //转正日
+                    if(enddate == null)
+                    {
+                        annualLeave.setEnddate(null);
+                    }
+                    else
+                    {
+                        annualLeave.setEnddate(s.parse(enddate));
+                    }
+                    //年休一览添加入职日，仕事开始日，转正日 to
                     tempannualLeaveList.add(annualLeave);
                 }
             }
