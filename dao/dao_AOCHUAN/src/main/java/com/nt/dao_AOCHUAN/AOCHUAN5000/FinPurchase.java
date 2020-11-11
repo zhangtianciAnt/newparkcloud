@@ -134,4 +134,8 @@ public class FinPurchase extends BaseModel {
     @Column(name = "COMMISSIONAMOUNTA")
     private String commissionamounta;
 
+    //总金额（应付金额）
+    @Column(name = "SUMMONERY")
+    private String summonery;
+
 }

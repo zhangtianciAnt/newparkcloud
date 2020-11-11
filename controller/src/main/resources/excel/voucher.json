@@ -32,7 +32,7 @@
           "FNumber": "1001"
         },
         "FCURRENCYID": {
-          "FNumber": "PRE001"
+          "FNumber": ""
         },
         "FEXCHANGERATETYPE": {
           "FNumber": "HLTX01_SYS"

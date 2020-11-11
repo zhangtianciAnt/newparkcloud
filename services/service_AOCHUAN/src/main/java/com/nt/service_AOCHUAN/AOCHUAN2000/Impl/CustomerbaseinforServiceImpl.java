@@ -119,7 +119,7 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
         for(Customerbaseinfor customerbaseinfor : list){
             basic = JSON.parseObject(jsonData);
             Map<String,Object> model = (Map<String, Object>) basic.get("Model");
-            Map<String,Object> fGroup = (Map<String, Object>) ((Map<String, Object>) basic.get("Model")).get("FGroup");
+            Map<String,Object> fGroup = (Map<String, Object>) ((Map<String, Object>) basic.get("Model")).get("FCOUNTRY");
             int kis = 0;
             if(flg){ //true: 系统服务
                 if(StringUtils.isNotEmpty(customerbaseinfor.getKisid())){
@@ -136,8 +136,8 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
             model.put("FCUSTID",kis);
             model.put("FNumber",customerbaseinfor.getCustnumber());
             model.put("FName",customerbaseinfor.getCustomernameen());
-            fGroup.put("FNumber",customerbaseinfor.getNation());
-            model.put("FGroup",fGroup);
+            fGroup.put("FNumber",customerbaseinfor.getNation());//国家
+            model.put("FCOUNTRY",fGroup);
             listmap.add(model);
         }
         basic.put("Model",listmap);

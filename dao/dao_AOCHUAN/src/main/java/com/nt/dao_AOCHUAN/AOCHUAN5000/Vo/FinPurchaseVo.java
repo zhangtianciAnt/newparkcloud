@@ -5,9 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.Date;
 
 @Data
@@ -68,6 +65,8 @@ public class FinPurchaseVo extends BaseModel {
     private  String purchase_amount;
     //单位
     private String unit1;
+    //总金额（应付金额）
+    private String summonery;
 
     private String paymentaccount;
 

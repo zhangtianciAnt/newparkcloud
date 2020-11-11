@@ -12,8 +12,8 @@
       "FCUSTID":0,
       "FNumber": "",
        "FName":"FName",
-       "FGroup": {
-         "FNumber" :"nation"
+       "FCOUNTRY": {
+         "FNumber" :""
           }
         },
   "BatchCount": 0
