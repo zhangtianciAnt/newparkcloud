@@ -33,6 +33,9 @@ public class FinPurchase extends BaseModel {
     //供应商名称
     @Column(name = "SUPPLIER")
     private String supplier;
+
+    private String suppliercn;
+
     //采购单价
     @Column(name = "UNITPRICE1")
     private String unitprice1;
