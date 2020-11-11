@@ -312,7 +312,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             applicationrecordMapper.updateByPrimaryKeySelective(applicationrecord);
             finPurchase.setAp_date(new Date());
             finPurchase.setRealamount(finPurchase.getRealpay());
-            finPurchase.setPaymentstatus("1");
+            finPurchase.setPaymentstatus("PY011002");
             finPurchaseMapper.updateByPrimaryKeySelective(finPurchase);
         }
     }

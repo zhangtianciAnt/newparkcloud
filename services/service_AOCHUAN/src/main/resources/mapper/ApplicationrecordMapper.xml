@@ -102,7 +102,7 @@
     ,a.invoiceno as invoicenumber
     ,t.productresponsibility as productresponsibility
     ,date_format(fp.FKTIME ,'%Y-%m-%d') as realdate
-    ,case when fp.PAYMENTSTATUS = '1' then '已付款' else '未付款' end as paymentstatus
+    ,case when fp.PAYMENTSTATUS = 'PY011002' then '已付款' else '未付款' end as paymentstatus
 FROM transportgood t
        left join  saledetails s on t.transportgood_id = s.transportgood_id
 
