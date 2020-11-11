@@ -91,4 +91,8 @@ public interface UserService {
 
     //获取当前用户登陸信息（IP）
     List<Log.Logs> getSigninlog(String userId) throws Exception ;
+
+    //本年度离职，账号不能登录的人员
+    //参数：years，年度
+    public List<CustomerInfo> getCustomerInfoResign(String years) throws Exception;
 }

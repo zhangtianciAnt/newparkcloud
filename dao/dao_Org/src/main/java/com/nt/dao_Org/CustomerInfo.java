@@ -703,8 +703,9 @@ public class CustomerInfo extends BaseModel {
         private String company;
         private String postion;
         private String level;
-        @JSONField(name="_time")
-        private String _time;
+//        @JSONField(name="_time")
+//        private String _time;
+        private String rewardTime;
     }
 
     @Data

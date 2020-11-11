@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.DoubleBinaryOperator;
 import java.util.stream.Collectors;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
@@ -2488,5 +2489,50 @@ public class UserServiceImpl implements UserService {
         rightNow.add(Calendar.DAY_OF_YEAR, -1);
         date = ymd.format(rightNow.getTime());
         return date;
+    }
+
+    //本年度离职，账号不能登录的人员
+    //参数：years，年度
+    @Override
+    public List<CustomerInfo> getCustomerInfoResign(String years) throws Exception
+    {
+        List<UserAccount> userAccountList = new ArrayList<UserAccount>();
+        List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
+        SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");
+        Query query = new Query();
+        query.addCriteria(Criteria.where("usertype").ne("1"));
+        query.addCriteria(Criteria.where("status").is("1"));
+        List<UserAccount> userAccountInfo = mongoTemplate.find(query, UserAccount.class);
+        for(UserAccount uAccount :userAccountInfo)
+        {
+            Query query1 = new Query();
+            query1.addCriteria(Criteria.where("userid").is(uAccount.get_id()));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query1, CustomerInfo.class);
+            if(customerInfo!=null)
+            {
+                if(customerInfo.getUserinfo().getResignation_date()!=null && !customerInfo.getUserinfo().getResignation_date().isEmpty())
+                {
+                    Calendar rightNow = Calendar.getInstance();
+                    //离职日
+                    String resignationdate = customerInfo.getUserinfo().getResignation_date().substring(0, 10);
+                    if (customerInfo.getUserinfo().getResignation_date().length() >= 24) {
+                        rightNow.setTime(Convert.toDate(resignationdate));
+                        rightNow.add(Calendar.DAY_OF_YEAR, 1);
+                        resignationdate = sf1ymd.format(rightNow.getTime());
+                    }
+                    String resignYear = resignationdate.substring(0,4);
+                    Integer resignmonth = Integer.valueOf(resignationdate.substring(5,7));
+                    if(resignmonth<4)
+                    {
+                        resignYear = String.valueOf(Integer.valueOf(resignYear) - 1);
+                    }
+                    if(years.equals(resignYear))
+                    {
+                        customerInfoList.add(customerInfo);
+                    }
+                }
+            }
+        }
+        return customerInfoList;
     }
 }
