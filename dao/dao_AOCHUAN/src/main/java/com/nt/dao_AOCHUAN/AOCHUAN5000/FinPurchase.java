@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 @Data
@@ -34,6 +35,7 @@ public class FinPurchase extends BaseModel {
     @Column(name = "SUPPLIER")
     private String supplier;
 
+    @Transient
     private String suppliercn;
 
     //采购单价
