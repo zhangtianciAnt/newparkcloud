@@ -63,5 +63,5 @@ public class Staffexitproce extends BaseModel {
 //    private String newreason;
 
 
-    private int version;
+    private Integer version;
 }
