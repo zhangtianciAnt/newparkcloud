@@ -19,6 +19,7 @@
     cr.UNITID,
     cr.UNITNUMBER,
     cr.UNITNAME,
+    cr.DIMENSION,
 
     hr.HELPRULE_ID,
     hr.CRERULE_FID ,

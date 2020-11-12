@@ -1,6 +1,5 @@
 package com.nt.dao_AOCHUAN.AOCHUAN7000.Vo;
 
-import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -102,5 +101,8 @@ public class All {
 
     @Column(name = "UNITNAME")
     private String unitname;
+
+    @Column(name = "DIMENSION")
+    private String dimension;
 
 }

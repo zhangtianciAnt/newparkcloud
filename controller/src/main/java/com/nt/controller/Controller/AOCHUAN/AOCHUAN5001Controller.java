@@ -9,6 +9,7 @@ import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.All;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinCrdlInfoService;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinSalesService;
 import com.nt.service_AOCHUAN.AOCHUAN7000.DocuruleService;
+import com.nt.service_Org.DictionaryService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -20,10 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/finsales")
@@ -37,6 +35,9 @@ public class AOCHUAN5001Controller {
 
     @Autowired
     private DocuruleService docuruleService;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @Autowired
     private TokenService tokenService;
@@ -208,7 +209,7 @@ public class AOCHUAN5001Controller {
      * @param accAndauxList
      * @return
      */
-    public CrdlInfo replaceRule(String userName, FinSales finSales, Docurule docurule, List<All> accAndauxList) {
+    public CrdlInfo replaceRule(String userName, FinSales finSales, Docurule docurule, List<All> accAndauxList) throws Exception {
 
         CrdlInfo crdlInfo = new CrdlInfo();
 
@@ -262,8 +263,10 @@ public class AOCHUAN5001Controller {
 
             //金额计算
             Double calAmount = 0.00;
+            Double hisAmount = 0.00;
             if (StringUtils.isNotBlank(item.getAmounttype())) {
-                calAmount = amountCalculation(item.getAmounttype(), finSales);
+                calAmount = amountCalculation(item.getAmounttype(), finSales).get("resultAmount");
+                hisAmount = amountCalculation(item.getAmounttype(), finSales).get("hisAmount");
             }
             //分录
             accountingRule.setRemarks(item.getRemarks());//摘要
@@ -273,26 +276,26 @@ public class AOCHUAN5001Controller {
             accountingRule.setCurrency(finSales.getCurrency());//币种
             accountingRule.setEx_rate(finSales.getEx_rate());//汇率
             accountingRule.setTaxrate(item.getCrerate());//税率
-            accountingRule.setOricurrency_amount(Double.parseDouble(finSales.getSalesamount()));//原币金额
-            accountingRule.setUnit(item.getUnitname());//单位
+            accountingRule.setOricurrency_amount(hisAmount);//原币金额
+            accountingRule.setUnit(finSales.getUnit());//单位
             accountingRule.setUnit_price(Double.parseDouble(finSales.getUnitprice()));//单价
             accountingRule.setQuantity(Integer.parseInt(finSales.getAmount()));//数量
             accountingRule.setAmount(calAmount);//金额
             accountingRule.setRowindex(item.getRowindex());//行号
             //辅助项目
-            accountingRule.setBankaccount_code(item.getBankaccountid());//银行账号id
-            accountingRule.setDept_code(item.getDepartid());//部门id
-            accountingRule.setIae_contg_code(item.getExpenditureid());//收支内容id
-            accountingRule.setAuxacctg_code(item.getAccountingid());//核算项目id
-            accountingRule.setMaincash_code(item.getMaincashid());//主金流id
-            accountingRule.setAttachcash_code(item.getFlowcashid());//附现金流id
-            accountingRule.setBankaccount(item.getBankaccount());//银行账号
-            accountingRule.setDept(item.getDepart());//部门
-            accountingRule.setIae_contg(item.getExpenditure());//收支内容
-            accountingRule.setAuxacctg(item.getAccounting());//核算项目
-            accountingRule.setMaincashflow(item.getMaincash());//主金流
-            accountingRule.setAttachcashflow(item.getFlowcash());//附现金流
-            accountingRule.setAuxacctg_amount(finSales.getSalesamount());//辅助账金额
+//            accountingRule.setBankaccount_code(item.getBankaccountid());//银行账号id
+//            accountingRule.setDept_code(item.getDepartid());//部门id
+//            accountingRule.setIae_contg_code(item.getExpenditureid());//收支内容id
+//            accountingRule.setAuxacctg_code(item.getAccountingid());//核算项目id
+//            accountingRule.setMaincash_code(item.getMaincashid());//主金流id
+//            accountingRule.setAttachcash_code(item.getFlowcashid());//附现金流id
+//            accountingRule.setBankaccount(item.getBankaccount());//银行账号
+//            accountingRule.setDept(item.getDepart());//部门
+//            accountingRule.setIae_contg(item.getExpenditure());//收支内容
+//            accountingRule.setAuxacctg(item.getAccounting());//核算项目
+//            accountingRule.setMaincashflow(item.getMaincash());//主金流
+//            accountingRule.setAttachcashflow(item.getFlowcash());//附现金流
+//            accountingRule.setAuxacctg_amount(finSales.getSalesamount());//辅助账金额
 
             actgrulist.add(accountingRule);
         }
@@ -310,19 +313,21 @@ public class AOCHUAN5001Controller {
      * @param finSales
      * @return
      */
-    private Double amountCalculation(String amountType, FinSales finSales) {
-
+    private Map<Object,Double> amountCalculation(String amountType, FinSales finSales) {
+        Map<Object,Double> dataMap = new HashMap<>();
         Double resultAmount = 0.00;
+        Double hisAmount = 0.00;
 
         switch (amountType) {
             case "0"://销售金额
-                if (StringUtils.isNotBlank(finSales.getSalesamount()) && !" ".equals(finSales.getSalesamount())) {
+                if (StringUtils.isNotBlank(finSales.getReceamount()) && !" ".equals(finSales.getReceamount())) {
 
                     if ("PY008002".equals(finSales.getCurrency())) {
-                        resultAmount = Double.parseDouble(finSales.getSalesamount()) * Double.parseDouble(finSales.getEx_rate());
+                        resultAmount = Double.parseDouble(finSales.getReceamount()) * Double.parseDouble(finSales.getEx_rate());
                     } else {
-                        resultAmount = Double.parseDouble(finSales.getSalesamount());
+                        resultAmount = Double.parseDouble(finSales.getReceamount());
                     }
+                    hisAmount = Double.parseDouble(finSales.getReceamount());
                 }
                 break;
             case "4"://保费
@@ -332,6 +337,7 @@ public class AOCHUAN5001Controller {
                     } else {
                         resultAmount = Double.parseDouble(finSales.getPremium());
                     }
+                    hisAmount = Double.parseDouble(finSales.getPremium());
                 }
                 break;
             case "5"://运费
@@ -341,6 +347,7 @@ public class AOCHUAN5001Controller {
                     } else {
                         resultAmount = Double.parseDouble(finSales.getFreight());
                     }
+                    hisAmount = Double.parseDouble(finSales.getFreight());
                 }
                 break;
             case "6"://手续费
@@ -349,9 +356,10 @@ public class AOCHUAN5001Controller {
                 } else {
                     resultAmount = finSales.getCommission_amount();
                 }
+                hisAmount = finSales.getCommission_amount();
                 break;
             case "7"://主营业务收入=应收款-（保费+运费)
-                if (StringUtils.isNotBlank(finSales.getSalesamount()) && !" ".equals(finSales.getSalesamount())) {
+                if (StringUtils.isNotBlank(finSales.getReceamount()) && !" ".equals(finSales.getReceamount())) {
                     Double premium = 0.00;
                     Double freight = 0.00;
                     //运费
@@ -363,24 +371,27 @@ public class AOCHUAN5001Controller {
                         freight = Double.parseDouble(finSales.getFreight());
                     }
                     if ("PY008002".equals(finSales.getCurrency())) {
-                        resultAmount = (Double.parseDouble(finSales.getSalesamount()) - (premium + freight)) * Double.parseDouble(finSales.getEx_rate());
+                        resultAmount = (Double.parseDouble(finSales.getReceamount()) - (premium + freight)) * Double.parseDouble(finSales.getEx_rate());
                     } else {
-                        resultAmount = Double.parseDouble(finSales.getSalesamount()) - (premium + freight);
+                        resultAmount = Double.parseDouble(finSales.getReceamount()) - (premium + freight);
                     }
+                    hisAmount = Double.parseDouble(finSales.getReceamount()) - (premium + freight);
                 }
                 break;
             case "8"://结算款=应收款-手续费
-                if (StringUtils.isNotBlank(finSales.getSalesamount()) && !" ".equals(finSales.getSalesamount())) {
+                if (StringUtils.isNotBlank(finSales.getReceamount()) && !" ".equals(finSales.getReceamount())) {
                     if ("PY008002".equals(finSales.getCurrency())) {
-                        resultAmount = (Double.parseDouble(finSales.getSalesamount()) - finSales.getCommission_amount()) * Double.parseDouble(finSales.getEx_rate());
+                        resultAmount = (Double.parseDouble(finSales.getReceamount()) - finSales.getCommission_amount()) * Double.parseDouble(finSales.getEx_rate());
                     } else {
-                        resultAmount = Double.parseDouble(finSales.getSalesamount()) - finSales.getCommission_amount();
+                        resultAmount = Double.parseDouble(finSales.getReceamount()) - finSales.getCommission_amount();
                     }
+                    hisAmount = Double.parseDouble(finSales.getReceamount()) - finSales.getCommission_amount();
                 }
                 break;
         }
-
-        return resultAmount;
+        dataMap.put("resultAmount",resultAmount);
+        dataMap.put("hisAmount",hisAmount);
+        return dataMap;
     }
 
 

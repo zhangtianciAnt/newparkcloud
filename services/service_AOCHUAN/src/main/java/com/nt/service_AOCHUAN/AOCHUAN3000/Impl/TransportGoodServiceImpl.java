@@ -1,7 +1,10 @@
 package com.nt.service_AOCHUAN.AOCHUAN3000.Impl;
 
 import com.aliyuncs.utils.IOUtils;
-import com.nt.dao_AOCHUAN.AOCHUAN3000.*;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Applicationrecord;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Receivablesrecord;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.Saledetails;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.DocumentExportVo;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.PurchaseExportVo;
 import com.nt.dao_AOCHUAN.AOCHUAN3000.Vo.SalesExportVo;
@@ -9,14 +12,19 @@ import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.service_AOCHUAN.AOCHUAN3000.Impl.xls.MyXLSTransformer;
 import com.nt.service_AOCHUAN.AOCHUAN3000.TransportGoodService;
-import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.*;
+import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ApplicationrecordMapper;
+import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ReceivablesrecordMapper;
+import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.SaledetailsMapper;
+import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinPurchaseMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinSalesMapper;
 import com.nt.service_AOCHUAN.AOCHUAN8000.Impl.ContractNumber;
 import com.nt.service_Auth.RoleService;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
@@ -58,6 +66,8 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
     @Autowired
     private ContractNumber contractNumber;
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @Autowired
     private SaledetailsMapper saledetailsMapper;
@@ -188,7 +198,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
                 val.setReceivablesrecord_id(UUID.randomUUID().toString());
             }
             if (transportGood.getFinance() == 1) {
-                insertHK(receivablesrecords, transportGood.getContractnumber(), transportGood.getCollectionaccount(), transportGood.getSaleresponsibility(), transportGood.getCountry(),tokenModel);
+                insertHK(receivablesrecords, transportGood,tokenModel);
             }
             receivablesrecordMapper.insertReceivablesrecordList(receivablesrecords);
         }
@@ -255,19 +265,28 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     }
 
 
-    public void insertHK(List<Receivablesrecord> receivablesrecords, String contractNumber, String collectionAccount, String saleresponsibility, String country, TokenModel tokenModel) throws Exception {
+//    public void insertHK(List<Receivablesrecord> receivablesrecords, String contractNumber, String collectionAccount, String saleresponsibility, String country, TokenModel tokenModel) throws Exception {
+    public void insertHK(List<Receivablesrecord> receivablesrecords,TransportGood transportGood, TokenModel tokenModel) throws Exception {
         for (Receivablesrecord val :
                 receivablesrecords) {
             FinSales finSales = new FinSales();
             finSales.setSales_id(UUID.randomUUID().toString());
-            finSales.setContractnumber(contractNumber);
+            finSales.setContractnumber(transportGood.getContractnumber());
             finSales.setUnitprice(val.getUnitprice());//单价
             finSales.setCurrency(val.getCurrency());//币种
+            if(StringUtils.isNotEmpty(finSales.getCurrency())){
+                com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
+                dictionary.setCode(finSales.getCurrency());
+                List<Dictionary> dir = dictionaryService.getDictionary(dictionary);
+                finSales.setEx_rate(dir.get(0).getValue1());//汇率
+            }
             finSales.setAmount(val.getNumbers());//数量
             finSales.setUnit(val.getUnit());//单位
-            finSales.setCountry(country);//国家
+            finSales.setFreight(transportGood.getFreight());//运费
+            finSales.setPremium(transportGood.getPremium());//保费
+            finSales.setCountry(transportGood.getCountry());//国家
             finSales.setCustomer(val.getCustomername());
-            finSales.setCollectionaccount(collectionAccount);
+            finSales.setCollectionaccount(transportGood.getCollectionaccount());
             finSales.setReceamount(val.getReceamount() == null ? "0.00" : val.getReceamount().toString());
             finSales.setReceduedate(val.getReceduedate());
             finSales.setSalesamount(val.getRealamount());
@@ -275,7 +294,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             finSales.setReceivablesrecord_id(val.getReceivablesrecord_id());
             finSales.setCredential_status("PW001001");
             finSales.setArrival_status("0");
-            finSales.setSaleresponsibility(saleresponsibility);//销售负责人
+            finSales.setSaleresponsibility(transportGood.getSaleresponsibility());//销售负责人
             finSales.setTransportgood_id(val.getTransportgood_id());//走货id
             finSales.setProductus(val.getProductid());//产品id
             finSales.preInsert(tokenModel);
