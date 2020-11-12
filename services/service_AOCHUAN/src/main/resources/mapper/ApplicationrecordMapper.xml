@@ -3,12 +3,12 @@
 <mapper namespace="com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ApplicationrecordMapper">
     <insert id="insertApplicationrecordList" parameterType="java.util.List">
         INSERT INTO applicationrecord (applicationrecord_id, suppliername, supplierid, realpay, realdate, realamount,
-        paiddate, invoiceno,paymentstatus, transportgood_id,productid)
+        paiddate, invoiceno,paymentstatus, transportgood_id,productid,unit,numbers1,unitprice1,currency1)
         values
         <foreach item="item" collection="list" separator=",">
             (#{item.applicationrecord_id}, #{item.suppliername}, #{item.supplierid}, #{item.realpay}, #{item.realdate},
             #{item.realamount}, #{item.paiddate},
-            #{item.invoiceno}, #{item.paymentstatus},#{item.transportgood_id},#{item.productid})
+            #{item.invoiceno}, #{item.paymentstatus},#{item.transportgood_id},#{item.productid},#{item.unit},#{item.numbers1},#{item.unitprice1},#{item.currency1})
         </foreach>
     </insert>
 
@@ -25,6 +25,10 @@
      applicationrecord.supplierid,
      applicationrecord.transportgood_id,
      applicationrecord.productid,
+     applicationrecord.unit,
+     applicationrecord.numbers1,
+     applicationrecord.unitprice1,
+     applicationrecord.currency1,
      products.CHINANAME as productname
      from applicationrecord
     inner join products

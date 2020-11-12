@@ -43,6 +43,14 @@ public class Applicationrecord extends BaseModel {
 
     private String productid;
 
+    private String unit;
+
+    private String numbers1;
+
+    private String unitprice1;
+
+    private String currency1;
+
     @Transient
     private String productname;
 }
