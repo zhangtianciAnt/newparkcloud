@@ -46,10 +46,15 @@ public class GlobalAop {
     //接口返回值
     @AfterReturning(returning = "ret", pointcut = "webLog()")
     public void doAfterReturning(Object ret) throws Throwable {
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        //资产盘点不加密
+        if(request.getRequestURL().toString().indexOf("assets/scanList") < 0){
 //        encoder
-        AES aes = new AES();
-        if(ret != null){
-            ((ApiResult) ret).setData(aes.encrypt(JSONObject.toJSONString(((ApiResult) ret).getData(), SerializerFeature.WriteMapNullValue)));
+            AES aes = new AES();
+            if(ret != null){
+                ((ApiResult) ret).setData(aes.encrypt(JSONObject.toJSONString(((ApiResult) ret).getData(), SerializerFeature.WriteMapNullValue)));
+            }
         }
         //处理完请求，返回内容
 //        if( ret !=null && ((ApiResult)ret).getData() != null){
