@@ -125,7 +125,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         String id = transportGood.getTransportgood_id();
         if(StringUtils.isNoneEmpty(id)){
             DeleteSonTable(id);
-            InsertSonTable(transportGood, id);
+            InsertSonTable(transportGood, id,tokenModel);
             if (transportGood.isNotice()) {
                 ToDoNotice(tokenModel, transportGood);
             }
@@ -145,7 +145,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         transportGood.setTransportgood_id(id);
         transportGood.preInsert(tokenModel);
         transportGoodMapper.insert(transportGood);
-        InsertSonTable(transportGood, id);
+        InsertSonTable(transportGood, id,tokenModel);
     }
 
     @Override
@@ -169,10 +169,11 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     }
 
 
-    private void InsertSonTable(TransportGood transportGood, String id) throws Exception {
+    private void InsertSonTable(TransportGood transportGood, String id, TokenModel tokenModel) throws Exception {
         if (transportGood.getSaledetails().size() > 0) {
             List<Saledetails> saledetailsList = transportGood.getSaledetails();
             for (Saledetails val : saledetailsList) {
+                val.preInsert(tokenModel);
                 val.setTransportgood_id(id);
                 val.setSaledetails_id(UUID.randomUUID().toString());
             }
@@ -182,11 +183,12 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         if (transportGood.getReceivablesrecord().size() > 0) {
             List<Receivablesrecord> receivablesrecords = transportGood.getReceivablesrecord();
             for (Receivablesrecord val : receivablesrecords) {
+                val.preInsert(tokenModel);
                 val.setTransportgood_id(id);
                 val.setReceivablesrecord_id(UUID.randomUUID().toString());
             }
             if (transportGood.getFinance() == 1) {
-                insertHK(receivablesrecords, transportGood.getContractnumber(), transportGood.getCollectionaccount(), transportGood.getSaleresponsibility());
+                insertHK(receivablesrecords, transportGood.getContractnumber(), transportGood.getCollectionaccount(), transportGood.getSaleresponsibility(), transportGood.getCountry(),tokenModel);
             }
             receivablesrecordMapper.insertReceivablesrecordList(receivablesrecords);
         }
@@ -194,11 +196,12 @@ public class TransportGoodServiceImpl implements TransportGoodService {
         if (transportGood.getApplicationrecord().size() > 0) {
             List<Applicationrecord> applicationrecords = transportGood.getApplicationrecord();
             for (Applicationrecord val : applicationrecords) {
+                val.preInsert(tokenModel);
                 val.setTransportgood_id(id);
                 val.setApplicationrecord_id(UUID.randomUUID().toString());
             }
             if (transportGood.getFinance() == 2) {
-                insertCW(applicationrecords, transportGood.getContractnumber(), transportGood.getProductresponsibility());
+                insertCW(applicationrecords, transportGood.getContractnumber(), transportGood.getProductresponsibility(),tokenModel);
             }
             applicationrecordMapper.insertApplicationrecordList(applicationrecords);
         }
@@ -226,7 +229,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     }
 
 
-    public void insertCW(List<Applicationrecord> applicationrecords, String contractNumber, String productresponsibility) {
+    public void insertCW(List<Applicationrecord> applicationrecords, String contractNumber, String productresponsibility, TokenModel tokenModel) {
         for (Applicationrecord val :
                 applicationrecords) {
             FinPurchase finPurchase = new FinPurchase();
@@ -242,7 +245,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             finPurchase.setProductresponsibility(productresponsibility);//采购负责人
             finPurchase.setProducten(val.getProductid());//产品id
             finPurchase.setTransportgood_id(val.getTransportgood_id());//走货id
-            finPurchase.preInsert();
+            finPurchase.preInsert(tokenModel);
             finPurchaseMapper.insert(finPurchase);
         }
 //        finPurchase.setPurchase_id(UUID.randomUUID().toString());
@@ -252,12 +255,17 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     }
 
 
-    public void insertHK(List<Receivablesrecord> receivablesrecords, String contractNumber, String collectionAccount, String saleresponsibility) throws Exception {
+    public void insertHK(List<Receivablesrecord> receivablesrecords, String contractNumber, String collectionAccount, String saleresponsibility, String country, TokenModel tokenModel) throws Exception {
         for (Receivablesrecord val :
                 receivablesrecords) {
             FinSales finSales = new FinSales();
             finSales.setSales_id(UUID.randomUUID().toString());
             finSales.setContractnumber(contractNumber);
+            finSales.setUnitprice(val.getUnitprice());//单价
+            finSales.setCurrency(val.getCurrency());//币种
+            finSales.setAmount(val.getNumbers());//数量
+            finSales.setUnit(val.getUnit());//单位
+            finSales.setCountry(country);//国家
             finSales.setCustomer(val.getCustomername());
             finSales.setCollectionaccount(collectionAccount);
             finSales.setReceamount(val.getReceamount() == null ? "0.00" : val.getReceamount().toString());
@@ -270,7 +278,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             finSales.setSaleresponsibility(saleresponsibility);//销售负责人
             finSales.setTransportgood_id(val.getTransportgood_id());//走货id
             finSales.setProductus(val.getProductid());//产品id
-            finSales.preInsert();
+            finSales.preInsert(tokenModel);
             finSalesMapper.insert(finSales);
         }
 //        finSales.setSales_id(UUID.randomUUID().toString());

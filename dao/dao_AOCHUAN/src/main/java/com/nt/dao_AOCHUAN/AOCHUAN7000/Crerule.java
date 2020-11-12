@@ -51,4 +51,8 @@ public class Crerule  extends BaseModel {
     @Column(name = "UNITNAME")
     private String unitname;
 
+    //核算维度
+    @Column(name = "DIMENSION")
+    private String dimension;
+
 }

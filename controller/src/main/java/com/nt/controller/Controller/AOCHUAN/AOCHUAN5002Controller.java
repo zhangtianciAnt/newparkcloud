@@ -4,11 +4,8 @@ import com.nt.dao_AOCHUAN.AOCHUAN5000.CredentialInformation;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.AccountingRule;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.CrdlInfo;
-import com.nt.dao_AOCHUAN.AOCHUAN7000.Crerule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule;
-import com.nt.dao_AOCHUAN.AOCHUAN7000.Helprule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.All;
-import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.DocuruleVo;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinCrdlInfoService;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinPurchaseSerivce;
 import com.nt.service_AOCHUAN.AOCHUAN7000.DocuruleService;
@@ -254,7 +251,7 @@ public class AOCHUAN5002Controller {
 
             String remarks = "";
             if(StringUtils.isNotBlank(item.getRemarks()) && item.getRemarks().indexOf("{0}")>0 && item.getRemarks().indexOf("{1}")>0 && item.getRemarks().indexOf("{2}")>0){
-                remarks = item.getRemarks().replace("{0}", finPurchase.getSupplier()).replace("{1}", finPurchase.getContractnumber());
+                remarks = item.getRemarks().replace("{0}", finPurchase.getSuppliercn()).replace("{1}", finPurchase.getContractnumber());
             }
             else{
                 return null;

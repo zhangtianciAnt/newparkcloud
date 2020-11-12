@@ -1,24 +1,16 @@
 package com.nt.controller.Controller.AOCHUAN;
 
 import com.nt.dao_AOCHUAN.AOCHUAN5000.CredentialInformation;
-import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.AccountingRule;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.CrdlInfo;
-import com.nt.dao_AOCHUAN.AOCHUAN7000.Crerule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule;
-import com.nt.dao_AOCHUAN.AOCHUAN7000.Helprule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.All;
-import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.DocuruleVo;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinCrdlInfoService;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinSalesService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
-import com.nt.utils.dao.TokenModel;
 import com.nt.service_AOCHUAN.AOCHUAN7000.DocuruleService;
 import com.nt.utils.*;
+import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -260,12 +252,13 @@ public class AOCHUAN5001Controller {
         for (All item : accAndauxList) {
             AccountingRule accountingRule = new AccountingRule();
 
-            String remarks = "";
-            if (StringUtils.isNotBlank(item.getRemarks()) && item.getRemarks().indexOf("{0}") > 0 && item.getRemarks().indexOf("{1}") > 0 && item.getRemarks().indexOf("{2}") > 0) {
-                remarks = item.getRemarks().replace("{0}", finSales.getContractnumber()).replace("{1}", finSales.getProductus()).replace("{2}", finSales.getAmount());
-            } else {
-                return null;
-            }
+//            String remarks = "";
+//            if (StringUtils.isNotBlank(item.getRemarks()) && item.getRemarks().indexOf("{0}") > 0 && item.getRemarks().indexOf("{1}") > 0 && item.getRemarks().indexOf("{2}") > 0) {
+////                remarks = item.getRemarks().replace("{0}", finSales.getContractnumber()).replace("{1}", finSales.getProductus()).replace("{2}", finSales.getAmount());
+//                remarks = item.getRemarks().replace("{0}", finSales.getContractnumber()).replace("{1}", finSales.getProductus());
+//            } else {
+//                return null;
+//            }
 
             //金额计算
             Double calAmount = 0.00;
@@ -273,7 +266,7 @@ public class AOCHUAN5001Controller {
                 calAmount = amountCalculation(item.getAmounttype(), finSales);
             }
             //分录
-            accountingRule.setRemarks(remarks);//摘要
+            accountingRule.setRemarks(item.getRemarks());//摘要
             accountingRule.setAcct_code(item.getAccountid());//科目编码
             accountingRule.setDebit(item.getDebit());//借方科目
             accountingRule.setCredit(item.getCredit());//贷方科目

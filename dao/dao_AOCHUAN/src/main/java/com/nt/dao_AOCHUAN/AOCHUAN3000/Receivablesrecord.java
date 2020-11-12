@@ -40,6 +40,11 @@ public class Receivablesrecord extends BaseModel {
 
     private String productid;
 
+    private String currency;//币种
+    private String numbers;//数量
+    private String unit;//单位
+    private String unitprice;//单价
+
     @Transient
     private String productname;
 }

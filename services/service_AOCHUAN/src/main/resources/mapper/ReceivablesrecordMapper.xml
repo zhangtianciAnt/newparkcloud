@@ -2,11 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_AOCHUAN.AOCHUAN3000.mapper.ReceivablesrecordMapper" >
     <insert id="insertReceivablesrecordList" parameterType="java.util.List">
-        INSERT INTO receivablesrecord (receivablesrecord_id, customername, receamount, receduedate, realamount, paybackdate, paybackstatus, customerid, transportgood_id,productid)
+        INSERT INTO receivablesrecord (receivablesrecord_id, customername, receamount, receduedate, realamount, paybackdate, paybackstatus, customerid,
+        transportgood_id,productid,currency,numbers,unit,unitprice)
         values
         <foreach item="item" collection="list" separator=",">
             (#{item.receivablesrecord_id}, #{item.customername}, #{item.receamount}, #{item.receduedate}, #{item.realamount}, #{item.paybackdate}, #{item.paybackstatus},
-            #{item.customerid}, #{item.transportgood_id},#{item.productid})
+            #{item.customerid}, #{item.transportgood_id},#{item.productid},#{item.currency},#{item.numbers},#{item.unit},#{item.unitprice})
         </foreach>
     </insert>
 
@@ -22,6 +23,10 @@
      receivablesrecord.paybackstatus,
      receivablesrecord.transportgood_id,
      receivablesrecord.productid,
+     receivablesrecord.currency,
+     receivablesrecord.numbers,
+     receivablesrecord.unit,
+     receivablesrecord.unitprice,
      products.ENGLISHNAME as productname
      from receivablesrecord
     inner join products
