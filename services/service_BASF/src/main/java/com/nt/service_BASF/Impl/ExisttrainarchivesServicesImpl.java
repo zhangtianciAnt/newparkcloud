@@ -176,27 +176,21 @@ public class ExisttrainarchivesServicesImpl implements ExisttrainarchivesService
                 try {
                     existtrainarchives.setCertificatenumber(value.get(5).toString().trim());
                 } catch (Exception e) {
-                    result.add("导入模板第 " + k + "行，证件编号数据异常，导入系统失败！");
-                    errorCount += 1;
-                    continue;
+                    existtrainarchives.setCertificatenumber("");
                 }
                 //批准日期
                 try {
                     String approvaldate = value.get(6).toString().trim();
                     existtrainarchives.setApprovaldate(formatter.parse(approvaldate.replace("/","")));
                 } catch (Exception e) {
-                    result.add("导入模板第 " + k + "行，批准日期数据异常，导入系统失败！");
-                    errorCount += 1;
-                    continue;
+                    existtrainarchives.setApprovaldate(null);
                 }
                 //有效日期
                 try {
                     String effectivedate = value.get(7).toString().trim();
                     existtrainarchives.setEffectivedate(formatter.parse(effectivedate.replace("/","")));
                 } catch (Exception e) {
-                    result.add("导入模板第 " + k + "行，有效日期数据异常，导入系统失败！");
-                    errorCount += 1;
-                    continue;
+                    existtrainarchives.setEffectivedate(null);
                 }
                 //备考
                 try {
