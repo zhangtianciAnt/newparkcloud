@@ -7,10 +7,7 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,12 +31,12 @@ public class Pfans2017Controller {
         return ApiResult.success(punchcardrecordService.getDataList(punchcardrecord,tokenModel));
     }
 
-    @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/list", method = {RequestMethod.GET})
+    public ApiResult list(@RequestParam String dates, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         PunchcardRecord punchcardrecord = new PunchcardRecord();
         punchcardrecord.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(punchcardrecordService.list(punchcardrecord,tokenModel));
+        return ApiResult.success(punchcardrecordService.list(dates,punchcardrecord,tokenModel));
     }
 
     @RequestMapping(value = "/list1", method = {RequestMethod.POST})
@@ -47,7 +44,8 @@ public class Pfans2017Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         PunchcardRecord punchcardrecord = new PunchcardRecord();
         punchcardrecord.setOwner(tokenModel.getUserId());
-        return ApiResult.success(punchcardrecordService.list(punchcardrecord,tokenModel));
+        String dates = "";
+        return ApiResult.success(punchcardrecordService.list(dates,punchcardrecord,tokenModel));
     }
     @RequestMapping(value = "/importUser",method={RequestMethod.POST})
     public ApiResult importUser(HttpServletRequest request){

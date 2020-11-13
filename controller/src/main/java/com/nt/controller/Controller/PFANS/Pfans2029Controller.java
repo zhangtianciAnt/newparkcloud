@@ -11,10 +11,7 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,12 +25,12 @@ public class Pfans2029Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/list", method = {RequestMethod.GET})
+    public ApiResult list(@RequestParam String dates, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         PunchcardRecordbp punchcardrecord = new PunchcardRecordbp();
         punchcardrecord.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(punchcardrecordService.list(punchcardrecord,tokenModel));
+        return ApiResult.success(punchcardrecordService.list(dates,punchcardrecord,tokenModel));
     }
     //add-ws-外协人员表查询
     @RequestMapping(value = "/getAttendancelist", method = {RequestMethod.POST})
@@ -51,7 +48,8 @@ public class Pfans2029Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         PunchcardRecordbp punchcardrecord = new PunchcardRecordbp();
         punchcardrecord.setOwner(tokenModel.getUserId());
-        return ApiResult.success(punchcardrecordService.list(punchcardrecord,tokenModel));
+        String dates = "";
+        return ApiResult.success(punchcardrecordService.list(dates,punchcardrecord,tokenModel));
     }
 
     @RequestMapping(value = "/getPunDetailbp", method = {RequestMethod.POST})
