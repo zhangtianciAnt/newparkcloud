@@ -71,9 +71,13 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
     private MongoTemplate mongoTemplate;
 
     @Override
-    public List<PunchcardRecord> list(PunchcardRecord punchcardrecord, TokenModel tokenModel) throws Exception {
+    public List<PunchcardRecord> list(String dates, PunchcardRecord punchcardrecord, TokenModel tokenModel) throws Exception {
+        SimpleDateFormat sformat = new SimpleDateFormat("yyyy-MM");//日期格式
         List<PunchcardRecord> punlist = punchcardrecordMapper.select(punchcardrecord);
         punlist = punlist.stream().filter(item -> (StringUtils.isNullOrEmpty(item.getTenantid()))).collect(Collectors.toList());
+        if(!dates.equals("")){
+            punlist = punlist.stream().filter(item -> (sformat.format(item.getPunchcardrecord_date()).equals(dates))).collect(Collectors.toList());
+        }
         return punlist;
     }
 
