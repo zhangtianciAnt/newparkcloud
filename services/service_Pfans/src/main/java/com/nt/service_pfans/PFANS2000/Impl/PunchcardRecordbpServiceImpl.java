@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.service_pfans.PFANS2000.PunchcardRecordbpService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -23,8 +25,13 @@ public class PunchcardRecordbpServiceImpl implements PunchcardRecordbpService {
     private AttendancebpMapper attendancebpmapper;
 
     @Override
-    public List<PunchcardRecordbp> list(PunchcardRecordbp punchcardrecord,TokenModel tokenModel) throws Exception {
-        return punchcardrecordMapper.select(punchcardrecord);
+    public List<PunchcardRecordbp> list(String dates,PunchcardRecordbp punchcardrecord,TokenModel tokenModel) throws Exception {
+        SimpleDateFormat sformat = new SimpleDateFormat("yyyy-MM");//日期格式
+        List<PunchcardRecordbp> punlist = punchcardrecordMapper.select(punchcardrecord);
+        if(!dates.equals("")){
+            punlist = punlist.stream().filter(item -> (sformat.format(item.getPunchcardrecord_date()).equals(dates))).collect(Collectors.toList());
+        }
+        return punlist;
     }
 
     //add-ws-外协人员表查询

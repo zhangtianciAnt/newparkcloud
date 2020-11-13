@@ -12,7 +12,7 @@ public interface PunchcardRecordbpService {
     //add-ws-外协人员表查询
     List<Attendancebp> getAttendancebplist(Attendancebp attendancebp) throws Exception;
     //add-ws-外协人员表查询
-    List<PunchcardRecordbp> list(PunchcardRecordbp punchcardrecord, TokenModel tokenModel) throws Exception;
+    List<PunchcardRecordbp> list(String dates,PunchcardRecordbp punchcardrecord, TokenModel tokenModel) throws Exception;
 
     List<PunchcardRecordDetailbp> getPunDetailbp(PunchcardRecordDetailbp detail)throws Exception;
 }

@@ -13,7 +13,7 @@ import java.util.List;
 
 
 public interface PunchcardRecordService {
-    List<PunchcardRecord> list(PunchcardRecord punchcardrecord,TokenModel tokenModel) throws Exception;
+    List<PunchcardRecord> list(String dates, PunchcardRecord punchcardrecord,TokenModel tokenModel) throws Exception;
     List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
     //void methodAttendance(TokenModel tokenModel) throws Exception ;
     void methodAttendance_b(Calendar cal,String userid) throws Exception ;
