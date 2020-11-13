@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -78,6 +79,17 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
     @Override
     public void update(RecruitJudgement recruitJudgement, TokenModel tokenModel) throws Exception {
         recruitJudgement.preUpdate(tokenModel);
+        //审批通过，入职区分默认待入职。add ccm 1113
+        if(recruitJudgement.getStatus().equals("4") && StringUtils.isNullOrEmpty(recruitJudgement.getEntrydivision()))
+        {
+            List<Dictionary> dicList = dictionaryService.getForSelect("PR065");
+            dicList = dicList.stream().filter(item -> (item.getValue1().equals("待入职"))).collect(Collectors.toList());
+            if(dicList.size()>0)
+            {
+                recruitJudgement.setEntrydivision(dicList.get(0).getCode());
+            }
+        }
+        //审批通过，入职区分默认待入职。add ccm 1113
         recruitJudgementMapper.updateByPrimaryKeySelective(recruitJudgement);
 //        add_fjl_06/02  --填写入职日并且审批通过的数据插入到人员信息，并给薪资担当发代办
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");

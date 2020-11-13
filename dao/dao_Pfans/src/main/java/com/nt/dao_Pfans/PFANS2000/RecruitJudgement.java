@@ -126,4 +126,13 @@ public class RecruitJudgement extends BaseModel {
     //add_fjl_0731
     private String interviewrecord_id;
     //add_fjl_0731
+
+    //add ccm 1113
+    //入职区分
+    private String entrydivision;
+    //面试合格时间
+    private Date interviewtime;
+    //未入职理由
+    private String unemployedreason;
+    //add ccm 1113
 }
