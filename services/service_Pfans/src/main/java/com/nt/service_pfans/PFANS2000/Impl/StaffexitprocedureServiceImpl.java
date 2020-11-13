@@ -1107,7 +1107,6 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
                 for (Staffexitproce list64 : staffexitprocelist) {
                     list64.setModifyon(new Date());
                     list64.setOwner(list.getUserdata());
-                    list64.setVersion(list64.getVersion()+1);
                     staffexitproceMapper.updateByPrimaryKey(list64);
                 }
                 //目标管理
@@ -1378,10 +1377,8 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         }
 //        }
 //        if(staffexitprocedureVo.getStaffexitprocedure().getStage().equals("1") && staffexitprocedureVo.getStaffexitprocedure().getStatus().equals("4")) {
-        staffexitprocedureVo.getStaffexitproce().setVersion(staffexitprocedureVo.getStaffexitproce().getVersion() + 1);
         BeanUtils.copyProperties(staffexitprocedureVo.getStaffexitproce(), staffexitproce);
         staffexitproce.preUpdate(tokenModel);
-        staffexitproce.setVersion(staffexitproce.getVersion()+1);
         staffexitproceMapper.updateByPrimaryKey(staffexitproce);
         String staffexitproceid = staffexitproce.getStaffexitproce_id();
         Citation cita = new Citation();

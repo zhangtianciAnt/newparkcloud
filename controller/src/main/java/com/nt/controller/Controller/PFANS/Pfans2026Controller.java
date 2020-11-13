@@ -311,11 +311,13 @@ public class Pfans2026Controller {
             }
             String lastStr = StringUtils.join(lastAnt.toArray(), ",");
             staffexitprocedureVo.getStaffexitproce().setCondate(lastStr);
+            staffexitprocedureVo.getStaffexitproce().setVersion(Staff.getVersion() + 1);
             TokenModel tokenModel = tokenService.getToken(request);
             staffexitprocedureService.update2(staffexitprocedureVo, tokenModel);
             return ApiResult.success();
         }else{
             TokenModel tokenModel = tokenService.getToken(request);
+            staffexitprocedureVo.getStaffexitproce().setVersion(Staff.getVersion() + 1);
             staffexitprocedureService.update2(staffexitprocedureVo, tokenModel);
             return ApiResult.success();
         }
