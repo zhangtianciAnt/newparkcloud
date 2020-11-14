@@ -29,8 +29,43 @@
     "FEntity": {
         "FEXPLANATION": "",
         "FACCOUNTID": {
-          "FNumber": "1001"
+          "FNumber": ""
         },
+      "FDetailID": {
+        "FDETAILID__FFLEX10": {
+          "FNumber": ""
+        },
+        "FDETAILID__FFLEX4": {
+          "FNumber": ""
+        },
+        "FDETAILID__FFLEX5": {
+          "FNumber": ""
+        },
+        "FDETAILID__FFLEX9": {
+          "FNumber": ""
+        },
+        "FDETAILID__FFLEX6": {
+          "FNumber": ""
+        },
+        "FDETAILID__FFLEX7": {
+          "FNumber": ""
+        },
+        "FDETAILID__FFLEX11": {
+          "FNumber": ""
+        },
+        "FDETAILID__FFLEX8": {
+          "FNumber": ""
+        },
+        "FDETAILID__FFLEX12": {
+          "FNumber": ""
+        },
+        "FDETAILID__FFLEX13": {
+          "FNumber": ""
+        },
+        "FDETAILID__FF100002": {
+          "FNumber": ""
+        }
+      },
         "FCURRENCYID": {
           "FNumber": ""
         },

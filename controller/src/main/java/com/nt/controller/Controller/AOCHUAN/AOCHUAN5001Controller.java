@@ -1,15 +1,20 @@
 package com.nt.controller.Controller.AOCHUAN;
 
+import com.nt.dao_AOCHUAN.AOCHUAN2000.Customerbaseinfor;
+import com.nt.dao_AOCHUAN.AOCHUAN3000.TransportGood;
+import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.CredentialInformation;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinSales;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.AccountingRule;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.CrdlInfo;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.All;
+import com.nt.service_AOCHUAN.AOCHUAN2000.mapper.CustomerbaseinforMapper;
+import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper;
+import com.nt.service_AOCHUAN.AOCHUAN4000.mapper.ProductsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinCrdlInfoService;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinSalesService;
 import com.nt.service_AOCHUAN.AOCHUAN7000.DocuruleService;
-import com.nt.service_Org.DictionaryService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -37,7 +42,11 @@ public class AOCHUAN5001Controller {
     private DocuruleService docuruleService;
 
     @Autowired
-    private DictionaryService dictionaryService;
+    private CustomerbaseinforMapper customerbaseinforMapper;
+    @Autowired
+    private TransportGoodMapper transportGoodMapper;
+    @Autowired
+    private ProductsMapper productsMapper;
 
     @Autowired
     private TokenService tokenService;
@@ -281,6 +290,44 @@ public class AOCHUAN5001Controller {
             accountingRule.setUnit_price(Double.parseDouble(finSales.getUnitprice()));//单价
             accountingRule.setQuantity(Integer.parseInt(finSales.getAmount()));//数量
             accountingRule.setAmount(calAmount);//金额
+            String dim = "";
+            if(StringUtils.isNotEmpty(item.getDimension())){//核算维度
+                String dimSplit[] = item.getDimension().split("/");
+                if(dimSplit.length > 0){
+                    for(String di:dimSplit){
+                        if(di.equals("客户")){
+                            TransportGood transportGood = new TransportGood();
+                            Customerbaseinfor customerbaseinfor = new Customerbaseinfor();
+                            transportGood.setContractnumber(finSales.getContractnumber());
+                            List<TransportGood> transportGoodList = transportGoodMapper.select(transportGood);
+                            if(transportGoodList.size() > 0){
+                                customerbaseinfor.setCustomerbaseinfor_id(transportGoodList.get(0).getCustomerid());
+                                List<Customerbaseinfor> customerbaseinforList = customerbaseinforMapper.select(customerbaseinfor);
+                                if(customerbaseinforList.size() > 0){
+                                    dim = customerbaseinforList.get(0).getCustomernameen()+"/"+customerbaseinforList.get(0).getNation()+"/";
+                                    accountingRule.setFdetailid__fflex6(customerbaseinforList.get(0).getCustnumber());
+                                    accountingRule.setFdetailid__ff100002(customerbaseinforList.get(0).getNation());
+                                }
+                            }
+                        }
+                        if(di.equals("物料")){
+                            Products products = new Products();
+                            products.setProducts_id(finSales.getProductus());
+                            List<Products> productsList = productsMapper.select(products);
+                            if(productsList.size() > 0){
+                                dim = dim +productsList.get(0).getChinaname()+"/";
+                                accountingRule.setFdetailid__fflex8(productsList.get(0).getPronumber());
+                            }
+                        }
+//                        if(di.equals("供应商")){
+//                      }
+                    }
+                }
+            }
+            if(dim != ""){//去掉末尾"/"
+                dim = dim.substring(0,dim.length()-1);
+            }
+            accountingRule.setDimension(dim);//核算维度
             accountingRule.setRowindex(item.getRowindex());//行号
             //辅助项目
 //            accountingRule.setBankaccount_code(item.getBankaccountid());//银行账号id

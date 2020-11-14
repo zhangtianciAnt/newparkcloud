@@ -188,8 +188,45 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                         Map<String, Object> fentity = (Map<String, Object>)((Map<String, Object>) basic1.get("Model")).get("FEntity");//单据体
                         Map<String, Object> faccountid = (Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FACCOUNTID");//科目编码
                         Map<String, Object> fcurrencyid = (Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FCURRENCYID");//币种
+                        Map<String, Object> fdetailid = (Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID");//核算维度
+                        Map<String, Object> fdetailid__fflex6 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FFLEX6");//客户
+                        Map<String, Object> fdetailid__fflex7 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FFLEX7");//员工
+                        Map<String, Object> fdetailid__fflex8 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FFLEX8");//产品
+                        Map<String, Object> fdetailid__fflex9 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FFLEX9");//费用项目
+                        Map<String, Object> fdetailid__fflex10 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FFLEX10");//资产类别
+                        Map<String, Object> fdetailid__fflex11 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FFLEX11");//组织机构
+                        Map<String, Object> fdetailid__fflex12 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FFLEX12");//产品分组
+                        Map<String, Object> fdetailid__fflex13 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FFLEX13");//客户分组
+                        Map<String, Object> fdetailid__fflex4 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FFLEX4");//供应商
+                        Map<String, Object> fdetailid__fflex5 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FFLEX5");//部门
+                        Map<String, Object> fdetailid__ff100002 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FF100002");//国家
                         fentity.put("FEXPLANATION",ar.getRemarks());//摘要
                         faccountid.put("FNumber",ar.getAcct_code()); //科目编码
+                        if(StringUtils.isNotEmpty(ar.getDimension())){
+                            fdetailid__fflex4.put("FNumber",ar.getFdetailid__fflex4());//供应商
+                            fdetailid__fflex5.put("FNumber",ar.getFdetailid__fflex5());//部门
+                            fdetailid__fflex6.put("FNumber",ar.getFdetailid__fflex6());//客户
+                            fdetailid__fflex7.put("FNumber",ar.getFdetailid__fflex7());//员工
+                            fdetailid__fflex8.put("FNumber",ar.getFdetailid__fflex8());//产品
+                            fdetailid__fflex9.put("FNumber",ar.getFdetailid__fflex9());//费用项目
+                            fdetailid__fflex10.put("FNumber",ar.getFdetailid__fflex10());//资产类别
+                            fdetailid__fflex11.put("FNumber",ar.getFdetailid__fflex11());//组织机构
+                            fdetailid__fflex12.put("FNumber",ar.getFdetailid__fflex12());//产品分组
+                            fdetailid__fflex13.put("FNumber",ar.getFdetailid__fflex13());//客户分组
+                            fdetailid__ff100002.put("FNumber",ar.getFdetailid__ff100002());//国家
+                        }
+                        fdetailid.put("FDETAILID__FFLEX4",fdetailid__fflex4);
+                        fdetailid.put("FDETAILID__FFLEX5",fdetailid__fflex5);
+                        fdetailid.put("FDETAILID__FFLEX6",fdetailid__fflex6);
+                        fdetailid.put("FDETAILID__FFLEX7",fdetailid__fflex7);
+                        fdetailid.put("FDETAILID__FFLEX8",fdetailid__fflex8);
+                        fdetailid.put("FDETAILID__FFLEX9",fdetailid__fflex9);
+                        fdetailid.put("FDETAILID__FFLEX10",fdetailid__fflex10);
+                        fdetailid.put("FDETAILID__FFLEX11",fdetailid__fflex11);
+                        fdetailid.put("FDETAILID__FFLEX12",fdetailid__fflex12);
+                        fdetailid.put("FDETAILID__FFLEX13",fdetailid__fflex13);
+                        fdetailid.put("FDETAILID__FF100002",fdetailid__ff100002);
+                        fentity.put("FDetailID",fdetailid);
                         if(StringUtils.isNotEmpty(ar.getCurrency())){
                             if(ar.getCurrency().equals("PY008001")){
                                 ar.setCurrency("PRE001");//人民币
@@ -370,6 +407,18 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                 acctgRul.setUnit_price(item.getUnit_price());//单价
                 acctgRul.setQuantity(item.getQuantity());//数量
                 acctgRul.setAmount(item.getAmount());
+                acctgRul.setDimension(item.getDimension());
+                acctgRul.setFdetailid__fflex4(item.getFdetailid__fflex4());
+                acctgRul.setFdetailid__fflex5(item.getFdetailid__fflex5());
+                acctgRul.setFdetailid__fflex6(item.getFdetailid__fflex6());
+                acctgRul.setFdetailid__fflex7(item.getFdetailid__fflex7());
+                acctgRul.setFdetailid__fflex8(item.getFdetailid__fflex8());
+                acctgRul.setFdetailid__fflex9(item.getFdetailid__fflex9());
+                acctgRul.setFdetailid__fflex10(item.getFdetailid__fflex10());
+                acctgRul.setFdetailid__fflex11(item.getFdetailid__fflex11());
+                acctgRul.setFdetailid__fflex12(item.getFdetailid__fflex12());
+                acctgRul.setFdetailid__fflex13(item.getFdetailid__fflex13());
+                acctgRul.setFdetailid__ff100002(item.getFdetailid__ff100002());
                 acctgRul.setRowindex(item.getRowindex());
                 acctgRul.preInsert(tokenModel);
                 finAcctgRulMapper.insertSelective(acctgRul);

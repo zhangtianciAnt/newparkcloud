@@ -1,6 +1,5 @@
 package com.nt.dao_AOCHUAN.AOCHUAN5000.Vo;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -102,4 +101,40 @@ public class AccountingRule extends BaseModel {
     //辅助账金额
     @Column(name = "AUXACCTG_AMOUNT")
     private String auxacctg_amount;
+    //核算维度
+    @Column(name = "DIMENSION")
+    private String dimension;
+
+    @Column(name = "FDETAILID__FFLEX6")
+    private String fdetailid__fflex6;//客户
+
+    @Column(name = "FDETAILID__FFLEX7")
+    private String fdetailid__fflex7;//员工
+
+    @Column(name = "FDETAILID__FFLEX8")
+    private String fdetailid__fflex8;//产品
+
+    @Column(name = "FDETAILID__FFLEX9")
+    private String fdetailid__fflex9;//费用项目
+
+    @Column(name = "FDETAILID__FFLEX10")
+    private String fdetailid__fflex10;//资产类别
+
+    @Column(name = "FDETAILID__FFLEX11")
+    private String fdetailid__fflex11;//组织机构
+
+    @Column(name = "FDETAILID__FFLEX12")
+    private String fdetailid__fflex12;//产品分组
+
+    @Column(name = "FDETAILID__FFLEX13")
+    private String fdetailid__fflex13;//客户分组
+
+    @Column(name = "FDETAILID__FFLEX4")
+    private String fdetailid__fflex4;//供应商
+
+    @Column(name = "FDETAILID__FFLEX5")
+    private String fdetailid__fflex5;//部门
+
+    @Column(name = "FDETAILID__FF100002")
+    private String fdetailid__ff100002;//国家
 }
