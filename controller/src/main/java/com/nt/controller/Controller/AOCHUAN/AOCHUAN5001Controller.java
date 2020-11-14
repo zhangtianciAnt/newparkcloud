@@ -275,6 +275,9 @@ public class AOCHUAN5001Controller {
             Double hisAmount = 0.00;
             if (StringUtils.isNotBlank(item.getAmounttype())) {
                 calAmount = amountCalculation(item.getAmounttype(), finSales).get("resultAmount");
+//                if(){
+////
+////                }
                 hisAmount = amountCalculation(item.getAmounttype(), finSales).get("hisAmount");
             }
             //分录
@@ -399,11 +402,11 @@ public class AOCHUAN5001Controller {
                 break;
             case "6"://手续费
                 if ("PY008002".equals(finSales.getCurrency())) {
-                    resultAmount = finSales.getCommission_amount() * Double.parseDouble(finSales.getEx_rate());
+                    resultAmount = Double.parseDouble(finSales.getCommissionamounta()) * Double.parseDouble(finSales.getEx_rate());
                 } else {
-                    resultAmount = finSales.getCommission_amount();
+                    resultAmount = Double.parseDouble(finSales.getCommissionamounta());
                 }
-                hisAmount = finSales.getCommission_amount();
+                hisAmount = Double.parseDouble(finSales.getCommissionamounta());
                 break;
             case "7"://主营业务收入=应收款-（保费+运费)
                 if (StringUtils.isNotBlank(finSales.getReceamount()) && !" ".equals(finSales.getReceamount())) {
@@ -427,12 +430,12 @@ public class AOCHUAN5001Controller {
                 break;
             case "8"://结算款=应收款-手续费
                 if (StringUtils.isNotBlank(finSales.getReceamount()) && !" ".equals(finSales.getReceamount())) {
-                    if ("PY008002".equals(finSales.getCurrency())) {
-                        resultAmount = (Double.parseDouble(finSales.getReceamount()) - finSales.getCommission_amount()) * Double.parseDouble(finSales.getEx_rate());
+                    if (StringUtils.isNotEmpty(finSales.getCurrency()) && "PY008002".equals(finSales.getCurrency())) {
+                        resultAmount = (Double.parseDouble(finSales.getReceamount()) - Double.parseDouble(finSales.getCommissionamounta())) * Double.parseDouble(finSales.getEx_rate());
                     } else {
-                        resultAmount = Double.parseDouble(finSales.getReceamount()) - finSales.getCommission_amount();
+                        resultAmount = Double.parseDouble(finSales.getReceamount()) - Double.parseDouble(finSales.getCommissionamounta());
                     }
-                    hisAmount = Double.parseDouble(finSales.getReceamount()) - finSales.getCommission_amount();
+                    hisAmount = Double.parseDouble(finSales.getReceamount()) - Double.parseDouble(finSales.getCommissionamounta());
                 }
                 break;
         }

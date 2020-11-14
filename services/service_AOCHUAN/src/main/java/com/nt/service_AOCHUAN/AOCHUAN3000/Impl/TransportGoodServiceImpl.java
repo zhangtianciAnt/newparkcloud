@@ -211,7 +211,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
                 val.setApplicationrecord_id(UUID.randomUUID().toString());
             }
             if (transportGood.getFinance() == 2) {
-                insertCW(applicationrecords, transportGood.getContractnumber(), transportGood.getProductresponsibility(),tokenModel);
+                insertCW(applicationrecords, transportGood,tokenModel);
             }
             applicationrecordMapper.insertApplicationrecordList(applicationrecords);
         }
@@ -239,21 +239,26 @@ public class TransportGoodServiceImpl implements TransportGoodService {
     }
 
 
-    public void insertCW(List<Applicationrecord> applicationrecords, String contractNumber, String productresponsibility, TokenModel tokenModel) {
+    public void insertCW(List<Applicationrecord> applicationrecords, TransportGood transportGood, TokenModel tokenModel) {
         for (Applicationrecord val :
                 applicationrecords) {
             FinPurchase finPurchase = new FinPurchase();
             finPurchase.setPurchase_id(UUID.randomUUID().toString());
-            finPurchase.setContractnumber(contractNumber);
+            finPurchase.setContractnumber(transportGood.getContractnumber());
             finPurchase.setSupplier(val.getSupplierid());
-            finPurchase.setPaymenttime(val.getRealdate());
-            finPurchase.setInvoicenumber(val.getInvoiceno());
+            finPurchase.setUnitprice1(val.getUnitprice1());//单价
+            finPurchase.setCurrency1(val.getCurrency1());//币种
+            finPurchase.setPurchase_amount(val.getNumbers1());//数量
+            finPurchase.setUnit1(val.getUnit());//单位
+            finPurchase.setPaymenttime(val.getRealdate());//应付日期
+            finPurchase.setInvoicenumber(val.getInvoiceno());//发票号码
             finPurchase.setCredential_status("PW001001");
-            finPurchase.setRealpay(val.getRealpay() == null ? "0.00" : val.getRealpay().toString());
-            finPurchase.setRealamount(val.getRealamount());
+            finPurchase.setRealpay(val.getRealpay() == null ? "0.00" : val.getRealpay().toString());//应付金额
+            finPurchase.setRealamount(val.getRealamount());//实付金额
             finPurchase.setApplicationrecord_id(val.getApplicationrecord_id());
-            finPurchase.setProductresponsibility(productresponsibility);//采购负责人
+            finPurchase.setProductresponsibility(transportGood.getProductresponsibility());//采购负责人
             finPurchase.setProducten(val.getProductid());//产品id
+            finPurchase.setSupplier(val.getSupplierid());//供应商id
             finPurchase.setTransportgood_id(val.getTransportgood_id());//走货id
             finPurchase.preInsert(tokenModel);
             finPurchaseMapper.insert(finPurchase);

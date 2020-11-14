@@ -1,11 +1,15 @@
 package com.nt.controller.Controller.AOCHUAN;
 
+import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierbaseinfor;
+import com.nt.dao_AOCHUAN.AOCHUAN4000.Products;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.CredentialInformation;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.FinPurchase;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.AccountingRule;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.CrdlInfo;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.All;
+import com.nt.service_AOCHUAN.AOCHUAN1000.mapper.SupplierbaseinforMapper;
+import com.nt.service_AOCHUAN.AOCHUAN4000.mapper.ProductsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinCrdlInfoService;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinPurchaseSerivce;
 import com.nt.service_AOCHUAN.AOCHUAN7000.DocuruleService;
@@ -18,10 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/finpurchase")
@@ -35,6 +36,12 @@ public class AOCHUAN5002Controller {
 
     @Autowired
     private DocuruleService docuruleService;
+
+    @Autowired
+    private SupplierbaseinforMapper supplierbaseinforMapper;
+
+    @Autowired
+    private ProductsMapper productsMapper;
 
     @Autowired
     private TokenService tokenService;
@@ -249,32 +256,71 @@ public class AOCHUAN5002Controller {
         for (All item:accAndauxList) {
             AccountingRule accountingRule = new AccountingRule();
 
-            String remarks = "";
-            if(StringUtils.isNotBlank(item.getRemarks()) && item.getRemarks().indexOf("{0}")>0 && item.getRemarks().indexOf("{1}")>0 && item.getRemarks().indexOf("{2}")>0){
-                remarks = item.getRemarks().replace("{0}", finPurchase.getSuppliercn()).replace("{1}", finPurchase.getContractnumber());
-            }
-            else{
-                return null;
-            }
+//            String remarks = "";
+//            if(StringUtils.isNotBlank(item.getRemarks()) && item.getRemarks().indexOf("{0}")>0 && item.getRemarks().indexOf("{1}")>0 && item.getRemarks().indexOf("{2}")>0){
+//                remarks = item.getRemarks().replace("{0}", finPurchase.getSuppliercn()).replace("{1}", finPurchase.getContractnumber());
+//            }
+//            else{
+//                return null;
+//            }
 
             //金额计算
-            Double calAmount = 0.00;
+            Map<Object,String> mp = new HashMap<>();
+            Double resultAmount = 0.00;//原币金额
+            int purchase_amount = 0;//数量
+            Double unitprice = 0.00;//单价
+            Double hisAmount = 0.00;
             if(StringUtils.isNotBlank(item.getAmounttype())) {
-                calAmount = amountCalculation(item.getAmounttype(), item.getCrerate(), finPurchase);
+                mp = amountCalculation(mp,item.getAmounttype(), item.getCrerate(), finPurchase);
+                if(!mp.get("resultAmount").equals("")){
+                    resultAmount = Double.parseDouble(mp.get("resultAmount"));
+                }
+                if(!mp.get("purchase_amount").equals("")){
+                    purchase_amount = Integer.parseInt(mp.get("purchase_amount"));
+                }
+                if(!mp.get("unitprice").equals("")){
+                    unitprice = Double.parseDouble(mp.get("unitprice"));
+                }
             }
             //分录
-            accountingRule.setRemarks(remarks);//摘要
+            accountingRule.setRemarks(item.getRemarks());//摘要
             accountingRule.setAcct_code(item.getAccountid());//科目编码
             accountingRule.setDebit(item.getDebit());//借方科目
             accountingRule.setCredit(item.getCredit());//贷方科目
             accountingRule.setCurrency(finPurchase.getCurrency1());//币种
-            accountingRule.setEx_rate(finPurchase.getEx_rate());//汇率
+//            accountingRule.setEx_rate(finPurchase.getEx_rate());//汇率
             accountingRule.setTaxrate(item.getCrerate());//税率
-            accountingRule.setOricurrency_amount(Double.parseDouble(finPurchase.getPurchaseamount()));//原币金额
+            accountingRule.setOricurrency_amount(resultAmount);//原币金额
             accountingRule.setUnit(item.getUnitname());//单位
-            accountingRule.setUnit_price(Double.parseDouble(finPurchase.getUnitprice1()));//单价
-            accountingRule.setQuantity(Integer.parseInt(finPurchase.getPurchase_amount()));//数量
-            accountingRule.setAmount(calAmount);//金额
+            accountingRule.setUnit_price(unitprice);//单价
+            accountingRule.setQuantity(purchase_amount);//数量
+            accountingRule.setAmount(resultAmount);//金额
+            String dim = "";
+            if(StringUtils.isNotEmpty(item.getDimension())){//核算维度
+                String dimSplit[] = item.getDimension().split("/");
+                if(dimSplit.length > 0){
+                    for(String di:dimSplit){
+                        if(di.equals("供应商")){
+                            Supplierbaseinfor supplierbaseinfor = supplierbaseinforMapper.selectByPrimaryKey(finPurchase.getSupplier());
+                            if(supplierbaseinfor != null){
+                                dim = supplierbaseinfor.getSuppliernamecn()+"/";
+                                accountingRule.setFdetailid__fflex4(supplierbaseinfor.getSupnumber());
+                            }
+                        }
+                        if(di.equals("物料")){
+                            Products productsList = productsMapper.selectByPrimaryKey(finPurchase.getProducten());
+                            if(productsList != null){
+                                dim = dim +productsList.getChinaname()+"/";
+                                accountingRule.setFdetailid__fflex8(productsList.getPronumber());
+                            }
+                        }
+                    }
+                }
+            }
+            if(dim != ""){//去掉末尾"/"
+                dim = dim.substring(0,dim.length()-1);
+            }
+            accountingRule.setDimension(dim);//核算维度
             accountingRule.setRowindex(item.getRowindex());//行号
             //辅助项目
             accountingRule.setBankaccount_code(item.getBankaccountid());//银行账号id
@@ -306,24 +352,27 @@ public class AOCHUAN5002Controller {
      * @param finPurchase
      * @return
      */
-    private Double amountCalculation(String amountType, String tax, FinPurchase finPurchase) throws ParseException {
-
-        Double resultAmount = 0.00;
+    private Map<Object,String> amountCalculation(Map<Object,String> dataMap,String amountType, String tax, FinPurchase finPurchase) throws ParseException {
+//        Map<Object,Double> dataMap = new HashMap<>();
+        String resultAmount = "";//原币金额
+        String purchase_amount = "";//数量
+        String unitprice = "";//单价
+        String hisAmount = "";
 
         switch (amountType) {
-            case "1"://采购金额
-                if (StringUtils.isNotBlank(finPurchase.getPurchaseamount()) && !" ".equals(finPurchase.getPurchaseamount())) {
-                        resultAmount = Double.parseDouble(finPurchase.getPurchaseamount());
+            case "1"://采购金额Purchaseamount
+                if (StringUtils.isNotBlank(finPurchase.getRealpay()) && !" ".equals(finPurchase.getRealpay())) {
+                        resultAmount = finPurchase.getRealpay();
                 }
                 break;
             case "2"://税费 = 采购金额/(1+增值税率)*增值税率
-                if (StringUtils.isNotBlank(finPurchase.getPurchaseamount()) && !" ".equals(finPurchase.getPurchaseamount())) {
+                if (StringUtils.isNotBlank(finPurchase.getRealpay()) && !" ".equals(finPurchase.getRealpay())) {
 
-                    Double pAmount = Double.parseDouble(finPurchase.getPurchaseamount());
+                    Double pAmount = Double.parseDouble(finPurchase.getRealpay());
                     NumberFormat nf =  NumberFormat.getPercentInstance();
-                    Number percent = nf.parse(tax);
+                    Number percent = nf.parse("13%");
 
-                    resultAmount = pAmount/(1+percent.doubleValue())*percent.doubleValue();
+                    resultAmount = String.valueOf(pAmount/(1+percent.doubleValue())*percent.doubleValue());
                 }
                 break;
             case "3"://库存商品
@@ -331,12 +380,18 @@ public class AOCHUAN5002Controller {
                     Integer count = 0;
                     if (StringUtils.isNotBlank(finPurchase.getPurchase_amount()) && !" ".equals(finPurchase.getPurchase_amount())) {
                         count = Integer.parseInt(finPurchase.getPurchase_amount());
+                        purchase_amount = finPurchase.getUnitprice1();
                     }
-                    resultAmount = Double.parseDouble(finPurchase.getUnitprice1()) * count;
+                    resultAmount = String.valueOf(Double.parseDouble(finPurchase.getUnitprice1()) * count);
+                    unitprice = finPurchase.getPurchase_amount();
                 }
                 break;
         }
 
-        return resultAmount;
+        dataMap.put("resultAmount",resultAmount);
+        dataMap.put("hisAmount",hisAmount);
+        dataMap.put("purchase_amount",purchase_amount);
+        dataMap.put("unitprice",unitprice);
+        return dataMap;
     }
 }
