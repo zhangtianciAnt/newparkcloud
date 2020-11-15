@@ -282,8 +282,10 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             if(StringUtils.isNotEmpty(finSales.getCurrency())){
                 com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
                 dictionary.setCode(finSales.getCurrency());
-                List<Dictionary> dir = dictionaryService.getDictionary(dictionary);
-                finSales.setEx_rate(dir.get(0).getValue1());//汇率
+                List<Dictionary> dir = dictionaryService.getDictionaryList(dictionary);
+                if(dir.size()>0){
+                    finSales.setEx_rate(dir.get(0).getValue2());//汇率
+                }
             }
             finSales.setAmount(val.getNumbers());//数量
             finSales.setUnit(val.getUnit());//单位
