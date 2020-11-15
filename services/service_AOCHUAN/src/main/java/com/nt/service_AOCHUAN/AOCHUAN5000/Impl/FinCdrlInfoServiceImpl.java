@@ -7,6 +7,7 @@ import com.aliyuncs.utils.IOUtils;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.AcctgRul;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.AuxAcctg;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.CredentialInformation;
+import com.nt.dao_AOCHUAN.AOCHUAN5000.KisLogin;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.AccountingRule;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.CrdlInfo;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinCrdlInfoService;
@@ -17,8 +18,6 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
@@ -48,34 +47,6 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
         return finCrdlInfoMapper.select(credentialInformation);
     }
     //add_fjl_1021 推送KIS
-    //金蝶login
-    public ResultVo login(String url,String content) {
-
-        ResponseEntity<String> responseEntity = HttpUtil.httpPost(url, content);
-        //获取登录cookie
-        if(responseEntity.getStatusCode()== HttpStatus.OK){
-            String login_cookie = "";
-            Set<String> keys = responseEntity.getHeaders().keySet();
-            for(String key:keys){
-                if (key.equalsIgnoreCase("Set-Cookie")) {
-                    List<String> cookies = responseEntity.getHeaders().get(key);
-                    for(String cookie:cookies){
-                        if(cookie.startsWith("kdservice-sessionid")){
-                            login_cookie=cookie;
-                            break;
-                        }
-                    }
-                }
-            }
-            Map<String,Object> map = new HashMap<>();
-            map.put("cookie",login_cookie);
-            return ResultUtil.success(map);
-        }
-
-        Map<String,Object> result = JSON.parseObject(responseEntity.getBody());
-        return ResultUtil.error(result.get("Message").toString());
-    }
-
     //金蝶批量保存
     public ResultVo batchSave(String url,String cookie, String content,TokenModel tokenModel,List<CredentialInformation> credentialInformationList) throws Exception {
         //保存
@@ -110,9 +81,14 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
     public void login1(List<CredentialInformation> credentialInformation,TokenModel tokenModel) throws Exception {
         //正式dbid：5f1533095ad35e
         //测试dbid：5f4f0eaa667840
-        String loginParam = BaseUtil.buildLogin("5f4f0eaa667840", "Administrator", "888888", 2052);
+//      String loginParam = buildLogin("5f4f0eaa667840", "Administrator", "888888", 2052);
+        KisLogin kisLogin = finCrdlInfoMapper.selectKislogin();
+        String loginParam = "";
+        if(kisLogin != null){
+            loginParam = BaseUtil.buildLogin(kisLogin.getKisloginid(), kisLogin.getUsername(), kisLogin.getUserpassword(), kisLogin.getLcid());
+        }
 
-        ResultVo login = login(k3CloundConfig.url + k3CloundConfig.login, loginParam);
+        ResultVo login = BaseUtil.login(k3CloundConfig.url + k3CloundConfig.login, loginParam);
 
         if (login.getCode() != ResultEnum.SUCCESS.getCode()) {
 //            log.error("【登录金蝶系统失败】：{}", login.getMsg());

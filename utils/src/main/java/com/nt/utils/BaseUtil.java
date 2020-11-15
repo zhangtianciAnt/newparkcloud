@@ -2,11 +2,11 @@ package com.nt.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * @date 2020/10/20 15:58
@@ -95,5 +95,32 @@ public class BaseUtil {
             }
         }
         return buffer.toString();
+    }
+    //金蝶login
+    public static ResultVo login(String url,String content) {
+
+        ResponseEntity<String> responseEntity = HttpUtil.httpPost(url, content);
+        //获取登录cookie
+        if(responseEntity.getStatusCode()== HttpStatus.OK){
+            String login_cookie = "";
+            Set<String> keys = responseEntity.getHeaders().keySet();
+            for(String key:keys){
+                if (key.equalsIgnoreCase("Set-Cookie")) {
+                    List<String> cookies = responseEntity.getHeaders().get(key);
+                    for(String cookie:cookies){
+                        if(cookie.startsWith("kdservice-sessionid")){
+                            login_cookie=cookie;
+                            break;
+                        }
+                    }
+                }
+            }
+            Map<String,Object> map = new HashMap<>();
+            map.put("cookie",login_cookie);
+            return ResultUtil.success(map);
+        }
+
+        Map<String,Object> result = JSON.parseObject(responseEntity.getBody());
+        return ResultUtil.error(result.get("Message").toString());
     }
 }

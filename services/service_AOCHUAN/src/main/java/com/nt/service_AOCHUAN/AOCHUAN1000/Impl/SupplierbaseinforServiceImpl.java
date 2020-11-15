@@ -5,14 +5,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.utils.IOUtils;
 import com.nt.dao_AOCHUAN.AOCHUAN1000.Supplierbaseinfor;
+import com.nt.dao_AOCHUAN.AOCHUAN5000.KisLogin;
 import com.nt.service_AOCHUAN.AOCHUAN1000.SupplierbaseinforService;
 import com.nt.service_AOCHUAN.AOCHUAN1000.mapper.SupplierbaseinforMapper;
+import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinCrdlInfoMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -29,6 +29,8 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
     @Autowired
     private SupplierbaseinforMapper supplierbaseinforMapper;
 
+    @Autowired
+    private FinCrdlInfoMapper finCrdlInfoMapper;
     @Autowired
     private K3CloundConfig k3CloundConfig;
     @Autowired
@@ -68,33 +70,6 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
         return id;
     }
     //add_fjl_1021 推送KIS
-    //金蝶login
-    public ResultVo login(String url,String content) {
-
-        ResponseEntity<String> responseEntity = HttpUtil.httpPost(url, content);
-        //获取登录cookie
-        if(responseEntity.getStatusCode()== HttpStatus.OK){
-            String login_cookie = "";
-            Set<String> keys = responseEntity.getHeaders().keySet();
-            for(String key:keys){
-                if (key.equalsIgnoreCase("Set-Cookie")) {
-                    List<String> cookies = responseEntity.getHeaders().get(key);
-                    for(String cookie:cookies){
-                        if(cookie.startsWith("kdservice-sessionid")){
-                            login_cookie=cookie;
-                            break;
-                        }
-                    }
-                }
-            }
-            Map<String,Object> map = new HashMap<>();
-            map.put("cookie",login_cookie);
-            return ResultUtil.success(map);
-        }
-
-        Map<String,Object> result = JSON.parseObject(responseEntity.getBody());
-        return ResultUtil.error(result.get("Message").toString());
-    }
 
     //金蝶批量保存
     public ResultVo batchSave(String url,String cookie, String content,TokenModel tokenModel,List<Supplierbaseinfor> supplierbaseinforList,Boolean flg) throws Exception {
@@ -127,9 +102,16 @@ public class SupplierbaseinforServiceImpl implements SupplierbaseinforService {
     public void login1(List<Supplierbaseinfor> supplierbaseinforList,TokenModel tokenModel,Boolean flg) throws Exception {
         //正式dbid：5f1533095ad35e
         //测试dbid：5f4f0eaa667840
-        String loginParam = BaseUtil.buildLogin("5f4f0eaa667840", "Administrator", "888888", 2052);
+//        String loginParam = BaseUtil.buildLogin("5f4f0eaa667840", "Administrator", "888888", 2052);
+//
+//        ResultVo login = login(k3CloundConfig.url + k3CloundConfig.login, loginParam);
+        KisLogin kisLogin = finCrdlInfoMapper.selectKislogin();
+        String loginParam = "";
+        if(kisLogin != null){
+            loginParam = BaseUtil.buildLogin(kisLogin.getKisloginid(), kisLogin.getUsername(), kisLogin.getUserpassword(), kisLogin.getLcid());
+        }
 
-        ResultVo login = login(k3CloundConfig.url + k3CloundConfig.login, loginParam);
+        ResultVo login = BaseUtil.login(k3CloundConfig.url + k3CloundConfig.login, loginParam);
 
         if (login.getCode() != ResultEnum.SUCCESS.getCode()) {
 //            log.error("【登录金蝶系统失败】：{}", login.getMsg());
