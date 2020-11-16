@@ -72,8 +72,12 @@
         "FEXCHANGERATETYPE": {
           "FNumber": "HLTX01_SYS"
         },
-        "FEXCHANGERATE": 1
-      }
+      "FUnitId": {
+        "FNUMBER": "g"
+      },
+      "FPrice": 0,
+      "FQty": 0
+    }
   },
   "BatchCount": 0
 }

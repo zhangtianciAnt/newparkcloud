@@ -10,10 +10,12 @@ import com.nt.dao_AOCHUAN.AOCHUAN5000.CredentialInformation;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.KisLogin;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.AccountingRule;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.CrdlInfo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinCrdlInfoService;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinAcctgRulMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinAuxAcctgMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinCrdlInfoMapper;
+import com.nt.service_Org.DictionaryService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,8 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
 
     @Autowired
     private FinAcctgRulMapper finAcctgRulMapper;
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @Autowired
     private FinAuxAcctgMapper finAuxAcctgMapper;
@@ -161,10 +165,11 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                         String jsonData1 = BaseUtil.jsonRead(file1);
                         JSONObject basic1 = null;
                         basic1 = JSON.parseObject(jsonData1);
-                        Map<String, Object> fentity = (Map<String, Object>)((Map<String, Object>) basic1.get("Model")).get("FEntity");//单据体
+                        Map<String, Object> linkfentity = (Map<String, Object>)((Map<String, Object>) basic1.get("Model")).get("FEntity");//单据体
                         Map<String, Object> faccountid = (Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FACCOUNTID");//科目编码
                         Map<String, Object> fcurrencyid = (Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FCURRENCYID");//币种
                         Map<String, Object> fdetailid = (Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID");//核算维度
+                        Map<String, Object> funitid = (Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FUnitId");//单位
                         Map<String, Object> fdetailid__fflex6 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FFLEX6");//客户
                         Map<String, Object> fdetailid__fflex7 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FFLEX7");//员工
                         Map<String, Object> fdetailid__fflex8 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FFLEX8");//产品
@@ -176,6 +181,8 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                         Map<String, Object> fdetailid__fflex4 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FFLEX4");//供应商
                         Map<String, Object> fdetailid__fflex5 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FFLEX5");//部门
                         Map<String, Object> fdetailid__ff100002 = (Map<String, Object>)((Map<String, Object>)((Map<String, Object>) ((Map<String, Object>) basic1.get("Model")).get("FEntity")).get("FDetailID")).get("FDETAILID__FF100002");//国家
+                        Map<String, Object> fentity = new LinkedHashMap<>();
+                        fentity.putAll(linkfentity);
                         fentity.put("FEXPLANATION",ar.getRemarks());//摘要
                         faccountid.put("FNumber",ar.getAcct_code()); //科目编码
                         if(StringUtils.isNotEmpty(ar.getDimension())){
@@ -213,7 +220,20 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                             }
                         }
                         fcurrencyid.put("FNumber",ar.getCurrency());//币别
+                        fentity.put("FCURRENCYID",fcurrencyid);//币别
+                        if(StringUtils.isNotEmpty(ar.getEx_rate())){
+                            com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
+                            dictionary.setCode(ar.getEx_rate());
+                            List<Dictionary> dir = dictionaryService.getDictionaryList(dictionary);
+                            if(dir.size()>0){
+                                funitid.put("FNUMBER",dir.get(0).getValue1());//单位
+                            }
+                        }
+                        fentity.put("FUnitId",funitid);//单位
+                        fentity.put("FPrice",ar.getUnit_price());//单价
+                        fentity.put("FQty",ar.getQuantity());//数量
                         fentity.put("FEXCHANGERATE",ar.getEx_rate());//汇率
+                        //FAmount  本位币金额
                         fentity.put("FAMOUNTFOR",ar.getOricurrency_amount());//原币金额
                         if(StringUtils.isNotEmpty(ar.getDebit())){//借方科目
                             fentity.put("FDEBIT",ar.getAmount());//借方金额
