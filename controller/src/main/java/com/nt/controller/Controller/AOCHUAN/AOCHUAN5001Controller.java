@@ -183,17 +183,17 @@ public class AOCHUAN5001Controller {
 
         //UPDATE:FIN_SALES
         //存在Check
-        if (finSalesService.existCheck(finSales)) {
-            //唯一性Check
-            if (!finSalesService.uniqueCheck(finSales)) {
+//        if (finSalesService.existCheck(finSales)) {
+//            //唯一性Check
+//            if (!finSalesService.uniqueCheck(finSales)) {
                 finSales.setCredential_sales(crdlInfo.getCredentialInformation().getCrdl_num());
                 finSalesService.update(finSales, tokenService.getToken(request));
-            } else {
-                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-            }
-        } else {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
+//            } else {
+//                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+//            }
+//        } else {
+//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+//        }
 
         //正常结束
         FinSales finSales1 = new FinSales();
@@ -290,8 +290,12 @@ public class AOCHUAN5001Controller {
             accountingRule.setTaxrate(item.getCrerate());//税率
             accountingRule.setOricurrency_amount(hisAmount);//原币金额
             accountingRule.setUnit(finSales.getUnit());//单位
-            accountingRule.setUnit_price(Double.parseDouble(finSales.getUnitprice()));//单价
-            accountingRule.setQuantity(Integer.parseInt(finSales.getAmount()));//数量
+            if(StringUtils.isNotEmpty(finSales.getUnitprice())){
+                accountingRule.setUnit_price(Double.parseDouble(finSales.getUnitprice()));//单价
+            }
+            if(StringUtils.isNotEmpty(finSales.getAmount())){
+                accountingRule.setQuantity(Integer.parseInt(finSales.getAmount()));//数量
+            }
             accountingRule.setAmount(calAmount);//金额
             String dim = "";
             if(StringUtils.isNotEmpty(item.getDimension())){//核算维度

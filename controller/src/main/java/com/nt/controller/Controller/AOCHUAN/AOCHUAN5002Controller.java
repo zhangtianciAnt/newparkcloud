@@ -8,11 +8,13 @@ import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.AccountingRule;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.CrdlInfo;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.All;
+import com.nt.dao_Org.Dictionary;
 import com.nt.service_AOCHUAN.AOCHUAN1000.mapper.SupplierbaseinforMapper;
 import com.nt.service_AOCHUAN.AOCHUAN4000.mapper.ProductsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinCrdlInfoService;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinPurchaseSerivce;
 import com.nt.service_AOCHUAN.AOCHUAN7000.DocuruleService;
+import com.nt.service_Org.DictionaryService;
 import com.nt.utils.*;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,9 @@ public class AOCHUAN5002Controller {
 
     @Autowired
     private ProductsMapper productsMapper;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @Autowired
     private TokenService tokenService;
@@ -74,17 +79,17 @@ public class AOCHUAN5002Controller {
 
         //UPDATE:FIN_SALES
         //存在Check
-        if (finPurchaseSerivce.existCheck(finPurchase)) {
-            //唯一性Check
-            if(! finPurchaseSerivce.uniqueCheck(finPurchase)) {
+//        if (finPurchaseSerivce.existCheck(finPurchase)) {
+//            //唯一性Check
+//            if(! finPurchaseSerivce.uniqueCheck(finPurchase)) {
                 finPurchaseSerivce.update(finPurchase, tokenService.getToken(request));
                 finPurchaseSerivce.updateTransportGood(finPurchase, tokenService.getToken(request));
-            }else{
-                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-            }
-        }else{
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
+//            }else{
+//                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+//            }
+//        }else{
+//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+//        }
         //正常结束
         return ApiResult.success(finPurchaseSerivce.getFinPurchaseList());
     }
@@ -221,7 +226,7 @@ public class AOCHUAN5002Controller {
      * @param accAndauxList
      * @return
      */
-    public CrdlInfo replaceRule(String userName,FinPurchase finPurchase, Docurule docurule,List<All> accAndauxList) throws ParseException {
+    public CrdlInfo replaceRule(String userName,FinPurchase finPurchase, Docurule docurule,List<All> accAndauxList) throws Exception {
 
         CrdlInfo crdlInfo = new CrdlInfo();
 
@@ -271,6 +276,14 @@ public class AOCHUAN5002Controller {
             Double unitprice = 0.00;//单价
             Double hisAmount = 0.00;
             if(StringUtils.isNotBlank(item.getAmounttype())) {
+                if(StringUtils.isNotEmpty(item.getCrerate())){
+                    com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
+                    dictionary.setCode(item.getCrerate());
+                    List<Dictionary> dir = dictionaryService.getDictionaryList(dictionary);
+                    if(dir.size()>0){
+                        item.setCrerate(dir.get(0).getValue2());
+                    }
+                }
                 mp = amountCalculation(mp,item.getAmounttype(), item.getCrerate(), finPurchase);
                 if(!mp.get("resultAmount").equals("")){
                     resultAmount = Double.parseDouble(mp.get("resultAmount"));
@@ -370,7 +383,7 @@ public class AOCHUAN5002Controller {
 
                     Double pAmount = Double.parseDouble(finPurchase.getRealpay());
                     NumberFormat nf =  NumberFormat.getPercentInstance();
-                    Number percent = nf.parse("13%");
+                    Number percent = nf.parse(tax);//13%
 
                     resultAmount = String.valueOf(pAmount/(1+percent.doubleValue())*percent.doubleValue());
                 }
