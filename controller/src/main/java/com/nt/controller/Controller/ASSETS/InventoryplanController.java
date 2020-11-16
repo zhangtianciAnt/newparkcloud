@@ -88,7 +88,7 @@ public class InventoryplanController {
     }
 
     @RequestMapping(value = "/selectByResult", method = {RequestMethod.POST})
-    public ApiResult selectByResult(@RequestBody List<List<String>> inventoryrangeidlist, HttpServletRequest request) throws Exception {
+    public ApiResult selectByResult(@RequestBody List<Map<String,String>> inventoryrangeidlist, HttpServletRequest request) throws Exception {
         if (inventoryrangeidlist == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }

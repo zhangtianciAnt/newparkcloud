@@ -25,7 +25,7 @@ public interface InventoryplanService {
 
     InventoryRangeVo selectById(String inventoryrangeid) throws Exception;
 
-    List<InventoryResults> selectByResult(List<List<String>> inventoryrangeidlist) throws Exception;
+    List<InventoryResults> selectByResult(List<Map<String,String>> inventoryrangeidlist) throws Exception;
 
     int check(Inventoryplan inventoryplan) throws Exception;
 }

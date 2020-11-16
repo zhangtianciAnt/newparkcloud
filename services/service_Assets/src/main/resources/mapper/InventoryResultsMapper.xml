@@ -8,4 +8,15 @@
     (#{item.inventoryresults_id}, #{item.inventoryplan_id}, #{item.filename}, #{item.typeassets}, #{item.price}, #{item.purchasetime}, #{item.usedepartment}, #{item.barcode}, #{item.result}, #{item.rowindex}, #{item.principal}, #{item.rfidcd}, #{item.createby}, #{item.createon}, #{item.modifyby}, #{item.modifyon}, #{item.owner}, #{item.status}, #{item.tenantid})
         </foreach>
     </insert>
+
+    <select id="selectInResults" parameterType="list" resultType="com.nt.dao_Assets.InventoryResults">
+        SELECT
+        *
+        from inventoryresults
+        where (BARCODE,INVENTORYPLAN_ID) in
+        <foreach collection="list" index="index" item="item" open="("
+                 separator="," close=")">
+            (#{item.barcode}, #{item.inventoryplan_id})
+        </foreach>
+    </select>
 </mapper>
