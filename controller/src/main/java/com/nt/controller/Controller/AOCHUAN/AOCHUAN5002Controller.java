@@ -276,15 +276,17 @@ public class AOCHUAN5002Controller {
             Double unitprice = 0.00;//单价
             Double hisAmount = 0.00;
             if(StringUtils.isNotBlank(item.getAmounttype())) {
+                String tar = "";
                 if(StringUtils.isNotEmpty(item.getCrerate())){
+                    tar = item.getCrerate();
                     com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
                     dictionary.setCode(item.getCrerate());
                     List<Dictionary> dir = dictionaryService.getDictionaryList(dictionary);
                     if(dir.size()>0){
-                        item.setCrerate(dir.get(0).getValue2());
+                        tar = dir.get(0).getValue2();
                     }
                 }
-                mp = amountCalculation(mp,item.getAmounttype(), item.getCrerate(), finPurchase);
+                mp = amountCalculation(mp,item.getAmounttype(), tar, finPurchase);
                 if(!mp.get("resultAmount").equals("")){
                     resultAmount = Double.parseDouble(mp.get("resultAmount"));
                 }
