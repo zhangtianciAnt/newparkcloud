@@ -291,7 +291,7 @@ public class AOCHUAN5002Controller {
 //            accountingRule.setEx_rate(finPurchase.getEx_rate());//汇率
             accountingRule.setTaxrate(item.getCrerate());//税率
             accountingRule.setOricurrency_amount(resultAmount);//原币金额
-            accountingRule.setUnit(item.getUnitname());//单位
+            accountingRule.setUnit(finPurchase.getUnit1());//单位
             accountingRule.setUnit_price(unitprice);//单价
             accountingRule.setQuantity(purchase_amount);//数量
             accountingRule.setAmount(resultAmount);//金额

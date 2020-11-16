@@ -15,6 +15,7 @@
         acc.AMOUNT AMOUNT,
         acc.CURRENCY CURRENCY,
         acc.EX_RATE EX_RATE,
+        acc.QUANTITY QUANTITY,
         acc.ORICURRENCY_AMOUNT ORICURRENCY_AMOUNT,
         acc.UNIT UNIT,
         acc.UNIT_PRICE UNIT_PRICE,
