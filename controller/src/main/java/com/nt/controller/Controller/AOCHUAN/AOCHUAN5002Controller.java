@@ -286,7 +286,7 @@ public class AOCHUAN5002Controller {
                         tar = dir.get(0).getValue2();
                     }
                 }
-                mp = amountCalculation(mp,item.getAmounttype(), tar, finPurchase);
+                mp = amountCalculation(mp,item.getAmounttype(), tar, finPurchase,docurule);
                 if(!mp.get("resultAmount").equals("")){
                     resultAmount = Double.parseDouble(mp.get("resultAmount"));
                 }
@@ -305,11 +305,13 @@ public class AOCHUAN5002Controller {
             accountingRule.setCurrency(finPurchase.getCurrency1());//币种
 //            accountingRule.setEx_rate(finPurchase.getEx_rate());//汇率
             accountingRule.setTaxrate(item.getCrerate());//税率
-            accountingRule.setOricurrency_amount(resultAmount);//原币金额
             accountingRule.setUnit(finPurchase.getUnit1());//单位
             accountingRule.setUnit_price(unitprice);//单价
             accountingRule.setQuantity(purchase_amount);//数量
+            accountingRule.setOricurrency_amount(resultAmount);//原币金额
             accountingRule.setAmount(resultAmount);//金额
+            accountingRule.setAmounttype(item.getAmounttype());//区分科目名
+
             String dim = "";
             if(StringUtils.isNotEmpty(item.getDimension())){//核算维度
                 String dimSplit[] = item.getDimension().split("/");
@@ -354,7 +356,23 @@ public class AOCHUAN5002Controller {
 
             actgrulist.add(accountingRule);
         }
-
+        Double amoun1 = 0.00;
+        Double amoun2 = 0.00;
+        for(AccountingRule a: actgrulist){
+            if(a.getAmounttype().equals("1")){
+                amoun1 = a.getAmount();
+            } else if(a.getAmounttype().equals("2")){
+                amoun2 = a.getAmount();
+            }
+        }
+        Double amoun3 = amoun1 - amoun2;
+        for(AccountingRule a: actgrulist){
+            if(a.getAmounttype().equals("3")){
+                a.setAmount(amoun3);
+                a.setOricurrency_amount(amoun3);
+                a.setUnit_price(a.getOricurrency_amount()/a.getQuantity());
+            }
+        }
         crdlInfo.setCredentialInformation(crdl);
         crdlInfo.setAccountingRuleList(actgrulist);
 
@@ -367,23 +385,31 @@ public class AOCHUAN5002Controller {
      * @param finPurchase
      * @return
      */
-    private Map<Object,String> amountCalculation(Map<Object,String> dataMap,String amountType, String tax, FinPurchase finPurchase) throws ParseException {
+    private Map<Object,String> amountCalculation(Map<Object,String> dataMap,String amountType, String tax, FinPurchase finPurchase,Docurule docurule) throws ParseException {
 //        Map<Object,Double> dataMap = new HashMap<>();
+        String realpay = "";
         String resultAmount = "";//原币金额
         String purchase_amount = "";//数量
         String unitprice = "";//单价
         String hisAmount = "";
+        if(StringUtils.isNotEmpty(docurule.getDocutype())){
+            if(docurule.getDocutype().equals("PZ001001")){//付款凭证
+                realpay = finPurchase.getRealpay();//应付金额
+            } else if(docurule.getDocutype().equals("PZ001002")){//收到发票凭证
+                realpay = finPurchase.getRealamount();//实付金额
+            }
+        }
 
         switch (amountType) {
             case "1"://采购金额Purchaseamount
-                if (StringUtils.isNotBlank(finPurchase.getRealpay()) && !" ".equals(finPurchase.getRealpay())) {
-                        resultAmount = finPurchase.getRealpay();
+                if (StringUtils.isNotBlank(realpay) && !" ".equals(realpay)) {
+                        resultAmount = realpay;
                 }
                 break;
             case "2"://税费 = 采购金额/(1+增值税率)*增值税率
-                if (StringUtils.isNotBlank(finPurchase.getRealpay()) && !" ".equals(finPurchase.getRealpay())) {
+                if (StringUtils.isNotBlank(realpay) && !" ".equals(realpay)) {
 
-                    Double pAmount = Double.parseDouble(finPurchase.getRealpay());
+                    Double pAmount = Double.parseDouble(realpay);
                     NumberFormat nf =  NumberFormat.getPercentInstance();
                     Number percent = nf.parse(tax);//13%
 
@@ -395,10 +421,10 @@ public class AOCHUAN5002Controller {
                     Integer count = 0;
                     if (StringUtils.isNotBlank(finPurchase.getPurchase_amount()) && !" ".equals(finPurchase.getPurchase_amount())) {
                         count = Integer.parseInt(finPurchase.getPurchase_amount());
-                        purchase_amount = finPurchase.getUnitprice1();
+                        unitprice = finPurchase.getUnitprice1();
                     }
                     resultAmount = String.valueOf(Double.parseDouble(finPurchase.getUnitprice1()) * count);
-                    unitprice = finPurchase.getPurchase_amount();
+                    purchase_amount = finPurchase.getPurchase_amount();
                 }
                 break;
         }

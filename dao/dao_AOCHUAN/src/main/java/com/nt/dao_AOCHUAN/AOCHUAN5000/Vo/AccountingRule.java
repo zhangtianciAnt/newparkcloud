@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import javax.persistence.Transient;
 
 @Data
 @AllArgsConstructor
@@ -137,4 +138,7 @@ public class AccountingRule extends BaseModel {
 
     @Column(name = "FDETAILID__FF100002")
     private String fdetailid__ff100002;//国家
+
+    @Transient
+    private String amounttype;//区分科目名
 }

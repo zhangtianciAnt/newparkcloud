@@ -8,7 +8,6 @@ import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.EarlyvacationService;
 import com.nt.service_Org.LogService;
 import com.nt.service_Org.UserService;
-//import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.utils.*;
 import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
@@ -20,9 +19,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+//import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 
 /**
  * @ProjectName: newparkcloud
@@ -191,8 +191,9 @@ public class UserController {
 
         } else {
             userVo.getUserAccount().preInsert(tokenModel);
-            userVo.getUserAccount().setAccount(userVo.getCustomerInfo().getUserinfo().getMobilenumber());
-            userVo.getUserAccount().setPassword(userVo.getCustomerInfo().getUserinfo().getMobilenumber());
+            //ewechatid：企业微信ID
+            userVo.getUserAccount().setAccount(userVo.getCustomerInfo().getUserinfo().getEwechatid());
+            userVo.getUserAccount().setPassword(userVo.getCustomerInfo().getUserinfo().getEwechatid());
             info = userService.addAccountCustomer(userVo);
 //            annualLeaveService.insertannualLeave(info);
             id = info.getUserid();

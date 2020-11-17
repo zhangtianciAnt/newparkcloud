@@ -274,11 +274,8 @@ public class AOCHUAN5001Controller {
             Double calAmount = 0.00;
             Double hisAmount = 0.00;
             if (StringUtils.isNotBlank(item.getAmounttype())) {
-                calAmount = amountCalculation(item.getAmounttype(), finSales).get("resultAmount");
-//                if(){
-////
-////                }
-                hisAmount = amountCalculation(item.getAmounttype(), finSales).get("hisAmount");
+                calAmount = amountCalculation(item.getAmounttype(), finSales,docurule).get("resultAmount");
+                hisAmount = amountCalculation(item.getAmounttype(), finSales,docurule).get("hisAmount");
             }
             //分录
             accountingRule.setRemarks(item.getRemarks());//摘要
@@ -367,21 +364,29 @@ public class AOCHUAN5001Controller {
      * @param finSales
      * @return
      */
-    private Map<Object,Double> amountCalculation(String amountType, FinSales finSales) {
+    private Map<Object,Double> amountCalculation(String amountType, FinSales finSales,Docurule docurule) {
         Map<Object,Double> dataMap = new HashMap<>();
+        String amount = "";
         Double resultAmount = 0.00;
         Double hisAmount = 0.00;
+        if(StringUtils.isNotEmpty(docurule.getDocutype())){
+            if(docurule.getDocutype().equals("PZ001003")){//销售凭证
+                amount = finSales.getReceamount();//应收金额
+            } else if(docurule.getDocutype().equals("PZ001004")){//收到货款凭证
+                amount = finSales.getSalesamount();//实收金额
+            }
+        }
 
         switch (amountType) {
             case "0"://销售金额
-                if (StringUtils.isNotBlank(finSales.getReceamount()) && !" ".equals(finSales.getReceamount())) {
+                if (StringUtils.isNotBlank(amount) && !" ".equals(amount)) {
 
                     if ("PY008002".equals(finSales.getCurrency())) {
-                        resultAmount = Double.parseDouble(finSales.getReceamount()) * Double.parseDouble(finSales.getEx_rate());
+                        resultAmount = Double.parseDouble(amount) * Double.parseDouble(finSales.getEx_rate());
                     } else {
-                        resultAmount = Double.parseDouble(finSales.getReceamount());
+                        resultAmount = Double.parseDouble(amount);
                     }
-                    hisAmount = Double.parseDouble(finSales.getReceamount());
+                    hisAmount = Double.parseDouble(amount);
                 }
                 break;
             case "4"://保费
@@ -413,7 +418,7 @@ public class AOCHUAN5001Controller {
                 hisAmount = Double.parseDouble(finSales.getCommissionamounta());
                 break;
             case "7"://主营业务收入=应收款-（保费+运费)
-                if (StringUtils.isNotBlank(finSales.getReceamount()) && !" ".equals(finSales.getReceamount())) {
+                if (StringUtils.isNotBlank(amount) && !" ".equals(amount)) {
                     Double premium = 0.00;
                     Double freight = 0.00;
                     //运费
@@ -425,21 +430,21 @@ public class AOCHUAN5001Controller {
                         freight = Double.parseDouble(finSales.getFreight());
                     }
                     if ("PY008002".equals(finSales.getCurrency())) {
-                        resultAmount = (Double.parseDouble(finSales.getReceamount()) - (premium + freight)) * Double.parseDouble(finSales.getEx_rate());
+                        resultAmount = (Double.parseDouble(amount) - (premium + freight)) * Double.parseDouble(finSales.getEx_rate());
                     } else {
-                        resultAmount = Double.parseDouble(finSales.getReceamount()) - (premium + freight);
+                        resultAmount = Double.parseDouble(amount) - (premium + freight);
                     }
-                    hisAmount = Double.parseDouble(finSales.getReceamount()) - (premium + freight);
+                    hisAmount = Double.parseDouble(amount) - (premium + freight);
                 }
                 break;
             case "8"://结算款=应收款-手续费
-                if (StringUtils.isNotBlank(finSales.getReceamount()) && !" ".equals(finSales.getReceamount())) {
+                if (StringUtils.isNotBlank(amount) && !" ".equals(amount)) {
                     if (StringUtils.isNotEmpty(finSales.getCurrency()) && "PY008002".equals(finSales.getCurrency())) {
-                        resultAmount = (Double.parseDouble(finSales.getReceamount()) - Double.parseDouble(finSales.getCommissionamounta())) * Double.parseDouble(finSales.getEx_rate());
+                        resultAmount = (Double.parseDouble(amount) - Double.parseDouble(finSales.getCommissionamounta())) * Double.parseDouble(finSales.getEx_rate());
                     } else {
-                        resultAmount = Double.parseDouble(finSales.getReceamount()) - Double.parseDouble(finSales.getCommissionamounta());
+                        resultAmount = Double.parseDouble(amount) - Double.parseDouble(finSales.getCommissionamounta());
                     }
-                    hisAmount = Double.parseDouble(finSales.getReceamount()) - Double.parseDouble(finSales.getCommissionamounta());
+                    hisAmount = Double.parseDouble(amount) - Double.parseDouble(finSales.getCommissionamounta());
                 }
                 break;
         }
