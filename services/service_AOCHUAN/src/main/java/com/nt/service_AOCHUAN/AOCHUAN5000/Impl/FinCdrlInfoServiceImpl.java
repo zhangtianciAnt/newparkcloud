@@ -229,6 +229,10 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                                 funitid.put("FNUMBER",dir.get(0).getValue1());//单位
                             }
                         }
+                        //库存商品_出口 的场合
+                        if(ar.getAcct_code().equals("1405.03")){
+                            funitid.put("FNUMBER","kg");
+                        }
                         fentity.put("FUnitId",funitid);//单位
                         fentity.put("FPrice",ar.getUnit_price());//单价
                         fentity.put("FQty",ar.getQuantity());//数量
