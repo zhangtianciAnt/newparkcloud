@@ -128,17 +128,17 @@ public class AOCHUAN5001Controller {
 
         //UPDATE:FIN_SALES
         //存在Check
-        if (finSalesService.existCheck(finSales)) {
+//        if (finSalesService.existCheck(finSales)) {
             //唯一性Check
-            if (!finSalesService.uniqueCheck(finSales)) {
+//            if (!finSalesService.uniqueCheck(finSales)) {
                 finSales.setCredential_arrival(crdlInfo.getCredentialInformation().getCrdl_num());
                 finSalesService.update(finSales, tokenService.getToken(request));
-            } else {
-                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-            }
-        } else {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
+//            } else {
+//                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+//            }
+//        } else {
+//            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+//        }
 
         //正常结束
         FinSales finSales1 = new FinSales();
@@ -291,7 +291,14 @@ public class AOCHUAN5001Controller {
                 accountingRule.setUnit_price(Double.parseDouble(finSales.getUnitprice()));//单价
             }
             if(StringUtils.isNotEmpty(finSales.getAmount())){
-                accountingRule.setQuantity(Integer.parseInt(finSales.getAmount()));//数量
+                if(finSales.getAmount().contains(".00")){
+                    String a = finSales.getAmount().substring(0,finSales.getAmount().length() - 4);
+                    accountingRule.setQuantity(Integer.parseInt(a));//数量
+                }
+                else{
+                    accountingRule.setQuantity(Integer.parseInt(finSales.getAmount()));//数量
+                }
+
             }
             accountingRule.setAmount(calAmount);//金额
             String dim = "";
