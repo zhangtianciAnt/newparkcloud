@@ -2118,9 +2118,9 @@ public class UserServiceImpl implements UserService {
                     if (item.get("是否有工作经验●") != null) {
                         String experience = item.get("是否有工作经验●").toString();
                         if (experience != null) {
-                            if (experience.equals("是")) {
+                            if (experience.equals("有")) {
                                 customerInfoList.get(0).getUserinfo().setExperience("0");
-                            } else if (experience.equals("否")) {
+                            } else if (experience.equals("无")) {
                                 customerInfoList.get(0).getUserinfo().setExperience("1");
                             }
                         }
