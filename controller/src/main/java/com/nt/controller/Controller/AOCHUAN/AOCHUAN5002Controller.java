@@ -275,8 +275,8 @@ public class AOCHUAN5002Controller {
                 if(StringUtils.isNotBlank(finPurchase.getSuppliercn())){
                     remarks = item.getRemarks().replace("{0}", finPurchase.getSuppliercn());
                 }
-                if(StringUtils.isNotBlank(finPurchase.getContractnumber())){
-                    Products products = productsMapper.selectByPrimaryKey(finPurchase.getContractnumber());
+                if(StringUtils.isNotBlank(finPurchase.getProducten())){
+                    Products products = productsMapper.selectByPrimaryKey(finPurchase.getProducten());
                     if(products != null){
                         remarks = remarks.replace("{1}", products.getChinaname());
                     }
@@ -294,9 +294,6 @@ public class AOCHUAN5002Controller {
 
                 }
 //                remarks = item.getRemarks().replace("{0}", finPurchase.getSuppliercn()).replace("{1}", finPurchase.getContractnumber());
-            }
-            else{
-                return null;
             }
 
             //金额计算
@@ -419,9 +416,9 @@ public class AOCHUAN5002Controller {
         if(StringUtils.isNotEmpty(docurule.getDocutype())){
             if(docurule.getDocutype().equals("PZ001001") && StringUtils.isNotEmpty(finPurchase.getRealpay())){//付款凭证
                 realpay = finPurchase.getRealpay();//应付金额
-            } else if(docurule.getDocutype().equals("PZ001002") && StringUtils.isNotEmpty(finPurchase.getSumamount())){//收到发票凭证
+            } else if(docurule.getDocutype().equals("PZ001002") && finPurchase.getSumamount() != null){//收到发票凭证
 //                realpay = finPurchase.getRealamount();//实付金额
-                realpay = finPurchase.getSumamount();//采购总金额
+                realpay = String.valueOf(finPurchase.getSumamount());//采购总金额
             }
         }
 
