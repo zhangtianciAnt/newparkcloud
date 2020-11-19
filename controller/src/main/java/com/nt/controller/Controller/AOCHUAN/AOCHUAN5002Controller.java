@@ -257,24 +257,53 @@ public class AOCHUAN5002Controller {
         crdl.setOrder_no(finPurchase.getContractnumber());//订单号
 
         List<AccountingRule> actgrulist = new ArrayList<>();
-
+        Double rate = 0.00;
+        if(StringUtils.isNotEmpty(finPurchase.getCurrency1())){
+            com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
+            dictionary.setCode(finPurchase.getEx_rate());
+            List<Dictionary> dir = dictionaryService.getDictionaryList(dictionary);
+            if(dir.size()>0){
+                rate = Double.parseDouble(dir.get(0).getValue2());
+            }
+        }
         for (All item:accAndauxList) {
             AccountingRule accountingRule = new AccountingRule();
 
-//            String remarks = "";
-//            if(StringUtils.isNotBlank(item.getRemarks()) && item.getRemarks().indexOf("{0}")>0 && item.getRemarks().indexOf("{1}")>0 && item.getRemarks().indexOf("{2}")>0){
+            //摘要替换  凭证类型+单号+产品名+数量+单位
+            String remarks = "";
+            if(StringUtils.isNotBlank(item.getRemarks()) && item.getRemarks().indexOf("{0}")>0 && item.getRemarks().indexOf("{1}")>0 && item.getRemarks().indexOf("{2}")>0&& item.getRemarks().indexOf("{3}")>0){
+                if(StringUtils.isNotBlank(finPurchase.getSuppliercn())){
+                    remarks = item.getRemarks().replace("{0}", finPurchase.getSuppliercn());
+                }
+                if(StringUtils.isNotBlank(finPurchase.getContractnumber())){
+                    Products products = productsMapper.selectByPrimaryKey(finPurchase.getContractnumber());
+                    if(products != null){
+                        remarks = remarks.replace("{1}", products.getChinaname());
+                    }
+                }
+                if(StringUtils.isNotBlank(finPurchase.getPurchase_amount())){
+                    remarks = remarks.replace("{2}", finPurchase.getPurchase_amount());
+                }
+                if(StringUtils.isNotBlank(finPurchase.getUnit1())){
+                    com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
+                    dictionary.setCode(finPurchase.getUnit1());
+                    List<Dictionary> dir = dictionaryService.getDictionaryList(dictionary);
+                    if(dir.size()>0){
+                        remarks = remarks.replace("{3}", dir.get(0).getValue1());
+                    }
+
+                }
 //                remarks = item.getRemarks().replace("{0}", finPurchase.getSuppliercn()).replace("{1}", finPurchase.getContractnumber());
-//            }
-//            else{
-//                return null;
-//            }
+            }
+            else{
+                return null;
+            }
 
             //金额计算
-            Map<Object,String> mp = new HashMap<>();
             Double resultAmount = 0.00;//原币金额
             int purchase_amount = 0;//数量
             Double unitprice = 0.00;//单价
-            Double hisAmount = 0.00;
+            Double hisAmount = 0.00;//采购金额
             if(StringUtils.isNotBlank(item.getAmounttype())) {
                 String tar = "";
                 if(StringUtils.isNotEmpty(item.getCrerate())){
@@ -286,19 +315,14 @@ public class AOCHUAN5002Controller {
                         tar = dir.get(0).getValue2();
                     }
                 }
-                mp = amountCalculation(mp,item.getAmounttype(), tar, finPurchase,docurule);
-                if(!mp.get("resultAmount").equals("")){
-                    resultAmount = Double.parseDouble(mp.get("resultAmount"));
-                }
-                if(!mp.get("purchase_amount").equals("")){
-                    purchase_amount = Integer.parseInt(mp.get("purchase_amount"));
-                }
-                if(!mp.get("unitprice").equals("")){
-                    unitprice = Double.parseDouble(mp.get("unitprice"));
-                }
+                Map<Object,Double> mp = amountCalculation(item.getAmounttype(), tar, finPurchase,docurule,rate);
+                resultAmount = mp.get("resultAmount");
+                purchase_amount = mp.get("purchase_amount").intValue();
+                unitprice = mp.get("unitprice");
+                hisAmount = mp.get("hisAmount");
             }
             //分录
-            accountingRule.setRemarks(item.getRemarks());//摘要
+            accountingRule.setRemarks(remarks);//摘要
             accountingRule.setAcct_code(item.getAccountid());//科目编码
             accountingRule.setDebit(item.getDebit());//借方科目
             accountingRule.setCredit(item.getCredit());//贷方科目
@@ -309,7 +333,7 @@ public class AOCHUAN5002Controller {
             accountingRule.setUnit_price(unitprice);//单价
             accountingRule.setQuantity(purchase_amount);//数量
             accountingRule.setOricurrency_amount(resultAmount);//原币金额
-            accountingRule.setAmount(resultAmount);//金额
+            accountingRule.setAmount(hisAmount);//金额
             accountingRule.setAmounttype(item.getAmounttype());//区分科目名
 
             String dim = "";
@@ -385,35 +409,39 @@ public class AOCHUAN5002Controller {
      * @param finPurchase
      * @return
      */
-    private Map<Object,String> amountCalculation(Map<Object,String> dataMap,String amountType, String tax, FinPurchase finPurchase,Docurule docurule) throws ParseException {
-//        Map<Object,Double> dataMap = new HashMap<>();
+    private Map<Object,Double> amountCalculation(String amountType, String tax, FinPurchase finPurchase,Docurule docurule,Double rate) throws ParseException {
+        Map<Object,Double> dataMap = new HashMap<>();
         String realpay = "";
-        String resultAmount = "";//原币金额
-        String purchase_amount = "";//数量
-        String unitprice = "";//单价
-        String hisAmount = "";
+        Double resultAmount = 0.00;//原币金额
+        Double purchase_amount = 0.00;//数量
+        Double unitprice = 0.00;//单价
+        Double hisAmount = 0.00;
         if(StringUtils.isNotEmpty(docurule.getDocutype())){
-            if(docurule.getDocutype().equals("PZ001001")){//付款凭证
+            if(docurule.getDocutype().equals("PZ001001") && StringUtils.isNotEmpty(finPurchase.getRealpay())){//付款凭证
                 realpay = finPurchase.getRealpay();//应付金额
-            } else if(docurule.getDocutype().equals("PZ001002")){//收到发票凭证
-                realpay = finPurchase.getRealamount();//实付金额
+            } else if(docurule.getDocutype().equals("PZ001002") && StringUtils.isNotEmpty(finPurchase.getSumamount())){//收到发票凭证
+//                realpay = finPurchase.getRealamount();//实付金额
+                realpay = finPurchase.getSumamount();//采购总金额
             }
         }
 
         switch (amountType) {
             case "1"://采购金额Purchaseamount
                 if (StringUtils.isNotBlank(realpay) && !" ".equals(realpay)) {
-                        resultAmount = realpay;
+                        resultAmount = Double.parseDouble(realpay);
+                        hisAmount = Double.parseDouble(realpay) * rate;
                 }
                 break;
             case "2"://税费 = 采购金额/(1+增值税率)*增值税率
                 if (StringUtils.isNotBlank(realpay) && !" ".equals(realpay)) {
 
                     Double pAmount = Double.parseDouble(realpay);
+                    Double pAmounts = Double.parseDouble(realpay) * rate;
                     NumberFormat nf =  NumberFormat.getPercentInstance();
                     Number percent = nf.parse(tax);//13%
 
-                    resultAmount = String.valueOf(pAmount/(1+percent.doubleValue())*percent.doubleValue());
+                    resultAmount = pAmount/(1+percent.doubleValue())*percent.doubleValue();
+                    hisAmount = pAmounts/(1+percent.doubleValue())*percent.doubleValue();
                 }
                 break;
             case "3"://库存商品
@@ -421,10 +449,11 @@ public class AOCHUAN5002Controller {
                     Integer count = 0;
                     if (StringUtils.isNotBlank(finPurchase.getPurchase_amount()) && !" ".equals(finPurchase.getPurchase_amount())) {
                         count = Integer.parseInt(finPurchase.getPurchase_amount());
-                        unitprice = finPurchase.getUnitprice1();
+                        unitprice = Double.parseDouble(finPurchase.getUnitprice1());
                     }
-                    resultAmount = String.valueOf(Double.parseDouble(finPurchase.getUnitprice1()) * count);
-                    purchase_amount = finPurchase.getPurchase_amount();
+                    resultAmount = Double.parseDouble(finPurchase.getUnitprice1()) * count;
+                    hisAmount = Double.parseDouble(finPurchase.getUnitprice1()) * count * rate;
+                    purchase_amount = Double.parseDouble(finPurchase.getPurchase_amount());
                 }
                 break;
         }

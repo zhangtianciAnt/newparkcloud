@@ -255,6 +255,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             finPurchase.setCredential_status("PW001001");
             finPurchase.setRealpay(val.getRealpay() == null ? "0.00" : val.getRealpay().toString());//应付金额
             finPurchase.setRealamount(val.getRealamount());//实付金额
+            finPurchase.setSumamount(val.getSumamount());//采购总金额（收到货物发票专用）
             finPurchase.setApplicationrecord_id(val.getApplicationrecord_id());
             finPurchase.setProductresponsibility(transportGood.getProductresponsibility());//采购负责人
             finPurchase.setProducten(val.getProductid());//产品id

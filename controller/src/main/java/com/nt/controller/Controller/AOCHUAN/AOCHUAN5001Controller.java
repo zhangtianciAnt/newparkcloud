@@ -9,12 +9,14 @@ import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.AccountingRule;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.CrdlInfo;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Docurule;
 import com.nt.dao_AOCHUAN.AOCHUAN7000.Vo.All;
+import com.nt.dao_Org.Dictionary;
 import com.nt.service_AOCHUAN.AOCHUAN2000.mapper.CustomerbaseinforMapper;
 import com.nt.service_AOCHUAN.AOCHUAN3000.mapper.TransportGoodMapper;
 import com.nt.service_AOCHUAN.AOCHUAN4000.mapper.ProductsMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinCrdlInfoService;
 import com.nt.service_AOCHUAN.AOCHUAN5000.FinSalesService;
 import com.nt.service_AOCHUAN.AOCHUAN7000.DocuruleService;
+import com.nt.service_Org.DictionaryService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -40,6 +42,9 @@ public class AOCHUAN5001Controller {
 
     @Autowired
     private DocuruleService docuruleService;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @Autowired
     private CustomerbaseinforMapper customerbaseinforMapper;
@@ -259,31 +264,59 @@ public class AOCHUAN5001Controller {
 
         List<AccountingRule> actgrulist = new ArrayList<>();
 
+        Double rate = 0.00;
+        if(StringUtils.isNotEmpty(finSales.getCurrency())){
+            com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
+            dictionary.setCode(finSales.getEx_rate());
+            List<Dictionary> dir = dictionaryService.getDictionaryList(dictionary);
+            if(dir.size()>0){
+                rate = Double.parseDouble(dir.get(0).getValue2());
+            }
+        }
         for (All item : accAndauxList) {
             AccountingRule accountingRule = new AccountingRule();
+            String remarks = "";
+            if(StringUtils.isNotBlank(item.getRemarks()) && item.getRemarks().indexOf("{0}")>0 && item.getRemarks().indexOf("{1}")>0 && item.getRemarks().indexOf("{2}")>0&& item.getRemarks().indexOf("{3}")>0){
+                if(StringUtils.isNotBlank(finSales.getContractnumber())){
+                    remarks = item.getRemarks().replace("{0}", finSales.getContractnumber());
+                }
+                if(StringUtils.isNotBlank(finSales.getProductus())){
+                    Products products = productsMapper.selectByPrimaryKey(finSales.getProductus());
+                    if(products != null){
+                        remarks = remarks.replace("{1}", products.getChinaname());
+                    }
+                }
+                if(StringUtils.isNotBlank(finSales.getAmount())){
+                    remarks = remarks.replace("{2}", finSales.getAmount());
+                }
+                if(StringUtils.isNotBlank(finSales.getUnit())){
+                    com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
+                    dictionary.setCode(finSales.getUnit());
+                    List<Dictionary> dir = dictionaryService.getDictionaryList(dictionary);
+                    if(dir.size()>0){
+                        remarks = remarks.replace("{3}", dir.get(0).getValue1());
+                    }
 
-//            String remarks = "";
-//            if (StringUtils.isNotBlank(item.getRemarks()) && item.getRemarks().indexOf("{0}") > 0 && item.getRemarks().indexOf("{1}") > 0 && item.getRemarks().indexOf("{2}") > 0) {
-////                remarks = item.getRemarks().replace("{0}", finSales.getContractnumber()).replace("{1}", finSales.getProductus()).replace("{2}", finSales.getAmount());
-//                remarks = item.getRemarks().replace("{0}", finSales.getContractnumber()).replace("{1}", finSales.getProductus());
-//            } else {
-//                return null;
-//            }
+                }
+            }
+            else{
+                return null;
+            }
 
             //金额计算
             Double calAmount = 0.00;
             Double hisAmount = 0.00;
             if (StringUtils.isNotBlank(item.getAmounttype())) {
-                calAmount = amountCalculation(item.getAmounttype(), finSales,docurule).get("resultAmount");
-                hisAmount = amountCalculation(item.getAmounttype(), finSales,docurule).get("hisAmount");
+                calAmount = amountCalculation(item.getAmounttype(), finSales,docurule,rate).get("resultAmount");
+                hisAmount = amountCalculation(item.getAmounttype(), finSales,docurule,rate).get("hisAmount");
             }
             //分录
-            accountingRule.setRemarks(item.getRemarks());//摘要
+            accountingRule.setRemarks(remarks);//摘要
             accountingRule.setAcct_code(item.getAccountid());//科目编码
             accountingRule.setDebit(item.getDebit());//借方科目
             accountingRule.setCredit(item.getCredit());//贷方科目
             accountingRule.setCurrency(finSales.getCurrency());//币种
-            accountingRule.setEx_rate(finSales.getEx_rate());//汇率
+            accountingRule.setEx_rate(String.valueOf(rate));//汇率
             accountingRule.setTaxrate(item.getCrerate());//税率
             accountingRule.setOricurrency_amount(hisAmount);//原币金额
             accountingRule.setUnit(finSales.getUnit());//单位
@@ -357,7 +390,6 @@ public class AOCHUAN5001Controller {
 
             actgrulist.add(accountingRule);
         }
-
         crdlInfo.setCredentialInformation(crdl);
         crdlInfo.setAccountingRuleList(actgrulist);
 
@@ -371,7 +403,7 @@ public class AOCHUAN5001Controller {
      * @param finSales
      * @return
      */
-    private Map<Object,Double> amountCalculation(String amountType, FinSales finSales,Docurule docurule) {
+    private Map<Object,Double> amountCalculation(String amountType, FinSales finSales,Docurule docurule,Double rate) throws Exception {
         Map<Object,Double> dataMap = new HashMap<>();
         String amount = "";
         Double resultAmount = 0.00;
@@ -387,42 +419,27 @@ public class AOCHUAN5001Controller {
         switch (amountType) {
             case "0"://销售金额
                 if (StringUtils.isNotBlank(amount) && !" ".equals(amount)) {
-
-                    if ("PY008002".equals(finSales.getCurrency())) {
-                        resultAmount = Double.parseDouble(amount) * Double.parseDouble(finSales.getEx_rate());
-                    } else {
-                        resultAmount = Double.parseDouble(amount);
-                    }
+                    resultAmount = Double.parseDouble(amount) * rate;
                     hisAmount = Double.parseDouble(amount);
                 }
                 break;
             case "4"://保费
                 if (StringUtils.isNotBlank(finSales.getPremium()) && !" ".equals(finSales.getPremium())) {
-                    if ("PY008002".equals(finSales.getCurrency())) {
-                        resultAmount = Double.parseDouble(finSales.getPremium()) * Double.parseDouble(finSales.getEx_rate());
-                    } else {
-                        resultAmount = Double.parseDouble(finSales.getPremium());
-                    }
+                    resultAmount = Double.parseDouble(finSales.getPremium()) * rate;
                     hisAmount = Double.parseDouble(finSales.getPremium());
                 }
                 break;
             case "5"://运费
                 if (StringUtils.isNotBlank(finSales.getFreight()) && !" ".equals(finSales.getFreight())) {
-                    if ("PY008002".equals(finSales.getCurrency())) {
-                        resultAmount = Double.parseDouble(finSales.getFreight()) * Double.parseDouble(finSales.getEx_rate());
-                    } else {
-                        resultAmount = Double.parseDouble(finSales.getFreight());
-                    }
+                    resultAmount = Double.parseDouble(finSales.getFreight()) * rate;
                     hisAmount = Double.parseDouble(finSales.getFreight());
                 }
                 break;
             case "6"://手续费
-                if ("PY008002".equals(finSales.getCurrency())) {
-                    resultAmount = Double.parseDouble(finSales.getCommissionamounta()) * Double.parseDouble(finSales.getEx_rate());
-                } else {
-                    resultAmount = Double.parseDouble(finSales.getCommissionamounta());
+                if (StringUtils.isNotBlank(finSales.getCommissionamounta()) && !" ".equals(finSales.getCommissionamounta())) {
+                    resultAmount = Double.parseDouble(finSales.getCommissionamounta()) * rate;
+                    hisAmount = Double.parseDouble(finSales.getCommissionamounta());
                 }
-                hisAmount = Double.parseDouble(finSales.getCommissionamounta());
                 break;
             case "7"://主营业务收入=应收款-（保费+运费)
                 if (StringUtils.isNotBlank(amount) && !" ".equals(amount)) {
@@ -436,21 +453,13 @@ public class AOCHUAN5001Controller {
                     if (StringUtils.isNotBlank(finSales.getFreight()) && !" ".equals(finSales.getFreight())) {
                         freight = Double.parseDouble(finSales.getFreight());
                     }
-                    if ("PY008002".equals(finSales.getCurrency())) {
-                        resultAmount = (Double.parseDouble(amount) - (premium + freight)) * Double.parseDouble(finSales.getEx_rate());
-                    } else {
-                        resultAmount = Double.parseDouble(amount) - (premium + freight);
-                    }
+                    resultAmount = (Double.parseDouble(amount) - (premium + freight)) * rate;
                     hisAmount = Double.parseDouble(amount) - (premium + freight);
                 }
                 break;
             case "8"://结算款=应收款-手续费
                 if (StringUtils.isNotBlank(amount) && !" ".equals(amount)) {
-                    if (StringUtils.isNotEmpty(finSales.getCurrency()) && "PY008002".equals(finSales.getCurrency())) {
-                        resultAmount = (Double.parseDouble(amount) - Double.parseDouble(finSales.getCommissionamounta())) * Double.parseDouble(finSales.getEx_rate());
-                    } else {
-                        resultAmount = Double.parseDouble(amount) - Double.parseDouble(finSales.getCommissionamounta());
-                    }
+                    resultAmount = (Double.parseDouble(amount) - Double.parseDouble(finSales.getCommissionamounta())) * rate;
                     hisAmount = Double.parseDouble(amount) - Double.parseDouble(finSales.getCommissionamounta());
                 }
                 break;

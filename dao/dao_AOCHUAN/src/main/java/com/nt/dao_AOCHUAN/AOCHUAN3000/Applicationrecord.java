@@ -50,6 +50,8 @@ public class Applicationrecord extends BaseModel {
     private String unitprice1;
 
     private String currency1;
+    //采购总金额
+    private String sumamount;
 
     @Transient
     private String productname;

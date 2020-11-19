@@ -15,7 +15,7 @@ public interface SupplierbaseinforMapper extends MyMapper<Supplierbaseinfor> {
      */
     public List<Supplierbaseinfor> getSuppliersExceptUnique();
 
-    @Select("select SUPPLIERBASEINFOR_ID,suppliernamecn,industryinvolved,address1,linkman,mobilephone from supplierbaseinfor  ORDER BY createon DESC")
+    @Select("select SUPPLIERBASEINFOR_ID,suppliernamecn,industryinvolved,address1,linkman,mobilephone,createon from supplierbaseinfor  ORDER BY createon DESC")
     List<Supplierbaseinfor> allSelect();
     // add-ws-10/13-禅道任务459
     @Select("select SUPPLIERBASEINFOR_ID,suppliernamecn,industryinvolved,address1,linkman,mobilephone,kisid,supnumber from supplierbaseinfor where NOT(`STATUS` = '1') and date_format(supplierbaseinfor.CREATEON, '%Y%m') = #{createon} order by createon desc")

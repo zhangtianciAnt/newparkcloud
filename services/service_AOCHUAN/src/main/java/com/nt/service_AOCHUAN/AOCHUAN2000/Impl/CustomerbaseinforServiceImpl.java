@@ -6,9 +6,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.utils.IOUtils;
 import com.nt.dao_AOCHUAN.AOCHUAN2000.Customerbaseinfor;
 import com.nt.dao_AOCHUAN.AOCHUAN5000.KisLogin;
+import com.nt.dao_Org.Dictionary;
 import com.nt.service_AOCHUAN.AOCHUAN2000.CustomerbaseinforService;
 import com.nt.service_AOCHUAN.AOCHUAN2000.mapper.CustomerbaseinforMapper;
 import com.nt.service_AOCHUAN.AOCHUAN5000.mapper.FinCrdlInfoMapper;
+import com.nt.service_Org.DictionaryService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,9 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
 
     @Autowired
     private FinCrdlInfoMapper finCrdlInfoMapper;
+
+    @Autowired
+    private DictionaryService dictionaryService;
     @Autowired
     private RestTemplate restTemplate;
 
@@ -146,7 +151,14 @@ public class CustomerbaseinforServiceImpl implements CustomerbaseinforService {
             model.put("FCUSTID",kis);
             model.put("FNumber",customerbaseinfor.getCustnumber());
             model.put("FName",customerbaseinfor.getCustomernameen());
-            fGroup.put("FNumber",customerbaseinfor.getNation());//国家
+            if(StringUtils.isNotEmpty(customerbaseinfor.getNation())){
+                com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
+                dictionary.setCode(customerbaseinfor.getNation());
+                List<Dictionary> dir = dictionaryService.getDictionaryList(dictionary);
+                if(dir.size()>0){
+                    fGroup.put("FNumber",dir.get(0).getValue2());//国家
+                }
+            }
             model.put("FCOUNTRY",fGroup);
             listmap.add(model);
         }
