@@ -260,7 +260,7 @@ public class AOCHUAN5002Controller {
         Double rate = 1.00;
         if(StringUtils.isNotEmpty(finPurchase.getCurrency1())){
             com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
-            dictionary.setCode(finPurchase.getEx_rate());
+            dictionary.setCode(finPurchase.getCurrency1());
             List<Dictionary> dir = dictionaryService.getDictionaryList(dictionary);
             if(dir.size()>0){
                 rate = Double.parseDouble(dir.get(0).getValue2());
