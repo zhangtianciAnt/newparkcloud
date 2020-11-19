@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -145,6 +146,6 @@ public class FinPurchase extends BaseModel {
 
     //总金额（采购明细）
     @Column(name = "SUMAMOUNT")
-    private String sumamount;
+    private BigDecimal sumamount;
 
 }

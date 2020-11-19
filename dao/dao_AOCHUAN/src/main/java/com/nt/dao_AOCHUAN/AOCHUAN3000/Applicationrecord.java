@@ -51,7 +51,7 @@ public class Applicationrecord extends BaseModel {
 
     private String currency1;
     //采购总金额
-    private String sumamount;
+    private BigDecimal sumamount;
 
     @Transient
     private String productname;

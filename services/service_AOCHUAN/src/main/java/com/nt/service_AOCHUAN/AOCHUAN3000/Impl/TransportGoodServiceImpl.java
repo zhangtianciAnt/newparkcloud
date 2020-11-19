@@ -42,6 +42,7 @@ import org.springframework.util.ResourceUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -180,12 +181,14 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 
 
     private void InsertSonTable(TransportGood transportGood, String id, TokenModel tokenModel) throws Exception {
+        BigDecimal sumamou = new BigDecimal(0);
         if (transportGood.getSaledetails().size() > 0) {
             List<Saledetails> saledetailsList = transportGood.getSaledetails();
             for (Saledetails val : saledetailsList) {
                 val.preInsert(tokenModel);
                 val.setTransportgood_id(id);
                 val.setSaledetails_id(UUID.randomUUID().toString());
+                sumamou = sumamou.add(val.getPurchaseamount());
             }
             saledetailsMapper.insertSaledetailsList(saledetailsList);
         }
@@ -208,6 +211,7 @@ public class TransportGoodServiceImpl implements TransportGoodService {
             for (Applicationrecord val : applicationrecords) {
                 val.preInsert(tokenModel);
                 val.setTransportgood_id(id);
+                val.setSumamount(sumamou);
                 val.setApplicationrecord_id(UUID.randomUUID().toString());
             }
             if (transportGood.getFinance() == 2) {
