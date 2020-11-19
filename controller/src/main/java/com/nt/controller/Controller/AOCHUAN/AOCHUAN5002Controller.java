@@ -257,7 +257,7 @@ public class AOCHUAN5002Controller {
         crdl.setOrder_no(finPurchase.getContractnumber());//订单号
 
         List<AccountingRule> actgrulist = new ArrayList<>();
-        Double rate = 0.00;
+        Double rate = 1.00;
         if(StringUtils.isNotEmpty(finPurchase.getCurrency1())){
             com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
             dictionary.setCode(finPurchase.getEx_rate());
