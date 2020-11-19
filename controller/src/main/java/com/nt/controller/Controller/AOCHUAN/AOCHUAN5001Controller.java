@@ -264,15 +264,15 @@ public class AOCHUAN5001Controller {
 
         List<AccountingRule> actgrulist = new ArrayList<>();
 
-        Double rate = 0.00;
-        if(StringUtils.isNotEmpty(finSales.getCurrency())){
-            com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
-            dictionary.setCode(finSales.getEx_rate());
-            List<Dictionary> dir = dictionaryService.getDictionaryList(dictionary);
-            if(dir.size()>0){
-                rate = Double.parseDouble(dir.get(0).getValue2());
-            }
-        }
+//        Double rate = 0.00;
+//        if(StringUtils.isNotEmpty(finSales.getCurrency())){
+//            com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
+//            dictionary.setCode(finSales.getEx_rate());
+//            List<Dictionary> dir = dictionaryService.getDictionaryList(dictionary);
+//            if(dir.size()>0){
+//                rate = Double.parseDouble(dir.get(0).getValue2());
+//            }
+//        }
         for (All item : accAndauxList) {
             AccountingRule accountingRule = new AccountingRule();
             String remarks = "";
@@ -305,8 +305,8 @@ public class AOCHUAN5001Controller {
             Double calAmount = 0.00;
             Double hisAmount = 0.00;
             if (StringUtils.isNotBlank(item.getAmounttype())) {
-                calAmount = amountCalculation(item.getAmounttype(), finSales,docurule,rate).get("resultAmount");
-                hisAmount = amountCalculation(item.getAmounttype(), finSales,docurule,rate).get("hisAmount");
+                calAmount = amountCalculation(item.getAmounttype(), finSales,docurule).get("resultAmount");
+                hisAmount = amountCalculation(item.getAmounttype(), finSales,docurule).get("hisAmount");
             }
             //分录
             accountingRule.setRemarks(remarks);//摘要
@@ -314,7 +314,7 @@ public class AOCHUAN5001Controller {
             accountingRule.setDebit(item.getDebit());//借方科目
             accountingRule.setCredit(item.getCredit());//贷方科目
             accountingRule.setCurrency(finSales.getCurrency());//币种
-            accountingRule.setEx_rate(String.valueOf(rate));//汇率
+            accountingRule.setEx_rate(String.valueOf(finSales.getEx_rate()));//汇率
             accountingRule.setTaxrate(item.getCrerate());//税率
             accountingRule.setOricurrency_amount(hisAmount);//原币金额
             accountingRule.setUnit(finSales.getUnit());//单位
@@ -346,7 +346,16 @@ public class AOCHUAN5001Controller {
                                 customerbaseinfor.setCustomerbaseinfor_id(transportGoodList.get(0).getCustomerid());
                                 List<Customerbaseinfor> customerbaseinforList = customerbaseinforMapper.select(customerbaseinfor);
                                 if(customerbaseinforList.size() > 0){
-                                    dim = customerbaseinforList.get(0).getCustomernameen()+"/"+customerbaseinforList.get(0).getNation()+"/";
+                                    String nation = "";
+                                    if(StringUtils.isNotEmpty(customerbaseinforList.get(0).getNation())){
+                                        com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
+                                        dictionary.setCode(customerbaseinforList.get(0).getNation());
+                                        List<Dictionary> dir = dictionaryService.getDictionaryList(dictionary);
+                                        if(dir.size()>0){
+                                            nation = dir.get(0).getValue1();
+                                        }
+                                    }
+                                    dim = customerbaseinforList.get(0).getCustomernameen()+"/"+nation+"/";
                                     accountingRule.setFdetailid__fflex6(customerbaseinforList.get(0).getCustnumber());
                                     accountingRule.setFdetailid__ff100002(customerbaseinforList.get(0).getNation());
                                 }
@@ -401,7 +410,7 @@ public class AOCHUAN5001Controller {
      * @param finSales
      * @return
      */
-    private Map<Object,Double> amountCalculation(String amountType, FinSales finSales,Docurule docurule,Double rate) throws Exception {
+    private Map<Object,Double> amountCalculation(String amountType, FinSales finSales,Docurule docurule) throws Exception {
         Map<Object,Double> dataMap = new HashMap<>();
         String amount = "";
         Double resultAmount = 0.00;
@@ -412,6 +421,10 @@ public class AOCHUAN5001Controller {
             } else if(docurule.getDocutype().equals("PZ001004")){//收到货款凭证
                 amount = finSales.getSalesamount();//实收金额
             }
+        }
+        float rate = 1;
+        if(StringUtils.isNotEmpty(finSales.getEx_rate())){
+            rate = Float.parseFloat(finSales.getEx_rate());
         }
 
         switch (amountType) {
