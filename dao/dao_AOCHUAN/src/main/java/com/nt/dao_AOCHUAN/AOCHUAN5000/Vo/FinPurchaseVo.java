@@ -68,6 +68,8 @@ public class FinPurchaseVo extends BaseModel {
     //总金额（应付金额）
     private String summonery;
 
+    private String sumamount;
+
     private String paymentaccount;
 
     private String realpay;

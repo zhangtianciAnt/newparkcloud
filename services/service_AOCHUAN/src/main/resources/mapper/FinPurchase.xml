@@ -4,7 +4,7 @@
 
     <select id="selectById" resultType="com.nt.dao_AOCHUAN.AOCHUAN5000.Vo.FinPurchaseVo">
     SELECT f.CONTRACTNUMBER as contractnumber, f.PURCHASE_ID as purchase_id, f.PRODUCTEN as producten,
-     f.CURRENCY1 as CURRENCY1, f.SUPPLIER as SUPPLIER, f.UNITPRICE1 as UNITPRICE1, f.PURCHASE_AMOUNT as PURCHASE_AMOUNT
+     f.CURRENCY1 as CURRENCY1, f.SUPPLIER as SUPPLIER, f.UNITPRICE1 as UNITPRICE1, f.PURCHASE_AMOUNT as PURCHASE_AMOUNT, f.SUMAMOUNT as SUMAMOUNT
       ,f.PAYMENTTIME as paymenttime, f.AP_DATE as ap_date, f.INVOICENUMBER as invoicenumber, f.SUMMONERY as SUMMONERY, f.UNIT1 as UNIT1
       ,f.PAYMENTSTATUS as paymentstatus, f.PRODUCTRESPONSIBILITY as productresponsibility,f.CREDENTIAL_STATUS as credential_status
       ,f.TRANSPORTGOOD_ID as transportgood_id, f.STATUS as status, f.REALPAY as realpay, f.REALAMOUNT as realamount

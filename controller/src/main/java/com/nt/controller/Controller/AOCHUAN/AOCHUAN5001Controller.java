@@ -347,17 +347,19 @@ public class AOCHUAN5001Controller {
                                 List<Customerbaseinfor> customerbaseinforList = customerbaseinforMapper.select(customerbaseinfor);
                                 if(customerbaseinforList.size() > 0){
                                     String nation = "";
+                                    String nationcode = "";
                                     if(StringUtils.isNotEmpty(customerbaseinforList.get(0).getNation())){
                                         com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
                                         dictionary.setCode(customerbaseinforList.get(0).getNation());
                                         List<Dictionary> dir = dictionaryService.getDictionaryList(dictionary);
                                         if(dir.size()>0){
                                             nation = dir.get(0).getValue1();
+                                            nationcode = dir.get(0).getValue2();
                                         }
                                     }
                                     dim = customerbaseinforList.get(0).getCustomernameen()+"/"+nation+"/";
                                     accountingRule.setFdetailid__fflex6(customerbaseinforList.get(0).getCustnumber());
-                                    accountingRule.setFdetailid__ff100002(customerbaseinforList.get(0).getNation());
+                                    accountingRule.setFdetailid__ff100002(nationcode);
                                 }
                             }
                         }
