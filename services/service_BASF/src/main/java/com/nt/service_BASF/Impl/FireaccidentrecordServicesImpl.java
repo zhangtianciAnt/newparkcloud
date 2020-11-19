@@ -3,6 +3,7 @@ package com.nt.service_BASF.Impl;
 import com.nt.dao_BASF.Commandrecord;
 import com.nt.dao_BASF.Fireaccidentrecord;
 import com.nt.dao_BASF.Firealarm;
+import com.nt.dao_BASF.VO.FireaccidentrecordVo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.service_BASF.FireaccidentrecordServices;
 import com.nt.service_BASF.mapper.FireaccidentrecordMapper;
@@ -60,8 +61,16 @@ public class FireaccidentrecordServicesImpl implements FireaccidentrecordService
     }
 
     @Override
-    public List<Fireaccidentrecord> getlist() throws Exception {
-        return fireaccidentrecordMapper.selectList();
+    public List<FireaccidentrecordVo> getlist() throws Exception {
+        List<FireaccidentrecordVo> rtnList = fireaccidentrecordMapper.selectList();
+        for(FireaccidentrecordVo record : rtnList){
+            if(StringUtils.isNotEmpty(record.getIndevice())){
+                String list[] = record.getIndevice().split("/");
+                record.setAccunit(list[0]);
+            }
+            record.setTypacc(dictionaryService.getCodeValue(record.getTypacc()));
+        }
+        return rtnList;
     }
 
     @Override

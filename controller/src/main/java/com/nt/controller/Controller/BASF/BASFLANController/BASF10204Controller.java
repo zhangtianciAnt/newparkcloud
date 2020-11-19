@@ -83,6 +83,23 @@ public class BASF10204Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         vehicleManagementServices.update(vehicleManagement, tokenModel);
+
+        // 查询所有消防车最后的gps信息返回给前端
+        List<VehicleManagement> vehicleManagements = vehicleManagementServices.list(null);
+        List<MhInfo> mhInfos = new ArrayList<>();
+        for (VehicleManagement v : vehicleManagements) {
+            MhInfo mhInfo = new MhInfo();
+            mhInfo.setVehicleManagement(v);
+            mhInfo.setEnable(v.getEnable());
+            //因为现在没有app和后台的心跳线，所以返回默认所有车都是在线状态
+            mhInfo.setRunStatus(1);
+            mhInfo.setLat(Double.valueOf(v.getLat()));
+            mhInfo.setLng(Double.valueOf(v.getLng()));
+            mhInfos.add(mhInfo);
+        }
+        MultiThreadScheduleTask.webSocketVo.setCarSet(mhInfos);
+        WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(MultiThreadScheduleTask.webSocketVo)));
+
         return ApiResult.success();
     }
 

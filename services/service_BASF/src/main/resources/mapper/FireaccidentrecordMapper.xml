@@ -3,12 +3,13 @@
 <mapper namespace="com.nt.service_BASF.mapper.FireaccidentrecordMapper">
 
     <!--    消防事故记录列表-->
-    <select id="selectList" resultType="com.nt.dao_BASF.VO.FireaListVo">
+    <select id="selectList" resultType="com.nt.dao_BASF.VO.FireaccidentrecordVo">
        SELECT
         fireaccidentrecord.*
+        ,fireaccidentrecord.CREATEON as firealarmcompletiontime
         ,firealarm.indevice
         ,firealarm.accunit
-        ,firealarm.CREATEON AS firealarmcreateon
+        ,firealarm.typacc
         FROM fireaccidentrecord
         LEFT JOIN
         firealarm

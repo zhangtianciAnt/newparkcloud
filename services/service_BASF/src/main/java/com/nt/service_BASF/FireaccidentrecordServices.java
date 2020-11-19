@@ -1,6 +1,7 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.*;
+import com.nt.dao_BASF.VO.FireaccidentrecordVo;
 import com.nt.dao_BASF.VO.UsergroupVo;
 import com.nt.utils.dao.TokenModel;
 
@@ -35,5 +36,5 @@ public interface FireaccidentrecordServices {
     void excelexport(Fireaccidentrecord fireaccidentrecord, Firealarm firealarm, Commandrecord commandrecord, HttpServletResponse response) throws Exception;
 
     //获取消防事故记录列表(字段追加:装置名称，事发单位，创建时间)
-    List<Fireaccidentrecord> getlist() throws Exception;
+    List<FireaccidentrecordVo> getlist() throws Exception;
 }
