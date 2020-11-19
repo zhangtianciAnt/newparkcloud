@@ -299,9 +299,7 @@ public class AOCHUAN5001Controller {
 
                 }
             }
-            else{
-                return null;
-            }
+
 
             //金额计算
             Double calAmount = 0.00;
