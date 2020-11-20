@@ -166,21 +166,27 @@ public class Pfans5008Controller {
                 if(sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()>=sf1ymd.parse(startDate).getTime()
                     && sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()<=sf1ymd.parse(endDate).getTime())
                 {
-                    list.add(item);
+                    if (list.stream().filter(item2 -> item2.getLogmanagement_id().equals(item.getLogmanagement_id())).count() == 0) {
+                        list.add(item);
+                    }
                 }
             }
             else if(StringUtils.isNotBlank(startDate))
             {
                 if(sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()>=sf1ymd.parse(startDate).getTime())
                 {
-                    list.add(item);
+                    if (list.stream().filter(item2 -> item2.getLogmanagement_id().equals(item.getLogmanagement_id())).count() == 0) {
+                        list.add(item);
+                    }
                 }
             }
             else if(StringUtils.isNotBlank(endDate))
             {
                 if(sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()<=sf1ymd.parse(endDate).getTime())
                 {
-                    list.add(item);
+                    if (list.stream().filter(item2 -> item2.getLogmanagement_id().equals(item.getLogmanagement_id())).count() == 0) {
+                        list.add(item);
+                    }
                 }
             }
         }
