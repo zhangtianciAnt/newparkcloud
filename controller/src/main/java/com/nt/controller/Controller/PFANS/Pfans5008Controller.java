@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -154,9 +155,36 @@ public class Pfans5008Controller {
     @RequestMapping(value = "/getLogDataList", method = {RequestMethod.GET})
     public ApiResult getLogDataList(String startDate ,String endDate , HttpServletRequest request) throws Exception {
         LogManagement logmanagement = new LogManagement();
+        SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");
         TokenModel tokenModel = tokenService.getToken(request);
         logmanagement.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(logmanagementService.getLogDataList(logmanagement,startDate,endDate));
+        List<LogManagement> list = logmanagementService.getLogDataList(logmanagement,startDate,endDate);
+        List<LogManagement> list1 = logmanagementService.getDataListPL(tokenModel);
+        for (LogManagement item : list1) {
+            if(StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate))
+            {
+                if(sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()>=sf1ymd.parse(startDate).getTime()
+                    && sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()<=sf1ymd.parse(endDate).getTime())
+                {
+                    list.add(item);
+                }
+            }
+            else if(StringUtils.isNotBlank(startDate))
+            {
+                if(sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()>=sf1ymd.parse(startDate).getTime())
+                {
+                    list.add(item);
+                }
+            }
+            else if(StringUtils.isNotBlank(endDate))
+            {
+                if(sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()<=sf1ymd.parse(endDate).getTime())
+                {
+                    list.add(item);
+                }
+            }
+        }
+        return ApiResult.success(list);
     }
 
     @RequestMapping(value = "/getDataList1", method = {RequestMethod.POST})
@@ -167,18 +195,26 @@ public class Pfans5008Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         LogManagement logmanagement = new LogManagement();
         logmanagement.setOwners(tokenModel.getOwnerList());
-        List<LogManagement> list = logmanagementService.getDataList(logmanagement);
+        logmanagement.setLog_date(conditon.getLog_date());
+        List<LogManagement> list = logmanagementService.getDataListByLog_date(logmanagement);
         //add_fjl_0716_添加PL权限的人查看日志一览  start
         List<LogManagement> list1 = logmanagementService.getDataListPL(tokenModel);
         for (LogManagement item : list1) {
-            if (list.stream().filter(item2 -> item2.getProject_id().equals(item.getProject_id())).count() == 0) {
-                list.add(item);
+            //upd ccm 1118 日志管理可以看到外注员工的数据 fr
+//            if (list.stream().filter(item2 -> item2.getProject_id().equals(item.getProject_id())).count() == 0) {
+//                list.add(item);
+//            }
+            if(DateUtil.format(item.getLog_date(),"yyyy/MM").equals(
+                    DateUtil.format(conditon.getLog_date(),"yyyy/MM")))
+            {
+                if (list.stream().filter(item2 -> item2.getLogmanagement_id().equals(item.getLogmanagement_id())).count() == 0) {
+                    list.add(item);
+                }
             }
+            //upd ccm 1118 日志管理可以看到外注员工的数据 to
         }
         //add_fjl_0716_添加PL权限的人查看日志一览  end
-        list = list.stream().filter(item -> DateUtil.format(item.getLog_date(),"yyyy/MM").equals(
-                DateUtil.format(conditon.getLog_date(),"yyyy/MM")
-        )).collect(Collectors.toList());
+
         return ApiResult.success(list);
     }
     // add-ws-5/26-No.68

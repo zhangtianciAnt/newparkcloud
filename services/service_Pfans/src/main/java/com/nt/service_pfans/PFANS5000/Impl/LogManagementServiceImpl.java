@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.PersonalProjects;
 import cn.hutool.poi.excel.ExcelReader;
@@ -108,8 +109,17 @@ public class LogManagementServiceImpl implements LogManagementService {
 
     @Override
     public List<LogManagement> getDataList(LogManagement logmanagement) throws Exception {
+
         return logmanagementmapper.select(logmanagement);
     }
+
+    //add ccm 1118 日志优化
+    @Override
+    public List<LogManagement> getDataListByLog_date(LogManagement logmanagement) throws Exception {
+        String log_date = DateUtil.format(logmanagement.getLog_date(),"yyyy-MM");
+        return logmanagementmapper.getDataListByLog_date(logmanagement.getOwners(),log_date);
+    }
+    //add ccm 1118 日志优化
 
     //add_fjl_0716_添加PL权限的人查看日志一览  start
     @Override
