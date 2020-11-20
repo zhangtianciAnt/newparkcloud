@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -399,6 +400,47 @@ public class AOCHUAN5001Controller {
 
             actgrulist.add(accountingRule);
         }
+        BigDecimal amoun1 = new BigDecimal(0.00);
+        BigDecimal amoun2 = new BigDecimal(0.00);
+        int de = 0;//借方科目的行数
+        int cr = 0;//贷方科目的条数
+        for(AccountingRule a: actgrulist){
+            if(StringUtils.isNotEmpty(a.getDebit())){
+                de++;
+                amoun1 =amoun1.add(new BigDecimal(a.getAmount()));
+            }
+            if(StringUtils.isNotEmpty(a.getCredit())){
+                cr++;
+                amoun2 =amoun2.add(new BigDecimal(a.getAmount()));
+            }
+        }
+        BigDecimal diff = amoun1.subtract(amoun2);
+        //外币场合 借方总金额 - 贷方总金额
+        if(amoun1.compareTo(amoun2) == 1){
+            for(AccountingRule a: actgrulist){
+                if(de > cr){
+                    if(StringUtils.isNotEmpty(a.getCredit())){
+                        a.setAmount(amoun2.add(diff).doubleValue());
+                    }
+                } else {
+                    if(StringUtils.isNotEmpty(a.getDebit())){
+                        a.setAmount(amoun1.subtract(diff).doubleValue());
+                    }
+                }
+            }
+        } else if(amoun1.compareTo(amoun2) == -1){
+            for(AccountingRule a: actgrulist){
+                if(de > cr){
+                    if(StringUtils.isNotEmpty(a.getCredit())){
+                        a.setAmount(amoun2.subtract(diff).doubleValue());
+                    }
+                } else {
+                    if(StringUtils.isNotEmpty(a.getDebit())){
+                        a.setAmount(amoun1.add(diff).doubleValue());
+                    }
+                }
+            }
+        }
         crdlInfo.setCredentialInformation(crdl);
         crdlInfo.setAccountingRuleList(actgrulist);
 
@@ -433,24 +475,28 @@ public class AOCHUAN5001Controller {
             case "0"://销售金额
                 if (StringUtils.isNotBlank(amount) && !" ".equals(amount)) {
                     resultAmount = Double.parseDouble(amount) * rate;
+                    resultAmount = (double) Math.round(resultAmount*100)/100;
                     hisAmount = Double.parseDouble(amount);
                 }
                 break;
             case "4"://保费
                 if (StringUtils.isNotBlank(finSales.getPremium()) && !" ".equals(finSales.getPremium())) {
                     resultAmount = Double.parseDouble(finSales.getPremium()) * rate;
+                    resultAmount = (double) Math.round(resultAmount*100)/100;
                     hisAmount = Double.parseDouble(finSales.getPremium());
                 }
                 break;
             case "5"://运费
                 if (StringUtils.isNotBlank(finSales.getFreight()) && !" ".equals(finSales.getFreight())) {
                     resultAmount = Double.parseDouble(finSales.getFreight()) * rate;
+                    resultAmount = (double) Math.round(resultAmount*100)/100;
                     hisAmount = Double.parseDouble(finSales.getFreight());
                 }
                 break;
             case "6"://手续费
                 if (StringUtils.isNotBlank(finSales.getCommissionamounta()) && !" ".equals(finSales.getCommissionamounta())) {
                     resultAmount = Double.parseDouble(finSales.getCommissionamounta()) * rate;
+                    resultAmount = (double) Math.round(resultAmount*100)/100;
                     hisAmount = Double.parseDouble(finSales.getCommissionamounta());
                 }
                 break;
@@ -467,12 +513,14 @@ public class AOCHUAN5001Controller {
                         freight = Double.parseDouble(finSales.getFreight());
                     }
                     resultAmount = (Double.parseDouble(amount) - (premium + freight)) * rate;
+                    resultAmount = (double) Math.round(resultAmount*100)/100;
                     hisAmount = Double.parseDouble(amount) - (premium + freight);
                 }
                 break;
             case "8"://结算款=应收款-手续费
                 if (StringUtils.isNotBlank(amount) && !" ".equals(amount)) {
                     resultAmount = (Double.parseDouble(amount) - Double.parseDouble(finSales.getCommissionamounta())) * rate;
+                    resultAmount = (double) Math.round(resultAmount*100)/100;
                     hisAmount = Double.parseDouble(amount) - Double.parseDouble(finSales.getCommissionamounta());
                 }
                 break;

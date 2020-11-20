@@ -389,7 +389,7 @@ public class AOCHUAN5002Controller {
         Double amoun3 = amoun1 - amoun2;
         for(AccountingRule a: actgrulist){
             if(a.getAmounttype().equals("3")){
-                a.setAmount(amoun3);
+                a.setAmount(amoun3 * rate);
                 a.setOricurrency_amount(amoun3);
                 a.setUnit_price(a.getOricurrency_amount()/a.getQuantity());
             }

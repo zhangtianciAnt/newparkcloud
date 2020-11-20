@@ -188,7 +188,9 @@ public class TransportGoodServiceImpl implements TransportGoodService {
                 val.preInsert(tokenModel);
                 val.setTransportgood_id(id);
                 val.setSaledetails_id(UUID.randomUUID().toString());
-                sumamou = sumamou.add(val.getPurchaseamount());
+                if(val.getPurchaseamount() != null){
+                    sumamou = sumamou.add(val.getPurchaseamount());
+                }
             }
             saledetailsMapper.insertSaledetailsList(saledetailsList);
         }
