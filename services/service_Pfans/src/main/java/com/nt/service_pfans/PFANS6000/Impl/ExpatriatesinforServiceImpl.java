@@ -28,6 +28,7 @@ import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -43,6 +44,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -378,110 +381,66 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         {
             expatriatesinfor.setGroup_id(expatriatesinfor.getInterviewdep());
         }
-        expatriatesinforMapper.updateByPrimaryKey(expatriatesinfor);
-        if (expatriatesinfor.getWhetherentry().equals("BP006001") && !expatriatesinfor.getGroup_id().equals("") && expatriatesinfor.getGroup_id() !=null) {
+        //部门转移,上个月单价复制到新部门 ztc 1118 start
+        //取上个月
+        String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
+        LocalDate monthAntDate = LocalDate.now();
+        monthAntDate = monthAntDate.minusMonths(1);
+        DateTimeFormatter formatters = DateTimeFormatter.ofPattern("yyyy-MM");
+        String lastmonthAntStr = formatters.format(monthAntDate);
+        //当月
+        String nowmonthAntStr = formatters.format(LocalDate.now());
+
+        //外驻退场时间format
+        SimpleDateFormat sdfAnt = new SimpleDateFormat("yyyy-MM") ;
+        String admissiontime = sdfAnt.format(expatriatesinfor.getAdmissiontime());
+
+        Expatriatesinfor expatriatesOld = expatriatesinforMapper.selectByPrimaryKey(expatriatesinfor.getExpatriatesinfor_id());
+
+        Expatriatesinfor expatriatesinforAnt = expatriatesinforMapper.selectByPrimaryKey(expatriatesinfor.getExpatriatesinfor_id());
+        //判断条件：1.部门不同（必要条件）2.在职外驻。3.入场月份不是当月（必定没上月单价）
+        if(!expatriatesinfor.getGroup_id().equals(expatriatesinforAnt.getGroup_id())
+                && expatriatesinfor.getExits().equals("1")
+                && !admissiontime.equals(nowmonthAntStr)) {
+            //查询上月PricesetGroup主键
+            PricesetGroup pricesetGroup = new PricesetGroup();
+            pricesetGroup.setPd_date(lastmonthAntStr);
+            List<PricesetGroup> pricesetGroupList = pricesetGroupMapper.select(pricesetGroup);
+            String pricesetgroupid = pricesetGroupList.get(0).getPricesetgroup_id();
+            //查询旧部门上个月该员工设定的单价
             Priceset priceset = new Priceset();
             priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
-            //priceset.setGroupid(expatriatesinfor.getGroup_id());
-            String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
-            String sDate = DateUtil.format(new Date(), "yyyy-MM");
+            priceset.setPricesetgroup_id(pricesetgroupid);
+            priceset.setGroup_id(expatriatesOld.getGroup_id());
+            List<Priceset> pricesetList = pricesetMapper.select(priceset);
+            //该员工上个月在旧部门没有单价
+            if(pricesetList.size() == 0){
+                priceset.preInsert(tokenModel);
+                priceset.setPriceset_id(UUID.randomUUID().toString());
+                priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
+                //新部门
+                priceset.setGroup_id(expatriatesinfor.getGroup_id());
+                priceset.setGraduation(expatriatesinfor.getGraduation_year());
+                priceset.setCompany(expatriatesinfor.getSuppliername());
+                priceset.setAssesstime(thisDate);
+                priceset.setUsername(expatriatesinfor.getExpname());
+                priceset.setPricesetgroup_id(pricesetGroupList.get(0).getPricesetgroup_id());
+                priceset.setStatus("0");
+                pricesetMapper.insert(priceset);
+            }else{
+                //查询新部门是否由该员工上个月的单价履历 先删后插
+                Priceset pricesetNew = new Priceset();
+                pricesetNew.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
+                pricesetNew.setGroup_id(expatriatesinfor.getGroup_id());
+                pricesetMapper.delete(pricesetNew);
 
-            List<Priceset> list1 = pricesetMapper.select(priceset);
-            if(list1.size() == 0)
-            {
-                PricesetGroup pricesetGroup = new PricesetGroup();
-                pricesetGroup.setPd_date(sDate);
-                List<PricesetGroup> pricesetGroupList = pricesetGroupMapper.select(pricesetGroup);
-                if(pricesetGroupList.size()>0)
-                {
-                    priceset.preInsert(tokenModel);
-                    priceset.setPriceset_id(UUID.randomUUID().toString());
-                    priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
-                    priceset.setGroup_id(expatriatesinfor.getGroup_id());
-                    priceset.setGraduation(expatriatesinfor.getGraduation_year());
-                    priceset.setCompany(expatriatesinfor.getSuppliername());
-                    priceset.setAssesstime(thisDate);
-                    priceset.setUsername(expatriatesinfor.getExpname());
-                    priceset.setPricesetgroup_id(pricesetGroupList.get(0).getPricesetgroup_id());
-                    priceset.setStatus("0");
-                    pricesetMapper.insert(priceset);
-                }
-            }
-            else
-            {
-                PricesetGroup pricesetGroup = new PricesetGroup();
-                pricesetGroup.setPd_date(sDate);
-                List<PricesetGroup> pricesetGroupList = pricesetGroupMapper.select(pricesetGroup);
-                if(pricesetGroupList.size()>0)
-                {
-                    priceset.setGroup_id(expatriatesinfor.getGroup_id());
-                    priceset.setPricesetgroup_id(pricesetGroupList.get(0).getPricesetgroup_id());
-                    List<Priceset> pricesetlist = pricesetMapper.select(priceset);
-                    if(pricesetlist.size()==0)
-                    {
-                        Priceset priceset1 = new Priceset();
-                        priceset1.setPricesetgroup_id(pricesetGroupList.get(0).getPricesetgroup_id());
-                        priceset1.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
-                        pricesetlist = pricesetMapper.select(priceset1);
-                        if(pricesetlist.size()>0)
-                        {
-                            pricesetlist.get(0).preInsert(tokenModel);
-                            pricesetlist.get(0).setPriceset_id(UUID.randomUUID().toString());
-                            pricesetlist.get(0).setGroup_id(expatriatesinfor.getGroup_id());
-                            pricesetlist.get(0).setStatus("0");
-                            pricesetMapper.insert(pricesetlist.get(0));
-                        }
-                    }
-                }
+                pricesetList.get(0).setPriceset_id(UUID.randomUUID().toString());
+                pricesetList.get(0).setGroup_id(expatriatesinfor.getGroup_id());
+                pricesetList.get(0).preInsert(tokenModel);
+                pricesetMapper.insert(pricesetList.get(0));
             }
         }
-
-        //ccm add
-        if(!expatriatesinfor.getGroup_id().equals(""))
-        {
-            ExpatriatesinforDetail e = new ExpatriatesinforDetail();
-            e.setExpatriatesinfor_id(expatriatesinfor.getExpatriatesinfor_id());
-            List<ExpatriatesinforDetail> expatriatesinforDetails =new ArrayList<>();
-            expatriatesinforDetails = expatriatesinforDetailMapper.select(e);
-            if(expatriatesinforDetails.size() == 0)
-            {
-                //登录新的履历
-                ExpatriatesinforDetail e1 = new ExpatriatesinforDetail();
-                e1.preInsert(tokenModel);
-                e1.setGroup_id(expatriatesinfor.getGroup_id());
-                e1.setExpatriatesinfordetail_id(UUID.randomUUID().toString());
-                e1.setExpatriatesinfor_id(expatriatesinfor.getExpatriatesinfor_id());
-                e1.setExdatestr(new Date());
-                expatriatesinforDetailMapper.insert(e1);
-            }
-            else
-            {
-                for(ExpatriatesinforDetail expDetail : expatriatesinforDetails)
-                {
-                    if(expDetail.getExdateend() ==null)
-                    {
-                        if(!expDetail.getGroup_id().equals(expatriatesinfor.getGroup_id()))
-                        {
-                            //更新结束时间
-                            expDetail.setExdateend(new Date());
-                            expDetail.preUpdate(tokenModel);
-                            expatriatesinforDetailMapper.updateByPrimaryKey(expDetail);
-
-                            //登录新的履历
-                            ExpatriatesinforDetail e2 = new ExpatriatesinforDetail();
-                            e2.preInsert(tokenModel);
-                            e2.setGroup_id(expatriatesinfor.getGroup_id());
-                            e2.setExpatriatesinfordetail_id(UUID.randomUUID().toString());
-                            e2.setExpatriatesinfor_id(expDetail.getExpatriatesinfor_id());
-                            e2.setExdatestr(new Date());
-                            expatriatesinforDetailMapper.insert(e2);
-                        }
-                    }
-                }
-            }
-        }
-        //ccm add
-
+        expatriatesinforMapper.updateByPrimaryKey(expatriatesinfor);
     }
 
     @Override
