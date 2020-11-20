@@ -27,6 +27,28 @@
                 GROUP BY projectsystem.COMPANYPROJECTS_ID))
     </select>
 
+<!--    add ccm 1118 日志优化-->
+    <select id="getDataListByLog_date" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
+        SELECT * FROM logmanagement
+        WHERE 1=1
+        <if test="log_date != null and log_date !=''">
+            <![CDATA[
+            and DATE_FORMAT(LOG_DATE, '%Y-%m') = #{log_date}
+        ]]>
+        </if>
+
+        <if test="owners != null and owners.size() > 0">
+            and (owner in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+
+    </select>
+    <!--    add ccm 1118 日志优化-->
+
     <select id="selectByDate" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
 
         select *
