@@ -221,9 +221,9 @@ public class FinCdrlInfoServiceImpl implements FinCrdlInfoService {
                         }
                         fcurrencyid.put("FNumber",ar.getCurrency());//币别
                         fentity.put("FCURRENCYID",fcurrencyid);//币别
-                        if(StringUtils.isNotEmpty(ar.getEx_rate())){
+                        if(StringUtils.isNotEmpty(ar.getUnit())){
                             com.nt.dao_Org.Dictionary dictionary = new com.nt.dao_Org.Dictionary();
-                            dictionary.setCode(ar.getEx_rate());
+                            dictionary.setCode(ar.getUnit());
                             List<Dictionary> dir = dictionaryService.getDictionaryList(dictionary);
                             if(dir.size()>0){
                                 funitid.put("FNUMBER",dir.get(0).getValue1());//单位
