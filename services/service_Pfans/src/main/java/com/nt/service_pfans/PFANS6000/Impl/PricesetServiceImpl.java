@@ -15,12 +15,14 @@ import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.service_pfans.PFANS6000.mapper.PricesetGroupMapper;
 import com.nt.service_pfans.PFANS6000.mapper.PricesetMapper;
 import com.nt.utils.dao.TokenModel;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -48,156 +50,78 @@ public class PricesetServiceImpl implements PricesetService {
      * @throws Exception
      */
     @Override
-    public List<PricesetVo> gettlist(PricesetGroup pricesetGroup) throws Exception {
+    public List<PricesetVo> gettlist(String pddate, String groupid) throws Exception {
+        //在职，当月有单价
+        List<Priceset> pricesetList = pricesetMapper.selectThismonth(pddate,groupid);
+        //查询当月没有单价的人员 selectBpeople返回外驻人员登记表主键
+        List<String> peopleAnt = pricesetMapper.selectBpeople(pddate,groupid);
+
+        String lastMounth = "";
+        lastMounth = (DateUtil.format(DateUtil.offset(DateUtil.parse(pricesetGroupMapper.selectByPrimaryKey
+                (pricesetList.get(0).getPricesetgroup_id()).getPd_date() + "-01"), DateField.MONTH,-1),"yyyy-MM"));
+        PricesetGroup pricesetGroup = new PricesetGroup();
+        pricesetGroup.setPd_date(lastMounth);
+        String PricesetGroup_id = pricesetGroupMapper.select(pricesetGroup).get(0).getPricesetgroup_id();
+
+        for(String ms:peopleAnt){
+            Priceset priceset = new Priceset();
+            priceset.setUser_id(ms);
+            priceset.setPricesetgroup_id(PricesetGroup_id);
+            List<Priceset> pricesetAntList = pricesetMapper.select(priceset);
+            Expatriatesinfor expatriatesinfor = expatriatesinforMapper.selectByPrimaryKey(ms);
+            //上个月单价
+            if(pricesetAntList.size() > 0){
+                Priceset pricesetAnt = new Priceset();
+//                本月没有单价，上个月多个单价
+                if(pricesetAntList.size() > 1){
+                    String groupidL = expatriatesinfor.getGroup_id();
+                    for(int i = 0; i < pricesetAntList.size();i ++){
+                        if(groupidL.equals(pricesetAntList.get(i).getGroup_id())){
+                            pricesetAntList.get(0).setPricesetgroup_id(pricesetList.get(i).getPricesetgroup_id());
+                            BeanUtils.copyProperties(pricesetAntList.get(0), pricesetAnt);
+                            pricesetList.add(pricesetAnt);
+                        }
+                    }
+                    //本月没有单价，上个月1个单价
+                }else{
+                    pricesetAntList.get(0).setPricesetgroup_id(pricesetList.get(0).getPricesetgroup_id());
+                    BeanUtils.copyProperties(pricesetAntList.get(0), pricesetAnt);
+                    pricesetList.add(pricesetAnt);
+                }
+            }else{//上个月没有单价
+                Expatriatesinfor expatr = expatriatesinforMapper.selectByPrimaryKey(ms);
+                //判断传过来的月份 该员工是否为本月入场
+                //前台查询的月份
+                String pdone= pddate.substring(0,4);
+                String pdtwo= pddate.substring(5);
+                String pdstr= pdone + pdtwo;
+                int pddateint = Integer.valueOf(pdstr);
+                //入场月份
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+                String expatrdate = sdf.format(expatr.getAdmissiontime());
+                String adone= expatrdate.substring(0,4);
+                String adtwo= expatrdate.substring(5);
+                String adstr= adone + adtwo;
+                int adtimeint = Integer.valueOf(adstr);
+
+                if(pddateint >= adtimeint){
+                    Priceset pricesetEmpt = new Priceset();
+                    pricesetEmpt.setGroup_id(expatriatesinfor.getGroup_id());
+                    pricesetEmpt.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
+                    pricesetEmpt.setUsername(expatriatesinfor.getExpname());
+                    pricesetEmpt.setGraduation(expatriatesinfor.getGraduation_year());
+                    pricesetEmpt.setCompany(expatriatesinfor.getSuppliername());
+                    pricesetList.add(pricesetEmpt);
+                }
+            }
+        }
         List<PricesetVo> rst = new ArrayList<PricesetVo>();
-        List<PricesetGroup> ms = pricesetGroupMapper.select(pricesetGroup);
-
-        if(ms.size() > 0){
-            for(PricesetGroup item:ms){
-                PricesetVo a = new PricesetVo(new PricesetGroup(),new ArrayList<Priceset>());
-                Priceset conditon = new Priceset();
-                conditon.setPricesetgroup_id(item.getPricesetgroup_id());
-                a.setMain(item);
-
-                List<Priceset> list = pricesetMapper.select(conditon);
-
-                Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
-                expatriatesinfor.setWhetherentry("BP006001");
-                List<Expatriatesinfor> expatriatesinforlist = expatriatesinforMapper.select(expatriatesinfor);
-                for(Expatriatesinfor expatriatesinforItem:expatriatesinforlist){
-
-                    List<Priceset> pl = list.stream().filter(pli -> (expatriatesinforItem.getExpatriatesinfor_id().equals(pli.getUser_id())  )).collect(Collectors.toList());
-
-                    if(pl.size() > 0){
-                        for(Priceset ip:pl){
-                            Priceset priceset = new Priceset();
-                            BeanUtil.copyProperties(ip,priceset);
-                            a.getDetail().add(priceset);
-                        }
-                        List<Priceset> p = pl.stream().filter(pli -> (expatriatesinforItem.getGroup_id().equals(pli.getGroup_id()))).collect(Collectors.toList());
-                        if(p.size() ==0)
-                        {
-
-                            //查询履历
-                            List<ExpatriatesinforDetail> expatriatesinforDetails =new ArrayList<>();
-                            //画面传过来的月份
-                            expatriatesinforDetails = expatriatesinforDetailMapper.selectByDate(pricesetGroup.getPd_date(),expatriatesinforItem.getExpatriatesinfor_id());
-                            if(expatriatesinforDetails.size()>0)
-                            {
-                                for(ExpatriatesinforDetail eDetail:expatriatesinforDetails)
-                                {
-                                    Priceset pr = new Priceset();
-                                    pr.setUser_id(eDetail.getExpatriatesinfor_id());
-                                    pr.setGroup_id(eDetail.getGroup_id());
-                                    pr.setUsername(expatriatesinforItem.getExpname());
-                                    pr.setGraduation(expatriatesinforItem.getGraduation_year());
-                                    pr.setCompany(expatriatesinforItem.getSuppliername());
-                                    List<Priceset> prlist = a.getDetail().stream().filter(pli -> (pr.getGroup_id().equals(pli.getGroup_id()) && pr.getUser_id().equals(pli.getUser_id()))).collect(Collectors.toList());
-                                    prlist = prlist.stream().filter(pli -> (pr.getUsername().equals(pli.getUsername()))).collect(Collectors.toList());
-                                    if(prlist.size() == 0)
-                                    {
-                                        Priceset priceset = new Priceset();
-                                        priceset.setGroup_id(eDetail.getGroup_id());
-                                        priceset.setUser_id(eDetail.getExpatriatesinfor_id());
-                                        priceset.setUsername(expatriatesinforItem.getExpname());
-                                        priceset.setGraduation(expatriatesinforItem.getGraduation_year());
-                                        priceset.setCompany(expatriatesinforItem.getSuppliername());
-                                        a.getDetail().add(priceset);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else{
-                        Priceset priceset = new Priceset();
-                        priceset.setGroup_id(expatriatesinforItem.getGroup_id());
-                        priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
-                        priceset.setUsername(expatriatesinforItem.getExpname());
-                        priceset.setGraduation(expatriatesinforItem.getGraduation_year());
-                        priceset.setCompany(expatriatesinforItem.getSuppliername());
-                        a.getDetail().add(priceset);
-                    }
-                }
-                rst.add(a);
-            }
+        PricesetVo a = new PricesetVo(new PricesetGroup(),new ArrayList<Priceset>());
+        a.getMain().setPd_date(pddate);
+        for(Priceset pr : pricesetList){
+            a.getDetail().add(pr);
         }
-        else{
-            pricesetGroup.setPd_date(DateUtil.format(DateUtil.offset(DateUtil.parse(pricesetGroup.getPd_date() + "-01"), DateField.MONTH,-1),"yyyy-MM"));
-            ms = pricesetGroupMapper.select(pricesetGroup);
-            if(ms.size() > 0){
-                for(PricesetGroup item:ms){
-                    Priceset conditon = new Priceset();
-                    conditon.setPricesetgroup_id(item.getPricesetgroup_id());
-                    List<Priceset> list = pricesetMapper.select(conditon);
-
-                    PricesetVo a = new PricesetVo(new PricesetGroup(),new ArrayList<Priceset>());
-
-                    a.getMain().setPd_date(DateUtil.format(DateUtil.offset(DateUtil.parse(pricesetGroup.getPd_date() + "-01"), DateField.MONTH,1),"yyyy-MM"));
-
-                    Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
-                    expatriatesinfor.setWhetherentry("BP006001");
-                    List<Expatriatesinfor> expatriatesinforlist = expatriatesinforMapper.select(expatriatesinfor);
-                    //画面传过来的月份
-                    String pddate = DateUtil.format(DateUtil.offset(DateUtil.parse(pricesetGroup.getPd_date() + "-01"), DateField.MONTH,1),"yyyy-MM");
-                    for(Expatriatesinfor expatriatesinforItem:expatriatesinforlist){
-                        //查询履历
-                        List<ExpatriatesinforDetail> expatriatesinforDetails =new ArrayList<>();
-                        expatriatesinforDetails = expatriatesinforDetailMapper.selectByDate(pddate,expatriatesinfor.getExpatriatesinfor_id());
-                        if(expatriatesinforDetails.size()>0)
-                        {
-                            for(ExpatriatesinforDetail eDetail:expatriatesinforDetails)
-                            {
-                                Priceset priceset = new Priceset();
-                                priceset.setGroup_id(eDetail.getGroup_id());
-                                priceset.setUser_id(eDetail.getExpatriatesinfor_id());
-                                priceset.setUsername(expatriatesinforItem.getExpname());
-                                priceset.setGraduation(expatriatesinforItem.getGraduation_year());
-                                priceset.setCompany(expatriatesinforItem.getSuppliername());
-                                a.getDetail().add(priceset);
-                            }
-                        }
-                        else
-                        {
-                            Priceset priceset = new Priceset();
-                            List<Priceset> pl = list.stream().filter(pli -> expatriatesinforItem.getExpatriatesinfor_id().equals(pli.getUser_id())).collect(Collectors.toList());
-
-                            priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
-                            priceset.setUsername(expatriatesinforItem.getExpname());
-                            priceset.setGroup_id(expatriatesinforItem.getGroup_id());
-                            priceset.setGraduation(expatriatesinforItem.getGraduation_year());
-                            priceset.setCompany(expatriatesinforItem.getSuppliername());
-                            if(pl.size() > 0){
-                                BeanUtil.copyProperties(pl.get(0),priceset);
-                            }
-                            priceset.setPriceset_id("");
-                            priceset.setPricesetgroup_id("");
-                            a.getDetail().add(priceset);
-                        }
-                    }
-                    rst.add(a);
-                }
-            }
-            else{
-                PricesetVo a = new PricesetVo(new PricesetGroup(),new ArrayList<Priceset>());
-
-                a.getMain().setPd_date(DateUtil.format(DateUtil.offset(DateUtil.parse(pricesetGroup.getPd_date() + "-01"), DateField.MONTH,1),"yyyy-MM"));
-
-                Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
-                expatriatesinfor.setWhetherentry("BP006001");
-                List<Expatriatesinfor> expatriatesinforlist = expatriatesinforMapper.select(expatriatesinfor);
-                for(Expatriatesinfor expatriatesinforItem:expatriatesinforlist){
-                    Priceset priceset = new Priceset();
-                    priceset.setUser_id(expatriatesinforItem.getExpatriatesinfor_id());
-                    priceset.setGroup_id(expatriatesinforItem.getGroup_id());
-                    priceset.setUsername(expatriatesinforItem.getExpname());
-                    priceset.setGraduation(expatriatesinforItem.getGraduation_year());
-                    priceset.setCompany(expatriatesinforItem.getSuppliername());
-                    a.getDetail().add(priceset);
-                }
-                rst.add(a);
-            }
-        }
-
+        rst.add(a);
         return rst;
     }
 

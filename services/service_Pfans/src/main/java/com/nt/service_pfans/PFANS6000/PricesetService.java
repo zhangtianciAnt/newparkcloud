@@ -10,7 +10,7 @@ import java.util.List;
 public interface PricesetService {
 
     //获取单价设定列表
-    List<PricesetVo> gettlist(PricesetGroup pricesetGroup) throws Exception;
+    List<PricesetVo> gettlist(String pddate, String groupid) throws Exception;
 
     List<Priceset> getPricesetList(Priceset priceset) throws Exception;
 

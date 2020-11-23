@@ -12,4 +12,7 @@ public interface ExpatriatesinforMapper extends MyMapper<Expatriatesinfor> {
     @Select("select * from Expatriatesinfor")
     List<Expatriatesinfor> getExpatriatesinforexit();
 
+    @Select(" SELECT EXPATRIATESINFOR_ID, WHETHERENTRY FROM expatriatesinfor WHERE Whetherentry = 'BP006001'")
+    List<String> getPeolple1();
+
 }

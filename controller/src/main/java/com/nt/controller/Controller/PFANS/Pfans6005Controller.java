@@ -33,14 +33,15 @@ public class Pfans6005Controller {
     private TokenService tokenService;
 
 
-    @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult getpriceset(@RequestBody PricesetGroup pricesetGroup, HttpServletRequest request) throws Exception {
-        if (pricesetGroup == null) {
+    @RequestMapping(value = "/list", method = {RequestMethod.GET})
+    public ApiResult getpriceset(String pddate, String groupid, HttpServletRequest request) throws Exception {
+        if (pddate == null || groupid == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        PricesetGroup pricesetGroup = new PricesetGroup();
         pricesetGroup.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(pricesetService.gettlist(pricesetGroup));
+        return ApiResult.success(pricesetService.gettlist(pddate,groupid));
     }
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
