@@ -108,6 +108,13 @@ public class InterviewRecord  extends BaseModel {
     private String technology;
 
     /**
+     * 备注栏
+     */
+    @Column(name = "TEXTAREA")
+    private String textarea;
+
+
+    /**
      * 面试是否通过
      */
     @Column(name = "RESULT")
