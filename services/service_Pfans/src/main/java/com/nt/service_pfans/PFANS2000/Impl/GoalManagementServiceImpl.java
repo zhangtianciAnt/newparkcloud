@@ -37,7 +37,7 @@ public class GoalManagementServiceImpl implements GoalManagementService {
         String yearmm  = sfym.format(calend.getTime());
         String years = yearmm.substring(0,4);
         String month = yearmm.substring(5,7);
-        if(Integer.valueOf(month)<3)
+        if(Integer.valueOf(month)<4)
         {
             years = String.valueOf(Integer.valueOf(years)-1);
         }
