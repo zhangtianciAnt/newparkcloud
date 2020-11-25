@@ -20,27 +20,48 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class ThemeInforServiceImpl implements ThemeInforService {
     @Autowired
     private ThemeInforMapper themeinformapper;
+
     @Override
     public List<ThemeInfor> list(ThemeInfor themeinfor) throws Exception {
         return themeinformapper.select(themeinfor);
     }
+
     @Override
     public void insert(ThemeInfor themeinfor, TokenModel tokenModel) throws Exception {
-        themeinfor.preInsert(tokenModel);
-        themeinfor.setThemeinfor_id(UUID.randomUUID().toString());
-        themeinformapper.insert(themeinfor);
+        ThemeInfor infor = new ThemeInfor();
+        infor.setThemename(themeinfor.getThemename());
+        List<ThemeInfor> themeinforlist = themeinformapper.select(infor);
+        if (themeinforlist.size() > 0) {
+            throw new LogicalException("theme名称已存在，请勿重复添加");
+        } else {
+            themeinfor.preInsert(tokenModel);
+            themeinfor.setThemeinfor_id(UUID.randomUUID().toString());
+            themeinformapper.insert(themeinfor);
+        }
     }
+
     @Override
     public void upd(ThemeInfor themeinfor, TokenModel tokenModel) throws Exception {
-        themeinfor.preUpdate(tokenModel);
-        themeinformapper.updateByPrimaryKey(themeinfor);
+        ThemeInfor infor = new ThemeInfor();
+        String themeinfor_id = themeinfor.getThemeinfor_id();
+        infor.setThemename(themeinfor.getThemename());
+        List<ThemeInfor> themeinforlist = themeinformapper.select(infor);
+        themeinforlist = themeinforlist.stream().filter(item -> (!item.getThemeinfor_id().equals(themeinfor_id))).collect(Collectors.toList());
+        if (themeinforlist.size() > 0) {
+            throw new LogicalException("theme名称已存在，请勿重复添加");
+        } else {
+            themeinfor.preUpdate(tokenModel);
+            themeinformapper.updateByPrimaryKey(themeinfor);
+        }
     }
+
     @Override
     public ThemeInfor One(String themeinforid) throws Exception {
         return themeinformapper.selectByPrimaryKey(themeinforid);
@@ -78,10 +99,10 @@ public class ThemeInforServiceImpl implements ThemeInforService {
                         continue;
                     }
                     themeinfor.setThemename(value.get(0).toString());
-                    List<ThemeInfor> themeinforlist =   themeinformapper.select(themeinfor);
-                    if(themeinforlist.size()>0){
+                    List<ThemeInfor> themeinforlist = themeinformapper.select(themeinfor);
+                    if (themeinforlist.size() > 0) {
                         error = error + 1;
-                        Result.add("模板第" + (k-1) + "行的Theme名重复，请输入正确的Theme名，导入失败");
+                        Result.add("模板第" + (k - 1) + "行的Theme名重复，请输入正确的Theme名，导入失败");
                         continue;
                     }
 
