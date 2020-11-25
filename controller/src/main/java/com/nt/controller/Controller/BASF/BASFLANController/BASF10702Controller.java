@@ -86,17 +86,20 @@ public class BASF10702Controller {
      */
     @RequestMapping(value = "/createBlack", method = {RequestMethod.POST})
     public ApiResult createBlack(String drivername,
-                                 String driveridnumber, String violationtype) throws Exception {
+                                 String driveridnumber, String violationtype, String vehicleinformationid, String logdet) throws Exception {
         BlackList blackList = new BlackList();
         blackList.setDriveridnumber(driveridnumber);
         List<BlackList> list = blackListServices.list(blackList);
-        if(list.size() == 0){
+        if (list.size() == 0) {
             blackList.setViolationstime(new Date());
             blackList.setViolationtype(violationtype);
             blackList.setDrivername(drivername);
             blackList.setBlacklistid(UUID.randomUUID().toString());
             blackList.preInsert();
             blackListServices.createBlack(blackList);
+            if (violationtype.equals("1")) {
+                vehicleinformationServices.updategps(vehicleinformationid, logdet, "20");
+            }
         }
         return ApiResult.success();
     }
