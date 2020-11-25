@@ -14,6 +14,8 @@ import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
+import com.nt.dao_Org.Dictionary;
+import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.PurchaseApplyService;
@@ -66,6 +68,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private ContractMapper contractMapper;
     @Autowired
     private NonJudgmentMapper nonJudgmentMapper;
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
     @Autowired
     private AwardMapper AwardMapper;
     @Autowired
@@ -955,6 +959,15 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     citation.preInsert(tokenModel);
                     citation.setContractapplication_id(UUID.randomUUID().toString());
                     String contractnumber = citation.getContractnumber();
+
+                    //20201125 gbb 禅道618 合同编号与实际选择的合同类型不符 start
+                    String contractEn = contractnumber.replaceAll("\\s*","").replaceAll("[^(A-Za-z)]","");
+                    Dictionary dictionary = new Dictionary();
+                    dictionary.setCode(citation.getContracttype());
+                    dictionary = dictionaryMapper.select(dictionary).get(0);
+                    contractnumber = contractnumber.replace(contractEn,dictionary.getValue2());
+                    //20201125 gbb 禅道618 合同编号与实际选择的合同类型不符 start
+
                     String[] str = contractnumber.split("-");
                     if (str.length == 1) {
                         //年、契約种类、部门、契约类型、
