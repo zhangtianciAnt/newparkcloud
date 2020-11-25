@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS2000.mapper.PersonalCostMapper">
+    <select id="selectPersonalCostResult" parameterType="list" resultType="com.nt.dao_Pfans.PFANS2000.PersonalCost">
+        SELECT
+        *
+        from personalcost
+        where (USERID) in
+        <foreach collection="list" index="index" item="item" open="("
+                 separator="," close=")">
+            (#{item.userid})
+        </foreach>
+        and yearsantid = #{yearsantid}
+    </select>
+    <update id="updatePersonalCost" parameterType="com.nt.dao_Pfans.PFANS2000.PersonalCost">
+        <foreach collection="uplist" index="index" item="item" separator=";">
+            update personalcost
+            <set>
+                PRANK = #{item.prank},
+                APTOJUCOST = #{item.aptojucost},
+                JUTOMACOST = #{item.jutomacost},
+                REMARKS = #{item.remarks},
+                MODIFYBY = #{tokenModel.userId},
+                MODIFYON = #{tokenModel.expireDate},
+                TENANTID = #{tokenModel.tenantId},
+            </set>
+            WHERE personalcostid = #{item.personalcostid}
+        </foreach>
+    </update>
+</mapper>
+
