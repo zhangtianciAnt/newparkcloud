@@ -475,6 +475,7 @@ public class Pfans1012Controller {
         Map<String, Object> data = new HashMap<>();
         if ("PJ004004".equals(pubvo.getPublicexpense().getPaymentmethod())) {
             String payeeName = "";
+            String loanNo = "";
 //            LoanApplication loanApplication = new LoanApplication();
 //            loanApplication = loanapplicationMapper.selectByPrimaryKey(pubvo.getPublicexpense().getLoan());
 //            payeeName = loanApplication.getPayeename();
@@ -484,7 +485,11 @@ public class Pfans1012Controller {
             {
                 LoanApplication loanApplication = new LoanApplication();
                 loanApplication = loanapplicationMapper.selectByPrimaryKey(id);
-                payeeName = loanApplication.getPayeename();
+                if(loanApplication!=null)
+                {
+                    payeeName = loanApplication.getPayeename();
+                    loanNo = loanApplication.getLoanapno();
+                }
                 if(payeeName==null || payeeName .equals(""))
                 {
                     query = new Query();
@@ -504,6 +509,18 @@ public class Pfans1012Controller {
                     if(!data.containsValue(payeeName))
                     {
                         data.put("payeeName", data.get("payeeName") + ","+payeeName);
+                    }
+                }
+
+                if(!data.containsKey("loanNo"))
+                {
+                    data.put("loanNo", loanNo);
+                }
+                else
+                {
+                    if(!data.containsValue(loanNo))
+                    {
+                        data.put("loanNo", data.get("loanNo") + ","+loanNo);
                     }
                 }
             }
