@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -50,6 +51,7 @@ public class AdditionalServiceImpl implements AdditionalService {
             Additional additional = new Additional();
             additional.setGiving_id(Givingid);
             additionalMapper.delete(additional);
+            List<CustomerInfo> customerinfoAll = mongoTemplate.findAll(CustomerInfo.class);
             List<Additional> listVo = new ArrayList<Additional>();
             List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
@@ -88,6 +90,17 @@ public class AdditionalServiceImpl implements AdditionalService {
                     //String click="^([1-9][0-9]*)+(.[0-9]{1,2})?$";
                     String click = "^(-?[1-9]\\d*\\.?\\d*)|(-?0\\.\\d*[1-9])|(-?[0])|(-?[0]\\.\\d*)$";
 
+                    String jobnumber = value.get(1).toString();
+                    additional.setJobnumber(jobnumber);
+                    List<CustomerInfo> customerinfo = customerinfoAll.stream().filter(item -> (item.getUserinfo().getJobnumber().equals(jobnumber))).collect(Collectors.toList());
+                    if(customerinfo.size() == 0){
+                        error = error + 1;
+                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        continue;
+                    }
+                    else{
+                        additional.setUser_id(customerinfo.get(0).getUserid());
+                    }
                     if(!StringUtils.isNullOrEmpty(value.get(3).toString())){
                         if(!value.get(3).toString().matches(click)){
                             error = error + 1;
@@ -157,19 +170,6 @@ public class AdditionalServiceImpl implements AdditionalService {
                             Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
                             continue;
                         }
-                    }
-                    Query query = new Query();
-                    String jobnumber = value.get(1).toString();
-                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
-                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
-                        additional.setUser_id(customerInfo.getUserid());
-                        additional.setJobnumber(value.get(1).toString());
-                    }
-                    if (customerInfo == null) {
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
-                        continue;
                     }
                     additional.setChildreneducation(value.get(3).toString());
                     additional.setHousing(value.get(4).toString());
