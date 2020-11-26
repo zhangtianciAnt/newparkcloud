@@ -17,7 +17,7 @@
 	t.saleresponsibility,
 	t.productresponsibility,
 	t.orders,
-	rpad(t.contractnumber,9, '0') as numberoreder
+	Num_char_extract(t.contractnumber,0) as numberoreder
   from transportgood t
   left join saledetails
 	on saledetails.transportgood_id = t.transportgood_id
