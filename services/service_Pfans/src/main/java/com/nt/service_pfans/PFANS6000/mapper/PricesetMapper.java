@@ -17,7 +17,7 @@ public interface PricesetMapper extends MyMapper<Priceset> {
             "INNER JOIN ( SELECT EXPATRIATESINFOR_ID, WHETHERENTRY FROM expatriatesinfor WHERE EXITS = '1' and GROUP_ID = #{groupid}) b  ON a.USER_ID = b.EXPATRIATESINFOR_ID ")
     List<Priceset> selectThismonth(@Param("Pd_date") String Pd_date,@Param("groupid") String groupid);
 
-    @Select("SELECT EXPATRIATESINFOR_ID, WHETHERENTRY FROM expatriatesinfor WHERE EXITS = '1' and GROUP_ID = #{groupid} and  EXPATRIATESINFOR_ID not in (SELECT p.user_id FROM priceset p WHERE PRICESETGROUP_ID = ( SELECT PRICESETGROUP_ID FROM pricesetgroup WHERE Pd_date ='2020-11' )) ")
+    @Select("SELECT EXPATRIATESINFOR_ID, WHETHERENTRY FROM expatriatesinfor WHERE EXITS = '1' and GROUP_ID = #{groupid} and  EXPATRIATESINFOR_ID not in (SELECT p.user_id FROM priceset p WHERE PRICESETGROUP_ID = ( SELECT PRICESETGROUP_ID FROM pricesetgroup WHERE Pd_date =#{Pd_date} )) ")
     List<String> selectBpeople(@Param("Pd_date") String Pd_date,@Param("groupid") String groupid);
 
 }

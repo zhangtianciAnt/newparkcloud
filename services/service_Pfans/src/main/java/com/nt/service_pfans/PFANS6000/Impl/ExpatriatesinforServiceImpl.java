@@ -433,11 +433,50 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                 pricesetNew.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
                 pricesetNew.setGroup_id(expatriatesinfor.getGroup_id());
                 pricesetMapper.delete(pricesetNew);
-
                 pricesetList.get(0).setPriceset_id(UUID.randomUUID().toString());
                 pricesetList.get(0).setGroup_id(expatriatesinfor.getGroup_id());
                 pricesetList.get(0).preInsert(tokenModel);
                 pricesetMapper.insert(pricesetList.get(0));
+            }
+        }
+        if(!expatriatesinfor.getGroup_id().equals("")) {
+            ExpatriatesinforDetail e = new ExpatriatesinforDetail();
+            e.setExpatriatesinfor_id(expatriatesinfor.getExpatriatesinfor_id());
+            List<ExpatriatesinforDetail> expatriatesinforDetails =new ArrayList<>();
+            expatriatesinforDetails = expatriatesinforDetailMapper.select(e);
+            if(expatriatesinforDetails.size() == 0) {
+                //登录新的履历
+                ExpatriatesinforDetail e1 = new ExpatriatesinforDetail();
+                e1.preInsert(tokenModel);
+                e1.setGroup_id(expatriatesinfor.getGroup_id());
+                e1.setExpatriatesinfordetail_id(UUID.randomUUID().toString());
+                e1.setExpatriatesinfor_id(expatriatesinfor.getExpatriatesinfor_id());
+                e1.setExdatestr(new Date());
+                expatriatesinforDetailMapper.insert(e1);
+
+            } else {
+                for(ExpatriatesinforDetail expDetail : expatriatesinforDetails)
+                {
+                    if(expDetail.getExdateend() ==null)
+                    {
+                        if(!expDetail.getGroup_id().equals(expatriatesinfor.getGroup_id()))
+                        {
+                            //更新结束时间
+                            expDetail.setExdateend(new Date());
+                            expDetail.preUpdate(tokenModel);
+                            expatriatesinforDetailMapper.updateByPrimaryKey(expDetail);
+
+                            //登录新的履历
+                            ExpatriatesinforDetail e2 = new ExpatriatesinforDetail();
+                            e2.preInsert(tokenModel);
+                            e2.setGroup_id(expatriatesinfor.getGroup_id());
+                            e2.setExpatriatesinfordetail_id(UUID.randomUUID().toString());
+                            e2.setExpatriatesinfor_id(expDetail.getExpatriatesinfor_id());
+                            e2.setExdatestr(new Date());
+                            expatriatesinforDetailMapper.insert(e2);
+                        }
+                    }
+                }
             }
         }
         expatriatesinforMapper.updateByPrimaryKey(expatriatesinfor);
