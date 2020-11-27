@@ -72,10 +72,14 @@ public class PricesetServiceImpl implements PricesetService {
 //                本月没有单价，上个月多个单价
                 if (pricesetAntList.size() > 1) {
                     String groupidL = expatriatesinfor.getGroup_id();
+                    PricesetGroup pricesetGroupEnt = new PricesetGroup();
+                    pricesetGroupEnt.setPd_date(pddate);
+                    List<PricesetGroup> pricesetGroupListEnt = pricesetGroupMapper.select(pricesetGroupEnt);
+                    String pricesetGrid = pricesetGroupListEnt.get(0).getPricesetgroup_id();
                     for (int i = 0; i < pricesetAntList.size(); i++) {
                         if (groupidL.equals(pricesetAntList.get(i).getGroup_id())) {
-                            pricesetAntList.get(0).setPricesetgroup_id(pricesetList.get(i).getPricesetgroup_id());
-                            BeanUtils.copyProperties(pricesetAntList.get(0), pricesetAnt);
+                            pricesetAntList.get(i).setPricesetgroup_id(pricesetGrid);
+                            BeanUtils.copyProperties(pricesetAntList.get(i), pricesetAnt);
                             pricesetList.add(pricesetAnt);
                         }
                     }

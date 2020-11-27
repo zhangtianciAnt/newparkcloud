@@ -14,10 +14,11 @@ public interface PricesetMapper extends MyMapper<Priceset> {
     List<Priceset> selectBygroupid(@Param("years") int years,@Param("groupid") String groupid);
 
     @Select("SELECT a.* FROM (SELECT p.* FROM priceset p WHERE PRICESETGROUP_ID = ( SELECT PRICESETGROUP_ID FROM pricesetgroup WHERE Pd_date = #{Pd_date} ) ) a " +
-            "INNER JOIN ( SELECT EXPATRIATESINFOR_ID, WHETHERENTRY FROM expatriatesinfor WHERE EXITS = '1' and GROUP_ID = #{groupid}) b  ON a.USER_ID = b.EXPATRIATESINFOR_ID ")
+            "INNER JOIN ( SELECT EXPATRIATESINFOR_ID, WHETHERENTRY FROM expatriatesinfor WHERE EXITS = '1' and GROUP_ID = #{groupid}) b  ON a.USER_ID = b.EXPATRIATESINFOR_ID and GROUP_ID = #{groupid}")
     List<Priceset> selectThismonth(@Param("Pd_date") String Pd_date,@Param("groupid") String groupid);
 
-    @Select("SELECT EXPATRIATESINFOR_ID, WHETHERENTRY FROM expatriatesinfor WHERE EXITS = '1' and GROUP_ID = #{groupid} and  EXPATRIATESINFOR_ID not in (SELECT p.user_id FROM priceset p WHERE PRICESETGROUP_ID = ( SELECT PRICESETGROUP_ID FROM pricesetgroup WHERE Pd_date =#{Pd_date} )) ")
+
+    @Select("SELECT EXPATRIATESINFOR_ID FROM expatriatesinfor WHERE EXITS = '1' AND GROUP_ID = #{groupid} AND EXPATRIATESINFOR_ID NOT IN ( SELECT p.user_id FROM priceset p WHERE PRICESETGROUP_ID = ( SELECT PRICESETGROUP_ID FROM pricesetgroup WHERE Pd_date = #{Pd_date} ) and GROUP_ID = #{groupid} )")
     List<String> selectBpeople(@Param("Pd_date") String Pd_date,@Param("groupid") String groupid);
 
 }

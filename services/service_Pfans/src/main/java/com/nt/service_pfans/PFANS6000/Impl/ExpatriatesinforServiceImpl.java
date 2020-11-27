@@ -398,7 +398,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         Expatriatesinfor expatriatesOld = expatriatesinforMapper.selectByPrimaryKey(expatriatesinfor.getExpatriatesinfor_id());
 
         Expatriatesinfor expatriatesinforAnt = expatriatesinforMapper.selectByPrimaryKey(expatriatesinfor.getExpatriatesinfor_id());
-        //判断条件：1.部门不同（必要条件）2.在职外驻。3.入场月份不是当月（必定没上月单价）
+        //判断条件：1.部门不同（必要条件）2.在职外驻。3.入场月份不是当月（入场月份是当月必定没上月单价）
         if(!expatriatesinfor.getGroup_id().equals(expatriatesinforAnt.getGroup_id())
                 && expatriatesinfor.getExits().equals("1")
                 && !admissiontime.equals(nowmonthAntStr)) {
@@ -427,16 +427,6 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                 priceset.setPricesetgroup_id(pricesetGroupList.get(0).getPricesetgroup_id());
                 priceset.setStatus("0");
                 pricesetMapper.insert(priceset);
-            }else{
-                //查询新部门是否由该员工上个月的单价履历 先删后插
-                Priceset pricesetNew = new Priceset();
-                pricesetNew.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
-                pricesetNew.setGroup_id(expatriatesinfor.getGroup_id());
-                pricesetMapper.delete(pricesetNew);
-                pricesetList.get(0).setPriceset_id(UUID.randomUUID().toString());
-                pricesetList.get(0).setGroup_id(expatriatesinfor.getGroup_id());
-                pricesetList.get(0).preInsert(tokenModel);
-                pricesetMapper.insert(pricesetList.get(0));
             }
         }
         if(!expatriatesinfor.getGroup_id().equals("")) {
