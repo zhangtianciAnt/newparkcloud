@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -49,6 +50,7 @@ public class OtherFourServiceImpl implements OtherFourService {
             OtherFour Four = new OtherFour();
             Four.setGiving_id(Givingid);
             otherFourMapper.delete(Four);
+            List<CustomerInfo> customerinfoAll = mongoTemplate.findAll(CustomerInfo.class);
             List<OtherFour> listVo = new ArrayList<OtherFour>();
             List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
@@ -84,18 +86,16 @@ public class OtherFourServiceImpl implements OtherFourService {
                     if (value.get(2).toString().equals("") || value.get(4).toString().equals("")) {
                         continue;
                     }
-                    Query query = new Query();
                     String jobnumber = value.get(2).toString();
-                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
-                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
-                        otherFour.setUser_id(customerInfo.getUserid());
-                        otherFour.setJobnumber(value.get(2).toString());
-                    }
-                    if (customerInfo == null) {
+                    otherFour.setJobnumber(jobnumber);
+                    List<CustomerInfo> customerinfo = customerinfoAll.stream().filter(item -> (item.getUserinfo().getJobnumber().equals(jobnumber))).collect(Collectors.toList());
+                    if(customerinfo.size() == 0){
                         error = error + 1;
                         Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
                         continue;
+                    }
+                    else{
+                        otherFour.setUser_id(customerinfo.get(0).getUserid());
                     }
                     //卡号 upd gbb 0727 end
                     String click="^(-?[0-9][0-9]*)+(.[0-9]{1,2})?$";

@@ -1,5 +1,6 @@
 package com.nt.dao_Pfans.PFANS5000;
 
+import com.nt.utils.Encryption.Encryption;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -90,12 +91,14 @@ public class CompanyProjects extends BaseModel {
     /**
      * 项目名称(中)
      */
+    //@Encryption
     @Column(name = "PROJECT_NAME")
     private String project_name;
 
     /**
      * 项目名称(和)
      */
+    //@Encryption
     @Column(name = "PROJECT_NAMEJP")
     private String project_namejp;
 

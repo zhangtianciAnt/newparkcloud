@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -56,6 +57,7 @@ public class AppreciationServiceImpl implements AppreciationService {
             Appreciation appreciation = new Appreciation();
             appreciation.setGiving_id(Givingid);
             appreciationMapper.delete(appreciation);
+            List<CustomerInfo> customerinfoAll = mongoTemplate.findAll(CustomerInfo.class);
             List<Appreciation> listVo = new ArrayList<Appreciation>();
             List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
@@ -108,17 +110,21 @@ public class AppreciationServiceImpl implements AppreciationService {
 //                            continue;
 //                        }
 //                    }
-                    Query query = new Query();
                     String jobnumber = value.get(1).toString();
+                    appreciation.setJobnumber(jobnumber);
                     appreciation.setAmount(value.get(4).toString());
-                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
-                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
-                        appreciation.setUser_id(customerInfo.getUserid());
-                        appreciation.setJobnumber(value.get(1).toString());
+
+                    List<CustomerInfo> customerinfo = customerinfoAll.stream().filter(item -> (item.getUserinfo().getJobnumber().equals(jobnumber))).collect(Collectors.toList());
+                    if(customerinfo.size() == 0){
+                        error = error + 1;
+                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        continue;
+                    }
+                    else{
+                        appreciation.setUser_id(customerinfo.get(0).getUserid());
                         if(StringUtils.isNullOrEmpty(value.get(4).toString())){
                             Dictionary dictionary = new Dictionary();
-                            dictionary.setCode(customerInfo.getUserinfo().getRank());
+                            dictionary.setCode(customerinfo.get(0).getUserinfo().getRank());
                             dictionary = dictionaryMapper.select(dictionary).get(0);
                             Dictionary commentaryDic = new Dictionary();
                             commentaryDic.setValue1(value.get(3).toString());
@@ -133,11 +139,6 @@ public class AppreciationServiceImpl implements AppreciationService {
                                         * Double.parseDouble(commentaryDic.getValue2()) / 100).setScale(-1, RoundingMode.HALF_UP).toPlainString());
                             }
                         }
-                    }
-                    if (customerInfo == null) {
-                        error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
-                        continue;
                     }
                     appreciation.setGiving_id(Givingid);
                     appreciation.setCommentary(value.get(3).toString());

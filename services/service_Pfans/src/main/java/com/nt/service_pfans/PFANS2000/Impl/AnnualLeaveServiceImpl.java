@@ -290,7 +290,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //ccm 202000702 to
         return tempannualLeaveList;
     }
-    @Scheduled(cron="0 0 0 1 4 *")//正式时间每年4月1日零时执行
+    @Scheduled(cron="0 0 0 1 4 *")//正式时间每年4月1日零时执行--事业年度开始获取年休
     public void creatAnnualLeaveAn() throws Exception {
         insert();
     }
@@ -753,17 +753,17 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         return map;
     }
 
-    @Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add
+    @Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add -- 添加正式员工前一天的打卡记录
     public void insertattendanceTask()throws Exception {
         insertattendance(-1,"","");
     }
 
-    @Scheduled(cron="0 35 0 * * ?")//正式时间每天半夜12点半  GBB add
+    @Scheduled(cron="0 35 0 * * ?")//正式时间每天半夜12点半  GBB add -- 添加外驻员工前一天的打卡记录
     public void insertattendancebpTask()throws Exception {
         insertattendancebp(-1,"","");
     }
 
-    @Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add
+    @Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add -- 前一天的考勤数据处理
     public void insertpunchcardTask()throws Exception {
         //处理异常和加班数据
         //上月1号
@@ -791,19 +791,19 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     }
 
     //系统服务--取当天打卡记录//正式时间每天下午4点45分执行  GBB add
-    @Scheduled(cron="0 45 16 * * ?")
+    @Scheduled(cron="0 45 16 * * ?") //每天下午4点45分执行  GBB add -- 取当正式员工天下午4点45分之前打卡记录
     public void selectattendanceTask()throws Exception {
         selectattendance();
     }
 
     //系统服务--取当天打卡记录BP//正式时间每天下午4点50分执行  GBB add
-    @Scheduled(cron="0 50 16 * * ?")
+    @Scheduled(cron="0 50 16 * * ?") //每天下午4点50分执行  GBB add -- 取当外驻员工天下午4点50分之前打卡记录
     public void selectattendancebpTask()throws Exception {
         selectattendancebp();
     }
 
     //系统服务--取当天打卡记录BP//正式时间每天下午4点50分执行  GBB add
-    @Scheduled(cron="0 0 23 * * ?")
+    @Scheduled(cron="0 0 23 30 * ?") //每月30号晚23点计算实际工资  GBB add
     public void selectrealwagesTask()throws Exception {
         getrealwages();
     }

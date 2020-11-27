@@ -1,5 +1,6 @@
 package com.nt.dao_Pfans.PFANS6000;
 
+import com.nt.utils.Encryption.Encryption;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +29,7 @@ public class Expatriatesinfor extends BaseModel {
     /**
      * 姓名
      */
+    //@Encryption
     @Column(name = "EXPNAME")
     private String expname;
 
@@ -46,6 +48,7 @@ public class Expatriatesinfor extends BaseModel {
     /**
      * 供应商名称
      */
+    //@Encryption
     @Column(name = "SUPPLIERNAME")
     private String suppliername;
 
@@ -262,6 +265,7 @@ public class Expatriatesinfor extends BaseModel {
     /**
      * 登录账号
      */
+    //@Encryption
     @Column(name = "ACCOUNTNAME")
     private String accountname;
 

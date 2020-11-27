@@ -315,19 +315,24 @@ public class GivingServiceImpl implements GivingService {
 //        baseQuery.setGiving_id(givingid);
 //        List<Base> baseList = baseMapper.select(baseQuery);
         /*base 数据检索 -lxx*/
+        // 前月
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -1);
+        String preYear = String.valueOf(cal.get(Calendar.YEAR));
+        String preMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
         if (abNormalinfo.size() > 0) {
             int rowindex = 0;
             int rowindexMan = 0;
             for (AbNormal abNor : abNormalinfo) {
                 if (abNor.getErrortype().equals("PR013012") || abNor.getErrortype().equals("PR013013")) {
                     boolean bool = true;
-                    for (OtherOne otherOne : otherOnes) {
-                        if (otherOne.getUser_id().equals(abNor.getUser_id())) {
-                            // otherOne.
-                            // otherOne.setOther1();
-                        }
-                    }
-
+                    Attendance attendance = new Attendance();
+                    attendance.setUser_id(abNor.getUser_id());
+                    attendance.setYears(preYear);
+                    attendance.setMonths(preMonth);
+                    List<Attendance> attendanceList = attendanceMapper.select(attendance);
+                    String StrNursingleave = BigDecimal.valueOf(attendanceList.stream()
+                            .mapToDouble(subItem -> Double.parseDouble(ifNull(subItem.getNursingleave()))).sum() / 8).setScale(0, RoundingMode.HALF_UP).toPlainString();
                     OtherOne otherOne = new OtherOne();
                     String beginTime = "";
                     String otherOneid = UUID.randomUUID().toString();
@@ -353,8 +358,13 @@ public class GivingServiceImpl implements GivingService {
                         otherOne.setRowindex(rowindex);
                         otherOne.setReststart(abNor.getOccurrencedate());
                         otherOne.setRestend(abNor.getFinisheddate());
-                        Integer days = getDaysforOtherOne(abNor.getOccurrencedate(), abNor.getFinisheddate());
-                        otherOne.setAttendance(days.toString());
+                        if(StrNursingleave.equals(abNor.getWorktime())){
+                            otherOne.setAttendance("0");
+                        }
+                        else{
+                            Double days = Double.parseDouble(abNor.getWorktime()) - Double.parseDouble(StrNursingleave);
+                            otherOne.setAttendance(Integer.valueOf(days.toString()).toString());
+                        }
                         /*其他1 -lxx*/
                         //IF 入社日<=2012/3/31
 //                        otherOne.setOther1("0");
@@ -378,11 +388,10 @@ public class GivingServiceImpl implements GivingService {
                         otherOne.setRowindex(rowindexMan);
                         otherOne.setStartdate(abNor.getOccurrencedate());
                         otherOne.setEnddate(abNor.getFinisheddate());
-                        Integer days = getDaysforOtherOneman(abNor.getOccurrencedate(), abNor.getFinisheddate());
-                        otherOne.setVacation(days.toString());
+                        otherOne.setVacation(StrNursingleave);
                         long beginMillisecond = notNull(beginTime).equals("0") ? (long) 0 : format.parse(beginTime.replace("/", "-")).getTime();
                         if (beginMillisecond >= endMillisecond) {
-                            otherOne.setHandsupport(days.toString());
+                            otherOne.setHandsupport(Integer.valueOf(StrNursingleave).toString());
                         } else {
                             otherOne.setHandsupport("0");
                         }
@@ -406,11 +415,15 @@ public class GivingServiceImpl implements GivingService {
         init();
         /*获取 customerInfos-lxx*/
         List<Base> bases = new ArrayList<>();
-        Dictionary dictionary = new Dictionary();
-        Calendar cal = Calendar.getInstance();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
-        SimpleDateFormat sfym = new SimpleDateFormat("yyyyMM");
-        String strTemp = sfym.format(new Date());
+        // 前月
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -1);
+        String preYear = String.valueOf(cal.get(Calendar.YEAR));
+        String preMonth = String.format("%2d", cal.get(Calendar.MONTH) + 1).replace(" ", "0");
+        String strTemp = preYear + preMonth;
+
+        Dictionary dictionary = new Dictionary();
         dictionary.setPcode("PR042");
         List<Dictionary> dictionarylist = dictionaryMapper.select(dictionary);
         /*获取基数 type-lxx*/
@@ -2072,16 +2085,29 @@ public class GivingServiceImpl implements GivingService {
             calStar.setTime(start);
             Calendar calEnd = Calendar.getInstance();
             calEnd.setTime(end);
-            for (int i = calStar.get(Calendar.DATE); i <= calEnd.get(Calendar.DATE); i++) {
-                Calendar cal = Calendar.getInstance();
-                cal.set(calStar.get(Calendar.YEAR), calStar.get(Calendar.MONTH), i);
-                int day = cal.get(Calendar.DAY_OF_WEEK);
-                if (!(day == Calendar.SUNDAY || day == Calendar.SATURDAY)) {
+            while (calStar.compareTo(calEnd) <= 0) {
+                if (calStar.get(Calendar.DAY_OF_WEEK) != 7 && calStar.get(Calendar.DAY_OF_WEEK) != 1) {
                     workDays++;
                 }
+                calStar.add(Calendar.DAY_OF_MONTH, 1);
             }
         }
-        return workDays;
+        SimpleDateFormat ymd = new SimpleDateFormat("yyyy-MM-dd");
+        //工作日表
+        List<WorkingDay> workingDaysList = workingDayMapper.getWorkingday(ymd.format(start),ymd.format(end));
+        int workingDayscount = workingDaysList.size();
+        for (int i = 0; i < workingDaysList.size(); i++) {
+            Date bdate = workingDaysList.get(i).getWorkingdate();
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(bdate);
+            if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY){
+                workingDayscount = workingDayscount - 1;
+            }
+        }
+        //振替出勤日
+        List<WorkingDay> workingDaysList1 = workingDaysList.stream().filter(p->(p.getType().equals("4"))).collect(Collectors.toList());
+
+        return workDays - workingDayscount + workingDaysList1.size();
     }
 
     //获取工作日(产休)-lxx
@@ -2115,14 +2141,6 @@ public class GivingServiceImpl implements GivingService {
             calStar.setTime(start);
             Calendar calEnd = Calendar.getInstance();
             calEnd.setTime(end);
-//            for (int i = calStar.get(Calendar.DATE); i <= calEnd.get(Calendar.DATE); i++) {
-//                Calendar cal = Calendar.getInstance();
-//                cal.set(calStar.get(Calendar.YEAR), calStar.get(Calendar.MONTH), i);
-//                int day = cal.get(Calendar.DAY_OF_WEEK);
-//                if (!(day == Calendar.SUNDAY || day == Calendar.SATURDAY)) {
-//                    workDays++;
-//                }
-//            }
             while (calStar.compareTo(calEnd) <= 0) {
                 if (calStar.get(Calendar.DAY_OF_WEEK) != 7 && calStar.get(Calendar.DAY_OF_WEEK) != 1) {
                     workDays++;
@@ -2143,10 +2161,9 @@ public class GivingServiceImpl implements GivingService {
             }
         }
         //振替出勤日
-        List<WorkingDay> workingDaysList1 = new ArrayList<WorkingDay>();
-        workingDaysList1 = workingDaysList.stream().filter(p->(p.getType().equals("4"))).collect(Collectors.toList());
-        workingDayscount = workingDayscount + workingDaysList1.size();
-        return workDays - workingDayscount;
+        List<WorkingDay> workingDaysList1 = workingDaysList.stream().filter(p->(p.getType().equals("4"))).collect(Collectors.toList());
+
+        return workDays - workingDayscount + workingDaysList1.size();
     }
 
     // region 入职和离职 BY Cash
