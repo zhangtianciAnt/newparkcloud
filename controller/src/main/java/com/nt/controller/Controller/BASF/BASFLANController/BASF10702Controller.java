@@ -48,7 +48,6 @@ public class BASF10702Controller {
     private TokenService tokenService;
 
     /**
-     * @param blackList
      * @Method list
      * @Author Wxz
      * @Version 1.0
@@ -57,8 +56,8 @@ public class BASF10702Controller {
      * @Date 2019/11/22 15：22
      */
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult list(@RequestBody(required = false) BlackList blackList) throws Exception {
-        return ApiResult.success(blackListServices.list(blackList));
+    public ApiResult list() throws Exception {
+        return ApiResult.success(blackListServices.getBlackList());
     }
 
     /**
@@ -76,7 +75,6 @@ public class BASF10702Controller {
     }
 
     /**
-     * @param driverIdNo
      * @Method list
      * @Author SKAIXX
      * @Version 1.0

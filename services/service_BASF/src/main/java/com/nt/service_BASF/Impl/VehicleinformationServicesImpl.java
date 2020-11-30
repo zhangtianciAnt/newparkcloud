@@ -58,6 +58,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     @Override
     public List<Vehicleinformation> list() throws Exception {
         Vehicleinformation vehicleinformation = new Vehicleinformation();
+        vehicleinformation.setStatus("0");
         return vehicleinformationMapper.select(vehicleinformation);
     }
 
@@ -353,7 +354,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         if (vehicleinformationList.size() > 0) {
             // 更新出场时间
             for (Vehicleinformation tmp : vehicleinformationList) {
-                updateouttime(tmp);
+                updateouttimebysamecar(tmp);
             }
         }
     }
@@ -371,6 +372,23 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     @Override
     public void updategps(String vehicleinformationid, String gps, String speed) throws Exception {
         vehicleinformationMapper.updategps(vehicleinformationid, gps, new Date(), speed);
+    }
+
+    /**
+     * @param
+     * @param
+     * @Method updateouttimebysamecar
+     * @Author Wxz
+     * @Version 1.0
+     * @Description 同一个pad绑定多次同一辆车，让前一次车辆出厂
+     * @Return void
+     * @Date 2019/11/14 13：39
+     */
+    private void updateouttimebysamecar(Vehicleinformation vehicleinformation) throws Exception {
+        vehicleinformation.setModifyon(new Date());
+        vehicleinformation.setStatus("1");
+        vehicleinformation.setOuttime(new Date());
+        vehicleinformationMapper.updateByPrimaryKeySelective(vehicleinformation);
     }
 
     /**

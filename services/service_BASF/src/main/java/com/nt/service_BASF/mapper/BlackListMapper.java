@@ -1,7 +1,10 @@
 package com.nt.service_BASF.mapper;
 
 import com.nt.dao_BASF.BlackList;
+import com.nt.dao_BASF.VO.BlackListVo;
 import com.nt.utils.MyMapper;
+
+import java.util.List;
 
 /**
  * @ProjectName: BASF应急平台
@@ -13,4 +16,5 @@ import com.nt.utils.MyMapper;
  * @Version: 1.0
  */
 public interface BlackListMapper extends MyMapper<BlackList> {
+    List<BlackListVo> getBlackList() throws Exception;
 }

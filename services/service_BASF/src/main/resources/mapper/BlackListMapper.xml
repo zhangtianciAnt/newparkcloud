@@ -15,4 +15,33 @@
         <result column="Owner" property="owner" jdbcType="VARCHAR"/>
         <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
     </resultMap>
+    <select id="getBlackList" resultType="com.nt.dao_BASF.VO.BlackListVo">
+        SELECT
+            CONCAT( a.blacklistid, ',', b.vehicleinformationid ) AS combinationid,
+            a.drivername,
+            a.driveridnumber,
+            a.violationtype,
+            a.violationstime,
+            b.vehicleinformationid,
+            b.vehiclenumber,
+            b.linkdepartment,
+            b.vehicletype,
+            b.supplier,
+            b.transtype,
+            b.destination,
+            b.intime,
+            b.outtime
+        FROM
+            blacklist a,
+            vehicleinformation b
+        WHERE
+            a.driveridnumber = b.driverid
+            and a.driveridnumber <![CDATA[ <> ]]> ''
+            and a.`STATUS` = 0
+            and b.`STATUS` = 0
+            and UNIX_TIMESTAMP(a.violationstime) &gt;= UNIX_TIMESTAMP(b.intime)
+            <if test="outtime != null">
+                and UNIX_TIMESTAMP(a.violationstime) &lt;= UNIX_TIMESTAMP(b.outtime)
+            </if>
+    </select>
 </mapper>

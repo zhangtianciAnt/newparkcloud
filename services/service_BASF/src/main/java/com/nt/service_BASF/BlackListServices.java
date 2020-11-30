@@ -1,6 +1,7 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.BlackList;
+import com.nt.dao_BASF.VO.BlackListVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -27,4 +28,6 @@ public interface BlackListServices {
 
     //创建黑名单信息
     void createBlack(BlackList blackList) throws Exception;
+    //获取黑名单列表
+    List<BlackListVo> getBlackList() throws Exception;
 }

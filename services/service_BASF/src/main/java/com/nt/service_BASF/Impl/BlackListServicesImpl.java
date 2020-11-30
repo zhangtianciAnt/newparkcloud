@@ -1,6 +1,7 @@
 package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.BlackList;
+import com.nt.dao_BASF.VO.BlackListVo;
 import com.nt.service_BASF.BlackListServices;
 import com.nt.service_BASF.mapper.BlackListMapper;
 import com.nt.utils.dao.TokenModel;
@@ -88,4 +89,17 @@ public class BlackListServicesImpl implements BlackListServices {
         //逻辑删除（status -> "1"）
         blackListMapper.updateByPrimaryKeySelective(blackList);
     }
+    /**
+     * @Method list
+     * @Author Wxz
+     * @Version 1.0
+     * @Description 获取黑名单列表
+     * @Return java.util.List<driverInformation>
+     * @Date 2019/11/22 15:05
+     */
+    @Override
+    public List<BlackListVo> getBlackList() throws Exception {
+        return blackListMapper.getBlackList();
+    }
+
 }
