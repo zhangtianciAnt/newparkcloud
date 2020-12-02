@@ -52,6 +52,11 @@ public class Pfans1043Controller {
         return ApiResult.success();
     }
 
+    @RequestMapping(value = "/getlisttheme", method = {RequestMethod.GET})
+    public ApiResult getlisttheme(String year,String contract, HttpServletRequest request) throws Exception {
+        return ApiResult.success(themeinforservice.getlisttheme(year,contract));
+    }
+
     @RequestMapping(value = "/importUser",method={RequestMethod.POST})
     public ApiResult importUser(HttpServletRequest request,String flag){
         try{
