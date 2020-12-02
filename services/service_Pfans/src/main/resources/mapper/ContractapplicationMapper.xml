@@ -42,6 +42,27 @@
         select count(*) as count1 from `award` where CONTRACTNUMBER = #{contractNumber} and MAKETYPE = '9' and status = '0'
         ) as ga on 1 =1
 	</select>
+    <select id="existN" parameterType="list" resultType="com.nt.dao_Pfans.PFANS1000.Vo.ExistVo">
+        select count(*) as count5
+        from napalm
+        where (CLAIMNUMBER) in
+        <foreach collection="NapinList" index="index" item="item" open="("
+                 separator="," close=")">
+            (#{item})
+        </foreach>
+        and status = '0'
+	</select>
+
+    <select id="existQ" parameterType="list" resultType="com.nt.dao_Pfans.PFANS1000.Vo.ExistVo">
+        select count(*) as count6
+        from petition
+        where (CLAIMNUMBER) in
+        <foreach collection="QingqiuList" index="index" item="item" open="("
+                 separator="," close=")">
+            (#{item})
+        </foreach>
+        and status = '0'
+	</select>
 
     <select id="purchaseExistCheck" resultType="com.nt.dao_Pfans.PFANS1000.Contractnumbercount">
         select cc.purnumbers,cc.contractnumber

@@ -22,10 +22,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -166,6 +163,18 @@ public class Pfans1026Controller {
     public ApiResult existCheck(String contractNumber, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(contractapplicationService.existCheck(contractNumber));
+    }
+
+    @RequestMapping(value = "/existN", method = {RequestMethod.POST})
+    public ApiResult existQN(@RequestBody List<String> NapinList, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(contractapplicationService.existN(NapinList));
+    }
+
+    @RequestMapping(value = "/existQ", method = {RequestMethod.POST})
+    public ApiResult existQ(@RequestBody List<String> QingqiuList, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(contractapplicationService.existQ(QingqiuList));
     }
 
     @RequestMapping(value = "/getPe", method = {RequestMethod.GET})

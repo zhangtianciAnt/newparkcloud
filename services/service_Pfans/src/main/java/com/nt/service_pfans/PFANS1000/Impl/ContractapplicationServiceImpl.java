@@ -1147,6 +1147,19 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         existVo = contractapplicationMapper.existCheck(contractNumber);
         return existVo;
     }
+
+    @Override
+    public ExistVo existN(List<String> NapinList) throws Exception {
+        ExistVo existVo = new ExistVo();
+        existVo = contractapplicationMapper.existN(NapinList);
+        return existVo;
+    }
+    @Override
+    public ExistVo existQ(List<String> QingqiuList) throws Exception {
+        ExistVo existVo = new ExistVo();
+        existVo = contractapplicationMapper.existQ(QingqiuList);
+        return existVo;
+    }
     //add ccm 0725  采购合同chongfucheck
     @Override
     public List<Contractnumbercount> purchaseExistCheck(String purnumbers) throws Exception {

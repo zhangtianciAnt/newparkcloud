@@ -23,7 +23,11 @@ public interface ContractapplicationService {
     Map<String, Object> insertBook(String contractnumber, String rowindex, String countNumber, TokenModel tokenModel) throws Exception;
     //upd-ws-7/1-禅道152任务
     //存在check
-    ExistVo existCheck(String contractNumber) throws Exception;
+    ExistVo existCheck(String qinqNapinList) throws Exception;
+
+    ExistVo existN(List<String> NapinList) throws Exception;
+
+    ExistVo existQ(List<String> QingqiuList) throws Exception;
 
     List<Petition> getPe(String countNumber) throws Exception;
     //add ccm 0725  采购合同chongfucheck
