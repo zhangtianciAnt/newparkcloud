@@ -835,6 +835,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             JSONArray jsonArray = JSONArray.parseArray(obj.toString());
 
             insertattendanceMethod(jsonArray);
+            //删除昨天申请过出差但是有打卡记录的数据（以打卡记录为准，删除出差的默认记录）
+            punchcardrecorddetailmapper.deletetravel();
     }
 
     //社员打卡记录方法

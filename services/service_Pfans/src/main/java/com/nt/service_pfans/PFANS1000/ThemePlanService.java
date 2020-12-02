@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000;
 
+import com.nt.dao_Pfans.PFANS1000.PersonnelPlan;
 import com.nt.dao_Pfans.PFANS1000.ThemePlan;
 import com.nt.dao_Pfans.PFANS1000.ThemePlanDetail;
 import com.nt.dao_Pfans.PFANS1000.Vo.ThemePlanVo;
@@ -11,21 +12,19 @@ import java.util.List;
 
 public interface ThemePlanService {
 
+    List<PersonnelPlan> getAll(String groupid, String year) throws Exception;
+
     //列表
     List<ThemePlan> getList(ThemePlan themePlan) throws Exception;
 
-    //详细
-    List<ThemePlanDetail> get(ThemePlan themePlan) throws Exception;
 
     List<ThemePlanDetailVo> detilList(ThemePlanDetail themePlanDetail) throws Exception;
 
-    //创建
-    public void insert(ThemePlanVo themePlan, TokenModel tokenModel) throws LogicalException;
-
+    List<ThemePlanDetail> getthemename(String themename) throws Exception;
     //更新
     public void update(ThemePlanVo themePlan, TokenModel tokenModel) throws LogicalException;
 
-    //更新
+    //新建
     public void inserttheme(List<ThemePlanDetailVo> themePlanDetailVo, TokenModel tokenModel) throws LogicalException;
 
 }

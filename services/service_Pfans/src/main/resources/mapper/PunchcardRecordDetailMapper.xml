@@ -74,4 +74,30 @@
         </if>
         AND (TENANTID = '' or TENANTID is null)
     </delete>
+
+    <delete id="deletetravel">
+        DELETE
+        FROM
+            punchcardrecord
+        WHERE
+            USER_ID IN (
+            SELECT
+                USER_ID
+            FROM
+                (
+                SELECT
+                    pun.USER_ID
+                FROM
+                    punchcardrecord pun
+                WHERE
+                    pun.PUNCHCARDRECORD_DATE = DATE_SUB( CURDATE(), INTERVAL 1 DAY )
+                GROUP BY
+                    pun.USER_ID
+                HAVING
+                    count(*) > 1
+                ) x
+            )
+            AND PUNCHCARDRECORD_DATE = DATE_SUB( CURDATE(), INTERVAL 1 DAY )
+            AND TENANTID = '1'
+    </delete>
 </mapper>
