@@ -118,7 +118,10 @@ public class GivingServiceImpl implements GivingService {
     private AnnualLeaveMapper annualLeaveMapper;
 
     private static List<CustomerInfo> customerInfos;
+    private static List<CustomerInfo> customerinfoAll;
     private static List<Wages> lastwages;
+    private static List<Dictionary> dictionaryAll;
+
 
     // 日期基数
     private static final double dateBase = 21.75;
@@ -133,6 +136,7 @@ public class GivingServiceImpl implements GivingService {
                 .gte(sf.format(now.getTime())), Criteria.where("userinfo.resignation_date").is(null), Criteria.where("userinfo.resignation_date").is(""));
         query.addCriteria(criteria);
         customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+        List<CustomerInfo> customerinfoAll = mongoTemplate.findAll(CustomerInfo.class);
     }
 
     /**
@@ -282,7 +286,7 @@ public class GivingServiceImpl implements GivingService {
     @Override
     public void insertOtherOne(String givingid, TokenModel tokenModel) throws Exception {
         /*获取 customerInfos-lxx*/
-        init();
+        //init();
         /*获取 customerInfos-lxx*/
         List<OtherOne> otherOnes = new ArrayList<>();
         DecimalFormat df = new DecimalFormat("#.00");
@@ -345,7 +349,7 @@ public class GivingServiceImpl implements GivingService {
                     otherOne.setGiving_id(givingid);
                     otherOne.setUser_id(abNor.getUser_id());
 
-                    List<CustomerInfo> cust = customerInfos.stream().filter(customerInfo -> customerInfo.getUserid().equals(abNor.getUser_id())).collect(Collectors.toList());
+                    List<CustomerInfo> cust = customerinfoAll.stream().filter(customerInfo -> customerInfo.getUserid().equals(abNor.getUser_id())).collect(Collectors.toList());
 
                     if (cust.size() > 0) {
                         otherOne.setDepartment_id(cust.get(0).getUserinfo().getCenterid()); //部门
@@ -412,7 +416,7 @@ public class GivingServiceImpl implements GivingService {
     @Override
     public void insertBase(String givingid, TokenModel tokenModel) throws Exception {
         /*获取 customerInfos-lxx*/
-        init();
+        //init();
         /*获取 customerInfos-lxx*/
         List<Base> bases = new ArrayList<>();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
@@ -858,31 +862,30 @@ public class GivingServiceImpl implements GivingService {
             othertwo.setOthertwo_id(othertwoid);
             othertwo.setGiving_id(givingid);
             othertwo.setUser_id(casgift.getUser_id());
-            Query query = new Query();
-            String User_id = casgift.getUser_id();
-            query.addCriteria(Criteria.where("userid").is(User_id));
-            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            othertwo.setJobnumber(customerInfo.getUserinfo().getJobnumber());
+            List<CustomerInfo> customerinfo = customerinfoAll.stream().filter(item -> (item.getUserid().equals(casgift.getUser_id()))).collect(Collectors.toList());
+            if(customerinfo.size() > 0){
+                othertwo.setJobnumber(customerinfo.get(0).getUserinfo().getJobnumber());
+            }
             othertwo.setType("0");
             othertwo.setRowindex(rowundex);
             othertwo.setRootknot(casgift.getTwoclass());
             othertwo.setMoneys(casgift.getAmoutmoney());
             othertwoMapper.insertSelective(othertwo);
         }
-        List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(givingid);
-        if (otherTwo2List.size() > 0) {
-            for (OtherTwo2 otherTwo2 : otherTwo2List) {
-                if (tokenModel != null) {
-                    otherTwo2.preInsert(tokenModel);
-                } else {
-                    otherTwo2.preInsert();
-                }
-                otherTwo2.setUser_id(otherTwo2.getUser_id());
-                otherTwo2.setMoneys(otherTwo2.getMoneys());
-                otherTwo2.setOthertwo2_id(UUID.randomUUID().toString());
-                othertwo2Mapper.insert(otherTwo2);
-            }
-        }
+//        List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(givingid);
+//        if (otherTwo2List.size() > 0) {
+//            for (OtherTwo2 otherTwo2 : otherTwo2List) {
+//                if (tokenModel != null) {
+//                    otherTwo2.preInsert(tokenModel);
+//                } else {
+//                    otherTwo2.preInsert();
+//                }
+//                otherTwo2.setUser_id(otherTwo2.getUser_id());
+//                otherTwo2.setMoneys(otherTwo2.getMoneys());
+//                otherTwo2.setOthertwo2_id(UUID.randomUUID().toString());
+//                othertwo2Mapper.insert(otherTwo2);
+//            }
+//        }
     }
 
     /**
@@ -946,6 +949,7 @@ public class GivingServiceImpl implements GivingService {
         init();
         //获取上月工资
         lastwages = wagesMapper.lastWages(Integer.parseInt(DateUtil.format(new Date(), "yyyy")), Integer.parseInt(DateUtil.format(new Date(), "M")) - 1,"");
+        String givingid = UUID.randomUUID().toString();
         // 时间格式
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMM");
         String strTemp = sf1.format(new Date());
@@ -1007,7 +1011,6 @@ public class GivingServiceImpl implements GivingService {
         giving.setMonths(strTemp);
         givingMapper.delete(giving);
         // 创建giving表数据
-        String givingid = UUID.randomUUID().toString();
         giving = new Giving();
         if (tokenModel != null) {
             giving.preInsert(tokenModel);
@@ -2208,7 +2211,7 @@ public class GivingServiceImpl implements GivingService {
     // 入职
     public List<Induction> getInduction(String givingId) throws Exception {
         /*获取 customerInfos-lxx*/
-        init();
+        //init();
         /*获取 customerInfos-lxx*/
         List<Induction> inductions = new ArrayList<>();
         // 今月日期

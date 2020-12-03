@@ -9,8 +9,6 @@ import java.util.List;
 
 public interface WagesMapper extends MyMapper<Wages> {
 
-    List<Wages> selectWage();
-
     void updateWages(@Param("givingId") String givingId,@Param("user_id") String user_id);
 
     List<Wages> lastWages(@Param("year") int year, @Param("month") int month, @Param("userid") String userid);

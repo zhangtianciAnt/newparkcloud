@@ -2303,8 +2303,8 @@ public class WagesServiceImpl implements WagesService {
 //        model.add("失业保险");
 //        model.add("个人社会保险(専項控除)");
 //        model.add("个人住房公积金(専項控除)");
-//        model.add("个人社会保险费+公积金(専項控除)合计");
-        model.add("専項控除累計（当月まで）");
+        model.add("个人社会保险费+公积金(専項控除)合计");
+//        model.add("専項控除累計（当月まで）");
 //        model.add("附加控除累計（当月まで）");
 //        model.add("免税分累計（当月まで）");
 //        model.add("年間累計税金（先月まで）");
@@ -2442,8 +2442,12 @@ public class WagesServiceImpl implements WagesService {
 //                BigDecimal Lastmonthbasic = BigDecimal.valueOf(Double.valueOf(value.get(11).toString()));
 //                //上月基本給
 //                wages.setLastmonth(String.valueOf(Lastmonthduty.add(Lastmonthbasic)));
+                System.out.println(value.get(1).toString() + "-" + value.get(2).toString() + "-" + value.get(3).toString());
                 wages.setBasethismonthbasic(value.get(2).toString());
                 wages.setThismonthduty(value.get(3).toString());
+                if(value.get(1).toString().equals("00114")){
+                    String a = "";
+                }
                 //本月职责工资
                 BigDecimal Basethismonthbasic = BigDecimal.valueOf(Double.valueOf(value.get(2).toString()));
                 //本个月基本工资
@@ -2487,9 +2491,10 @@ public class WagesServiceImpl implements WagesService {
 //                wages.setUnemploymentinsurance(value.get(41).toString());
 //                wages.setSocialinsurance(value.get(42).toString());
 //                wages.setAccumulationfund(value.get(43).toString());
-//                wages.setDisciplinarycontrol(value.get(44).toString());
+                //个人社会保险费+公积金(専項控除)合计
+                wages.setDisciplinarycontrol(value.get(5).toString());
                 //専項控除累計（当月まで）
-                wages.setThismonthterm(value.get(5).toString());
+//                wages.setThismonthterm(value.get(45).toString());
 //                wages.setThismonthadditional(value.get(46).toString());
 //                wages.setThismonthdutyfree(value.get(47).toString());
 //                wages.setLastdutyfree(value.get(48).toString());
