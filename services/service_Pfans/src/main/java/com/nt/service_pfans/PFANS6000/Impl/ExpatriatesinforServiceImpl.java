@@ -431,6 +431,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                         pricesetMapper.insert(pricesetnew);
                     } else { //旧部门上个月有单价
                         pricesetnew = pricesetListOld.get(0);
+                        pricesetnew.setPriceset_id(UUID.randomUUID().toString());
                         //新部门
                         pricesetnew.setGroup_id(expatriatesinfor.getGroup_id());
                         pricesetnew.setPricesetgroup_id(pricesetgroupidnew);
@@ -438,11 +439,14 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                     }
                 }else{ //该员工旧部门本月有单价
                     pricesetnew = pricesetListnew2.get(0);
+                    pricesetnew.setPriceset_id(UUID.randomUUID().toString());
                     pricesetnew.setGroup_id(expatriatesinfor.getGroup_id());
                     pricesetnew.setPricesetgroup_id(pricesetgroupidnew);
+                    pricesetMapper.insert(pricesetnew);
                 }
             } else { //新部门上个月有单价
                 pricesetnew = pricesetListNew.get(0);
+                pricesetnew.setPriceset_id(UUID.randomUUID().toString());
                 pricesetnew.setPricesetgroup_id(pricesetgroupidnew);
                 pricesetMapper.insert(pricesetnew);
             }
