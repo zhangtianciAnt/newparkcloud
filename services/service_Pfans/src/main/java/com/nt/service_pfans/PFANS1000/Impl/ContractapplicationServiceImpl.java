@@ -467,18 +467,27 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //納品書作成
                 else if (rowindex.equals("5")) {
-                    Napalm napalm2 = new Napalm();
-                    napalm2.setContractnumber(contractnumber);
-                    List<Napalm> napalmList = napalmMapper.select(napalm2);
-                    if (napalmList.size() > 0) {
-                        for (Napalm pe : napalmList) {
-                            if (!StringUtils.isNullOrEmpty(pe.getSealstatus())) {
-                                throw new LogicalException("纳品书正在印章中，不可更新！");
+                    List<String> numcountList = Arrays.asList(countNumber.split(","));
+                    int flg = 0;
+                    for(String count : numcountList){
+                        Napalm napalmAnt = new Napalm();
+                        napalmAnt.setClaimnumber(count);
+                        List<Napalm> napalmList = napalmMapper.select(napalmAnt);
+                        if (napalmList.size() > 0) {
+                            for (Napalm pe : napalmList) {
+                                if (!StringUtils.isNullOrEmpty(pe.getSealstatus())) {
+                                    flg ++;
+                                }
                             }
                         }
                     }
-//                    napalm2.setOwner(tokenModel.getUserId());
-                    napalmMapper.delete(napalm2);
+                    if(flg != 0){
+                        throw new LogicalException("纳品书正在印章中，不可更新！");
+                    }else{
+                        Napalm napalm2 = new Napalm();
+                        napalm2.setContractnumber(contractnumber);
+                        napalmMapper.delete(napalm2);
+                    }
                     // add_fjl_0604 --添加请求书和纳品书的选择生成 start
                     String numcount[] = countNumber.split(",");
                     if (numcount.length > 0) {
@@ -551,18 +560,28 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //請求書作成
                 else if (rowindex.equals("6")) {
-                    Petition petition2 = new Petition();
-                    petition2.setContractnumber(contractnumber);
-                    List<Petition> petitionList = PetitionMapper.select(petition2);
-                    if (petitionList.size() > 0) {
-                        for (Petition pe : petitionList) {
-                            if (!StringUtils.isNullOrEmpty(pe.getSealstatus())) {
-                                throw new LogicalException("请求书正在印章中，不可更新！");
+                    List<String> numcountList = Arrays.asList(countNumber.split(","));
+                    int flg = 0;
+                    for(String count : numcountList){
+                        Petition petitionAnt = new Petition();
+                        petitionAnt.setClaimnumber(count);
+                        List<Petition> petitionList = PetitionMapper.select(petitionAnt);
+                        if (petitionList.size() > 0) {
+                            for (Petition pe : petitionList) {
+                                if (!StringUtils.isNullOrEmpty(pe.getSealstatus())) {
+                                    flg ++;
+                                }
                             }
                         }
                     }
+                    if(flg != 0){
+                        throw new LogicalException("请求书正在印章中，不可更新！");
+                    }else{
+                        Petition petition2 = new Petition();
+                        petition2.setContractnumber(contractnumber);
 //                    petition2.setOwner(tokenModel.getUserId());
-                    PetitionMapper.delete(petition2);
+                        PetitionMapper.delete(petition2);
+                    }
                     // add_fjl_0604 --添加请求书和纳品书的选择生成 start
                     String numcount[] = countNumber.split(",");
                     if (numcount.length > 0) {
