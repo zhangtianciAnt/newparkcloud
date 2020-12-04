@@ -30,6 +30,16 @@ public class Pfans1036Controller {
         return ApiResult.success(businessplanService.get(businessplan));
     }
 
+    @RequestMapping(value = "/getgroupA1", method = {RequestMethod.GET})
+    public ApiResult getgroupA1(String year,String groupid,HttpServletRequest request) throws Exception {
+        return ApiResult.success(businessplanService.getgroupA1(year,groupid));
+    }
+
+    @RequestMapping(value = "/getgroup", method = {RequestMethod.GET})
+    public ApiResult getgroup(String year,String type,HttpServletRequest request) throws Exception {
+        return ApiResult.success(businessplanService.getgroup(year,type));
+    }
+
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
     public ApiResult selectById(String businessplanid, HttpServletRequest request) throws Exception {
         if (businessplanid == null) {

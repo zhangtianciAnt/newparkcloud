@@ -3,6 +3,8 @@ package com.nt.service_pfans.PFANS1000;
 
 import com.nt.dao_Pfans.PFANS1000.Businessplan;
 import com.nt.dao_Pfans.PFANS1000.PersonPlanTable;
+import com.nt.dao_Pfans.PFANS1000.Vo.BusinessGroupA1Vo;
+import com.nt.dao_Pfans.PFANS1000.Vo.BusinessGroupA2Vo;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessplanVo;
 import com.nt.utils.dao.TokenModel;
 
@@ -12,6 +14,10 @@ import java.util.Map;
 public interface BusinessplanService {
 
     List<Businessplan> get(Businessplan businessplan) throws Exception;
+
+    List<BusinessGroupA1Vo> getgroupA1(String year,String groupid) throws Exception;
+
+    List<BusinessGroupA2Vo> getgroup(String year,String type) throws Exception;
 
     public Businessplan selectById(String businessplanid) throws Exception;
 
