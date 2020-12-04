@@ -48,75 +48,16 @@ public class PricesetServiceImpl implements PricesetService {
      */
     @Override
     public List<PricesetVo> gettlist(String pddate, String groupid) throws Exception {
-        //在职，当月有单价
-        List<Priceset> pricesetList = pricesetMapper.selectThismonth(pddate, groupid);
-        //查询当月没有单价的人员 selectBpeople返回外驻人员登记表主键
-        List<String> peopleAnt = pricesetMapper.selectBpeople(pddate, groupid);
         List<PricesetVo> rst = new ArrayList<PricesetVo>();
         PricesetVo a = new PricesetVo(new PricesetGroup(), new ArrayList<Priceset>());
-        String lastMounth = "";
-        lastMounth = (DateUtil.format(DateUtil.offset(DateUtil.parse(pddate + "-01"), DateField.MONTH, -1), "yyyy-MM"));
-        PricesetGroup pricesetGroup = new PricesetGroup();
-        pricesetGroup.setPd_date(lastMounth);
-        String PricesetGroup_id = pricesetGroupMapper.select(pricesetGroup).get(0).getPricesetgroup_id();
-
-        for (String ms : peopleAnt) {
-            Priceset priceset = new Priceset();
-            priceset.setUser_id(ms);
-            priceset.setPricesetgroup_id(PricesetGroup_id);
-            List<Priceset> pricesetAntList = pricesetMapper.select(priceset);
-            Expatriatesinfor expatriatesinfor = expatriatesinforMapper.selectByPrimaryKey(ms);
-            //上个月单价
-            if (pricesetAntList.size() > 0) {
-                Priceset pricesetAnt = new Priceset();
-//                本月没有单价，上个月多个单价
-                if (pricesetAntList.size() > 1) {
-                    String groupidL = expatriatesinfor.getGroup_id();
-                    PricesetGroup pricesetGroupEnt = new PricesetGroup();
-                    pricesetGroupEnt.setPd_date(pddate);
-                    List<PricesetGroup> pricesetGroupListEnt = pricesetGroupMapper.select(pricesetGroupEnt);
-                    String pricesetGrid = pricesetGroupListEnt.get(0).getPricesetgroup_id();
-                    for (int i = 0; i < pricesetAntList.size(); i++) {
-                        if (groupidL.equals(pricesetAntList.get(i).getGroup_id())) {
-                            pricesetAntList.get(i).setPricesetgroup_id(pricesetGrid);
-                            BeanUtils.copyProperties(pricesetAntList.get(i), pricesetAnt);
-                            pricesetList.add(pricesetAnt);
-                        }
-                    }
-                    //本月没有单价，上个月1个单价
-                } else {
-                    pricesetAntList.get(0).setPricesetgroup_id(pricesetList.get(0).getPricesetgroup_id());
-                    BeanUtils.copyProperties(pricesetAntList.get(0), pricesetAnt);
-                    pricesetList.add(pricesetAnt);
-                }
-            } else {//上个月没有单价
-                Expatriatesinfor expatr = expatriatesinforMapper.selectByPrimaryKey(ms);
-                //判断传过来的月份 该员工是否为本月入场
-                //前台查询的月份
-                String pdone = pddate.substring(0, 4);
-                String pdtwo = pddate.substring(5);
-                String pdstr = pdone + pdtwo;
-                int pddateint = Integer.valueOf(pdstr);
-                //入场月份
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
-                String expatrdate = sdf.format(expatr.getAdmissiontime());
-                String adone = expatrdate.substring(0, 4);
-                String adtwo = expatrdate.substring(5);
-                String adstr = adone + adtwo;
-                int adtimeint = Integer.valueOf(adstr);
-
-                if (pddateint >= adtimeint) {
-                    Priceset pricesetEmpt = new Priceset();
-                    pricesetEmpt.setGroup_id(expatriatesinfor.getGroup_id());
-                    pricesetEmpt.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
-                    pricesetEmpt.setUsername(expatriatesinfor.getExpname());
-                    pricesetEmpt.setGraduation(expatriatesinfor.getGraduation_year());
-                    pricesetEmpt.setCompany(expatriatesinfor.getSuppliername());
-                    pricesetList.add(pricesetEmpt);
-                }
-            }
-        }
         a.getMain().setPd_date(pddate);
+        PricesetGroup pricesetGroup = new PricesetGroup();
+        pricesetGroup.setPd_date(pddate);
+        String pricesetGroupid = pricesetGroupMapper.select(pricesetGroup).get(0).getPricesetgroup_id();
+        Priceset priceset = new Priceset();
+        priceset.setGroup_id(groupid);
+        priceset.setPricesetgroup_id(pricesetGroupid);
+        List<Priceset> pricesetList = pricesetMapper.select(priceset);
         for (Priceset pr : pricesetList) {
             a.getDetail().add(pr);
         }
