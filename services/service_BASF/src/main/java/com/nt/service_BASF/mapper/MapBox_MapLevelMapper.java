@@ -1,6 +1,7 @@
 package com.nt.service_BASF.mapper;
 
 import com.nt.dao_BASF.MapBox_MapLevel;
+import com.nt.dao_BASF.VO.MapBox_MapLevelVo;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -19,4 +20,6 @@ public interface MapBox_MapLevelMapper extends MyMapper<MapBox_MapLevel> {
     List<MapBox_MapLevel> selectChildrensStr(@Param("mapid") String mapid) throws Exception;
 
     List<MapBox_MapLevel> getAll() throws Exception;
+
+    MapBox_MapLevelVo getLevelId(@Param("mapid") String mapid) throws Exception;
 }

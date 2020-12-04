@@ -2,6 +2,7 @@ package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.MapBox_MapLevel;
 import com.nt.dao_BASF.Riskassessments;
+import com.nt.dao_BASF.VO.MapBox_MapLevelVo;
 import com.nt.service_BASF.MapBox_MapLevelServices;
 import com.nt.service_BASF.mapper.MapBox_MapLevelMapper;
 import com.nt.service_BASF.mapper.RiskassessmentsMapper;
@@ -183,7 +184,9 @@ public class MapBox_MapLevelServicesImpl implements MapBox_MapLevelServices {
                 mapBox_mapLevel.preUpdate(tokenModel);
             }
             mapBox_mapLevelMapper.updateByPrimaryKeySelective(mapBox_mapLevel);
-            String[] parentidList = mapBox_mapLevel.getCascids().split("/");
+            MapBox_MapLevelVo mapBox_MapLevelVo = mapBox_mapLevelMapper.getLevelId(mapid);
+//            String[] parentidList = mapBox_mapLevel.getCascids().split("/");
+            String[] parentidList = mapBox_MapLevelVo.getLevelid().split("/");
             if (parentidList.length >= 2) {
                 for (int i = 0; i < parentidList.length; i++) {
                     MapBox_MapLevel mapBox_mapLevel1 = mapBox_mapLevelMapper.selectByPrimaryKey(parentidList[i]);

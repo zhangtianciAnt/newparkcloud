@@ -44,4 +44,24 @@ WHERE
 ORDER BY
 	mapbox_maplevel.CREATEON ASC
     </select>
+
+    <select id="getLevelId" resultType="com.nt.dao_BASF.VO.MapBox_MapLevelVo">
+    SELECT
+        concat( level2.parentid, '/', level2and3and4.level2id, '/', level2and3and4.level3id ) AS levelid
+    FROM
+        mapbox_maplevel level2,
+        (
+    SELECT
+        level2and3.parentid AS level2id,
+        level3and4.parentid AS level3id,
+        level3and4.id AS level4id
+    FROM
+        mapbox_maplevel level2and3,
+        ( SELECT id, parentid FROM mapbox_maplevel WHERE id = #{mapid} ) level3and4
+    WHERE
+        level2and3.id = level3and4.parentid
+        ) level2and3and4
+    WHERE
+        level2.id = level2and3and4.level2id
+    </select>
 </mapper>
