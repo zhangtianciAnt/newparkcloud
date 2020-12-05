@@ -17,7 +17,11 @@
     </resultMap>
     <select id="getBlackList" resultType="com.nt.dao_BASF.VO.BlackListVo">
         SELECT
-            CONCAT( a.blacklistid, ',', b.vehicleinformationid ) AS combinationid,
+            CONCAT(
+            a.blacklistid,
+            ',',
+            b.vehicleinformationid
+            ) AS combinationid,
             a.drivername,
             a.driveridnumber,
             a.violationtype,
@@ -36,12 +40,17 @@
             vehicleinformation b
         WHERE
             a.driveridnumber = b.driverid
-            and a.driveridnumber <![CDATA[ <> ]]> ''
-            and a.`STATUS` = 0
-            and b.`STATUS` = 0
-            and UNIX_TIMESTAMP(a.violationstime) &gt;= UNIX_TIMESTAMP(b.intime)
-            <if test="outtime != null">
-                and UNIX_TIMESTAMP(a.violationstime) &lt;= UNIX_TIMESTAMP(b.outtime)
-            </if>
+            AND a.driveridnumber <![CDATA[ <> ]]> ''
+            AND a.`STATUS` = 0
+            AND b.`STATUS` = 0
+            AND (
+            CASE
+            WHEN b.outtime IS NULL THEN
+            TO_DAYS(a.violationstime) &gt;= TO_DAYS(b.intime)
+            ELSE
+            TO_DAYS(a.violationstime) &gt;= TO_DAYS(b.intime)
+            AND TO_DAYS(a.violationstime) &lt;= TO_DAYS(b.outtime)
+            END
+            )
     </select>
 </mapper>
