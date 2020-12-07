@@ -66,7 +66,38 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     }
 
     @Override
+    public List<OrgTreeVo> getgroupcompanyen(String year) throws Exception {
+        List<OrgTreeVo> OrgTreeVolist = new ArrayList<>();
+        OrgTree orgs = orgTreeService.get(new OrgTree());
+        for (OrgTree org : orgs.getOrgs()) {
+            for (OrgTree org1 : org.getOrgs()) {
+                OrgTreeVo orgtreevo = new OrgTreeVo();
+                orgtreevo.set_id(org1.get_id());
+                orgtreevo.setCompanyen(org1.getCompanyen());
+                orgtreevo.setRedirict(org1.getRedirict());
+                OrgTreeVolist.add(orgtreevo);
+            }
+        }
+        Businessplan businessplan = new Businessplan();
+        businessplan.setYear(year);
+        businessplan.setStatus("4");
+        businessplan.setGroup_id("91B253A1C605E9CA814462FB4C4D2605F43F");
+        List<Businessplan> businessplanlist = businessplanMapper.select(businessplan);
+        if (businessplanlist.size() > 0) {
+            OrgTreeVolist.get(0).setType("1");
+            OrgTreeVolist.get(0).setAssets_lodyear(businessplanlist.get(0).getAssets_lodyear());
+            OrgTreeVolist.get(0).setEquipment_lodyear(businessplanlist.get(0).getEquipment_lodyear());
+        } else {
+            OrgTreeVolist.get(0).setType("0");
+
+        }
+        return OrgTreeVolist;
+    }
+
+    @Override
     public List<BusinessGroupA2Vo> getgroup(String year, String type) throws Exception {
+        int scale = 2;//设置位数
+        int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
         List<BusinessGroupA2Vo> VoList = new ArrayList<>();
         List<BusinessGroupA2Vo> getgroup = new ArrayList<>();
         if (type.equals("1")) {
@@ -95,12 +126,56 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             personnelplan.setGroupid(vo2.getGroupname());
             personnelplan.setYears(year);
             List<PersonnelPlan> personnelplanlist = personnelplanMapper.select(personnelplan);
-
             if (personnelplanlist.size() > 0) {
                 vo2.setCommission(personnelplanlist.get(0).getMoneyavg());
             } else {
                 vo2.setCommission("0");
             }
+            BigDecimal money1 = new BigDecimal(vo2.getMoney1());
+            BigDecimal money2 = new BigDecimal(vo2.getMoney2());
+            BigDecimal money3 = new BigDecimal(vo2.getMoney3());
+            BigDecimal money4 = new BigDecimal(vo2.getMoney4());
+            BigDecimal money5 = new BigDecimal(vo2.getMoney5());
+            BigDecimal money6 = new BigDecimal(vo2.getMoney6());
+            BigDecimal money7 = new BigDecimal(vo2.getMoney7());
+            BigDecimal money8 = new BigDecimal(vo2.getMoney8());
+            BigDecimal money9 = new BigDecimal(vo2.getMoney9());
+            BigDecimal money10 = new BigDecimal(vo2.getMoney10());
+            BigDecimal money11 = new BigDecimal(vo2.getMoney11());
+            BigDecimal money12 = new BigDecimal(vo2.getMoney12());
+            BigDecimal moneyfirst = new BigDecimal(vo2.getMoneyfirst());
+            BigDecimal moneysecond = new BigDecimal(vo2.getMoneysecond());
+            BigDecimal moneytotal = new BigDecimal(vo2.getMoneytotal());
+            BigDecimal moneys1 = money1.divide(new BigDecimal("1000"));
+            BigDecimal moneys2 = money2.divide(new BigDecimal("1000"));
+            BigDecimal moneys3 = money3.divide(new BigDecimal("1000"));
+            BigDecimal moneys4 = money4.divide(new BigDecimal("1000"));
+            BigDecimal moneys5 = money5.divide(new BigDecimal("1000"));
+            BigDecimal moneys6 = money6.divide(new BigDecimal("1000"));
+            BigDecimal moneys7 = money7.divide(new BigDecimal("1000"));
+            BigDecimal moneys8 = money8.divide(new BigDecimal("1000"));
+            BigDecimal moneys9 = money9.divide(new BigDecimal("1000"));
+            BigDecimal moneys10 = money10.divide(new BigDecimal("1000"));
+            BigDecimal moneys11 = money11.divide(new BigDecimal("1000"));
+            BigDecimal moneys12 = money12.divide(new BigDecimal("1000"));
+            BigDecimal moneyfirsts = moneyfirst.divide(new BigDecimal("1000"));
+            BigDecimal moneyseconds = moneysecond.divide(new BigDecimal("1000"));
+            BigDecimal moneytotals = moneytotal.divide(new BigDecimal("1000"));
+            vo2.setMoney1(String.valueOf(moneys1));
+            vo2.setMoney2(String.valueOf(moneys2));
+            vo2.setMoney3(String.valueOf(moneys3));
+            vo2.setMoney4(String.valueOf(moneys4));
+            vo2.setMoney5(String.valueOf(moneys5));
+            vo2.setMoney6(String.valueOf(moneys6));
+            vo2.setMoney7(String.valueOf(moneys7));
+            vo2.setMoney8(String.valueOf(moneys8));
+            vo2.setMoney9(String.valueOf(moneys9));
+            vo2.setMoney10(String.valueOf(moneys10));
+            vo2.setMoney11(String.valueOf(moneys11));
+            vo2.setMoney12(String.valueOf(moneys12));
+            vo2.setMoneyfirst(String.valueOf(moneyfirsts));
+            vo2.setMoneysecond(String.valueOf(moneyseconds));
+            vo2.setMoneytotal(String.valueOf(moneytotals));
             VoList.add(vo2);
         }
         if (conditionKeys.size() > 0) {
@@ -161,8 +236,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     }
 
     @Override
-    public List<BusinessGroupA1Vo> getgroupA1(String year, String groupids) throws Exception {
-        String groupid = "8650EA802D57250CA4B11A1B66017E5BA53E";
+    public List<BusinessGroupA1Vo> getgroupA1(String year, String groupid) throws Exception {
         int scale = 2;//设置位数
         int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
         List<BusinessGroupA1Vo> VoList = new ArrayList<>();
@@ -200,21 +274,21 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 BigDecimal moneysecond = new BigDecimal(getone.get(0).getMoneysecond());
                 BigDecimal moneytotal = new BigDecimal(getone.get(0).getMoneytotal());
                 if (businessgroupa1vo1.getName2().equals("0")) {
-                    BigDecimal moneys1 = money1.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys2 = money2.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys3 = money3.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys4 = money4.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys5 = money5.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys6 = money6.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys7 = money7.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys8 = money8.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys9 = money9.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys10 = money10.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys11 = money11.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys12 = money12.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneyfirsts = moneyfirst.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneyseconds = moneysecond.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneytotals = moneytotal.divide(new BigDecimal("1000"), scale, roundingMode);
+                    BigDecimal moneys1 = money1.divide(new BigDecimal("1000"));
+                    BigDecimal moneys2 = money2.divide(new BigDecimal("1000"));
+                    BigDecimal moneys3 = money3.divide(new BigDecimal("1000"));
+                    BigDecimal moneys4 = money4.divide(new BigDecimal("1000"));
+                    BigDecimal moneys5 = money5.divide(new BigDecimal("1000"));
+                    BigDecimal moneys6 = money6.divide(new BigDecimal("1000"));
+                    BigDecimal moneys7 = money7.divide(new BigDecimal("1000"));
+                    BigDecimal moneys8 = money8.divide(new BigDecimal("1000"));
+                    BigDecimal moneys9 = money9.divide(new BigDecimal("1000"));
+                    BigDecimal moneys10 = money10.divide(new BigDecimal("1000"));
+                    BigDecimal moneys11 = money11.divide(new BigDecimal("1000"));
+                    BigDecimal moneys12 = money12.divide(new BigDecimal("1000"));
+                    BigDecimal moneyfirsts = moneyfirst.divide(new BigDecimal("1000"));
+                    BigDecimal moneyseconds = moneysecond.divide(new BigDecimal("1000"));
+                    BigDecimal moneytotals = moneytotal.divide(new BigDecimal("1000"));
                     businessgroupa1vo1.setMoney1(String.valueOf(moneys1));
                     businessgroupa1vo1.setMoney2(String.valueOf(moneys2));
                     businessgroupa1vo1.setMoney3(String.valueOf(moneys3));
@@ -234,21 +308,21 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                     BigDecimal bd = new BigDecimal(businessgroupa1vo1.getName2());
                     BigDecimal bd1 = new BigDecimal("1");
                     BigDecimal bd2 = bd1.add(bd);
-                    BigDecimal moneys1 = money1.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys2 = money2.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys3 = money3.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys4 = money4.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys5 = money5.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys6 = money6.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys7 = money7.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys8 = money8.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys9 = money9.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys10 = money10.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys11 = money11.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys12 = money12.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneyfirsts = moneyfirst.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneyseconds = moneysecond.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneytotals = moneytotal.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
+                    BigDecimal moneys1 = money1.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys2 = money2.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys3 = money3.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys4 = money4.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys5 = money5.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys6 = money6.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys7 = money7.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys8 = money8.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys9 = money9.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys10 = money10.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys11 = money11.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys12 = money12.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneyfirsts = moneyfirst.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneyseconds = moneysecond.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneytotals = moneytotal.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
                     businessgroupa1vo1.setMoney1(String.valueOf(moneys1));
                     businessgroupa1vo1.setMoney2(String.valueOf(moneys2));
                     businessgroupa1vo1.setMoney3(String.valueOf(moneys3));
@@ -325,21 +399,21 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 BigDecimal moneysecond = new BigDecimal(gettwo.get(0).getMoneysecond());
                 BigDecimal moneytotal = new BigDecimal(gettwo.get(0).getMoneytotal());
                 if (businessgroupa1vo1.getName2().equals("0")) {
-                    BigDecimal moneys1 = money1.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys2 = money2.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys3 = money3.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys4 = money4.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys5 = money5.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys6 = money6.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys7 = money7.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys8 = money8.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys9 = money9.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys10 = money10.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys11 = money11.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys12 = money12.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneyfirsts = moneyfirst.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneyseconds = moneysecond.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneytotals = moneytotal.divide(new BigDecimal("1000"), scale, roundingMode);
+                    BigDecimal moneys1 = money1.divide(new BigDecimal("1000"));
+                    BigDecimal moneys2 = money2.divide(new BigDecimal("1000"));
+                    BigDecimal moneys3 = money3.divide(new BigDecimal("1000"));
+                    BigDecimal moneys4 = money4.divide(new BigDecimal("1000"));
+                    BigDecimal moneys5 = money5.divide(new BigDecimal("1000"));
+                    BigDecimal moneys6 = money6.divide(new BigDecimal("1000"));
+                    BigDecimal moneys7 = money7.divide(new BigDecimal("1000"));
+                    BigDecimal moneys8 = money8.divide(new BigDecimal("1000"));
+                    BigDecimal moneys9 = money9.divide(new BigDecimal("1000"));
+                    BigDecimal moneys10 = money10.divide(new BigDecimal("1000"));
+                    BigDecimal moneys11 = money11.divide(new BigDecimal("1000"));
+                    BigDecimal moneys12 = money12.divide(new BigDecimal("1000"));
+                    BigDecimal moneyfirsts = moneyfirst.divide(new BigDecimal("1000"));
+                    BigDecimal moneyseconds = moneysecond.divide(new BigDecimal("1000"));
+                    BigDecimal moneytotals = moneytotal.divide(new BigDecimal("1000"));
                     businessgroupa1vo1.setMoney1(String.valueOf(moneys1));
                     businessgroupa1vo1.setMoney2(String.valueOf(moneys2));
                     businessgroupa1vo1.setMoney3(String.valueOf(moneys3));
@@ -359,21 +433,21 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                     BigDecimal bd = new BigDecimal(businessgroupa1vo1.getName2());
                     BigDecimal bd1 = new BigDecimal("1");
                     BigDecimal bd2 = bd1.add(bd);
-                    BigDecimal moneys1 = money1.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys2 = money2.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys3 = money3.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys4 = money4.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys5 = money5.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys6 = money6.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys7 = money7.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys8 = money8.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys9 = money9.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys10 = money10.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys11 = money11.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys12 = money12.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneyfirsts = moneyfirst.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneyseconds = moneysecond.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneytotals = moneytotal.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
+                    BigDecimal moneys1 = money1.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys2 = money2.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys3 = money3.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys4 = money4.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys5 = money5.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys6 = money6.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys7 = money7.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys8 = money8.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys9 = money9.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys10 = money10.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys11 = money11.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys12 = money12.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneyfirsts = moneyfirst.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneyseconds = moneysecond.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneytotals = moneytotal.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
                     businessgroupa1vo1.setMoney1(String.valueOf(moneys1));
                     businessgroupa1vo1.setMoney2(String.valueOf(moneys2));
                     businessgroupa1vo1.setMoney3(String.valueOf(moneys3));
@@ -450,21 +524,21 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 BigDecimal moneysecond = new BigDecimal(getthree.get(0).getMoneysecond());
                 BigDecimal moneytotal = new BigDecimal(getthree.get(0).getMoneytotal());
                 if (businessgroupa1vo1.getName2().equals("0")) {
-                    BigDecimal moneys1 = money1.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys2 = money2.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys3 = money3.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys4 = money4.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys5 = money5.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys6 = money6.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys7 = money7.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys8 = money8.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys9 = money9.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys10 = money10.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys11 = money11.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys12 = money12.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneyfirsts = moneyfirst.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneyseconds = moneysecond.divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneytotals = moneytotal.divide(new BigDecimal("1000"), scale, roundingMode);
+                    BigDecimal moneys1 = money1.divide(new BigDecimal("1000"));
+                    BigDecimal moneys2 = money2.divide(new BigDecimal("1000"));
+                    BigDecimal moneys3 = money3.divide(new BigDecimal("1000"));
+                    BigDecimal moneys4 = money4.divide(new BigDecimal("1000"));
+                    BigDecimal moneys5 = money5.divide(new BigDecimal("1000"));
+                    BigDecimal moneys6 = money6.divide(new BigDecimal("1000"));
+                    BigDecimal moneys7 = money7.divide(new BigDecimal("1000"));
+                    BigDecimal moneys8 = money8.divide(new BigDecimal("1000"));
+                    BigDecimal moneys9 = money9.divide(new BigDecimal("1000"));
+                    BigDecimal moneys10 = money10.divide(new BigDecimal("1000"));
+                    BigDecimal moneys11 = money11.divide(new BigDecimal("1000"));
+                    BigDecimal moneys12 = money12.divide(new BigDecimal("1000"));
+                    BigDecimal moneyfirsts = moneyfirst.divide(new BigDecimal("1000"));
+                    BigDecimal moneyseconds = moneysecond.divide(new BigDecimal("1000"));
+                    BigDecimal moneytotals = moneytotal.divide(new BigDecimal("1000"));
                     businessgroupa1vo1.setMoney1(String.valueOf(moneys1));
                     businessgroupa1vo1.setMoney2(String.valueOf(moneys2));
                     businessgroupa1vo1.setMoney3(String.valueOf(moneys3));
@@ -484,21 +558,21 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                     BigDecimal bd = new BigDecimal(businessgroupa1vo1.getName2());
                     BigDecimal bd1 = new BigDecimal("1");
                     BigDecimal bd2 = bd1.add(bd);
-                    BigDecimal moneys1 = money1.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys2 = money2.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys3 = money3.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys4 = money4.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys5 = money5.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys6 = money6.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys7 = money7.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys8 = money8.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys9 = money9.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys10 = money10.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys11 = money11.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneys12 = money12.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneyfirsts = moneyfirst.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneyseconds = moneysecond.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
-                    BigDecimal moneytotals = moneytotal.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"), scale, roundingMode);
+                    BigDecimal moneys1 = money1.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys2 = money2.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys3 = money3.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys4 = money4.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys5 = money5.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys6 = money6.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys7 = money7.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys8 = money8.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys9 = money9.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys10 = money10.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys11 = money11.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneys12 = money12.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneyfirsts = moneyfirst.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneyseconds = moneysecond.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+                    BigDecimal moneytotals = moneytotal.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
                     businessgroupa1vo1.setMoney1(String.valueOf(moneys1));
                     businessgroupa1vo1.setMoney2(String.valueOf(moneys2));
                     businessgroupa1vo1.setMoney3(String.valueOf(moneys3));

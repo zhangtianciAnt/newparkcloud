@@ -35,6 +35,11 @@ public class Pfans1036Controller {
         return ApiResult.success(businessplanService.getgroupA1(year,groupid));
     }
 
+    @RequestMapping(value = "/getgroupcompanyen", method = {RequestMethod.GET})
+    public ApiResult getgroupcompanyen(String year,HttpServletRequest request) throws Exception {
+        return ApiResult.success(businessplanService.getgroupcompanyen(year));
+    }
+
     @RequestMapping(value = "/getgroup", method = {RequestMethod.GET})
     public ApiResult getgroup(String year,String type,HttpServletRequest request) throws Exception {
         return ApiResult.success(businessplanService.getgroup(year,type));
