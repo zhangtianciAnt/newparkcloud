@@ -273,4 +273,8 @@ public class Judgement extends BaseModel {
     @Column(name = "SURPUBILCMONEY")
     private String surpubilcmoney;
 
+    //决裁类型（流程相关）
+    @Column(name = "DECISION")
+    private String decision;
+
 }
