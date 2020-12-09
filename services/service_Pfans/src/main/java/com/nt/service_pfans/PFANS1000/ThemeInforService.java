@@ -15,6 +15,8 @@ public interface ThemeInforService {
 
     void upd(ThemeInfor themeinfor, TokenModel tokenModel) throws Exception;
 
+    List<ThemeInfor> getlisttheme(String year,String contract) throws Exception;
+
     List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 
     //根据id获取数据

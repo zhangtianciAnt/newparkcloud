@@ -84,6 +84,12 @@ public class Assets extends BaseModel {
     private String barcode;
 
     /**
+     * 存放地点
+     */
+    @Column(name = "STORAGELOCATION")
+    private String storagelocation;
+
+    /**
      * 结果
      */
     @Column(name = "RESULT")

@@ -34,6 +34,20 @@ public class ThemeInforServiceImpl implements ThemeInforService {
     }
 
     @Override
+    public List<ThemeInfor> getlisttheme(String year,String contract) throws Exception {
+        ThemeInfor theme = new ThemeInfor();
+        theme.setYear(year);
+        List<ThemeInfor> themeinforlist = themeinformapper.select(theme);
+        if (contract.equals("0")) {
+            themeinforlist = themeinforlist.stream().filter(item -> (item.getContract().equals("PJ142001")) || (item.getContract().equals("PJ142002")) || (item.getContract().equals("PJ142003")) || (item.getContract().equals("PJ142004")) || (item.getContract().equals("PJ142005"))).collect(Collectors.toList());
+        } else if (contract.equals("1")) {
+            themeinforlist = themeinforlist.stream().filter(item -> (item.getContract().equals("PJ142006")) || (item.getContract().equals("PJ142007")) || (item.getContract().equals("PJ142008")) || (item.getContract().equals("PJ142009"))).collect(Collectors.toList());
+        }
+        return themeinforlist;
+    }
+
+
+    @Override
     public void insert(ThemeInfor themeinfor, TokenModel tokenModel) throws Exception {
         ThemeInfor infor = new ThemeInfor();
         infor.setThemename(themeinfor.getThemename());
