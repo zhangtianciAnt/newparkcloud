@@ -14,6 +14,7 @@ import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 //import com.nt.service_pfans.PFANS1000.mapper.BusinessplandetMapper;
+import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -629,6 +630,15 @@ public class BusinessplanServiceImpl implements BusinessplanService {
 
     @Override
     public void updateBusinessplanVo(Businessplan businessplan, TokenModel tokenModel) throws Exception {
+        String businessplanid = businessplan.getBusinessplanid();
+        Businessplan business = new Businessplan();
+        business.setYear(businessplan.getYear());
+        business.setGroup_id(businessplan.getGroup_id());
+        List<Businessplan> businessplanlist = businessplanMapper.select(business);
+        businessplanlist = businessplanlist.stream().filter(item -> (!item.getBusinessplanid().equals(businessplanid))).collect(Collectors.toList());
+        if (businessplanlist.size() > 0) {
+            throw new LogicalException("本部门该年度事业计划已经创建，请到列表页中查找编辑。");
+        }
         businessplan.preUpdate(tokenModel);
         businessplanMapper.updateByPrimaryKeySelective(businessplan);
     }
@@ -683,6 +693,13 @@ public class BusinessplanServiceImpl implements BusinessplanService {
 
     @Override
     public void insertBusinessplan(Businessplan businessplan, TokenModel tokenModel) throws Exception {
+        Businessplan business = new Businessplan();
+        business.setYear(businessplan.getYear());
+        business.setGroup_id(businessplan.getGroup_id());
+        List<Businessplan> businessplanlist = businessplanMapper.select(business);
+        if (businessplanlist.size() > 0) {
+            throw new LogicalException("本部门该年度事业计划已经创建，请到列表页中查找编辑。");
+        }
         String businessplanid = UUID.randomUUID().toString();
         List<BussinessPlanPL> pl = JSON.parseArray(businessplan.getTableP(), BussinessPlanPL.class);
         businessplan.setBusinessplanid(businessplanid);
