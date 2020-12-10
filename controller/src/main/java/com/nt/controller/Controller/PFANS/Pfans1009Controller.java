@@ -147,20 +147,6 @@ public class Pfans1009Controller {
                 wfList3 = customerInfo.getUserinfo().getCustomername();
                 wfList3 = sign.startGraphics2D(wfList3);
             }
-            query = new Query();
-            query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
-            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            if (customerInfo != null) {
-                wfList4 = customerInfo.getUserinfo().getCustomername();
-                wfList4 = sign.startGraphics2D(wfList4);
-            }
-            query = new Query();
-            query.addCriteria(Criteria.where("userid").is(wfList.get(4).getUserId()));
-            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            if (customerInfo != null) {
-                wfList5 = customerInfo.getUserinfo().getCustomername();
-                wfList5 = sign.startGraphics2D(wfList5);
-            }
         }
         Map<String, Object> data = new HashMap<>();
         data.put("fxs", fxs);
