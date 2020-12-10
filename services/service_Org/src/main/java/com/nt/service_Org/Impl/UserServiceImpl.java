@@ -3,7 +3,6 @@ package com.nt.service_Org.Impl;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.crypto.SecureUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.mysql.jdbc.StringUtils;
@@ -19,7 +18,6 @@ import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.JsTokenService;
 import com.nt.utils.services.TokenService;
-import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -33,11 +31,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.naming.AuthenticationException;
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.*;
+import javax.naming.directory.BasicAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.function.DoubleBinaryOperator;
 import java.util.stream.Collectors;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
@@ -71,6 +74,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ToDoNoticeService toDoNoticeService;
+
+    @Autowired
+    private UserService userService;
 
     /**
      * @方法名：getUserAccount
@@ -128,12 +134,60 @@ public class UserServiceImpl implements UserService {
         //根据条件检索数据
         Query query = new Query();
         query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+        //域登录的时候把下面password这句话注释掉
         query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
         query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
         List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
 
-        //数据不存在时
+        //数据不存在时创建新用户
         if (userAccountlist.size() <= 0) {
+//            Object name = activeDirectory(userAccount, locale, "1");
+//            UserAccount ust = new UserAccount();
+//            ust.setAccount(userAccount.getAccount());
+//            ust.setPassword(userAccount.getPassword());
+//            ust.setUsertype("0");
+//            List<Role> rl = new ArrayList<>();
+//            Role role = new Role();
+//            role.set_id("5e7860c68f43163084351131");
+//            role.setRolename("正式社员");
+//            role.setDescription("正式社员");
+//            role.setDefaultrole("true");
+//            rl.add(role);
+//            ust.setRoles(rl);
+//            ust.setStatus("0");
+//            mongoTemplate.save(ust);
+//            Query queryer = new Query();
+//            queryer.addCriteria(Criteria.where("account").is(ust.getAccount()));
+//            queryer.addCriteria(Criteria.where("password").is(ust.getPassword()));
+//            List<UserAccount> userAccountlistNew = mongoTemplate.find(queryer, UserAccount.class);
+//            CustomerInfo customerInfo = new CustomerInfo();
+//            CustomerInfo.UserInfo userinfo = new CustomerInfo.UserInfo();
+//            userinfo.setCustomername(name.toString());
+//            userinfo.setAdfield(userAccount.getAccount());
+//            customerInfo.setUserinfo(userinfo);
+//            customerInfo.setType("1");
+//            customerInfo.setStatus("0");
+//            if (userAccountlistNew.size() > 0) {
+//                String _id = userAccountlistNew.get(0).get_id();
+//                customerInfo.setUserid(_id);
+//                mongoTemplate.save(customerInfo);
+//            }
+//            Query queryUser = new Query();
+//            queryUser.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+//            queryUser.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
+//            List<UserAccount> userAccountUserlist = mongoTemplate.find(query, UserAccount.class);
+//            List<String> roleIds = new ArrayList<String>();
+//            query = new Query();
+//            query.addCriteria(Criteria.where("_id").is(userAccountUserlist.get(0).get_id()));
+//            UserAccount account = mongoTemplate.findOne(query, UserAccount.class);
+//            List<Role> roles = account.getRoles();
+//            if (roles != null) {
+//                for (int i = 0; i < roles.size(); i++) {
+//                    roleIds.add(roles.get(i).get_id());
+//                }
+//            }
+//            return jsTokenService.createToken(userAccountUserlist.get(0).get_id(), userAccountUserlist.get(0).getTenantid(), userAccountUserlist.get(0).getUsertype(), new ArrayList<String>(), locale, "", roleIds);
+            //发布域登录把这句话注释了把上面的全解了
             throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04, locale));
         } else {
             List<String> roleIds = new ArrayList<String>();
@@ -146,10 +200,94 @@ public class UserServiceImpl implements UserService {
                     roleIds.add(roles.get(i).get_id());
                 }
             }
-
             return jsTokenService.createToken(userAccountlist.get(0).get_id(), userAccountlist.get(0).getTenantid(), userAccountlist.get(0).getUsertype(), new ArrayList<String>(), locale, "", roleIds);
         }
+    }
 
+    /**
+     * @return
+     * @方法名：activeDirectory
+     * @描述：AD单点登录
+     * @创建日期：2020/12/02
+     * @作者：SHUBO
+     * @参数：[userAccount]
+     */
+    @Override
+    public Object activeDirectory(UserAccount userAccount, String locale, String firstTime) throws Exception {
+
+        String sn = " ";
+        String givenName = " ";
+        String name = " ";
+        String username = userAccount.getAccount();
+        String password = userAccount.getPassword();
+        DirContext ctx;
+        List<String> nameList = new ArrayList();
+        Hashtable env = new Hashtable();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+        //域LDAPURL/dc=域名,dc=域名.后面的。例子:newtouch.com
+        env.put(Context.PROVIDER_URL, "ldap://192.168.1.102:389/dc=yiduanhen,dc=com");
+        env.put(Context.SECURITY_PRINCIPAL, username);
+        env.put(Context.SECURITY_CREDENTIALS, password);
+
+        try {
+            ctx = new InitialDirContext(env);
+            //测试用firstTime
+//            firstTime = "1";
+            if (firstTime.equals("1")) {
+                int totalResults = 0;
+                String searchFilter = "objectClass=User";
+                SearchControls searchCtls = new SearchControls();
+                searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+                //返回属性sn=姓，givenName=名
+                String returnedAtts[] = {"sn", "givenName"};
+                searchCtls.setReturningAttributes(returnedAtts);
+                //组织OU="组织名称"
+                String searchBase = "OU=p";
+                NamingEnumeration answer = ctx.search(searchBase, searchFilter,
+                        searchCtls);
+                while (answer.hasMoreElements()) {
+                    SearchResult sr = (SearchResult) answer.next();
+                    String dn = sr.getName();
+                    String match = dn.split("CN=")[1].split(",")[0];
+                    if (username.equals(match)) {
+                        BasicAttributes Attrs = (BasicAttributes) sr.getAttributes();
+                        if (Attrs != null) {
+                            try {
+                                Iterator ite = Attrs.getIDs().asIterator();
+                                //迭代器取得key,在下面用for去取
+//                                while (ite.hasNext()){
+//                                  String keyId =  (String) ite.next();
+//                                    System.out.println(keyId);
+//                                }
+                                for (NamingEnumeration ne = Attrs.getAll(); ne.hasMore(); ) {
+                                    Attribute Attr = (Attribute) ne.next();
+                                    for (NamingEnumeration e = Attr.getAll(); e.hasMore(); totalResults++) {
+                                        String keyId = (String) ite.next();
+                                        switch (keyId) {
+                                            case "sn":
+                                                sn = e.next().toString();
+                                                break;
+                                            case "givenName":
+                                                givenName = e.next().toString();
+                                                break;
+                                        }
+                                    }
+                                }
+                                name = sn + givenName;
+                                ctx.close();
+                                return name;
+                            } catch (NamingException e) {
+                                throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04, locale));
+                            }
+                        }
+                    }
+                }
+            }
+            ctx.close();
+        } catch (AuthenticationException e) {
+            throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04, locale));
+        }
+        return null;
     }
 
     /**
@@ -225,7 +363,7 @@ public class UserServiceImpl implements UserService {
         CustomerInfo.UserInfo userInfo = new CustomerInfo.UserInfo();
         BeanUtils.copyProperties(userVo.getCustomerInfo().getUserinfo(), userInfo);
         //add-ws-9/14-禅道任务518
-        if (userInfo.getEnterday().indexOf("Z")  != -1) {
+        if (userInfo.getEnterday().indexOf("Z") != -1) {
             String enterday = userInfo.getEnterday().substring(0, 10).replace("-", "/");
             Calendar cal = Calendar.getInstance();
             cal.setTime(sf.parse(enterday));//设置起时间
@@ -234,8 +372,8 @@ public class UserServiceImpl implements UserService {
         }
         //add-ws-9/14-禅道任务518
         //add-ws-9/14-禅道任务525
-        if(userInfo.getEnddate() != null){
-            if (userInfo.getEnddate().indexOf("Z")  != -1) {
+        if (userInfo.getEnddate() != null) {
+            if (userInfo.getEnddate().indexOf("Z") != -1) {
                 String enddate = userInfo.getEnddate().substring(0, 10).replace("-", "/");
                 Calendar cal1 = Calendar.getInstance();
                 cal1.setTime(sf.parse(enddate));//设置起时间
@@ -258,7 +396,7 @@ public class UserServiceImpl implements UserService {
             } else {
                 throw new LogicalException("邮箱已存在！");
             }
-        }else{
+        } else {
             flg1 = 1;
         }
 //add-ws-4/28-人员重复check
@@ -288,7 +426,7 @@ public class UserServiceImpl implements UserService {
 
 //AD域重复check
         Query queryAD = new Query();
-        if(!userInfo.getJobnumber().equals("00000")){
+        if (!userInfo.getJobnumber().equals("00000")) {
             if (!StringUtils.isNullOrEmpty(userInfo.getJobnumber())) {
                 queryAD.addCriteria(Criteria.where("userinfo.jobnumber").is(userInfo.getJobnumber()));
                 List<CustomerInfo> qcCode = mongoTemplate.find(queryAD, CustomerInfo.class);
@@ -298,7 +436,7 @@ public class UserServiceImpl implements UserService {
                     throw new LogicalException("卡号重复");
                 }
             }
-        }else{
+        } else {
             flg3 = 1;
         }
 
@@ -461,6 +599,7 @@ public class UserServiceImpl implements UserService {
         }
         return customerInfos;
     }
+
     //add-ws-9/12-财务人员编码处理
     @Override
     public List<CustomerInfo> getAccountCustomer3(String orgid, String orgtype, TokenModel tokenModel) throws Exception {
@@ -511,6 +650,7 @@ public class UserServiceImpl implements UserService {
         return customerInfos;
     }
     //add-ws-9/12-财务人员编码处理
+
     /**
      * @方法名：getAccountCustomerById
      * @描述：根据用户id获取用户信息
@@ -566,11 +706,11 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void updUserStatus(String userid, String status) throws Exception {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("userid").is(userid));
-        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-        customerInfo.setStatus(status);
-        mongoTemplate.save(customerInfo);
+//        Query query = new Query();
+//        query.addCriteria(Criteria.where("userid").is(userid));
+//        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//        customerInfo.setStatus(status);
+//        mongoTemplate.save(customerInfo);
         Query queryAccount = new Query();
         queryAccount.addCriteria(Criteria.where("_id").is(userid));
         UserAccount userAccount = mongoTemplate.findOne(queryAccount, UserAccount.class);
@@ -810,7 +950,7 @@ public class UserServiceImpl implements UserService {
 //        }
 //    }
     //系统服务--每天00:05 更新离职人员的信息，已经离职人员不能登录系统  fjl add start
-        @Scheduled(cron = "0 05 0 * * ?")
+    @Scheduled(cron = "0 05 0 * * ?")
     public void updUseraccountStatus() throws Exception {
         SimpleDateFormat st = new SimpleDateFormat("yyyy-MM-dd");
         String redate = st.format(new Date());
@@ -1477,8 +1617,7 @@ public class UserServiceImpl implements UserService {
                     }
                     personal.setDuty(item.get("现职责工资").toString());
                     userinfo.setDuty(item.get("现职责工资").toString());
-                }
-                else{
+                } else {
                     //add gbb 0724 等级联动职责工资 start
                     if (item.get("Rank") != null) {
                         String rank = item.get("Rank").toString();
@@ -1607,8 +1746,7 @@ public class UserServiceImpl implements UserService {
                 }
                 accesscount = accesscount + 1;
             }
-        }
-        else {
+        } else {
             for (Map<String, Object> item : readAll) {
                 UserAccount userAccount = new UserAccount();
                 List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
@@ -2092,8 +2230,7 @@ public class UserServiceImpl implements UserService {
                     if (item.get("现职责工资●") != null) {
                         personal.setDuty(item.get("现职责工资●").toString());
 //                            customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
-                    }
-                    else{
+                    } else {
                         //add gbb 0724 等级联动职责工资 start
                         if (item.get("Rank●") != null) {
                             Dictionary dictionary = new Dictionary();
@@ -2464,9 +2601,9 @@ public class UserServiceImpl implements UserService {
         List<Log.Logs> logslist = new ArrayList<>();
         Query query = new Query();
         List<Log> loglist = mongoTemplate.find(query, Log.class);
-        if(loglist.size() > 0){
+        if (loglist.size() > 0) {
             logslist = loglist.get(0).getLogs();
-            if(logslist.size() > 0){
+            if (logslist.size() > 0) {
                 logslist = logslist.stream().filter(coi -> (coi.getCreateby() != null)).collect(Collectors.toList());
                 logslist = logslist.stream().filter(coi -> (coi.getCreateby().contains(userId))).collect(Collectors.toList());
                 logslist = logslist.stream().sorted(Comparator.comparing(Log.Logs::getCreateon).reversed()).collect(Collectors.toList());
@@ -2494,8 +2631,7 @@ public class UserServiceImpl implements UserService {
     //本年度离职，账号不能登录的人员
     //参数：years，年度
     @Override
-    public List<CustomerInfo> getCustomerInfoResign(String years) throws Exception
-    {
+    public List<CustomerInfo> getCustomerInfoResign(String years) throws Exception {
         List<UserAccount> userAccountList = new ArrayList<UserAccount>();
         List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
         SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");
@@ -2503,15 +2639,12 @@ public class UserServiceImpl implements UserService {
         query.addCriteria(Criteria.where("usertype").ne("1"));
         query.addCriteria(Criteria.where("status").is("1"));
         List<UserAccount> userAccountInfo = mongoTemplate.find(query, UserAccount.class);
-        for(UserAccount uAccount :userAccountInfo)
-        {
+        for (UserAccount uAccount : userAccountInfo) {
             Query query1 = new Query();
             query1.addCriteria(Criteria.where("userid").is(uAccount.get_id()));
             CustomerInfo customerInfo = mongoTemplate.findOne(query1, CustomerInfo.class);
-            if(customerInfo!=null)
-            {
-                if(customerInfo.getUserinfo().getResignation_date()!=null && !customerInfo.getUserinfo().getResignation_date().isEmpty())
-                {
+            if (customerInfo != null) {
+                if (customerInfo.getUserinfo().getResignation_date() != null && !customerInfo.getUserinfo().getResignation_date().isEmpty()) {
                     Calendar rightNow = Calendar.getInstance();
                     //离职日
                     String resignationdate = customerInfo.getUserinfo().getResignation_date().substring(0, 10);
@@ -2520,14 +2653,12 @@ public class UserServiceImpl implements UserService {
                         rightNow.add(Calendar.DAY_OF_YEAR, 1);
                         resignationdate = sf1ymd.format(rightNow.getTime());
                     }
-                    String resignYear = resignationdate.substring(0,4);
-                    Integer resignmonth = Integer.valueOf(resignationdate.substring(5,7));
-                    if(resignmonth<4)
-                    {
+                    String resignYear = resignationdate.substring(0, 4);
+                    Integer resignmonth = Integer.valueOf(resignationdate.substring(5, 7));
+                    if (resignmonth < 4) {
                         resignYear = String.valueOf(Integer.valueOf(resignYear) - 1);
                     }
-                    if(years.equals(resignYear))
-                    {
+                    if (years.equals(resignYear)) {
                         customerInfoList.add(customerInfo);
                     }
                 }

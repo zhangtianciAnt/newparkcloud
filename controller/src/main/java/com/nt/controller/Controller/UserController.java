@@ -45,7 +45,7 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-     private AnnualLeaveService annualLeaveService;
+    private AnnualLeaveService annualLeaveService;
 
     @Autowired
     private TokenService tokenService;
@@ -98,6 +98,10 @@ public class UserController {
             if (userAccount == null) {
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
             }
+
+            //域登录
+            //userService.activeDirectory(userAccount,RequestUtils.CurrentLocale(request),"0");
+
             JsTokenModel tokenModel = userService.login(userAccount,RequestUtils.CurrentLocale(request));
 
             var log = new Log();
@@ -116,7 +120,6 @@ public class UserController {
         } catch (LogicalException ex) {
             return ApiResult.fail(ex.getMessage());
         }
-
     }
 
     //获取当前用户信息
@@ -185,14 +188,14 @@ public class UserController {
             info = userService.addAccountCustomer(userVo);
             id = info.getUserid();
         } else {
+            UserVo as = new UserVo();
             userVo.getUserAccount().preInsert(tokenModel);
             userVo.getUserAccount().setPassword(userVo.getCustomerInfo().getUserinfo().getAdfield());
-            info = userService.addAccountCustomer(userVo);
+
+            info = userService.addAccountCustomer(as);
             annualLeaveService.insertannualLeave(info);
             id = info.getUserid();
         }
-
-
         return ApiResult.success(id);
     }
 
