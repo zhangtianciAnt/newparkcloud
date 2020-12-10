@@ -1785,14 +1785,14 @@ public class UserServiceImpl implements UserService {
                             }
                         }
                     }
-                    if (item.get("AD域账号●") != null) {
-                        customerInfoList.get(0).getUserinfo().setAdfield(item.get("AD域账号●").toString());
+                    if (item.get("登陆账户●") != null) {
+                        customerInfoList.get(0).getUserinfo().setAdfield(item.get("登陆账户●").toString());
                         query = new Query();
                         query.addCriteria(Criteria.where("userinfo.adfield").is(customerInfoList.get(0).getUserinfo().getAdfield()));
                         List<CustomerInfo> customerInfoLists = new ArrayList<CustomerInfo>();
                         customerInfoLists = mongoTemplate.find(query, CustomerInfo.class);
                         if (customerInfoLists.size() > 0) {
-                            throw new LogicalException("AD域账号（" + item.get("AD域账号●").toString() + "）" + "在人员表中已存在，请勿重复填写。");
+                            throw new LogicalException("登陆账户（" + item.get("登陆账户●").toString() + "）" + "在人员表中已存在，请勿重复填写。");
                         } else {
                             userAccount.setAccount(customerInfoList.get(0).getUserinfo().getAdfield());
                             userAccount.setPassword(customerInfoList.get(0).getUserinfo().getAdfield());
