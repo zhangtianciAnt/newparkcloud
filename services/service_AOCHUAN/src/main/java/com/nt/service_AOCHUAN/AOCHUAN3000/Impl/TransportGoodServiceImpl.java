@@ -153,9 +153,14 @@ public class TransportGoodServiceImpl implements TransportGoodService {
 //        transportGood.setSupplier(arr[1]);
 //        transportGood.setCasnum(arr[2]);
         //transportGood.setContractnumber(number);
+
         transportGood.setTransportgood_id(id);
         transportGood.preInsert(tokenModel);
         transportGoodMapper.insert(transportGood);
+        log.info("-------------新建走货--------------");
+        log.info("走货id：" + id);
+        log.info("增加数据"+ transportGood);
+        log.info("--------------删除结束-------------------------");
         InsertSonTable(transportGood, id,tokenModel);
     }
 
