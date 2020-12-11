@@ -322,6 +322,10 @@ public class CustomerInfo extends BaseModel {
          */
         private String restlastyear;
         /**
+         * 新人区分(税金用）
+         */
+        private String taxes;
+        /**
          * 口座番号
          */
         private String seatnumber;

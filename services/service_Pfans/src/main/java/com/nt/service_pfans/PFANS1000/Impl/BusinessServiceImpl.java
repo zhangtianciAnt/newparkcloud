@@ -398,6 +398,7 @@ public class BusinessServiceImpl implements BusinessService {
                 if (calStar.get(Calendar.DAY_OF_WEEK) != 7 && calStar.get(Calendar.DAY_OF_WEEK) != 1) {
                     //如果不是周六或者周日，但是该日属于国家法定节假日或者特殊放假日则-1
                     if (SPECIAL_REST_DAYS.contains(DateFormatUtils.format(calStar.getTime(), "yyyy-MM-dd"))) {
+                        calStar.add(Calendar.DAY_OF_MONTH, 1);
                         continue;
                     }
                     //添加打卡记录
@@ -407,6 +408,7 @@ public class BusinessServiceImpl implements BusinessService {
                 if (SPECIAL_WORK_DAYS.contains(DateFormatUtils.format(calStar.getTime(), "yyyy-MM-dd"))) {
                     //如果不是周六或者周日，但是该日属于国家法定节假日或者特殊放假日则-1
                     if (SPECIAL_REST_DAYS.contains(DateFormatUtils.format(calStar.getTime(), "yyyy-MM-dd"))) {
+                        calStar.add(Calendar.DAY_OF_MONTH, 1);
                         continue;
                     }
                     //添加打卡记录
