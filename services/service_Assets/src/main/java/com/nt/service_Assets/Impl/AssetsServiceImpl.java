@@ -221,10 +221,10 @@ public class AssetsServiceImpl implements AssetsService {
             file.transferTo(f);
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
-            String[] gudingzichan = "资产类型,名称,资产编号,使用部门,部门代码,管理者,条码类型,资产状态,在库状态,PC管理号,启用日期,原值,帐面净值,型号,PSDCD_借还情况,PSDCD_带出理由,带出地点,PSDCD_责任人,联系电话,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_实际归还日,备注,资产说明,存放地点".split(",");
-            String[] jieruzichan = "资产类型,名称,资产编号,使用部门,部门代码,管理者,条码类型,型号,借出单位,借出单位联系人,联系电话,借用合同,借用合同编号,借用开始日,PSDCD_预计归还日,PSDCD_实际归还日,资产说明,备注,备注1,存放地点".split(",");
+            String[] gudingzichan = "资产类型,名称,资产编号,使用部门,部门代码,管理者,条码类型,资产状态,在库状态,PC管理号,存放地点,启用日期,原值,帐面净值,型号,PSDCD_借还情况,PSDCD_带出理由,带出地点,PSDCD_责任人,联系电话,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_实际归还日,备注,资产说明".split(",");
+            String[] jieruzichan = "资产类型,名称,资产编号,使用部门,部门代码,管理者,条码类型,型号,借出单位,借出单位联系人,联系电话,借用合同,借用合同编号,借用开始日,PSDCD_预计归还日,PSDCD_实际归还日,资产说明,备注,备注1".split(",");
             //String[] gudingzichan = "名称,资产类型,资产编号,资产状态,管理者,使用部门,部门代码,条码类型,启用日期,在库状态,购入时间,价格,帐面净值,型号,PC管理号,PSDCD_借还情况,PSDCD_带出理由,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_是否逾期,PSDCD_对方单位,PSDCD_责任人,PSDCD_归还确认,备注".split(",");
-            String[] duiwaizichan = "名称,资产类型,资产编号,姓名,条码类型,资产状态,在库状态,通関資料管理番号,型号,原值,HS编码,輸入日付,延期返却期限,备注,客户,管理番号,機材名称,INVOICEと一致性,设备写真あるか,輸出部門担当者,実施日,動作状況,現場担当者,実施日,備考,動作状況,現場実施者,実施日,INVOICEとの一致性,入荷写真との一致性,梱包状況,現場担当者,輸出部門担当者,実施日,最終確認,現場TL,輸出部門TL,実施日,備考,部门,存放地点".split(",");
+            String[] duiwaizichan = "名称,资产类型,资产编号,姓名,条码类型,资产状态,在库状态,通関資料管理番号,型号,原值,HS编码,輸入日付,延期返却期限,备注,客户,管理番号,機材名称,INVOICEと一致性,设备写真あるか,輸出部門担当者,実施日,動作状況,現場担当者,実施日,備考,動作状況,現場実施者,実施日,INVOICEとの一致性,入荷写真との一致性,梱包状況,現場担当者,輸出部門担当者,実施日,最終確認,現場TL,輸出部門TL,実施日,備考,部门".split(",");
             List<Object> header = list.get(0);
             int typeLength = header.size();
             if (typeLength == gudingzichan.length) {
@@ -396,8 +396,8 @@ public class AssetsServiceImpl implements AssetsService {
                     //启用日期,在库状态,购入时间,价格,帐面净值,型号,PC管理号,PSDCD_借还情况,PSDCD_带出理由,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_是否逾期,PSDCD_对方单位,PSDCD_责任人,PSDCD_归还确认,备注
                     //String[] gudingCols = "activitiondate,stockstatus,purchasetime,price,realprice,model,pcno,psdcddebitsituation,psdcdbringoutreason,psdcdperiod,psdcdreturndate,psdcdisoverdue,psdcdcounterparty,psdcdresponsible,psdcdreturnconfirmation,remarks".split(",");
 
-                    //启用日期,原值,帐面净值,型号,PSDCD_借还情况,PSDCD_带出理由,带出地点,PSDCD_责任人,联系电话,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_实际归还日,备注,资产说明
-                    String[] gudingCols = "pcno,activitiondate,price,realprice,model,psdcddebitsituation,psdcdbringoutreason,address,psdcdresponsible,psdcdphone,psdcdperiod,psdcdreturndate,psdcdshijidate,remarks,remarks1,storagelocation".split(",");
+                    //启用日期,存放地点,原值,帐面净值,型号,PSDCD_借还情况,PSDCD_带出理由,带出地点,PSDCD_责任人,联系电话,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_实际归还日,备注,资产说明
+                    String[] gudingCols = "pcno,storagelocation,activitiondate,price,realprice,model,psdcddebitsituation,psdcdbringoutreason,address,psdcdresponsible,psdcdphone,psdcdperiod,psdcdreturndate,psdcdshijidate,remarks,remarks1".split(",");
                     //add_fjl_0911  添加条码类型 必填 添加启用日期
                     int start = 9;
                     setOrderedValues(start, assets, gudingCols, value);
@@ -481,8 +481,8 @@ public class AssetsServiceImpl implements AssetsService {
                         continue;
                     }
 
-                    //型号,借出单位,借出单位联系人,联系电话,借用合同,借用合同编号,借用开始日,预定返还日,实际返还日,资产说明，备注,备注1,
-                    String[] gudingCols = "model,address,psdcdresponsible,psdcdphone,loancontract,loancontractno,activitiondate,psdcdreturndate,psdcdshijidate,remarks1,remarks,remarks2,storagelocation".split(","); //0605--与客户确认字段
+                    //型号,借出单位,借出单位联系人,联系电话,借用合同,借用合同编号,借用开始日,预定返还日,实际返还日,资产说明，备注,备注1
+                    String[] gudingCols = "model,address,psdcdresponsible,psdcdphone,loancontract,loancontractno,activitiondate,psdcdreturndate,psdcdshijidate,remarks1,remarks,remarks2".split(","); //0605--与客户确认字段
                     int start = 7;
                     setOrderedValues(start, assets, gudingCols, value);
 //                    }
@@ -648,11 +648,11 @@ public class AssetsServiceImpl implements AssetsService {
                      * (17列 - 24列)： INVOICEと一致性, 設備写真あるか, 輸出部門担当者,実施日, 动作状况, 現場担当者, 実施日，備考
                      * ------- 以下列用for循环添加 ----------（outparams1..14）
                      * （25列 - 33列）動作状況	,現場実施者,実施日,INVOICEとの一致性，入荷写真との一致性，梱包状況，現場担当者，輸出部門担当者，実施日
-                     * （34列 - 39列）最終確認，現場TL，輸出部門TL，実施日，備考，部门,存放地点
+                     * （34列 - 39列）最終確認，現場TL，輸出部門TL，実施日，備考，部门
                      *
                      */
                     String[] qitaCols = ("pcno,model,price,no,purchasetime,activitiondate,remarks,customer,controlno,machinename," +//(7-16)
-                            "inparams1,inparams2,inparams3,inparams4,inparams5,inparams6,inparams7,inparams8,storagelocation") //17- 24
+                            "inparams1,inparams2,inparams3,inparams4,inparams5,inparams6,inparams7,inparams8") //17- 24
                             .split(",");
                     List<String> qitaList = new ArrayList<String>(Arrays.asList(qitaCols));
                     for (int i = 1; i <= 14; i++) {
