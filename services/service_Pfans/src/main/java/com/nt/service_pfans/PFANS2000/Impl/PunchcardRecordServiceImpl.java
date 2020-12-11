@@ -819,6 +819,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             //ccm add 1020 短病假变长病假
 
                             // if有打卡记录  else 没有打卡记录
+                            if(punchcardRecordlist.size()>1)
+                            {
+                                punchcardRecordlist = punchcardRecordlist.stream().filter(item -> (item.getTenantid() == null)).collect(Collectors.toList());
+                            }
                             if (punchcardRecordlist.size() > 0) {
                                 for (PunchcardRecord PR : punchcardRecordlist) {
                                     String time_start = sdf.format(PR.getTime_start());
@@ -2371,6 +2375,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             //ccm add 1020 短病假变长病假
 
                             // if有打卡记录  else 没有打卡记录
+                            if(punchcardRecordlist.size()>1)
+                            {
+                                punchcardRecordlist = punchcardRecordlist.stream().filter(item -> (item.getTenantid() == null)).collect(Collectors.toList());
+                            }
                             if (punchcardRecordlist.size() > 0) {
                                 for (PunchcardRecord PR : punchcardRecordlist) {
                                     String time_start = sdf.format(PR.getTime_start());
