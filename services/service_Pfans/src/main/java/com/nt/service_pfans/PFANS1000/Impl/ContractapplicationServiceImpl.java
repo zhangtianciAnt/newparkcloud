@@ -10,6 +10,7 @@ import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Pfans.PFANS4000.Seal;
+import com.nt.dao_Pfans.PFANS5000.ProjectContract;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_Auth.RoleService;
@@ -32,6 +33,7 @@ import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
 import com.nt.service_pfans.PFANS4000.mapper.SealMapper;
+import com.nt.service_pfans.PFANS5000.mapper.ProjectContractMapper;
 import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
@@ -62,6 +64,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private ContractnumbercountMapper contractnumbercountMapper;
     @Autowired
     private ContractcompoundMapper contractcompoundMapper;
+    @Autowired
+    private ProjectContractMapper projectContractMapper;
     @Autowired
     private QuotationMapper quotationMapper;
     @Autowired
@@ -101,12 +105,36 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         //契约番号申请
         List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
         vo.setContractapplication(coList);
+
         //契约番号回数
         Contractnumbercount number = new Contractnumbercount();
         number.setContractnumber(contractapplication.getContractnumber());
         List<Contractnumbercount> numberList = contractnumbercountMapper.select(number);
+
         if (numberList != null && numberList.size() > 1) {
             numberList = numberList.stream().sorted(Comparator.comparing(Contractnumbercount::getRowindex)).collect(Collectors.toList());
+
+            //add ccm 1204 纳品回数可变的对应
+            //检索是否做成书类
+            Award a =new Award();
+            a.setContractnumber(contractapplication.getContractnumber());
+            a.setMaketype("4");
+            List<Award> awardL = AwardMapper.select(a);
+            //决裁书
+            if(awardL!=null)
+            {
+                for(Award al :awardL)
+                {
+                    if(al.getStatus().equals("2") || al.getStatus().equals("4"))
+                    {
+                        for(Contractnumbercount c : numberList)
+                        {
+                            c.setBookStatus(true);
+                        }
+                    }
+                }
+            }
+            //add ccm 1204 纳品回数可变的对应
         }
         vo.setContractnumbercount(numberList);
         //契约番号回数
@@ -170,6 +198,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     strBuffer.deleteCharAt(strBuffer.length() - 1);
                 }
                 citation.setQingremarks(String.valueOf(strBuffer));
+                citation.setClaimtype(String.valueOf(numberList.size()));
                 if (!StringUtils.isNullOrEmpty(citation.getContractapplication_id())) {
                     citation.preUpdate(tokenModel);
                     contractapplicationMapper.updateByPrimaryKeySelective(citation);
@@ -192,6 +221,26 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 if (!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())) {
                     number.preUpdate(tokenModel);
                     contractnumbercountMapper.updateByPrimaryKeySelective(number);
+
+                    //add ccm 1205
+                    List<ProjectContract> pjList = new ArrayList<>();
+                    ProjectContract pj = new ProjectContract();
+                    pj.setContractnumbercount_id(number.getContractnumbercount_id());
+                    pjList = projectContractMapper.select(pj);
+                    if(pjList.size()>0)
+                    {
+                        for(ProjectContract p : pjList)
+                        {
+                            p.setClaimtype(number.getClaimtype());
+                            p.preUpdate(tokenModel);
+                            p.setWorkinghours(number.getClaimdatetimeqh());
+                            p.setContractrequestamount(number.getClaimamount());
+                            projectContractMapper.updateByPrimaryKey(p);
+                        }
+                    }
+                    //add ccm 1205
+
+
                     //add_fjl_添加合同回款相关  start
                     int todoNumber = 0;
                     //资金回收完成给申请人发代办
@@ -220,6 +269,34 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     number.preInsert(tokenModel);
                     number.setContractnumbercount_id(UUID.randomUUID().toString());
                     contractnumbercountMapper.insert(number);
+
+                    //add ccm 1205
+                    //合同是否有使用
+                    //有 if
+                    List<String> proList = contractapplicationMapper.selectPJ(number.getContractnumber());
+                    if(proList.size()>0)
+                    {
+                        for(String  comid : proList)
+                        {
+                            ProjectContract pjc = new ProjectContract();
+                            pjc.setContract(number.getContractnumber());
+                            pjc.setCompanyprojects_id(comid);
+                            List<ProjectContract> pcList = projectContractMapper.select(pjc);
+                            if(pcList.size()>0)
+                            {
+                                pcList.get(0).setProjectcontract_id(UUID.randomUUID().toString());
+                                pcList.get(0).setContractnumbercount_id(number.getContractnumbercount_id());
+                                pcList.get(0).setWorkinghours(number.getClaimdatetimeqh());
+                                pcList.get(0).setRowindex(pcList.size()+1);
+                                pcList.get(0).preInsert(tokenModel);
+                                pcList.get(0).setContractrequestamount(number.getClaimamount());
+                                pcList.get(0).setContractamount("0");
+                                pcList.get(0).setDeliveryfinshdate(number.getDeliveryfinshdate());
+                                projectContractMapper.insert(pcList.get(0));
+                            }
+                        }
+                    }
+                    //add ccm 1205
                 }
             }
         }
@@ -467,22 +544,36 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //納品書作成
                 else if (rowindex.equals("5")) {
-                    Napalm napalm2 = new Napalm();
-                    napalm2.setContractnumber(contractnumber);
-                    List<Napalm> napalmList = napalmMapper.select(napalm2);
-                    if (napalmList.size() > 0) {
-                        for (Napalm pe : napalmList) {
-                            if (!StringUtils.isNullOrEmpty(pe.getSealstatus())) {
-                                throw new LogicalException("纳品书正在印章中，不可更新！");
+                    List<String> numcountList = Arrays.asList(countNumber.split(","));
+                    String numcount[] = countNumber.split(",");
+                    int flg = 0;
+                    for (String count : numcountList) {
+                        Napalm napalmAnt = new Napalm();
+                        napalmAnt.setClaimnumber(count);
+                        List<Napalm> napalmList = napalmMapper.select(napalmAnt);
+                        if (napalmList.size() > 0) {
+                            for (Napalm pe : napalmList) {
+                                if (!StringUtils.isNullOrEmpty(pe.getSealstatus())) {
+                                    flg++;
+                                }
                             }
                         }
                     }
-//                    napalm2.setOwner(tokenModel.getUserId());
-                    napalmMapper.delete(napalm2);
+                    if (flg != 0) {
+                        throw new LogicalException("纳品书正在印章中，不可更新！");
+                    }
                     // add_fjl_0604 --添加请求书和纳品书的选择生成 start
-                    String numcount[] = countNumber.split(",");
+
                     if (numcount.length > 0) {
                         for (int i = 0; i < numcount.length; i++) {
+                            Napalm nap = new Napalm();
+                            nap.setClaimnumber(numcount[i]);
+                            List<Napalm> napalmlist = napalmMapper.select(nap);
+                            if (napalmlist.size() > 0) {
+                                Napalm napalm2 = new Napalm();
+                                napalm2.setClaimnumber(numcount[i]);
+                                napalmMapper.delete(napalm2);
+                            }
                             contractnumbercount = new Contractnumbercount();
                             contractnumbercount.setClaimnumber(numcount[i]);
                             List<Contractnumbercount> countLi = contractnumbercountMapper.select(contractnumbercount);
@@ -551,22 +642,35 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //請求書作成
                 else if (rowindex.equals("6")) {
-                    Petition petition2 = new Petition();
-                    petition2.setContractnumber(contractnumber);
-                    List<Petition> petitionList = PetitionMapper.select(petition2);
-                    if (petitionList.size() > 0) {
-                        for (Petition pe : petitionList) {
-                            if (!StringUtils.isNullOrEmpty(pe.getSealstatus())) {
-                                throw new LogicalException("请求书正在印章中，不可更新！");
+                    List<String> numcountList = Arrays.asList(countNumber.split(","));
+                    int flg = 0;
+                    for (String count : numcountList) {
+                        Petition petitionAnt = new Petition();
+                        petitionAnt.setClaimnumber(count);
+                        List<Petition> petitionList = PetitionMapper.select(petitionAnt);
+                        if (petitionList.size() > 0) {
+                            for (Petition pe : petitionList) {
+                                if (!StringUtils.isNullOrEmpty(pe.getSealstatus())) {
+                                    flg++;
+                                }
                             }
                         }
                     }
-//                    petition2.setOwner(tokenModel.getUserId());
-                    PetitionMapper.delete(petition2);
+                    if (flg != 0) {
+                        throw new LogicalException("请求书正在印章中，不可更新！");
+                    }
                     // add_fjl_0604 --添加请求书和纳品书的选择生成 start
                     String numcount[] = countNumber.split(",");
                     if (numcount.length > 0) {
                         for (int i = 0; i < numcount.length; i++) {
+                            Petition pet = new Petition();
+                            pet.setClaimnumber(numcount[i]);
+                            List<Petition> petitionlist = PetitionMapper.select(pet);
+                            if (petitionlist.size() > 0) {
+                                Petition petition2 = new Petition();
+                                petition2.setClaimnumber(numcount[i]);
+                                PetitionMapper.delete(petition2);
+                            }
                             contractnumbercount = new Contractnumbercount();
                             contractnumbercount.setClaimnumber(numcount[i]);
                             List<Contractnumbercount> countLi = contractnumbercountMapper.select(contractnumbercount);
@@ -944,6 +1048,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         strBuffer.deleteCharAt(strBuffer.length() - 1);
                     }
                     citation.setQingremarks(String.valueOf(strBuffer));
+                    citation.setClaimtype(String.valueOf(numberList.size()));
                     contractapplicationMapper.updateByPrimaryKeySelective(citation);
                 } else {
                     for (Contractnumbercount contractRemarks : numberList) {
@@ -1050,6 +1155,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         }
                         citation.setContractnumber(newcontractnumber);
                     }
+                    citation.setClaimtype(String.valueOf(numberList.size()));
                     contractapplicationMapper.insert(citation);
                 }
             }
@@ -1067,11 +1173,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     number.preUpdate(tokenModel);
                     number.setContractnumber(cnList.get(0).getContractnumber());
                     contractnumbercountMapper.updateByPrimaryKeySelective(number);
+
                 } else {
                     number.preInsert(tokenModel);
                     number.setContractnumber(cnList.get(0).getContractnumber());
                     number.setContractnumbercount_id(UUID.randomUUID().toString());
                     contractnumbercountMapper.insert(number);
+
                     //add_fjl_添加合同回款相关  start
                     if (contractapplication.getContractapplication().get(0).getType().equals("1")) {
                         if (number.getClaimdate() != null && Integer.parseInt(stt.format(number.getClaimdate())) <= Integer.parseInt(stt.format(new Date()))) {
@@ -1151,13 +1259,17 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     @Override
     public ExistVo existN(List<String> NapinList) throws Exception {
         ExistVo existVo = new ExistVo();
-        existVo = contractapplicationMapper.existN(NapinList);
+        if(NapinList!=null && NapinList.size()>0) {
+            existVo = contractapplicationMapper.existN(NapinList);
+        }
         return existVo;
     }
     @Override
     public ExistVo existQ(List<String> QingqiuList) throws Exception {
         ExistVo existVo = new ExistVo();
-        existVo = contractapplicationMapper.existQ(QingqiuList);
+        if(QingqiuList!=null && QingqiuList.size()>0) {
+            existVo = contractapplicationMapper.existQ(QingqiuList);
+        }
         return existVo;
     }
     //add ccm 0725  采购合同chongfucheck
@@ -1243,4 +1355,48 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         return getpurchaseMap;
     }
 
+    @Override
+    public boolean getNapinQinqiu(Contractnumbercount contractnumbercount) throws Exception
+    {
+        boolean result = false;
+        //纳品书
+        Napalm napalm = new Napalm();
+        napalm.setContractnumber(contractnumbercount.getContractnumber());
+        napalm.setStatus("0");
+        napalm.setClaimnumber(contractnumbercount.getClaimnumber());
+        List<Napalm> napalmList = napalmMapper.select(napalm);
+        if(napalmList.size()>0)
+        {
+            if(napalmList.get(0).getSealid()!="" && napalmList.get(0).getSealid()!=null)
+            {
+                result = true;
+            }
+        }
+        if(!result)
+        {
+            //请求书
+            Petition petition = new Petition();
+            petition.setContractnumber(contractnumbercount.getContractnumber());
+            petition.setStatus("0");
+            petition.setClaimnumber(contractnumbercount.getClaimnumber());
+            List<Petition> petitionList = PetitionMapper.select(petition);
+            if(petitionList.size()>0)
+            {
+                if(petitionList.get(0).getSealid()!="" && petitionList.get(0).getSealid()!=null)
+                {
+                    result = true;
+                }
+            }
+        }
+        //如果已经有项目在使用，不可以删除。
+        List<ProjectContract> pjList = new ArrayList<>();
+        ProjectContract pj = new ProjectContract();
+        pj.setContractnumbercount_id(contractnumbercount.getContractnumbercount_id());
+        pjList = projectContractMapper.select(pj);
+        if(pjList.size()>0)
+        {
+            result = true;
+        }
+        return result;
+    }
 }

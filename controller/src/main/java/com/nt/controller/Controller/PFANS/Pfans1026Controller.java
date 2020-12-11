@@ -204,4 +204,13 @@ public class Pfans1026Controller {
     }
     //采购业务数据流程查看详情
 
+    @RequestMapping(value="/getNapinQinqiu",method = {RequestMethod.POST})
+    public ApiResult getNapinQinqiu(@RequestBody Contractnumbercount contractnumbercount, HttpServletRequest request) throws Exception{
+        if (contractnumbercount == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(contractapplicationService.getNapinQinqiu(contractnumbercount));
+    }
+
 }

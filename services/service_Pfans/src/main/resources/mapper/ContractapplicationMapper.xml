@@ -74,4 +74,11 @@
             and cc.purnumbers = #{purnumbers}
         </if>
     </select>
+
+    <select id="selectPJ" resultType="java.lang.String">
+        select p.COMPANYPROJECTS_ID
+        from projectcontract p
+        where p.contract =#{contractnumber}
+        group by p.COMPANYPROJECTS_ID
+    </select>
 </mapper>

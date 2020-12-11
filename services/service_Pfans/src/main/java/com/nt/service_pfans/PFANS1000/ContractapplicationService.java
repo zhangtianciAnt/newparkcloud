@@ -35,4 +35,6 @@ public interface ContractapplicationService {
     //add ccm 0725  采购合同chongfucheck
 
     Map<String, String> getworkfolwPurchaseData(Award award) throws Exception;
+
+    boolean getNapinQinqiu(Contractnumbercount contractnumbercount) throws Exception;
 }

@@ -164,4 +164,8 @@ public class Contractnumbercount extends BaseModel {
     @Column(name = "PURNUMBERS")
     private String purnumbers;
 
+    //书类做成状态，受托合同纳品回数的修改使用
+    @Column(name = "BOOKSTATUS")
+    private Boolean bookStatus;
+
 }

@@ -23,4 +23,6 @@ public interface ContractapplicationMapper extends MyMapper<Contractapplication>
     //add ccm 0725  采购合同chongfucheck
     public List<Contractnumbercount> purchaseExistCheck(@Param("purnumbers") String purnumbers);
     //add ccm 0725  采购合同chongfucheck
+
+    public List<String> selectPJ(@Param("contractnumber") String contractnumber);
 }
