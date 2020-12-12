@@ -113,29 +113,29 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
         if (numberList != null && numberList.size() > 1) {
             numberList = numberList.stream().sorted(Comparator.comparing(Contractnumbercount::getRowindex)).collect(Collectors.toList());
+        }
 
-            //add ccm 1204 纳品回数可变的对应
-            //检索是否做成书类
-            Award a =new Award();
-            a.setContractnumber(contractapplication.getContractnumber());
-            a.setMaketype("4");
-            List<Award> awardL = AwardMapper.select(a);
-            //决裁书
-            if(awardL!=null)
+        //add ccm 1204 纳品回数可变的对应
+        //检索是否做成书类
+        Award a =new Award();
+        a.setContractnumber(contractapplication.getContractnumber());
+        a.setMaketype("4");
+        List<Award> awardL = AwardMapper.select(a);
+        //决裁书
+        if(awardL!=null)
+        {
+            for(Award al :awardL)
             {
-                for(Award al :awardL)
+                if(al.getStatus().equals("2") || al.getStatus().equals("4"))
                 {
-                    if(al.getStatus().equals("2") || al.getStatus().equals("4"))
+                    for(Contractnumbercount c : numberList)
                     {
-                        for(Contractnumbercount c : numberList)
-                        {
-                            c.setBookStatus(true);
-                        }
+                        c.setBookStatus(true);
                     }
                 }
             }
-            //add ccm 1204 纳品回数可变的对应
         }
+        //add ccm 1204 纳品回数可变的对应
         vo.setContractnumbercount(numberList);
         //契约番号回数
         Contractcompound compound = new Contractcompound();
