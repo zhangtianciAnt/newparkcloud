@@ -14,4 +14,6 @@ public interface PersonalCostMapper extends MyMapper<PersonalCost>{
     List<PersonalCost> selectPersonalCostResult(@Param("list") List<CustomerInfo> customerInfoList,@Param("yearsantid") String yearsantid);
 
     void updatePersonalCost(@Param("uplist") List<PersonalCost> personalCostList, @Param("tokenModel") TokenModel tokenModel);
+
+    List<String> selectBirthUserid(@Param("year") String year);
 }

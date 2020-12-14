@@ -27,5 +27,12 @@
             WHERE personalcostid = #{item.personalcostid}
         </foreach>
     </update>
+    <select id="selectBirthUserid" resultType="java.lang.String">
+        select user_id from abnormal
+        where ERROR_TYPE = 'PR013012'
+        and (status = '4' or status = '7' )
+        and APPLICATION_DATE
+        like CONCAT('%',#{year},'%')
+    </select>
 </mapper>
 

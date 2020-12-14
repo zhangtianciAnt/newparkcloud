@@ -714,4 +714,24 @@
         where giving_id = #{givingId}
     </select>
 
+    <select id="getComtotalwages" resultType="java.lang.String">
+        select COMTOTALWAGES
+        from wages
+        where  CREATEONYM like CONCAT('%',#{createonym},'%')
+        <if test="userid != ''" >
+            and  USER_ID =  #{userid}
+        </if>
+        and COMTOTALWAGES is not null
+    </select>
+
+    <select id="getTotal" resultType="java.lang.String">
+        select TOTAL3
+        from wages
+        where  CREATEONYM like CONCAT('%',#{createonym},'%')
+        <if test="userid != ''" >
+            and  USER_ID =  #{userid}
+        </if>
+        and TOTAL3 is not null
+    </select>
+
 </mapper>

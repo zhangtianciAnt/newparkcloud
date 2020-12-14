@@ -22,4 +22,10 @@ public interface WagesMapper extends MyMapper<Wages> {
     List<Wages> getWagesdepartment(@Param("dates") String dates);
 
     List<Wages> getWagecompany();
+
+    //人件费计算社保基数---一整年的工资总额与小计3（采暖费与独生子女费）
+    List<String> getComtotalwages(@Param("userid") String userid, @Param("createonym") String createonym);
+
+    //人件费计算社保基数---一整年的工资总额与小计3（采暖费与独生子女费）
+    List<String> getTotal(@Param("userid") String userid, @Param("createonym") String createonym);
 }
