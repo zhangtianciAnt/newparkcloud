@@ -21,4 +21,7 @@ public interface PricesetMapper extends MyMapper<Priceset> {
     @Select("SELECT EXPATRIATESINFOR_ID FROM expatriatesinfor WHERE EXITS = '1' AND GROUP_ID = #{groupid} AND EXPATRIATESINFOR_ID NOT IN ( SELECT p.user_id FROM priceset p WHERE PRICESETGROUP_ID = ( SELECT PRICESETGROUP_ID FROM pricesetgroup WHERE Pd_date = #{Pd_date} ) and GROUP_ID = #{groupid} )")
     List<String> selectBpeople(@Param("Pd_date") String Pd_date,@Param("groupid") String groupid);
 
+    //add ccm 20201212
+    List<Priceset> selectBymonth(@Param("lastmonthAntStr") String lastmonthAntStr, @Param("nowmonthAntStr") String nowmonthAntStr);
+    //add ccm 20201212
 }

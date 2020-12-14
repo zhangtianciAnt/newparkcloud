@@ -8,6 +8,7 @@ import com.nt.service_Auth.AuthService;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS6000.DeleginformationService;
+import com.nt.service_pfans.PFANS6000.PricesetService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -47,6 +48,9 @@ public class AuthController {
 
     @Autowired
     private DeleginformationService deleginformationService;
+
+    @Autowired
+    private PricesetService pricesetService;
 
     /**
      * @方法名：getActionsAuth
@@ -158,4 +162,12 @@ public class AuthController {
         deleginformationService.saveDelegaTask();
         return ApiResult.success();
     }
+
+    //add ccm 20201212  外驻单价自动保存
+    @RequestMapping(value = "/savePriceset",method={RequestMethod.GET})
+    public ApiResult savePriceset(HttpServletRequest request) throws Exception {
+        pricesetService.savePriceset();
+        return ApiResult.success();
+    }
+    //add ccm 20201212
 }

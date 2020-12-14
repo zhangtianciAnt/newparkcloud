@@ -326,7 +326,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                     mongoTemplate.save(userAcount);
                 }
             }
-        } else {
+        }
+        else {
             UserAccount userAccount = new UserAccount();
             userAccount.setAccount(expatriatesinfor.getAccountname());
             userAccount.setPassword(expatriatesinfor.getAccountname());
@@ -359,6 +360,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             expatriatesinfor.setGroup_id(expatriatesinfor.getInterviewdep());
         }
 
+        //add ccm 20201212
         //部门转移,上个月单价复制到新部门 ztc 1118 start
         //取上个月 lastmonthAntStr
         String thisDate = DateUtil.format(new Date(), "yyyy-MM-dd");
@@ -376,10 +378,14 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         //外驻人员旧数据
         Expatriatesinfor expatriatesOld = expatriatesinforMapper.selectByPrimaryKey(expatriatesinfor.getExpatriatesinfor_id());
 
-        //判断条件：1.部门不同（必要条件）2.在职外驻。3.入场月份不是当月（入场月份是当月必定没上月单价）
+
+        //if判断条件：1.部门不同（必要条件）2.在职外驻。
+        // //3.入场月份不是当月（入场月份是当月必定没上月单价）
         if (!expatriatesinfor.getGroup_id().equals(expatriatesOld.getGroup_id())
                 && expatriatesinfor.getExits().equals("1")
-                && !admissiontime.equals(nowmonthAntStr)) {
+//                && !admissiontime.equals(nowmonthAntStr)
+            )
+        {
             //查询上月PricesetGroup主键 pricesetgroupid
             PricesetGroup pricesetGroup = new PricesetGroup();
             pricesetGroup.setPd_date(lastmonthAntStr);
@@ -413,7 +419,104 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             priceset1.setGroup_id(expatriatesinfor.getGroup_id());
             List<Priceset> pricesetListNew = pricesetMapper.select(priceset1);
 
+            //查询新部门本月员工设定的单价 pricesetListNewing
+            Priceset pricesetnewing = new Priceset();
+            pricesetnewing.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
+            pricesetnewing.setPricesetgroup_id(pricesetgroupidnew);
+            pricesetnewing.setGroup_id(expatriatesinfor.getGroup_id());
+            List<Priceset> pricesetListNewing = pricesetMapper.select(pricesetnewing);
+
+            //当月新部门单价不存在
             Priceset pricesetnew = new Priceset();
+            if(pricesetListNewing.size()==0)
+            {
+                //当月旧部门单价不存在
+                if(pricesetListnew2.size()==0)
+                {
+                    //上月新部门单价不存在
+                    if(pricesetListNew.size() == 0)
+                    {
+                        //上月旧部门单价不存在
+                        if(pricesetListOld.size() == 0)
+                        {
+                            pricesetnew.preInsert(tokenModel);
+                            pricesetnew.setPriceset_id(UUID.randomUUID().toString());
+                            pricesetnew.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
+                            //当月新部门
+                            pricesetnew.setGroup_id(expatriatesinfor.getGroup_id());
+                            pricesetnew.setGraduation(expatriatesinfor.getGraduation_year());
+                            pricesetnew.setCompany(expatriatesinfor.getSuppliername());
+                            pricesetnew.setAssesstime(thisDate);
+                            pricesetnew.setUsername(expatriatesinfor.getExpname());
+                            pricesetnew.setPricesetgroup_id(pricesetgroupidnew);
+                            pricesetnew.setStatus("0");
+                            pricesetMapper.insert(pricesetnew);
+
+                            //当月旧部门
+                            pricesetnew.setPriceset_id(UUID.randomUUID().toString());
+                            pricesetnew.setGroup_id(expatriatesOld.getGroup_id());
+                            pricesetMapper.insert(pricesetnew);
+                        }
+                        else
+                        {
+                            pricesetnew = pricesetListOld.get(0);
+                            //新部门
+                            pricesetnew.setGroup_id(expatriatesinfor.getGroup_id());
+                            pricesetnew.setPriceset_id(UUID.randomUUID().toString());
+                            pricesetnew.setPricesetgroup_id(pricesetgroupidnew);
+                            pricesetMapper.insert(pricesetnew);
+                        }
+
+                        pricesetnew.setPriceset_id(UUID.randomUUID().toString());
+                        pricesetnew.setPricesetgroup_id(pricesetgroupid);
+                        pricesetMapper.insert(pricesetnew);
+                    }
+                    else
+                    {
+                        //当月新部门
+                        pricesetnew = pricesetListNew.get(0);
+                        pricesetnew.setPriceset_id(UUID.randomUUID().toString());
+                        pricesetnew.setPricesetgroup_id(pricesetgroupidnew);
+                        pricesetMapper.insert(pricesetnew);
+
+                        pricesetnew = pricesetListNew.get(0);
+                        //旧部门 当月
+                        pricesetnew.setGroup_id(expatriatesOld.getGroup_id());
+                        pricesetnew.setPriceset_id(UUID.randomUUID().toString());
+                        pricesetnew.setPricesetgroup_id(pricesetgroupidnew);
+                        pricesetMapper.insert(pricesetnew);
+                    }
+                }
+                else
+                {
+                    pricesetnew = pricesetListnew2.get(0);
+                    //当月新部门
+                    pricesetnew.setGroup_id(expatriatesinfor.getGroup_id());
+                    pricesetnew.setPriceset_id(UUID.randomUUID().toString());
+                    pricesetnew.setPricesetgroup_id(pricesetgroupidnew);
+                    pricesetMapper.insert(pricesetnew);
+
+                    //上月新部门
+                    if(pricesetListNew.size() == 0)
+                    {
+                        pricesetnew.setPriceset_id(UUID.randomUUID().toString());
+                        pricesetnew.setPricesetgroup_id(pricesetgroupid);
+                        pricesetMapper.insert(pricesetnew);
+                    }
+                }
+            }
+
+            //上月新部门单价不存在创建
+//            if(pricesetListNew.size()==0)
+//            {
+//                pricesetListNewing = pricesetMapper.select(pricesetnewing);
+//                pricesetnew = pricesetListNewing.get(0);
+//                pricesetnew.setPriceset_id(UUID.randomUUID().toString());
+//                pricesetnew.setPricesetgroup_id(pricesetgroupid);
+//                pricesetMapper.insert(pricesetnew);
+//            }
+
+            /*
             if (pricesetListNew.size() == 0) { //新部门上个月单价为0 从旧部门中取
                 if (pricesetListnew2.size() == 0) { //该员工旧部门本月没有单价
                     if (pricesetListOld.size() == 0) { //该员工旧部门上个月没有单价 新建
@@ -444,13 +547,93 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                     pricesetnew.setPricesetgroup_id(pricesetgroupidnew);
                     pricesetMapper.insert(pricesetnew);
                 }
-            } else { //新部门上个月有单价
+            }
+            else { //新部门上个月有单价
                 pricesetnew = pricesetListNew.get(0);
                 pricesetnew.setPriceset_id(UUID.randomUUID().toString());
                 pricesetnew.setPricesetgroup_id(pricesetgroupidnew);
                 pricesetMapper.insert(pricesetnew);
             }
+            */
 
+        }
+        else if(expatriatesinfor.getExits().equals("1"))
+        {
+            PricesetGroup pricesetGroup = new PricesetGroup();
+            //查询当月是否存在
+            pricesetGroup.setPd_date(nowmonthAntStr);
+            List<PricesetGroup> pricesetGroupListafter = pricesetGroupMapper.select(pricesetGroup);
+            //查询上月月是否存在
+            pricesetGroup.setPd_date(lastmonthAntStr);
+            List<PricesetGroup> pricesetGroupListbefore = pricesetGroupMapper.select(pricesetGroup);
+
+            //当月id
+            String pricesetgroupidafter = pricesetGroupListafter.get(0).getPricesetgroup_id();
+            //上月id
+            String pricesetgroupidbefore = pricesetGroupListbefore.get(0).getPricesetgroup_id();
+
+            Priceset priceset = new Priceset();
+            //当月当前部门
+            priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
+            priceset.setPricesetgroup_id(pricesetgroupidafter);
+            priceset.setGroup_id(expatriatesinfor.getGroup_id());
+            List<Priceset> pricesetListafter = pricesetMapper.select(priceset);
+
+            //上月当前部门
+            priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
+            priceset.setPricesetgroup_id(pricesetgroupidbefore);
+            priceset.setGroup_id(expatriatesinfor.getGroup_id());
+            List<Priceset> pricesetListbefore = pricesetMapper.select(priceset);
+
+            //if当月当前部门不存在单价
+            //else当月当前部门存在单价
+            if(pricesetListafter.size()==0)
+            {
+                //if上月当前部门不存在
+                //else上月当前部门存在
+                if(pricesetListbefore.size()==0)
+                {
+                    //当月当前部门
+                    priceset.preInsert(tokenModel);
+                    priceset.setPriceset_id(UUID.randomUUID().toString());
+                    priceset.setUser_id(expatriatesinfor.getExpatriatesinfor_id());
+                    priceset.setGroup_id(expatriatesinfor.getGroup_id());
+                    priceset.setGraduation(expatriatesinfor.getGraduation_year());
+                    priceset.setCompany(expatriatesinfor.getSuppliername());
+                    priceset.setAssesstime(thisDate);
+                    priceset.setUsername(expatriatesinfor.getExpname());
+                    priceset.setPricesetgroup_id(pricesetgroupidafter);
+                    priceset.setStatus("0");
+                    pricesetMapper.insert(priceset);
+
+                    //上月当前部门
+                    priceset.preInsert(tokenModel);
+                    priceset.setPriceset_id(UUID.randomUUID().toString());
+                    priceset.setPricesetgroup_id(pricesetgroupidbefore);
+                    pricesetMapper.insert(priceset);
+                }
+                else
+                {
+                    //当月当前部门
+                    pricesetListbefore.get(0).preInsert(tokenModel);
+                    pricesetListbefore.get(0).setPriceset_id(UUID.randomUUID().toString());
+                    pricesetListbefore.get(0).setPricesetgroup_id(pricesetgroupidafter);
+                    pricesetMapper.insert(pricesetListbefore.get(0));
+                }
+            }
+            else
+            {
+                //if上月当前部门不存在
+                //else上月当前部门存在
+                if(pricesetListbefore.size()==0)
+                {
+                    //上月当前部门
+                    pricesetListafter.get(0).preInsert(tokenModel);
+                    pricesetListafter.get(0).setPriceset_id(UUID.randomUUID().toString());
+                    pricesetListafter.get(0).setPricesetgroup_id(pricesetgroupidbefore);
+                    pricesetMapper.insert(pricesetListafter.get(0));
+                }
+            }
         }
         //部门转移,上个月单价复制到新部门 ztc 1118 end
 
