@@ -80,4 +80,14 @@ priceset.yearunit
             and p.GROUP_ID = #{groupid}
         </if>
     </select>
+
+    <select id="selectBymonth" resultType="com.nt.dao_Pfans.PFANS6000.Priceset">
+        SELECT p.*
+        FROM `priceset` p
+        inner join pricesetgroup  pg
+        on p.PRICESETGROUP_ID = pg.PRICESETGROUP_ID
+        where (pg.PD_DATE  =  date_format( concat( #{lastmonthAntStr}, '-01' ) ,'%Y-%m')
+        or  pg.PD_DATE  =  date_format( concat(  #{nowmonthAntStr}, '-01' ),'%Y-%m'))
+        order by pg.PD_DATE desc
+    </select>
 </mapper>

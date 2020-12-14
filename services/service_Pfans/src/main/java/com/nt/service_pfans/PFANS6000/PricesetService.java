@@ -20,4 +20,7 @@ public interface PricesetService {
     //单价设定修改
     public void updatepriceset(PricesetVo pricesetVo, TokenModel tokenModel) throws Exception;
 
+    //add ccm 20201212
+    public void savePriceset() throws Exception;
+    //add ccm 20201212
 }
