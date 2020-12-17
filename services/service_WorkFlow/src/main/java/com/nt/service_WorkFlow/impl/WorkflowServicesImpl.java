@@ -672,6 +672,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
                                               String workflowname, List<String> userList) throws Exception {
         OutOperationWorkflowVo outOperationWorkflowVo = new OutOperationWorkflowVo();
         Workflowinstance workflowinstance = workflowinstanceMapper.selectByPrimaryKey(instanceId);
+        //禅#656 自动跳过重复审批人员 查询所有审批人 GBB 20201204 start
+        Workflownode workflownode = new Workflownode();
+        workflownode.setWorkflowid(workflowinstance.getWorkflowid());
+        List<Workflownode> Workflownodelist = workflownodeMapper.select(workflownode);
+        Workflownodelist = Workflownodelist.stream().filter(item -> !StringUtils.isNullOrEmpty(item.getItemid())).collect(Collectors.toList());
+        //禅#656 自动跳过重复审批人员 查询所有审批人 GBB 20201204 end
         // 流程进行中
         if ("0".equals(workflowinstance.getStatus())) {
             // 查找流程节点实例
@@ -1092,6 +1098,53 @@ public class WorkflowServicesImpl implements WorkflowServices {
                         if (StrUtil.isEmpty(user)) {
                             continue;
                         }
+
+                        //禅#656 自动跳过重复审批人员 GBB 20201204 end
+                        String StrUserid = user;
+                        List<Workflownode> list = Workflownodelist.stream().filter(Sitem -> (Sitem.getItemid().equals(StrUserid))).collect(Collectors.toList());
+                        if(list.size() > 0){
+                            Workflowstep workflowstep = new Workflowstep();
+                            workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
+                            workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
+                            workflowstep.setName(item.getNodename());
+                            workflowstep.setItemid(StrUserid);
+                            workflowstep.setResult("0");
+                            workflowstep.setRemark("系统自动跳过");
+                            workflowstep.setModifyby(StrUserid);
+                            workflowstep.setModifyon(new Date());
+                            workflowstep.preInsert(tokenModel);
+
+                            workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                            workflowstepMapper.insert(workflowstep);
+
+                            // 如果节点为最后一个节点时，结束流程
+                            if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
+                                workflowinstance.setModifyby(tokenModel.getUserId());
+                                workflowinstance.setModifyon(new Date());
+                                workflowinstance.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
+                                outOperationWorkflowVo.setState("2");
+                                outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+
+                                ToDoNotice toDoNotice = new ToDoNotice();
+                                List<String> params = new ArrayList<String>();
+                                params.add(workflowname);
+                                toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_11, params, tokenModel.getLocale()));
+                                toDoNotice.setInitiator(workflowinstance.getOwner());
+                                toDoNotice.setContent(item.getNodename());
+                                toDoNotice.setDataid(dataId);
+                                toDoNotice.setUrl(url);
+                                toDoNotice.setWorkflowurl(workFlowurl);
+                                toDoNotice.preInsert(tokenModel);
+                                toDoNotice.setOwner(workflowinstance.getOwner());
+                                toDoNoticeService.save(toDoNotice);
+
+                                return outOperationWorkflowVo;
+                            }
+                            continue;
+                        }
+                        //禅#656 自动跳过重复审批人员 GBB 20201204 end
+
                         // 创建节点
                         Workflowstep workflowstep = new Workflowstep();
                         workflowstep.setWorkflowstepid(UUID.randomUUID().toString());

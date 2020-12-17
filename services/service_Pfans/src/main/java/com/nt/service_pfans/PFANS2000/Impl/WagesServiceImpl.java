@@ -297,7 +297,7 @@ public class WagesServiceImpl implements WagesService {
             wagesMapper.delete(del_wage);
             for (Wages wage : wages) {
                 wage.setWages_id(UUID.randomUUID().toString());
-                wage.setCreateonym(DateUtil.format(new Date(), "YYYY-MM"));
+                wage.setCreateonym(DateUtil.format(new Date(), "yyyy-MM"));
                 wage.setActual(actual);
                 List<CustomerInfo> customerinfo = customerInfoList.stream().filter(coi -> (coi.getUserid().contains(wage.getUser_id()))).collect(Collectors.toList());
                 if(customerinfo.size() > 0){

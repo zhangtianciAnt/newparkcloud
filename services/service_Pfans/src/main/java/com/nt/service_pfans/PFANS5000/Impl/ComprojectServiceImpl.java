@@ -220,7 +220,7 @@ public class ComprojectServiceImpl implements ComprojectService {
     @Override
     public void insert(CompanyProjectsVo companyProjectsVo, TokenModel tokenModel) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String thisYear_s = String.valueOf(Integer.parseInt(DateUtil.format(new Date(), "YYYY")) - 1);
+        String thisYear_s = String.valueOf(Integer.parseInt(DateUtil.format(new Date(), "yyyy")) - 1);
         String initial_s_01 = "0401";
         int thatYear_i = Integer.parseInt(thisYear_s) + 1;
         String thatYear_s = String.valueOf(thatYear_i);

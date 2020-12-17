@@ -39,7 +39,7 @@ public class Pfans1045Controller {
     @RequestMapping(value = "/get", method = {RequestMethod.POST})
     public ApiResult getPolicyContract(@RequestBody PolicyContract policycontract, HttpServletRequest request) throws Exception {
         SimpleDateFormat sf = new SimpleDateFormat("MM");
-        SimpleDateFormat sf1 = new SimpleDateFormat("YYYY");
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
         String cycle =  policycontract.getInformation().substring(5, 7);
         PolicyContract policy = new PolicyContract();
@@ -133,7 +133,7 @@ public class Pfans1045Controller {
         if (policycontract == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        SimpleDateFormat sf1 = new SimpleDateFormat("YYYY");
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
         PolicyContract policy = new PolicyContract();
         String cycle = policycontract.getCycle();
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());

@@ -212,7 +212,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 attendance.setCenter_id(punchcard.getCenter_id());
                 attendance.setGroup_id(punchcard.getGroup_id());
                 attendance.setTeam_id(punchcard.getTeam_id());
-                attendance.setYears(DateUtil.format(punchcard.getPunchcardrecord_date(), "YYYY").toString());
+                attendance.setYears(DateUtil.format(punchcard.getPunchcardrecord_date(), "yyyy").toString());
                 attendance.setMonths(DateUtil.format(punchcard.getPunchcardrecord_date(), "MM").toString());
                 attendance.setAttendanceid(UUID.randomUUID().toString());
                 attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
@@ -239,7 +239,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     calendar.setTime(new Date());
                     calendar.add(Calendar.DAY_OF_YEAR, -1);
                     attendance.setDates(calendar.getTime());
-                    attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                    attendance.setYears(DateUtil.format(attendance.getDates(), "yyyy").toString());
                     attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
                     attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                     attendance.setOwner(attendance.getUser_id());
@@ -380,7 +380,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
                                     attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
                                     attendance.setAttendanceid(UUID.randomUUID().toString());
-                                    attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                                    attendance.setYears(DateUtil.format(attendance.getDates(), "yyyy").toString());
                                     attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
                                     attendance.setRecognitionstate("");
                                     tokenModel.setUserId(attendance.getUser_id());
@@ -435,7 +435,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
                                     attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
                                     attendance.setAttendanceid(UUID.randomUUID().toString());
-                                    attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                                    attendance.setYears(DateUtil.format(attendance.getDates(), "yyyy").toString());
                                     attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
                                     attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                                     tokenModel.setUserId(attendance.getUser_id());
@@ -492,7 +492,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
                             attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
                             attendance.setAttendanceid(UUID.randomUUID().toString());
-                            attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                            attendance.setYears(DateUtil.format(attendance.getDates(), "yyyy").toString());
                             attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
                             attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                             tokenModel.setUserId(attendance.getUser_id());
@@ -560,7 +560,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
                                 attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
                                 attendance.setAttendanceid(UUID.randomUUID().toString());
-                                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                                attendance.setYears(DateUtil.format(attendance.getDates(), "yyyy").toString());
                                 attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
                                 attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                                 tokenModel.setUserId(attendance.getUser_id());
@@ -620,7 +620,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         as.setGroup_id(customerInfo.getUserinfo().getGroupname());
                                         as.setTeam_id(customerInfo.getUserinfo().getTeamname());
                                         as.setAttendanceid(UUID.randomUUID().toString());
-                                        as.setYears(DateUtil.format(as.getDates(), "YYYY").toString());
+                                        as.setYears(DateUtil.format(as.getDates(), "yyyy").toString());
                                         as.setMonths(DateUtil.format(as.getDates(), "MM").toString());
                                         as.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                                         tokenModel.setUserId(as.getUser_id());
@@ -676,7 +676,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
                                     attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
                                     attendance.setAttendanceid(UUID.randomUUID().toString());
-                                    attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                                    attendance.setYears(DateUtil.format(attendance.getDates(), "yyyy").toString());
                                     attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
                                     attendance.setRecognitionstate("");
                                     tokenModel.setUserId(attendance.getUser_id());
@@ -710,7 +710,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         token.setUserId(ad.getUser_id());
                         token.setExpireDate(new Date());
                         WorkingDay workDay = new WorkingDay();
-                        workDay.setYears(DateUtil.format(ad.getDates(), "YYYY").toString());
+                        workDay.setYears(DateUtil.format(ad.getDates(), "yyyy").toString());
                         workDay.setWorkingdate(sf1ymd.parse(sf1ymd.format(ad.getDates())));
                         List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
 
@@ -724,7 +724,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             }
                         } else if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
                             workinghours = "0";
-                        } else if (sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "YYYY").toString() + "-03-08") || sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "YYYY").toString() + "-05-04")) {
+                        } else if (sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "yyyy").toString() + "-03-08") || sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "yyyy").toString() + "-05-04")) {
                             workinghours = "4";
                         } else {
                             workinghours = "8";
@@ -2266,7 +2266,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         token.setUserId(ad.getUser_id());
                         token.setExpireDate(new Date());
                         WorkingDay workDay = new WorkingDay();
-                        workDay.setYears(DateUtil.format(ad.getDates(), "YYYY").toString());
+                        workDay.setYears(DateUtil.format(ad.getDates(), "yyyy").toString());
                         workDay.setWorkingdate(sf1ymd.parse(sf1ymd.format(ad.getDates())));
                         List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
 
@@ -2280,7 +2280,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             }
                         } else if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
                             workinghours = "0";
-                        } else if (sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "YYYY").toString() + "-03-08") || sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "YYYY").toString() + "-05-04")) {
+                        } else if (sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "yyyy").toString() + "-03-08") || sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "yyyy").toString() + "-05-04")) {
                             workinghours = "4";
                         } else {
                             workinghours = "8";
@@ -3737,7 +3737,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         replacerest.setCenter_id(ad.getCenter_id());
         replacerest.setGroup_id(ad.getGroup_id());
         replacerest.setTeam_id(ad.getTeam_id());
-        replacerest.setApplication_date(DateUtil.format(new Date(), "YYYY/MM/dd"));
+        replacerest.setApplication_date(DateUtil.format(new Date(), "yyyy/MM/dd"));
         replacerest.setRecognitionstate("0");
         if (replacerestlist.size() > 0) {
             //更新代休
