@@ -711,6 +711,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         token.setExpireDate(new Date());
                         WorkingDay workDay = new WorkingDay();
                         workDay.setYears(DateUtil.format(ad.getDates(), "yyyy").toString());
+                        String MM = DateUtil.format(ad.getDates(), "MM").toString();
+                        String yyyy = DateUtil.format(ad.getDates(), "yyyy").toString();
+                        if(Double.valueOf(MM)<4)
+                        {
+                            workDay.setYears(String.valueOf(Integer.valueOf(yyyy)-1));
+                        }
                         workDay.setWorkingdate(sf1ymd.parse(sf1ymd.format(ad.getDates())));
                         List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
 
@@ -2267,6 +2273,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         token.setExpireDate(new Date());
                         WorkingDay workDay = new WorkingDay();
                         workDay.setYears(DateUtil.format(ad.getDates(), "yyyy").toString());
+                        String MM = DateUtil.format(ad.getDates(), "MM").toString();
+                        String yyyy = DateUtil.format(ad.getDates(), "yyyy").toString();
+                        if(Double.valueOf(MM)<4)
+                        {
+                            workDay.setYears(String.valueOf(Integer.valueOf(yyyy)-1));
+                        }
                         workDay.setWorkingdate(sf1ymd.parse(sf1ymd.format(ad.getDates())));
                         List<WorkingDay> workingDaysList = workingDayMapper.select(workDay);
 
