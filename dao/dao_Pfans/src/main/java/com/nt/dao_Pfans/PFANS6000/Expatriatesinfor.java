@@ -29,7 +29,7 @@ public class Expatriatesinfor extends BaseModel {
     /**
      * 姓名
      */
-    //@Encryption
+    @Encryption
     @Column(name = "EXPNAME")
     private String expname;
 
@@ -48,7 +48,6 @@ public class Expatriatesinfor extends BaseModel {
     /**
      * 供应商名称
      */
-    //@Encryption
     @Column(name = "SUPPLIERNAME")
     private String suppliername;
 

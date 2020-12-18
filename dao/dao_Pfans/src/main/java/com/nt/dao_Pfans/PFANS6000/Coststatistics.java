@@ -1,5 +1,6 @@
 package com.nt.dao_Pfans.PFANS6000;
 
+import com.nt.utils.Encryption.Encryption;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,6 +33,7 @@ public class Coststatistics extends BaseModel {
     private String bpname;
 
     //BP名汉字
+    @Encryption
     @Column(name = "BPNAME1")
     private String bpname1;
 
