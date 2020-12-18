@@ -354,7 +354,10 @@ public class WagesServiceImpl implements WagesService {
     public Wages getwages(String strFlg, TokenModel tokenModel) throws Exception {
         Wages wages = new Wages();
         //获取上月工资
-        lastwages = wagesMapper.lastWages(Integer.parseInt(DateUtil.format(new Date(), "yyyy")), Integer.parseInt(DateUtil.format(new Date(), "M")) - 1,userid);
+        SimpleDateFormat sfYM = new SimpleDateFormat("yyyy-MM");
+        Calendar lastMonthDate = Calendar.getInstance();
+        lastMonthDate.add(Calendar.MONTH, -1);
+        lastwages = wagesMapper.lastWages(sfYM.format(lastMonthDate.getTime()),userid);
         // 时间格式
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMM");
         String strTemp = sf1.format(new Date());
@@ -1946,6 +1949,7 @@ public class WagesServiceImpl implements WagesService {
         lastMonthDate.add(Calendar.MONTH, -1);
         SimpleDateFormat sfUTC = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
         SimpleDateFormat sfChina = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sfYM = new SimpleDateFormat("yyyy-MM");
         int lastDay = thisMonthDate.getActualMaximum(Calendar.DAY_OF_MONTH);
         long mouthStart = sfChina.parse((thisMonthDate.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(thisMonthDate.getTime())) + "-01")).getTime();
         long mouthEnd = sfChina.parse((thisMonthDate.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(thisMonthDate.getTime())) + "-" + lastDay)).getTime();
@@ -1979,7 +1983,7 @@ public class WagesServiceImpl implements WagesService {
             }
         }
         // 抽取上月发工资的人员
-        List<String> userids = wagesMapper.lastMonthWage(thisMonthDate.get(Calendar.YEAR), Integer.parseInt(getMouth(sfChina.format(lastMonthDate.getTime()))),userid);
+        List<String> userids = wagesMapper.lastMonthWage(sfYM.format(lastMonthDate.getTime()),userid);
         if (customerInfos.size() > 0) {
             for (CustomerInfo customerInfo : customerInfos) {
                 // 退职日非空的情况（该员工的給料和补助在退职处理中计算）

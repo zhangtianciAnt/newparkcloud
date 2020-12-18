@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -356,20 +357,17 @@ public class EvectionServiceImpl implements EvectionService {
         }else{
             placeAnt = evectionVo.getEvection().getPlace();
         }
-        DateFormat formatterAnt = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatterAnt = new SimpleDateFormat("yyyy-MM-dd");
+
         String startStr = formatterAnt.format(evectionVo.getEvection().getStartdate());
-        Date startDate = formatterAnt.parse(startStr);
-        Calendar calendarSta = Calendar.getInstance();
-        calendarSta.setTime(startDate);
-        String monthSStr = String.valueOf(calendarSta.get(calendarSta.MONTH));
-        String daySStr = String.valueOf(calendarSta.get(calendarSta.DATE));
+        LocalDate DateLocalStar = LocalDate.parse(startStr);
+        String monthSStr = String.valueOf(DateLocalStar.getMonthValue());
+        String daySStr = String.valueOf(DateLocalStar.getDayOfMonth());
 
         String endStr = formatterAnt.format(evectionVo.getEvection().getEnddate());
-        Date endDate = formatterAnt.parse(endStr);
-        Calendar calendarEnd = Calendar.getInstance();
-        calendarEnd.setTime(endDate);
-        String monthSEnd = String.valueOf(calendarEnd.get(calendarEnd.MONTH));
-        String daySEnd = String.valueOf(calendarEnd.get(calendarEnd.DATE));
+        LocalDate DateLocalEnd = LocalDate.parse(endStr);
+        String monthSEnd = String.valueOf(DateLocalEnd.getMonthValue());
+        String daySEnd = String.valueOf(DateLocalEnd.getDayOfMonth());
         //        ztc 禅道558 6.2-6.9 end
         date = myFormatter.parse(myFormatter.format(date));
         //通过字典查取税率

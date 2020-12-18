@@ -11,9 +11,9 @@ public interface WagesMapper extends MyMapper<Wages> {
 
     void updateWages(@Param("givingId") String givingId,@Param("user_id") String user_id);
 
-    List<Wages> lastWages(@Param("year") int year, @Param("month") int month, @Param("userid") String userid);
+    List<Wages> lastWages(@Param("yearmonth") String yearmonth, @Param("userid") String userid);
 
-    List<String> lastMonthWage(@Param("year") int year, @Param("month") int month, @Param("userid") String userid);
+    List<String> lastMonthWage(@Param("yearmonth") String yearmonth, @Param("userid") String userid);
 
 //    List<Wages> getWageList(Wages wages);
 

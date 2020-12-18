@@ -3,8 +3,7 @@
 <mapper namespace="com.nt.service_pfans.PFANS2000.mapper.WagesMapper">
     <select id="lastMonthWage" resultType="java.lang.String">
        select USER_ID from wages
-       where YEAR(wages.CREATEON) = #{year}
-       and MONTH(wages.CREATEON) = #{month}
+       where wages.CREATEONYM = #{yearmonth}
        and wages.actual = '0'
        <if test="userid != ''" >
            and USER_ID = #{userid}
@@ -13,8 +12,7 @@
 
     <select id="lastWages" resultType="com.nt.dao_Pfans.PFANS2000.Wages">
        select * from wages
-       where YEAR(wages.CREATEON) = #{year}
-       AND MONTH(wages.CREATEON) = #{month}
+        where wages.CREATEONYM = #{yearmonth}
        AND wages.actual = '0'
        <if test="userid != ''" >
            and USER_ID = #{userid}
@@ -161,7 +159,7 @@
         @LJYNSSDE := (
         IF
         (
-        DATE_FORMAT(@WORKDATE,'%Y') - DATE_FORMAT(NOW(),'%Y') = 0 and base.taxes = 2,
+        DATE_FORMAT(@WORKDATE,'%Y') - DATE_FORMAT(NOW(),'%Y') = 0 and base.taxes = 1,
         round(
         (
         @YEARSTOTAL12 - base.DIC_LJYNSSDECS * ( MONTH ( DATE_FORMAT( NOW( ), '%Y-%m-%d' ) ) - 0 - MONTH ( DATE_FORMAT(@WORKDATE,'%Y-%m-%d') ) + 1 ) - @ZXKCLJ - @ADDITIONAL_TOTAL - @DUTYFREE_CUMULATIVE

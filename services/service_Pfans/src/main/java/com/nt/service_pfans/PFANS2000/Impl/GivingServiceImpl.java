@@ -2,7 +2,6 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
-import com.alibaba.druid.sql.visitor.functions.Isnull;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.*;
@@ -285,6 +284,7 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insertOtherOne(String givingid, TokenModel tokenModel) throws Exception {
+        System.out.println("其他1");
         /*获取 customerInfos-lxx*/
         //init();
         /*获取 customerInfos-lxx*/
@@ -418,6 +418,7 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insertBase(String givingid, TokenModel tokenModel) throws Exception {
+        System.out.println("基数");
         /*获取 customerInfos-lxx*/
         //init();
         /*获取 customerInfos-lxx*/
@@ -514,14 +515,14 @@ public class GivingServiceImpl implements GivingService {
                         base.setRegistered("1");
                     }
                 }
-                //新人区分(税金用)
-                base.setTaxes("2");//否
+                //新人区分(税金用)*(是否有工作经验):有
+                base.setTaxes("0");//
                 String Enterday = formatStringDateadd(customer.getUserinfo().getEnterday());
                 Enterday = Enterday.substring(0,4);
                 //是否有工作经验(无)  /  入社年月日为当年
                 if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customer.getUserinfo().getExperience())) {
-                    if(customer.getUserinfo().getExperience().equals("1") && DateUtil.format(new Date(), "yyyy").equals(Enterday)){
-                        base.setTaxes("1");//是
+                    if(customer.getUserinfo().getExperience().equals("1") && DateUtil.format(new Date(), "yyyy").equals(Enterday)){//当年入职并且无经验的人
+                        base.setTaxes("1");//无经验
                     }
                 }
                 /*基本工资 -> 月工资  月工资拆分为 基本工资  职责工资 -lxx*/
@@ -861,6 +862,7 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insertOtherTwo(String givingid, TokenModel tokenModel) throws Exception {
+        System.out.println("其他2");
         OtherTwo othertwo = new OtherTwo();
         CasgiftApply casgiftapply = new CasgiftApply();
         casgiftapply.setPayment("0");
@@ -915,6 +917,7 @@ public class GivingServiceImpl implements GivingService {
      */
     @Override
     public void insertContrast(String givingid, TokenModel tokenModel) throws Exception {
+        System.out.println("个人对比");
         Contrast contrast = new Contrast();
         Base base = new Base();
         base.setGiving_id(givingid);
@@ -966,10 +969,14 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insert(String generation, TokenModel tokenModel) throws Exception {
+        System.out.println("givingStart");
         // 生成工资单的时候重新调用init方法获取最新的人员信息 By Skaixx
         init();
         //获取上月工资
-        lastwages = wagesMapper.lastWages(Integer.parseInt(DateUtil.format(new Date(), "yyyy")), Integer.parseInt(DateUtil.format(new Date(), "M")) - 1,"");
+        SimpleDateFormat sfYM = new SimpleDateFormat("yyyy-MM");
+        Calendar lastMonthDate = Calendar.getInstance();
+        lastMonthDate.add(Calendar.MONTH, -1);
+        lastwages = wagesMapper.lastWages(sfYM.format(lastMonthDate.getTime()),"");
         //获取所有有字典
         dictionaryAll = dictionaryMapper.selectAll();
         String givingid = UUID.randomUUID().toString();
@@ -1067,6 +1074,7 @@ public class GivingServiceImpl implements GivingService {
         insertLackattendance(givingid, tokenModel);
         //加班
         insertResidual(givingid, tokenModel);
+        System.out.println("givingEnd");
     }
 
 
@@ -1280,7 +1288,7 @@ public class GivingServiceImpl implements GivingService {
             else{
                 //上月发工资之后入职的实习工资
                 if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
-                    thisMonth = customerInfo.getUserinfo().getBasic();//111
+                    thisMonth = customerInfo.getUserinfo().getBasic();
                     thisMonthBasic = customerInfo.getUserinfo().getBasic();
                 }
                 if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
@@ -1363,7 +1371,11 @@ public class GivingServiceImpl implements GivingService {
 
         for (Appreciation appreciation : appreciationlist) {
             // 获取给与标准
-            double rnbasesalary = Double.parseDouble(baseList.stream().filter(item -> item.getUser_id().equals(appreciation.getUser_id())).collect(Collectors.toList()).get(0).getRnbasesalary());
+            double rnbasesalary = 0;
+            baseList  = baseList.stream().filter(item -> item.getUser_id().equals(appreciation.getUser_id())).collect(Collectors.toList());
+            if(baseList.size() > 0){
+                rnbasesalary = Double.parseDouble(baseList.get(0).getRnbasesalary());
+            }
             if (com.mysql.jdbc.StringUtils.isNullOrEmpty(appreciation.getAmount())) {
                 if(!appreciation.getCommentary().equals("")){
                     // 获取评价奖金百分比
@@ -1420,6 +1432,7 @@ public class GivingServiceImpl implements GivingService {
      **/
     @Override
     public void insertResidual(String givingid, TokenModel tokenModel) throws Exception {
+        System.out.println("加班");
         // region 获取当月与前月
         Calendar cal = Calendar.getInstance();
 
@@ -1752,6 +1765,7 @@ public class GivingServiceImpl implements GivingService {
      **/
     @Override
     public void insertLackattendance(String givingid, TokenModel tokenModel) throws Exception {
+        System.out.println("欠勤");
         // region 获取基数表数据
         Base base = new Base();
         base.setGiving_id(givingid);
@@ -1960,8 +1974,9 @@ public class GivingServiceImpl implements GivingService {
             double Lastshortdeficiencytry = Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencytry())) * preSalaryPerHour
                     * Double.parseDouble(shortDictionary.getValue2());
 
-            // 长病欠-正式
+            // 长病欠-正式(本月工资- 上月工资/21.75/8*长病假 + 1810/21.75/8*长病假 )
             //total += Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencyformal())) * longSalary;
+            double Lastchronicdeficiencyformal1 = Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencyformal())) * preSalaryPerHour;
             double Lastchronicdeficiencyformal = Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencyformal())) * longSalary;
             // 长病欠-试用
             //total += Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencytry())) * longSalary * 0.9d;
@@ -1969,7 +1984,7 @@ public class GivingServiceImpl implements GivingService {
             double Lastchronicdeficiencytry = Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencytry())) * longSalary;
 
             //费用-正式
-            double totala = - Lastdiligenceformal - Lastshortdeficiencyformal - Lastchronicdeficiencyformal;
+            double totala = - Lastdiligenceformal - Lastshortdeficiencyformal - Lastchronicdeficiencyformal1 + Lastchronicdeficiencyformal;
             //费用-试用
             double totalb = - Lastdiligencetry - Lastshortdeficiencytry - Lastchronicdeficiencytry;
             total = totala + totalb;
@@ -2165,6 +2180,7 @@ public class GivingServiceImpl implements GivingService {
     // region 入职和离职 BY Cash
     // 入职表插入数据
     public void insertInduction(String givingid, TokenModel tokenModel) throws Exception {
+        System.out.println("入职");
         int rowundex = 1;
         List<Induction> inductionList = getInduction(givingid);
         if (inductionList.size() > 0) {
@@ -2184,6 +2200,7 @@ public class GivingServiceImpl implements GivingService {
 
     // 退职表插入数据
     public void insertRetire(String givingid, TokenModel tokenModel) throws Exception {
+        System.out.println("退职");
         int rowundex = 1;
         List<Retire> retireList = getRetire(givingid);
         if (retireList.size() > 0) {
@@ -2214,6 +2231,7 @@ public class GivingServiceImpl implements GivingService {
         lastMonthDate.add(Calendar.MONTH, -1);
         SimpleDateFormat sfUTC = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
         SimpleDateFormat sfChina = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sfYM = new SimpleDateFormat("yyyy-MM");
         int lastDay = thisMonthDate.getActualMaximum(Calendar.DAY_OF_MONTH);
         long mouthStart = sfChina.parse((thisMonthDate.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(thisMonthDate.getTime())) + "-01")).getTime();
         long mouthEnd = sfChina.parse((thisMonthDate.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(thisMonthDate.getTime())) + "-" + lastDay)).getTime();
@@ -2226,20 +2244,10 @@ public class GivingServiceImpl implements GivingService {
         // 正社员工開始日
         //String staffStartDate = "";  add 20201010
         // 納付率表抽取相关数据
-        Dictionary dictionary = new Dictionary();
-        dictionary.setPcode("PR042");
-        List<Dictionary> subsidyList = dictionaryMapper.select(dictionary);
         // 一括补助_试用
         double trialSubsidy = 0d;
         // 一括补助_正式
         double officialSubsidy = 0d;
-        for (Dictionary diction : subsidyList) {
-            if (diction.getCode().equals("PR042009")) {
-                trialSubsidy = Double.parseDouble(diction.getValue2());
-            } else if (diction.getCode().equals("PR042010")) {
-                officialSubsidy = Double.parseDouble(diction.getValue2());
-            }
-        }
         List<Dictionary> subsidyList1 = dictionaryAll.stream().filter(item -> (item.getCode().equals("PR042009"))).collect(Collectors.toList());
         List<Dictionary> subsidyList2 = dictionaryAll.stream().filter(item -> (item.getCode().equals("PR042010"))).collect(Collectors.toList());
         if(subsidyList1.size() > 0){
@@ -2248,26 +2256,31 @@ public class GivingServiceImpl implements GivingService {
         if(subsidyList2.size() > 0){
             officialSubsidy = Double.parseDouble(subsidyList2.get(0).getValue2());
         }
-        dictionary.setPcode("PR049");
-        List<Dictionary> proportionList = dictionaryMapper.select(dictionary);
         // 试用期工资扣除比例
         double wageDeductionProportion = 0d;
-        for (Dictionary diction : proportionList) {
-            if (diction.getCode().equals("PR049010")) {
-                wageDeductionProportion = Double.parseDouble(diction.getValue2());
-            }
-        }
         List<Dictionary> proportionList1 = dictionaryAll.stream().filter(item -> (item.getCode().equals("PR049010"))).collect(Collectors.toList());
         if(proportionList1.size() > 0){
             wageDeductionProportion = Double.parseDouble(proportionList1.get(0).getValue2());
         }
         // 抽取上月发工资的人员
-        List<String> userids = wagesMapper.lastMonthWage(thisMonthDate.get(Calendar.YEAR), Integer.parseInt(getMouth(sfChina.format(lastMonthDate.getTime()))),"");
+        List<String> userids = wagesMapper.lastMonthWage(sfYM.format(lastMonthDate.getTime()),"");
         if (customerInfos.size() > 0) {
             for (CustomerInfo customerInfo : customerInfos) {
                 // 退职日非空的情况（该员工的給料和补助在退职处理中计算）
                 if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getResignation_date())) {
                     continue;
+                }
+                // 试用期截止日不为空的情况
+                // 转正日小于当月的除外
+                Date endDate = new Date();
+                if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getEnddate())){
+                    if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
+                        customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
+                    }
+                    endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
+                    if (endDate.getTime() < mouthStart) {
+                        continue;
+                    }
                 }
                 // 正社员工開始日
                 String staffStartDate = "";
@@ -2286,11 +2299,6 @@ public class GivingServiceImpl implements GivingService {
                         if (enterDay.getTime() >= lastmouthStart && enterDay.getTime() <= mouthEnd) {
                             //add_fjl_0923  添加[入社年月日]是在上月与本月的条件 end
                             if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
-                                // 转正日期
-                                if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
-                                    customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
-                                }
-                                Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
                                 // 本月转正
                                 if (endDate.getTime() >= mouthStart && endDate.getTime() <= mouthEnd) {
                                     // 正社员工開始日
@@ -2299,13 +2307,11 @@ public class GivingServiceImpl implements GivingService {
                                 }
                             }
                             //上月入职
-                            if (enterDay.getTime() < mouthStart) {
-
+                            if (enterDay.getTime() < mouthStart) {//上月未发工资的人
                                 // 计算給料和补助
                                 calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df,0);
                             }
-                            else{
-                                //当月入职
+                            else{//当月入职
                                 // 计算給料和补助
                                 calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df,1);
                             }
@@ -2323,27 +2329,18 @@ public class GivingServiceImpl implements GivingService {
                         calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df,1);
                         inductions.add(induction);
                     } else {
-                        // 试用期截止日不为空的情况
-                        // 本月转正或未转正的人
-                        if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
-                            customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
-                        }
-                        Date endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
-                        if (endDate.getTime() >= mouthStart) {
-                            // 本月转正
-                            if (endDate.getTime() <= mouthEnd) {
-                                // 正社员工開始日
-                                staffStartDate = endDate.toString();
-                                induction.setStartdate(endDate);
-                                // 计算給料和补助
-                                calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df,1);
-                                inductions.add(induction);
-                            } else {
-                                // 本月未转正
-                                // 计算給料和补助
-                                calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df,1);
-                                inductions.add(induction);
-                            }
+                        // 本月转正
+                        if (endDate.getTime() <= mouthEnd) {// 本月转正
+                            // 正社员工開始日
+                            staffStartDate = endDate.toString();
+                            induction.setStartdate(endDate);
+                            // 计算給料和补助
+                            calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df,1);
+                            inductions.add(induction);
+                        } else {//本月之后转正
+                            // 计算給料和补助
+                            calculateSalaryAndSubsidy(induction, customerInfo, staffStartDate, trialSubsidy, officialSubsidy, wageDeductionProportion, sfUTC, df,1);
+                            inductions.add(induction);
                         }
                     }
                 }
@@ -2352,7 +2349,7 @@ public class GivingServiceImpl implements GivingService {
         return inductions;
     }
 
-    // 计算給料和补助
+    // 计算給料和补助--入职用
     private void calculateSalaryAndSubsidy(Induction induction, CustomerInfo customerInfo, String staffStartDate, double trialSubsidy, double officialSubsidy,
                                            double wageDeductionProportion, SimpleDateFormat sf, DecimalFormat df,int intflg) throws Exception {
         // 用户ID
@@ -2387,7 +2384,6 @@ public class GivingServiceImpl implements GivingService {
             if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
                 customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
             }
-            induction.setWorddate(sf.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC")));
             calEnddate.setTime(sf.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC")));
         }
         // 本月基本工资
@@ -2408,12 +2404,14 @@ public class GivingServiceImpl implements GivingService {
         double lastMonthSuitDays = Double.parseDouble(daysList.get("lastMonthSuitDays"));
         // 上月出勤日数
         double lastAttendanceDays = lastMonthDays + lastMonthSuitDays;
-        induction.setAttendance(String.valueOf(lastAttendanceDays));
+        if(intflg == 0){
+            induction.setAttendance(String.valueOf(lastAttendanceDays));
+        }
         // 今月試用社員出勤日数
         thisMonthSuitDays = calculateAttendanceDays(thisMonthSuitDays);
         induction.setTrial(String.valueOf(thisMonthSuitDays));
         // 給料
-        if (StringUtils.isNotEmpty(staffStartDate)) {
+        if (StringUtils.isNotEmpty(staffStartDate)) {//当月转正
             //没有试用期的情况
             if (calEnterday.get(Calendar.YEAR) == calEnddate.get(Calendar.YEAR)
                     && calEnterday.get(Calendar.MONTH) == calEnddate.get(Calendar.MONTH)
@@ -2421,79 +2419,81 @@ public class GivingServiceImpl implements GivingService {
                 induction.setGive(df.format((Double.parseDouble(thisMonthSalary) / dateBase * thisMonthDays)));
             }
             else{
-
-                //试用期截止日为当月最后一天的话也算是当月试用，当月未转正
-                if((DateUtil.format(new Date(), "yyyyMM").equals(DateUtil.format(induction.getWorddate(), "yyyyMM"))
-                        && DateUtil.format(induction.getWorddate(), "dd").equals(lastday))){
-                    // 上月試用社員出勤日数
-                    lastAttendanceDays = 0d;
-                    induction.setAttendance(String.valueOf(""));
-                    // 今月試用社員出勤日数
-                    thisMonthSuitDays = 0d;
-                    induction.setTrial(String.valueOf(""));
-                    induction.setGive(df.format(Double.parseDouble(thisMonthSalary)));
-                }
-                else{
-                    induction.setGive(df.format(Double.parseDouble(thisMonthSalary) - (Double.parseDouble(thisMonthSalary) / dateBase * thisMonthSuitDays * wageDeductionProportion)));
-                }
-
-            }
-
-        } else {
-            if(intflg == 1){
-                //本月之前的试用人员当月无转正的情况:【先月出勤日数】/【今月試用社員出勤日数】设空值（kang）（上月入职后未算工资的除外）
-                if(!DateUtil.format(new Date(), "yyyyMM").equals(DateUtil.format(induction.getWorddate(), "yyyyMM"))){
-                    // 上月試用社員出勤日数
-                    lastAttendanceDays = 0d;
-                    induction.setAttendance(String.valueOf(""));
-                    strEnterday = strEnterday.replace("/","").replace("-","").substring(0,6);
-                    if(!DateUtil.format(new Date(), "yyyyMM").equals(strEnterday)){
+                if(intflg == 1){
+                    //试用期截止日为当月最后一天的话也算是当月试用，当月未转正
+                    if((DateUtil.format(new Date(), "yyyyMM").equals(DateUtil.format(induction.getStartdate(), "yyyyMM"))
+                            && DateUtil.format(induction.getWorddate(), "dd").equals(lastday))){
                         // 今月試用社員出勤日数
                         thisMonthSuitDays = 0d;
                         induction.setTrial(String.valueOf(""));
+                        induction.setGive(df.format(Double.parseDouble(thisMonthSalary)));
+                    }
+                    else{
+                        induction.setGive(df.format(Double.parseDouble(thisMonthSalary) - (Double.parseDouble(thisMonthSalary) / dateBase * thisMonthSuitDays * wageDeductionProportion)));
                     }
                 }
+                else{//上月入职未发工资当月转正
+                    induction.setGive(df.format(Double.parseDouble(lastMonthSalary) / dateBase * lastAttendanceDays + Double.parseDouble(thisMonthSalary)));
+                }
             }
-            if (lastAttendanceDays > 0) {
+        } else {//本月之后转正
+            strEnterday  =formatStringDates(strEnterday);
+            strEnterday = strEnterday.replace("/","").replace("-","").substring(0,6);
+            if(!DateUtil.format(new Date(), "yyyyMM").equals(strEnterday)){//非当月入社的人员
+                // 今月試用社員出勤日数
+                thisMonthSuitDays = 0d;
+                induction.setTrial(String.valueOf(""));
+            }
+            if(intflg == 0){//上月未发工资的人
+                //上月工资 / 21.75 * 上月出勤天数 + 本月工资
                 induction.setGive(df.format(Double.parseDouble(lastMonthSalary) / dateBase * lastAttendanceDays + Double.parseDouble(thisMonthSalary)));
-            } else {
-                if (thisMonthSuitDays > 0) {
+            }
+            else{
+                if (thisMonthSuitDays > 0) {//当月入职的人
                     induction.setGive(df.format(Double.parseDouble(thisMonthSalary) / dateBase * thisMonthSuitDays));
-                } else {
+                } else {//当月之前入职的
                     induction.setGive(thisMonthSalary);
                 }
             }
         }
         // 一括补助
         //本月转正判断
-        if(induction.getStartdate() != null){
+        if(induction.getStartdate() != null){//当月转正
             //没有试用期的情况
             if (calEnterday.get(Calendar.YEAR) == calEnddate.get(Calendar.YEAR)
                     && calEnterday.get(Calendar.MONTH) == calEnddate.get(Calendar.MONTH)
-                    && calEnterday.get(Calendar.DATE) == calEnddate.get(Calendar.DATE) + 1) {
+                    && calEnterday.get(Calendar.DATE) == calEnddate.get(Calendar.DATE) + 1) {//无试用期的情况
                 induction.setLunch(df.format(officialSubsidy / 21.75 * thisMonthDays));
             }
             else if (DateUtil.format(new Date(), "yyyy").equals(String.valueOf(calEnddate.get(Calendar.YEAR)))
                 && DateUtil.format(new Date(), "M").equals(String.valueOf(calEnddate.get(Calendar.MONTH) + 1))
-                && lastday.equals(String.valueOf(calEnddate.get(Calendar.DATE)))) {
+                && lastday.equals(String.valueOf(calEnddate.get(Calendar.DATE)))) {//试用期500
                     //calEnddate.get(Calendar.MONTH) 取出的月份月份少一个月
                     induction.setLunch(df.format(trialSubsidy));
             }
             else{
-                //ROUND(1000-500/21.75*I3,2)
+                //ROUND(1000-500/21.75*I3,2)//本月转正有试用期的
                 induction.setLunch(df.format(officialSubsidy - trialSubsidy / 21.75 * thisMonthSuitDays));
             }
 
         }
-        else{
-            if(induction.getTrial().equals("")){
-                //上月试用工作日数 / 21.75 * 500 + 上月正式工作日数 / 21.75 * 1000 + 今月試用社員出勤日数 / 21.75 * 500 + 本月正式工作日数 / 21.75 * 1000
-                induction.setLunch(df.format(trialSubsidy));
+        else{//当月未转正的人员
+            if(induction.getTrial().equals("")){//本月之前开始试用并且本月未转正的（今月试用出勤天数为0）
+                if(intflg == 0){//上月发工资之后入职
+                    //500 + 500 / 21.75 * 先月出勤日数
+                    induction.setLunch(df.format(trialSubsidy + trialSubsidy / dateBase * lastAttendanceDays));
+                }
+                else{//本月之前之前开始试用
+                    //上月试用工作日数 / 21.75 * 500 + 上月正式工作日数 / 21.75 * 1000 + 今月試用社員出勤日数 / 21.75 * 500 + 本月正式工作日数 / 21.75 * 1000
+                    induction.setLunch(df.format(trialSubsidy));
+                }
             }
-            else{
+            else{//本月入职
+                //500 / 21.75 * 今月試用社員出勤日数
+                induction.setLunch(df.format(trialSubsidy / dateBase * thisMonthSuitDays));
                 //上月试用工作日数 / 21.75 * 500 + 上月正式工作日数 / 21.75 * 1000 + 今月試用社員出勤日数 / 21.75 * 500 + 本月正式工作日数 / 21.75 * 1000
-                induction.setLunch(df.format(lastMonthSuitDays / dateBase * trialSubsidy + lastMonthDays / dateBase * officialSubsidy +
-                        thisMonthSuitDays / dateBase * trialSubsidy + thisMonthDays / dateBase * officialSubsidy));
+//                    induction.setLunch(df.format(lastMonthSuitDays / dateBase * trialSubsidy + lastMonthDays / dateBase * officialSubsidy +
+//                            thisMonthSuitDays / dateBase * trialSubsidy + thisMonthDays / dateBase * officialSubsidy));
             }
         }
     }
@@ -2618,6 +2618,23 @@ public class GivingServiceImpl implements GivingService {
             SimpleDateFormat ymd = new SimpleDateFormat("yyyy/MM/dd");
             rightNow.setTime(Convert.toDate(date));
             rightNow.add(Calendar.DAY_OF_YEAR, 1);
+            date = ymd.format(rightNow.getTime());
+        }
+        return date;
+    }
+
+    /**
+     * 时间格式化
+     *
+     * @param date
+     * @return
+     */
+    private String formatStringDates(String date) {
+        if (date.indexOf("Z") > 0) {
+            date = date.replace("-", "/").substring(0, 10);
+            Calendar rightNow = Calendar.getInstance();
+            SimpleDateFormat ymd = new SimpleDateFormat("yyyy/MM/dd");
+            rightNow.setTime(Convert.toDate(date));
             date = ymd.format(rightNow.getTime());
         }
         return date;

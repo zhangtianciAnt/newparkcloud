@@ -1557,17 +1557,6 @@ public class UserServiceImpl implements UserService {
                         }
                     }
                 }
-                //新人区分(税金用)
-                if (item.get("新人区分(税金用)") != null) {
-                    String taxes = item.get("新人区分(税金用)").toString();
-                    if (taxes != null) {
-                        if (taxes.equals("否")) {
-                            userinfo.setTaxes("0");
-                        } else if (taxes.equals("是")) {
-                            userinfo.setTaxes("1");
-                        }
-                    }
-                }
                 //奖金记上区分
                 if (item.get("奖金记上区分") != null) {
                     String dlnation = item.get("奖金记上区分").toString();
@@ -2129,9 +2118,9 @@ public class UserServiceImpl implements UserService {
                     if (item.get("是否有工作经验●") != null) {
                         String experience = item.get("是否有工作经验●").toString();
                         if (experience != null) {
-                            if (experience.equals("是")) {
+                            if (experience.equals("有")) {
                                 customerInfoList.get(0).getUserinfo().setExperience("0");
-                            } else if (experience.equals("否")) {
+                            } else if (experience.equals("无")) {
                                 customerInfoList.get(0).getUserinfo().setExperience("1");
                             }
                         }
@@ -2195,16 +2184,6 @@ public class UserServiceImpl implements UserService {
                                 customerInfoList.get(0).getUserinfo().setDlnation("0");
                             } else if (dlnation.equals("是")) {
                                 customerInfoList.get(0).getUserinfo().setDlnation("1");
-                            }
-                        }
-                    }
-                    if (item.get("新人区分(税金用)●") != null) {
-                        String taxes = item.get("新人区分(税金用)●").toString();
-                        if (taxes != null) {
-                            if (taxes.equals("否")) {
-                                customerInfoList.get(0).getUserinfo().setTaxes("0");
-                            } else if (taxes.equals("是")) {
-                                customerInfoList.get(0).getUserinfo().setTaxes("1");
                             }
                         }
                     }
