@@ -14,4 +14,6 @@ public interface ExisttrainarchivesMapper extends MyMapper<Existtrainarchives> {
     ExisttrainarchivesVo getExisttrainarchivesInfoById(@Param("id") String id) throws Exception;
 
     List<ExisttrainarchivesVo> existtrainarchivesList() throws Exception;
+
+    int deleteAll() throws Exception;
 }

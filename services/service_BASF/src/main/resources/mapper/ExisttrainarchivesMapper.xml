@@ -58,4 +58,8 @@
             id = #{id}
             AND `STATUS` = '0'
     </select>
+
+    <delete id="deleteAll">
+        delete from existtrainarchives
+    </delete>
 </mapper>

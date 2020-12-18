@@ -128,97 +128,101 @@ public class ExisttrainarchivesServicesImpl implements ExisttrainarchivesService
             result.add("失败数：" + errorCount);
             return result;
         }
-        try {
-            for (int i = 1; i < list.size(); i++) {
-                k += 1;
-                Existtrainarchives existtrainarchives = new Existtrainarchives();
-                SimpleDateFormat formatter = new SimpleDateFormat( "yyyyMMdd");
-                List<Object> value = list.get(i);
-                //标识
-                try {
-                    existtrainarchives.setId(value.get(0).toString());
-                } catch (Exception e) {
-                    existtrainarchives.setId("");
-                }
-                //部门
-                try {
-                    existtrainarchives.setDepartment(value.get(1).toString());
-                } catch (Exception e) {
-                    result.add("导入模板第 " + k + " 行，部门名称数据异常，导入系统失败！");
-                    errorCount += 1;
-                    continue;
-                }
-                //姓名
-                try {
-                    existtrainarchives.setEmployeename(value.get(2).toString());
-                } catch (Exception e) {
-                    result.add("导入模板第 " + k + "行，姓名数据异常，导入系统失败！");
-                    errorCount += 1;
-                    continue;
-                }
-                //负责人
-                try {
-                    existtrainarchives.setManagername(value.get(3).toString());
-                } catch (Exception e) {
-                    result.add("导入模板第 " + k + "行，负责人数据异常，导入系统失败！");
-                    errorCount += 1;
-                    continue;
-                }
-                //培训项目
-                try {
-                    existtrainarchives.setTrainingprograms(value.get(4).toString());
-                } catch (Exception e) {
-                    result.add("导入模板第 " + k + "行，培训项目数据异常，导入系统失败！");
-                    errorCount += 1;
-                    continue;
-                }
-                //证件编号
-                try {
-                    existtrainarchives.setCertificatenumber(value.get(5).toString().trim());
-                } catch (Exception e) {
-                    existtrainarchives.setCertificatenumber("");
-                }
-                //批准日期
-                try {
-                    String approvaldate = value.get(6).toString().trim();
-                    existtrainarchives.setApprovaldate(formatter.parse(approvaldate.replace("/","")));
-                } catch (Exception e) {
-                    existtrainarchives.setApprovaldate(null);
-                }
-                //有效日期
-                try {
-                    String effectivedate = value.get(7).toString().trim();
-                    existtrainarchives.setEffectivedate(formatter.parse(effectivedate.replace("/","")));
-                } catch (Exception e) {
-                    existtrainarchives.setEffectivedate(null);
-                }
-                //备考
-                try {
-                    existtrainarchives.setRemark(value.get(8).toString().trim());
-                } catch (Exception e) {
-                    existtrainarchives.setRemark("");
-                }
-                existtrainarchives.preInsert(tokenModel);
-                existtrainarchives.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-                try {
-                    if (StringUtils.isNotEmpty(existtrainarchives.getId())) {
-                        existtrainarchivesMapper.updateByPrimaryKey(existtrainarchives);
-                    } else {
-                        existtrainarchives.setId(UUID.randomUUID().toString());
-                        existtrainarchivesMapper.insert(existtrainarchives);
+        int deleteRows = existtrainarchivesMapper.deleteAll();
+        if (deleteRows >= 0) {
+            try {
+                for (int i = 1; i < list.size(); i++) {
+                    k += 1;
+                    Existtrainarchives existtrainarchives = new Existtrainarchives();
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    List<Object> value = list.get(i);
+                    //标识
+                    try {
+                        existtrainarchives.setId(value.get(0).toString());
+                    } catch (Exception e) {
+                        existtrainarchives.setId("");
                     }
-                    successCount += 1;
-                } catch (Exception e) {
-                    result.add("导入模板第 " + k + "行存储到数据库异常，导入系统失败！");
-                    errorCount += 1;
-                    continue;
+                    //部门
+                    try {
+                        existtrainarchives.setDepartment(value.get(1).toString());
+                    } catch (Exception e) {
+                        result.add("导入模板第 " + k + " 行，部门名称数据异常，导入系统失败！");
+                        errorCount += 1;
+                        continue;
+                    }
+                    //姓名
+                    try {
+                        existtrainarchives.setEmployeename(value.get(2).toString());
+                    } catch (Exception e) {
+                        result.add("导入模板第 " + k + "行，姓名数据异常，导入系统失败！");
+                        errorCount += 1;
+                        continue;
+                    }
+                    //负责人
+                    try {
+                        existtrainarchives.setManagername(value.get(3).toString());
+                    } catch (Exception e) {
+                        result.add("导入模板第 " + k + "行，负责人数据异常，导入系统失败！");
+                        errorCount += 1;
+                        continue;
+                    }
+                    //培训项目
+                    try {
+                        existtrainarchives.setTrainingprograms(value.get(4).toString());
+                    } catch (Exception e) {
+                        result.add("导入模板第 " + k + "行，培训项目数据异常，导入系统失败！");
+                        errorCount += 1;
+                        continue;
+                    }
+                    //证件编号
+                    try {
+                        existtrainarchives.setCertificatenumber(value.get(5).toString().trim());
+                    } catch (Exception e) {
+                        existtrainarchives.setCertificatenumber("");
+                    }
+                    //批准日期
+                    try {
+                        String approvaldate = value.get(6).toString().trim();
+                        existtrainarchives.setApprovaldate(formatter.parse(approvaldate));
+                    } catch (Exception e) {
+                        existtrainarchives.setApprovaldate(null);
+                    }
+                    //有效日期
+                    try {
+                        String effectivedate = value.get(7).toString().trim();
+                        existtrainarchives.setEffectivedate(formatter.parse(effectivedate));
+                    } catch (Exception e) {
+                        existtrainarchives.setEffectivedate(null);
+                    }
+                    //备考
+                    try {
+                        existtrainarchives.setRemark(value.get(8).toString().trim());
+                    } catch (Exception e) {
+                        existtrainarchives.setRemark("");
+                    }
+                    existtrainarchives.preInsert(tokenModel);
+                    existtrainarchives.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+
+                    try {
+                        if (StringUtils.isNotEmpty(existtrainarchives.getId())) {
+                            existtrainarchivesMapper.updateByPrimaryKey(existtrainarchives);
+                        } else {
+                            existtrainarchives.setId(UUID.randomUUID().toString());
+                            existtrainarchivesMapper.insert(existtrainarchives);
+                        }
+                        successCount += 1;
+                    } catch (Exception e) {
+                        result.add("导入模板第 " + k + "行存储到数据库异常，导入系统失败！");
+                        errorCount += 1;
+                        continue;
+                    }
                 }
+                result.add("失败数：" + errorCount);
+                result.add("成功数：" + successCount);
+            } catch (Exception e) {
+                throw new LogicalException(e.getMessage());
             }
-            result.add("失败数：" + errorCount);
-            result.add("成功数：" + successCount);
-            return result;
-        } catch (Exception e) {
-            throw new LogicalException(e.getMessage());
         }
+        return result;
     }
 }
