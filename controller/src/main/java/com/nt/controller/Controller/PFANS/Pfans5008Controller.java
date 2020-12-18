@@ -20,10 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -220,7 +217,7 @@ public class Pfans5008Controller {
             //upd ccm 1118 日志管理可以看到外注员工的数据 to
         }
         //add_fjl_0716_添加PL权限的人查看日志一览  end
-
+        list = list.stream().sorted(Comparator.comparing(LogManagement::getLog_date).reversed()).collect(Collectors.toList());
         return ApiResult.success(list);
     }
     // add-ws-5/26-No.68
