@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class APBCardHolderVo {
 
+    private String ALLName;
     private String DepartmentPEName;
     private String type;
     private String RecNum;
