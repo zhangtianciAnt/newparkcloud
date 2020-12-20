@@ -8,6 +8,10 @@
         <result property="type" column="type"></result>
         <result property="result" column="result"></result>
         <result property="remark" column="remark"></result>
+        <result property="devicename" column="devicename"></result>
+        <result property="deviceno" column="deviceno"></result>
+        <result property="shieldstatus" column="shieldstatus"></result>
+        <result property="warningstatus" column="warningstatus"></result>
         <association property="electronicfencestatus" javaType="com.nt.dao_BASF.Electronicfencestatus">
             <result property="shieldstatus" column="shieldstatus"></result>
             <result property="warningstatus" column="warningstatus"></result>

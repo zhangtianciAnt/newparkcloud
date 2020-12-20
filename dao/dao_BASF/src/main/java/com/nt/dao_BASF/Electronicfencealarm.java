@@ -29,6 +29,20 @@ public class Electronicfencealarm {
     private String result;
     private String remark;
 
+    /**
+     * 设备编号
+     */
+    private String deviceno;
+
+    /**
+     * 设备名称
+     */
+    private String devicename;
+
+    private Integer shieldstatus;
+
+    private Integer warningstatus;
+
     @Transient
     private Electronicfencestatus electronicfencestatus;
     @Transient
