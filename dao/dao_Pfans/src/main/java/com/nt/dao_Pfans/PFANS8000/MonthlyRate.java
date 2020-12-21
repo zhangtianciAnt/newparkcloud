@@ -46,4 +46,6 @@ public class MonthlyRate  extends BaseModel {
     @Column(name = "INDEXDATA")
     private Integer indexdata;
 
+    @Column(name = "CURRENCYNAME")
+    private String currencyname;
 }

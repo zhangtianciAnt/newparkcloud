@@ -61,5 +61,8 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
         monthlyratelist = monthlyratelist.stream().sorted(Comparator.comparing(MonthlyRate::getIndexdata).reversed()).collect(Collectors.toList());
         return monthlyratelist;
     }
-
+    @Override
+    public List<MonthlyRate> slectlist2() throws Exception {
+        return monthlyratemapper.selectAll();
+    }
 }

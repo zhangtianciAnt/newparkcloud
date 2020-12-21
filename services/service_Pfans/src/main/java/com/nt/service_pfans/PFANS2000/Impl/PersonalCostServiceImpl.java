@@ -37,10 +37,10 @@ public class PersonalCostServiceImpl implements PersonalCostService {
     private MongoTemplate mongoTemplate;
 
     @Autowired
-    PersonalCostYearsMapper personalCostYearsMapper;
+    private PersonalCostYearsMapper personalCostYearsMapper;
 
     @Autowired
-    PersonalCostMapper personalCostMapper;
+    private PersonalCostMapper personalCostMapper;
 
     @Autowired
     private WagesMapper wagesMapper;

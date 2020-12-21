@@ -59,5 +59,8 @@ public class Pfans8011Controller {
         return ApiResult.success(monthlyrateservice.slectlist(monthlyrate));
     }
 
-
+    @GetMapping("slectlist2")
+    public ApiResult slectlist2(HttpServletRequest request) throws Exception {
+        return ApiResult.success(monthlyrateservice.slectlist2());
+    }
 }
