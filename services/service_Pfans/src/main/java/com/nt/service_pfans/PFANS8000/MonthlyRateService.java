@@ -17,4 +17,7 @@ public interface MonthlyRateService {
     void UpdateData(List<MonthlyRate> monthlyrate, TokenModel tokenModel) throws Exception;
 
     List<MonthlyRate> slectlist(MonthlyRate monthlyrate) throws Exception;
+
+    List<MonthlyRate> slectlist2() throws Exception;
+
 }
