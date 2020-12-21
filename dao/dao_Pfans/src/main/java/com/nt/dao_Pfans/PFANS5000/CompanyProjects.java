@@ -91,14 +91,14 @@ public class CompanyProjects extends BaseModel {
     /**
      * 项目名称(中)
      */
-    //@Encryption
+    @Encryption
     @Column(name = "PROJECT_NAME")
     private String project_name;
 
     /**
      * 项目名称(和)
      */
-    //@Encryption
+    @Encryption
     @Column(name = "PROJECT_NAMEJP")
     private String project_namejp;
 

@@ -1,5 +1,6 @@
 package com.nt.dao_Pfans.PFANS5000.Vo;
 
+import com.nt.utils.Encryption.Encryption;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,7 @@ public class CompanyProjectsVo3 {
     /**
      * 项目名称
      */
+    @Encryption
     private String project_name;
 
     /**

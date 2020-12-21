@@ -1,6 +1,7 @@
 package com.nt.dao_Pfans.PFANS5000.Vo;
 
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
+import com.nt.utils.Encryption.Encryption;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class LogmanagementConfirmVo {
     /**
      * 项目名称、center
      */
+    @Encryption
     private String projectname;
 
     /**

@@ -264,7 +264,6 @@ public class Expatriatesinfor extends BaseModel {
     /**
      * 登录账号
      */
-    //@Encryption
     @Column(name = "ACCOUNTNAME")
     private String accountname;
 

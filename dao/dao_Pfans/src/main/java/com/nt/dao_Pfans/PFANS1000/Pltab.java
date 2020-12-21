@@ -1,5 +1,6 @@
 package com.nt.dao_Pfans.PFANS1000;
 
+import com.nt.utils.Encryption.Encryption;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class Pltab extends BaseModel {
 
 	private static final long serialVersionUID = 1L;
 
+    @Encryption
     private String pj;//项目-
     private String pj1;//共同项目-
 
