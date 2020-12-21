@@ -232,4 +232,16 @@ public class PersonalCost extends BaseModel {
     @Column(name = "REMARKS")
     private String remarks;
 
+    /**
+     *Centerid
+     */
+    @Column(name = "CENTERID ")
+    private String centerid ;
+
+    /**
+     *GROUPID
+     */
+    @Column(name = "GROUPID ")
+    private String groupid ;
+
 }
