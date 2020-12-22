@@ -8,10 +8,12 @@ import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS4000.Seal;
+import com.nt.dao_Pfans.PFANS4000.SealDetail;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS4000.SealService;
+import com.nt.service_pfans.PFANS4000.mapper.SealDetailMapper;
 import com.nt.service_pfans.PFANS4000.mapper.SealMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
@@ -28,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import com.nt.dao_Pfans.PFANS4000.Vo.SealVo;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -50,10 +54,19 @@ public class SealServiceImpl implements SealService {
     private ToDoNoticeService toDoNoticeService;
     @Autowired
     private ContractapplicationMapper contractapplicationMapper;
+    @Autowired
+    private SealDetailMapper sealdetailmapper;
+
+
 
     @Override
-    public List<Seal> list(Seal seal) throws Exception {
-        return sealMapper.select(seal);
+    public SealVo list(Seal seal) throws Exception {
+        SealVo sealvo = new SealVo();
+        List<Seal> seallist = sealMapper.select(seal);
+        List<SealDetail> sealdetaillist = sealdetailmapper.selectAll();
+        sealvo.setSeal(seallist);
+        sealvo.setSealdetail(sealdetaillist);
+        return sealvo;
     }
 
     @Override
@@ -96,8 +109,7 @@ public class SealServiceImpl implements SealService {
                             awardMapper.updateByPrimaryKey(aw);
                         }
                     }
-                }
-                else if (boksplit[0].equals("9")) {//其他契约决裁
+                } else if (boksplit[0].equals("9")) {//其他契约决裁
                     for (int a = 1; a < boksplit.length; a++) {
                         Award aw = awardMapper.selectByPrimaryKey(boksplit[a]);
                         if (aw != null) {
@@ -153,8 +165,7 @@ public class SealServiceImpl implements SealService {
                             awardMapper.updateByPrimaryKey(aw);
                         }
                     }
-                }
-                else if (boksplit[0].equals("9")) {//其他契约决裁
+                } else if (boksplit[0].equals("9")) {//其他契约决裁
                     for (int a = 1; a < boksplit.length; a++) {
                         Award aw = awardMapper.selectByPrimaryKey(boksplit[a]);
                         if (aw != null) {
@@ -174,6 +185,9 @@ public class SealServiceImpl implements SealService {
     @Override
     public void upd(Seal seal, TokenModel tokenModel) throws Exception {
         seal.preUpdate(tokenModel);
+        if (seal.getStatus().equals("4")) {
+            seal.setAcceptor(tokenModel.getUserId());
+        }
         sealMapper.updateByPrimaryKey(seal);
         //add_fjl_添加合同回款相关  start
         Petition petition = new Petition();
@@ -207,8 +221,7 @@ public class SealServiceImpl implements SealService {
                             napalmMapper.updateByPrimaryKey(np);
                         }
                     }
-                }
-                else if (boksplit[0].equals("9")) {//其他决裁
+                } else if (boksplit[0].equals("9")) {//其他决裁
                     for (int a = 1; a < boksplit.length; a++) {
                         Award aw = awardMapper.selectByPrimaryKey(boksplit[a]);
                         if (aw != null) {
@@ -348,4 +361,46 @@ public class SealServiceImpl implements SealService {
     public Seal One(String sealid) throws Exception {
         return sealMapper.selectByPrimaryKey(sealid);
     }
+    //add-ws-12/21-印章盖印
+    @Override
+    public void insertnamedialog(String sealdetailname, String sealdetaildate, TokenModel tokenModel) throws Exception {
+        List<SealDetail> sealdetaillist = sealdetailmapper.selectAll();
+        if (sealdetaillist.size() > 0) {
+            SealDetail seal = new SealDetail();
+            seal.setSealdetailid(sealdetaillist.get(0).getSealdetailid());
+            sealdetailmapper.delete(seal);
+        }
+        SealDetail sealdetail = new SealDetail();
+        sealdetail.preInsert(tokenModel);
+        sealdetail.setSealdetaildate(sealdetaildate);
+        sealdetail.setSealdetailname(sealdetailname);
+        sealdetail.setSealdetailid(UUID.randomUUID().toString());
+        sealdetailmapper.insert(sealdetail);
+    }
+    @Override
+    public void insertrecognition(String sealid, TokenModel tokenModel) throws Exception {
+        String[] sealidlist = sealid.split(",");
+        List<SealDetail> sealdetaillist = sealdetailmapper.selectAll();
+        if (sealdetaillist.size() > 0) {
+            for (var i = 0; i < sealidlist.length; i++) {
+                Seal seal = sealMapper.selectByPrimaryKey(sealidlist[i]);
+                if (tokenModel.getUserId().equals(sealdetaillist.get(0).getSealdetailname())) {
+                    if (seal != null) {
+                        seal.setRegulator(sealdetaillist.get(0).getSealdetailname());
+                        seal.setRegulatorstate("true");
+                        seal.setAcceptstate("true");
+                        seal.preUpdate(tokenModel);
+                        sealMapper.updateByPrimaryKey(seal);
+                    }
+                } else {
+                    if (seal != null) {
+                        seal.setAcceptstate("true");
+                        seal.preUpdate(tokenModel);
+                        sealMapper.updateByPrimaryKey(seal);
+                    }
+                }
+            }
+        }
+    }
+    //add-ws-12/21-印章盖印
 }

@@ -9,10 +9,7 @@ import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,6 +22,7 @@ public class Pfans4001Controller {
 
     @Autowired
     private TokenService tokenService;
+
 
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
@@ -71,5 +69,21 @@ public class Pfans4001Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(sealService.One(seal.getSealid()));
     }
-
+    //add-ws-12/21-印章盖印
+    @RequestMapping(value = "/insertrecognition", method = {RequestMethod.POST})
+    public ApiResult insertrecognition(@RequestBody Seal seal, HttpServletRequest request) throws Exception {
+        if (seal == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        sealService.insertrecognition(seal.getSealid(),tokenModel);
+        return ApiResult.success();
+    }
+    @GetMapping("/insertnamedialog")
+    public ApiResult insertnamedialog(String sealdetailname, String sealdetaildate, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        sealService.insertnamedialog(sealdetailname,sealdetaildate,tokenModel);
+        return ApiResult.success();
+    }
+    //add-ws-12/21-印章盖印
 }

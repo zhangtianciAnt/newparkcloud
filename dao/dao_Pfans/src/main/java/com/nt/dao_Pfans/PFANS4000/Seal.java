@@ -73,5 +73,19 @@ public class Seal extends BaseModel {
     @Column(name = "AWARDID ")
     private String awardid;
     //add-ws-7/20-禅道任务342
+    //add-ws-12/21-印章盖印
+    //    承认者
+    @Column(name = "ACCEPTOR")
+    private String acceptor;
+    //    盖印承认
+    @Column(name = "ACCEPTSTATE")
+    private String acceptstate;
+    //    盖印监管确认
+    @Column(name = "REGULATORSTATE")
+    private String regulatorstate;
+    //    盖印监管者
+    @Column(name = "REGULATOR")
+    private String regulator;
+    //add-ws-12/21-印章盖印
 }
 
