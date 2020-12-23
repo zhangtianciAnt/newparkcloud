@@ -67,6 +67,7 @@ public class ContractServiceImpl implements ContractService {
             Contractnumbercount count = new Contractnumbercount();
             count.setContractnumber(contract.getContractnumber());
             List<Contractnumbercount> contractnumbercountList = contractnumbercountMapper.select(count);
+            contractnumbercountList = contractnumbercountList.stream().sorted(Comparator.comparing(Contractnumbercount::getRowindex)).collect(Collectors.toList());
             result.setNumberCount(contractnumbercountList);
         }
         // add end
