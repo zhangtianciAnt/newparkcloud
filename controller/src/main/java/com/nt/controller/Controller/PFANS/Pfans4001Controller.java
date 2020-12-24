@@ -1,7 +1,9 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS4000.Seal;
+import com.nt.dao_Pfans.PFANS4000.SealDetail;
 import com.nt.service_pfans.PFANS4000.SealService;
+import com.nt.service_pfans.PFANS4000.mapper.SealDetailMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/seal")
@@ -23,12 +26,22 @@ public class Pfans4001Controller {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private SealDetailMapper sealdetailmapper;
 
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
+
         Seal seal = new Seal();
-        seal.setOwners(tokenModel.getOwnerList());
+        List<SealDetail> sealdetaillist = sealdetailmapper.selectAll();
+        if (sealdetaillist.size() > 0) {
+            if (!tokenModel.getUserId().equals(sealdetaillist.get(0).getSealdetailname())) {
+                seal.setOwners(tokenModel.getOwnerList());
+            }
+        }else{
+            seal.setOwners(tokenModel.getOwnerList());
+        }
         return ApiResult.success(sealService.list(seal));
     }
 
