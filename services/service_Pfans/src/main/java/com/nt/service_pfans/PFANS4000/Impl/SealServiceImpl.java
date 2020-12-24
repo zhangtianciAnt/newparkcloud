@@ -11,6 +11,7 @@ import com.nt.dao_Pfans.PFANS4000.Seal;
 import com.nt.dao_Pfans.PFANS4000.SealDetail;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
+import com.nt.service_Org.mapper.TodoNoticeMapper;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS4000.SealService;
 import com.nt.service_pfans.PFANS4000.mapper.SealDetailMapper;
@@ -40,6 +41,10 @@ public class SealServiceImpl implements SealService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private SealMapper sealMapper;
+
+    @Autowired
+    private TodoNoticeMapper todoNoticeMapper;
+
     @Autowired
     private AwardMapper awardMapper;
     @Autowired
@@ -186,6 +191,27 @@ public class SealServiceImpl implements SealService {
         seal.preUpdate(tokenModel);
         if (seal.getStatus().equals("4")) {
             seal.setAcceptor(tokenModel.getUserId());
+//            总经理代办
+            ToDoNotice toDoNotice = new ToDoNotice();
+            toDoNotice.setUrl("/PFANS4001View");
+            toDoNotice.setTitle("【印章申请】有需要您盖印承认得数据");
+            toDoNotice.setStatus("0");
+            List<ToDoNotice> todonoticelist = todoNoticeMapper.select(toDoNotice);
+            if (todonoticelist.size() == 0) {
+                List<MembersVo> rolelist = roleService.getMembers("5e785fd38f4316308435112d");
+                if (rolelist.size() > 0) {
+                    ToDoNotice toDoNotice3 = new ToDoNotice();
+                    toDoNotice3.setTitle("【印章申请】有需要您盖印承认得数据");
+                    toDoNotice3.setInitiator(seal.getUserid());
+                    toDoNotice3.setContent("【印章申请】有需要您盖印承认得数据");
+                    toDoNotice3.setDataid(seal.getSealid());
+                    toDoNotice3.setUrl("/PFANS4001View");
+                    toDoNotice3.setWorkflowurl("/PFANS4001View");
+                    toDoNotice3.preInsert(tokenModel);
+                    toDoNotice3.setOwner(rolelist.get(0).getUserid());
+                    toDoNoticeService.save(toDoNotice3);
+                }
+            }
         }
         sealMapper.updateByPrimaryKey(seal);
         //add_fjl_添加合同回款相关  start
