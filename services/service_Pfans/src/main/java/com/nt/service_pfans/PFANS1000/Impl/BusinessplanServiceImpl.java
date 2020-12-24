@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.alibaba.fastjson.JSON;
@@ -106,6 +107,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                     throw new LogicalException("第" + (i) + "列标题错误，应为" + model.get(i - 1).toString());
                 }
             }
+            int year = Integer.valueOf(DateUtil.format(new Date(), "MM")) >= 4 ? Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1 : Integer.valueOf(DateUtil.format(new Date(), "YYYY"));
             int n = 1;
             int accesscount = 0;
             int error = 0;
@@ -120,7 +122,11 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                     }
                 }
                 if (value.size() > 1) {
+
+
+
                     Businessplan businessplan = new Businessplan();
+                    businessplan.setYear(String.valueOf(year));
                     businessplan.setEncoding(value.get(0).toString().substring(0, 2));
                     List<Businessplan> businessplanlist = businessplanMapper.select(businessplan);
                     if (businessplanlist.size() == 0) {
@@ -155,6 +161,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 if (value.size() > 1) {
                     Businessplan businessplan = new Businessplan();
                     businessplan.setEncoding(value.get(0).toString().substring(0, 2));
+                    businessplan.setYear(String.valueOf(year));
                     List<Businessplan> businessplanlist = businessplanMapper.select(businessplan);
                     if (businessplanlist.size() > 0) {
                         String money4 = "";
