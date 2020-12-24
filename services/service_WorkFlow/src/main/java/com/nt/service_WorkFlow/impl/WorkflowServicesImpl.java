@@ -1050,6 +1050,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                             }
                         }
 
+                        user = getUpUser(workflowinstance.getOwner(), item.getNodename().toUpperCase());
                         if (StrUtil.isEmpty(user)) {
                             continue;
                         }
