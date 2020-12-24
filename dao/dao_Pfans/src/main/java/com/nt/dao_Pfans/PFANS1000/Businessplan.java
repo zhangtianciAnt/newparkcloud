@@ -100,4 +100,8 @@ public class Businessplan extends BaseModel {
 
     @Column(name = "EQUIPMENT_LODYEAR")
     private String equipment_lodyear;
+
+    @Column(name = "ENCODING")
+    private String encoding;
+
 }

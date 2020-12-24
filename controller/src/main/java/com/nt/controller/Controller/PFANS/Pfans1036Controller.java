@@ -3,10 +3,7 @@ package com.nt.controller.Controller.PFANS;
 import com.nt.dao_Pfans.PFANS1000.Businessplan;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessplanVo;
 import com.nt.service_pfans.PFANS1000.BusinessplanService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +18,18 @@ public class Pfans1036Controller {
     private BusinessplanService businessplanService;
     @Autowired
     private TokenService tokenService;
+
+    @PostMapping("/importUser")
+    public ApiResult importUser(HttpServletRequest request, String flag) {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            return ApiResult.success(businessplanService.importUser(request, tokenModel));
+        } catch (LogicalException e) {
+            return ApiResult.fail(e.getMessage());
+        } catch (Exception e) {
+            return ApiResult.fail("操作失败！");
+        }
+    }
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
