@@ -58,7 +58,6 @@ public class SealServiceImpl implements SealService {
     private SealDetailMapper sealdetailmapper;
 
 
-
     @Override
     public SealVo list(Seal seal) throws Exception {
         SealVo sealvo = new SealVo();
@@ -361,6 +360,7 @@ public class SealServiceImpl implements SealService {
     public Seal One(String sealid) throws Exception {
         return sealMapper.selectByPrimaryKey(sealid);
     }
+
     //add-ws-12/21-印章盖印
     @Override
     public void insertnamedialog(String sealdetailname, String sealdetaildate, TokenModel tokenModel) throws Exception {
@@ -377,6 +377,7 @@ public class SealServiceImpl implements SealService {
         sealdetail.setSealdetailid(UUID.randomUUID().toString());
         sealdetailmapper.insert(sealdetail);
     }
+
     @Override
     public void insertrecognition(String sealid, TokenModel tokenModel) throws Exception {
         String[] sealidlist = sealid.split(",");
@@ -398,6 +399,16 @@ public class SealServiceImpl implements SealService {
                         seal.preUpdate(tokenModel);
                         sealMapper.updateByPrimaryKey(seal);
                     }
+                    ToDoNotice toDoNotice3 = new ToDoNotice();
+                    toDoNotice3.setTitle("总经理已承认【印章申请】，需要您监管盖印");
+                    toDoNotice3.setInitiator(tokenModel.getUserId());
+                    toDoNotice3.setContent("已被赋予盖印监管者权限！");
+                    toDoNotice3.setDataid(tokenModel.getUserId());
+                    toDoNotice3.setUrl("/PFANS4001View");
+                    toDoNotice3.setWorkflowurl("/PFANS4001View");
+                    toDoNotice3.preInsert(tokenModel);
+                    toDoNotice3.setOwner(sealdetaillist.get(0).getSealdetailname());
+                    toDoNoticeService.save(toDoNotice3);
                 }
             }
         }
