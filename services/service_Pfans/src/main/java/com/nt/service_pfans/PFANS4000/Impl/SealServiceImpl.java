@@ -211,6 +211,11 @@ public class SealServiceImpl implements SealService {
                     toDoNotice3.setOwner(rolelist.get(0).getUserid());
                     toDoNoticeService.save(toDoNotice3);
                 }
+            } else {
+                ToDoNotice todonotice = new ToDoNotice();
+                BeanUtils.copyProperties(todonoticelist, todonotice);
+                todonotice.preUpdate(tokenModel);
+                todoNoticeMapper.updateByPrimaryKey(todonotice);
             }
         }
         sealMapper.updateByPrimaryKey(seal);
@@ -386,6 +391,7 @@ public class SealServiceImpl implements SealService {
     public List<SealDetail> selectcognition() throws Exception {
         return sealdetailmapper.selectAll();
     }
+
     @Override
     public void insertrecognition(String sealid, TokenModel tokenModel) throws Exception {
         String[] sealidlist = sealid.split(",");
@@ -410,6 +416,7 @@ public class SealServiceImpl implements SealService {
                     ToDoNotice toDoNotice = new ToDoNotice();
                     toDoNotice.setUrl("/PFANS4001View");
                     toDoNotice.setTitle("总经理已承认【印章申请】，需要您监管盖印");
+                    toDoNotice.setOwner(sealdetaillist.get(0).getSealdetailname());
                     toDoNotice.setStatus("0");
                     List<ToDoNotice> todonoticelist = todoNoticeMapper.select(toDoNotice);
                     if (todonoticelist.size() == 0) {
@@ -423,6 +430,11 @@ public class SealServiceImpl implements SealService {
                         toDoNotice3.preInsert(tokenModel);
                         toDoNotice3.setOwner(sealdetaillist.get(0).getSealdetailname());
                         toDoNoticeService.save(toDoNotice3);
+                    } else {
+                        ToDoNotice todonotice = new ToDoNotice();
+                        BeanUtils.copyProperties(todonoticelist, todonotice);
+                        todonotice.preUpdate(tokenModel);
+                        todoNoticeMapper.updateByPrimaryKey(todonotice);
                     }
                 }
             }
