@@ -92,6 +92,11 @@ public class Pfans4001Controller {
         sealService.insertrecognition(seal.getSealid(),tokenModel);
         return ApiResult.success();
     }
+    @GetMapping("/selectcognition")
+    public ApiResult selectcognition(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success( sealService.selectcognition());
+    }
     @GetMapping("/insertnamedialog")
     public ApiResult insertnamedialog(String sealdetailname, String sealdetaildate, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
