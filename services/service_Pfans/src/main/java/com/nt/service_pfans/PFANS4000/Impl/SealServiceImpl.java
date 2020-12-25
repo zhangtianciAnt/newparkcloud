@@ -353,28 +353,6 @@ public class SealServiceImpl implements SealService {
                             toDoNoticeService.save(toDoNotice);
                         }
                     }
-//                    if (countLi.get(0).getClaimconditionqh() != null && countLi.get(0).getClaimconditionqh() != "") {
-//                        if (countLi.get(0).getClaimconditionqh().equals("HT011003") && countLi.get(0).getDeliveryconditionqh().equals("HT009003")) {
-//                            //向财务部长（角色）发送待办
-//                            List<MembersVo> rolelist = roleService.getMembers("5e7861948f43163084351132");
-//                            if (rolelist.size() > 0) {
-//                                for (MembersVo rt : rolelist) {
-//                                    //发起人创建代办
-//                                    ToDoNotice toDoNotice = new ToDoNotice();
-//                                    List<String> params = new ArrayList<String>();
-//                                    toDoNotice.setTitle(countLi.get(0).getContractnumber() + countLi.get(0).getClaimtype() + "作成完毕，可进行资金回收确认");
-//                                    toDoNotice.setInitiator(seal.getUserid());
-//                                    toDoNotice.setContent(countLi.get(0).getContractnumber() + countLi.get(0).getClaimtype() + "作成完毕，可进行资金回收确认");
-//                                    toDoNotice.setDataid(countLi.get(0).getContractnumber()); //合同是按照合同编号查询
-//                                    toDoNotice.setUrl("/PFANS1026FormView");
-//                                    toDoNotice.setWorkflowurl("/PFANS1026View");
-//                                    toDoNotice.preInsert(tokenModel);
-//                                    toDoNotice.setOwner(rt.getUserid());
-//                                    toDoNoticeService.save(toDoNotice);
-//                                }
-//                            }
-//                        }
-//                    }
                 }
             }
         }
@@ -425,16 +403,23 @@ public class SealServiceImpl implements SealService {
                         seal.preUpdate(tokenModel);
                         sealMapper.updateByPrimaryKey(seal);
                     }
-                    ToDoNotice toDoNotice3 = new ToDoNotice();
-                    toDoNotice3.setTitle("总经理已承认【印章申请】，需要您监管盖印");
-                    toDoNotice3.setInitiator(tokenModel.getUserId());
-                    toDoNotice3.setContent("已被赋予盖印监管者权限！");
-                    toDoNotice3.setDataid(tokenModel.getUserId());
-                    toDoNotice3.setUrl("/PFANS4001View");
-                    toDoNotice3.setWorkflowurl("/PFANS4001View");
-                    toDoNotice3.preInsert(tokenModel);
-                    toDoNotice3.setOwner(sealdetaillist.get(0).getSealdetailname());
-                    toDoNoticeService.save(toDoNotice3);
+                    ToDoNotice toDoNotice = new ToDoNotice();
+                    toDoNotice.setUrl("/PFANS4001View");
+                    toDoNotice.setTitle("总经理已承认【印章申请】，需要您监管盖印");
+                    toDoNotice.setStatus("0");
+                    List<ToDoNotice> todonoticelist = todoNoticeMapper.select(toDoNotice);
+                    if (todonoticelist.size() == 0) {
+                        ToDoNotice toDoNotice3 = new ToDoNotice();
+                        toDoNotice3.setTitle("总经理已承认【印章申请】，需要您监管盖印");
+                        toDoNotice3.setInitiator(tokenModel.getUserId());
+                        toDoNotice3.setContent("已被赋予盖印监管者权限！");
+                        toDoNotice3.setDataid(tokenModel.getUserId());
+                        toDoNotice3.setUrl("/PFANS4001View");
+                        toDoNotice3.setWorkflowurl("/PFANS4001View");
+                        toDoNotice3.preInsert(tokenModel);
+                        toDoNotice3.setOwner(sealdetaillist.get(0).getSealdetailname());
+                        toDoNoticeService.save(toDoNotice3);
+                    }
                 }
             }
         }
