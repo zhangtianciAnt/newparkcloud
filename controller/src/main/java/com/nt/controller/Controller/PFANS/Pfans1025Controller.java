@@ -281,7 +281,7 @@ public class Pfans1025Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         SimpleDateFormat sf = new SimpleDateFormat("MM");
-        SimpleDateFormat sf1 = new SimpleDateFormat("YYYY");
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
         Date draftingdate = awardvo.getAward().getDraftingdate();
         PolicyContract policycontract = new PolicyContract();

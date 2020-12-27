@@ -35,7 +35,7 @@ public class GlobalAop {
         // 记录下请求内容
         log.info("方法调用开始>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         log.info("接口地址 : " + request.getRequestURL().toString());
-        log.info("请求时间 : "+ DateUtil.format(new Date(),"YYYY/MM/dd HH:mm:ss"));
+        log.info("请求时间 : "+ DateUtil.format(new Date(),"yyyy/MM/dd HH:mm:ss"));
         log.info("请求类型 : " + request.getMethod());
         log.info("IP : " + request.getRemoteAddr());
         log.info("类名 : " + joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
@@ -71,7 +71,7 @@ public class GlobalAop {
         HttpServletRequest request = attributes.getRequest();
         log.info("方法调用结束>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
         log.info("接口地址 : " + request.getRequestURL().toString());
-        log.info("TIME : "+ DateUtil.format(new Date(),"YYYY/MM/dd HH:mm:ss"));
+        log.info("TIME : "+ DateUtil.format(new Date(),"yyyy/MM/dd HH:mm:ss"));
         log.info("方法调用结束<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
     }
 }

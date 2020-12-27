@@ -419,7 +419,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         calendar.setTime(new Date());
         calendar.add(Calendar.YEAR, -1);
         annualLeave.setUser_id(customer.getUserid());
-        annualLeave.setYears(DateUtil.format(calendar.getTime(),"YYYY"));
+        annualLeave.setYears(DateUtil.format(calendar.getTime(),"yyyy"));
         List<AnnualLeave> annualLeavelist = annualLeaveMapper.select(annualLeave);
         BigDecimal zero = BigDecimal.ZERO;
         //上年度
@@ -448,7 +448,17 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         annualLeave.setAnnualleave_id(annualleaveid);
         annualLeave.setUser_id(customer.getUserid());
         annualLeave.setOwner(customer.getUserid());
-        annualLeave.setYears(DateUtil.format(new Date(),"YYYY"));
+//        annualLeave.setYears(DateUtil.format(new Date(),"YYYY"));
+        Calendar calyears = Calendar.getInstance();
+        //当前年度
+        int year = 0;
+        int month = calyears.get(Calendar.MONTH);
+        if(month >= 1 && month <= 3) {
+            year = calendar.get(Calendar.YEAR) - 1;
+        }else {
+            year = calendar.get(Calendar.YEAR);
+        }
+        annualLeave.setYears(String.valueOf(year));
         annualLeave.setCenter_id(customer.getUserinfo().getCenterid());
         annualLeave.setGroup_id(customer.getUserinfo().getGroupid());
         annualLeave.setTeam_id(customer.getUserinfo().getTeamid());
@@ -476,9 +486,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         String workdaystartCal = customer.getUserinfo().getWorkday();
 
         if (StringUtil.isNotEmpty(workdaystartCal)) {
-            int year = getYears(workdaystartCal);
+            int yearr = getYears(workdaystartCal);
             //本年度法定年休（期初）
-            if(year < 10){
+            if(yearr < 10){
                 //年休计算不考虑试用期，未满10年均有5天年休
                 //del CCM 20200411--from
 //                if(customer.getUserinfo().getEnddate() == null || customer.getUserinfo().getEnddate().isEmpty())
@@ -500,10 +510,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 //del CCM 20200411--to
                 annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("5"));
             }
-            if(year >= 10 && year < 20){
+            if(yearr >= 10 && yearr < 20){
                 annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("10"));
             }
-            if(year >= 20){
+            if(yearr >= 20){
                 annual_leave_thisyear = annual_leave_thisyear.add(new BigDecimal("15"));
             }
         }
@@ -571,9 +581,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             //途中入职
             if(calendar_start.getTime().compareTo(start.getTime())>=0 && calendar_start.getTime().compareTo(end.getTime())<=0)
             {
-                int year = getYears(workdaystartCal);
+                int yeare = getYears(workdaystartCal);
                 //有工作经验者
-                if(year>=1)
+                if(yeare>=1)
                 {
                     //入职日 > 事业年度开始日
                     if(calendar_start.getTime().compareTo(start.getTime())>0)
@@ -1652,7 +1662,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         attendance.setOutgoinghours(overtimeHours);
                         attendance.setGroup_id(exList.get(0).getGroup_id());
 
-                        attendance.setYears(DateUtil.format(sfymd.parse(recordTime),"YYYY").toString());
+                        attendance.setYears(DateUtil.format(sfymd.parse(recordTime),"yyyy").toString());
                         attendance.setMonths(DateUtil.format(sfymd.parse(recordTime),"MM").toString());
                         attendance.setAttendancebpid(UUID.randomUUID().toString());
                         attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
@@ -1687,7 +1697,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         attendance.setGroup_id(Expatriatesinfor.getGroup_id());
                         attendance.setUser_id(Expatriatesinfor.getAccount());
                         attendance.setDates(calendar.getTime());
-                        attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+                        attendance.setYears(DateUtil.format(attendance.getDates(), "yyyy").toString());
                         attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
                         attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
                         attendance.preInsert(tokenModel);
@@ -3268,7 +3278,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     attendance.setOutgoinghours(overtimeHours);
                     attendance.setGroup_id(exList.get(0).getGroup_id());
 
-                    attendance.setYears(DateUtil.format(sfymd.parse(recordTime),"YYYY").toString());
+                    attendance.setYears(DateUtil.format(sfymd.parse(recordTime),"yyyy").toString());
                     attendance.setMonths(DateUtil.format(sfymd.parse(recordTime),"MM").toString());
                     attendance.setAttendancebpid(UUID.randomUUID().toString());
                     attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);

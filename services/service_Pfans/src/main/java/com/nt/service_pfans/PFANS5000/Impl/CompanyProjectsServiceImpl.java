@@ -301,7 +301,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             //2019
             //String thisYear_s = String.valueOf(Integer.parseInt(DateUtil.format(new Date(), "YYYY")) - 1);
-            String thisYear_s = DateUtil.format(new Date(), "YYYY");
+            String thisYear_s = DateUtil.format(new Date(), "yyyy");
             //2020
 //            int thatYear_i = Integer.parseInt(thisYear_s) + 1;
 //            String thatYear_s = String.valueOf(thatYear_i);
@@ -1406,7 +1406,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             //2019
             //String thisYear_s = String.valueOf(Integer.parseInt(DateUtil.format(new Date(), "YYYY")) - 1);
-            String thisYear_s = DateUtil.format(new Date(), "YYYY");
+            String thisYear_s = DateUtil.format(new Date(), "yyyy");
             //2020
 //            int thatYear_i = Integer.parseInt(thisYear_s) + 1;
 //            String thatYear_s = String.valueOf(thatYear_i);
