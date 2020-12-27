@@ -136,17 +136,17 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                 othertwo.preInsert(tokenModel);
                 othertwo.setOthertwo_id(UUID.randomUUID().toString());
                 othertwoMapper.insert(othertwo);
-                List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(Givingid);
-                if(otherTwo2List.size()>0){
-                    for(OtherTwo2 otherTwo2 :otherTwo2List){
-                        otherTwo2.preInsert(tokenModel);
-                        otherTwo2.setUser_id(otherTwo2.getUser_id());
-                        otherTwo2.setMoneys(otherTwo2.getMoneys());
-                        otherTwo2.setOthertwo2_id(UUID.randomUUID().toString());
-                        othertwo2Mapper.insert(otherTwo2);
-                    }
-                }
-                listVo.add(othertwo);
+//                List<OtherTwo2> otherTwo2List = givingMapper.selectOthertwo(Givingid);
+//                if(otherTwo2List.size()>0){
+//                    for(OtherTwo2 otherTwo2 :otherTwo2List){
+//                        otherTwo2.preInsert(tokenModel);
+//                        otherTwo2.setUser_id(otherTwo2.getUser_id());
+//                        otherTwo2.setMoneys(otherTwo2.getMoneys());
+//                        otherTwo2.setOthertwo2_id(UUID.randomUUID().toString());
+//                        othertwo2Mapper.insert(otherTwo2);
+//                    }
+//                }
+                //listVo.add(othertwo);
                 accesscount = accesscount + 1;
             }
             Result.add("失败数：" + error);

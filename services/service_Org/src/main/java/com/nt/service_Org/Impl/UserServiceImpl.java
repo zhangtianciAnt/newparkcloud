@@ -1317,7 +1317,7 @@ public class UserServiceImpl implements UserService {
                         List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                         if (dictionaryList.size() > 0) {
                             userinfo.setPost(dictionaryList.get(0).getCode());
-                            personal1.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                            personal1.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                             personal1.setBasic(dictionaryList.get(0).getCode());
                         } else {
                             throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的职务（" + item.get("职务").toString() + "）在字典中不存在！");
@@ -1340,7 +1340,7 @@ public class UserServiceImpl implements UserService {
                             List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                             if (dictionaryList.size() > 0) {
                                 userinfo.setRank(dictionaryList.get(0).getCode());
-                                personal2.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                                personal2.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                                 personal2.setBasic(dictionaryList.get(0).getCode());
                             } else {
                                 throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的Rank（" + item.get("Rank").toString() + "）在字典中不存在！");
@@ -1659,37 +1659,37 @@ public class UserServiceImpl implements UserService {
                 //养老保险基数
                 if (item.get("养老保险基数") != null) {
                     userinfo.setYanglaoinsurance(item.get("养老保险基数").toString());
-                    personal3.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                    personal3.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                     personal3.setBasic(item.get("养老保险基数").toString());
                 }
                 //医疗保险基数
                 if (item.get("医疗保险基数") != null) {
                     userinfo.setYiliaoinsurance(item.get("医疗保险基数").toString());
-                    personal4.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                    personal4.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                     personal4.setBasic(item.get("医疗保险基数").toString());
                 }
                 //失业保险基数
                 if (item.get("失业保险基数") != null) {
                     userinfo.setShiyeinsurance(item.get("失业保险基数").toString());
-                    personal5.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                    personal5.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                     personal5.setBasic(item.get("失业保险基数").toString());
                 }
                 //工伤保险基数
                 if (item.get("工伤保险基数") != null) {
                     userinfo.setGongshanginsurance(item.get("工伤保险基数").toString());
-                    personal6.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                    personal6.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                     personal6.setBasic(item.get("工伤保险基数").toString());
                 }
                 //生育保险基数
                 if (item.get("生育保险基数") != null) {
                     userinfo.setShengyuinsurance(item.get("生育保险基数").toString());
-                    personal7.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                    personal7.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                     personal7.setBasic(item.get("生育保险基数").toString());
                 }
                 //住房公积金缴纳基数
                 if (item.get("住房公积金缴纳基数") != null) {
                     userinfo.setHouseinsurance(item.get("住房公积金缴纳基数").toString());
-                    personal8.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                    personal8.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                     personal8.setBasic(item.get("住房公积金缴纳基数").toString());
                 }
 //                }
@@ -1993,7 +1993,7 @@ public class UserServiceImpl implements UserService {
                             List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                             if (dictionaryList.size() > 0) {
                                 customerInfoList.get(0).getUserinfo().setPost(dictionaryList.get(0).getCode());
-                                personal1.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                                personal1.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                                 personal1.setBasic(dictionaryList.get(0).getCode());
                             } else {
                                 throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的职务（" + item.get("职务●").toString() + "）在字典中不存在！");
@@ -2079,7 +2079,7 @@ public class UserServiceImpl implements UserService {
                                 List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
                                 if (dictionaryList.size() > 0) {
                                     customerInfoList.get(0).getUserinfo().setRank(dictionaryList.get(0).getCode());
-                                    personal2.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                                    personal2.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                                     personal2.setBasic(dictionaryList.get(0).getCode());
                                 } else {
                                     throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的Rank（" + item.get("Rank●").toString() + "）在字典中不存在！");
@@ -2276,32 +2276,32 @@ public class UserServiceImpl implements UserService {
                     }
                     if (item.get("养老保险基数●") != null) {
                         customerInfoList.get(0).getUserinfo().setYanglaoinsurance(item.get("养老保险基数●").toString());
-                        personal3.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                        personal3.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                         personal3.setBasic(item.get("养老保险基数●").toString());
                     }
                     if (item.get("医疗保险基数●") != null) {
                         customerInfoList.get(0).getUserinfo().setYiliaoinsurance(item.get("医疗保险基数●").toString());
-                        personal4.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                        personal4.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                         personal4.setBasic(item.get("医疗保险基数●").toString());
                     }
                     if (item.get("失业保险基数●") != null) {
                         customerInfoList.get(0).getUserinfo().setShiyeinsurance(item.get("失业保险基数●").toString());
-                        personal5.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                        personal5.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                         personal5.setBasic(item.get("失业保险基数●").toString());
                     }
                     if (item.get("工伤保险基数●") != null) {
                         customerInfoList.get(0).getUserinfo().setGongshanginsurance(item.get("工伤保险基数●").toString());
-                        personal6.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                        personal6.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                         personal6.setBasic(item.get("工伤保险基数●").toString());
                     }
                     if (item.get("生育保险基数●") != null) {
                         customerInfoList.get(0).getUserinfo().setShengyuinsurance(item.get("生育保险基数●").toString());
-                        personal7.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                        personal7.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                         personal7.setBasic(item.get("生育保险基数●").toString());
                     }
                     if (item.get("住房公积金缴纳基数●") != null) {
                         customerInfoList.get(0).getUserinfo().setHouseinsurance(item.get("住房公积金缴纳基数●").toString());
-                        personal8.setDate(DateUtil.format(new Date(), "YYYY-MM-dd"));
+                        personal8.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                         personal8.setBasic(item.get("住房公积金缴纳基数●").toString());
                     }
                 } else {
