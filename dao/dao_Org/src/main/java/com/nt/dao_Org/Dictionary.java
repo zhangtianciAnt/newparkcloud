@@ -52,6 +52,11 @@ public class Dictionary extends BaseModel {
     @Column(name = "VALUE9")
     private String value9;
 
+    //人件费 需要添加 1228 ccm
+    @Column(name = "VALUE10")
+    private String value10;
+    //人件费 需要添加 1228 ccm
+
     @Column(name = "PCODE")
     private String pcode;
 
