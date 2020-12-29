@@ -31,7 +31,6 @@ public class PersonalCost extends BaseModel {
     @Column(name = "YEARSANTID")
     private String yearsantid;
 
-
     /**
      *CENTERID
      */
@@ -223,6 +222,12 @@ public class PersonalCost extends BaseModel {
      */
     @Column(name = "GJJJSAJ")
     private String gjjjsaj;
+
+    /**
+     * 社保企业4
+     */
+    @Column(name = "SBQYAJ")
+    private String sbqyaj;
 
     /**
      * 取暖补贴4
