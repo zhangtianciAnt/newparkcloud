@@ -341,7 +341,7 @@ public class PersonalCost extends BaseModel {
      * 创建时间
      */
     @Column(name = "CREATEON")
-    private String createon;
+    private Date createon;
 
     /**
      * 更新人
@@ -353,7 +353,7 @@ public class PersonalCost extends BaseModel {
      * 更新时间
      */
     @Column(name = "MODIFYON")
-    private String modifyon;
+    private Date modifyon;
 
     /**
      * 负责人
