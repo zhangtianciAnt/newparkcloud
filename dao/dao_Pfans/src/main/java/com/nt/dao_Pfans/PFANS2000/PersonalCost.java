@@ -15,11 +15,11 @@ import javax.persistence.Table;
 @Table(name = "personalcost")
 public class PersonalCost extends BaseModel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
-	 * 人件费ID
-	 */
+     * 人件费ID
+     */
     @Id
     @Column(name = "PERSONALCOSTID")
     private String personalcostid;
@@ -245,3 +245,4 @@ public class PersonalCost extends BaseModel {
     private String groupid ;
 
 }
+
