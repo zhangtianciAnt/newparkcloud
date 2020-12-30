@@ -94,4 +94,12 @@ public class OrgTreeServiceImpl implements OrgTreeService {
         }
         return orgTrees;
     }
+
+    @Override
+    public OrgTree getTreeYears(String log_date) throws Exception {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("years").is(log_date));
+        OrgTree orgtreeold = mongoTemplate.findOne(query, OrgTree.class);
+        return orgtreeold;
+    }
 }

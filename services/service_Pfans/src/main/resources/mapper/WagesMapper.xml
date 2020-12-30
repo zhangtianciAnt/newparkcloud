@@ -145,9 +145,9 @@
         IF
         ( @GJJ * 2 - base.DIC_99NQZGDWGR * 2 > 0, convert(@GJJ * 2 - base.DIC_99NQZGDWGR * 2,decimal(10,2)), round(0,2) ),
         (IF
-        ( @GJJ > base.DIC_99NHZGDW, convert(@GJJ - base.DIC_99NHZGDW,decimal(10,2)), round(0,2) ) +
+        ( CAST(@GJJ AS DECIMAL) > CAST(base.DIC_99NHZGDW AS DECIMAL), convert(@GJJ - base.DIC_99NHZGDW,decimal(10,2)), round(0,2) ) +
         IF
-        ( @GJJ > base.DIC_99NHZGGR, convert(@GJJ - base.DIC_99NHZGGR,decimal(10,2)), round(0,2) ))
+        ( CAST(@GJJ AS DECIMAL) > CAST(base.DIC_99NHZGGR AS DECIMAL), convert(@GJJ - base.DIC_99NHZGGR,decimal(10,2)), round(0,2) ))
         )
         ) AS HOUSINGMONEYS,#住房公积金应纳税金额
         @OTHERFOUR_TOTAL := convert(base.OTHERFOUR_TOTAL,decimal(10,2)) AS OTHER4,#其他4公司负担社保（24元）

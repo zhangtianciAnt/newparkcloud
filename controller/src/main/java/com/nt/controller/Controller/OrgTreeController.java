@@ -85,4 +85,17 @@ public class OrgTreeController {
         orgTree.set_id(id);
         return ApiResult.success(orgTreeService.getById(orgTree));
     }
+
+    /**
+     * @方法名：getTreeYears
+     * @描述：获取历史组织架构
+     * @创建日期：2020/12/30
+     * @作者：GAOBINGBING
+     * @参数：[id, request]
+     * @返回值：com.nt.utils.ApiResult
+     */
+    @RequestMapping(value = "/getTreeYears", method = {RequestMethod.GET})
+    public ApiResult getTreeYears(String Years, HttpServletRequest request) throws Exception {
+        return ApiResult.success(orgTreeService.getTreeYears(Years));
+    }
 }

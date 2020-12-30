@@ -26,4 +26,7 @@ public interface OrgTreeService {
 
     // 获取当前组织机构树形结构
     List<OrgTree> getById(OrgTree orgTree) throws Exception;
+
+    // 获取组织机构树形结构
+    OrgTree getTreeYears(String Years) throws Exception;
 }
