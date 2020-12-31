@@ -12,4 +12,6 @@ import java.util.List;
 public interface ElectronicfencealarmMapper extends MyMapper<Electronicfencealarm> {
 
     List<Electronicfencealarm> getElectronicfences(Electronicfencealarm electronicfencealarm) throws Exception;
+
+    int insertSelectiveByCondition(Electronicfencealarm electronicfencealarm) throws Exception;
 }

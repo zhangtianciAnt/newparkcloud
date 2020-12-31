@@ -87,11 +87,11 @@ public class BASF10105Controller {
     }
 
     @RequestMapping(value = "/createElectronicfenceAlarmInfo", method = {RequestMethod.POST})
-    public ApiResult createElectronicfenceAlarmInfo(@RequestBody Electronicfencealarm electronicfencealarm) {
+    public ApiResult createElectronicfenceAlarmInfo(@RequestBody Electronicfencealarm electronicfencealarm) throws Exception {
         electronicfencealarm.setId(UUID.randomUUID().toString());
         electronicfencealarm.setCreateon(new Date());
         electronicfencealarm.setStatus(0);
-        electronicfencealarmMapper.insert(electronicfencealarm);
+        electronicfencealarmMapper.insertSelectiveByCondition(electronicfencealarm);
         return ApiResult.success();
     }
 

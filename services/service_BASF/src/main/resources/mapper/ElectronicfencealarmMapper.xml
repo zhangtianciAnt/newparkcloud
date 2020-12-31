@@ -58,5 +58,59 @@
         where electronicfencealarm.`STATUS`=0
         order by electronicfencealarm.createon desc
     </select>
-
+    <insert id="insertSelectiveByCondition" parameterType="com.nt.dao_BASF.Electronicfencealarm">
+        insert into electronicfencealarm
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="deviceinformationid != null">
+                deviceinformationid,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createon != null">
+                createon,
+            </if>
+            <if test="modifyon != null">
+                modifyon,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="result != null">
+                result,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="deviceinformationid != null">
+                #{deviceinformationid,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="createon != null">
+                #{createon,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyon != null">
+                #{modifyon,jdbcType=TIMESTAMP},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="result != null">
+                #{result,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
 </mapper>
