@@ -13,20 +13,20 @@ public class bpSum3Vo implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String GROUP_ID;
-    private String SUPPLIERNAME;
+    private String group_id;
+    private String suppliername;
     private String yaer;
-    private String APRIL;
-    private String MAY;
-    private String JUNE;
-    private String JULY;
-    private String AUGUST;
-    private String SEPTEMBER;
-    private String OCTOBER;
-    private String NOVEMBER;
-    private String DECEMBER;
-    private String JANUARY;
-    private String FEBRUARY;
-    private String MARCH;
+    private String april;
+    private String may;
+    private String june;
+    private String july;
+    private String august;
+    private String september;
+    private String october;
+    private String november;
+    private String december;
+    private String january;
+    private String february;
+    private String march;
 
 }
