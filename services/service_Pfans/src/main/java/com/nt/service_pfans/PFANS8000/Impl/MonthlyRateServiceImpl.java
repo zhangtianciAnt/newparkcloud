@@ -29,7 +29,7 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
 
     //汇率定时任务
 //    @Scheduled(cron = "0 */5 * * * ?")
-    @Scheduled(cron = "0 10 0 * 1 12 ?")
+    @Scheduled(cron = "0 10 0 1 12 ?")
     public void getdataExittime() throws Exception {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy");
         String data11 = sf.format(new Date()) + "-" + "11";
