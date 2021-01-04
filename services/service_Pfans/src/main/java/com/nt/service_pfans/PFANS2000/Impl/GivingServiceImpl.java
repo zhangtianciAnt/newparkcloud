@@ -372,6 +372,7 @@ public class GivingServiceImpl implements GivingService {
                             Double days = Double.parseDouble(abNor.getRelengthtime()) - Double.parseDouble(StrNursingleave);
                             otherOne.setAttendance(String.valueOf(days.intValue()));
                         }
+                        otherOne.setTenantid(abNor.getTenantid());//0无；1当月是产休开始日；2当月是产休结束日
                         /*其他1 -lxx*/
                         //IF 入社日<=2012/3/31
 //                        otherOne.setOther1("0");

@@ -36,7 +36,11 @@
         MAX(case when status = '7' then re_finished_date
         else finished_date end) finisheddate,
         my_WorkingDays(date_format(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y%m'))/ 8 as worktime,
-        my_AttendanceDays(date_format(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y%m'))/ 8 as relengthtime
+        my_AttendanceDays(date_format(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y%m'))/ 8 as relengthtime,
+        case when
+        DATE_FORMAT(occurrence_date,'%Y%m') = DATE_FORMAT( DATE_SUB(NOW(), interval 1 MONTH),'%Y%m') then '1'
+        when DATE_FORMAT(finished_date,'%Y%m') = DATE_FORMAT( DATE_SUB(NOW(), interval 1 MONTH),'%Y%m') then '2'
+        else '0' end as TENANTID
         from abnormal
         where status >= 4
         and error_type = 'PR013012'
@@ -52,7 +56,8 @@
         MAX(case when status = '7' then re_finished_date
         else finished_date end) finisheddate,
         my_WorkingDays(date_format(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y%m'))/ 8 as worktime,
-        my_AttendanceDays(date_format(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y%m'))/ 8 as relengthtime
+        my_AttendanceDays(date_format(DATE_SUB(NOW(), INTERVAL 1 MONTH),'%Y%m'))/ 8 as relengthtime,
+        '0' as TENANTID
         from abnormal
         where status >= 4
         and error_type = 'PR013013'

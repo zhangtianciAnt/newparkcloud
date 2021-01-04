@@ -64,6 +64,15 @@ public class OrgTreeController {
             orgTree.preInsert(tokenModel);
         }
         orgTree.preUpdate(tokenModel);
+        //新建组织架构(Status为1是不生效)
+        if(orgTree.getType().equals("0")){
+            OrgTree orgTreeold = orgTreeService.getTreeYears(orgTree.getYears(),"0");
+            if(orgTreeold != null){
+                return ApiResult.fail("新组织已存在");
+            }
+            orgTree.setStatus("1");
+            orgTree.setType("1");
+        }
         orgTreeService.save(orgTree);
         return ApiResult.success();
     }
@@ -95,7 +104,7 @@ public class OrgTreeController {
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/getTreeYears", method = {RequestMethod.GET})
-    public ApiResult getTreeYears(String Years, HttpServletRequest request) throws Exception {
-        return ApiResult.success(orgTreeService.getTreeYears(Years));
+    public ApiResult getTreeYears(String Years, String type, HttpServletRequest request) throws Exception {
+        return ApiResult.success(orgTreeService.getTreeYears(Years,type));
     }
 }
