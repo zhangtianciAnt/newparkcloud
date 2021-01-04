@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -213,8 +214,9 @@ public class SealServiceImpl implements SealService {
                 }
             } else {
                 ToDoNotice todonotice = new ToDoNotice();
-                BeanUtils.copyProperties(todonoticelist, todonotice);
-                todonotice.preUpdate(tokenModel);
+                BeanUtils.copyProperties(todonoticelist.get(0), todonotice);
+                todonotice.setCreateon(new Date());
+                todonotice.setCreateby(seal.getUserid());
                 todoNoticeMapper.updateByPrimaryKey(todonotice);
             }
         }
@@ -432,8 +434,9 @@ public class SealServiceImpl implements SealService {
                         toDoNoticeService.save(toDoNotice3);
                     } else {
                         ToDoNotice todonotice = new ToDoNotice();
-                        BeanUtils.copyProperties(todonoticelist, todonotice);
-                        todonotice.preUpdate(tokenModel);
+                        BeanUtils.copyProperties(todonoticelist.get(0), todonotice);
+                        todonotice.setCreateon(new Date());
+                        todonotice.setCreateby(seal.getUserid());
                         todoNoticeMapper.updateByPrimaryKey(todonotice);
                     }
                 }
