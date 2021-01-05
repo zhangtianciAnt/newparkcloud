@@ -29,8 +29,10 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
 
     //汇率定时任务
 //    @Scheduled(cron = "0 */5 * * * ?")
-    @Scheduled(cron = "0 10 0 1 12 ?")
+   @Scheduled(cron = "0 10 0 1 12 ?")
     public void getdataExittime() throws Exception {
+        List<MonthlyRate> monthlyratelist = new ArrayList<>();
+        List<MonthlyRate> monthlyratelists = new ArrayList<>();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy");
         String data11 = sf.format(new Date()) + "-" + "11";
         String data10 = sf.format(new Date()) + "-" + "10";
@@ -278,6 +280,24 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
                 }
             }
         } else {
+            int n = 0;
+            for (Dictionary dic : curListA) {
+                monthlyratelist = monthlyratelist11.stream().filter(item -> (item.getCurrency().equals(dic.getCode()))).collect(Collectors.toList());
+                if (monthlyratelist.size() == 0) {
+                    n++;
+                    int m = monthlyratelist11.size() + n;
+                    MonthlyRate monthr = new MonthlyRate();
+                    monthr.setCurrency(dic.getCode());
+                    monthr.setCurrencyname(dic.getValue1());
+                    monthr.setAccountingexchangerate("0");
+                    monthr.setBusinessplanexchangerate("0");
+                    monthr.setExchangerate("0");
+                    monthr.setIndexdata(m);
+                    monthlyratelists.add(monthr);
+                } else {
+                    monthlyratelists.addAll(monthlyratelist);
+                }
+            }
             int year = 0;
             int years = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
             for (int i = 1; i <= 12; i++) {
@@ -286,7 +306,7 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
                 } else {
                     year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
                 }
-                for (MonthlyRate list : monthlyratelist11) {
+                for (MonthlyRate list : monthlyratelists) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
                     String data = String.valueOf(year) + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
