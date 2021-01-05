@@ -109,7 +109,10 @@ public class LogManagementServiceImpl implements LogManagementService {
     //add-ws-01/05-优化接口
     @Override
     public List<LogManagement> sumlogdate(LogManagement logmanagement) throws Exception {
-        List<LogManagement> list = logmanagementmapper.select(logmanagement);
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
+        String createby = logmanagement.getCreateby();
+        String logdate = sf1.format(logmanagement.getLog_date());
+        List<LogManagement> list = logmanagementmapper.selectsum(createby, logdate);
         BigDecimal sum = new BigDecimal("0");
         BigDecimal sum1 = new BigDecimal("0");
         for (LogManagement log : list) {
