@@ -106,7 +106,27 @@ public class LogManagementServiceImpl implements LogManagementService {
         logmanagementmapper.insert(logmanagement);
     }
 
+    //add-ws-01/05-优化接口
+    @Override
+    public List<LogManagement> sumlogdate(LogManagement logmanagement) throws Exception {
+        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
+        String createby = logmanagement.getCreateby();
+        String logdate = sf1.format(logmanagement.getLog_date());
+        List<LogManagement> list = logmanagementmapper.selectsum(createby, logdate);
+        BigDecimal sum = new BigDecimal("0");
+        BigDecimal sum1 = new BigDecimal("0");
+        for (LogManagement log : list) {
+            sum = new BigDecimal(log.getTime_start());
+            sum1 = sum1.add(sum);
+        }
+        LogManagement logmanag = new LogManagement();
+        logmanag.setTime_start(String.valueOf(sum1));
+        List<LogManagement> list2 = new ArrayList<>();
+        list2.add(logmanag);
+        return list2;
+    }
 
+    //add-ws-01/05-优化接口
     @Override
     public List<LogManagement> getDataList(LogManagement logmanagement) throws Exception {
 
@@ -116,8 +136,8 @@ public class LogManagementServiceImpl implements LogManagementService {
     //add ccm 1118 日志优化
     @Override
     public List<LogManagement> getDataListByLog_date(LogManagement logmanagement) throws Exception {
-        String log_date = DateUtil.format(logmanagement.getLog_date(),"yyyy-MM");
-        return logmanagementmapper.getDataListByLog_date(logmanagement.getOwners(),log_date);
+        String log_date = DateUtil.format(logmanagement.getLog_date(), "yyyy-MM");
+        return logmanagementmapper.getDataListByLog_date(logmanagement.getOwners(), log_date);
     }
     //add ccm 1118 日志优化
 
@@ -143,7 +163,7 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
-    public List<Projectsystem> CheckList(Projectsystem projectsystem,TokenModel tokenModel) throws Exception {
+    public List<Projectsystem> CheckList(Projectsystem projectsystem, TokenModel tokenModel) throws Exception {
         projectsystem.setName(tokenModel.getUserId());
         List<Projectsystem> projectsystemlist = projectsystemMapper.select(projectsystem);
         return projectsystemlist;
