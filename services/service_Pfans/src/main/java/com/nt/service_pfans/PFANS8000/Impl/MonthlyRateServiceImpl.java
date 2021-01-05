@@ -69,156 +69,216 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
         List<MonthlyRate> monthlyratelist1 = monthlyratemapper.select(month);
         List<com.nt.dao_Org.Dictionary> curListA = dictionaryService.getForSelect("PG019");
         if (curListA.size() == monthlyratelist11.size()) {
-            int year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+            int year = 0;
             for (int i = 1; i <= 12; i++) {
+                if (i <= 3) {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 2;
+                } else {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+                }
                 for (MonthlyRate list : monthlyratelist11) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
                     String data = String.valueOf(year) + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
-                    list.setYear(sf.format(new Date()));
+                    list.setYear(String.valueOf(year));
                     list.setMonth(data);
                     list.setCreateon(new Date());
                     monthlyratemapper.insert(list);
                 }
             }
         } else if (curListA.size() == monthlyratelist10.size()) {
-            int year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+            int year = 0;
             for (int i = 1; i <= 12; i++) {
+                if (i <= 3) {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 2;
+                } else {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+                }
                 for (MonthlyRate list : monthlyratelist10) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
                     String data = String.valueOf(year) + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
-                    list.setYear(sf.format(new Date()));
+                    list.setYear(String.valueOf(year));
                     list.setMonth(data);
                     list.setCreateon(new Date());
                     monthlyratemapper.insert(list);
                 }
             }
         } else if (curListA.size() == monthlyratelist9.size()) {
-            int year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+            int year = 0;
             for (int i = 1; i <= 12; i++) {
+                if (i <= 3) {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 2;
+                } else {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+                }
                 for (MonthlyRate list : monthlyratelist9) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
                     String data = String.valueOf(year) + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
-                    list.setYear(sf.format(new Date()));
+                    list.setYear(String.valueOf(year));
                     list.setMonth(data);
                     list.setCreateon(new Date());
                     monthlyratemapper.insert(list);
                 }
             }
         } else if (curListA.size() == monthlyratelist8.size()) {
-            int year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+            int year = 0;
             for (int i = 1; i <= 12; i++) {
+                if (i <= 3) {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 2;
+                } else {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+                }
                 for (MonthlyRate list : monthlyratelist8) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
                     String data = String.valueOf(year) + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
-                    list.setYear(sf.format(new Date()));
+                    list.setYear(String.valueOf(year));
                     list.setMonth(data);
                     list.setCreateon(new Date());
                     monthlyratemapper.insert(list);
                 }
             }
         } else if (curListA.size() == monthlyratelist7.size()) {
-            int year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+            int year = 0;
             for (int i = 1; i <= 12; i++) {
+                if (i <= 3) {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 2;
+                } else {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+                }
                 for (MonthlyRate list : monthlyratelist7) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
                     String data = String.valueOf(year) + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
-                    list.setYear(sf.format(new Date()));
+                    list.setYear(String.valueOf(year));
                     list.setMonth(data);
                     list.setCreateon(new Date());
                     monthlyratemapper.insert(list);
                 }
             }
         } else if (curListA.size() == monthlyratelist6.size()) {
-            int year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+            int year = 0;
             for (int i = 1; i <= 12; i++) {
+                if (i <= 3) {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 2;
+                } else {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+                }
                 for (MonthlyRate list : monthlyratelist6) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
                     String data = String.valueOf(year) + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
-                    list.setYear(sf.format(new Date()));
+                    list.setYear(String.valueOf(year));
                     list.setMonth(data);
                     list.setCreateon(new Date());
                     monthlyratemapper.insert(list);
                 }
             }
         } else if (curListA.size() == monthlyratelist5.size()) {
-            int year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+            int year = 0;
             for (int i = 1; i <= 12; i++) {
+                if (i <= 3) {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 2;
+                } else {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+                }
                 for (MonthlyRate list : monthlyratelist5) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
                     String data = String.valueOf(year) + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
-                    list.setYear(sf.format(new Date()));
+                    list.setYear(String.valueOf(year));
                     list.setMonth(data);
                     list.setCreateon(new Date());
                     monthlyratemapper.insert(list);
                 }
             }
         } else if (curListA.size() == monthlyratelist4.size()) {
-            int year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+            int year = 0;
             for (int i = 1; i <= 12; i++) {
+                if (i <= 3) {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 2;
+                } else {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+                }
                 for (MonthlyRate list : monthlyratelist4) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
                     String data = String.valueOf(year) + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
-                    list.setYear(sf.format(new Date()));
+                    list.setYear(String.valueOf(year));
                     list.setMonth(data);
                     list.setCreateon(new Date());
                     monthlyratemapper.insert(list);
                 }
             }
         } else if (curListA.size() == monthlyratelist3.size()) {
-            int year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+            int year = 0;
             for (int i = 1; i <= 12; i++) {
+                if (i <= 3) {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 2;
+                } else {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+                }
                 for (MonthlyRate list : monthlyratelist3) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
                     String data = String.valueOf(year) + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
-                    list.setYear(sf.format(new Date()));
+                    list.setYear(String.valueOf(year));
                     list.setMonth(data);
                     list.setCreateon(new Date());
                     monthlyratemapper.insert(list);
                 }
             }
         } else if (curListA.size() == monthlyratelist2.size()) {
-            int year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+            int year = 0;
             for (int i = 1; i <= 12; i++) {
+                if (i <= 3) {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 2;
+                } else {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+                }
                 for (MonthlyRate list : monthlyratelist2) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
                     String data = String.valueOf(year) + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
-                    list.setYear(sf.format(new Date()));
+                    list.setYear(String.valueOf(year));
                     list.setMonth(data);
                     list.setCreateon(new Date());
                     monthlyratemapper.insert(list);
                 }
             }
         } else if (curListA.size() == monthlyratelist1.size()) {
-            int year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+            int year = 0;
             for (int i = 1; i <= 12; i++) {
+                if (i <= 3) {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 2;
+                } else {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+                }
                 for (MonthlyRate list : monthlyratelist1) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
                     String data = String.valueOf(year) + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
-                    list.setYear(sf.format(new Date()));
+                    list.setYear(String.valueOf(year));
                     list.setMonth(data);
                     list.setCreateon(new Date());
                     monthlyratemapper.insert(list);
                 }
             }
         } else {
-            int year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+            int year = 0;
             for (int i = 1; i <= 12; i++) {
+                if (i <= 3) {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 2;
+                } else {
+                    year = Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1;
+                }
                 for (MonthlyRate list : monthlyratelist11) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
                     String data = String.valueOf(year) + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
-                    list.setYear(sf.format(new Date()));
+                    list.setYear(String.valueOf(year));
                     list.setMonth(data);
                     list.setCreateon(new Date());
                     monthlyratemapper.insert(list);
