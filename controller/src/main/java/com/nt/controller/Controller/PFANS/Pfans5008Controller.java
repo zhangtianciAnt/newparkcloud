@@ -284,5 +284,15 @@ public class Pfans5008Controller {
             return ApiResult.fail("操作失败！");
         }
     }
+    //add-ws-01/05-优化接口
+    @RequestMapping(value = "/sumlogdate", method = {RequestMethod.POST})
+    public ApiResult sumlogdate(@RequestBody LogManagement conditon, HttpServletRequest request) throws Exception {
+        if (conditon == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(logmanagementService.sumlogdate(conditon));
+    }
+//add-ws-01/05-优化接口
 }
+
 
