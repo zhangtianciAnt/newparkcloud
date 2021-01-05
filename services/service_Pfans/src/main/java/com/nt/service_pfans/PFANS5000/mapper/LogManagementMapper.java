@@ -47,7 +47,7 @@ public interface LogManagementMapper extends MyMapper<LogManagement> {
                          @Param("starttime") String starttime, @Param("endtime") String endtime);
 
 
-    @Select("select time_start from logmanagement where  log_date = #{logdate} and createby=#{createby}")
+    @Select("select time_start from logmanagement where  DATE_FORMAT(LOG_DATE, '%Y-%m') = #{logdate} and createby=#{createby}")
     List<LogManagement> selectsum(@Param("createby") String createby, @Param("logdate") String logdate);
 
 }
