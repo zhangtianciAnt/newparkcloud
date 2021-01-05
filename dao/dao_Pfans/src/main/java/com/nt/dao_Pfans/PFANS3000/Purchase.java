@@ -295,4 +295,8 @@ public class Purchase  extends BaseModel {
     //剩余未精算金额
     @Column(name = "SURPUBILCMONEY")
     private String surpubilcmoney;
+
+    //是否可多次申请暂借款
+    @Column(name = "ENABLEDUPLICATELOAN")
+    private String enableduplicateloan;
 }
