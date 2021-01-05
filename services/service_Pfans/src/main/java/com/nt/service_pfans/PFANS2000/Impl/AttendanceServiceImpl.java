@@ -56,70 +56,62 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Override
     public List<Attendance> getAttendancelist(Attendance attendance) throws Exception {
         //add-ws-5/6-根据当前月份和当前月的上个月获取数据
-        List<Attendance> attendancelist = attendanceMapper.select(attendance);
+        String accYear = "";
+        SimpleDateFormat format = new SimpleDateFormat("YYYY");
         SimpleDateFormat sf1 = new SimpleDateFormat("MM");
-        String strTemp = sf1.format(new Date());
-        SimpleDateFormat format = new SimpleDateFormat("MM");
+        String strTemp = sf1.format(new Date());     //当前月
+        String strYear = format.format(new Date());     //当前年
         Date date = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date); // 设置为当前时间
         calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1); // 设置为上一个月
         date = calendar.getTime();
-        String accDate = format.format(date);
-        attendancelist = attendancelist.stream()
-                .filter(item -> (item.getMonths().equals(accDate) || item.getMonths().equals(strTemp)))
-                .collect(Collectors.toList());
+        String accDate = sf1.format(date);          //上个月
+        if (strTemp.equals("01")) {
+            Calendar c = Calendar.getInstance();
+            c.setTime(new Date());
+            c.add(Calendar.YEAR, -1);
+            Date y = c.getTime();
+            accYear = format.format(y);              //上一年
+        } else {
+            accYear = format.format(new Date());     //上一年
+        }
+        return attendanceMapper.selectDataList(strTemp, strYear, accDate, accYear);
         //add-ws-5/6-根据当前月份和当前月的上个月获取数据
-        return attendancelist;
     }
 
     //考勤使用
     @Override
     public List<Attendance> getAttendancelist1(Attendance attendance) throws Exception {
         List<Attendance> attendancelist = attendanceMapper.select(attendance);
-        for(Attendance atten :attendancelist)
-        {
-            if(atten.getAbsenteeism()!=null && atten.getAbsenteeism()!="")
-            {
+        for (Attendance atten : attendancelist) {
+            if (atten.getAbsenteeism() != null && atten.getAbsenteeism() != "") {
                 atten = selectAbnomaling(atten);
-            }
-            else if(atten.getTabsenteeism()!=null && atten.getTabsenteeism()!="")
-            {
+            } else if (atten.getTabsenteeism() != null && atten.getTabsenteeism() != "") {
                 atten = selectAbnomaling(atten);
             }
             //判断前台查看按钮可用。临时存放到正式迟到字段
             List<AbNormal> abList = getabnormalByuseridandDate(atten);
-            if(abList.size()>0)
-            {
+            if (abList.size() > 0) {
                 //判断当天所有申请的异常审批状态  暂存到早退字段中
                 List<AbNormal> abList1 = new ArrayList<AbNormal>();
                 abList1 = abList.stream().filter(item -> (item.getStatus().equals("2") || item.getStatus().equals("5"))).collect(Collectors.toList());
-                if(abList1.size()>0)
-                {
+                if (abList1.size() > 0) {
                     //进行中
                     atten.setLeaveearly("0");
-                }
-                else
-                {
+                } else {
                     abList1 = abList.stream().filter(item -> (item.getStatus().equals("0"))).collect(Collectors.toList());
-                    if(abList1.size()>0)
-                    {
+                    if (abList1.size() > 0) {
                         //未发起
                         atten.setLeaveearly("1");
-                    }
-                    else
-                    {
+                    } else {
                         abList1 = abList.stream().filter(item -> (item.getStatus().equals("3") || item.getStatus().equals("6"))).collect(Collectors.toList());
-                        if(abList1.size()>0)
-                        {
+                        if (abList1.size() > 0) {
                             //驳回
                             atten.setLeaveearly("2");
-                        }
-                        else
-                        {
+                        } else {
                             abList1 = abList.stream().filter(item -> (item.getStatus().equals("4") || item.getStatus().equals("7"))).collect(Collectors.toList());
-                            if(abList1.size()>0)
-                            {
+                            if (abList1.size() > 0) {
                                 //已完成
                                 atten.setLeaveearly("3");
                             }
@@ -127,9 +119,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                     }
                 }
                 atten.setLate("can");
-            }
-            else
-            {
+            } else {
                 atten.setLate("nocan");
             }
 
@@ -139,37 +129,26 @@ public class AttendanceServiceImpl implements AttendanceService {
             o.setUserid(atten.getUser_id());
             List<Overtime> ovList = overtimeMapper.select(o);
             ovList = ovList.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
-            if(ovList.size()>0)
-            {
+            if (ovList.size() > 0) {
                 //判断当天所有申请的加班审批状态  暂存到试用早退字段中
                 List<Overtime> ovList1 = new ArrayList<Overtime>();
                 ovList1 = ovList.stream().filter(item -> (item.getStatus().equals("2") || item.getStatus().equals("5"))).collect(Collectors.toList());
-                if(ovList1.size()>0)
-                {
+                if (ovList1.size() > 0) {
                     //进行中
                     atten.setTleaveearly("0");
-                }
-                else
-                {
+                } else {
                     ovList1 = ovList.stream().filter(item -> (item.getStatus().equals("0"))).collect(Collectors.toList());
-                    if(ovList1.size()>0)
-                    {
+                    if (ovList1.size() > 0) {
                         //未发起
                         atten.setTleaveearly("1");
-                    }
-                    else
-                    {
+                    } else {
                         ovList1 = ovList.stream().filter(item -> (item.getStatus().equals("3") || item.getStatus().equals("6"))).collect(Collectors.toList());
-                        if(ovList1.size()>0)
-                        {
+                        if (ovList1.size() > 0) {
                             //驳回
                             atten.setTleaveearly("2");
-                        }
-                        else
-                        {
+                        } else {
                             ovList1 = ovList.stream().filter(item -> (item.getStatus().equals("4") || item.getStatus().equals("7"))).collect(Collectors.toList());
-                            if(ovList1.size()>0)
-                            {
+                            if (ovList1.size() > 0) {
                                 //已完成
                                 atten.setTleaveearly("3");
                             }
@@ -185,17 +164,17 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Override
     public List<Attendance> getAttendancelistCompared(Attendance attendance) throws Exception {
 
-        List<Attendance> attendancelist = attendanceMapper.selectResignationAll(attendance.getUser_id(),attendance.getYears(),attendance.getMonths());
+        List<Attendance> attendancelist = attendanceMapper.selectResignationAll(attendance.getUser_id(), attendance.getYears(), attendance.getMonths());
         return attendancelist;
     }
+
     @Override
     public void disclickUpdateStates(Attendance attendance, TokenModel tokenModel) throws Exception {
         Workflowinstance ws = new Workflowinstance();
-        ws.setDataid(attendance.getUser_id()+","+attendance.getYears()+","+attendance.getMonths());
+        ws.setDataid(attendance.getUser_id() + "," + attendance.getYears() + "," + attendance.getMonths());
         ws.setStatus("4");
         List<Workflowinstance> wslist = workflowinstanceMapper.select(ws);
-        if(wslist.size()>0)
-        {
+        if (wslist.size() > 0) {
             wslist.get(0).setStatus("2");
             wslist.get(0).setModifyby(tokenModel.getUserId());
             wslist.get(0).setModifyon(new Date());
@@ -210,7 +189,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Override
     public void update(AttendanceVo attendancevo, TokenModel tokenModel) throws Exception {
         List<Attendance> attendancelist = attendancevo.getAttendance();
-        attendanceMapper.updStatusre(tokenModel.getUserId(),attendancelist);
+        attendanceMapper.updStatusre(tokenModel.getUserId(), attendancelist);
     }
 
     //add_fjl_05/13   --添加审批正常结束后，自动变成承认状态
@@ -257,19 +236,13 @@ public class AttendanceServiceImpl implements AttendanceService {
         List<Overtime> oList = new ArrayList<Overtime>();
         oList = overtimeMapper.selectOvertimeBystatusandUserid(attendancelist.get(0).getUser_id());
         oList = oList.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
-        for(Attendance attendance :attendancelist)
-        {
+        for (Attendance attendance : attendancelist) {
             //判断考勤未审批的数据
-            for(AbNormal ab:abList)
-            {
-                if(!returnDateList.contains(attendance.getDates()))
-                {
-                    if(ab.getStatus().equals("2") && sfymd.parse(sfymd.format(attendance.getDates())).getTime() >= sfymd.parse(sfymd.format(ab.getOccurrencedate())).getTime() && sfymd.parse(sfymd.format(attendance.getDates())).getTime() <= sfymd.parse(sfymd.format(ab.getFinisheddate())).getTime())
-                    {
+            for (AbNormal ab : abList) {
+                if (!returnDateList.contains(attendance.getDates())) {
+                    if (ab.getStatus().equals("2") && sfymd.parse(sfymd.format(attendance.getDates())).getTime() >= sfymd.parse(sfymd.format(ab.getOccurrencedate())).getTime() && sfymd.parse(sfymd.format(attendance.getDates())).getTime() <= sfymd.parse(sfymd.format(ab.getFinisheddate())).getTime()) {
                         returnDateList.add(attendance.getDates());
-                    }
-                    else if(ab.getStatus().equals("5") && sfymd.parse(sfymd.format(attendance.getDates())).getTime() >= sfymd.parse(sfymd.format(ab.getReoccurrencedate())).getTime() && sfymd.parse(sfymd.format(attendance.getDates())).getTime() <= sfymd.parse(sfymd.format(ab.getRefinisheddate())).getTime())
-                    {
+                    } else if (ab.getStatus().equals("5") && sfymd.parse(sfymd.format(attendance.getDates())).getTime() >= sfymd.parse(sfymd.format(ab.getReoccurrencedate())).getTime() && sfymd.parse(sfymd.format(attendance.getDates())).getTime() <= sfymd.parse(sfymd.format(ab.getRefinisheddate())).getTime()) {
                         returnDateList.add(attendance.getDates());
                     }
                 }
@@ -277,8 +250,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
             //判断加班未审批通过的数据
             List<Overtime> ov = oList.stream().filter(item -> sfymd.format(attendance.getDates()).equals(sfymd.format(item.getReserveovertimedate()))).collect(Collectors.toList());
-            if(ov.size()>0 && !returnDateList.contains(attendance.getDates()))
-            {
+            if (ov.size() > 0 && !returnDateList.contains(attendance.getDates())) {
                 returnDateList.add(attendance.getDates());
             }
         }
@@ -287,35 +259,23 @@ public class AttendanceServiceImpl implements AttendanceService {
     //add ccm 2020729 考勤异常加班审批中的日期，考勤不允许承认
 
     //add ccm 0804 查询欠勤是否已经全部申请
-    public Attendance selectAbnomaling(Attendance attendance) throws Exception
-    {
+    public Attendance selectAbnomaling(Attendance attendance) throws Exception {
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         List<AbNormal> abList = new ArrayList<AbNormal>();
         abList = abNormalMapper.selectAbnomalBystatusandUserid(attendance.getUser_id());
-        if(abList.size()>0)
-        {
+        if (abList.size() > 0) {
             Double hours = 0D;
-            for(AbNormal a: abList)
-            {
-                if(a.getStatus().equals("2"))
-                {
-                    if(sfymd.parse(sfymd.format(attendance.getDates())).getTime() >= sfymd.parse(sfymd.format(a.getOccurrencedate())).getTime() && sfymd.parse(sfymd.format(attendance.getDates())).getTime() <= sfymd.parse(sfymd.format(a.getFinisheddate())).getTime())
-                    {
+            for (AbNormal a : abList) {
+                if (a.getStatus().equals("2")) {
+                    if (sfymd.parse(sfymd.format(attendance.getDates())).getTime() >= sfymd.parse(sfymd.format(a.getOccurrencedate())).getTime() && sfymd.parse(sfymd.format(attendance.getDates())).getTime() <= sfymd.parse(sfymd.format(a.getFinisheddate())).getTime()) {
                         hours += Double.valueOf(a.getLengthtime());
-                    }
-                    else
-                    {
+                    } else {
                         hours += 0;
                     }
-                }
-                else
-                {
-                    if(sfymd.parse(sfymd.format(attendance.getDates())).getTime() >= sfymd.parse(sfymd.format(a.getReoccurrencedate())).getTime() && sfymd.parse(sfymd.format(attendance.getDates())).getTime() <= sfymd.parse(sfymd.format(a.getRefinisheddate())).getTime())
-                    {
+                } else {
+                    if (sfymd.parse(sfymd.format(attendance.getDates())).getTime() >= sfymd.parse(sfymd.format(a.getReoccurrencedate())).getTime() && sfymd.parse(sfymd.format(attendance.getDates())).getTime() <= sfymd.parse(sfymd.format(a.getRefinisheddate())).getTime()) {
                         hours += Double.valueOf(a.getRelengthtime());
-                    }
-                    else
-                    {
+                    } else {
                         hours += 0;
                     }
                 }
@@ -328,12 +288,11 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     //add ccm 0812 考情管理查看当天的异常申请数据
-    public List<AbNormal> getabnormalByuseridandDate(Attendance attendance) throws Exception
-    {
+    public List<AbNormal> getabnormalByuseridandDate(Attendance attendance) throws Exception {
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         List<AbNormal> abNormals = new ArrayList<AbNormal>();
         String dates = sfymd.format(attendance.getDates());
-        abNormals = abNormalMapper.getabnormalByuseridandDate(attendance.getUser_id(),dates);
+        abNormals = abNormalMapper.getabnormalByuseridandDate(attendance.getUser_id(), dates);
         return abNormals;
     }
     //add ccm 0812 考情管理查看当天的异常申请数据
