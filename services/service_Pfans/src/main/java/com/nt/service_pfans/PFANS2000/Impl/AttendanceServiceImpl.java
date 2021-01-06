@@ -56,6 +56,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Override
     public List<Attendance> getAttendancelist(Attendance attendance) throws Exception {
         //add-ws-5/6-根据当前月份和当前月的上个月获取数据
+        String userid = attendance.getUser_id();
         String accYear = "";
         SimpleDateFormat format = new SimpleDateFormat("YYYY");
         SimpleDateFormat sf1 = new SimpleDateFormat("MM");
@@ -76,7 +77,8 @@ public class AttendanceServiceImpl implements AttendanceService {
         } else {
             accYear = format.format(new Date());     //上一年
         }
-        return attendanceMapper.selectDataList(strTemp, strYear, accDate, accYear);
+        List<Attendance> list = attendanceMapper.selectDataList(strTemp, strYear, accDate, accYear, userid);
+        return list;
         //add-ws-5/6-根据当前月份和当前月的上个月获取数据
     }
 
