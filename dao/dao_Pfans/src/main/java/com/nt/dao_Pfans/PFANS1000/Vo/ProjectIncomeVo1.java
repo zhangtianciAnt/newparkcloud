@@ -15,4 +15,6 @@ public class ProjectIncomeVo1 {
     private String contractamount;
     //0本月最后一次纳品项目，1不是本月最后一次纳品项目
     private String type;
+
+    private String theme;
 }

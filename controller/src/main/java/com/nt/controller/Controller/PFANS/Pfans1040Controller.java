@@ -41,6 +41,12 @@ public class Pfans1040Controller {
     public ApiResult getthemename(String themename, HttpServletRequest request) throws Exception {
         return ApiResult.success(themePlanService.getthemename(themename));
     }
+    //add-ws-01/06-禅道任务710
+    @RequestMapping(value = "/themenametype", method = {RequestMethod.GET})
+    public ApiResult themenametype(String type, HttpServletRequest request) throws Exception {
+        return ApiResult.success(themePlanService.themenametype(type));
+    }
+    //add-ws-01/06-禅道任务710
     @RequestMapping(value = "/getList", method = {RequestMethod.POST})
     public ApiResult list(@RequestBody ThemePlan themePlan, HttpServletRequest request) throws Exception {
         if (themePlan == null) {

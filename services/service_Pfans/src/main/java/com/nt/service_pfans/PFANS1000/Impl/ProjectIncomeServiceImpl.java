@@ -569,6 +569,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                         projectincomevo1.setType("1");
                     }
                     projectincomevo1.setCompanyprojectid(companyprojectslist.getCompanyprojects_id());
+                    projectincomevo1.setTheme(projectcontractlist.get(0).getTheme());
                     projectincomevo1list.add(projectincomevo1);
                 }
 
