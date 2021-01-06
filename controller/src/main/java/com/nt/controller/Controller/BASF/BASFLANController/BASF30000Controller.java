@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.BASF.BASFLANController;
 
+import com.nt.dao_BASF.Chathistory;
 import com.nt.dao_BASF.Webchatuserinfo;
 import com.nt.service_BASF.WebchatuserinfoServices;
 import com.nt.utils.ApiResult;
@@ -7,10 +8,7 @@ import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
 import com.nt.utils.RequestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,6 +35,21 @@ public class BASF30000Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return webchatuserinfoServices.checkPwd(webchatuserinfo);
+    }
+
+    // 保存聊天记录
+    @RequestMapping(value = "/saveChatHistory", method = {RequestMethod.POST})
+    public ApiResult saveChatHistory(@RequestBody Chathistory chathistory, HttpServletRequest request) throws Exception {
+        if (chathistory == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return webchatuserinfoServices.saveChatHistory(chathistory);
+    }
+
+    // 获取聊天记录
+    @RequestMapping(value = "/getChatHistory", method = {RequestMethod.GET})
+    public ApiResult getChatHistory(@RequestParam String from, @RequestParam String to, HttpServletRequest request) throws Exception {
+        return webchatuserinfoServices.getChatHistory(from, to);
     }
 
     // 聊天室用户修改密码
