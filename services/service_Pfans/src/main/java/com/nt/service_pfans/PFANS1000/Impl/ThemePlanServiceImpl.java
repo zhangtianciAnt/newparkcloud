@@ -80,10 +80,20 @@ public class ThemePlanServiceImpl implements ThemePlanService {
 
     @Override
     public List<ThemePlanDetail> getthemename(String themename) throws Exception {
-        ThemePlanDetail theme =new ThemePlanDetail();
+        ThemePlanDetail theme = new ThemePlanDetail();
         theme.setThemename(themename);
         return themePlanDetailMapper.select(theme);
     }
+
+    //add-ws-01/06-禅道任务710
+    @Override
+    public List<ThemePlanDetail> themenametype(String type) throws Exception {
+        ThemePlanDetail theme = new ThemePlanDetail();
+        theme.setType(type);
+        return themePlanDetailMapper.select(theme);
+    }
+
+    //add-ws-01/06-禅道任务710
     @Override
     public List<ThemePlanDetailVo> detilList(ThemePlanDetail themePlanDetail) throws Exception {
         List<ThemePlanDetailVo> colist = new ArrayList<ThemePlanDetailVo>();
@@ -222,7 +232,7 @@ public class ThemePlanServiceImpl implements ThemePlanService {
     }
 
     @Override
-    public  List<PersonnelPlan> getAll(String groupid, String year) throws Exception {
+    public List<PersonnelPlan> getAll(String groupid, String year) throws Exception {
         PersonnelPlan personnelplan = new PersonnelPlan();
         personnelplan.setGroupid(groupid);
         personnelplan.setYears(year);
