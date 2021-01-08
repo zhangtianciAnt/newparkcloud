@@ -456,9 +456,9 @@ public class AbNormalServiceImpl implements AbNormalService {
                     if (list.size() > 0) {
                         double shenqing = 0;
                         for (AbNormal a : list) {
-                            if (a.getStatus().equals("2") || a.getStatus().equals("3")) {
+                            if (a.getStatus().equals("2")) {
                                 shenqing = shenqing + Double.valueOf(a.getLengthtime());
-                            } else if (a.getStatus().equals("5") || a.getStatus().equals("6")) {
+                            } else if (a.getStatus().equals("5") ) {
                                 shenqing = shenqing + Double.valueOf(a.getRelengthtime());
                             }
                         }
