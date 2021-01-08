@@ -22,4 +22,6 @@ public class ExternalVo {
 
     private String suppliernameid;
 
+    private String unitprice;
+
 }
