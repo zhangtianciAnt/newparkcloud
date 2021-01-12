@@ -591,7 +591,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 }
                 //endregion 事业计划费用
 
-                List<Map<String, String>> data = coststatisticsMapper.getcostMonth(dates.substring(0,4),manhour,cost,expense,months,groupIdList.get(i));
+                List<Map<String, String>> data = coststatisticsMapper.getcostMonth(dates.substring(0,7),manhour,cost,expense,months,groupIdList.get(i));
                 if(data.size() > 0){
                     if(i == 0){
                         dataList = data;
