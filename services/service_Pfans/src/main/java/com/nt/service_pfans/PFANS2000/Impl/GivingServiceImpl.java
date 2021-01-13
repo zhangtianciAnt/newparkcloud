@@ -121,7 +121,9 @@ public class GivingServiceImpl implements GivingService {
     private static List<Wages> lastwages;
     private static List<Dictionary> dictionaryAll;
 
-
+    private static final SimpleDateFormat sdfYM = new SimpleDateFormat("yyyyMM");
+    private static final SimpleDateFormat sdfYMD = new SimpleDateFormat("yyyy/MM/dd");
+    private static final SimpleDateFormat sdfUTC = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
     // 日期基数
     private static final double dateBase = 21.75;
 
@@ -1223,6 +1225,18 @@ public class GivingServiceImpl implements GivingService {
     }
 
     public String getSalary(CustomerInfo customerInfo, int addMouth) throws ParseException {
+        //转正日
+        if (StringUtils.isEmpty(customerInfo.getUserinfo().getEnddate())) {
+            if (customerInfo.getUserinfo().getEnddate().indexOf("Z")  != -1) {
+                String enddate = customerInfo.getUserinfo().getEnddate().substring(0, 10).replace("-", "/");
+                Calendar cal1 = Calendar.getInstance();
+                cal1.setTime(sdfYMD.parse(enddate));//设置起时间
+                cal1.add(Calendar.DATE, +1);
+                customerInfo.getUserinfo().setEnddate(sdfYMD.format(cal1.getTime()));
+            }
+        }
+        int intNewDate = Integer.parseInt(sdfYM.format(new Date()));
+        int intEnddate = Integer.parseInt(customerInfo.getUserinfo().getEnddate().replace("/","").replace("-","").substring(0,6));
         String thisMouth = "0";
         //本月工资
         if(addMouth == 1){
@@ -1232,6 +1246,10 @@ public class GivingServiceImpl implements GivingService {
                 }
                 else{
                     thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()));
+                }
+                //转正日大于当月的情况（试用期）工资为90%
+                if(intEnddate > intNewDate){
+                    thisMouth  = new BigDecimal(Double.parseDouble(ifNull(thisMouth)) * 0.9d).setScale(2, RoundingMode.HALF_UP).toPlainString();
                 }
             }
         }
@@ -1252,7 +1270,10 @@ public class GivingServiceImpl implements GivingService {
                         else{
                             thisMouth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()));
                         }
-                        //thisMouth = new BigDecimal(Double.parseDouble(ifNull(thisMouth)) * 0.9d).setScale(2, RoundingMode.HALF_UP).toPlainString();
+                        //转正日大于当月的情况（试用期）工资为90%
+                        if(intEnddate > intNewDate){
+                            thisMouth  = new BigDecimal(Double.parseDouble(ifNull(thisMouth)) * 0.9d).setScale(2, RoundingMode.HALF_UP).toPlainString();
+                        }
                     }
                 }
             }
@@ -1262,6 +1283,18 @@ public class GivingServiceImpl implements GivingService {
     }
 
     public Map<String, String> getSalaryBasicAndDuty(CustomerInfo customerInfo, int addMouth) throws ParseException {
+        //转正日
+        if (StringUtils.isEmpty(customerInfo.getUserinfo().getEnddate())) {
+            if (customerInfo.getUserinfo().getEnddate().indexOf("Z")  != -1) {
+                String enddate = customerInfo.getUserinfo().getEnddate().substring(0, 10).replace("-", "/");
+                Calendar cal1 = Calendar.getInstance();
+                cal1.setTime(sdfYMD.parse(enddate));//设置起时间
+                cal1.add(Calendar.DATE, +1);
+                customerInfo.getUserinfo().setEnddate(sdfYMD.format(cal1.getTime()));
+            }
+        }
+        int intNewDate = Integer.parseInt(sdfYM.format(new Date()));
+        int intEnddate = Integer.parseInt(customerInfo.getUserinfo().getEnddate().replace("/","").replace("-","").substring(0,6));
         // UPD_GBB_2020/05/20 ALL
         String thisMonth = "0";
         String thisMonthBasic = "0";
@@ -1269,11 +1302,20 @@ public class GivingServiceImpl implements GivingService {
         //本月工资
         if(addMouth == 1){
             if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
-                thisMonth = customerInfo.getUserinfo().getBasic();
-                thisMonthBasic = customerInfo.getUserinfo().getBasic();
-            }
-            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
-                thisMonthDuty = customerInfo.getUserinfo().getDuty();
+                if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
+                    thisMonth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()) + Double.parseDouble(customerInfo.getUserinfo().getDuty()));
+                    thisMonthBasic = customerInfo.getUserinfo().getBasic();
+                    thisMonthDuty = customerInfo.getUserinfo().getDuty();
+                }
+                else{
+                    thisMonth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()));
+                }
+                //转正日大于当月的情况（试用期）工资为90%
+                if(intEnddate > intNewDate){
+                    thisMonth  = new BigDecimal(Double.parseDouble(ifNull(thisMonth)) * 0.9d).setScale(2, RoundingMode.HALF_UP).toPlainString();
+                    //本月基本工资=本月基本工资*0.9 - 本月职责工资 * 0.1
+                    thisMonthBasic = new BigDecimal(Double.parseDouble(ifNull(thisMonthBasic)) * 0.9d - Double.parseDouble(ifNull(thisMonthDuty)) * 0.1d).setScale(2, RoundingMode.HALF_UP).toPlainString();
+                }
             }
         }
         else{ //上月基本工資
@@ -1289,15 +1331,21 @@ public class GivingServiceImpl implements GivingService {
             else{
                 //上月发工资之后入职的实习工资
                 if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getBasic())) {
-                    thisMonth = customerInfo.getUserinfo().getBasic();
-                    thisMonthBasic = customerInfo.getUserinfo().getBasic();
+                    if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
+                        thisMonth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()) + Double.parseDouble(customerInfo.getUserinfo().getDuty()));
+                        thisMonthBasic = customerInfo.getUserinfo().getBasic();
+                        thisMonthDuty = customerInfo.getUserinfo().getDuty();
+                    }
+                    else{
+                        thisMonth = String.valueOf(Double.parseDouble(customerInfo.getUserinfo().getBasic()));
+                    }
+                    //转正日大于当月的情况（试用期）工资为90%
+                    if(intEnddate > intNewDate){
+                        thisMonth  = new BigDecimal(Double.parseDouble(ifNull(thisMonth)) * 0.9d).setScale(2, RoundingMode.HALF_UP).toPlainString();
+                        //本月基本工资=本月基本工资*0.9 - 本月职责工资 * 0.1
+                        thisMonthBasic = new BigDecimal(Double.parseDouble(ifNull(thisMonthBasic)) * 0.9d - Double.parseDouble(ifNull(thisMonthDuty)) * 0.1d).setScale(2, RoundingMode.HALF_UP).toPlainString();
+                    }
                 }
-                if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getDuty())) {
-                    thisMonthDuty = customerInfo.getUserinfo().getDuty();
-                }
-//                thisMonth = new BigDecimal(Double.parseDouble(ifNull(thisMonth)) * 0.9d).setScale(2, RoundingMode.HALF_UP).toPlainString();
-//                thisMonthBasic = new BigDecimal(Double.parseDouble(ifNull(thisMonthBasic)) * 0.9d).setScale(2, RoundingMode.HALF_UP).toPlainString();
-//                thisMonthDuty = new BigDecimal(Double.parseDouble(ifNull(thisMonthDuty)) * 0.9d).setScale(2, RoundingMode.HALF_UP).toPlainString();
             }
         }
         // UPD_GBB_2020/6/9 end
