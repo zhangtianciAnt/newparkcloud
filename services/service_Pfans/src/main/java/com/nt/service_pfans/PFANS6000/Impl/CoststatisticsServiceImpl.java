@@ -591,7 +591,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 }
                 //endregion 事业计划费用
 
-                List<Map<String, String>> data = coststatisticsMapper.getcostMonth(dates.substring(0,4),manhour,cost,expense,months,groupIdList.get(i));
+                List<Map<String, String>> data = coststatisticsMapper.getcostMonth(dates.substring(0,7),manhour,cost,expense,months,groupIdList.get(i));
                 if(data.size() > 0){
                     if(i == 0){
                         dataList = data;
@@ -686,11 +686,16 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         }
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         for(int x=0;x<dataList.size();x++ ){
-            if(!String.valueOf(dataList.get(x).get("bpcostcount")).equals("0.0")){
-                if(!String.valueOf(dataList.get(x).get("bpcostcount")).equals("0")){
-                    Map<String,String> map = dataList.get(x);
-                    list.add(map);
-                }
+//            if(!String.valueOf(dataList.get(x).get("bpcostcount")).equals("0.0")){
+//                if(!String.valueOf(dataList.get(x).get("bpcostcount")).equals("0")){
+//                    Map<String,String> map = dataList.get(x);
+//                    list.add(map);
+//                }
+//            }
+            if(!String.valueOf(dataList.get(x).get("ex1usercount0")).equals("")
+                    || !String.valueOf(dataList.get(x).get("ex2usercount0")).equals("")){
+                Map<String,String> map = dataList.get(x);
+                list.add(map);
             }
         }
         if(list.size() >0){

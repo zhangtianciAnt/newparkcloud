@@ -158,25 +158,25 @@
 			round(sum(manhour5),2) as manhour5,
 			round(sum(cost5),2) as cost5,
 			round(sum(manhour6),2) as manhour6,
-			round(sum(cost6),2) as cost6,
+			round(sum(cost6 + expense6),2) as cost6,
 			round(sum(manhour7),2) as manhour7,
 			round(sum(cost7),2) as cost7,
 			round(sum(manhour8),2) as manhour8,
 			round(sum(cost8),2) as cost8,
 			round(sum(manhour9),2) as manhour9,
-			round(sum(cost9),2) as cost9,
+			round(sum(cost9 + expense9),2) as cost9,
 			round(sum(manhour10),2) as manhour10,
 			round(sum(cost10),2) as cost10,
 			round(sum(manhour11),2) as manhour11,
 			round(sum(cost11),2) as cost11,
 			round(sum(manhour12),2) as manhour12,
-			round(sum(cost12),2) as cost12,
+			round(sum(cost12 + expense12),2) as cost12,
 			round(sum(manhour1),2) as manhour1,
 			round(sum(cost1),2) as cost1,
 			round(sum(manhour2),2) as manhour2,
 			round(sum(cost2),2) as cost2,
 			round(sum(manhour3),2) as manhour3,
-			round(sum(cost3),2) as cost3
+			round(sum(cost3 + expense3),2) as cost3
 			from coststatistics
 			where years = substring(#{years},1,4)
 			<if test="groupIdList != null and groupIdList.size() > 0 ">
@@ -242,12 +242,35 @@
 								END
 							)
 						ELSE 0 END ) AS ex1cost,
-					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN 1 ELSE 0 END ) AS ex1usercount
+					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL
+		AND (
+		(
+		CASE WHEN ( ${months} = 3 or ${months} = 6 or ${months} = 9 or ${months} = 12)
+		THEN ${cost}
+		<if test="months == 3 or months == 6 or months == 9 or months == 12 " >
+			+ ${expense}
+		</if>
+		ELSE ${cost}
+		END
+		) > 0
+		OR
+		(
+			ex1.EXITS = 1
+			AND ex1.GROUP_ID = #{groupid}
+		)
+		OR
+		(
+			ex1.EXITS = 0
+			AND DATE_FORMAT(ex1.EXITIME, '%Y-%m') >= DATE_FORMAT(concat( #{years},'-01' ), '%Y-%m')
+			AND ex1.GROUP_ID = #{groupid}
+		)
+		)
+		) THEN 1 ELSE 0 END ) AS ex1usercount
 				FROM
 					coststatistics
 					LEFT JOIN expatriatesinfor ex1 ON coststatistics.bpname = ex1.expatriatesinfor_id
 					AND ex1.jobclassification IN ('BP025001','BP025002','BP025005' )
-				WHERE coststatistics.years = #{years}
+				WHERE coststatistics.years = substring(#{years},1,4)
 				GROUP BY bpcompany
 			) co1
 			LEFT JOIN (
@@ -262,18 +285,40 @@
 								<if test="months == 3 or months == 6 or months == 9 or months == 12 " >
 									+ ${expense}
 								</if>
-								ELSE ${cost}
-								END
-							)
-						ELSE 0 END ) AS ex2cost,
-					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL ) THEN 1 ELSE 0 END ) AS ex2usercount
-				FROM
-					coststatistics
-					LEFT JOIN expatriatesinfor ex2 ON coststatistics.bpname = ex2.expatriatesinfor_id
-					AND ex2.jobclassification IN ('BP025003','BP025004' )
-				WHERE coststatistics.years = #{years}
-				GROUP BY bpcompany
-			) co2 ON co1.bpcompany = co2.bpcompany
+		ELSE ${cost}
+		END
+		)
+		ELSE 0 END ) AS ex2cost,
+		SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL
+		AND (
+		(
+		CASE WHEN ( ${months} = 3 or ${months} = 6 or ${months} = 9 or ${months} = 12)
+		THEN ${cost}
+		<if test="months == 3 or months == 6 or months == 9 or months == 12 " >
+			+ ${expense}
+		</if>
+		ELSE ${cost}
+		END
+		) > 0
+		OR
+		(
+			ex2.EXITS = 1
+			AND ex2.GROUP_ID = #{groupid}
+		)
+		OR (
+			ex2.EXITS = 0
+			AND DATE_FORMAT(ex2.EXITIME, '%Y-%m') >= DATE_FORMAT(concat( #{years},'-01' ), '%Y-%m')
+			AND ex2.GROUP_ID = #{groupid}
+		)
+		)
+		) THEN 1 ELSE 0 END ) AS ex2usercount
+		FROM
+		coststatistics
+		LEFT JOIN expatriatesinfor ex2 ON coststatistics.bpname = ex2.expatriatesinfor_id
+		AND ex2.jobclassification IN ('BP025003','BP025004' )
+		WHERE coststatistics.years = substring(#{years},1,4)
+		GROUP BY bpcompany
+		) co2 ON co1.bpcompany = co2.bpcompany
 		order by co1.bpcompany
 	</select>
 

@@ -101,6 +101,9 @@ public class AwardServiceImpl implements AwardService {
             Contractnumbercount contractnumbercount = new Contractnumbercount();
             contractnumbercount.setContractnumber(awa.getContractnumber());
             List<Contractnumbercount> contractList = contractnumbercountMapper.select(contractnumbercount);
+            if (contractList != null && contractList.size() > 1) {
+                contractList = contractList.stream().sorted(Comparator.comparing(Contractnumbercount::getRowindex)).collect(Collectors.toList());
+            }
             awavo.setNumbercounts(contractList);
         }
         return awavo;
