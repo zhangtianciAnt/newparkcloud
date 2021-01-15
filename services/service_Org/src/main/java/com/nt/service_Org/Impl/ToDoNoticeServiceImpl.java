@@ -9,6 +9,7 @@ import com.nt.utils.SocketSessionRegistry;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -21,8 +22,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
@@ -59,7 +62,10 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
     public List<ToDoNotice> getDataList(String status,String userid) throws Exception {
         String STATUS = status;
         List<ToDoNotice> todonotice = todoNoticeMapper.getDataList(STATUS,userid);
-        if (todonotice.size()==0) {
+        if (todonotice.size() > 0) {
+            todonotice = todonotice.stream().sorted(Comparator.comparing(ToDoNotice::getCreateon).reversed()).collect(Collectors.toList());
+        }
+        else if (todonotice.size()==0) {
             return null;
         }
         return todonotice;

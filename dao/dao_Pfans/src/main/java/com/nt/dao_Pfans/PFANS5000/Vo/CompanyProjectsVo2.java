@@ -23,6 +23,10 @@ public class CompanyProjectsVo2 {
     @Encryption
     private String project_namejp;
     /**
+     * 项目类型
+     */
+    private String projecttype;
+    /**
      * GROUP
      */
     private String group_id;
