@@ -3366,7 +3366,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         String workDayYear ="0";
         String startDate = year + "-04-01";
         String endDate = String.valueOf(Integer.valueOf(year)+1) + "-04-01";
-        workDayYear = workDayYears(startDate,endDate,year);
+        workDayYear = workDayYears(startDate,endDate,year,userid);
 
         //当前年度截止到当前日期已经工作天数
         String workDayYearT ="0";
@@ -3404,7 +3404,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             }
         }
         endDate = sfymd.format(end.getTime());
-        workDayYearT = workDayYears(startDate,endDate,year);
+        workDayYearT = workDayYears(startDate,endDate,year,userid);
 
         //当前年度已经审批通过的年休
         Double finishAnnuel = 0d;
@@ -3442,7 +3442,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         return ra;
     }
     //当前年度工作天数
-    public String workDayYears(String startDate,String endDate,String year) throws Exception {
+    public String workDayYears(String startDate,String endDate,String year,String userid) throws Exception {
         String workDayYear = "0";
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         //工作日表
@@ -3493,34 +3493,74 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         days.removeAll(tempdays);
 
         //3.8   5.4  的判断
-        boolean w = false;
-        boolean y = false;
-        String womenday = String.valueOf(Integer.valueOf(year)+1) + "-03-08";
-        //当前剩余日期中包含3月8日，出勤振替日中不包含3月8日
-        if(days.contains(womenday) && !workingDaysListbao.contains(womenday))
+        //ccm add 0110
+        List<CustomerInfo> custwomenboy = mongoTemplate.find(new Query(Criteria.where("userid").is(userid)), CustomerInfo.class);
+        for(CustomerInfo c : custwomenboy)
         {
-            w = true;
-        }
-        String youngday = year + "-05-04";
-        //当前剩余日期中包含5月4日，出勤振替日中不包含5月4日
-        if(days.contains(youngday) && !workingDaysListbao.contains(youngday))
-        {
-            y = true;
-        }
+            boolean w = false;
+            boolean y = false;
+            String womenday = String.valueOf(Integer.valueOf(year)+1) + "-03-08";
+            //当前剩余日期中包含3月8日，出勤振替日中不包含3月8日
+            if(days.contains(womenday) && !workingDaysListbao.contains(womenday))
+            {
+                //女
+                if(c.getUserinfo().getSex().equals("PR019002"))
+                {
+                    w = true;
+                }
+            }
+            String youngday = year + "-05-04";
+            //当前剩余日期中包含5月4日，出勤振替日中不包含5月4日
+            if(days.contains(youngday) && !workingDaysListbao.contains(youngday))
+            {
+                int age = 0;
+                Calendar born = Calendar.getInstance();
+                Calendar resign = Calendar.getInstance();
 
-        //最终返回天数
-        if(w && y)
-        {
-            workDayYear = String.valueOf(days.size() - 1);
+                resign.setTime(Convert.toDate(c.getUserinfo().getResignation_date()));
+                String resignday = c.getUserinfo().getResignation_date().substring(0, 10);
+                if (c.getUserinfo().getResignation_date().length() >= 24) {
+                    resign.setTime(Convert.toDate(resignday));
+                    resign.add(Calendar.DAY_OF_YEAR, 1);
+                }
+                born.setTime(Convert.toDate(c.getUserinfo().getBirthday()));
+                String birthday = c.getUserinfo().getBirthday().substring(0, 10);
+                if (c.getUserinfo().getBirthday().length() >= 24) {
+                    born.setTime(Convert.toDate(birthday));
+                    born.add(Calendar.DAY_OF_YEAR, 1);
+                }
+
+                if (born.after(resign)) {
+                    throw new IllegalArgumentException("年龄不能超过当前日期");
+                }
+                age = resign.get(Calendar.YEAR) - born.get(Calendar.YEAR);
+                int nowDayOfYear = resign.get(Calendar.DAY_OF_YEAR);
+                int bornDayOfYear = born.get(Calendar.DAY_OF_YEAR);
+                if (nowDayOfYear < bornDayOfYear) {
+                    age -= 1;
+                }
+                if(age<=28)
+                {
+                    y = true;
+                }
+            }
+
+            //最终返回天数
+            if(w && y)
+            {
+                workDayYear = String.valueOf(days.size() - 1);
+            }
+            else if(w || y)
+            {
+                workDayYear = String.valueOf(days.size() - 0.5);
+            }
+            else
+            {
+                workDayYear = String.valueOf(days.size());
+            }
         }
-        else if(w || y)
-        {
-            workDayYear = String.valueOf(days.size() - 0.5);
-        }
-        else
-        {
-            workDayYear = String.valueOf(days.size());
-        }
+        //ccm add 0110
+
         return workDayYear;
     }
 

@@ -243,7 +243,28 @@
 							)
 						ELSE 0 END ) AS ex1cost,
 					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL
-		AND (ex1.EXITS = 1 OR (ex1.EXITS = 0 AND DATE_FORMAT(ex1.EXITIME, '%Y-%m') >= DATE_FORMAT(concat( #{years},'-01' ), '%Y-%m')))
+		AND (
+		(
+		CASE WHEN ( ${months} = 3 or ${months} = 6 or ${months} = 9 or ${months} = 12)
+		THEN ${cost}
+		<if test="months == 3 or months == 6 or months == 9 or months == 12 " >
+			+ ${expense}
+		</if>
+		ELSE ${cost}
+		END
+		) > 0
+		OR
+		(
+			ex1.EXITS = 1
+			AND ex1.GROUP_ID = #{groupid}
+		)
+		OR
+		(
+			ex1.EXITS = 0
+			AND DATE_FORMAT(ex1.EXITIME, '%Y-%m') >= DATE_FORMAT(concat( #{years},'-01' ), '%Y-%m')
+			AND ex1.GROUP_ID = #{groupid}
+		)
+		)
 		) THEN 1 ELSE 0 END ) AS ex1usercount
 				FROM
 					coststatistics
@@ -264,20 +285,40 @@
 								<if test="months == 3 or months == 6 or months == 9 or months == 12 " >
 									+ ${expense}
 								</if>
-								ELSE ${cost}
-								END
-							)
-						ELSE 0 END ) AS ex2cost,
-					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL
-		AND (ex2.EXITS = 1 OR (ex2.EXITS = 0 AND DATE_FORMAT(ex2.EXITIME, '%Y-%m') >= DATE_FORMAT(concat( #{years},'-01' ), '%Y-%m')))
+		ELSE ${cost}
+		END
+		)
+		ELSE 0 END ) AS ex2cost,
+		SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL
+		AND (
+		(
+		CASE WHEN ( ${months} = 3 or ${months} = 6 or ${months} = 9 or ${months} = 12)
+		THEN ${cost}
+		<if test="months == 3 or months == 6 or months == 9 or months == 12 " >
+			+ ${expense}
+		</if>
+		ELSE ${cost}
+		END
+		) > 0
+		OR
+		(
+			ex2.EXITS = 1
+			AND ex2.GROUP_ID = #{groupid}
+		)
+		OR (
+			ex2.EXITS = 0
+			AND DATE_FORMAT(ex2.EXITIME, '%Y-%m') >= DATE_FORMAT(concat( #{years},'-01' ), '%Y-%m')
+			AND ex2.GROUP_ID = #{groupid}
+		)
+		)
 		) THEN 1 ELSE 0 END ) AS ex2usercount
-				FROM
-					coststatistics
-					LEFT JOIN expatriatesinfor ex2 ON coststatistics.bpname = ex2.expatriatesinfor_id
-					AND ex2.jobclassification IN ('BP025003','BP025004' )
-				WHERE coststatistics.years = substring(#{years},1,4)
-				GROUP BY bpcompany
-			) co2 ON co1.bpcompany = co2.bpcompany
+		FROM
+		coststatistics
+		LEFT JOIN expatriatesinfor ex2 ON coststatistics.bpname = ex2.expatriatesinfor_id
+		AND ex2.jobclassification IN ('BP025003','BP025004' )
+		WHERE coststatistics.years = substring(#{years},1,4)
+		GROUP BY bpcompany
+		) co2 ON co1.bpcompany = co2.bpcompany
 		order by co1.bpcompany
 	</select>
 

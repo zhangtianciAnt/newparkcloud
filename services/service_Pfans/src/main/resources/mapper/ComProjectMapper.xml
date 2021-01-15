@@ -46,7 +46,7 @@
 	</select>
 
     <select id="getList2" resultType="com.nt.dao_Pfans.PFANS5000.Comproject">
-		select COMPROJECT_ID,PROJECT_NAME,NUMBERS,STATUS,LEADERID,STARTDATE,NOWDATE from comproject
+		select COMPROJECT_ID,PROJECT_NAME,PROJECTTYPE,NUMBERS,STATUS,LEADERID,STARTDATE,NOWDATE from comproject
 		where (STATUS = '4' or STATUS = '7' or STATUS = '8')
 		<if test="owners != null and owners.size() > 0 ">
 			and
@@ -60,7 +60,7 @@
 	</select>
 
     <select id="getList3" resultType="com.nt.dao_Pfans.PFANS5000.Comproject">
-		select COMPROJECT_ID,PROJECT_NAME,NUMBERS,STATUS,LEADERID,STARTDATE,NOWDATE from comproject
+		select COMPROJECT_ID,PROJECT_NAME,PROJECTTYPE,NUMBERS,STATUS,LEADERID,STARTDATE,NOWDATE from comproject
 		where STATUS = '9'
 		<if test="owners != null and owners.size() > 0 ">
 			and
