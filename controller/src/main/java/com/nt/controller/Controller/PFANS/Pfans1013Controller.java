@@ -241,6 +241,7 @@ public class Pfans1013Controller {
         String wfList4 = "";
         StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
         startWorkflowVo.setDataId(evevo.getEvection().getEvectionid());
+        startWorkflowVo.setMenuUrl("/PFANS1013View");
         List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
         // add-ws-7/10-禅道249
         Query query7 = new Query();
