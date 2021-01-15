@@ -483,11 +483,15 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         Query query = CustmizeQuery(new OrgTree());
         OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
         List<OrgTree>  orgTrees =  orgTree.getOrgs();
+        String[] groupArray = groupid.split(",");
         if(role.equals("2")){
             for (OrgTree org: orgTrees ) {
-                if(org.get_id().equals(groupid)){
-                    for (OrgTree org1: org.getOrgs() ) {
-                        groupIdList.add(org1.get_id());
+                for(String group :groupArray)
+                {
+                    if(org.get_id().equals(group)){
+                        for (OrgTree org1: org.getOrgs() ) {
+                            groupIdList.add(org1.get_id());
+                        }
                     }
                 }
             }
@@ -500,7 +504,10 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             }
         }
         else{
-            groupIdList.add(groupid);
+            for(String group :groupArray)
+            {
+                groupIdList.add(group);
+            }
         }
         List<Coststatistics> costMonthList = coststatisticsMapper.getcostMonthList(dates,groupIdList);
         return costMonthList;
