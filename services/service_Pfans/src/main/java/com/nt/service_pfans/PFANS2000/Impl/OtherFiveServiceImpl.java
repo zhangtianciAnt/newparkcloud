@@ -62,7 +62,7 @@ public class OtherFiveServiceImpl implements OtherFiveService {
             List<Object> model = new ArrayList<Object>();
             model.add("No.");
             model.add("部門");
-            model.add("工号");
+            //model.add("工号");
             model.add("姓名");
             model.add("医疗保险");
             model.add("意外保险");
@@ -90,41 +90,41 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                     //卡号 upd gbb 0727 start
                     if (value.get(2).toString().equals("") ||
                         (
-                            value.get(4).toString().equals("") && value.get(5).toString().equals("") && value.get(6).toString().equals("")
-                            && value.get(8).toString().equals("") && value.get(9).toString().equals("") && value.get(10).toString().equals("")
+                            value.get(3).toString().equals("") && value.get(4).toString().equals("") && value.get(5).toString().equals("")
+                            && value.get(7).toString().equals("") && value.get(8).toString().equals("") && value.get(9).toString().equals("")
                         )
                     ) {
                         continue;
                     }
-                    String jobnumber = value.get(2).toString();
-                    otherfive.setJobnumber(jobnumber);
-                    List<CustomerInfo> customerinfo = customerinfoAll.stream().filter(item -> (item.getUserinfo().getJobnumber().equals(jobnumber))).collect(Collectors.toList());
+                    String strCustomername = value.get(2).toString();
+                    List<CustomerInfo> customerinfo = customerinfoAll.stream().filter(item -> (item.getUserinfo().getCustomername().equals(strCustomername))).collect(Collectors.toList());
                     if(customerinfo.size() == 0){
                         error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        Result.add("模板第" + (k - 1) + "行的姓名没有找到，请输入正确的姓名，导入失败");
                         continue;
                     }
                     else{
                         otherfive.setUser_id(customerinfo.get(0).getUserid());
+                        otherfive.setJobnumber(customerinfo.get(0).getUserinfo().getJobnumber());
                     }
                     //卡号 upd gbb 0727 end
                     String click="^(-?[1-9][0-9]*)+(.[0-9]{1,2})?$";
                     if(value.size() > 4) {
-                        if (value.get(4).toString().length()>20) {
+                        if (value.get(3).toString().length()>20) {
                             error = error + 1;
                             Result.add("模板第" + (k-1) + "行的医疗保险长度超出范围，请输入长度为20位之内的医疗保险，导入失败");
                             continue;
                         }
                     }
                     if(value.size() > 5) {
-                        if(!value.get(5).toString().equals("")){
-                            if (value.get(5).toString().length()>20) {
+                        if(!value.get(4).toString().equals("")){
+                            if (value.get(4).toString().length()>20) {
                                 error = error + 1;
                                 Result.add("模板第" + (k-1) + "行的意外保险长度超出范围，请输入长度为20位之内的意外保险，导入失败");
                                 continue;
                             }
-                            if(!value.get(5).toString().equals("0")){
-                                if(!Pattern.matches(click, value.get(5).toString())){
+                            if(!value.get(4).toString().equals("0")){
+                                if(!Pattern.matches(click, value.get(4).toString())){
                                     error = error + 1;
                                     Result.add("模板第" + (k - 1) + "行的意外保险不符合规范，请输入正确的意外保险，导入失败");
                                     continue;
@@ -133,14 +133,14 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                         }
                     }
                     if(value.size() > 6) {
-                        if(!value.get(6).toString().equals("")){
-                            if (value.get(6).toString().length()>20) {
+                        if(!value.get(5).toString().equals("")){
+                            if (value.get(5).toString().length()>20) {
                                 error = error + 1;
                                 Result.add("模板第" + (k-1) + "行的体检长度超出范围，请输入长度为20位之内的体检，导入失败");
                                 continue;
                             }
-                            if(!value.get(6).toString().equals("0")){
-                                if(!Pattern.matches(click, value.get(6).toString())){
+                            if(!value.get(5).toString().equals("0")){
+                                if(!Pattern.matches(click, value.get(5).toString())){
                                     error = error + 1;
                                     Result.add("模板第" + (k - 1) + "行的体检不符合规范，请输入正确的体检，导入失败");
                                     continue;
@@ -149,21 +149,21 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                         }
                     }
                     if(value.size() > 7) {
-                        if (value.get(7).toString().length()>20) {
+                        if (value.get(6).toString().length()>20) {
                             error = error + 1;
                             Result.add("模板第" + (k-1) + "行的福祉合計长度超出范围，请输入长度为20位之内的福祉合計，导入失败");
                             continue;
                         }
                     }
                     if(value.size() > 8) {
-                        if(!value.get(8).toString().equals("")){
-                            if (value.get(8).toString().length()>20) {
+                        if(!value.get(7).toString().equals("")){
+                            if (value.get(7).toString().length()>20) {
                                 error = error + 1;
                                 Result.add("模板第" + (k-1) + "行的工会福祉长度超出范围，请输入长度为20位之内的工会福祉，导入失败");
                                 continue;
                             }
-                            if(!value.get(8).toString().equals("0")){
-                                if(!Pattern.matches(click, value.get(8).toString())){
+                            if(!value.get(7).toString().equals("0")){
+                                if(!Pattern.matches(click, value.get(7).toString())){
                                     error = error + 1;
                                     Result.add("模板第" + (k - 1) + "行的工会福祉不符合规范，请输入正确的工会福祉，导入失败");
                                     continue;
@@ -172,14 +172,14 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                         }
                     }
                     if(value.size() > 9) {
-                        if(!value.get(9).toString().equals("")){
-                            if (value.get(9).toString().length()>20) {
+                        if(!value.get(8).toString().equals("")){
+                            if (value.get(8).toString().length()>20) {
                                 error = error + 1;
                                 Result.add("模板第" + (k-1) + "行的忘年会奖品长度超出范围，请输入长度为20位之内的忘年会奖品，导入失败");
                                 continue;
                             }
-                            if(!value.get(9).toString().equals("0")){
-                                if(!Pattern.matches(click, value.get(9).toString())){
+                            if(!value.get(8).toString().equals("0")){
+                                if(!Pattern.matches(click, value.get(8).toString())){
                                     error = error + 1;
                                     Result.add("模板第" + (k - 1) + "行的忘年会奖品不符合规范，请输入正确的忘年会奖品，导入失败");
                                     continue;
@@ -188,14 +188,14 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                         }
                     }
                     if(value.size() > 10) {
-                        if(!value.get(10).toString().equals("")){
-                            if (value.get(10).toString().length()>20) {
+                        if(!value.get(9).toString().equals("")){
+                            if (value.get(9).toString().length()>20) {
                                 error = error + 1;
                                 Result.add("模板第" + (k-1) + "行的組合旅游费长度超出范围，请输入长度为20位之内的組合旅游费，导入失败");
                                 continue;
                             }
-                            if(!value.get(10).toString().equals("0")){
-                                if(!Pattern.matches(click, value.get(10).toString())){
+                            if(!value.get(9).toString().equals("0")){
+                                if(!Pattern.matches(click, value.get(9).toString())){
                                     error = error + 1;
                                     Result.add("模板第" + (k - 1) + "行的組合旅游费不符合规范，请输入正确的組合旅游费，导入失败");
                                     continue;
@@ -204,7 +204,7 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                         }
                     }
                     if(value.size() > 11) {
-                        if (value.get(11).toString().length()>20) {
+                        if (value.get(10).toString().length()>20) {
                             error = error + 1;
                             Result.add("模板第" + (k-1) + "行的合計长度超出范围，请输入长度为20位之内的合計，导入失败");
                             continue;
@@ -212,15 +212,15 @@ public class OtherFiveServiceImpl implements OtherFiveService {
                     }
                     otherfive.setGiving_id(Givingid);
                     otherfive.setDepartment_id(value.get(1).toString());
-                    otherfive.setMedicalinsurance(value.get(4).toString());
-                    otherfive.setAccident(value.get(5).toString());
-                    otherfive.setPhysical(value.get(6).toString());
-                    otherfive.setWelfaretotal(value.get(7).toString());
-                    otherfive.setLabourunion(value.get(8).toString());
-                    otherfive.setAnnualmeeting(value.get(9).toString());
-                    otherfive.setTravel(value.get(10).toString());
-                    otherfive.setTotal(value.get(11).toString());
-                    otherfive.setRemarks(value.get(12).toString());
+                    otherfive.setMedicalinsurance(value.get(3).toString());
+                    otherfive.setAccident(value.get(4).toString());
+                    otherfive.setPhysical(value.get(5).toString());
+                    otherfive.setWelfaretotal(value.get(6).toString());
+                    otherfive.setLabourunion(value.get(7).toString());
+                    otherfive.setAnnualmeeting(value.get(8).toString());
+                    otherfive.setTravel(value.get(9).toString());
+                    otherfive.setTotal(value.get(10).toString());
+                    otherfive.setRemarks(value.get(11).toString());
                 }
                 otherfive.setOtherfive_id(UUID.randomUUID().toString());
                 int rowundex = accesscount+ 1;

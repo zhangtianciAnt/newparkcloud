@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.OtherTwo;
 import com.nt.dao_Pfans.PFANS2000.OtherTwo2;
@@ -24,6 +25,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -69,8 +72,8 @@ public class OtherTwoServiceImpl implements OtherTwoService {
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
             model.add("No.");
-            model.add("工号");
-            model.add("名字");
+            //model.add("工号");
+            model.add("姓名");
             model.add("金額");
             model.add("根拠");
             List<Object> key = list.get(0);
@@ -88,47 +91,50 @@ public class OtherTwoServiceImpl implements OtherTwoService {
                 k++;
                 if (value != null && !value.isEmpty()) {
                     //卡号 upd gbb 0727 start
-                    //upd gbb 0904 添加 value.get(3).toString().equals("")
-                    if (value.get(1).toString().equals("") || value.get(3).toString().equals("")) {
+                    //upd gbb 0904 添加 value.get(2).toString().equals("")
+                    if (value.get(1).toString().equals("") || value.get(2).toString().equals("")) {
                         continue;
                     }
-                    String jobnumber = value.get(1).toString();
-                    othertwo.setJobnumber(jobnumber);
-                    List<CustomerInfo> customerinfo = customerinfoAll.stream().filter(item -> (item.getUserinfo().getJobnumber().equals(jobnumber))).collect(Collectors.toList());
+                    String strCustomername = value.get(1).toString();
+                    List<CustomerInfo> customerinfo = customerinfoAll.stream().filter(item -> (item.getUserinfo().getCustomername().equals(strCustomername))).collect(Collectors.toList());
                     if(customerinfo.size() == 0){
                         error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        Result.add("模板第" + (k - 1) + "行的姓名没有找到，请输入正确的姓名，导入失败");
                         continue;
                     }
                     else{
                         othertwo.setUser_id(customerinfo.get(0).getUserid());
+                        othertwo.setJobnumber(customerinfo.get(0).getUserinfo().getJobnumber());
                     }
                     //卡号 upd gbb 0727 end
-                    String click = "^(-?[1-9][0-9]*)+(.[0-9]{1,2})?$";
-                    if(!value.get(3).toString().equals("0")){
-                        if (!Pattern.matches(click, value.get(3).toString())) {
-                            error = error + 1;
-                            Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");
-                            continue;
+                    String click = "^(-?[0-9]*)+(.[0-9]{1,2})?$";
+                    if(!value.get(2).toString().equals("")){
+                        if(!value.get(2).toString().equals("0")){
+                            value.set(2,new BigDecimal(Double.parseDouble(value.get(2).toString())).setScale(2, RoundingMode.HALF_UP).toPlainString());
+                            if (!Pattern.matches(click, value.get(2).toString())) {
+                                error = error + 1;
+                                Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");
+                                continue;
+                            }
                         }
                     }
                     if (value.size() > 3) {
-                        if (value.get(3).toString().length() > 20) {
+                        if (value.get(2).toString().length() > 20) {
                             error = error + 1;
                             Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
                             continue;
                         }
                     }
                     if (value.size() > 4) {
-                        if (value.get(4).toString().length() > 20) {
+                        if (value.get(3).toString().length() > 20) {
                             error = error + 1;
                             Result.add("模板第" + (k - 1) + "行的根拠长度超出范围，请输入长度为20位之内的根拠，导入失败");
                             continue;
                         }
                     }
                     othertwo.setGiving_id(Givingid);
-                    othertwo.setMoneys(value.get(3).toString());
-                    othertwo.setRootknot(value.get(4).toString());
+                    othertwo.setMoneys(value.get(2).toString());
+                    othertwo.setRootknot(value.get(3).toString());
                 }
                 int rowundex = accesscount + 1;
                 othertwo.setRowindex(rowundex);

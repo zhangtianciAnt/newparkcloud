@@ -226,10 +226,6 @@ public class GivingServiceImpl implements GivingService {
         // region 累计税金 By SKAIXX
         List<AccumulatedTaxVo> accumulatedTaxVolist = accumulatedTaxMapper.getaccumulatedTax();
         accumulatedTaxVolist = accumulatedTaxVolist.stream().filter(coi -> (coi.getGiving_id().contains(giving_id))).collect(Collectors.toList());
-        // 获取全年综合收入适用税率
-        Dictionary taxDictionary = new Dictionary();
-        taxDictionary.setPcode("PR048");    // 全年综合收入适用税率
-        List<Dictionary> taxDictionaryList = dictionaryMapper.getDictionary(taxDictionary);
         givingVo.setAccumulatedTaxVo(accumulatedTaxVolist);
         // endregion
 
@@ -536,9 +532,11 @@ public class GivingServiceImpl implements GivingService {
                 base.setThismonthbasic(getSalaryBasicAndDuty(customer, 1).get("thisMonthBasic"));
                 base.setThismonthduty(getSalaryBasicAndDuty(customer, 1).get("thisMonthDuty"));
                 //N月前基数-N根据字典获取 PR061001
-                Dictionary dictionaryPr = new Dictionary();
-                dictionaryPr.setCode("PR061001");
-                Dictionary dicResult = dictionaryMapper.selectByPrimaryKey(dictionaryPr);
+//                Dictionary dictionaryPr = new Dictionary();
+//                dictionaryPr.setCode("PR061001");
+//                Dictionary dicResult = dictionaryMapper.selectByPrimaryKey(dictionaryPr);
+                Dictionary dicResult = dictionaryAll.stream().filter(item -> (item.getCode().equals("PR061001"))).collect(Collectors.toList()).get(0);
+
                 int tmabasic = Integer.parseInt(dicResult.getValue1());
                 base.setTmabasic(getSalaryBasicAndDuty(customer, -tmabasic).get("thisMonth"));
                 /*基本工资 -> 月工资  月工资拆分为 基本工资  职责工资 -lxx*/
@@ -1501,9 +1499,10 @@ public class GivingServiceImpl implements GivingService {
         List<Base> baseList = baseMapper.select(base);
 
         // 代休截止间隔修改为从字典中获取
-        Dictionary replaceDic = new Dictionary();
-        replaceDic.setCode("PR061001");    // 代休间隔
-        replaceDic = dictionaryMapper.select(replaceDic).get(0);
+//        Dictionary replaceDic = new Dictionary();
+//        replaceDic.setCode("PR061001");    // 代休间隔
+//        replaceDic = dictionaryMapper.select(replaceDic).get(0);
+        Dictionary replaceDic = dictionaryAll.stream().filter(item -> (item.getCode().equals("PR061001"))).collect(Collectors.toList()).get(0);
         int rep = Integer.parseInt(replaceDic.getValue1());
 
         // 以基数表数据为单位循环插入残业数据
@@ -1771,14 +1770,16 @@ public class GivingServiceImpl implements GivingService {
         double currentSalaryPerHour = Double.parseDouble(base.getThismonth()) / 21.75d / 8d;
 
         // 获取短病欠扣除比例
-        Dictionary shortDictionary = new Dictionary();
-        shortDictionary.setCode("PR049005");    // 短病欠扣除比例
-        shortDictionary = dictionaryMapper.select(shortDictionary).get(0);
+//        Dictionary shortDictionary = new Dictionary();
+//        shortDictionary.setCode("PR049005");    // 短病欠扣除比例
+//        shortDictionary = dictionaryMapper.select(shortDictionary).get(0);
+        Dictionary shortDictionary = dictionaryAll.stream().filter(item -> (item.getCode().equals("PR049005"))).collect(Collectors.toList()).get(0);
 
         // 获取长病欠
-        Dictionary longDictionary = new Dictionary();
-        longDictionary.setCode("PR047001");     // 大連社会最低賃金
-        longDictionary = dictionaryMapper.select(longDictionary).get(0);
+//        Dictionary longDictionary = new Dictionary();
+//        longDictionary.setCode("PR047001");     // 大連社会最低賃金
+//        longDictionary = dictionaryMapper.select(longDictionary).get(0);
+        Dictionary longDictionary = dictionaryAll.stream().filter(item -> (item.getCode().equals("PR047001"))).collect(Collectors.toList()).get(0);
         // 长病欠小时工资
         double longSalary = Double.parseDouble(longDictionary.getValue2()) / 21.75d / 8d;
 
@@ -1990,14 +1991,16 @@ public class GivingServiceImpl implements GivingService {
         double currentSalaryPerHour = Double.parseDouble(base.getThismonth()) / 21.75d / 8d;
 
         // 获取短病欠扣除比例
-        Dictionary shortDictionary = new Dictionary();
-        shortDictionary.setCode("PR049005");    // 短病欠扣除比例
-        shortDictionary = dictionaryMapper.select(shortDictionary).get(0);
+//        Dictionary shortDictionary = new Dictionary();
+//        shortDictionary.setCode("PR049005");    // 短病欠扣除比例
+//        shortDictionary = dictionaryMapper.select(shortDictionary).get(0);
+        Dictionary shortDictionary = dictionaryAll.stream().filter(item -> (item.getCode().equals("PR049005"))).collect(Collectors.toList()).get(0);
 
         // 获取长病欠
-        Dictionary longDictionary = new Dictionary();
-        longDictionary.setCode("PR047001");     // 大連社会最低賃金
-        longDictionary = dictionaryMapper.select(longDictionary).get(0);
+//        Dictionary longDictionary = new Dictionary();
+//        longDictionary.setCode("PR047001");     // 大連社会最低賃金
+//        longDictionary = dictionaryMapper.select(longDictionary).get(0);
+        Dictionary longDictionary = dictionaryAll.stream().filter(item -> (item.getCode().equals("PR047001"))).collect(Collectors.toList()).get(0);
         // 长病欠小时工资
         double longSalary = Double.parseDouble(longDictionary.getValue2()) / 21.75d / 8d;
 
@@ -2078,6 +2081,9 @@ public class GivingServiceImpl implements GivingService {
 
     //试用天数计算
     private int getTrialWorkDaysExceptWeekend(Date start, Date end) throws Exception{
+        if(sdfYMD.format(start).equals(sdfYMD.format(end))){
+            return 1;
+        }
         SimpleDateFormat ymd = new SimpleDateFormat("yyyy-MM-dd");
         //只取年月日比较
         start = ymd.parse(ymd.format(start));

@@ -2264,7 +2264,7 @@ public class WagesServiceImpl implements WagesService {
         List<List<Object>> list = reader.read();
         List<Object> model = new ArrayList<Object>();
         model.add("发放时间");
-        model.add("工号");
+        model.add("姓名");
 //        model.add("部门");
 //        model.add("名字");
 //        model.add("養老基数");
@@ -2383,11 +2383,11 @@ public class WagesServiceImpl implements WagesService {
 
                 //region 人员基础信息查询
                 Query query = new Query();
-                String jobnumber = value.get(1).toString();
-                query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
+                String strCustomername = value.get(1).toString();
+                query.addCriteria(Criteria.where("userinfo.customername").is(strCustomername));
                 CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
-                    wages.setJobnumber(jobnumber);  //工号
+                    wages.setJobnumber(customerInfo.getUserinfo().getJobnumber());  //工号
                     wages.setUser_id(customerInfo.getUserid());
                     //upd_fjl_0910
 //                    wages.setWorkdate(customerInfo.getUserinfo().getEnterday());//入社时间
@@ -2427,7 +2427,7 @@ public class WagesServiceImpl implements WagesService {
                 }
                 else{
                     error = error + 1;
-                    Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                    Result.add("模板第" + (k - 1) + "行的姓名没有找到，请输入正确的姓名，导入失败");
                     continue;
                 }
                 //endregion 人员基础信息查询

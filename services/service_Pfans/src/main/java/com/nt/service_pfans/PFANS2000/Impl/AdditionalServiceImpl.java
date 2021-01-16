@@ -62,8 +62,8 @@ public class AdditionalServiceImpl implements AdditionalService {
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
             model.add("No.");
-            model.add("工号");
-            model.add("名字");
+            //model.add("工号");
+            model.add("姓名");
             model.add("累计子女教育");
             model.add("累计住房贷款利息");
             model.add("累计住房租金");
@@ -90,93 +90,93 @@ public class AdditionalServiceImpl implements AdditionalService {
                     //String click="^([1-9][0-9]*)+(.[0-9]{1,2})?$";
                     String click = "^(-?[1-9]\\d*\\.?\\d*)|(-?0\\.\\d*[1-9])|(-?[0])|(-?[0]\\.\\d*)$";
 
-                    String jobnumber = value.get(1).toString();
-                    additional.setJobnumber(jobnumber);
-                    List<CustomerInfo> customerinfo = customerinfoAll.stream().filter(item -> (item.getUserinfo().getJobnumber().equals(jobnumber))).collect(Collectors.toList());
+                    String strCustomername = value.get(1).toString();
+                    List<CustomerInfo> customerinfo = customerinfoAll.stream().filter(item -> (item.getUserinfo().getCustomername().equals(strCustomername))).collect(Collectors.toList());
                     if(customerinfo.size() == 0){
                         error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        Result.add("模板第" + (k - 1) + "行的姓名没有找到，请输入正确的姓名，导入失败");
                         continue;
                     }
                     else{
                         additional.setUser_id(customerinfo.get(0).getUserid());
+                        additional.setJobnumber(customerinfo.get(0).getUserinfo().getJobnumber());
+                    }
+                    if(!StringUtils.isNullOrEmpty(value.get(2).toString())){
+                        if(!value.get(2).toString().matches(click)){
+                            error = error + 1;
+                            Result.add("模板第" + (k - 1) + "行的累计子女教育金额不符合规范，请输入正确的金额，导入失败");
+                            continue;
+                        }
                     }
                     if(!StringUtils.isNullOrEmpty(value.get(3).toString())){
                         if(!value.get(3).toString().matches(click)){
                             error = error + 1;
-                            Result.add("模板第" + (k - 1) + "行的累计子女教育金额不符合规范，请输入正确的金额，导入失败");
+                            Result.add("模板第" + (k - 1) + "行的累计住房贷款利息金额不符合规范，请输入正确的金额，导入失败");
                             continue;
                         }
                     }
                     if(!StringUtils.isNullOrEmpty(value.get(4).toString())){
                         if(!value.get(4).toString().matches(click)){
                             error = error + 1;
-                            Result.add("模板第" + (k - 1) + "行的累计住房贷款利息金额不符合规范，请输入正确的金额，导入失败");
+                            Result.add("模板第" + (k - 1) + "行的累计住房租金金额不符合规范，请输入正确的金额，导入失败");
                             continue;
                         }
                     }
                     if(!StringUtils.isNullOrEmpty(value.get(5).toString())){
                         if(!value.get(5).toString().matches(click)){
                             error = error + 1;
-                            Result.add("模板第" + (k - 1) + "行的累计住房租金金额不符合规范，请输入正确的金额，导入失败");
+                            Result.add("模板第" + (k - 1) + "行的累计赡养老人金额不符合规范，请输入正确的金额，导入失败");
                             continue;
                         }
                     }
                     if(!StringUtils.isNullOrEmpty(value.get(6).toString())){
                         if(!value.get(6).toString().matches(click)){
                             error = error + 1;
-                            Result.add("模板第" + (k - 1) + "行的累计赡养老人金额不符合规范，请输入正确的金额，导入失败");
-                            continue;
-                        }
-                    }
-                    if(!StringUtils.isNullOrEmpty(value.get(7).toString())){
-                        if(!value.get(7).toString().matches(click)){
-                            error = error + 1;
                             Result.add("模板第" + (k - 1) + "行的累计继续教育金额不符合规范，请输入正确的金额，导入失败");
                             continue;
                         }
                     }
                     if (value.size() > 3) {
-                        if (value.get(3).toString().length() > 20) {
+                        if (value.get(2).toString().length() > 20) {
                             error = error + 1;
                             Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
                             continue;
                         }
                     }
                     if (value.size() > 4) {
-                        if (value.get(4).toString().length() > 20) {
+                        if (value.get(3).toString().length() > 20) {
                             error = error + 1;
                             Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
                             continue;
                         }
                     }
                     if (value.size() > 5) {
-                        if (value.get(5).toString().length() > 20) {
+                        if (value.get(4).toString().length() > 20) {
                             error = error + 1;
                             Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
                             continue;
                         }
                     }
                     if (value.size() > 6) {
-                        if (value.get(6).toString().length() > 20) {
+                        if (value.get(5).toString().length() > 20) {
                             error = error + 1;
                             Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
                             continue;
                         }
                     }
                     if (value.size() > 7) {
-                        if (value.get(7).toString().length() > 20) {
+                        if (value.get(6).toString().length() > 20) {
                             error = error + 1;
                             Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
                             continue;
                         }
                     }
-                    additional.setChildreneducation(value.get(3).toString());
-                    additional.setHousing(value.get(4).toString());
-                    additional.setRent(value.get(5).toString());
-                    additional.setSupport(value.get(6).toString());
-                    additional.setEducation(value.get(7).toString());
-                    additional.setTotal(value.get(8).toString());
+                    additional.setChildreneducation(value.get(2).toString());
+                    additional.setHousing(value.get(3).toString());
+                    additional.setRent(value.get(4).toString());
+                    additional.setSupport(value.get(5).toString());
+                    additional.setEducation(value.get(6).toString());
+                    additional.setTotal(value.get(7).toString());
                     additional.setGiving_id(Givingid);
                 }
                 int rowundex = accesscount+ 1;

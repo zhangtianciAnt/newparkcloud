@@ -108,7 +108,7 @@
         convert( base.DIC_YKBZZS - ( base.DIC_YKBZZS / 21.75 * @CXDAYS) - @KCYKBZQQ, decimal(10,2))
         WHEN ( @TYPE &lt;=> '4' ) THEN
         convert(base.RETIRE_LUNCH - @KCYKBZQQ - @KCYKBZQQDY,decimal(10,2))
-        WHEN (base.LASTMONTHSUITDAYS &lt;> 0.0) THEN
+        WHEN ((base.LASTDILIGENCETRY + base.LASTSHORTDEFICIENCYTRY + base.LASTCHRONICDEFICIENCYTRY ) > 0) THEN
         convert(base.DIC_YKBZZS - @KCYKBZQQ,decimal(10,2))
         ELSE
         convert(
@@ -180,46 +180,46 @@
         (
         IF
         (
-        convert( ( @LJYNSSDE * base.DIC_0SL - base.DIC_0SSKC - @ACCUMUKATEDTAX_YEARTAXES ), decimal(10,2) ) &lt; 0, round(0,2), convert(@LJYNSSDE * base.DIC_0SL - base.DIC_0SSKC - @ACCUMUKATEDTAX_YEARTAXES ,decimal(10,2))) ) WHEN ( @LJYNSSDE > 36000
+        convert( ( CAST(@LJYNSSDE * base.DIC_0SL as  DECIMAL(20,2)) - base.DIC_0SSKC - @ACCUMUKATEDTAX_YEARTAXES ), decimal(10,2) ) &lt; 0, round(0,2), convert(CAST(@LJYNSSDE * base.DIC_0SL as  DECIMAL(20,2)) - base.DIC_0SSKC - @ACCUMUKATEDTAX_YEARTAXES ,decimal(10,2))) ) WHEN ( @LJYNSSDE > 36000
         AND CAST(@LJYNSSDE AS DECIMAL(10,0)) &lt;= CAST(base.DIC_2JE AS DECIMAL(10,0))
         ) THEN
         (
         IF
         (
-        convert( ( @LJYNSSDE * base.DIC_1SL - base.DIC_1SSKC - @ACCUMUKATEDTAX_YEARTAXES ), decimal(10,2) ) &lt; 0, round(0,2), convert(@LJYNSSDE * base.DIC_1SL - base.DIC_1SSKC - @ACCUMUKATEDTAX_YEARTAXES,decimal(10,2)) ) ) WHEN ( @LJYNSSDE > 144000
+        convert( ( CAST(@LJYNSSDE * base.DIC_1SL as  DECIMAL(20,2)) - base.DIC_1SSKC - @ACCUMUKATEDTAX_YEARTAXES ), decimal(10,2) ) &lt; 0, round(0,2), convert(CAST(@LJYNSSDE * base.DIC_1SL as  DECIMAL(20,2)) - base.DIC_1SSKC - @ACCUMUKATEDTAX_YEARTAXES,decimal(10,2)) ) ) WHEN ( @LJYNSSDE > 144000
         AND CAST(@LJYNSSDE AS DECIMAL(10,0)) &lt;= CAST(base.DIC_3JE AS DECIMAL(10,0))
         ) THEN#20%
         (
         IF
         (
-        convert( ( @LJYNSSDE * base.DIC_2SL - base.DIC_2SSKC - @ACCUMUKATEDTAX_YEARTAXES ), decimal(10,2) ) &lt; 0, round(0,2), convert(@LJYNSSDE * base.DIC_2SL - base.DIC_2SSKC - @ACCUMUKATEDTAX_YEARTAXES,decimal(10,2)) ) ) WHEN ( @LJYNSSDE > 300000
+        convert( ( CAST(@LJYNSSDE * base.DIC_2SL as  DECIMAL(20,2)) - base.DIC_2SSKC - @ACCUMUKATEDTAX_YEARTAXES ), decimal(10,2) ) &lt; 0, round(0,2), convert(CAST(@LJYNSSDE * base.DIC_2SL as  DECIMAL(20,2)) - base.DIC_2SSKC - @ACCUMUKATEDTAX_YEARTAXES,decimal(10,2)) ) ) WHEN ( @LJYNSSDE > 300000
         AND CAST(@LJYNSSDE AS DECIMAL(10,0)) &lt;= CAST(base.DIC_4JE AS DECIMAL(10,0))
         ) THEN#25%
         (
         IF
         (
-        convert( ( @LJYNSSDE * base.DIC_3SL - base.DIC_3SSKC - @ACCUMUKATEDTAX_YEARTAXES ), decimal(10,2) ) &lt; 0, round(0,2), convert(@LJYNSSDE * base.DIC_3SL - base.DIC_3SSKC - @ACCUMUKATEDTAX_YEARTAXES,decimal(10,2)) ) ) WHEN ( @LJYNSSDE > 420000
+        convert( ( CAST(@LJYNSSDE * base.DIC_3SL as  DECIMAL(20,2)) - base.DIC_3SSKC - @ACCUMUKATEDTAX_YEARTAXES ), decimal(10,2) ) &lt; 0, round(0,2), convert(CAST(@LJYNSSDE * base.DIC_3SL as  DECIMAL(20,2)) - base.DIC_3SSKC - @ACCUMUKATEDTAX_YEARTAXES,decimal(10,2)) ) ) WHEN ( @LJYNSSDE > 420000
         AND CAST(@LJYNSSDE AS DECIMAL(10,0)) &lt;= CAST(base.DIC_5JE AS DECIMAL(10,0))
         ) THEN#30%
         (
         IF
         (
-        convert( ( @LJYNSSDE * base.DIC_4SL - base.DIC_4SSKC - @ACCUMUKATEDTAX_YEARTAXES ), decimal(10,2) ) &lt; 0, round(0,2), convert(@LJYNSSDE * base.DIC_4SL - base.DIC_4SSKC - @ACCUMUKATEDTAX_YEARTAXES,decimal(10,2)) ) ) WHEN ( @LJYNSSDE > 660000
+        convert( ( CAST(@LJYNSSDE * base.DIC_4SL as  DECIMAL(20,2)) - base.DIC_4SSKC - @ACCUMUKATEDTAX_YEARTAXES ), decimal(10,2) ) &lt; 0, round(0,2), convert(CAST(@LJYNSSDE * base.DIC_4SL as  DECIMAL(20,2)) - base.DIC_4SSKC - @ACCUMUKATEDTAX_YEARTAXES,decimal(10,2)) ) ) WHEN ( @LJYNSSDE > 660000
         AND CAST(@LJYNSSDE AS DECIMAL(10,0)) &lt;= CAST(base.DIC_6JE AS DECIMAL(10,0))
         ) THEN#35%
         (
         IF
         (
-        convert( ( @LJYNSSDE * base.DIC_5SL - base.DIC_5SSKC - @ACCUMUKATEDTAX_YEARTAXES ), decimal(10,2) ) &lt; 0,
+        convert( ( CAST(@LJYNSSDE * base.DIC_5SL as  DECIMAL(20,2)) - base.DIC_5SSKC - @ACCUMUKATEDTAX_YEARTAXES ), decimal(10,2) ) &lt; 0,
         round(0,2),
-        convert(@LJYNSSDE * base.DIC_5SL - base.DIC_5SSKC - @ACCUMUKATEDTAX_YEARTAXES ,decimal(10,2))
+        convert(CAST(@LJYNSSDE * base.DIC_5SL as  DECIMAL(20,2)) - base.DIC_5SSKC - @ACCUMUKATEDTAX_YEARTAXES ,decimal(10,2))
         )
         ) ELSE (
         IF
         (
-        convert( ( @LJYNSSDE * base.DIC_6SL - base.DIC_6SSKC - @ACCUMUKATEDTAX_YEARTAXES ), decimal(10,2) ) &lt; 0,
+        convert( ( CAST(@LJYNSSDE * base.DIC_6SL as  DECIMAL(20,2)) - base.DIC_6SSKC - @ACCUMUKATEDTAX_YEARTAXES ), decimal(10,2) ) &lt; 0,
         round(0,2),
-        convert(@LJYNSSDE * base.DIC_6SL - base.DIC_6SSKC - @ACCUMUKATEDTAX_YEARTAXES ,decimal(10,2))
+        convert(CAST(@LJYNSSDE * base.DIC_6SL as  DECIMAL(20,2)) - base.DIC_6SSKC - @ACCUMUKATEDTAX_YEARTAXES ,decimal(10,2))
         )
         )
         END

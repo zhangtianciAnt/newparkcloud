@@ -62,7 +62,7 @@ public class OtherFourServiceImpl implements OtherFourService {
             List<Object> model = new ArrayList<Object>();
             model.add("No.");
             model.add("部門");
-            model.add("工号");
+            //model.add("工号");
             model.add("姓名");
             model.add("社保大病险");
             model.add("合計");
@@ -82,32 +82,32 @@ public class OtherFourServiceImpl implements OtherFourService {
                 k++;
                 if (value != null && !value.isEmpty()) {
                     //卡号 upd gbb 0727 start
-                    //卡号 upd gbb 0904 添加 value.get(4).toString().equals("")
-                    if (value.get(2).toString().equals("") || value.get(4).toString().equals("")) {
+                    //卡号 upd gbb 0904 添加 value.get(3).toString().equals("")
+                    if (value.get(2).toString().equals("") || value.get(3).toString().equals("")) {
                         continue;
                     }
-                    String jobnumber = value.get(2).toString();
-                    otherFour.setJobnumber(jobnumber);
-                    List<CustomerInfo> customerinfo = customerinfoAll.stream().filter(item -> (item.getUserinfo().getJobnumber().equals(jobnumber))).collect(Collectors.toList());
+                    String strCustomername = value.get(2).toString();
+                    List<CustomerInfo> customerinfo = customerinfoAll.stream().filter(item -> (item.getUserinfo().getCustomername().equals(strCustomername))).collect(Collectors.toList());
                     if(customerinfo.size() == 0){
                         error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        Result.add("模板第" + (k - 1) + "行的姓名没有找到，请输入正确的姓名，导入失败");
                         continue;
                     }
                     else{
                         otherFour.setUser_id(customerinfo.get(0).getUserid());
+                        otherFour.setJobnumber(customerinfo.get(0).getUserinfo().getJobnumber());
                     }
                     //卡号 upd gbb 0727 end
                     String click="^(-?[0-9][0-9]*)+(.[0-9]{1,2})?$";
-                    if(!value.get(4).toString().equals("0")){
-                        if(!Pattern.matches(click, value.get(4).toString())){
+                    if(!value.get(3).toString().equals("0")){
+                        if(!Pattern.matches(click, value.get(3).toString())){
                             error = error + 1;
                             Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");
                             continue;
                         }
                     }
                     if (value.size() > 4) {
-                        if (value.get(4).toString().length() > 20) {
+                        if (value.get(3).toString().length() > 20) {
                             error = error + 1;
                             Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
                             continue;
@@ -115,9 +115,9 @@ public class OtherFourServiceImpl implements OtherFourService {
                     }
                     otherFour.setGiving_id(Givingid);
                     otherFour.setDepartment_id(value.get(1).toString());
-                    otherFour.setSocialsecurity(value.get(4).toString());
-                    otherFour.setTotal(value.get(5).toString());
-                    otherFour.setRemarks(value.get(6).toString());
+                    otherFour.setSocialsecurity(value.get(3).toString());
+                    otherFour.setTotal(value.get(4).toString());
+                    otherFour.setRemarks(value.get(5).toString());
                 }
                 int rowundex = accesscount+ 1;
                 otherFour.setRowindex(rowundex);

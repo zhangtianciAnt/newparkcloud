@@ -68,8 +68,8 @@ public class AppreciationServiceImpl implements AppreciationService {
             List<List<Object>> list = reader.read();
             List<Object> model = new ArrayList<Object>();
             model.add("No.");
-            model.add("工号");
-            model.add("氏名");
+            //model.add("工号");
+            model.add("姓名");
             model.add("評価");
             model.add("金額");
             model.add("備考");
@@ -98,36 +98,35 @@ public class AppreciationServiceImpl implements AppreciationService {
                     }
                     //卡号 upd gbb 0727 end
                     String click = "^(-?[1-9][0-9]*)+(.[0-9]{1,2})?$";
-//                    if (!Pattern.matches(click, value.get(4).toString())) {
+//                    if (!Pattern.matches(click, value.get(3).toString())) {
 //                        error = error + 1;
 //                        Result.add("模板第" + (k - 1) + "行的金额不符合规范，请输入正确的金额，导入失败");
 //                        continue;
 //                    }
 //                    if (value.size() > 4) {
-//                        if (value.get(4).toString().length() > 20) {
+//                        if (value.get(3).toString().length() > 20) {
 //                            error = error + 1;
 //                            Result.add("模板第" + (k - 1) + "行的金额长度超出范围，请输入长度为20位之内的金额，导入失败");
 //                            continue;
 //                        }
 //                    }
-                    String jobnumber = value.get(1).toString();
-                    appreciation.setJobnumber(jobnumber);
-                    appreciation.setAmount(value.get(4).toString());
-
-                    List<CustomerInfo> customerinfo = customerinfoAll.stream().filter(item -> (item.getUserinfo().getJobnumber().equals(jobnumber))).collect(Collectors.toList());
+                    String strCustomername = value.get(1).toString();
+                    appreciation.setAmount(value.get(3).toString());
+                    List<CustomerInfo> customerinfo = customerinfoAll.stream().filter(item -> (item.getUserinfo().getCustomername().equals(strCustomername))).collect(Collectors.toList());
                     if(customerinfo.size() == 0){
                         error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        Result.add("模板第" + (k - 1) + "行的姓名没有找到，请输入正确的姓名，导入失败");
                         continue;
                     }
                     else{
                         appreciation.setUser_id(customerinfo.get(0).getUserid());
-                        if(StringUtils.isNullOrEmpty(value.get(4).toString())){
+                        appreciation.setJobnumber(customerinfo.get(0).getUserinfo().getJobnumber());
+                        if(StringUtils.isNullOrEmpty(value.get(3).toString())){
                             Dictionary dictionary = new Dictionary();
                             dictionary.setCode(customerinfo.get(0).getUserinfo().getRank());
                             dictionary = dictionaryMapper.select(dictionary).get(0);
                             Dictionary commentaryDic = new Dictionary();
-                            commentaryDic.setValue1(value.get(3).toString());
+                            commentaryDic.setValue1(value.get(2).toString());
                             commentaryDic.setPcode("PR056");
                             commentaryDic = dictionaryMapper.select(commentaryDic).get(0);
                             if(commentaryDic != null){
@@ -141,13 +140,13 @@ public class AppreciationServiceImpl implements AppreciationService {
                         }
                     }
                     appreciation.setGiving_id(Givingid);
-                    appreciation.setCommentary(value.get(3).toString());
-                    appreciation.setRemarks(value.get(5).toString());
-                    appreciation.setOther1(value.get(6).toString());
-                    appreciation.setOther2(value.get(7).toString());
-                    appreciation.setOther3(value.get(8).toString());
-                    appreciation.setOther4(value.get(9).toString());
-                    appreciation.setOther5(value.get(10).toString());
+                    appreciation.setCommentary(value.get(2).toString());
+                    appreciation.setRemarks(value.get(4).toString());
+                    appreciation.setOther1(value.get(5).toString());
+                    appreciation.setOther2(value.get(6).toString());
+                    appreciation.setOther3(value.get(7).toString());
+                    appreciation.setOther4(value.get(8).toString());
+                    appreciation.setOther5(value.get(9).toString());
                 }
                 int rowundex = accesscount+ 1;
                 appreciation.setRowindex(rowundex);
