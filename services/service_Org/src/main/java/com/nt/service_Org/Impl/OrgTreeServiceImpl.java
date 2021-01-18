@@ -10,7 +10,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
@@ -96,11 +98,19 @@ public class OrgTreeServiceImpl implements OrgTreeService {
     }
 
     @Override
-    public OrgTree getTreeYears(String Years,String type) throws Exception {
+    public OrgTree getTreeYears(String Years,String Status) throws Exception {
         Query query = new Query();
         //历史组织架构
         query.addCriteria(Criteria.where("years").is(Years));
-        OrgTree orgtreeold = mongoTemplate.findOne(query, OrgTree.class);
-        return orgtreeold;
+        OrgTree orgtree = mongoTemplate.findOne(query, OrgTree.class);
+        if(Status.equals("1")){
+            query.addCriteria(Criteria.where("status").is("1"));
+            List<OrgTree> orgTrees = mongoTemplate.find(query, OrgTree.class);
+            orgTrees = orgTrees.stream().sorted(Comparator.comparing(OrgTree::getYears).reversed()).collect(Collectors.toList());
+            if (orgTrees.size() > 0) {
+                orgtree = orgTrees.get(0);
+            }
+        }
+        return orgtree;
     }
 }
