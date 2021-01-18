@@ -47,9 +47,6 @@ public class Pfans1045Controller {
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
         List<PolicyContract> policycontractlist = policycontractmapper.select(policy);
         policycontractlist = policycontractlist.stream().filter(item -> (item.getStatus().equals("4"))).collect(Collectors.toList());
-        //add-ws-01/18-年度问题数据匹配
-
-        //add-ws-01/18-年度问题数据匹配
         for (PolicyContract PolicyCon : policycontractlist) {
             if(PolicyCon.getYearss().equals(year)){
                 if (cycle.equals("03") || cycle.equals("04") || cycle.equals("05")) {
