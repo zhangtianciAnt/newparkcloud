@@ -54,7 +54,6 @@
         WHERE  WORKINGDATE BETWEEN date_format( #{startDate}, '%Y-%m-%d')
         AND  date_format( #{endDate}, '%Y-%m-%d')
         AND STATUS='0'
-        order by workingdate
     </select>
 
 </mapper>

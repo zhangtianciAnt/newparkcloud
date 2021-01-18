@@ -277,9 +277,4 @@ public class Judgement extends BaseModel {
     @Column(name = "DECISION")
     private String decision;
 
-    //决裁类型（流程相关）
-    @Column(name = "ENABLEDUPLICATELOAN")
-    private String enableduplicateloan;
-
-
 }

@@ -47,10 +47,14 @@ public class ExcelController {
             row1.put("人名", customerInfo.getUserinfo().getCustomername());
             row1.put("日期", item.get("日期"));
             row1.put("事假", item.get("事假"));
+            row1.put("试用事假", item.get("试用事假"));
             row1.put("产休/护理假", item.get("产休/护理假"));
             row1.put("欠勤", item.get("欠勤"));
+            row1.put("试用欠勤", item.get("试用欠勤"));
             row1.put("短病假", item.get("短病假"));
+            row1.put("试用短病假", item.get("试用短病假"));
             row1.put("长病假", item.get("长病假"));
+            row1.put("试用长病假", item.get("试用长病假"));
             row1.put("平日", item.get("平日"));
             row1.put("休日", item.get("休日"));
             row1.put("祝日", item.get("祝日"));

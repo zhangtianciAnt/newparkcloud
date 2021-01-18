@@ -23,7 +23,6 @@ public class Pfans1043Controller {
     @Autowired
     private TokenService tokenService;
 
-
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
@@ -50,11 +49,6 @@ public class Pfans1043Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         themeinforservice.upd(themeinfor, tokenModel);
         return ApiResult.success();
-    }
-
-    @RequestMapping(value = "/getlisttheme", method = {RequestMethod.GET})
-    public ApiResult getlisttheme(String year,String contract, HttpServletRequest request) throws Exception {
-        return ApiResult.success(themeinforservice.getlisttheme(year,contract));
     }
 
     @RequestMapping(value = "/importUser",method={RequestMethod.POST})

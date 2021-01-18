@@ -1,7 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Vo.MembersVo;
@@ -103,20 +102,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     @Override
     public ContractapplicationVo get(Contractapplication contractapplication) {
         ContractapplicationVo vo = new ContractapplicationVo();
-        //列表申請日期年月篩選
-        if(contractapplication.getApplicationdate() != null){
-            String strApplicationdate = DateUtil.format(contractapplication.getApplicationdate(),"yyyy-MM");
-            contractapplication.setApplicationdate(null);
-            //契约番号申请
-            List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
-            coList = coList.stream().filter(item -> (DateUtil.format(item.getApplicationdate(),"yyyy-MM").equals(strApplicationdate))).collect(Collectors.toList());
-            vo.setContractapplication(coList);
-        }
-        else{
-            //契约番号申请
-            List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
-            vo.setContractapplication(coList);
-        }
+        //契约番号申请
+        List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
+        vo.setContractapplication(coList);
+
         //契约番号回数
         Contractnumbercount number = new Contractnumbercount();
         number.setContractnumber(contractapplication.getContractnumber());

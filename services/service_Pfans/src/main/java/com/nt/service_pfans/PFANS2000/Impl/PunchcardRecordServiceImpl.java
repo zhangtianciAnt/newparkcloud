@@ -731,56 +731,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         } else if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
                             workinghours = "0";
                         } else if (sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "yyyy").toString() + "-03-08") || sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "yyyy").toString() + "-05-04")) {
-                            //ccm add 0110
-                            List<CustomerInfo> custwomenboy = mongoTemplate.find(new Query(Criteria.where("userid").is(ad.getUser_id())), CustomerInfo.class);
-                            for(CustomerInfo c : custwomenboy)
-                            {
-                                if(sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "yyyy").toString() + "-03-08"))
-                                {
-                                    //男
-                                    if(c.getUserinfo().getSex().equals("PR019001"))
-                                    {
-                                        workinghours = "8";
-                                    }
-                                    else
-                                    {
-                                        workinghours = "4";
-                                    }
-                                }
-                                else
-                                {
-                                    int age = 0;
-                                    Calendar born = Calendar.getInstance();
-                                    Calendar now = Calendar.getInstance();
-
-                                    now.setTime(Convert.toDate(ad.getDates()));
-                                    born.setTime(Convert.toDate(c.getUserinfo().getBirthday()));
-                                    String birthday = c.getUserinfo().getBirthday().substring(0, 10);
-                                    if (c.getUserinfo().getBirthday().length() >= 24) {
-                                        born.setTime(Convert.toDate(birthday));
-                                        born.add(Calendar.DAY_OF_YEAR, 1);
-                                    }
-
-                                    if (born.after(now)) {
-                                        throw new IllegalArgumentException("年龄不能超过当前日期");
-                                    }
-                                    age = now.get(Calendar.YEAR) - born.get(Calendar.YEAR);
-                                    int nowDayOfYear = now.get(Calendar.DAY_OF_YEAR);
-                                    int bornDayOfYear = born.get(Calendar.DAY_OF_YEAR);
-                                    if (nowDayOfYear < bornDayOfYear) {
-                                        age -= 1;
-                                    }
-                                    if(age>28)
-                                    {
-                                        workinghours = "8";
-                                    }
-                                    else
-                                    {
-                                        workinghours = "4";
-                                    }
-                                }
-                            }
-                            //ccm add 0110
+                            workinghours = "4";
                         } else {
                             workinghours = "8";
                         }
@@ -2043,7 +1994,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     if (sf1ymd.parse(sf1ymd.format(calendar.getTime())).compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) > 0) {
                                         if (Double.valueOf(leave) + Double.valueOf(nomal) >= 4) {
                                             ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leave)));
-                                            ad.setAbsenteeism("0");
+                                            ad.setAbsenteeism(null);
                                         } else {
                                             ad.setNormal(df.format(Double.valueOf(leave) + Double.valueOf(nomal)));
                                             ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
@@ -2052,10 +2003,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     } else {
                                         if (Double.valueOf(leave) + Double.valueOf(nomal) >= 4) {
                                             ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leave)));
-                                            ad.setAbsenteeism("0");
+                                            ad.setAbsenteeism(null);
                                         } else {
                                             ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leave)));
-                                            ad.setAbsenteeism("0");
+                                            ad.setAbsenteeism(null);
                                         }
                                     }
 
@@ -2342,57 +2293,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                         } else if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
                             workinghours = "0";
                         } else if (sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "yyyy").toString() + "-03-08") || sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "yyyy").toString() + "-05-04")) {
-                            //ccm add 0110
-                            List<CustomerInfo> custwomenboy = mongoTemplate.find(new Query(Criteria.where("userid").is(ad.getUser_id())), CustomerInfo.class);
-
-                            for(CustomerInfo c : custwomenboy)
-                            {
-                                if(sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "yyyy").toString() + "-03-08"))
-                                {
-                                    //男
-                                    if(c.getUserinfo().getSex().equals("PR019001"))
-                                    {
-                                        workinghours = "8";
-                                    }
-                                    else
-                                    {
-                                        workinghours = "4";
-                                    }
-                                }
-                                else
-                                {
-                                    int age = 0;
-                                    Calendar born = Calendar.getInstance();
-                                    Calendar now = Calendar.getInstance();
-
-                                    now.setTime(Convert.toDate(ad.getDates()));
-                                    born.setTime(Convert.toDate(c.getUserinfo().getBirthday()));
-                                    String birthday = c.getUserinfo().getBirthday().substring(0, 10);
-                                    if (c.getUserinfo().getBirthday().length() >= 24) {
-                                        born.setTime(Convert.toDate(birthday));
-                                        born.add(Calendar.DAY_OF_YEAR, 1);
-                                    }
-
-                                    if (born.after(now)) {
-                                        throw new IllegalArgumentException("年龄不能超过当前日期");
-                                    }
-                                    age = now.get(Calendar.YEAR) - born.get(Calendar.YEAR);
-                                    int nowDayOfYear = now.get(Calendar.DAY_OF_YEAR);
-                                    int bornDayOfYear = born.get(Calendar.DAY_OF_YEAR);
-                                    if (nowDayOfYear < bornDayOfYear) {
-                                        age -= 1;
-                                    }
-                                    if(age>28)
-                                    {
-                                        workinghours = "8";
-                                    }
-                                    else
-                                    {
-                                        workinghours = "4";
-                                    }
-                                }
-                            }
-                            //ccm add 0110
+                            workinghours = "4";
                         } else {
                             workinghours = "8";
                         }
@@ -3585,7 +3486,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     if (sf1ymd.parse(sf1ymd.format(calendar.getTime())).compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) > 0) {
                                         if (Double.valueOf(leave) + Double.valueOf(nomal) >= 4) {
                                             ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leave)));
-                                            ad.setAbsenteeism("0");
+                                            ad.setAbsenteeism(null);
                                         } else {
                                             ad.setNormal(df.format(Double.valueOf(leave) + Double.valueOf(nomal)));
                                             ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
@@ -3594,12 +3495,13 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     } else {
                                         if (Double.valueOf(leave) + Double.valueOf(nomal) >= 4) {
                                             ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leave)));
-                                            ad.setAbsenteeism("0");
+                                            ad.setAbsenteeism(null);
                                         } else {
                                             ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leave)));
-                                            ad.setAbsenteeism("0");
+                                            ad.setAbsenteeism(null);
                                         }
                                     }
+
                                 }
                                 else if (workinghours.equals("8")) {
                                     if (sf1ymd.parse(sf1ymd.format(calendar.getTime())).compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) > 0) {

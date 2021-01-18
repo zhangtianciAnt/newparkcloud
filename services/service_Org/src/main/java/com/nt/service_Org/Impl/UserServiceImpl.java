@@ -212,83 +212,83 @@ public class UserServiceImpl implements UserService {
      * @作者：SHUBO
      * @参数：[userAccount]
      */
-    @Override
-    public Object activeDirectory(UserAccount userAccount, String locale, String firstTime) throws Exception {
-
-        String sn = " ";
-        String givenName = " ";
-        String name = " ";
-        String username = userAccount.getAccount();
-        String password = userAccount.getPassword();
-        DirContext ctx;
-        List<String> nameList = new ArrayList();
-        Hashtable env = new Hashtable();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        //域LDAPURL/dc=域名,dc=域名.后面的。例子:newtouch.com
-        env.put(Context.PROVIDER_URL, "ldap://192.168.1.102:389/dc=yiduanhen,dc=com");
-        env.put(Context.SECURITY_PRINCIPAL, username);
-        env.put(Context.SECURITY_CREDENTIALS, password);
-
-        try {
-            ctx = new InitialDirContext(env);
-            //测试用firstTime
-//            firstTime = "1";
-            if (firstTime.equals("1")) {
-                int totalResults = 0;
-                String searchFilter = "objectClass=User";
-                SearchControls searchCtls = new SearchControls();
-                searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-                //返回属性sn=姓，givenName=名
-                String returnedAtts[] = {"sn", "givenName"};
-                searchCtls.setReturningAttributes(returnedAtts);
-                //组织OU="组织名称"
-                String searchBase = "OU=p";
-                NamingEnumeration answer = ctx.search(searchBase, searchFilter,
-                        searchCtls);
-                while (answer.hasMoreElements()) {
-                    SearchResult sr = (SearchResult) answer.next();
-                    String dn = sr.getName();
-                    String match = dn.split("CN=")[1].split(",")[0];
-                    if (username.equals(match)) {
-                        BasicAttributes Attrs = (BasicAttributes) sr.getAttributes();
-                        if (Attrs != null) {
-                            try {
-                                Iterator ite = Attrs.getIDs().asIterator();
-                                //迭代器取得key,在下面用for去取
-//                                while (ite.hasNext()){
-//                                  String keyId =  (String) ite.next();
-//                                    System.out.println(keyId);
+//    @Override
+//    public Object activeDirectory(UserAccount userAccount, String locale, String firstTime) throws Exception {
+//
+//        String sn = " ";
+//        String givenName = " ";
+//        String name = " ";
+//        String username = userAccount.getAccount();
+//        String password = userAccount.getPassword();
+//        DirContext ctx;
+//        List<String> nameList = new ArrayList();
+//        Hashtable env = new Hashtable();
+//        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+//        //域LDAPURL/dc=域名,dc=域名.后面的。例子:newtouch.com
+//        env.put(Context.PROVIDER_URL, "ldap://192.168.1.102:389/dc=yiduanhen,dc=com");
+//        env.put(Context.SECURITY_PRINCIPAL, username);
+//        env.put(Context.SECURITY_CREDENTIALS, password);
+//
+//        try {
+//            ctx = new InitialDirContext(env);
+//            //测试用firstTime
+////            firstTime = "1";
+//            if (firstTime.equals("1")) {
+//                int totalResults = 0;
+//                String searchFilter = "objectClass=User";
+//                SearchControls searchCtls = new SearchControls();
+//                searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+//                //返回属性sn=姓，givenName=名
+//                String returnedAtts[] = {"sn", "givenName"};
+//                searchCtls.setReturningAttributes(returnedAtts);
+//                //组织OU="组织名称"
+//                String searchBase = "OU=p";
+//                NamingEnumeration answer = ctx.search(searchBase, searchFilter,
+//                        searchCtls);
+//                while (answer.hasMoreElements()) {
+//                    SearchResult sr = (SearchResult) answer.next();
+//                    String dn = sr.getName();
+//                    String match = dn.split("CN=")[1].split(",")[0];
+//                    if (username.equals(match)) {
+//                        BasicAttributes Attrs = (BasicAttributes) sr.getAttributes();
+//                        if (Attrs != null) {
+//                            try {
+//                                Iterator ite = Attrs.getIDs().asIterator();
+//                                //迭代器取得key,在下面用for去取
+////                                while (ite.hasNext()){
+////                                  String keyId =  (String) ite.next();
+////                                    System.out.println(keyId);
+////                                }
+//                                for (NamingEnumeration ne = Attrs.getAll(); ne.hasMore(); ) {
+//                                    Attribute Attr = (Attribute) ne.next();
+//                                    for (NamingEnumeration e = Attr.getAll(); e.hasMore(); totalResults++) {
+//                                        String keyId = (String) ite.next();
+//                                        switch (keyId) {
+//                                            case "sn":
+//                                                sn = e.next().toString();
+//                                                break;
+//                                            case "givenName":
+//                                                givenName = e.next().toString();
+//                                                break;
+//                                        }
+//                                    }
 //                                }
-                                for (NamingEnumeration ne = Attrs.getAll(); ne.hasMore(); ) {
-                                    Attribute Attr = (Attribute) ne.next();
-                                    for (NamingEnumeration e = Attr.getAll(); e.hasMore(); totalResults++) {
-                                        String keyId = (String) ite.next();
-                                        switch (keyId) {
-                                            case "sn":
-                                                sn = e.next().toString();
-                                                break;
-                                            case "givenName":
-                                                givenName = e.next().toString();
-                                                break;
-                                        }
-                                    }
-                                }
-                                name = sn + givenName;
-                                ctx.close();
-                                return name;
-                            } catch (NamingException e) {
-                                throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04, locale));
-                            }
-                        }
-                    }
-                }
-            }
-            ctx.close();
-        } catch (AuthenticationException e) {
-            throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04, locale));
-        }
-        return null;
-    }
+//                                name = sn + givenName;
+//                                ctx.close();
+//                                return name;
+//                            } catch (NamingException e) {
+//                                throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04, locale));
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            ctx.close();
+//        } catch (AuthenticationException e) {
+//            throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04, locale));
+//        }
+//        return null;
+//    }
 
     /**
      * @方法名：getCustomerInfo

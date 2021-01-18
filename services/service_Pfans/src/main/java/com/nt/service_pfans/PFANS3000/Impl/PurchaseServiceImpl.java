@@ -221,6 +221,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public void insert(Purchase purchase, TokenModel tokenModel) throws Exception {
+
         //add-ws-根据当前年月日从001开始增加采购编号
         List<Purchase> purchaselist = purchaseMapper.selectAll();
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
@@ -251,8 +252,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         //add-ws-根据当前年月日从001开始增加采购编号
         purchase.preInsert(tokenModel);
         purchase.setPurnumbers(Numbers);
-        purchase.setPurchase_id(UUID.randomUUID().toString());
-        purchase.setSurloappmoney(purchase.getTotalamount());
+        purchase.setPurchase_id(UUID.randomUUID().toString()) ;
         purchaseMapper.insert(purchase);
     }
 

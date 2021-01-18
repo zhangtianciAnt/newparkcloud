@@ -40,37 +40,13 @@ public class Pfans2016Controller {
                 list.setOccurrencedate(list.getReoccurrencedate());
                 list.setFinisheddate(list.getRefinisheddate());
             }
-            //数开<=条结 && 数结>=条开
-            //1.数开<=条开  && 数结<=条结
-            //2.数开<=条开  && 数结>=条结
-            //3.数开>=条开  && 数结>=条结
-            //4.数开>=条开  && 数结<=条结
-            if(Integer.valueOf(sf.format(list.getOccurrencedate())) <= Integer.valueOf(sf.format(ab.getFinisheddate())) && Integer.valueOf(sf.format(list.getFinisheddate())) >= Integer.valueOf(sf.format(ab.getOccurrencedate())))
-            {
-                if(Integer.valueOf(sf.format(list.getOccurrencedate())) <= Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate())))
-                {
-                    abnormallist.add(list);
-                }
-                else if(Integer.valueOf(sf.format(list.getOccurrencedate())) <= Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) >= Integer.valueOf(sf.format(ab.getFinisheddate())))
-                {
-                    abnormallist.add(list);
-                }
-                else if(Integer.valueOf(sf.format(list.getOccurrencedate())) >= Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) >= Integer.valueOf(sf.format(ab.getFinisheddate())))
-                {
-                    abnormallist.add(list);
-                }
-                else if(Integer.valueOf(sf.format(list.getOccurrencedate())) >= Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate())))
-                {
-                    abnormallist.add(list);
-                }
+            if (Integer.valueOf(sf.format(ab.getOccurrencedate())) <= Integer.valueOf(sf.format(list.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate()))) {
+                abnormallist.add(list);
+            } else if (Integer.valueOf(sf.format(ab.getOccurrencedate())) <= Integer.valueOf(sf.format(list.getOccurrencedate())) && Integer.valueOf(sf.format(ab.getFinisheddate())) > Integer.valueOf(sf.format(list.getOccurrencedate())) && Integer.valueOf(sf.format(ab.getFinisheddate())) <= Integer.valueOf(sf.format(list.getFinisheddate()))) {
+                abnormallist.add(list);
+            } else if (Integer.valueOf(sf.format(list.getOccurrencedate())) > Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate())) && Integer.valueOf(sf.format(list.getFinisheddate())) > Integer.valueOf(sf.format(ab.getOccurrencedate()))) {
+                abnormallist.add(list);
             }
-//            if (Integer.valueOf(sf.format(ab.getOccurrencedate())) <= Integer.valueOf(sf.format(list.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate()))) {
-//                abnormallist.add(list);
-//            } else if (Integer.valueOf(sf.format(ab.getOccurrencedate())) <= Integer.valueOf(sf.format(list.getOccurrencedate())) && Integer.valueOf(sf.format(ab.getFinisheddate())) > Integer.valueOf(sf.format(list.getOccurrencedate())) && Integer.valueOf(sf.format(ab.getFinisheddate())) <= Integer.valueOf(sf.format(list.getFinisheddate()))) {
-//                abnormallist.add(list);
-//            } else if (Integer.valueOf(sf.format(list.getOccurrencedate())) > Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate())) && Integer.valueOf(sf.format(list.getFinisheddate())) > Integer.valueOf(sf.format(ab.getOccurrencedate()))) {
-//                abnormallist.add(list);
-//            }
         }
 
         //add-ws-9/29-禅道任务547
