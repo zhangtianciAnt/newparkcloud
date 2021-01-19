@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS1000.ThemeInfor;
 import com.nt.service_pfans.PFANS1000.ThemeInforService;
 import com.nt.service_pfans.PFANS1000.mapper.ThemeInforMapper;
@@ -18,6 +19,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -30,7 +32,9 @@ public class ThemeInforServiceImpl implements ThemeInforService {
 
     @Override
     public List<ThemeInfor> list(ThemeInfor themeinfor) throws Exception {
-        return themeinformapper.select(themeinfor);
+        List<ThemeInfor> themeinforlist = themeinformapper.select(themeinfor);
+        themeinforlist = themeinforlist.stream().sorted(Comparator.comparing(ThemeInfor::getCreateon)).collect(Collectors.toList());
+        return themeinforlist;
     }
 
     @Override

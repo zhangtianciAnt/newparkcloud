@@ -125,7 +125,10 @@ public class AwardServiceImpl implements AwardService {
             if (award.getPolicycontract_id() != "" && award.getPolicycontract_id() != null) {
                 int scale = 2;//设置位数
                 int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
-                PolicyContract policycontractlist = policycontractmapper.selectByPrimaryKey(award.getPolicycontract_id());
+                PolicyContract po = new PolicyContract();
+                String policycontract_id = award.getPolicycontract_id();
+                po.setPolicycontract_id(policycontract_id);
+                PolicyContract policycontractlist = policycontractmapper.selectOne(po);
                 PolicyContract policy = new PolicyContract();
                 PolicyContract policy2 = new PolicyContract();
                 BeanUtils.copyProperties(policycontractlist, policy);

@@ -49,19 +49,19 @@ public class Pfans1045Controller {
         policycontractlist = policycontractlist.stream().filter(item -> (item.getStatus().equals("4"))).collect(Collectors.toList());
         for (PolicyContract PolicyCon : policycontractlist) {
             if(PolicyCon.getYearss().equals(year)){
-                if (cycle.equals("03") || cycle.equals("04") || cycle.equals("05")) {
+                if (cycle.equals("04") || cycle.equals("05") || cycle.equals("06")) {
                     if (PolicyCon.getCycle().equals("3") || PolicyCon.getCycle().equals("1")) {
                         policycontractlist2.add(PolicyCon);
                     }
-                } else if (cycle.equals("06") || cycle.equals("07") || cycle.equals("08")) {
+                } else if (cycle.equals("09") || cycle.equals("07") || cycle.equals("08")) {
                     if (PolicyCon.getCycle().equals("4") || PolicyCon.getCycle().equals("1")) {
                         policycontractlist2.add(PolicyCon);
                     }
-                } else if (cycle.equals("09") || cycle.equals("10") || cycle.equals("11")) {
+                } else if (cycle.equals("12") || cycle.equals("10") || cycle.equals("11")) {
                     if (PolicyCon.getCycle().equals("5") || PolicyCon.getCycle().equals("2")) {
                         policycontractlist2.add(PolicyCon);
                     }
-                } else if (cycle.equals("12") || cycle.equals("01") || cycle.equals("02")) {
+                } else if (cycle.equals("03") || cycle.equals("01") || cycle.equals("02")) {
                     if (PolicyCon.getCycle().equals("6") || PolicyCon.getCycle().equals("2")) {
                         policycontractlist2.add(PolicyCon);
                     }
