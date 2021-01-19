@@ -122,7 +122,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     @Override
     public List<Workflow> list(Workflow workflow) throws Exception {
-        return workflowMapper.select(workflow);
+        List<Workflow> workflowList = workflowMapper.select(workflow);
+        if (workflowList != null && workflowList.size() > 1) {
+            workflowList = workflowList.stream().sorted(Comparator.comparing(Workflow::getCode)).collect(Collectors.toList());
+        }
+        return workflowList;
     }
 
     @Override
