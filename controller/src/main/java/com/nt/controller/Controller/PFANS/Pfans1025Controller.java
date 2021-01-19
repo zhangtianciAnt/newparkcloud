@@ -283,49 +283,50 @@ public class Pfans1025Controller {
         SimpleDateFormat sf = new SimpleDateFormat("MM");
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
-        Date draftingdate = awardvo.getAward().getDraftingdate();
+        String year =  awardvo.getAward().getDates().substring(0, 4);
+        String month =  awardvo.getAward().getDates().substring(5, 7);
         PolicyContract policycontract = new PolicyContract();
         policycontract.setPolicycontract_id(awardvo.getAward().getPolicycontract_id());
         List<PolicyContract> policycontractlist = policycontractmapper.select(policycontract);
         List<PolicyContract> policycontractlist3 = policycontractmapper.selectAll();
         policycontractlist3.addAll(0,policycontractlist3);
         if (policycontractlist.size() > 0) {
-            if(policycontractlist.get(0).getYearss().equals(sf1.format(new Date()))) {
+            if(policycontractlist.get(0).getYearss().equals(year)) {
                 if (policycontractlist.get(0).getCycle().equals("0")) {
                     policycontractlist2 = policycontractlist;
                 } else if (policycontractlist.get(0).getCycle().equals("1")) {
-                    if (4 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 9) {
+                    if (4 <= Integer.valueOf(month) && Integer.valueOf(month) <= 9) {
                         policycontractlist2 = policycontractlist;
                     } else {
                         policycontractlist2 = policycontractlist3;
                     }
 
                 } else if (policycontractlist.get(0).getCycle().equals("2")) {
-                    if ((10 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 12) || (1 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 3)) {
+                    if ((10 <= Integer.valueOf(month) && Integer.valueOf(month) <= 12) || (1 <= Integer.valueOf(month) && Integer.valueOf(month) <= 3)) {
                         policycontractlist2 = policycontractlist;
                     } else {
                         policycontractlist2 = policycontractlist3;
                     }
                 } else if (policycontractlist.get(0).getCycle().equals("3")) {
-                    if (4 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 6) {
+                    if (4 <= Integer.valueOf(month) && Integer.valueOf(month) <= 6) {
                         policycontractlist2 = policycontractlist;
                     } else {
                         policycontractlist2 = policycontractlist3;
                     }
                 } else if (policycontractlist.get(0).getCycle().equals("4")) {
-                    if (7 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 9) {
+                    if (7 <= Integer.valueOf(month) && Integer.valueOf(month) <= 9) {
                         policycontractlist2 = policycontractlist;
                     } else {
                         policycontractlist2 = policycontractlist3;
                     }
                 } else if (policycontractlist.get(0).getCycle().equals("5")) {
-                    if (9 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 12) {
+                    if (9 <= Integer.valueOf(month) && Integer.valueOf(month) <= 12) {
                         policycontractlist2 = policycontractlist;
                     } else {
                         policycontractlist2 = policycontractlist3;
                     }
                 } else if (policycontractlist.get(0).getCycle().equals("6")) {
-                    if (1 <= Integer.valueOf(sf.format(draftingdate)) && Integer.valueOf(sf.format(draftingdate)) <= 3) {
+                    if (1 <= Integer.valueOf(month) && Integer.valueOf(month) <= 3) {
                         policycontractlist2 = policycontractlist;
                     } else {
                         policycontractlist2 = policycontractlist3;
