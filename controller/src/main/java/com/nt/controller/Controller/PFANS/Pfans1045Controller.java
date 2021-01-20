@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Pfans.PFANS1000.PolicyContract;
 import com.nt.dao_Pfans.PFANS1000.Vo.PolicyContractVo;
 import com.nt.service_pfans.PFANS1000.PolicyContractService;
@@ -135,8 +136,10 @@ public class Pfans1045Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
+
         PolicyContract policy = new PolicyContract();
         String cycle = policycontract.getCycle();
+        String year = policycontract.getYearss();
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
         List<PolicyContract> policycontractlist3 = policycontractmapper.selectAll();
@@ -144,7 +147,7 @@ public class Pfans1045Controller {
         List<PolicyContract> policylist = policycontractmapper.select(policy);
         if (policylist.size() > 0) {
             for (PolicyContract PolicyContract : policylist) {
-                if(PolicyContract.getYearss().equals(sf1.format(new Date()))) {
+                if(PolicyContract.getYearss().equals(year)) {
                     if (PolicyContract.getCycle().equals("0")) {
                         if (cycle.equals("0") || cycle.equals("1") || cycle.equals("2") || cycle.equals("3") || cycle.equals("4") || cycle.equals("5") || cycle.equals("6")) {
                             policycontractlist2 = policylist;
