@@ -328,10 +328,10 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 String statuspublic3 = "";
                 String statuspublic1 = publicExpenseVo.getPublicexpense().getJudgement_name();
                 String statuspublic2 = award.get(0).getStatuspublic();
-                if(com.mysql.jdbc.StringUtils.isNullOrEmpty(statuspublic2)){
-                     statuspublic3 = statuspublic1 ;
-                }else{
-                     statuspublic3 = statuspublic1 + ',' + statuspublic2 ;
+                if (com.mysql.jdbc.StringUtils.isNullOrEmpty(statuspublic2)) {
+                    statuspublic3 = statuspublic1;
+                } else {
+                    statuspublic3 = statuspublic1 + ',' + statuspublic2;
                 }
                 award.get(0).setStatuspublic(statuspublic3);
                 awardMapper.updateByPrimaryKey(award.get(0));
@@ -609,13 +609,13 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         }
 
         Map<String, Object> mergeResult = null;
-        Map<String, Float> specialMap = new HashMap<>();
+        Map<String, BigDecimal> specialMap = new HashMap<>();
         for (Invoice invoice : invoicelist) {
             if (SPECIAL_KEY.equals(invoice.getInvoicetype()) && (!"0".equals(invoice.getInvoiceamount()))) {
                 // 专票，获取税率
-                float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
+                BigDecimal rate = new BigDecimal(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
                 if (publicExpenseVo.getPublicexpense().getType() == "PJ001002") {
-                    if (rate <= 0) {
+                    if (rate.compareTo(new BigDecimal(0)) == -1) {
                         throw new LogicalException("专票税率不能为0");
                     }
                 }
@@ -625,9 +625,10 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 //            specialMap.put(TOTAL_TAX,
 //                    specialMap.getOrDefault(TOTAL_TAX, 0f) + getFloatValue(invoice.getInvoiceamount()));
         }
+        BigDecimal mount = new BigDecimal(publicExpenseVo.getPublicexpense().getRmbexpenditure()).add(new BigDecimal(publicExpenseVo.getPublicexpense().getForeigncurrency()));
         // 总金额改为人民币支出
-        specialMap.put(TOTAL_TAX, Float.parseFloat(publicExpenseVo.getPublicexpense().getRmbexpenditure()) + Float.parseFloat(publicExpenseVo.getPublicexpense().getForeigncurrency()));
-        if (specialMap.getOrDefault(TOTAL_TAX, 0f) <= 0) {
+        specialMap.put(TOTAL_TAX, mount);
+        if (mount.compareTo(new BigDecimal(0)) == -1) {
             throw new LogicalException("支出总金额应大于0");
         }
 
@@ -735,7 +736,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
      * @param detailList
      * @return resultMap
      */
-    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, Float> specialMap) throws LogicalException {
+    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, BigDecimal> specialMap) throws LogicalException {
         Map<String, Object> resultMap = new HashMap<>();
         if (detailList.size() <= 0) {
             throw new LogicalException("明细不能为空");
@@ -786,14 +787,15 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             if (specialMap.containsKey(keyNo) && Float.parseFloat(getRmb) > 0) {
                 List<TotalCost> taxList = (List<TotalCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
                 resultMap.put(TAX_KEY, taxList);
-                float rate = specialMap.get(keyNo);
+                BigDecimal rate = specialMap.get(keyNo);
                 TotalCost taxCost = new TotalCost();
-
+                int scale1 = 2;//设置位数
+                int roundingMode1 = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
                 // 税拔
-                String lineCost = FNUM.format(money / (1 + rate));
+                String lineCost = FNUM.format(new BigDecimal(money).divide(rate.add(new BigDecimal(1)),scale1, roundingMode1));
                 // 税金
                 String lineRate = FNUM.format(gettaxes);
-                String lineRateNo = FNUM.format(money / (1 + rate) * rate);
+                String lineRateNo = FNUM.format(new BigDecimal(money).divide(rate.add(new BigDecimal(1)),scale1, roundingMode1).multiply(rate));
                 if (money > 0) {
                     // 税
                     //add-ws-4/22-税金不为0存2302-00-01A0
@@ -813,8 +815,8 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     // 税拔
                     setProperty(detail, inputType, lineCost);
 //                    float diff = Float.parseFloat(lineCost) + Float.parseFloat(lineRateNo) - money;
-                    float diff = (new BigDecimal(lineCost).add(new BigDecimal(lineRateNo))).floatValue() - money;
-                    if (diff != 0) {
+                    BigDecimal diff = new BigDecimal(lineCost).add(new BigDecimal(lineRateNo)).subtract(new BigDecimal(money)).setScale(scale1, roundingMode1);
+                    if (diff.compareTo(new BigDecimal(0)) == 1) {
                         TotalCost padding = new TotalCost();
                         padding.setLineamount(diff + "");
                         padding.setBudgetcoding(getProperty(detail, "budgetcoding"));
@@ -1063,7 +1065,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         //财务担当
                         List<MembersVo> rolelist = roleService.getMembers("5f88210582e49438647c6100");
                         if (rolelist.size() > 0) {
-                            for(int i = 0; i < rolelist.size();i++){
+                            for (int i = 0; i < rolelist.size(); i++) {
                                 toDoNotice.setOwner(rolelist.get(i).getUserid());
                                 toDoNoticeService.save(toDoNotice);
                             }
@@ -1073,7 +1075,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         //IT
                         List<MembersVo> rolelist1 = roleService.getMembers("5f8820dc82e49438647c60ff");
                         if (rolelist1.size() > 0) {
-                            for(int t = 0; t < rolelist1.size(); t ++){
+                            for (int t = 0; t < rolelist1.size(); t++) {
                                 toDoNotice.setOwner(rolelist1.get(t).getUserid());
                                 toDoNoticeService.save(toDoNotice);
                             }

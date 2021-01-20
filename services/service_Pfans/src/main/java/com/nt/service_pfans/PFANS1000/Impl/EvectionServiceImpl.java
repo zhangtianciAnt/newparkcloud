@@ -352,9 +352,9 @@ public class EvectionServiceImpl implements EvectionService {
         SimpleDateFormat myFormatter = new SimpleDateFormat("ddMMMyyyy", Locale.ENGLISH);
         //        ztc 禅道558 6.2-6.9 start
         String placeAnt = "";
-        if(evectionVo.getEvection().getRegionname() != "" && evectionVo.getEvection().getRegionname() != null){
+        if (evectionVo.getEvection().getRegionname() != "" && evectionVo.getEvection().getRegionname() != null) {
             placeAnt = evectionVo.getEvection().getRegionname();
-        }else{
+        } else {
             placeAnt = evectionVo.getEvection().getPlace();
         }
         SimpleDateFormat formatterAnt = new SimpleDateFormat("yyyy-MM-dd");
@@ -389,20 +389,21 @@ public class EvectionServiceImpl implements EvectionService {
         //add-ws-5/12-汇税收益与汇税损失问题对应
         Map<String, Object> newmergeResult = null;
         //add-ws-5/12-汇税收益与汇税损失问题对应
-        Map<String, Float> specialMap = new HashMap<>();
+        Map<String, BigDecimal> specialMap = new HashMap<>();
         for (Invoice invoice : invoicelist) {
             if (Double.valueOf(invoice.getInvoiceamount()) > 0.0) {
                 // 专票，获取税率
-                float rate = getFloatValue(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
-                if (rate <= 0) {
+                BigDecimal rate = new BigDecimal(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
+                if (rate.compareTo(new BigDecimal(0)) == -1) {
                     throw new LogicalException("专票税率不能为0");
                 }
                 specialMap.put(invoice.getInvoicenumber(), rate);
             }
         }
+        BigDecimal mount = new BigDecimal(evectionVo.getEvection().getTotalpay());
         // 总金额改为人民币支出
-        specialMap.put(TOTAL_TAX, Float.parseFloat(evectionVo.getEvection().getTotalpay()));
-        if (specialMap.getOrDefault(TOTAL_TAX, 0f) <= 0) {
+        specialMap.put(TOTAL_TAX, mount);
+        if (mount.compareTo(new BigDecimal(0)) == -1) {
             throw new LogicalException("发票合计金额不能为0");
         }
 
@@ -481,7 +482,7 @@ public class EvectionServiceImpl implements EvectionService {
     }
 
     //add-ws-5/12-汇税收益与汇税损失问题对应
-    private Map<String, Object> newmergeDetailList(List<Object> detailList, final Map<String, Float> specialMap, List<Currencyexchange> currencyexchangeList) throws Exception {
+    private Map<String, Object> newmergeDetailList(List<Object> detailList, final Map<String, BigDecimal> specialMap, List<Currencyexchange> currencyexchangeList) throws Exception {
         Map<String, Object> newresultMap = new HashMap<>();
         if (detailList.size() <= 0) {
             throw new LogicalException("明细不能为空");
@@ -588,7 +589,7 @@ public class EvectionServiceImpl implements EvectionService {
      * @param detailList
      * @return resultMap
      */
-    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, Float> specialMap, List<Invoice> invoicelist) throws Exception {
+    private Map<String, Object> mergeDetailList(List<Object> detailList, final Map<String, BigDecimal> specialMap, List<Invoice> invoicelist) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         if (detailList.size() <= 0) {
             throw new LogicalException("明细不能为空");
@@ -644,12 +645,12 @@ public class EvectionServiceImpl implements EvectionService {
                         taxes = Float.parseFloat(inv.getFacetax());
                         List<TravelCost> taxList = (List<TravelCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
                         resultMap.put(TAX_KEY, taxList);
-                        float rate = specialMap.get(keyNo);
+                        BigDecimal rate = specialMap.get(keyNo);
                         TravelCost taxCost = new TravelCost();
                         taxesSUM += taxes;
                         // 税拔
-                        String lineCost = FNUM.format(money - taxesSUM);
-                        String lineCostNo = FNUM.format(money - taxes);
+                        String lineCost = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(taxesSUM)));
+                        String lineCostNo = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(taxes)));
                         // 税金
                         String lineRate = FNUM.format(taxes);
                         if (money > 0) {
@@ -669,8 +670,8 @@ public class EvectionServiceImpl implements EvectionService {
                             taxList.add(taxCost);
                             // 税拔
                             setProperty(detail, "rmb", lineCost);
-                            float diff = taxes + getFloatValue(lineCostNo) - money;
-                            if (diff != 0) {
+                            BigDecimal diff = new BigDecimal(taxes).add(new BigDecimal(lineCostNo)).subtract(new BigDecimal(money));
+                            if (diff.compareTo(new BigDecimal(0)) == 1) {
                                 TravelCost padding = new TravelCost();
                                 padding.setLineamount(diff + "");
                                 padding.setBudgetcoding(getProperty(detail, "budgetcoding"));
