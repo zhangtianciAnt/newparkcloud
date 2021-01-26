@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Pfans.PFANS1000.PolicyContract;
 import com.nt.dao_Pfans.PFANS1000.Vo.PolicyContractVo;
 import com.nt.service_pfans.PFANS1000.PolicyContractService;
@@ -42,25 +43,26 @@ public class Pfans1045Controller {
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
         String cycle =  policycontract.getInformation().substring(5, 7);
+        String year =  policycontract.getInformation().substring(0, 4);
         PolicyContract policy = new PolicyContract();
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
         List<PolicyContract> policycontractlist = policycontractmapper.select(policy);
         policycontractlist = policycontractlist.stream().filter(item -> (item.getStatus().equals("4"))).collect(Collectors.toList());
         for (PolicyContract PolicyCon : policycontractlist) {
-            if(PolicyCon.getYearss().equals(sf1.format(new Date()))){
-                if (cycle.equals("03") || cycle.equals("04") || cycle.equals("05")) {
+            if(PolicyCon.getYearss().equals(year)){
+                if (cycle.equals("04") || cycle.equals("05") || cycle.equals("06")) {
                     if (PolicyCon.getCycle().equals("3") || PolicyCon.getCycle().equals("1")) {
                         policycontractlist2.add(PolicyCon);
                     }
-                } else if (cycle.equals("06") || cycle.equals("07") || cycle.equals("08")) {
+                } else if (cycle.equals("09") || cycle.equals("07") || cycle.equals("08")) {
                     if (PolicyCon.getCycle().equals("4") || PolicyCon.getCycle().equals("1")) {
                         policycontractlist2.add(PolicyCon);
                     }
-                } else if (cycle.equals("09") || cycle.equals("10") || cycle.equals("11")) {
+                } else if (cycle.equals("12") || cycle.equals("10") || cycle.equals("11")) {
                     if (PolicyCon.getCycle().equals("5") || PolicyCon.getCycle().equals("2")) {
                         policycontractlist2.add(PolicyCon);
                     }
-                } else if (cycle.equals("12") || cycle.equals("01") || cycle.equals("02")) {
+                } else if (cycle.equals("03") || cycle.equals("01") || cycle.equals("02")) {
                     if (PolicyCon.getCycle().equals("6") || PolicyCon.getCycle().equals("2")) {
                         policycontractlist2.add(PolicyCon);
                     }
@@ -134,8 +136,10 @@ public class Pfans1045Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
+
         PolicyContract policy = new PolicyContract();
         String cycle = policycontract.getCycle();
+        String year = policycontract.getYearss();
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
         List<PolicyContract> policycontractlist3 = policycontractmapper.selectAll();
@@ -143,7 +147,7 @@ public class Pfans1045Controller {
         List<PolicyContract> policylist = policycontractmapper.select(policy);
         if (policylist.size() > 0) {
             for (PolicyContract PolicyContract : policylist) {
-                if(PolicyContract.getYearss().equals(sf1.format(new Date()))) {
+                if(PolicyContract.getYearss().equals(year)) {
                     if (PolicyContract.getCycle().equals("0")) {
                         if (cycle.equals("0") || cycle.equals("1") || cycle.equals("2") || cycle.equals("3") || cycle.equals("4") || cycle.equals("5") || cycle.equals("6")) {
                             policycontractlist2 = policylist;
