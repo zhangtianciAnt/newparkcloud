@@ -184,6 +184,7 @@ public class UserController {
             userVo.getUserAccount().preUpdate(tokenModel);
             info = userService.addAccountCustomer(userVo);
             id = info.getUserid();
+            annualLeaveService.insertannualLeave(info);
         } else {
             userVo.getUserAccount().preInsert(tokenModel);
             userVo.getUserAccount().setPassword(userVo.getCustomerInfo().getUserinfo().getAdfield());
