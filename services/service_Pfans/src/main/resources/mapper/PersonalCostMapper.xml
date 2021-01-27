@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_pfans.PFANS2000.mapper.PersonalCostMapper">
+
+    <select id="selectPersonalCost" resultType="com.nt.dao_Pfans.PFANS2000.PersonalCost">
+        select * from personalcost
+        where groupid = #{groupid}
+        and yearsantid = #{yearsantid}
+    </select>
+
     <select id="selectPersonalCostResult" parameterType="list" resultType="com.nt.dao_Pfans.PFANS2000.PersonalCost">
         SELECT
         *
@@ -16,10 +23,8 @@
         <foreach collection="uplist" index="index" item="item" separator=";">
             update personalcost
             <set>
-                PRANK = #{item.prank},
-                APTOJUCOST = #{item.aptojucost},
-                JUTOMACOST = #{item.jutomacost},
-                REMARKS = #{item.remarks},
+                CHANGERANK = #{item.changerank},
+                LTRANK = #{item.ltrank},
                 MODIFYBY = #{tokenModel.userId},
                 MODIFYON = #{tokenModel.expireDate},
                 TENANTID = #{tokenModel.tenantId},
@@ -34,5 +39,7 @@
         and APPLICATION_DATE
         like CONCAT('%',#{year},'%')
     </select>
+
+
 </mapper>
 

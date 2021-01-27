@@ -738,4 +738,14 @@
         and TOTAL3 is not null
     </select>
 
+
+    <select id="getActual" resultType="java.lang.String">
+        select ACTUAL
+        from wages
+        where  CREATEONYM = #{createonym}
+        <if test="userid != ''" >
+            and  USER_ID =  #{userid}
+        </if>
+    </select>
+
 </mapper>

@@ -632,29 +632,29 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                 }
                 projectincomevo2.setType("1");
                 if (month.equals("01")) {
-                    projectincomevo2.setMoney(personallist.getJanuarycosts());
+                    projectincomevo2.setMoney(personallist.getJanTrue());
                 } else if (month.equals("02")) {
-                    projectincomevo2.setMoney(personallist.getFebruarycosts());
+                    projectincomevo2.setMoney(personallist.getFebTrue());
                 } else if (month.equals("03")) {
-                    projectincomevo2.setMoney(personallist.getMarchcosts());
+                    projectincomevo2.setMoney(personallist.getMarTrue());
                 } else if (month.equals("04")) {
-                    projectincomevo2.setMoney(personallist.getAprilcosts());
+                    projectincomevo2.setMoney(personallist.getAprilTrue());
                 } else if (month.equals("05")) {
-                    projectincomevo2.setMoney(personallist.getMaycosts());
+                    projectincomevo2.setMoney(personallist.getMayTrue());
                 } else if (month.equals("06")) {
-                    projectincomevo2.setMoney(personallist.getJunecosts());
+                    projectincomevo2.setMoney(personallist.getJuneTrue());
                 } else if (month.equals("07")) {
-                    projectincomevo2.setMoney(personallist.getJulycosts());
+                    projectincomevo2.setMoney(personallist.getJulyTrue());
                 } else if (month.equals("08")) {
-                    projectincomevo2.setMoney(personallist.getAugustcosts());
+                    projectincomevo2.setMoney(personallist.getAugTrue());
                 } else if (month.equals("09")) {
-                    projectincomevo2.setMoney(personallist.getSeptembercosts());
+                    projectincomevo2.setMoney(personallist.getSepTrue());
                 } else if (month.equals("10")) {
-                    projectincomevo2.setMoney(personallist.getOctobercosts());
+                    projectincomevo2.setMoney(personallist.getOctTrue());
                 } else if (month.equals("11")) {
-                    projectincomevo2.setMoney(personallist.getNovembercosts());
+                    projectincomevo2.setMoney(personallist.getNoveTrue());
                 } else if (month.equals("12")) {
-                    projectincomevo2.setMoney(personallist.getDecembercosts());
+                    projectincomevo2.setMoney(personallist.getDeceTrue());
                 }
                 projectincomevo2list.add(projectincomevo2);
             }
