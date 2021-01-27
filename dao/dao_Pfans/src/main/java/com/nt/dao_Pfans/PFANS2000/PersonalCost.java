@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.sql.Date;
 
 @Data
 @AllArgsConstructor
@@ -31,209 +32,7 @@ public class PersonalCost extends BaseModel {
     private String yearsantid;
 
     /**
-     * 姓名
-     */
-    @Column(name = "USERID")
-    private String userid;
-
-    /**
-     * 等级
-     */
-    @Column(name = "PRANK")
-    private String prank;
-
-    /**
-     * 在职状态
-     */
-    @Column(name = "WORKDAY")
-    private String workday;
-
-
-    /**
-     * 社保基数-养老
-     */
-    @Column(name = "YANGBASERESULT")
-    private String yangbaseresult;
-
-    /**
-     * 社保基数-医疗
-     */
-    @Column(name = "YIBASERESULT")
-    private String yibaseresult;
-
-    /**
-     * 社保基数-公积金
-     */
-    @Column(name = "ZHUBASERESULT")
-    private String zhubaseresult;
-
-
-    /**
-     * 4月人件费预计
-     */
-    @Column(name = "APRILCOSTY")
-    private String aprilcosty;
-
-    /**
-     * 5月人件费预计
-     */
-    @Column(name = "MAYCOSTY")
-    private String maycosty;
-
-    /**
-     * 6月人件费预计
-     */
-    @Column(name = "JUNECOSTY")
-    private String junecosty;
-
-    /**
-     * 7月人件费预计
-     */
-    @Column(name = "JULYCOSTY")
-    private String julycosty;
-
-    /**
-     * 8月人件费预计
-     */
-    @Column(name = "AUGUSTCOSTY")
-    private String augustcosty;
-
-    /**
-     * 9月人件费预计
-     */
-    @Column(name = "SEPTEMBERCOSTY")
-    private String septembercosty;
-
-    /**
-     * 10月人件费预计
-     */
-    @Column(name = "OCTOBERCOSTY")
-    private String octobercosty;
-
-    /**
-     * 11月人件费预计
-     */
-    @Column(name = "NOVEMBERCOSTY")
-    private String novembercosty;
-
-    /**
-     * 12月人件费预计
-     */
-    @Column(name = "DECEMBERCOSTY")
-    private String decembercosty;
-
-    /**
-     * 1月人件费预计
-     */
-    @Column(name = "JANUARYCOSTY")
-    private String januarycosty;
-
-    /**
-     * 2月人件费预计
-     */
-    @Column(name = "FEBRUARYCOSTY")
-    private String februarycosty;
-
-    /**
-     * 3月人件费预计
-     */
-    @Column(name = "MARCHCOSTY")
-    private String marchcosty;
-
-
-    /**
-     * 4月人件费实际
-     */
-    @Column(name = "APRILCOSTS")
-    private String aprilcosts;
-
-    /**
-     * 5月人件费实际
-     */
-    @Column(name = "MAYCOSTS")
-    private String maycosts;
-
-    /**
-     * 6月人件费实际
-     */
-    @Column(name = "JUNECOSTS")
-    private String junecosts;
-
-    /**
-     * 7月人件费实际
-     */
-    @Column(name = "JULYCOSTS")
-    private String julycosts;
-
-    /**
-     * 8月人件费实际
-     */
-    @Column(name = "AUGUSTCOSTS")
-    private String augustcosts;
-
-    /**
-     * 9月人件费实际
-     */
-    @Column(name = "SEPTEMBERCOSTS")
-    private String septembercosts;
-
-    /**
-     * 10月人件费实际
-     */
-    @Column(name = "OCTOBERCOSTS")
-    private String octobercosts;
-
-    /**
-     * 11月人件费实际
-     */
-    @Column(name = "NOVEMBERCOSTS")
-    private String novembercosts;
-
-    /**
-     * 12月人件费实际
-     */
-    @Column(name = "DECEMBERCOSTS")
-    private String decembercosts;
-
-    /**
-     * 1月人件费实际
-     */
-    @Column(name = "JANUARYCOSTS")
-    private String januarycosts;
-
-    /**
-     * 2月人件费实际
-     */
-    @Column(name = "FEBRUARYCOSTS")
-    private String februarycosts;
-
-    /**
-     * 3月人件费实际
-     */
-    @Column(name = "MARCHCOSTS")
-    private String marchcosts;
-
-
-    /**
-     * 4~6月人件费
-     */
-    @Column(name = "APTOJUCOST")
-    private String aptojucost;
-
-    /**
-     * 7~3月人件费 1月1日自动生成
-     */
-    @Column(name = "JUTOMACOST")
-    private String jutomacost;
-
-    /**
-     * 备注
-     */
-    @Column(name = "REMARKS")
-    private String remarks;
-
-    /**
-     *Centerid
+     *CENTERID
      */
     @Column(name = "CENTERID ")
     private String centerid ;
@@ -244,5 +43,360 @@ public class PersonalCost extends BaseModel {
     @Column(name = "GROUPID ")
     private String groupid ;
 
-}
+    /**
+     * 姓名id
+     */
+    @Column(name = "USERID")
+    private String userid;
 
+    /**
+     * 姓名name
+     */
+    @Column(name = "USERNAME")
+    private String username;
+
+    /**
+     * 部门简称
+     */
+    @Column(name = "DEPARTSHORT")
+    private String departshort;
+
+    /**
+     * 配付与否
+     */
+    @Column(name = "ALLOTMENT")
+    private String allotment;
+
+    /**
+     * 新人入社预定月
+     */
+    @Column(name = "NEWPERSONALDATE")
+    private String newpersonaldate;
+
+    /**
+     * 升格前Rn
+     */
+    @Column(name = "EXRANK")
+    private String exrank;
+
+    /**
+     * 是否升格升号
+     */
+    @Column(name = "CHANGERANK")
+    private String changerank;
+
+    /**
+     * 升格后Rn
+     */
+    @Column(name = "LTRANK")
+    private String ltrank;
+
+    /**
+     * 基本给
+     */
+    @Column(name = "BASICALLYANT")
+    private String basicallyant;
+
+    /**
+     * 职责给
+     */
+    @Column(name = "RESPONSIBILITYANT")
+    private String responsibilityant;
+
+    /**
+     * 月工资
+     */
+    @Column(name = "MONTHLYSALARY")
+    private String monthlysalary;
+
+    /**
+     * 一括补贴
+     */
+    @Column(name = "ALLOWANCEANT")
+    private String allowanceant;
+
+    /**
+     * 拓展项补贴1（备份)
+     */
+    @Column(name = "OTHERANTONE")
+    private String otherantone;
+
+    /**
+     * 拓展项补贴2（备份)
+     */
+    @Column(name = "OTHERANTTWO")
+    private String otheranttwo;
+
+    /**
+     * 独生子女费
+     */
+    @Column(name = "ONLYCHILD")
+    private String onlychild;
+
+    /**
+     * 取暖补贴
+     */
+    @Column(name = "QNBT")
+    private String qnbt;
+
+
+    /**
+     * 补贴总计
+     */
+    @Column(name = "TOTALSUBSIDIES")
+    private String totalsubsidies;
+
+    /**
+     * 月度奖金月数
+     */
+    @Column(name = "MONTHLYBONUSMONTHS")
+    private String monthlybonusmonths;
+
+    /**
+     * 月度奖金
+     */
+    @Column(name = "MONTHLYBONUS")
+    private String monthlybonus;
+
+    /**
+     * 年度奖金月数
+     */
+    @Column(name = "ANNUALBONUSMONTHS")
+    private String annualbonusmonths;
+
+    /**
+     * 年度奖金
+     */
+    @Column(name = "ANNUALBONUS")
+    private String annualbonus;
+
+    /**
+     * 工资总额
+     */
+    @Column(name = "TOTALWAGES")
+    private String totalwages;
+
+    /**
+     * 工会经费
+     */
+    @Column(name = "TRADEUNIONFUNDS")
+    private String tradeunionfunds;
+
+    /**
+     * 加班费时给
+     */
+    @Column(name = "OVERTIMEPAY")
+    private String overtimepay;
+
+    /**
+     * 是否大连户籍
+     */
+    @Column(name = "INDALIAN")
+    private String indalian;
+
+    /**
+     * 养老保险基4
+     */
+    @Column(name = "OLDYLBXJAJ")
+    private String oldylbxjaj;
+
+    /**
+     * 失业保险基4
+     */
+    @Column(name = "LOSSYBXJAJ")
+    private String lossybxjaj;
+
+    /**
+     * 工伤保险基4
+     */
+    @Column(name = "GSBXJAJ")
+    private String gsbxjaj;
+
+    /**
+     * 医疗保险基4
+     */
+    @Column(name = "YLBXJAJ")
+    private String ylbxjaj;
+
+    /**
+     * 生育保险基4
+     */
+    @Column(name = "SYBXJAJ")
+    private String sybxjaj;
+
+    /**
+     * 公积金基数4
+     */
+    @Column(name = "GJJJSAJ")
+    private String gjjjsaj;
+
+    /**
+     * 社保企业4
+     */
+    @Column(name = "SBQYAJ")
+    private String sbqyaj;
+
+
+    /**
+     * 大病险4
+     */
+    @Column(name = "DBXAJ")
+    private String dbxaj;
+
+    /**
+     * 社保公司4
+     */
+    @Column(name = "SBGSAJ")
+    private String sbgsaj;
+
+    /**
+     * 公积金公司负担4
+     */
+    @Column(name = "GJJGSFDAJ")
+    private String gjjgsfdaj;
+
+    /**
+     * 4月-6月
+     */
+    @Column(name = "APTOJU")
+    private String aptoju;
+
+    /**
+     * 养老保险基7
+     */
+    @Column(name = "OLDYLBXJJM")
+    private String oldylbxjjm;
+
+    /**
+     * 失业保险基7
+     */
+    @Column(name = "LOSSYBXJJM")
+    private String lossybxjjm;
+
+    /**
+     * 工伤保险基7
+     */
+    @Column(name = "GSBXJJM")
+    private String gsbxjjm;
+
+    /**
+     * 医疗保险基7
+     */
+    @Column(name = "YLBXJJM")
+    private String ylbxjjm;
+
+    /**
+     * 生育保险基7
+     */
+    @Column(name = "SYBXJJM")
+    private String sybxjjm;
+
+    /**
+     * 公积金基数7
+     */
+    @Column(name = "GJJJSJM")
+    private String gjjjsjm;
+
+    /**
+     * 社保企业7
+     */
+    @Column(name = "SBQYJM")
+    private String sbqyjm;
+
+    /**
+     * 大病险7
+     */
+    @Column(name = "DBXJM")
+    private String dbxjm;
+
+    /**
+     * 社保公司7
+     */
+    @Column(name = "SBGSJM")
+    private String sbgsjm;
+
+    /**
+     * 公积金公司负担7
+     */
+    @Column(name = "GJJGSFDJM")
+    private String gjjgsfdjm;
+
+    /**
+     * 7月-3月
+     */
+    @Column(name = "JUTOMA")
+    private String jutoma;
+
+    /**
+     *  4月-实际
+     */
+    @Column(name = "APRILTRUE")
+    private String aprilTrue;
+
+    /**
+     *  5月-实际
+     */
+    @Column(name = "MAYTRUE")
+    private String mayTrue;
+
+    /**
+     *  6月-实际
+     */
+    @Column(name = "JUNETRUE")
+    private String juneTrue;
+
+    /**
+     *  7月-实际
+     */
+    @Column(name = "JULYTRUE")
+    private String julyTrue;
+
+    /**
+     *  8月-实际
+     */
+    @Column(name = "AUGTRUE")
+    private String augTrue;
+
+    /**
+     *  9月-实际
+     */
+    @Column(name = "SEPTRUE")
+    private String sepTrue;
+
+    /**
+     *  10月-实际
+     */
+    @Column(name = "OCTTRUE")
+    private String octTrue;
+
+    /**
+     *  11月-实际
+     */
+    @Column(name = "NOVETRUE")
+    private String noveTrue;
+
+    /**
+     *  12月-实际
+     */
+    @Column(name = "DECETRUE")
+    private String deceTrue;
+
+    /**
+     *  1月-实际
+     */
+    @Column(name = "JANTRUE")
+    private String janTrue;
+
+    /**
+     *  2月-实际
+     */
+    @Column(name = "FEBTRUE")
+    private String febTrue;
+
+    /**
+     *  3月-实际
+     */
+    @Column(name = "MARTRUE")
+    private String marTrue;
+
+}
