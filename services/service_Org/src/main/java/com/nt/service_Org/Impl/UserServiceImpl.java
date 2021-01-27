@@ -120,7 +120,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * @方法名：login
-     * @描述：用户登陆
+     * @描述：用户登录
      * @创建日期：2018/10/25
      * @作者：DONG
      * @参数：[userAccount]
@@ -420,11 +420,11 @@ public class UserServiceImpl implements UserService {
             if (qcAD.size() == 0 || qcAD.get(0).getUserid().equals(customerInfo.getUserid())) {
                 flg2 = 1;
             } else {
-                throw new LogicalException("AD域账号重复");
+                throw new LogicalException("登录账户重复");
             }
         }
 
-//AD域重复check
+//登录重复check
         Query queryAD = new Query();
         if (!userInfo.getJobnumber().equals("00000")) {
             if (!StringUtils.isNullOrEmpty(userInfo.getJobnumber())) {
@@ -502,7 +502,7 @@ public class UserServiceImpl implements UserService {
 //            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
 //                    Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
 //        }
-        //根据登陆用户id查看人员信息
+        //根据登录用户id查看人员信息
         List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
         if (!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId()) && !"5e78b2284e3b194874180f47".equals(tokenModel.getUserId())
                 && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId()) && !"5e78b17ef3c8d71e98a2aa30".equals(tokenModel.getUserId())) {
@@ -1015,7 +1015,7 @@ public class UserServiceImpl implements UserService {
 //        model.add("性别");
 //        model.add("预算编码");
 //        model.add("生年月日");
-//        model.add("AD域账号");
+//        model.add("登录账户");
 //        model.add("国籍");
 //        model.add("民族");
 //        model.add("户籍");
@@ -1115,15 +1115,15 @@ public class UserServiceImpl implements UserService {
                         throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在，请勿重复填写。");
                     }
                 }
-                //AD域账号
-                if (item.get("AD域账号") != null) {
-                    userinfo.setAdfield(item.get("AD域账号").toString());
+                //登录账户
+                if (item.get("登录账户") != null) {
+                    userinfo.setAdfield(item.get("登录账户").toString());
                     Query query = new Query();
                     query.addCriteria(Criteria.where("userinfo.adfield").is(userinfo.getAdfield()));
                     List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
                     customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
                     if (customerInfoList.size() > 0) {
-                        throw new LogicalException("卡号（" + item.get("卡号").toString() + "）" + "对应的 AD域账号 在人员表中已存在，请勿重复填写。");
+                        throw new LogicalException("卡号（" + item.get("卡号").toString() + "）" + "对应的 登录账户 在人员表中已存在，请勿重复填写。");
                     } else {
 //                            UserAccount userAccount = new UserAccount();
                         ust.setAccount(userinfo.getAdfield());
@@ -1135,7 +1135,7 @@ public class UserServiceImpl implements UserService {
                         query.addCriteria(Criteria.where("usertype").is(ust.getUsertype()));
                         List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
                         if (userAccountlist.size() > 0) {
-                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登录账户时会重复，请确认。");
                         }
                     }
                 }
@@ -1146,7 +1146,7 @@ public class UserServiceImpl implements UserService {
                     int cf = 0;
                     if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                         for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                            if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                            if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
                                 cf++;
                                 userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
                                 userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
@@ -1187,7 +1187,7 @@ public class UserServiceImpl implements UserService {
                             if (gf == 0) {
 
 //                                }
-                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
                                     cf++;
                                     userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
                                     userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
@@ -1246,7 +1246,7 @@ public class UserServiceImpl implements UserService {
                             if (tf == 0 && gf == 0) {
 
 //                                }
-                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
                                     cf++;
                                     userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
                                     userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
@@ -1739,11 +1739,13 @@ public class UserServiceImpl implements UserService {
                 query.addCriteria(Criteria.where("account").is(ust.getAccount()));
                 query.addCriteria(Criteria.where("password").is(ust.getPassword()));
                 List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
-                if (userAccountlist.size() > 0) {
-                    String _id = userAccountlist.get(0).get_id();
-                    customerInfo.setUserid(_id);
-                    mongoTemplate.save(customerInfo);
+                if(ust.getAccount() != null && ust.getAccount() != null && userAccountlist.size() > 0){
+                    customerInfo.setUserid(userAccountlist.get(0).get_id());
                 }
+                else{
+                    customerInfo.setUserid(UUID.randomUUID().toString());
+                }
+                mongoTemplate.save(customerInfo);
                 accesscount = accesscount + 1;
             }
         } else {
@@ -1785,14 +1787,14 @@ public class UserServiceImpl implements UserService {
                             }
                         }
                     }
-                    if (item.get("登陆账户●") != null) {
-                        customerInfoList.get(0).getUserinfo().setAdfield(item.get("登陆账户●").toString());
+                    if (item.get("登录账户●") != null) {
+                        customerInfoList.get(0).getUserinfo().setAdfield(item.get("登录账户●").toString());
                         query = new Query();
                         query.addCriteria(Criteria.where("userinfo.adfield").is(customerInfoList.get(0).getUserinfo().getAdfield()));
                         List<CustomerInfo> customerInfoLists = new ArrayList<CustomerInfo>();
                         customerInfoLists = mongoTemplate.find(query, CustomerInfo.class);
                         if (customerInfoLists.size() > 0) {
-                            throw new LogicalException("登陆账户（" + item.get("登陆账户●").toString() + "）" + "在人员表中已存在，请勿重复填写。");
+                            throw new LogicalException("登录账户（" + item.get("登录账户●").toString() + "）" + "在人员表中已存在，请勿重复填写。");
                         } else {
                             userAccount.setAccount(customerInfoList.get(0).getUserinfo().getAdfield());
                             userAccount.setPassword(customerInfoList.get(0).getUserinfo().getAdfield());
@@ -1803,7 +1805,7 @@ public class UserServiceImpl implements UserService {
                             query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
                             List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
                             if (userAccountlist.size() > 0) {
-                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登录账户时会重复，请确认。");
                             }
                         }
                     }
@@ -1814,7 +1816,7 @@ public class UserServiceImpl implements UserService {
                         int cf = 0;
                         if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                             for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
                                     cf++;
                                     customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
                                     customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
@@ -1855,7 +1857,7 @@ public class UserServiceImpl implements UserService {
                                 if (gf == 0) {
 
 //                                }
-                                    if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                    if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
                                         cf++;
                                         customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
                                         customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
@@ -1914,7 +1916,7 @@ public class UserServiceImpl implements UserService {
                                 if (tf == 0 && gf == 0) {
 
 //                                }
-                                    if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim())) {
+                                    if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
                                         cf++;
                                         customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
                                         customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
@@ -2571,7 +2573,7 @@ public class UserServiceImpl implements UserService {
                     customerInfoList.get(0).getUserinfo().setHouseData(cupList8);
                 }
                 mongoTemplate.save(customerInfoList.get(0));
-                //如果更新AD域账号,登录名和密码默认设置成AD域账号
+                //如果更新登录账户,登录名和密码默认设置成登录账户
                 if (userAccount.getPassword() != null && userAccount.getAccount() != null) {
                     Query qq = new Query();
                     qq.addCriteria(Criteria.where("_id").is(customerInfoList.get(0).getUserid()));
