@@ -100,6 +100,10 @@ public class WagesServiceImpl implements WagesService {
 
     @Autowired
     private AnnualLeaveMapper annualLeaveMapper;
+    @Autowired
+    private PersonalCostMapper personalcostmapper;
+    @Autowired
+    private PersonalCostYearsMapper personalcostyearsmapper;
 
 
     private static List<CustomerInfo> customerInfos;
@@ -279,14 +283,24 @@ public class WagesServiceImpl implements WagesService {
         String status = wages.get(0).getStatus();
         String actual = wages.get(0).getActual();
 
-//        Query query = CustmizeQuery(new OrgTree());
-//        OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
-//        List<OrgTree> orgTreeList = new ArrayList<>();
-//        List<OrgTree>  orgTrees =  orgTree.getOrgs();
-//        for (OrgTree org:
-//                orgTrees ) {
-//            orgTreeList.addAll(org.getOrgs());
+        // region 2021-1-27  人件费添加
+        //        String Newdate = DateUtil.format(new Date(), "yyyy-MM");
+//        List<PersonalCost> personalCostList = new ArrayList<>();
+//        PersonalCostYears personalcostyears = new PersonalCostYears();
+//        if(Newdate.substring(5,7).equals("01") || Newdate.substring(5,7).equals("02") || Newdate.substring(5,7).equals("03")){
+//            personalcostyears.setYears(String.valueOf(Integer.valueOf(Newdate.substring(0,4)) - 1));
 //        }
+//        else{
+//            personalcostyears.setYears(Newdate.substring(0,4));
+//        }
+//        List<PersonalCostYears> personalcostyearslist = personalcostyearsmapper.select(personalcostyears);
+//
+//        if (personalcostyearslist.size() > 0) {
+//            PersonalCost personalcost = new PersonalCost();
+//            personalcost.setYearsantid(personalcostyearslist.get(0).getYearsantid());
+//            personalCostList = personalcostmapper.select(personalcost);
+//        }
+// endregion
 
         Query query = new Query();
         List<CustomerInfo> customerInfoList = mongoTemplate.find(query,CustomerInfo.class);
@@ -307,6 +321,51 @@ public class WagesServiceImpl implements WagesService {
                     wage.setJobnumber(customerinfo.get(0).getUserinfo().getJobnumber());
                 }
                 wage.preInsert(tokenModel);
+
+                // region 2021-1-27  人件费添加
+//                for (PersonalCost per : personalCostList) {
+//                    if(per.getUserid().equals(wage.getUser_id())){
+//                        //当月实发工资
+//                        if(Newdate.substring(5,7).equals("04")){
+//                            per.setAprilTrue(wage.getRealwages());
+//                        }
+//                        if(Newdate.substring(5,7).equals("05")){
+//                            per.setMayTrue(wage.getRealwages());
+//                        }
+//                        if(Newdate.substring(5,7).equals("06")){
+//                            per.setJuneTrue(wage.getRealwages());
+//                        }
+//                        if(Newdate.substring(5,7).equals("07")){
+//                            per.setJulyTrue(wage.getRealwages());
+//                        }
+//                        if(Newdate.substring(5,7).equals("08")){
+//                            per.setAugTrue(wage.getRealwages());
+//                        }
+//                        if(Newdate.substring(5,7).equals("09")){
+//                            per.setSepTrue(wage.getRealwages());
+//                        }
+//                        if(Newdate.substring(5,7).equals("10")){
+//                            per.setOctTrue(wage.getRealwages());
+//                        }
+//                        if(Newdate.substring(5,7).equals("11")){
+//                            per.setNoveTrue(wage.getRealwages());
+//                        }
+//                        if(Newdate.substring(5,7).equals("12")){
+//                            per.setDeceTrue(wage.getRealwages());
+//                        }
+//                        if(Newdate.substring(5,7).equals("01")){
+//                            per.setJanTrue(wage.getRealwages());
+//                        }
+//                        if(Newdate.substring(5,7).equals("02")){
+//                            per.setFebTrue(wage.getRealwages());
+//                        }
+//                        if(Newdate.substring(5,7).equals("03")){
+//                            per.setMarTrue(wage.getRealwages());
+//                        }
+//                        personalcostmapper.updateByPrimaryKey(per);
+//                    }
+//                }
+                // endregion
             }
             wagesMapper.insertListAllCols(wages);
         }
