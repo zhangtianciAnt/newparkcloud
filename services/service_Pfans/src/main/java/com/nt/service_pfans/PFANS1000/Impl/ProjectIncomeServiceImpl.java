@@ -631,31 +631,31 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                     projectincomevo2.setName("");
                 }
                 projectincomevo2.setType("1");
-//                if (month.equals("01")) {
-//                    projectincomevo2.setMoney(personallist.getJanuarycosts());
-//                } else if (month.equals("02")) {
-//                    projectincomevo2.setMoney(personallist.getFebruarycosts());
-//                } else if (month.equals("03")) {
-//                    projectincomevo2.setMoney(personallist.getMarchcosts());
-//                } else if (month.equals("04")) {
-//                    projectincomevo2.setMoney(personallist.getAprilcosts());
-//                } else if (month.equals("05")) {
-//                    projectincomevo2.setMoney(personallist.getMaycosts());
-//                } else if (month.equals("06")) {
-//                    projectincomevo2.setMoney(personallist.getJunecosts());
-//                } else if (month.equals("07")) {
-//                    projectincomevo2.setMoney(personallist.getJulycosts());
-//                } else if (month.equals("08")) {
-//                    projectincomevo2.setMoney(personallist.getAugustcosts());
-//                } else if (month.equals("09")) {
-//                    projectincomevo2.setMoney(personallist.getSeptembercosts());
-//                } else if (month.equals("10")) {
-//                    projectincomevo2.setMoney(personallist.getOctobercosts());
-//                } else if (month.equals("11")) {
-//                    projectincomevo2.setMoney(personallist.getNovembercosts());
-//                } else if (month.equals("12")) {
-//                    projectincomevo2.setMoney(personallist.getDecembercosts());
-//                }
+                if (month.equals("01")) {
+                    projectincomevo2.setMoney(personallist.getJanuarycosts());
+                } else if (month.equals("02")) {
+                    projectincomevo2.setMoney(personallist.getFebruarycosts());
+                } else if (month.equals("03")) {
+                    projectincomevo2.setMoney(personallist.getMarchcosts());
+                } else if (month.equals("04")) {
+                    projectincomevo2.setMoney(personallist.getAprilcosts());
+                } else if (month.equals("05")) {
+                    projectincomevo2.setMoney(personallist.getMaycosts());
+                } else if (month.equals("06")) {
+                    projectincomevo2.setMoney(personallist.getJunecosts());
+                } else if (month.equals("07")) {
+                    projectincomevo2.setMoney(personallist.getJulycosts());
+                } else if (month.equals("08")) {
+                    projectincomevo2.setMoney(personallist.getAugustcosts());
+                } else if (month.equals("09")) {
+                    projectincomevo2.setMoney(personallist.getSeptembercosts());
+                } else if (month.equals("10")) {
+                    projectincomevo2.setMoney(personallist.getOctobercosts());
+                } else if (month.equals("11")) {
+                    projectincomevo2.setMoney(personallist.getNovembercosts());
+                } else if (month.equals("12")) {
+                    projectincomevo2.setMoney(personallist.getDecembercosts());
+                }
                 projectincomevo2list.add(projectincomevo2);
             }
             ProjectIncomeVo2 projectincomevo2 = new ProjectIncomeVo2();
