@@ -244,5 +244,78 @@ public class PersonalCost extends BaseModel {
     @Column(name = "GROUPID ")
     private String groupid ;
 
+
+    /**
+     *  4月-实际
+     */
+    @Column(name = "APRILTRUE")
+    private String aprilTrue;
+
+    /**
+     *  5月-实际
+     */
+    @Column(name = "MAYTRUE")
+    private String mayTrue;
+
+    /**
+     *  6月-实际
+     */
+    @Column(name = "JUNETRUE")
+    private String juneTrue;
+
+    /**
+     *  7月-实际
+     */
+    @Column(name = "JULYTRUE")
+    private String julyTrue;
+
+    /**
+     *  8月-实际
+     */
+    @Column(name = "AUGTRUE")
+    private String augTrue;
+
+    /**
+     *  9月-实际
+     */
+    @Column(name = "SEPTRUE")
+    private String sepTrue;
+
+    /**
+     *  10月-实际
+     */
+    @Column(name = "OCTTRUE")
+    private String octTrue;
+
+    /**
+     *  11月-实际
+     */
+    @Column(name = "NOVETRUE")
+    private String noveTrue;
+
+    /**
+     *  12月-实际
+     */
+    @Column(name = "DECETRUE")
+    private String deceTrue;
+
+    /**
+     *  1月-实际
+     */
+    @Column(name = "JANTRUE")
+    private String janTrue;
+
+    /**
+     *  2月-实际
+     */
+    @Column(name = "FEBTRUE")
+    private String febTrue;
+
+    /**
+     *  3月-实际
+     */
+    @Column(name = "MARTRUE")
+    private String marTrue;
+
 }
 
