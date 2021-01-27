@@ -395,7 +395,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 String mm = ymd.substring(5,7);
                 if(Double.valueOf(mm)<4)
                 {
-                    years = String.valueOf(Integer.valueOf(years) + 1);
+                    years = String.valueOf(Integer.valueOf(years) - 1);
                 }
                 a.setYears(years);
                 a.setUser_id(customer.getUserid());
@@ -417,9 +417,16 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
+        int monthbefore = calendar.get(Calendar.MONTH)+1;
+        int yearbefore = 0;
+        if(monthbefore >= 1 && monthbefore <= 3) {
+            yearbefore = calendar.get(Calendar.YEAR) - 2;
+        }else {
+            yearbefore = calendar.get(Calendar.YEAR) - 1;
+        }
         calendar.add(Calendar.YEAR, -1);
         annualLeave.setUser_id(customer.getUserid());
-        annualLeave.setYears(DateUtil.format(calendar.getTime(),"yyyy"));
+        annualLeave.setYears(String.valueOf(yearbefore));
         List<AnnualLeave> annualLeavelist = annualLeaveMapper.select(annualLeave);
         BigDecimal zero = BigDecimal.ZERO;
         //上年度
@@ -454,9 +461,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         int year = 0;
         int month = calyears.get(Calendar.MONTH)+1;
         if(month >= 1 && month <= 3) {
-            year = calendar.get(Calendar.YEAR) - 1;
+            year = calyears.get(Calendar.YEAR) - 1;
         }else {
-            year = calendar.get(Calendar.YEAR);
+            year = calyears.get(Calendar.YEAR);
         }
         annualLeave.setYears(String.valueOf(year));
         annualLeave.setCenter_id(customer.getUserinfo().getCenterid());
@@ -549,7 +556,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //事业年度开始（4月1日）
 
         Calendar start = Calendar.getInstance();
-        start.setTime(Convert.toDate(enterdaystartCal));
+        start.setTime(new Date());
         String shi_start = "";
         shi_start = sfymd.format(start.getTime());
         if(Integer.valueOf(shi_start.substring(5,7)) < 4)
@@ -628,7 +635,18 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         annualLeave.setDeduct_annual_leave_thisyear(deduct_annual_leave_thisyear);
         //法定年假剩余(本年度)
         annualLeave.setRemaining_annual_leave_thisyear(annual_leave_thisyear);
+
+        //add ccm 修改人员信息后 创建年休
+        AnnualLeave annual = new AnnualLeave();
+        annual.setUser_id(customer.getUserid());
+        annual.setYears(String.valueOf(year));
+        List<AnnualLeave> annuallist = annualLeaveMapper.select(annual);
+        if(annuallist.size() > 0)
+        {
+            annualLeaveMapper.deleteByPrimaryKey(annuallist.get(0));
+        }
         annualLeaveMapper.insertSelective(annualLeave);
+        //add ccm 修改人员信息后 创建年休
 
         //更新人员信息
         //今年年休数
