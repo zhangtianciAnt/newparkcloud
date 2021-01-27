@@ -483,7 +483,11 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         Query query = CustmizeQuery(new OrgTree());
         OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
         List<OrgTree>  orgTrees =  orgTree.getOrgs();
-        String[] groupArray = groupid.split(",");
+        String[] groupArray = null;
+        if(StringUtils.isNotBlank(groupid))
+        {
+           groupArray = groupid.split(",");
+        }
         if(role.equals("2")){
             for (OrgTree org: orgTrees ) {
                 for(String group :groupArray)
