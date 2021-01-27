@@ -29,6 +29,64 @@ public class Pfans2036Controller {
     @Autowired
     private PersonalCostService personalCostService;
 
+    @RequestMapping(value = "/getPersonalCost", method = {RequestMethod.GET})
+    public ApiResult getPersonalCost(String groupid,String yearsantid, HttpServletRequest request) throws Exception {
+        if (groupid == null || yearsantid == null ) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(personalCostService.getPersonalCost(groupid,yearsantid));
+    }
+
+    @RequestMapping(value = "/getGroupId", method = {RequestMethod.GET})
+    public ApiResult getGroupId(String yearsantid, HttpServletRequest request) throws Exception {
+        if (yearsantid == null ) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(personalCostService.getGroupId(yearsantid));
+    }
+
+    @RequestMapping(value = "/getChangeRanks", method = {RequestMethod.GET})
+    public ApiResult getChangeRanks() throws Exception {
+        return ApiResult.success(personalCostService.getChangeRanks());
+    }
+
+
+    @RequestMapping(value = "/gettableBm", method = {RequestMethod.GET})
+    public ApiResult gettableBm(String yearsantid, HttpServletRequest request) throws Exception {
+        if (yearsantid == null ) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(personalCostService.gettableBm(yearsantid));
+    }
+
+    @RequestMapping(value = "/gettableGs", method = {RequestMethod.GET})
+    public ApiResult gettableGs(String yearsantid, HttpServletRequest request) throws Exception {
+        if (yearsantid == null ) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(personalCostService.gettableGs(yearsantid));
+    }
+
+    @RequestMapping(value = "/gettableRb", method = {RequestMethod.GET})
+    public ApiResult gettableRb(String yearsantid, HttpServletRequest request) throws Exception {
+        if (yearsantid == null ) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(personalCostService.gettableRb(yearsantid));
+    }
+
+
+
+
+
+
+
+
     @RequestMapping(value = "/getYears", method = {RequestMethod.GET})
     public ApiResult getYears(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
@@ -44,14 +102,7 @@ public class Pfans2036Controller {
         return ApiResult.success(personalCostService.insertPenalcost(year,tokenModel));
     }
 
-    @RequestMapping(value = "/getPersonalCost", method = {RequestMethod.GET})
-    public ApiResult getPersonalCost(String groupid,String yearsantid, HttpServletRequest request) throws Exception {
-        if (groupid == null || yearsantid == null ) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(personalCostService.getPersonalCost(groupid,yearsantid));
-    }
+
 
     @RequestMapping(value = "/upPersonalCost", method = {RequestMethod.POST})
     public ApiResult upPersonalCost(@RequestBody List<PersonalCost> personalCostList, HttpServletRequest request) throws Exception {
