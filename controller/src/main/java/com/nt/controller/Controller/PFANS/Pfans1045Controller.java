@@ -42,14 +42,18 @@ public class Pfans1045Controller {
         SimpleDateFormat sf = new SimpleDateFormat("MM");
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
-        String cycle =  policycontract.getInformation().substring(5, 7);
-        String year =  policycontract.getInformation().substring(0, 4);
+        String cycle = "";
+        String year = "";
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(policycontract.getInformation())) {
+            cycle = policycontract.getInformation().substring(5, 7);
+            year = policycontract.getInformation().substring(0, 4);
+        }
         PolicyContract policy = new PolicyContract();
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
         List<PolicyContract> policycontractlist = policycontractmapper.select(policy);
         policycontractlist = policycontractlist.stream().filter(item -> (item.getStatus().equals("4"))).collect(Collectors.toList());
         for (PolicyContract PolicyCon : policycontractlist) {
-            if(PolicyCon.getYearss().equals(year)){
+            if (PolicyCon.getYearss().equals(year)) {
                 if (cycle.equals("04") || cycle.equals("05") || cycle.equals("06")) {
                     if (PolicyCon.getCycle().equals("3") || PolicyCon.getCycle().equals("1")) {
                         policycontractlist2.add(PolicyCon);
@@ -82,6 +86,7 @@ public class Pfans1045Controller {
         PolicyContractlist = PolicyContractlist.stream().filter(item -> (item.getStatus().equals("4"))).collect(Collectors.toList());
         return ApiResult.success(PolicyContractlist);
     }
+
     @RequestMapping(value = "/get3", method = {RequestMethod.GET})
     public ApiResult getPolicyContract3(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
@@ -147,7 +152,7 @@ public class Pfans1045Controller {
         List<PolicyContract> policylist = policycontractmapper.select(policy);
         if (policylist.size() > 0) {
             for (PolicyContract PolicyContract : policylist) {
-                if(PolicyContract.getYearss().equals(year)) {
+                if (PolicyContract.getYearss().equals(year)) {
                     if (PolicyContract.getCycle().equals("0")) {
                         if (cycle.equals("0") || cycle.equals("1") || cycle.equals("2") || cycle.equals("3") || cycle.equals("4") || cycle.equals("5") || cycle.equals("6")) {
                             policycontractlist2 = policylist;

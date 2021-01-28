@@ -71,15 +71,15 @@ public class Pfans1025Controller {
         }
         //add_fjl_0804  生成书类的覚字去掉 end
         //add-ws-8/13-禅道任务432
-        if(av.getAward().getRegindiff()!=null&&av.getAward().getRegindiff()!=""){
-            if(av.getAward().getRegindiff().equals("BP028001")){
+        if (av.getAward().getRegindiff() != null && av.getAward().getRegindiff() != "") {
+            if (av.getAward().getRegindiff().equals("BP028001")) {
                 av.getAward().setPjnameenglish(av.getAward().getPjnamechinese());
-            }else if(av.getAward().getRegindiff().equals("BP028002")){
+            } else if (av.getAward().getRegindiff().equals("BP028002")) {
                 av.getAward().setPjnameenglish(av.getAward().getPjnamejapanese());
-            }else if(av.getAward().getRegindiff().equals("BP028003")){
+            } else if (av.getAward().getRegindiff().equals("BP028003")) {
                 av.getAward().setPjnameenglish(av.getAward().getPjnameenglish());
             }
-        }else{
+        } else {
             av.getAward().setPjnameenglish(av.getAward().getPjnamejapanese());
         }
         //add-ws-8/13-禅道任务432
@@ -263,14 +263,14 @@ public class Pfans1025Controller {
     public ApiResult get2(Award award, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         List<Award> Awardlist = awardMapper.selectAll();
-        List<Award>   awardList =new ArrayList<>();
-        List<Award>   awardList2 =new ArrayList<>();
+        List<Award> awardList = new ArrayList<>();
+        List<Award> awardList2 = new ArrayList<>();
         Awardlist = Awardlist.stream().filter(item -> (item.getMaketype().equals("7"))).collect(Collectors.toList());
         List<Contractapplication> contractapplicationlist = contractapplicationMapper.selectAll();
-        contractapplicationlist=contractapplicationlist.stream().filter(item -> (item.getState().equals("有效"))).collect(Collectors.toList());
-        for(Contractapplication list:contractapplicationlist){
+        contractapplicationlist = contractapplicationlist.stream().filter(item -> (item.getState().equals("有效"))).collect(Collectors.toList());
+        for (Contractapplication list : contractapplicationlist) {
             awardList2 = Awardlist.stream().filter(item -> (item.getContractnumber().equals(list.getContractnumber()))).collect(Collectors.toList());
-            awardList.addAll(0,awardList2);
+            awardList.addAll(0, awardList2);
         }
         return ApiResult.success(awardList);
     }
@@ -280,18 +280,20 @@ public class Pfans1025Controller {
         if (awardvo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        SimpleDateFormat sf = new SimpleDateFormat("MM");
-        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
-        String year =  awardvo.getAward().getDates().substring(0, 4);
-        String month =  awardvo.getAward().getDates().substring(5, 7);
+        String year = "";
+        String month = "";
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(awardvo.getAward().getDates())) {
+            year = awardvo.getAward().getDates().substring(0, 4);
+            month = awardvo.getAward().getDates().substring(5, 7);
+        }
         PolicyContract policycontract = new PolicyContract();
         policycontract.setPolicycontract_id(awardvo.getAward().getPolicycontract_id());
         List<PolicyContract> policycontractlist = policycontractmapper.select(policycontract);
         List<PolicyContract> policycontractlist3 = policycontractmapper.selectAll();
-        policycontractlist3.addAll(0,policycontractlist3);
+        policycontractlist3.addAll(0, policycontractlist3);
         if (policycontractlist.size() > 0) {
-            if(policycontractlist.get(0).getYearss().equals(year)) {
+            if (policycontractlist.get(0).getYearss().equals(year)) {
                 if (policycontractlist.get(0).getCycle().equals("0")) {
                     policycontractlist2 = policycontractlist;
                 } else if (policycontractlist.get(0).getCycle().equals("1")) {
