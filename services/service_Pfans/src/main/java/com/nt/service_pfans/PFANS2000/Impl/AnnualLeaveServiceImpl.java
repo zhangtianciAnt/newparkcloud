@@ -290,6 +290,36 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         //ccm 202000702 to
         return tempannualLeaveList;
     }
+
+    @Scheduled(cron="0 30 23 31 3 *")//事业年度开始之前3月31日晚11点半更新年度年休表
+    public void updateAnnualLeaveBefore() throws Exception {
+        updateAnBefore();
+    }
+    //系统服务--事业年度开始之前获取年休
+    @Override
+    public void updateAnBefore() throws Exception {
+        List<AnnualLeave> viewList = annualLeaveMapper.getDataList(null);
+        AnnualLeave an = new AnnualLeave();
+        String Newdate = DateUtil.format(new Date(), "yyyy-MM");
+        //1、2、3月的时年间以
+        if(Newdate.substring(5,7).equals("01") || Newdate.substring(5,7).equals("02") || Newdate.substring(5,7).equals("03")){
+            an.setYears(String.valueOf(Integer.valueOf(Newdate.substring(0,4)) - 1));
+        }
+        else{
+            an.setYears(Newdate.substring(0,4));
+        }
+        List<AnnualLeave> thisyearsList = annualLeaveMapper.select(an);
+        if (thisyearsList != null) {
+            for (AnnualLeave thisyears : thisyearsList) {
+                List<AnnualLeave> AnnualList = viewList.stream().filter(coi -> (coi.getUser_id().contains(thisyears.getUser_id()))).collect(Collectors.toList());
+                if(AnnualList.size() > 0 ){
+                    thisyears.setRemaining_annual_leave_thisyear(AnnualList.get(0).getRemaining_annual_leave_thisyear().subtract(AnnualList.get(0).getAnnual_leave_shenqingzhong()));
+                    annualLeaveMapper.updateByPrimaryKey(thisyears);
+                }
+            }
+        }
+    }
+
     @Scheduled(cron="0 0 0 1 4 *")//正式时间每年4月1日零时执行--事业年度开始获取年休
     public void creatAnnualLeaveAn() throws Exception {
         insert();
