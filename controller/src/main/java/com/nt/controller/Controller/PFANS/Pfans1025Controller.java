@@ -283,8 +283,12 @@ public class Pfans1025Controller {
         SimpleDateFormat sf = new SimpleDateFormat("MM");
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
-        String year =  awardvo.getAward().getDates().substring(0, 4);
-        String month =  awardvo.getAward().getDates().substring(5, 7);
+        String year = "";
+        String month = "";
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(awardvo.getAward().getDates())) {
+            year = awardvo.getAward().getDates().substring(0, 4);
+            month = awardvo.getAward().getDates().substring(5, 7);
+        }
         PolicyContract policycontract = new PolicyContract();
         policycontract.setPolicycontract_id(awardvo.getAward().getPolicycontract_id());
         List<PolicyContract> policycontractlist = policycontractmapper.select(policycontract);

@@ -42,8 +42,12 @@ public class Pfans1045Controller {
         SimpleDateFormat sf = new SimpleDateFormat("MM");
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
-        String cycle =  policycontract.getInformation().substring(5, 7);
-        String year =  policycontract.getInformation().substring(0, 4);
+        String cycle = "";
+        String year = "";
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(policycontract.getInformation())) {
+            cycle = policycontract.getInformation().substring(5, 7);
+            year = policycontract.getInformation().substring(0, 4);
+        }
         PolicyContract policy = new PolicyContract();
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
         List<PolicyContract> policycontractlist = policycontractmapper.select(policy);
