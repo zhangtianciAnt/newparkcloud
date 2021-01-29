@@ -205,10 +205,14 @@ public class UserController {
         try {
             TokenModel tokenModel = tokenService.getToken(request);
             List<String> stringList =  userService.importUser(request, tokenModel);
+            String[]  groupUserid = stringList.get(2).replace("[","").replace("]","").replace("成功数人数id","").split(",");
             //add 导入人员计算年休 20201030
-            annualLeaveService.insertAnnualImport();
+            annualLeaveService.insertAnnualImport(groupUserid);
             //add 导入人员计算年休 20201030
-            return ApiResult.success(stringList);
+            List<String> returnList = new ArrayList<String>();
+            returnList.add(stringList.get(0));
+            returnList.add(stringList.get(1));
+            return ApiResult.success(returnList);
         }catch(LogicalException e){
             return ApiResult.fail(e.getMessage());
         }catch (Exception e) {

@@ -41,7 +41,7 @@ public interface AnnualLeaveService {
     void insert() throws Exception;
 
     //add 导入人员计算年休 20201030
-    void insertAnnualImport() throws Exception;
+    void insertAnnualImport(String[] groupUserid) throws Exception;
     //add 导入人员计算年休 20201030
 
     //获取打卡记录（参数）

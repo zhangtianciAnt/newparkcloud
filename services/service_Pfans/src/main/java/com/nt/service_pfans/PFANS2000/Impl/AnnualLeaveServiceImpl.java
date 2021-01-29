@@ -391,53 +391,76 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //add 导入人员计算年休 20201030
     @Override
-    public void insertAnnualImport() throws Exception {
+    public void insertAnnualImport(String[] useridList) throws Exception {
         List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
-        if (customerinfo != null) {
-            for (CustomerInfo customer : customerinfo) {
-                //if(customer.getUserid().equals("5e78b2264e3b194874180f37")){
-                //ccm 202000702 from
-                //生成年休时，去除已离职人员
-                if(customer.getUserinfo() .getResignation_date() != null && !customer.getUserinfo() .getResignation_date().isEmpty())
-                {
-                    SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
-                    String resignationdate = customer.getUserinfo().getResignation_date().substring(0, 10);
-                    Calendar rightNow = Calendar.getInstance();
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(new Date());
-                    if(customer.getUserinfo().getResignation_date().length() >= 24)
-                    {
-                        rightNow.setTime(Convert.toDate(resignationdate));
-                        rightNow.add(Calendar.DAY_OF_YEAR, 1);
-                        resignationdate = s.format(rightNow.getTime());
-                    }
-                    //离职日期 < 当前日期
-                    if(s.parse(resignationdate).getTime() < s.parse(s.format(calendar.getTime())).getTime())
-                    {
-                        continue;
-                    }
+        SimpleDateFormat s1 = new SimpleDateFormat("yyyy-MM-dd");
+        AnnualLeave annualLeave = new AnnualLeave();
+        String ymd = s1.format(new Date());
+        String years = ymd.substring(0,4);
+        String mm = ymd.substring(5,7);
+        if(Double.valueOf(mm)<4)
+        {
+            years = String.valueOf(Integer.valueOf(years) - 1);
+        }
+        for(String userid :useridList){
+            annualLeave.setYears(years);
+            annualLeave.setUser_id(userid.trim());
+            List<AnnualLeave> annualLeaveList = annualLeaveMapper.select(annualLeave);
+            if(annualLeaveList.size()==0)
+            {
+                List<CustomerInfo> newinfo = customerinfo.stream().filter(item -> (item.getUserid().equals(userid.trim()))).collect(Collectors.toList());
+                if(newinfo.size() > 0){
+                    insertannualLeave(newinfo.get(0));
                 }
-                //ccm 临时测试接口
-                SimpleDateFormat s1 = new SimpleDateFormat("yyyy-MM-dd");
-                AnnualLeave a = new AnnualLeave();
-                String ymd = s1.format(new Date());
-                String years = ymd.substring(0,4);
-                String mm = ymd.substring(5,7);
-                if(Double.valueOf(mm)<4)
-                {
-                    years = String.valueOf(Integer.valueOf(years) - 1);
-                }
-                a.setYears(years);
-                a.setUser_id(customer.getUserid());
-                List<AnnualLeave> annualLeaveList = annualLeaveMapper.select(a);
-                if(annualLeaveList.size()==0)
-                {
-                    insertannualLeave(customer);
-                }
-                //ccm 临时测试接口
-                //}
             }
         }
+
+//        List<CustomerInfo> customerinfo = mongoTemplate.findAll(CustomerInfo.class);
+//        if (customerinfo != null) {
+//            for (CustomerInfo customer : customerinfo) {
+//                //if(customer.getUserid().equals("5e78b2264e3b194874180f37")){
+//                //ccm 202000702 from
+//                //生成年休时，去除已离职人员
+//                if(customer.getUserinfo() .getResignation_date() != null && !customer.getUserinfo() .getResignation_date().isEmpty())
+//                {
+//                    SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+//                    String resignationdate = customer.getUserinfo().getResignation_date().substring(0, 10);
+//                    Calendar rightNow = Calendar.getInstance();
+//                    Calendar calendar = Calendar.getInstance();
+//                    calendar.setTime(new Date());
+//                    if(customer.getUserinfo().getResignation_date().length() >= 24)
+//                    {
+//                        rightNow.setTime(Convert.toDate(resignationdate));
+//                        rightNow.add(Calendar.DAY_OF_YEAR, 1);
+//                        resignationdate = s.format(rightNow.getTime());
+//                    }
+//                    //离职日期 < 当前日期
+//                    if(s.parse(resignationdate).getTime() < s.parse(s.format(calendar.getTime())).getTime())
+//                    {
+//                        continue;
+//                    }
+//                }
+//                //ccm 临时测试接口
+//                SimpleDateFormat s1 = new SimpleDateFormat("yyyy-MM-dd");
+//                AnnualLeave a = new AnnualLeave();
+//                String ymd = s1.format(new Date());
+//                String years = ymd.substring(0,4);
+//                String mm = ymd.substring(5,7);
+//                if(Double.valueOf(mm)<4)
+//                {
+//                    years = String.valueOf(Integer.valueOf(years) - 1);
+//                }
+//                a.setYears(years);
+//                a.setUser_id(customer.getUserid());
+//                List<AnnualLeave> annualLeaveList = annualLeaveMapper.select(a);
+//                if(annualLeaveList.size()==0)
+//                {
+//                    insertannualLeave(customer);
+//                }
+//                //ccm 临时测试接口
+//                //}
+//            }
+//        }
     }
     //add 导入人员计算年休 20201030
     //新建
@@ -564,12 +587,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         enterdaystartCal = enterdaystartCal.substring(0,10);
         Calendar calendar_start = Calendar.getInstance();
         calendar_start.setTime(Convert.toDate(enterdaystartCal));
-        if(customer.getUserinfo().getEnterday().length()>=24)
-        {
-            calendar_start.setTime(Convert.toDate(enterdaystartCal));
-            calendar_start.add(Calendar.DAY_OF_YEAR, 1);
-            enterdaystartCal = sfymd.format(calendar_start.getTime());
-        }
+//        if(customer.getUserinfo().getEnterday().length()>=24)
+//        {
+//            calendar_start.setTime(Convert.toDate(enterdaystartCal));
+//            calendar_start.add(Calendar.DAY_OF_YEAR, 1);
+//            enterdaystartCal = sfymd.format(calendar_start.getTime());
+//        }
         //离社年月日
         String resignationDateendCal = "";
         if (!StringUtil.isEmpty(customer.getUserinfo().getResignation_date()))

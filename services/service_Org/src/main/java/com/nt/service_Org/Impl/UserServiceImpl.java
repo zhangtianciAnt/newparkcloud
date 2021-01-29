@@ -1067,6 +1067,7 @@ public class UserServiceImpl implements UserService {
         int k = 1;
         int accesscount = 0;
         int error = 0;
+        List<String> useradd = new ArrayList<String>();
         if (resultInsUpd) {
             for (Map<String, Object> item : readAll) {
                 List<CustomerInfo.Personal> cupList = new ArrayList<CustomerInfo.Personal>();
@@ -1743,10 +1744,12 @@ public class UserServiceImpl implements UserService {
                     customerInfo.setUserid(userAccountlist.get(0).get_id());
                 }
                 else{
-                    customerInfo.setUserid(UUID.randomUUID().toString());
+                    customerInfo.setUserid(UUID.randomUUID().toString());//111
                 }
                 mongoTemplate.save(customerInfo);
                 accesscount = accesscount + 1;
+                //成功人员
+                useradd.add(customerInfo.getUserid());
             }
         } else {
             for (Map<String, Object> item : readAll) {
@@ -2585,12 +2588,15 @@ public class UserServiceImpl implements UserService {
                     }
                 }
                 accesscount = accesscount + 1;
+                //成功人员
+                useradd.add(customerInfoList.get(0).getUserid());
             }
 
         }
 //        UPD_FJL_2020/05/12 --修改人员导入
         Result.add("失败数：" + error);
         Result.add("成功数：" + accesscount);
+        Result.add("成功数人数id" + useradd);
         return Result;
 //        } catch (Exception e) {
 //            throw new LogicalException(e.getMessage());
