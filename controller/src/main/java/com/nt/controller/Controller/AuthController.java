@@ -131,7 +131,7 @@ public class AuthController {
 
     @RequestMapping(value = "/insertAnnualImport",method={RequestMethod.GET})
     public ApiResult insertAnnualImport(HttpServletRequest request) throws Exception {
-        annualLeaveService.insertAnnualImport();
+        annualLeaveService.insertAnnualImport(null);
         return ApiResult.success();
     }
 
