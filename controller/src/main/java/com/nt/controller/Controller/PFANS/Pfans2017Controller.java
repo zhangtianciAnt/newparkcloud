@@ -24,6 +24,11 @@ public class Pfans2017Controller {
     @Autowired
     private TokenService tokenService;
 
+    @GetMapping("/list2")
+    public ApiResult list2(String punchcardrecord_date, String user_id, HttpServletRequest request) throws Exception {
+        return ApiResult.success(punchcardrecordService.list2(punchcardrecord_date, user_id));
+    }
+
     @RequestMapping(value = "/getDataList", method = {RequestMethod.POST})
     public ApiResult getDataList(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
