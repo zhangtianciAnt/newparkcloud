@@ -70,11 +70,6 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-   @Override
-    public List<PunchcardRecord> list2(String punchcardrecord_date, String user_id) throws Exception {
-        return  punchcardrecordMapper.selectworktime(punchcardrecord_date,user_id);
-    }
-
     @Override
     public List<PunchcardRecord> list(String dates, PunchcardRecord punchcardrecord, TokenModel tokenModel) throws Exception {
         SimpleDateFormat sformat = new SimpleDateFormat("yyyy-MM");//日期格式
