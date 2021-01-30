@@ -409,8 +409,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             if(annualLeaveList.size()==0)
             {
                 List<CustomerInfo> newinfo = customerinfo.stream().filter(item -> (item.getUserid().equals(userid.trim()))).collect(Collectors.toList());
-                if(newinfo.size() > 0){
-                    insertannualLeave(newinfo.get(0));
+                if(newinfo.size() > 0 ){
+                    if(!StringUtils.isNullOrEmpty(newinfo.get(0).getUserinfo().getEnterday()) && !StringUtils.isNullOrEmpty(newinfo.get(0).getUserinfo().getWorkday()))
+                    {
+                        insertannualLeave(newinfo.get(0));
+                    }
                 }
             }
         }
@@ -587,12 +590,14 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         enterdaystartCal = enterdaystartCal.substring(0,10);
         Calendar calendar_start = Calendar.getInstance();
         calendar_start.setTime(Convert.toDate(enterdaystartCal));
-//        if(customer.getUserinfo().getEnterday().length()>=24)
-//        {
-//            calendar_start.setTime(Convert.toDate(enterdaystartCal));
-//            calendar_start.add(Calendar.DAY_OF_YEAR, 1);
-//            enterdaystartCal = sfymd.format(calendar_start.getTime());
-//        }
+        if(!StringUtils.isNullOrEmpty(enterdaystartCal)){
+            if(customer.getUserinfo().getEnterday().length()>=24)
+            {
+                calendar_start.setTime(Convert.toDate(enterdaystartCal));
+                calendar_start.add(Calendar.DAY_OF_YEAR, 1);
+                enterdaystartCal = sfymd.format(calendar_start.getTime());
+            }
+        }
         //离社年月日
         String resignationDateendCal = "";
         if (!StringUtil.isEmpty(customer.getUserinfo().getResignation_date()))
