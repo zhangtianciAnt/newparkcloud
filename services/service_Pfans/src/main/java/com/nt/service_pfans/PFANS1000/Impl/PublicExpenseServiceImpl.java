@@ -601,7 +601,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         }
         //科目名字典
         Map<String, String> accountCodeMap = new HashMap<>();
-        for (int i = 0; i < 26; i++) {
+        for (int i = 0; i < 28; i++) {
             List<com.nt.dao_Org.Dictionary> dictionaryListAccount = dictionaryService.getForSelect("PJ" + (112 + i));
             for (Dictionary d : dictionaryListAccount) {
                 accountCodeMap.put(d.getCode(), d.getValue1());
@@ -888,6 +888,38 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     //编辑
     @Override
     public void update(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception {
+        String invoiceNos = "";
+        Calendar cal = Calendar.getInstance();
+        String year = new SimpleDateFormat("yy", Locale.CHINESE).format(Calendar.getInstance().getTime());
+        int month = cal.get(Calendar.MONTH) + 1;
+        int day = cal.get(Calendar.DATE);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String no = "";
+        if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002002"))) {
+            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "GL");
+            no = String.format("%2d", count + 1).replace(" ", "0");
+            String month1 = String.format("%2d", month).replace(" ", "0");
+            String day1 = String.format("%2d", day).replace(" ", "0");
+            invoiceNos = "DL4GL" + year + month1 + day1 + no;
+        } else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002001"))) {
+            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AP");
+            no = String.format("%2d", count + 1).replace(" ", "0");
+            String month1 = String.format("%2d", month).replace(" ", "0");
+            String day1 = String.format("%2d", day).replace(" ", "0");
+            invoiceNos = "DL4AP" + year + month1 + day1 + no;
+        } else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002003"))) {
+            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AR");
+            no = String.format("%2d", count + 1).replace(" ", "0");
+            String month1 = String.format("%2d", month).replace(" ", "0");
+            String day1 = String.format("%2d", day).replace(" ", "0");
+            invoiceNos = "DL4AR" + year + month1 + day1 + no;
+        } else {
+            no = "01";
+            String month1 = String.format("%2d", month).replace(" ", "0");
+            String day1 = String.format("%2d", day).replace(" ", "0");
+            invoiceNos = "DL4AP" + year + month1 + day1 + no;
+        }
+
         PublicExpense publicExpense = new PublicExpense();
         BeanUtils.copyProperties(publicExpenseVo.getPublicexpense(), publicExpense);
         //add-ws-7/20-禅道任务342
@@ -905,6 +937,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 publicExpense.setModifyon(modeon);
             }
         }
+        publicExpense.setInvoiceno(invoiceNos);
         //upd-8/20-ws-禅道468任务
         publicExpenseMapper.updateByPrimaryKey(publicExpense);
 
