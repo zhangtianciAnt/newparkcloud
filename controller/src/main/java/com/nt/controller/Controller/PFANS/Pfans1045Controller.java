@@ -146,6 +146,7 @@ public class Pfans1045Controller {
         String cycle = policycontract.getCycle();
         String year = policycontract.getYearss();
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
+        policy.setYearss(policycontract.getYearss());
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
         List<PolicyContract> policycontractlist3 = policycontractmapper.selectAll();
         policycontractlist3.addAll(0, policycontractlist3);
@@ -155,50 +156,57 @@ public class Pfans1045Controller {
                 if (PolicyContract.getYearss().equals(year)) {
                     if (PolicyContract.getCycle().equals("0")) {
                         if (cycle.equals("0") || cycle.equals("1") || cycle.equals("2") || cycle.equals("3") || cycle.equals("4") || cycle.equals("5") || cycle.equals("6")) {
-                            policycontractlist2 = policylist;
-                        } else {
                             policycontractlist2 = policycontractlist3;
+                            break;
+                        } else {
+                            policycontractlist2 = policylist;
                         }
                     } else if (PolicyContract.getCycle().equals("1")) {
                         if (cycle.equals("3") || cycle.equals("4") || cycle.equals("1")) {
-                            policycontractlist2 = policylist;
-                        } else {
                             policycontractlist2 = policycontractlist3;
+                            break;
+                        } else {
+                            policycontractlist2 = policylist;
                         }
 
                     } else if (PolicyContract.getCycle().equals("2")) {
                         if (cycle.equals("5") || cycle.equals("6") || cycle.equals("2")) {
-                            policycontractlist2 = policylist;
-                        } else {
                             policycontractlist2 = policycontractlist3;
+                            break;
+                        } else {
+                            policycontractlist2 = policylist;
                         }
 
                     } else if (PolicyContract.getCycle().equals("3")) {
                         if (cycle.equals("3") || cycle.equals("1")) {
-                            policycontractlist2 = policylist;
-                        } else {
                             policycontractlist2 = policycontractlist3;
+                            break;
+                        } else {
+                            policycontractlist2 = policylist;
                         }
 
                     } else if (PolicyContract.getCycle().equals("4")) {
                         if (cycle.equals("4") || cycle.equals("1")) {
-                            policycontractlist2 = policylist;
-                        } else {
                             policycontractlist2 = policycontractlist3;
+                            break;
+                        } else {
+                            policycontractlist2 = policylist;
                         }
 
                     } else if (PolicyContract.getCycle().equals("5")) {
                         if (cycle.equals("5") || cycle.equals("2")) {
-                            policycontractlist2 = policylist;
-                        } else {
                             policycontractlist2 = policycontractlist3;
+                            break;
+                        } else {
+                            policycontractlist2 = policylist;
                         }
 
                     } else if (PolicyContract.getCycle().equals("6")) {
                         if (cycle.equals("6") || cycle.equals("2")) {
-                            policycontractlist2 = policylist;
-                        } else {
                             policycontractlist2 = policycontractlist3;
+                            break;
+                        } else {
+                            policycontractlist2 = policylist;
                         }
                     }
                 }
