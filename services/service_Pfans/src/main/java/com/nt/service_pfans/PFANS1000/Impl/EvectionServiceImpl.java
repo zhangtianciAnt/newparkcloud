@@ -378,7 +378,7 @@ public class EvectionServiceImpl implements EvectionService {
         }
         //科目名字典
         Map<String, String> accountCodeMap = new HashMap<>();
-        for (int i = 0; i < 26; i++) {
+        for (int i = 0; i < 28; i++) {
             List<com.nt.dao_Org.Dictionary> dictionaryListAccount = dictionaryService.getForSelect("PJ" + (112 + i));
             for (Dictionary d : dictionaryListAccount) {
                 accountCodeMap.put(d.getCode(), d.getValue1());
