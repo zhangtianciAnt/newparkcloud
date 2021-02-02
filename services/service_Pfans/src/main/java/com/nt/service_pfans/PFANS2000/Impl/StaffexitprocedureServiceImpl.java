@@ -1339,7 +1339,10 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
                 String Date = sdf1.format(pro.getExittime());
                 String Date1 = sdf1.format(new Date());
                 if (Integer.valueOf(Date) >= Integer.valueOf(Date1)) {
-                    pro.setExittime(new Date());
+                    //20210202 GBB 离职者调书审批通过之后更新项目退场日 start
+                    //pro.setExittime(new Date());
+                    pro.setExittime(staffexitprocedureVo.getStaffexitproce().getResignation_date());                    ;
+                    //20210202 GBB 离职者调书审批通过之后更新项目退场日 end
                     projectsystemMapper.updateByPrimaryKeySelective(pro);
                 }
             }
@@ -1351,17 +1354,22 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
                 String Date = sdf1.format(prolist.getExittime());
                 String Date1 = sdf1.format(new Date());
                 if (Integer.valueOf(Date) >= Integer.valueOf(Date1)) {
-                    prolist.setExittime(new Date());
+                    //20210202 GBB 离职者调书审批通过之后更新项目退场日 start
+                    //prolist.setExittime(new Date());
+                    prolist.setExittime(staffexitprocedureVo.getStaffexitproce().getResignation_date());                    ;
+                    //20210202 GBB 离职者调书审批通过之后更新项目退场日 end
                     prosystemMapper.updateByPrimaryKeySelective(prolist);
                 }
             }
-            Query query = new Query();
-            query.addCriteria(Criteria.where("userid").is(staffexitprocedureVo.getStaffexitproce().getUser_id()));
-            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            if (customerInfo != null) {
-                customerInfo.getUserinfo().setJobnumber("00000");
-            }
-            mongoTemplate.save(customerInfo);
+            //离职卡号更新只有系统服务可操作   20210201  gbb start
+//            Query query = new Query();
+//            query.addCriteria(Criteria.where("userid").is(staffexitprocedureVo.getStaffexitproce().getUser_id()));
+//            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//            if (customerInfo != null) {
+//                customerInfo.getUserinfo().setJobnumber("00000");
+//            }
+//            mongoTemplate.save(customerInfo);
+            //离职卡号更新只有系统服务可操作   20210201  gbb end
 
 
             ToDoNotice condition = new ToDoNotice();
