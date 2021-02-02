@@ -36,7 +36,7 @@ public class ExcelController {
     @RequestMapping(value = "/excel1", method = {RequestMethod.POST})
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public void save1(HttpServletResponse response, HttpServletRequest request) throws Exception {
-        ExcelReader reader = ExcelUtil.getReader("e:/testqindai.xlsx");
+        ExcelReader reader = ExcelUtil.getReader("c:/testqindai.xlsx");
         ArrayList<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
         List<Map<String, Object>> readAll = reader.readAll();
         for (Map<String, Object> item : readAll) {
@@ -47,10 +47,14 @@ public class ExcelController {
             row1.put("人名", customerInfo.getUserinfo().getCustomername());
             row1.put("日期", item.get("日期"));
             row1.put("事假", item.get("事假"));
+            row1.put("试用事假", item.get("试用事假"));
             row1.put("产休/护理假", item.get("产休/护理假"));
             row1.put("欠勤", item.get("欠勤"));
+            row1.put("试用欠勤", item.get("试用欠勤"));
             row1.put("短病假", item.get("短病假"));
+            row1.put("试用短病假", item.get("试用短病假"));
             row1.put("长病假", item.get("长病假"));
+            row1.put("试用长病假", item.get("试用长病假"));
             row1.put("平日", item.get("平日"));
             row1.put("休日", item.get("休日"));
             row1.put("祝日", item.get("祝日"));
@@ -60,7 +64,7 @@ public class ExcelController {
             row1.put("妇女节", item.get("妇女节"));
             rows.add(row1);
         }
-        ExcelWriter writer = ExcelUtil.getWriter("e:/testqindai.xlsx");
+        ExcelWriter writer = ExcelUtil.getWriter("c:/testqindai.xlsx");
         writer.write(rows, true);
         writer.close();
     }
