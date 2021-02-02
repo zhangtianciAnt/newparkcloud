@@ -200,6 +200,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
             else{
                 Delegainformation del = new Delegainformation();
                 del.setGroup_id(delegainformation.getGroup_id());
+                del.setAccount(delegainformation.getAccount());
                 //add ccm 1224 添加年度条件 fr
                 del.setYear(sDateyy);
                 if(Integer.valueOf(sDate) < 4)
