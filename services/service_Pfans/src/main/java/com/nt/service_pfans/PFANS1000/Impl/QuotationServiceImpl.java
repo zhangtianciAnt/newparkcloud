@@ -96,6 +96,9 @@ public class QuotationServiceImpl implements QuotationService {
             Contractnumbercount contractnumbercount = new Contractnumbercount();
             contractnumbercount.setContractnumber(quo.getContractnumber());
             List<Contractnumbercount> list = contractnumbercountMapper.select(contractnumbercount);
+            if (list != null && list.size() > 1) {
+                list = list.stream().sorted(Comparator.comparing(Contractnumbercount::getRowindex)).collect(Collectors.toList());
+            }
             asseVo.setNumbercounts(list);
         }
 
