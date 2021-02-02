@@ -208,7 +208,6 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                     del.setYear(String.valueOf(Integer.valueOf(sDateyy) - 1));
                 }
                 //add ccm 1224 添加年度条件 to
-                del.setAccount(delegainformation.getAccount());
                 List<Delegainformation> tion = delegainformationMapper.select(del);
                 if(tion.size() > 0){
                     delegainformation.preUpdate(tokenModel);
