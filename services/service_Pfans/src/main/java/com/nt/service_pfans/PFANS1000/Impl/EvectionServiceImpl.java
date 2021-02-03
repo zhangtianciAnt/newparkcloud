@@ -393,7 +393,7 @@ public class EvectionServiceImpl implements EvectionService {
         for (Invoice invoice : invoicelist) {
             if (Double.valueOf(invoice.getInvoiceamount()) > 0.0) {
                 // 专票，获取税率
-                BigDecimal rate = new BigDecimal(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
+                BigDecimal rate = new BigDecimal(taxRateMap.getOrDefault(invoice.getTaxrate(), "0"));
                 if (rate.compareTo(new BigDecimal(0)) == -1) {
                     throw new LogicalException("专票税率不能为0");
                 }
