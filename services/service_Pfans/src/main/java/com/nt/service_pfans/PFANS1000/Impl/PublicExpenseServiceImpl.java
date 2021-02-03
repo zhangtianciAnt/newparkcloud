@@ -613,7 +613,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         for (Invoice invoice : invoicelist) {
             if (SPECIAL_KEY.equals(invoice.getInvoicetype()) && (!"0".equals(invoice.getInvoiceamount()))) {
                 // 专票，获取税率
-                BigDecimal rate = new BigDecimal(taxRateMap.getOrDefault(invoice.getTaxrate(), ""));
+                BigDecimal rate = new BigDecimal(taxRateMap.getOrDefault(invoice.getTaxrate(), "0"));
                 if (publicExpenseVo.getPublicexpense().getType() == "PJ001002") {
                     if (rate.compareTo(new BigDecimal(0)) == -1) {
                         throw new LogicalException("专票税率不能为0");
