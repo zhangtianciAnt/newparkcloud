@@ -86,7 +86,7 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
                     List<Assets> assetsList = assetsMapper.select(assets);
                     for(Assets ast : assetsList){
                         ast.setOwner(notification.getEafter());
-                        ast.setPsdcdreturnconfirmation(notification.getEafter());
+                        ast.setPrincipal(notification.getEafter());
                         Query query = new Query();
                         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                         query.addCriteria(Criteria.where("userinfo.groupid").is(softwaretransfer.getTubegroup_id()));
