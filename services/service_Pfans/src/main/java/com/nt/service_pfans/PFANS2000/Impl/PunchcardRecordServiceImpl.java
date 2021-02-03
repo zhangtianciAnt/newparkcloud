@@ -1802,7 +1802,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         //周末加班
                                         if (ad.getWeekendindustry() != null && !ad.getWeekendindustry().isEmpty()) {
                                             if (Double.valueOf(ad.getWeekendindustry()) >= 8) {
-                                                ad.setWeekendindustry(df.format(Double.valueOf(ad.getWeekendindustry()) - 8));
+//                                                ad.setWeekendindustry(df.format(Double.valueOf(ad.getWeekendindustry()) - 8));
                                             }
                                         }
                                     }
@@ -3156,7 +3156,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 //操作代休表
                                                 //insertReplace(ad,tokenModel,"1",duration);
                                                 //周末加班除去换代休的时间
-                                                ad.setWeekendindustry(df.format(Double.valueOf(ad.getWeekendindustry()) - 8));
+//                                                ad.setWeekendindustry(df.format(Double.valueOf(ad.getWeekendindustry()) - 8));
                                             }
                                         } else if (ad.getSpecialday() != null && !ad.getSpecialday().isEmpty()) {
                                             String duration = null;
@@ -3343,7 +3343,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         //周末加班
                                         if (ad.getWeekendindustry() != null && !ad.getWeekendindustry().isEmpty()) {
                                             if (Double.valueOf(ad.getWeekendindustry()) >= 8) {
-                                                ad.setWeekendindustry(df.format(Double.valueOf(ad.getWeekendindustry()) - 8));
+//                                                ad.setWeekendindustry(df.format(Double.valueOf(ad.getWeekendindustry()) - 8));
                                             }
                                         }
                                     }
