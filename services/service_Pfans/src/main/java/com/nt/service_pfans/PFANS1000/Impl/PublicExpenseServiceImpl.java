@@ -895,29 +895,42 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         int day = cal.get(Calendar.DATE);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String no = "";
-        if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002002"))) {
-            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "GL");
-            no = String.format("%2d", count + 1).replace(" ", "0");
-            String month1 = String.format("%2d", month).replace(" ", "0");
-            String day1 = String.format("%2d", day).replace(" ", "0");
-            invoiceNos = "DL4GL" + year + month1 + day1 + no;
-        } else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002001"))) {
-            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AP");
-            no = String.format("%2d", count + 1).replace(" ", "0");
-            String month1 = String.format("%2d", month).replace(" ", "0");
-            String day1 = String.format("%2d", day).replace(" ", "0");
-            invoiceNos = "DL4AP" + year + month1 + day1 + no;
-        } else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002003"))) {
-            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AR");
-            no = String.format("%2d", count + 1).replace(" ", "0");
-            String month1 = String.format("%2d", month).replace(" ", "0");
-            String day1 = String.format("%2d", day).replace(" ", "0");
-            invoiceNos = "DL4AR" + year + month1 + day1 + no;
+        String id = publicExpenseVo.getPublicexpense().getPublicexpenseid();
+        PublicExpense publics = publicExpenseMapper.selectByPrimaryKey(id);
+        if(publicExpenseVo.getPublicexpense().getModuleid().equals("GL")){
+            publicExpenseVo.getPublicexpense().setModuleid("PJ002002");
+        }else if(publicExpenseVo.getPublicexpense().getModuleid().equals("AP")){
+            publicExpenseVo.getPublicexpense().setModuleid("PJ002001");
+        }else if(publicExpenseVo.getPublicexpense().getModuleid().equals("AR")){
+            publicExpenseVo.getPublicexpense().setModuleid("PJ002003");
+        }
+        if (!publics.getModuleid().equals(publicExpenseVo.getPublicexpense().getModuleid())) {
+            if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002002"))) {
+                int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "GL");
+                no = String.format("%2d", count + 1).replace(" ", "0");
+                String month1 = String.format("%2d", month).replace(" ", "0");
+                String day1 = String.format("%2d", day).replace(" ", "0");
+                invoiceNos = "DL4GL" + year + month1 + day1 + no;
+            } else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002001"))) {
+                int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AP");
+                no = String.format("%2d", count + 1).replace(" ", "0");
+                String month1 = String.format("%2d", month).replace(" ", "0");
+                String day1 = String.format("%2d", day).replace(" ", "0");
+                invoiceNos = "DL4AP" + year + month1 + day1 + no;
+            } else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002003"))) {
+                int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AR");
+                no = String.format("%2d", count + 1).replace(" ", "0");
+                String month1 = String.format("%2d", month).replace(" ", "0");
+                String day1 = String.format("%2d", day).replace(" ", "0");
+                invoiceNos = "DL4AR" + year + month1 + day1 + no;
+            } else {
+                no = "01";
+                String month1 = String.format("%2d", month).replace(" ", "0");
+                String day1 = String.format("%2d", day).replace(" ", "0");
+                invoiceNos = "DL4AP" + year + month1 + day1 + no;
+            }
         } else {
-            no = "01";
-            String month1 = String.format("%2d", month).replace(" ", "0");
-            String day1 = String.format("%2d", day).replace(" ", "0");
-            invoiceNos = "DL4AP" + year + month1 + day1 + no;
+            invoiceNos = publicExpenseVo.getPublicexpense().getInvoiceno();
         }
 
         PublicExpense publicExpense = new PublicExpense();
