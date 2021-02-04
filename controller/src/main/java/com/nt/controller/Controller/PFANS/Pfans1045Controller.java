@@ -42,8 +42,12 @@ public class Pfans1045Controller {
         SimpleDateFormat sf = new SimpleDateFormat("MM");
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
-        String cycle =  policycontract.getInformation().substring(5, 7);
-        String year =  policycontract.getInformation().substring(0, 4);
+        String cycle = "";
+        String year = "";
+        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(policycontract.getInformation())) {
+            cycle = policycontract.getInformation().substring(5, 7);
+            year = policycontract.getInformation().substring(0, 4);
+        }
         PolicyContract policy = new PolicyContract();
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
         List<PolicyContract> policycontractlist = policycontractmapper.select(policy);
@@ -130,7 +134,7 @@ public class Pfans1045Controller {
         return ApiResult.success(policycontractservice.check(policycontract, tokenModel));
     }
 
-    @RequestMapping(value = "/chackcycle", method = {RequestMethod.POST})
+       @RequestMapping(value = "/chackcycle", method = {RequestMethod.POST})
     public ApiResult chackcycle(@RequestBody PolicyContract policycontract, HttpServletRequest request) throws Exception {
         if (policycontract == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
@@ -141,59 +145,67 @@ public class Pfans1045Controller {
         String cycle = policycontract.getCycle();
         String year = policycontract.getYearss();
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
+        policy.setYearss(policycontract.getYearss());
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
         List<PolicyContract> policycontractlist3 = policycontractmapper.selectAll();
         policycontractlist3.addAll(0, policycontractlist3);
         List<PolicyContract> policylist = policycontractmapper.select(policy);
         if (policylist.size() > 0) {
             for (PolicyContract PolicyContract : policylist) {
-                if(PolicyContract.getYearss().equals(year)) {
+                if (PolicyContract.getYearss().equals(year)) {
                     if (PolicyContract.getCycle().equals("0")) {
                         if (cycle.equals("0") || cycle.equals("1") || cycle.equals("2") || cycle.equals("3") || cycle.equals("4") || cycle.equals("5") || cycle.equals("6")) {
-                            policycontractlist2 = policylist;
-                        } else {
                             policycontractlist2 = policycontractlist3;
+                            break;
+                        } else {
+                            policycontractlist2 = policylist;
                         }
                     } else if (PolicyContract.getCycle().equals("1")) {
                         if (cycle.equals("3") || cycle.equals("4") || cycle.equals("1")) {
-                            policycontractlist2 = policylist;
-                        } else {
                             policycontractlist2 = policycontractlist3;
+                            break;
+                        } else {
+                            policycontractlist2 = policylist;
                         }
 
                     } else if (PolicyContract.getCycle().equals("2")) {
                         if (cycle.equals("5") || cycle.equals("6") || cycle.equals("2")) {
-                            policycontractlist2 = policylist;
-                        } else {
                             policycontractlist2 = policycontractlist3;
+                            break;
+                        } else {
+                            policycontractlist2 = policylist;
                         }
 
                     } else if (PolicyContract.getCycle().equals("3")) {
                         if (cycle.equals("3") || cycle.equals("1")) {
-                            policycontractlist2 = policylist;
-                        } else {
                             policycontractlist2 = policycontractlist3;
+                            break;
+                        } else {
+                            policycontractlist2 = policylist;
                         }
 
                     } else if (PolicyContract.getCycle().equals("4")) {
                         if (cycle.equals("4") || cycle.equals("1")) {
-                            policycontractlist2 = policylist;
-                        } else {
                             policycontractlist2 = policycontractlist3;
+                            break;
+                        } else {
+                            policycontractlist2 = policylist;
                         }
 
                     } else if (PolicyContract.getCycle().equals("5")) {
                         if (cycle.equals("5") || cycle.equals("2")) {
-                            policycontractlist2 = policylist;
-                        } else {
                             policycontractlist2 = policycontractlist3;
+                            break;
+                        } else {
+                            policycontractlist2 = policylist;
                         }
 
                     } else if (PolicyContract.getCycle().equals("6")) {
                         if (cycle.equals("6") || cycle.equals("2")) {
-                            policycontractlist2 = policylist;
-                        } else {
                             policycontractlist2 = policycontractlist3;
+                            break;
+                        } else {
+                            policycontractlist2 = policylist;
                         }
                     }
                 }
