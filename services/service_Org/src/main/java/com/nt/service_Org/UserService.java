@@ -3,6 +3,7 @@ package com.nt.service_Org;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Log;
 import com.nt.dao_Org.UserAccount;
+import com.nt.dao_Org.Vo.UserAccountVo;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.utils.ApiResult;
 import com.nt.utils.LogicalException;
@@ -95,4 +96,7 @@ public interface UserService {
     //本年度离职，账号不能登录的人员
     //参数：years，年度
     public List<CustomerInfo> getCustomerInfoResign(String years) throws Exception;
+
+    //获取工资tab页登录密码
+    void checkpassword(UserAccountVo userAccountVo) throws Exception;
 }
