@@ -21,12 +21,14 @@ public class LogServiceImpl implements LogService {
         query.addCriteria(Criteria.where("type").is(log.getType()));
         query.addCriteria(Criteria.where("owner").is(log.getOwner()));
         List<Log> rst = mongoTemplate.find(query,Log.class);
-        if(rst.size() > 0){
-            rst.get(0).getLogs().addAll(log.getLogs());
-            mongoTemplate.save(rst.get(0));
-        }else{
+        //upd gbb 20210209 PSDCD_PFANS_20210209_BUG_014 登录log保存数据修改 from
+//        if(rst.size() > 0){
+//            rst.get(0).getLogs().addAll(log.getLogs());
+//            mongoTemplate.save(rst.get(0));
+//        }else{
             mongoTemplate.save(log);
-        }
+        //}
+        //upd gbb 20210209 PSDCD_PFANS_20210209_BUG_014 登录log保存数据修改 to
 
     }
 }
