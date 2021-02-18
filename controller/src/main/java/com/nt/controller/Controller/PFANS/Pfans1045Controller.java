@@ -252,16 +252,16 @@ public class Pfans1045Controller {
             for (PolicyContract list : policylist) {
                 String starttime = list.getYearss().substring(0, 7);
                 String endtime = list.getYearss().substring(10, 17);
-                if (Integer.valueOf(starttime.replace("-", "")) > Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
-                    return ApiResult.success(true);
-                } else if (Integer.valueOf(endtime.replace("-", "")) < Integer.valueOf(policycontract.getCycle().replace("-", ""))) {
-                    return ApiResult.success(true);
-                } else if (Integer.valueOf(starttime.replace("-", "")) <= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) >= Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
+                 if (Integer.valueOf(starttime.replace("-", "")) <= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) >= Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
                     return ApiResult.success(false);
                 } else if (Integer.valueOf(starttime.replace("-", "")) >= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) >= Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
                     return ApiResult.success(false);
                 } else if (Integer.valueOf(starttime.replace("-", "")) <= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) <= Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
                     return ApiResult.success(false);
+                } else if (Integer.valueOf(starttime.replace("-", "")) > Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
+                    return ApiResult.success(true);
+                } else if (Integer.valueOf(endtime.replace("-", "")) < Integer.valueOf(policycontract.getCycle().replace("-", ""))) {
+                    return ApiResult.success(true);
                 }
             }
         }
