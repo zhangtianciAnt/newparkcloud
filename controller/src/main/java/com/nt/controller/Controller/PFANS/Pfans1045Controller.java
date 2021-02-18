@@ -85,7 +85,8 @@ public class Pfans1045Controller {
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
         String year = "";
         if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(policycontract.getInformation())) {
-            year = policycontract.getInformation();
+            int years = Integer.valueOf(policycontract.getInformation().substring(5, 7)) <= 4 ? Integer.valueOf(policycontract.getInformation().substring(0, 4)) + 1 : Integer.valueOf(policycontract.getInformation().substring(0, 4));
+            year = String.valueOf(years) + policycontract.getInformation().substring(5, 7);
         }
         PolicyContract policy = new PolicyContract();
         policy.setOutsourcingcompany(policycontract.getOutsourcingcompany());
@@ -94,7 +95,7 @@ public class Pfans1045Controller {
         for (PolicyContract PolicyCon : policycontractlist) {
             String starttime = PolicyCon.getYearss().substring(0, 7);
             String endtime = PolicyCon.getYearss().substring(10, 17);
-            if (Integer.valueOf(starttime.replace("-", "")) <= Integer.valueOf(year.replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) >= Integer.valueOf(year.replace("-", ""))) {
+            if (Integer.valueOf(starttime.replace("-", "")) <= Integer.valueOf(year) && Integer.valueOf(endtime.replace("-", "")) >= Integer.valueOf(year)) {
                 policycontractlist2.add(PolicyCon);
             }
         }
@@ -253,14 +254,29 @@ public class Pfans1045Controller {
             for (PolicyContract list : policylist) {
                 String starttime = list.getYearss().substring(0, 7);
                 String endtime = list.getYearss().substring(10, 17);
-                if (Integer.valueOf(starttime.replace("-", "")) <= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) >= Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
-                    return ApiResult.success(false);
-                } else if (Integer.valueOf(starttime.replace("-", "")) >= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) >= Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
-                    return ApiResult.success(false);
-                } else if (Integer.valueOf(starttime.replace("-", "")) <= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) <= Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
-                    return ApiResult.success(false);
-                } else if (Integer.valueOf(starttime.replace("-", "")) >= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) <= Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
-                    return ApiResult.success(false);
+                //数开<=条结 && 数结>=条开
+                //1.数开<=条开  && 数结<=条结
+                //2.数开<=条开  && 数结>=条结
+                //3.数开>=条开  && 数结>=条结
+                //4.数开>=条开  && 数结<=条结
+                if(Integer.valueOf(starttime.replace("-", "")) <= Integer.valueOf(policycontract.getYearss().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) >= Integer.valueOf(policycontract.getCycle().replace("-", "")))
+                {
+                    if(Integer.valueOf(starttime.replace("-", "")) <= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) <= Integer.valueOf(policycontract.getYearss().replace("-", "")))
+                    {
+                        return ApiResult.success(false);
+                    }
+                    else if(Integer.valueOf(starttime.replace("-", "")) <= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) >= Integer.valueOf(policycontract.getYearss().replace("-", "")))
+                    {
+                        return ApiResult.success(false);
+                    }
+                    else if(Integer.valueOf(starttime.replace("-", "")) >= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) >= Integer.valueOf(policycontract.getYearss().replace("-", "")))
+                    {
+                        return ApiResult.success(false);
+                    }
+                    else if(Integer.valueOf(starttime.replace("-", "")) >= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) <= Integer.valueOf(policycontract.getYearss().replace("-", "")))
+                    {
+                        return ApiResult.success(false);
+                    }
                 }
             }
         }
