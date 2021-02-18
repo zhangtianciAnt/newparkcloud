@@ -261,10 +261,6 @@ public class Pfans1045Controller {
                     return ApiResult.success(false);
                 } else if (Integer.valueOf(starttime.replace("-", "")) >= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) <= Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
                     return ApiResult.success(false);
-                } else if (Integer.valueOf(starttime.replace("-", "")) > Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
-                    return ApiResult.success(true);
-                } else if (Integer.valueOf(endtime.replace("-", "")) < Integer.valueOf(policycontract.getCycle().replace("-", ""))) {
-                    return ApiResult.success(true);
                 }
             }
         }
