@@ -6,10 +6,7 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,11 +20,11 @@ public class Pfans1043Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value = "/list", method = {RequestMethod.POST})
-    public ApiResult list(HttpServletRequest request) throws Exception {
+    @GetMapping("/list")
+    public ApiResult list(String year, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         ThemeInfor themeinfor = new ThemeInfor();
-        //themeinfor.setOwners(tokenModel.getOwnerList());
+        themeinfor.setYear(year);
         return ApiResult.success(themeinforservice.list(themeinfor));
     }
 
@@ -51,14 +48,19 @@ public class Pfans1043Controller {
         return ApiResult.success();
     }
 
-    @RequestMapping(value = "/importUser",method={RequestMethod.POST})
-    public ApiResult importUser(HttpServletRequest request,String flag){
-        try{
+    @RequestMapping(value = "/getlisttheme", method = {RequestMethod.GET})
+    public ApiResult getlisttheme(String year, String contract, HttpServletRequest request) throws Exception {
+        return ApiResult.success(themeinforservice.getlisttheme(year, contract));
+    }
+
+    @RequestMapping(value = "/importUser", method = {RequestMethod.POST})
+    public ApiResult importUser(HttpServletRequest request, String flag) {
+        try {
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(themeinforservice.importUser(request,tokenModel));
-        }catch(LogicalException e){
+            return ApiResult.success(themeinforservice.importUser(request, tokenModel));
+        } catch (LogicalException e) {
             return ApiResult.fail(e.getMessage());
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ApiResult.fail("操作失败！");
         }
     }
