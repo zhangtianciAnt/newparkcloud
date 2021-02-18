@@ -29,19 +29,9 @@ public class ThemePlan extends BaseModel {
     @Column(name = "YEAR")
     private String year;
 
-    @Column(name = "MONTH")
-    private String month;
-
-    @Column(name = "TYPE")
-    private String type;
-
-    @Column(name = "ROWINDEX")
-    private String rowindex;
-
     @Column(name = "PLANCOUNT")
     private String plancount;
 
-    @Column(name = "FINANCIALPROCESSINGFLG")
-    private String financialprocessingflg;
-
+    @Column(name = "TYPE")
+    private String type;
 }

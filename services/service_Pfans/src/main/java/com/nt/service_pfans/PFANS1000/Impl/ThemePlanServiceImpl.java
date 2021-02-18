@@ -1,12 +1,16 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Pfans.PFANS1000.PersonnelPlan;
 import com.nt.dao_Pfans.PFANS1000.Routingdetail;
 import com.nt.dao_Pfans.PFANS1000.ThemePlan;
 import com.nt.dao_Pfans.PFANS1000.ThemePlanDetail;
-import com.nt.dao_Pfans.PFANS1000.Vo.ThemePlanDetailVo;
-import com.nt.dao_Pfans.PFANS1000.Vo.ThemePlanVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.*;
 import com.nt.service_pfans.PFANS1000.ThemePlanService;
+import com.nt.service_pfans.PFANS1000.mapper.PersonnelplanMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ThemePlanDetailMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ThemePlanMapper;
 import com.nt.utils.LogicalException;
@@ -15,15 +19,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class ThemePlanServiceImpl implements ThemePlanService {
+
+    @Autowired
+    private PersonnelplanMapper personnelplanMapper;
 
     @Autowired
     private ThemePlanMapper themePlanMapper;
@@ -40,52 +46,6 @@ public class ThemePlanServiceImpl implements ThemePlanService {
         //按年度，创建时间倒序排序
         colist.sort(byYear.thenComparing(byCreateon));
         return colist;
-    }
-
-    @Override
-    public List<ThemePlanDetail> get(ThemePlan themePlan) throws Exception {
-        List<ThemePlanDetail> colist = new ArrayList<ThemePlanDetail>();
-        colist = themePlanDetailMapper.getDetailList(themePlan.getThemeplan_id());
-        if (colist.size() > 0) {
-            colist = colist.stream().sorted(Comparator.comparing(ThemePlanDetail::getRowindex)).collect(Collectors.toList());
-        }
-        return colist;
-    }
-
-    @Override
-    public void insert(ThemePlanVo themePlan, TokenModel tokenModel) throws LogicalException {
-        List<ThemePlan> colist = themePlan.getThemePlans();
-        for (ThemePlan item : colist
-        ) {
-            ThemePlan ct = new ThemePlan();
-            ct.setCenter_id(item.getCenter_id());
-            ct.setGroup_id(item.getGroup_id());
-            ct.setYear(item.getYear());
-            ct.setType(item.getType());
-            //该group该年度theme是否已创建
-            colist = themePlanMapper.select(ct);
-            if (colist.size() > 0) {
-                throw new LogicalException("本部门该年度theme已经创建，请到列表页中查找编辑。");
-            }
-            ct.setThemeplan_id(UUID.randomUUID().toString());
-            ct.setFinancialprocessingflg("0");
-            ct.preInsert(tokenModel);
-            themePlanMapper.insert(ct);
-
-            //创建新的theme detail
-            List<ThemePlanDetail> colistDetail = themePlan.getThemePlanDetails();
-            for (ThemePlanDetail item2 : colistDetail) {
-                ThemePlanDetail ctDetail = new ThemePlanDetail();
-                ctDetail = item2;
-                ctDetail.setThemeplan_id(ct.getThemeplan_id());
-                ctDetail.setCenter_id(ct.getCenter_id());
-                ctDetail.setGroup_id(ct.getGroup_id());
-                ctDetail.setYear(ct.getYear());
-                ctDetail.preInsert(tokenModel);
-                ctDetail.setThemeplandetail_id(UUID.randomUUID().toString());
-                themePlanDetailMapper.insert(ctDetail);
-            }
-        }
     }
 
     @Override
@@ -119,15 +79,33 @@ public class ThemePlanServiceImpl implements ThemePlanService {
     }
 
     @Override
+    public List<ThemePlanDetail> getthemename(String themename) throws Exception {
+        ThemePlanDetail theme = new ThemePlanDetail();
+        theme.setThemename(themename);
+        return themePlanDetailMapper.select(theme);
+    }
+
+    //add-ws-01/06-禅道任务710
+    @Override
+    public List<ThemePlanDetail> themenametype(String type) throws Exception {
+        ThemePlanDetail theme = new ThemePlanDetail();
+        theme.setType(type);
+        return themePlanDetailMapper.select(theme);
+    }
+
+    //add-ws-01/06-禅道任务710
+    @Override
     public List<ThemePlanDetailVo> detilList(ThemePlanDetail themePlanDetail) throws Exception {
         List<ThemePlanDetailVo> colist = new ArrayList<ThemePlanDetailVo>();
         List<ThemePlanDetail> Detaillist = new ArrayList<ThemePlanDetail>();
         Detaillist = themePlanDetailMapper.select(themePlanDetail);
-        for(ThemePlanDetail tpd : Detaillist){
+        for (ThemePlanDetail tpd : Detaillist) {
             ThemePlanDetailVo Vo = new ThemePlanDetailVo();
 
             //region 赋值
             Vo.setThemeplandetail_id(tpd.getThemeplandetail_id());
+
+            Vo.setMonth(tpd.getMonth());
 
             Vo.setThemeplan_id(tpd.getThemeplan_id());
 
@@ -138,10 +116,6 @@ public class ThemePlanServiceImpl implements ThemePlanService {
             Vo.setGroup_id(tpd.getGroup_id());
 
             Vo.setYear(tpd.getYear());
-
-            Vo.setMonth(tpd.getMonth());
-
-            Vo.setTheme_id(tpd.getTheme_id());
 
             Vo.setThemename(tpd.getThemename());
 
@@ -157,17 +131,38 @@ public class ThemePlanServiceImpl implements ThemePlanService {
 
             Vo.setAssignor(tpd.getAssignor());
 
-            Vo.setPersonnel191(tpd.getPersonnel191());
+            //新加字段
+            Vo.setCustomerinfor_id(tpd.getCustomerinfor_id());
+            Vo.setSupplierinfor_id(tpd.getSupplierinfor_id());
+            Vo.setType(tpd.getType());
+            Vo.setWpersonnel1(tpd.getWpersonnel1());
+            Vo.setWpersonnel2(tpd.getWpersonnel2());
+            Vo.setWpersonnel3(tpd.getWpersonnel3());
+            Vo.setWpersonnel4(tpd.getWpersonnel4());
+            Vo.setWpersonnel5(tpd.getWpersonnel5());
+            Vo.setWpersonnel6(tpd.getWpersonnel6());
+            Vo.setWpersonnel7(tpd.getWpersonnel7());
+            Vo.setWpersonnel8(tpd.getWpersonnel8());
+            Vo.setWpersonnel9(tpd.getWpersonnel9());
+            Vo.setWpersonnel10(tpd.getWpersonnel10());
+            Vo.setWpersonnel11(tpd.getWpersonnel11());
+            Vo.setWpersonnel12(tpd.getWpersonnel12());
+            Vo.setSumpersonnel1(tpd.getSumpersonnel1());
+            Vo.setSumwpersonnel1(tpd.getSumwpersonnel1());
+            Vo.setSumamount1(tpd.getSumamount1());
 
-            Vo.setAmount191(tpd.getAmount191());
+            Vo.setSumpersonnel2(tpd.getSumpersonnel2());
+            Vo.setSumwpersonnel2(tpd.getSumwpersonnel2());
+            Vo.setSumamount2(tpd.getSumamount2());
 
-            Vo.setPersonnel192(tpd.getPersonnel192());
+            Vo.setSumpersonnel3(tpd.getSumpersonnel3());
+            Vo.setSumwpersonnel3(tpd.getSumwpersonnel3());
+            Vo.setSumamount3(tpd.getSumamount3());
 
-            Vo.setAmount192(tpd.getAmount192());
+            Vo.setSumpersonnel4(tpd.getSumpersonnel4());
+            Vo.setSumwpersonnel4(tpd.getSumwpersonnel4());
+            Vo.setSumamount4(tpd.getSumamount4());
 
-            Vo.setPersonnel193(tpd.getPersonnel193());
-
-            Vo.setAmount193(tpd.getAmount193());
 
             Vo.setPersonnel4(tpd.getPersonnel4());
 
@@ -217,7 +212,6 @@ public class ThemePlanServiceImpl implements ThemePlanService {
 
             Vo.setAmount3(tpd.getAmount3());
 
-            Vo.setType(tpd.getType());
 
             Vo.setRowindex(tpd.getRowindex());
 
@@ -238,11 +232,19 @@ public class ThemePlanServiceImpl implements ThemePlanService {
     }
 
     @Override
+    public List<PersonnelPlan> getAll(String groupid, String year) throws Exception {
+        PersonnelPlan personnelplan = new PersonnelPlan();
+        personnelplan.setGroupid(groupid);
+        personnelplan.setYears(year);
+        return personnelplanMapper.select(personnelplan);
+    }
+
+    @Override
     public void inserttheme(List<ThemePlanDetailVo> themePlanDetailVo, TokenModel tokenModel) throws LogicalException {
         int plancount = 0;
-        if(themePlanDetailVo.size() > 0){
+        if (themePlanDetailVo.size() > 0) {
             String themePlanid = UUID.randomUUID().toString();
-            if(!StringUtils.isNullOrEmpty(themePlanDetailVo.get(0).getThemeplan_id())){
+            if (!StringUtils.isNullOrEmpty(themePlanDetailVo.get(0).getThemeplan_id())) {
                 themePlanid = themePlanDetailVo.get(0).getThemeplan_id();
             }
             //region theme计划
@@ -250,26 +252,28 @@ public class ThemePlanServiceImpl implements ThemePlanService {
             ct.setCenter_id(themePlanDetailVo.get(0).getCenter_id());
             ct.setGroup_id(themePlanDetailVo.get(0).getGroup_id());
             ct.setYear(themePlanDetailVo.get(0).getYear());
-            ct.setType(themePlanDetailVo.get(0).getPlantype());
-            if(StringUtils.isNullOrEmpty(themePlanDetailVo.get(0).getThemeplan_id())){
+            ct.setType(themePlanDetailVo.get(0).getType());
+            if (StringUtils.isNullOrEmpty(themePlanDetailVo.get(0).getThemeplan_id())) {
                 //该group该年度theme是否已创建
                 List<ThemePlan> colist = themePlanMapper.select(ct);
                 if (colist.size() > 0) {
                     throw new LogicalException("本部门该年度theme已经创建，请到列表页中查找编辑。");
                 }
             }
+            ThemePlanDetail themeplandetail = new ThemePlanDetail();
+            themeplandetail.setThemeplan_id(themePlanDetailVo.get(0).getThemeplan_id());
+            themePlanDetailMapper.delete(themeplandetail);
             int rowindex = 0;
             for (ThemePlanDetailVo vo : themePlanDetailVo) {
                 rowindex = rowindex + 1;
                 plancount = plancount + 1;
                 String themeplandetailid = UUID.randomUUID().toString();
-                if(!StringUtils.isNullOrEmpty(vo.getThemeplandetail_id())){
+                if (!StringUtils.isNullOrEmpty(vo.getThemeplandetail_id())) {
                     themeplandetailid = vo.getThemeplandetail_id();
                 }
                 ThemePlanDetail ctDetail = new ThemePlanDetail();
 
                 //region ThemePlanDetail赋值
-
                 ctDetail.setThemeplandetail_id(vo.getThemeplandetail_id());
 
                 ctDetail.setThemeplan_id(vo.getThemeplan_id());
@@ -283,8 +287,6 @@ public class ThemePlanServiceImpl implements ThemePlanService {
                 ctDetail.setYear(vo.getYear());
 
                 ctDetail.setMonth(vo.getMonth());
-
-                ctDetail.setTheme_id(vo.getTheme_id());
 
                 ctDetail.setThemename(vo.getThemename());
 
@@ -300,17 +302,38 @@ public class ThemePlanServiceImpl implements ThemePlanService {
 
                 ctDetail.setAssignor(vo.getAssignor());
 
-                ctDetail.setPersonnel191(vo.getPersonnel191());
+                //新加字段
+                ctDetail.setCustomerinfor_id(vo.getCustomerinfor_id());
+                ctDetail.setSupplierinfor_id(vo.getSupplierinfor_id());
+                ctDetail.setType(vo.getType());
+                ctDetail.setWpersonnel1(vo.getWpersonnel1());
+                ctDetail.setWpersonnel2(vo.getWpersonnel2());
+                ctDetail.setWpersonnel3(vo.getWpersonnel3());
+                ctDetail.setWpersonnel4(vo.getWpersonnel4());
+                ctDetail.setWpersonnel5(vo.getWpersonnel5());
+                ctDetail.setWpersonnel6(vo.getWpersonnel6());
+                ctDetail.setWpersonnel7(vo.getWpersonnel7());
+                ctDetail.setWpersonnel8(vo.getWpersonnel8());
+                ctDetail.setWpersonnel9(vo.getWpersonnel9());
+                ctDetail.setWpersonnel10(vo.getWpersonnel10());
+                ctDetail.setWpersonnel11(vo.getWpersonnel11());
+                ctDetail.setWpersonnel12(vo.getWpersonnel12());
+                ctDetail.setSumpersonnel1(vo.getSumpersonnel1());
+                ctDetail.setSumwpersonnel1(vo.getSumwpersonnel1());
+                ctDetail.setSumamount1(vo.getSumamount1());
 
-                ctDetail.setAmount191(vo.getAmount191());
+                ctDetail.setSumpersonnel2(vo.getSumpersonnel2());
+                ctDetail.setSumwpersonnel2(vo.getSumwpersonnel2());
+                ctDetail.setSumamount2(vo.getSumamount2());
 
-                ctDetail.setPersonnel192(vo.getPersonnel192());
+                ctDetail.setSumpersonnel3(vo.getSumpersonnel3());
+                ctDetail.setSumwpersonnel3(vo.getSumwpersonnel3());
+                ctDetail.setSumamount3(vo.getSumamount3());
 
-                ctDetail.setAmount192(vo.getAmount192());
+                ctDetail.setSumpersonnel4(vo.getSumpersonnel4());
+                ctDetail.setSumwpersonnel4(vo.getSumwpersonnel4());
+                ctDetail.setSumamount4(vo.getSumamount4());
 
-                ctDetail.setPersonnel193(vo.getPersonnel193());
-
-                ctDetail.setAmount193(vo.getAmount193());
 
                 ctDetail.setPersonnel4(vo.getPersonnel4());
 
@@ -360,7 +383,6 @@ public class ThemePlanServiceImpl implements ThemePlanService {
 
                 ctDetail.setAmount3(vo.getAmount3());
 
-                ctDetail.setType(vo.getType());
 
                 ctDetail.setRowindex(vo.getRowindex());
 
@@ -368,50 +390,25 @@ public class ThemePlanServiceImpl implements ThemePlanService {
                 //endregion
 
                 ctDetail.setRowindex(String.valueOf(rowindex));
-                if(!StringUtils.isNullOrEmpty(ctDetail.getThemeplandetail_id())){
-                    ctDetail.preUpdate(tokenModel);
-                    ctDetail.setStatus(vo.getStatus());
-                    themePlanDetailMapper.updateByPrimaryKeySelective(ctDetail);
-                }
-                else{
+                if (!StringUtils.isNullOrEmpty(ctDetail.getThemeplandetail_id())) {
+                    ctDetail.preInsert(tokenModel);
+                    ctDetail.setThemeplandetail_id(themeplandetailid);
+                    ctDetail.setThemeplan_id(themePlanid);
+                    themePlanDetailMapper.insert(ctDetail);
+                } else {
                     ctDetail.preInsert(tokenModel);
                     ctDetail.setThemeplandetail_id(themeplandetailid);
                     ctDetail.setThemeplan_id(themePlanid);
                     themePlanDetailMapper.insert(ctDetail);
                 }
-                if(vo.getChildren().size() > 0){
-                    int derowindex = 0;
-                    for (ThemePlanDetail tpd : vo.getChildren()) {
-                        derowindex = derowindex + 1;
-                        plancount = plancount + 1;
-                        ThemePlanDetail themePlanDetail = tpd;
-                        themePlanDetail.setRowindex(String.valueOf(derowindex));
-                        themePlanDetail.setCenter_id(ctDetail.getCenter_id());
-                        themePlanDetail.setGroup_id(ctDetail.getGroup_id());
-                        themePlanDetail.setYear(ctDetail.getYear());
-                        if(!StringUtils.isNullOrEmpty(themePlanDetail.getThemeplandetail_id())){
-                            themePlanDetail.preUpdate(tokenModel);
-                            themePlanDetail.setStatus(tpd.getStatus());
-                            themePlanDetailMapper.updateByPrimaryKeySelective(themePlanDetail);
-                        }
-                        else{
-                            themePlanDetail.preInsert(tokenModel);
-                            themePlanDetail.setThemeplandetail_id(UUID.randomUUID().toString());
-                            themePlanDetail.setPthemeplandetail_id(themeplandetailid);
-                            themePlanDetail.setThemeplan_id(themePlanid);
-                            themePlanDetailMapper.insert(themePlanDetail);
-                        }
-                    }
-                }
+
             }
             ct.setPlancount(String.valueOf(plancount));
-            if(StringUtils.isNullOrEmpty(themePlanDetailVo.get(0).getThemeplan_id())){
+            if (StringUtils.isNullOrEmpty(themePlanDetailVo.get(0).getThemeplan_id())) {
                 ct.setThemeplan_id(themePlanid);
-                ct.setFinancialprocessingflg("0");
                 ct.preInsert(tokenModel);
                 themePlanMapper.insert(ct);
-            }
-            else{
+            } else {
                 ct.preUpdate(tokenModel);
                 ct.setThemeplan_id(themePlanDetailVo.get(0).getThemeplan_id());
                 ct.setStatus(themePlanDetailVo.get(0).getStatus());

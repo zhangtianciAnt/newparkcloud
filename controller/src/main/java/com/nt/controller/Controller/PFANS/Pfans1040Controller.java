@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Pfans.PFANS1000.PersonnelPlan;
 import com.nt.dao_Pfans.PFANS1000.ThemePlan;
 import com.nt.dao_Pfans.PFANS1000.ThemePlanDetail;
 import com.nt.dao_Pfans.PFANS1000.Vo.ThemePlanDetailVo;
@@ -31,6 +32,21 @@ public class Pfans1040Controller {
     @Autowired
     private TokenService tokenService;
 
+    @RequestMapping(value = "/getdataList", method = {RequestMethod.GET})
+    public ApiResult getdataList(String groupid,String year,HttpServletRequest request) throws Exception {
+
+        return ApiResult.success(themePlanService.getAll(groupid,year));
+    }
+    @RequestMapping(value = "/getthemename", method = {RequestMethod.GET})
+    public ApiResult getthemename(String themename, HttpServletRequest request) throws Exception {
+        return ApiResult.success(themePlanService.getthemename(themename));
+    }
+    //add-ws-01/06-禅道任务710
+    @RequestMapping(value = "/themenametype", method = {RequestMethod.GET})
+    public ApiResult themenametype(String type, HttpServletRequest request) throws Exception {
+        return ApiResult.success(themePlanService.themenametype(type));
+    }
+    //add-ws-01/06-禅道任务710
     @RequestMapping(value = "/getList", method = {RequestMethod.POST})
     public ApiResult list(@RequestBody ThemePlan themePlan, HttpServletRequest request) throws Exception {
         if (themePlan == null) {
@@ -39,16 +55,6 @@ public class Pfans1040Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         themePlan.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(themePlanService.getList(themePlan));
-    }
-
-    @RequestMapping(value = "/get", method = {RequestMethod.POST})
-    public ApiResult one(@RequestBody ThemePlan themePlan, HttpServletRequest request) throws Exception {
-        if (themePlan == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        themePlan.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(themePlanService.get(themePlan));
     }
 
     @RequestMapping(value = "/getdetilList", method = {RequestMethod.POST})
@@ -61,12 +67,6 @@ public class Pfans1040Controller {
         return ApiResult.success(themePlanService.detilList(themePlanDetail));
     }
 
-    @RequestMapping(value = "/insert", method = {RequestMethod.POST})
-    public ApiResult insert(@RequestBody ThemePlanVo themePlan, HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        themePlanService.insert(themePlan, tokenModel);
-        return ApiResult.success();
-    }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
     public ApiResult update(@RequestBody ThemePlanVo themePlan, HttpServletRequest request) throws Exception {
