@@ -32,4 +32,6 @@ public class PersonnelPlan extends BaseModel {
     //新入职人员
     private String newentry;
 
+    //人均单价
+    private String moneyavg;
 }
