@@ -253,15 +253,30 @@ public class Pfans1045Controller {
             for (PolicyContract list : policylist) {
                 String starttime = list.getYearss().substring(0, 7);
                 String endtime = list.getYearss().substring(10, 17);
-                 if (Integer.valueOf(starttime.replace("-", "")) <= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) >= Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
-                    return ApiResult.success(false);
-                } else if (Integer.valueOf(starttime.replace("-", "")) >= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) >= Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
-                    return ApiResult.success(false);
-                } else if (Integer.valueOf(starttime.replace("-", "")) <= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) <= Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
-                    return ApiResult.success(false);
-                } else if (Integer.valueOf(starttime.replace("-", "")) >= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) <= Integer.valueOf(policycontract.getYearss().replace("-", ""))) {
-                    return ApiResult.success(false);
-                } 
+                  //数开<=条结 && 数结>=条开
+                //1.数开<=条开  && 数结<=条结
+                //2.数开<=条开  && 数结>=条结
+                //3.数开>=条开  && 数结>=条结
+                //4.数开>=条开  && 数结<=条结
+                if(Integer.valueOf(starttime.replace("-", "")) <= Integer.valueOf(policycontract.getYearss().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) >= Integer.valueOf(policycontract.getCycle().replace("-", "")))
+                {
+                    if(Integer.valueOf(starttime.replace("-", "")) <= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) <= Integer.valueOf(policycontract.getYearss().replace("-", "")))
+                    {
+                        return ApiResult.success(false);
+                    }
+                    else if(Integer.valueOf(starttime.replace("-", "")) <= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) >= Integer.valueOf(policycontract.getYearss().replace("-", "")))
+                    {
+                        return ApiResult.success(false);
+                    }
+                    else if(Integer.valueOf(starttime.replace("-", "")) >= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) >= Integer.valueOf(policycontract.getYearss().replace("-", "")))
+                    {
+                        return ApiResult.success(false);
+                    }
+                    else if(Integer.valueOf(starttime.replace("-", "")) >= Integer.valueOf(policycontract.getCycle().replace("-", "")) && Integer.valueOf(endtime.replace("-", "")) <= Integer.valueOf(policycontract.getYearss().replace("-", "")))
+                    {
+                        return ApiResult.success(false);
+                    }
+                }
             }
         }
         return ApiResult.success(true);
