@@ -401,6 +401,7 @@ public class GivingServiceImpl implements GivingService {
                         } else {
                             otherOne.setHandsupport("0");
                         }
+                        otherOne.setHandsupport(StrNursingleave);
                         otherOne.setType("2");
                     }
                     otherOne.setStatus(AuthConstants.DEL_FLAG_NORMAL);
@@ -581,7 +582,12 @@ public class GivingServiceImpl implements GivingService {
                 }
 
                 //入社日
-                base.setWorkdate(formatStringDateadd(customer.getUserinfo().getEnterday()));
+                if (customer.getUserinfo().getEnterday().indexOf("Z") > 0) {
+                    base.setWorkdate(customer.getUserinfo().getEnterday().replace("-", "/").substring(0, 10));
+                }
+                else{
+                    base.setWorkdate(formatStringDateadd(customer.getUserinfo().getEnterday()));
+                }
                 base.setRowindex(rowindex);
                 /*group id -lxx*/
                 base.setGroupid(customer.getUserinfo().getGroupid());
@@ -1683,7 +1689,8 @@ public class GivingServiceImpl implements GivingService {
             // 前月小时工资
             //double salaryPerHour = Double.parseDouble(base.getThismonth()) / 21.75d / 8d;
             //上月基本工资
-            double salaryPerHour = Double.parseDouble(base.getLastmonthbasic()) / 21.75d / 8d;
+            //double salaryPerHour = Double.parseDouble(base.getLastmonthbasic()) / 21.75d / 8d;
+            double salaryPerHour = Double.parseDouble(base.getLastmonth()) / 21.75d / 8d;
             // 2020/06/05 UPDATE by myt END //GBB
             // 平日加班费 150%
             total += isOverR8 ? 0d : Double.parseDouble(ifNull(residual.getLastweekdays())) * salaryPerHour * 1.5d;
@@ -2007,21 +2014,21 @@ public class GivingServiceImpl implements GivingService {
         // UPD_GBB_2020/06/11 update
         if ("pre".equals(mode)) {   // 前月欠勤费用
             // 欠勤费用-正式
-            double Lastdiligenceformal = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getLastdiligenceformal())) * preSalaryPerHour).setScale(2, RoundingMode.UP).doubleValue();
+            double Lastdiligenceformal = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getLastdiligenceformal())) * preSalaryPerHour).setScale(2, RoundingMode.HALF_UP).doubleValue();
             // 欠勤费用-试用
-            double Lastdiligencetry = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getLastdiligencetry())) * preSalaryPerHour).setScale(2, RoundingMode.UP).doubleValue();
+            double Lastdiligencetry = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getLastdiligencetry())) * preSalaryPerHour).setScale(2, RoundingMode.HALF_UP).doubleValue();
             // 短病欠-正式
             double Lastshortdeficiencyformal = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencyformal())) * preSalaryPerHour
-                    * Double.parseDouble(shortDictionary.getValue2())).setScale(2, RoundingMode.UP).doubleValue();
+                    * Double.parseDouble(shortDictionary.getValue2())).setScale(2, RoundingMode.HALF_UP).doubleValue();
             // 短病欠-试用
             double Lastshortdeficiencytry = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getLastshortdeficiencytry())) * preSalaryPerHour
-                    * Double.parseDouble(shortDictionary.getValue2())).setScale(2, RoundingMode.UP).doubleValue();
+                    * Double.parseDouble(shortDictionary.getValue2())).setScale(2, RoundingMode.HALF_UP).doubleValue();
             // 长病欠-正式(本月工资- 上月工资/21.75/8*长病假 + 1810/21.75/8*长病假 )
             //total += Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencyformal())) * longSalary;
-            double Lastchronicdeficiencyformal1 = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencyformal())) * preSalaryPerHour).setScale(2, RoundingMode.UP).doubleValue();
-            double Lastchronicdeficiencyformal = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencyformal())) * longSalary).setScale(2, RoundingMode.UP).doubleValue();
+            double Lastchronicdeficiencyformal1 = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencyformal())) * preSalaryPerHour).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            double Lastchronicdeficiencyformal = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencyformal())) * longSalary).setScale(2, RoundingMode.HALF_UP).doubleValue();
             // 长病欠-试用
-            double Lastchronicdeficiencytry = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencytry())) * longSalary).setScale(2, RoundingMode.UP).doubleValue();
+            double Lastchronicdeficiencytry = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getLastchronicdeficiencytry())) * longSalary).setScale(2, RoundingMode.HALF_UP).doubleValue();
 
             //费用-正式
             double totala = - Lastdiligenceformal - Lastshortdeficiencyformal - Lastchronicdeficiencyformal1 + Lastchronicdeficiencyformal;
@@ -2030,21 +2037,21 @@ public class GivingServiceImpl implements GivingService {
             total = totala + totalb;
         } else {    // 当月欠勤费用
             // 欠勤费用-正式
-            double Thisdiligenceformal = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getThisdiligenceformal())) * currentSalaryPerHour).setScale(2, RoundingMode.UP).doubleValue();
+            double Thisdiligenceformal = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getThisdiligenceformal())) * currentSalaryPerHour).setScale(2, RoundingMode.HALF_UP).doubleValue();
             // 欠勤费用-试用
-            double Thisdiligencetry = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getThisdiligencetry())) * currentSalaryPerHour).setScale(2, RoundingMode.UP).doubleValue();
+            double Thisdiligencetry = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getThisdiligencetry())) * currentSalaryPerHour).setScale(2, RoundingMode.HALF_UP).doubleValue();
 
             // 短病欠-正式
             double Thisshortdeficiencyformal = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencyformal())) * currentSalaryPerHour
-                    * Double.parseDouble(shortDictionary.getValue2())).setScale(2, RoundingMode.UP).doubleValue();
+                    * Double.parseDouble(shortDictionary.getValue2())).setScale(2, RoundingMode.HALF_UP).doubleValue();
             // 短病欠-试用
             double Thisshortdeficiencytry = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getThisshortdeficiencytry())) * currentSalaryPerHour
-                    * Double.parseDouble(shortDictionary.getValue2())).setScale(2, RoundingMode.UP).doubleValue();
+                    * Double.parseDouble(shortDictionary.getValue2())).setScale(2, RoundingMode.HALF_UP).doubleValue();
 
             // 长病欠-正式
-            double Thischronicdeficiencyformal = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencyformal())) * longSalary).setScale(2, RoundingMode.UP).doubleValue();
+            double Thischronicdeficiencyformal = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencyformal())) * longSalary).setScale(2, RoundingMode.HALF_UP).doubleValue();
             // 长病欠-试用
-            double Thischronicdeficiencytry = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary).setScale(2, RoundingMode.UP).doubleValue();
+            double Thischronicdeficiencytry = new BigDecimal(Double.parseDouble(ifNull(lackattendance.getThischronicdeficiencytry())) * longSalary).setScale(2, RoundingMode.HALF_UP).doubleValue();
             //费用-正式
             double totala = - Thisdiligenceformal - Thisshortdeficiencyformal - Thisshortdeficiencytry;
             //费用-试用
