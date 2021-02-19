@@ -40,20 +40,20 @@
         like CONCAT('%',#{year},'%')
     </select>
     <!--add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-start    -->
-    <select id="getFuzzyQuery" parameterType="list" resultType="com.nt.dao_Pfans.PFANS2000.PersonalCost">
+    <select id="getFuzzyQuery"  resultType="com.nt.dao_Pfans.PFANS2000.PersonalCost">
         SELECT * FROM personalcost
         where yearsantid = #{yearsantid}
-        <if test="USERNAME!=null and USERNAME!=''">
-        and USERNAME LIKE CONCAT('%',#{username},'%')
+        <if test="username!=null and username!=''">
+            and USERNAME LIKE CONCAT('%',#{username},'%')
         </if>
-        <if test="ALLOTMENT!=null and ALLOTMENT!=''">
-        and ALLOTMENT LIKE CONCAT('%',#{allotmentAnt},'%')
+        <if test="allotmentAnt!=null and allotmentAnt!=''">
+            and ALLOTMENT LIKE CONCAT('%',#{allotmentAnt},'%')
         </if>
-        <if test="GROUPID!=null and GROUPID!=''">
-        AND GROUPID LIKE CONCAT('%',#{group_id},'%')
+        <if test="group_id!=null and group_id!=''">
+            AND GROUPID LIKE CONCAT('%',#{group_id},'%')
         </if>
-        <if test="LTRANK!=null and LTRANK!=''">
-        AND LTRANK LIKE CONCAT('%',#{rnAnt},'%')
+        <if test="rnAnt!=null and rnAnt!=''">
+            AND LTRANK LIKE CONCAT('%',#{rnAnt},'%')
         </if>
     </select>
     <!--add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-end    -->
