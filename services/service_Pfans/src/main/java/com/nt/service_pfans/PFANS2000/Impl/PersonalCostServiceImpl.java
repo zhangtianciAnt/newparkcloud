@@ -178,7 +178,7 @@ public class PersonalCostServiceImpl implements PersonalCostService {
                 }
                 personalCost.setUserid(custInfoAnt.getUserid());
                 personalCost.setUsername(custInfoAnt.getUserinfo().getCustomername());
-                personalCost.setUsername(custInfoAnt.getUserinfo().getBudgetunit());
+                personalCost.setDepartshort(custInfoAnt.getUserinfo().getBudgetunit());
                 //配付
                 if (allotmentList.contains(custInfoAnt.getUserinfo().getGroupid())) {
                     personalCost.setAllotment("PR068002");
