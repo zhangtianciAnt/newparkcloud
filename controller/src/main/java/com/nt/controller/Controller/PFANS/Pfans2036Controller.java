@@ -113,4 +113,10 @@ public class Pfans2036Controller {
         personalCostService.upPersonalCost(personalCostList, tokenModel);
         return ApiResult.success();
     }
+    //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-start
+    @RequestMapping(value = "/getFuzzyQuery", method = {RequestMethod.GET})
+    public ApiResult getFuzzyQuery(String yearsantid,String username,String allotmentAnt,String group_id,String rnAnt) throws Exception {
+        PersonalCost personalcost = new PersonalCost();
+        return ApiResult.success(personalCostService.getFuzzyQuery(yearsantid,username,allotmentAnt,group_id,rnAnt));
+    }
 }

@@ -32,4 +32,7 @@ public interface PersonalCostService {
 
     public void upPersonalCost(List<PersonalCost> personalCostList, TokenModel tokenModel) throws Exception;
 
+    //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-start
+    List<PersonalCost> getFuzzyQuery (String yearsantid,String username,String allotmentAnt,String group_id,String rnAnt) throws Exception;
+    //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-end
 }

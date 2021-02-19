@@ -794,5 +794,15 @@ public class PersonalCostServiceImpl implements PersonalCostService {
 //        return recruitMapper.select(recruit);
 //    }
 
-
+    //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-start
+    @Override
+    public  List<PersonalCost> getFuzzyQuery(String yearsantid,String username,String allotmentAnt,String group_id,String rnAnt) throws Exception {
+        List<PersonalCost> personalCost = new ArrayList<>();
+        if (group_id.equals("全部")) {
+            group_id = "";
+        }
+        personalCost = personalCostMapper.getFuzzyQuery(yearsantid,username,allotmentAnt,group_id,rnAnt);
+        return personalCost;
+    }
+    //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-end
 }

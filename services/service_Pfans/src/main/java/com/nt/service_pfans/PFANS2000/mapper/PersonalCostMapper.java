@@ -52,4 +52,8 @@ public interface PersonalCostMapper extends MyMapper<PersonalCost>{
     void updatePersonalCost(@Param("uplist") List<PersonalCost> personalCostList, @Param("tokenModel") TokenModel tokenModel);
 
     List<String> selectBirthUserid(@Param("year") String year);
+
+    @Select("SELECT * FROM personalcost where USERNAME LIKE CONCAT('%',#{username},'%') AND ALLOTMENT LIKE CONCAT('%',#{allotmentAnt},'%') AND GROUPID LIKE CONCAT('%',#{group_id},'%') AND LTRANK LIKE CONCAT('%',#{rnAnt},'%')")
+    List<PersonalCost> getFuzzyQuery(@Param("yearsantid") String yearsantid,@Param("username") String username,@Param("allotmentAnt") String allotmentAnt,@Param("group_id") String group_id,@Param("rnAnt") String rnAnt);
+
 }
