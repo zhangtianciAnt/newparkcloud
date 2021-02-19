@@ -53,7 +53,7 @@ public interface PersonalCostMapper extends MyMapper<PersonalCost>{
 
     List<String> selectBirthUserid(@Param("year") String year);
 
-    @Select("SELECT * FROM personalcost where yearsantid = #{yearsantid} and USERNAME LIKE CONCAT('%',#{username},'%') AND ALLOTMENT LIKE CONCAT('%',#{allotmentAnt},'%') AND GROUPID LIKE CONCAT('%',#{group_id},'%') AND LTRANK LIKE CONCAT('%',#{rnAnt},'%')")
+    //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-start
     List<PersonalCost> getFuzzyQuery(@Param("yearsantid") String yearsantid,@Param("username") String username,@Param("allotmentAnt") String allotmentAnt,@Param("group_id") String group_id,@Param("rnAnt") String rnAnt);
-
+    //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-end
 }
