@@ -134,7 +134,7 @@ public class ExisttrainarchivesServicesImpl implements ExisttrainarchivesService
                 for (int i = 1; i < list.size(); i++) {
                     k += 1;
                     Existtrainarchives existtrainarchives = new Existtrainarchives();
-                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
                     List<Object> value = list.get(i);
                     //标识
                     try {
