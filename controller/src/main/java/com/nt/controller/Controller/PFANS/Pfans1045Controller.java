@@ -37,7 +37,7 @@ public class Pfans1045Controller {
     @Autowired
     private TokenService tokenService;
 
-    //UPD-ws-02/06-PSDCD_PFANS_20210205_XQ_078
+    //UPD-ws-02/06-PSDCD_PFANS_20210205_XQ_078-from
 //    @RequestMapping(value = "/get", method = {RequestMethod.POST})
 //    public ApiResult getPolicyContract(@RequestBody PolicyContract policycontract, HttpServletRequest request) throws Exception {
 //        SimpleDateFormat sf = new SimpleDateFormat("MM");
@@ -103,7 +103,7 @@ public class Pfans1045Controller {
 
     }
 
-    //UPD-ws-02/06-PSDCD_PFANS_20210205_XQ_078
+    //UPD-ws-02/06-PSDCD_PFANS_20210205_XQ_078-to
     @RequestMapping(value = "/get2", method = {RequestMethod.GET})
     public ApiResult getPolicyContract2(HttpServletRequest request) throws Exception {
         List<PolicyContract> PolicyContractlist = policycontractmapper.selectAll();
@@ -159,7 +159,7 @@ public class Pfans1045Controller {
         return ApiResult.success(policycontractservice.check(policycontract, tokenModel));
     }
 
-    //UPD-ws-02/06-PSDCD_PFANS_20210205_XQ_078
+    //UPD-ws-02/06-PSDCD_PFANS_20210205_XQ_078-from
 //    @RequestMapping(value = "/chackcycle", method = {RequestMethod.POST})
 //    public ApiResult chackcycle(@RequestBody PolicyContract policycontract, HttpServletRequest request) throws Exception {
 //        if (policycontract == null) {
@@ -282,5 +282,5 @@ public class Pfans1045Controller {
         }
         return ApiResult.success(true);
     }
-    //UPD-ws-02/06-PSDCD_PFANS_20210205_XQ_078
+    //UPD-ws-02/06-PSDCD_PFANS_20210205_XQ_078-to
 }
