@@ -8,6 +8,7 @@ import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.*;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_Org.mapper.DictionaryMapper;
+import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
@@ -115,6 +116,8 @@ public class GivingServiceImpl implements GivingService {
 
     @Autowired
     private AnnualLeaveMapper annualLeaveMapper;
+    @Autowired
+    private AnnualLeaveService annualLeaveService;
 
     private static List<CustomerInfo> customerInfos;
     private static List<CustomerInfo> customerinfoAll;
@@ -123,9 +126,11 @@ public class GivingServiceImpl implements GivingService {
 
     private static final SimpleDateFormat sdfYM = new SimpleDateFormat("yyyyMM");
     private static final SimpleDateFormat sdfYMD = new SimpleDateFormat("yyyy/MM/dd");
+    private static final SimpleDateFormat sdfYMD1 = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat sdfUTC = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
     // 日期基数
     private static final double dateBase = 21.75;
+    private static final String strDate = "T16:00:00.000Z";
 
     @PostConstruct
     public void init() {
@@ -2579,7 +2584,7 @@ public class GivingServiceImpl implements GivingService {
         query.addCriteria(criteria);
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         if (customerInfos.size() > 0) {
-            for (CustomerInfo customerInfo : customerInfos) {//111
+            for (CustomerInfo customerInfo : customerInfos) {
 
                 //转正日
                 if (StringUtils.isEmpty(customerInfo.getUserinfo().getEnddate())) {
@@ -2613,6 +2618,43 @@ public class GivingServiceImpl implements GivingService {
                 else{//正式
                     retire.setLunch(df.format(officialSubsidy / dateBase * attendanceDays));
                 }
+                //insert gbb NT_PFANS_20210222_BUG_024 退职人员结算年休  start
+                SimpleDateFormat st = new SimpleDateFormat("yyyy-MM-dd");
+                if (customerInfo.getUserinfo().getResignation_date().indexOf(strDate) != -1) {
+                    Date temp = st.parse(customerInfo.getUserinfo().getResignation_date());
+                    Calendar cld = Calendar.getInstance();
+                    cld.setTime(temp);
+                    cld.add(Calendar.DATE, 1);
+                    temp = cld.getTime();
+                    //获得下一天日期字符串
+                    retire.setRetiredate(sdfYMD1.parse(sdfYMD1.format(temp)));
+                }
+                else{
+                    retire.setRetiredate(st.parse(customerInfo.getUserinfo().getResignation_date()));
+                }
+                Calendar calendar = Calendar.getInstance();
+                int year = 0;
+                int month = calendar.get(Calendar.MONTH)+1;
+                if(month >= 1 && month <= 3) {
+                    year = calendar.get(Calendar.YEAR) - 1;
+                }else {
+                    year = calendar.get(Calendar.YEAR);
+                }
+                String remaning = "0";
+                remaning = annualLeaveService.remainingAnnual(customerInfo.getUserid(),String.valueOf(year));
+                BigDecimal b1 = new BigDecimal(Double.parseDouble(thisMonthSalary) / dateBase / 8 * 2 * Double.parseDouble(remaning));
+                BigDecimal b2 = new BigDecimal(retire.getGive());
+                double strannualleavegive = b1.add(b2).doubleValue();
+                //4月份计算工资此处无需计算，工资详情中的最终工资会集中体现
+                if(month != 4){
+                    ///剩余年休
+                    retire.setAnnualleave(remaning);
+                    //年休结算
+                    retire.setAnnualleavegive(b1.toString());
+                    //给料
+                    retire.setGive(df.format(strannualleavegive));
+                }
+                //insert gbb NT_PFANS_20210222_BUG_024 退职人员结算年休  end
                 retires.add(retire);
             }
         }
