@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS2000.Lunarbonus;
 import com.nt.dao_Pfans.PFANS2000.Lunardetail;
 import com.nt.dao_Pfans.PFANS2000.Vo.LunarAllVo;
@@ -40,9 +41,9 @@ public class Pfans2027Controller {
 
     @RequestMapping(value = "/getList", method = {RequestMethod.GET})
     public ApiResult getList(HttpServletRequest request) throws Exception {
-//        TokenModel tokenModel = tokenService.getToken(request);
+        TokenModel tokenModel = tokenService.getToken(request);
 //        wagesService.select(tokenModel);
-        return ApiResult.success(lunarbonusService.getList());
+        return ApiResult.success(lunarbonusService.getList(tokenModel));
     }
 //考课对象List
     @RequestMapping(value = "/getExaminationobject", method = {RequestMethod.GET})
@@ -107,6 +108,21 @@ public class Pfans2027Controller {
         return ApiResult.success(lunarbonusService.getOne(lunarbonus_id,tokenModel));
     }
 
+    //发起待办
+    @RequestMapping(value="/createTodonotice",method = {RequestMethod.POST})
+    public ApiResult createTodonotice(@RequestBody Lunarbonus lunarbonus,HttpServletRequest request) throws Exception{
+        TokenModel tokenModel = tokenService.getToken(request);
+        lunarbonusService.createTodonotice(lunarbonus,tokenModel);
+        return ApiResult.success();
+    }
+
+    //结束评价
+    @RequestMapping(value="/overTodonotice",method = {RequestMethod.POST})
+    public ApiResult overTodonotice(HttpServletRequest request) throws Exception{
+        TokenModel tokenModel = tokenService.getToken(request);
+        lunarbonusService.overTodonotice(tokenModel);
+        return ApiResult.success();
+    }
 
 
 }

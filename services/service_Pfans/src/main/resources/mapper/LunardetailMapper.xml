@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS2000.mapper.LunardetailMapper">
+<!--    查询计算出勤率-->
+    <select id="selectWorkrate" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
+        SELECT `OWNER` user_id, TIME_START/my_AttendanceDays(#{YearM,jdbcType=VARCHAR}) workrate
+        FROM
+        (SELECT `OWNER`, SUM(TIME_START) TIME_START
+        FROM logmanagement
+        WHERE   DATE_FORMAT(LOG_DATE,'%Y%m') = #{YearM,jdbcType=VARCHAR}
+        GROUP BY `OWNER`) log
+    </select>
+<!--    查询前年的赏与记号-->
+    <select id="selectSign" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
+        SELECT USER_ID, BONUSSIGN
+        FROM lunardetail
+        WHERE EVALUATIONDAY = #{Years} AND `MONTH` = #{Types}
+        GROUP BY USER_ID
+    </select>
+    <!--    查询前回月度评价记号-->
+    <select id="selectSymbol" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
+        SELECT USER_ID, LASTSYMBOL
+        FROM lunardetail
+        WHERE EVALUATIONDAY = #{Years} AND `MONTH` = #{Typess}
+        GROUP BY USER_ID
+    </select>
+<!--更新Process字段-->
+    <select id="updateProcesT" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
+        UPDATE lunardetail
+        SET PROCESS = #{Process}
+        WHERE TEAM_ID = #{Tmid}
+    </select>
+    <select id="updateProcesG" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
+        UPDATE lunardetail
+        SET PROCESS = #{Process}
+        WHERE GROUP_ID = #{Gpid}
+    </select>
+    <select id="updateProcesC" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
+        UPDATE lunardetail
+        SET PROCESS = #{Process}
+        WHERE CENTER_ID = #{Crid}
+    </select>
+    <select id="updateProcess1" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
+        UPDATE lunardetail
+        SET PROCESS = #{Process}
+    </select>
+    <select id="selectProes" parameterType="list" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
+        select user_id
+        from lunardetail
+        where user_id in
+        <foreach collection="userIdList" index="index" item="item" open="("
+                 separator="," close=")">
+            (#{item})
+        </foreach>
+        and PROCESS = '0'
+    </select>
+
+    <select id="selectTeam" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
+        SELECT *
+        FROM lunardetail
+        WHERE  1 = 1 AND USER_ID !=  #{Self}
+        <if test="lunardetailList != null and lunardetailList.size() > 0 ">
+            AND TEAM_ID IN
+            <foreach item="item" index="index" collection="lunardetailList"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY USER_ID, `MONTH`
+    </select>
+
+    <select id="selectGroup" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
+        SELECT *
+        FROM lunardetail
+        WHERE  1 = 1 AND USER_ID !=  #{Self}
+        <if test="lunardetailList != null and lunardetailList.size() > 0 ">
+            AND GROUP_ID IN
+            <foreach item="item" index="index" collection="lunardetailList"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY USER_ID, `MONTH`
+    </select>
+
+    <select id="selectCenter" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
+        SELECT *
+        FROM lunardetail
+        WHERE  1 = 1 AND USER_ID !=  #{Self}
+        <if test="lunardetailList != null and lunardetailList.size() > 0 ">
+            AND CENTER_ID IN
+            <foreach item="item" index="index" collection="lunardetailList"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        ORDER BY USER_ID, `MONTH`
+    </select>
+
+    <select id="selectResult" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
+        SELECT *
+        FROM lunardetail
+        WHERE  EVALUATENUM = #{Evanum} AND EVALUATIONDAY = #{Evaday} AND SUBJECTMON = #{Submon} AND USER_ID !=  #{Self}
+        ORDER BY USER_ID, `MONTH`
+    </select>
+</mapper>
