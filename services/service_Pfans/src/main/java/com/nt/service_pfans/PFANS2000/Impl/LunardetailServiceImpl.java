@@ -1,11 +1,17 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.core.util.StrUtil;
+import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Pfans.PFANS1000.Vo.OrgTreeVo;
 import com.nt.dao_Pfans.PFANS2000.Examinationproject;
 import com.nt.dao_Pfans.PFANS2000.Lunarbasic;
+import com.nt.dao_Pfans.PFANS2000.Lunarbonus;
 import com.nt.dao_Pfans.PFANS2000.Lunardetail;
 import com.nt.dao_Pfans.PFANS2000.Vo.LunarAllVo;
 import com.nt.dao_Pfans.PFANS2000.Vo.LunardetailVo;
+import com.nt.service_Org.OrgTreeService;
+import com.nt.service_pfans.PFANS2000.LunarbonusService;
 import com.nt.service_pfans.PFANS2000.LunardetailService;
 import com.nt.service_pfans.PFANS2000.mapper.ExaminationprojectMapper;
 import com.nt.service_pfans.PFANS2000.mapper.LunarbasicMapper;
@@ -14,10 +20,12 @@ import com.nt.service_pfans.PFANS2000.mapper.LunardetailMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -27,6 +35,11 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor=Exception.class)
 public class LunardetailServiceImpl implements LunardetailService {
 
+    @Autowired
+    private LunarbonusService lunarbonusService;
+
+    @Autowired
+    private OrgTreeService orgTreeService;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -62,7 +75,7 @@ public class LunardetailServiceImpl implements LunardetailService {
 
         return lunardetailMapper.select(lunardetail);
     }
-//获取详情状态
+    //获取详情状态
     @Override
     public List<Examinationproject> getExam(String id) throws Exception {
         Examinationproject e = new Examinationproject();
@@ -75,8 +88,8 @@ public class LunardetailServiceImpl implements LunardetailService {
     @Override
     public void update(LunarAllVo lunarAllVo, TokenModel tokenModel) throws Exception {
         lunarAllVo.getLunarbonus().preUpdate(tokenModel);
+        String strLunarbonus_id = lunarAllVo.getLunarbonus().getLunarbonus_id();
         lunarbonusMapper.updateByPrimaryKey(lunarAllVo.getLunarbonus());
-
         for(Lunardetail item : lunarAllVo.getLunardetail()){
             if(StrUtil.isEmpty(item.getLunardetail_id())){
 
@@ -87,7 +100,6 @@ public class LunardetailServiceImpl implements LunardetailService {
             }else{
                 item.preUpdate(tokenModel);
                 lunardetailMapper.updateByPrimaryKey(item);
-
             }
         }
 

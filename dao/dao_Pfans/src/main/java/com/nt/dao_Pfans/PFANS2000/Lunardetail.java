@@ -16,7 +16,7 @@ import java.util.Date;
 @Table(name = "lunardetail")
 public class Lunardetail extends BaseModel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "LUNARDETAIL_ID")
@@ -129,6 +129,12 @@ public class Lunardetail extends BaseModel {
     @Column(name = "DIFFERENCE")
     private String difference;
 
+    @Column(name = "PRIZE")
+    private String prize;
+
+    @Column(name = "MONTH")
+    private String month;
+
     @Column(name = "EVALUATIONDAY")
     private String evaluationday;
 
@@ -138,6 +144,9 @@ public class Lunardetail extends BaseModel {
     @Column(name = "OCCUPATIONTYPE")
     private String occupationtype;
 
+    //    评价进程
+    @Column(name = "PROCESS")
+    private String process;
 
 
 }
