@@ -119,4 +119,5 @@ public class Pfans2036Controller {
         PersonalCost personalcost = new PersonalCost();
         return ApiResult.success(personalCostService.getFuzzyQuery(yearsantid,username,allotmentAnt,group_id,rnAnt));
     }
+
 }
