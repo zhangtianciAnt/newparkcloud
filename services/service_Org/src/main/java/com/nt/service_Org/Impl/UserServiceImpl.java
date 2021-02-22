@@ -9,6 +9,7 @@ import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.*;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.Vo.UserAccountVo;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
@@ -2693,5 +2694,18 @@ public class UserServiceImpl implements UserService {
             }
         }
         return customerInfoList;
+    }
+    //add-21/2/3-PSDCD_PFANS_20201124_XQ_033
+    @Override
+    public void checkpassword(UserAccountVo userAccountVo) throws Exception {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(userAccountVo.getUserid()));
+        query.addCriteria(Criteria.where("password").is(userAccountVo.getPassword()));
+        List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+        if (userAccountlist.size() > 0) {
+            throw new LogicalException("1");
+        } else {
+            throw new LogicalException("0");
+        }
     }
 }
