@@ -137,6 +137,7 @@ public class SupplierinforServiceImpl implements SupplierinforService {
             model.add("人员规模");
             model.add("网址");
             model.add("备注");
+            model.add("统计区分");
 
             List<Object> key = list.get(0);
             for (int i = 0; i < key.size(); i++) {
@@ -206,8 +207,8 @@ public class SupplierinforServiceImpl implements SupplierinforService {
                     }
                     if (value.size() > 6) {
                         supplierinfor.setPayeename(Convert.toStr(value.get(6)));
-                        if (supplierinfor.getPayeename() != null && supplierinfor.getPayeename().length() > 20) {
-                            throw new LogicalException("第" + i + "行 收款方全称 长度超长，最大长度为20");
+                        if (supplierinfor.getPayeename() != null && supplierinfor.getPayeename().length() > 50) {
+                            throw new LogicalException("第" + i + "行 收款方全称 长度超长，最大长度为50");
                         }
                     }
                     if (value.size() > 7) {
@@ -322,6 +323,20 @@ public class SupplierinforServiceImpl implements SupplierinforService {
                             }
                         }
                     }
+                    //insert gbb 20210223 PSDCD_PFANS_20201122_XQ_042 添加统计区分字段 start
+                    //统计区分
+                    if (value.size() > 24) {
+                        String statistics = Convert.toStr(value.get(24));
+                        if (StrUtil.isNotBlank(statistics)) {
+                            if(statistics.equals("预提")){
+                                supplierinfor.setStatistics("BP029001");//预提
+                            }
+                            else if(statistics.equals("费用")){
+                                supplierinfor.setStatistics("BP029002");//费用
+                            }
+                        }
+                    }
+                    //insert gbb 20210223 PSDCD_PFANS_20201122_XQ_042 添加统计区分字段 end
                 }
 
                 supplierinfor.preInsert();

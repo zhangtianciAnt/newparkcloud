@@ -180,4 +180,10 @@ public class Supplierinfor extends BaseModel {
      */
     @Column(name = "VENDORCODE")
     private String vendorcode;
+
+    /**
+     * 统计区分
+     */
+    @Column(name = "STATISTICS")
+    private String statistics;
 }
