@@ -6,8 +6,10 @@ import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS6000.Coststatistics;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
+import com.nt.dao_Pfans.PFANS6000.Delegainformationtax;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Vo.DelegainformationVo;
+import com.nt.dao_Pfans.PFANS6000.Vo.DelegainformationtaxVo;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
@@ -15,6 +17,7 @@ import com.nt.service_pfans.PFANS6000.CompanyStatisticsService;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
 import com.nt.service_pfans.PFANS6000.DeleginformationService;
 import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
+import com.nt.service_pfans.PFANS6000.mapper.DelegainformationtaxMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.dao.TokenModel;
@@ -50,7 +53,10 @@ public class DelegainformationServiceImpl implements DeleginformationService {
     @Autowired
     private CoststatisticsService coststatisticsService;
 
-
+    //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 start
+    @Autowired
+    private DelegainformationtaxMapper delegainformationtaxMapper;
+    //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
 
 //    @Override
 ////    public List<DelegainformationVo> getDelegainformation() throws Exception {
@@ -58,8 +64,10 @@ public class DelegainformationServiceImpl implements DeleginformationService {
 ////    }
 
     @Override
-    public List<DelegainformationVo> getYears(String year,String group_id,List<String> owners) throws Exception {
-
+    //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 start
+    //public List<DelegainformationVo> getYears(String year,String group_id,List<String> owners) throws Exception {
+    public DelegainformationtaxVo getYears(String year, String group_id, List<String> owners) throws Exception {
+    //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
         Calendar now = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
         int int4 = countWorkDay(Integer.parseInt(year),4);
@@ -149,11 +157,39 @@ public class DelegainformationServiceImpl implements DeleginformationService {
         for(int i = 0; i < Vo1.size(); i ++){
             Vo.add(Vo1.get(i));
         }
-        return Vo;
+        //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 start
+        DelegainformationtaxVo taxVo = new DelegainformationtaxVo();
+        taxVo.setDelegainformationVo(Vo);
+        Delegainformationtax tax = new Delegainformationtax();
+        tax.setYear(year);
+        tax.setGroup_id(group_id);
+        List<Delegainformationtax> taxlist = delegainformationtaxMapper.select(tax);
+        if(taxlist.size() > 0){
+            taxVo.setDelegainformationtaxList(taxlist);
+        }
+        return taxVo;
+        //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
     }
 
     @Override
-    public void updateDeleginformation(List<Delegainformation> delegainformationList, TokenModel tokenModel) throws Exception {
+    //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 start
+    //public void updateDeleginformation(List<Delegainformation> delegainformationList, TokenModel tokenModel) throws Exception {
+    public void updateDeleginformation(DelegainformationtaxVo taxVo, TokenModel tokenModel) throws Exception {
+        List<Delegainformation> delegainformationList = taxVo.getDelegainformationList();
+        List<Delegainformationtax> taxList = taxVo.getDelegainformationtaxList();
+        if(taxList.size() > 0){
+            Delegainformationtax tax = taxList.get(0);
+            if(!tax.getDelegainformationtax_id().equals("")){
+                tax.preUpdate(tokenModel);
+                delegainformationtaxMapper.updateByPrimaryKey(tax);
+            }
+            else{
+                tax.preInsert(tokenModel);
+                tax.setDelegainformationtax_id(UUID.randomUUID().toString());
+                delegainformationtaxMapper.insert(tax);
+            }
+        }
+        //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
         String sDate = DateUtil.format(new Date(), "MM");
         String sDateyy = DateUtil.format(new Date(), "yyyy");
         for (Delegainformation delegainformation : delegainformationList) {
@@ -287,7 +323,11 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                         {
                             if(or.getType().equals("2"))
                             {
-                                delvoList = getYears(y,or.get_id(),a);
+                                //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 start
+                                //delvoList = getYears(y,or.get_id(),a);
+                                DelegainformationtaxVo taxvo = getYears(y,or.get_id(),a);
+                                delvoList = taxvo.getDelegainformationVo();
+                                //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
                                 if(delvoList.size()>0)
                                 {
                                     for(DelegainformationVo vo : delvoList)
@@ -371,7 +411,10 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                                         del.setGroup_id(vo.getGroup_id());
                                         delList.add(del);
                                     }
-                                    updateDeleginformation(delList,tokenModel);
+                                    //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 start
+                                    taxvo.setDelegainformationList(delList);
+                                    updateDeleginformation(taxvo,tokenModel);
+                                    //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
                                     Coststatistics coststatistics = new Coststatistics();
                                     coststatisticsService.insertCoststatistics(or.get_id(),coststatistics,tokenModel);
                                 }
