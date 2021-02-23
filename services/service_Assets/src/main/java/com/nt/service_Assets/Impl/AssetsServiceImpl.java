@@ -666,6 +666,15 @@ public class AssetsServiceImpl implements AssetsService {
                     // end by zy
                 }
 
+                // 启用日期
+                if (!StringUtils.isEmpty(trim(value.get(11)))) {
+                    String date1 = trim(value.get(11));
+                    SimpleDateFormat sf = new SimpleDateFormat("dd-MM-yyyy");
+                    SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
+                    Date date2 = sf.parse(date1);
+                    assets.setActivitiondate(sf1.parse(sf1.format(date2)));//111
+                    assets.setInparams4(sf1.parse(sf1.format(date2)));
+                }
                 if (StrUtil.isNotBlank(assets.getAssets_id())) {
                     assets.preUpdate(tokenModel);
                     assetsMapper.updateByPrimaryKey(assets);
