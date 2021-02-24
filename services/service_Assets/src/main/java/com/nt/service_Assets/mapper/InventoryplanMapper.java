@@ -6,6 +6,6 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 public interface InventoryplanMapper extends MyMapper<Inventoryplan> {
-    @Select("select inventoryplan_id,inventorycycle  from inventoryplan where status  in ('0','4') ")
+    @Select("select inventoryplan_id,inventorycycle  from inventoryplan where status  in ('0','3') ")
     List<Inventoryplan> selectList();
 }
