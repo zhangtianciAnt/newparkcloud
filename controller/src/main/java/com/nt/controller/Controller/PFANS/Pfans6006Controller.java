@@ -2,6 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS2000.Bonussend;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
+import com.nt.dao_Pfans.PFANS6000.Vo.DelegainformationtaxVo;
 import com.nt.service_pfans.PFANS6000.DeleginformationService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -28,13 +29,17 @@ public class Pfans6006Controller {
     @Autowired
     private TokenService tokenService;
 
+    //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 start
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult updateDeleginformation(@RequestBody List<Delegainformation> delegainformationList, HttpServletRequest request) throws Exception {
-        if (delegainformationList == null) {
+    //public ApiResult updateDeleginformation(@RequestBody List<Delegainformation> delegainformationList, HttpServletRequest request) throws Exception {
+    public ApiResult updateDeleginformation(@RequestBody DelegainformationtaxVo taxVo, HttpServletRequest request) throws Exception {
+        //if (delegainformationList == null) {
+        if (taxVo == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        deleginformationService.updateDeleginformation(delegainformationList, tokenModel);
+        deleginformationService.updateDeleginformation(taxVo, tokenModel);
+        //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
         return ApiResult.success();
     }
 
