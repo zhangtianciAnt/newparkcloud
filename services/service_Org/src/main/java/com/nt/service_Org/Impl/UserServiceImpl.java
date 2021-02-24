@@ -1144,25 +1144,34 @@ public class UserServiceImpl implements UserService {
                 //center
                 if (item.get("center") != null) {
                     String cen = item.get("center").toString();
-                    List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
-                    int cf = 0;
-                    if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
-                        for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                            if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
-                                cf++;
-                                userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
-                                userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
-                                userinfo.setGroupname(null);
-                                userinfo.setGroupid(null);
-                                userinfo.setTeamname(null);
-                                userinfo.setTeamid(null);
-                                break;
+                    if(cen.equals("废弃")){
+                        userinfo.setCentername("废弃");
+                        userinfo.setCenterid("废弃");
+                        userinfo.setGroupname("废弃");
+                        userinfo.setGroupid("废弃");
+                        userinfo.setTeamname("废弃");
+                        userinfo.setTeamid("废弃");
+                    }
+                    else{
+                        List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                        int cf = 0;
+                        if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
+                            for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
+                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
+                                    cf++;
+                                    userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
+                                    userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+                                    userinfo.setGroupname(null);
+                                    userinfo.setGroupid(null);
+                                    userinfo.setTeamname(null);
+                                    userinfo.setTeamid(null);
+                                    break;
+                                }
+                            }
+                            if (cf == 0) {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
                             }
                         }
-                        if (cf == 0) {
-                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
-                        }
-                    }
 
 //                    Query query = new Query();
 //                    query.addCriteria(Criteria.where("userinfo.centername").is(cen.trim()));
@@ -1173,6 +1182,7 @@ public class UserServiceImpl implements UserService {
 //                    } else {
 //                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在，或者有空格！");
 //                    }
+                    }
                 }
                 //group
                 if (item.get("group") != null) {
@@ -1428,6 +1438,26 @@ public class UserServiceImpl implements UserService {
                 if (item.get("毕业年月日") != null) {
                     userinfo.setGraduationday(item.get("毕业年月日").toString());
                 }
+                if (item.get("婚姻状况") != null) {
+                    String children = item.get("婚姻状况").toString();
+                    if (children != null) {
+                        userinfo.setMarital(children);
+                    }
+                }
+                if (item.get("最终学历") != null) {
+                    String degree = item.get("最终学历").toString();
+                    if (degree != null) {
+                        Dictionary dictionary = new Dictionary();
+                        dictionary.setValue1(degree.trim());
+                        dictionary.setPcode("PR016");
+                        List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                        if (dictionaryList.size() > 0) {
+                            userinfo.setDegree(dictionaryList.get(0).getCode());
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的最终学历（" + item.get("最终学历").toString() + "）在字典中不存在！");
+                        }
+                    }
+                }
                 //最终学位
                 if (item.get("最终学位") != null) {
                     String degree = item.get("最终学位").toString();
@@ -1496,7 +1526,7 @@ public class UserServiceImpl implements UserService {
                 if (item.get("退职日") != null) {
                     //upd_fjl_0916 修改退职日的保存格式 start
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    String regindate = item.get("退职日●").toString();
+                    String regindate = item.get("退职日").toString();
                     Calendar cal = Calendar.getInstance();
                     cal.setTime(sdf.parse(regindate));//设置起时间
                     cal.add(Calendar.DATE, -1);//减1天
