@@ -274,6 +274,8 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
             model.add("ブランド使用料");
             model.add("その他経費");
             model.add("外注費");
+            model.add("減価償却費（設備）");
+            model.add("減価償却費（ソフト）");
             List<Object> key = list.get(0);
             for (int i = 1; i < key.size(); i++) {
                 if (!key.get(i).toString().trim().equals(model.get(i - 1))) {
@@ -407,6 +409,14 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                                 } else if (name.equals("外注費")) {
                                     BigDecimal bd = new BigDecimal(money);
                                     BigDecimal bd1 = new BigDecimal(value.get(15).toString());
+                                    bd2 = bd.add(bd1).setScale(scale, roundingMode);
+                                } else if (name.equals("減価償却費（設備）")) {
+                                    BigDecimal bd = new BigDecimal(money);
+                                    BigDecimal bd1 = new BigDecimal(value.get(16).toString());
+                                    bd2 = bd.add(bd1).setScale(scale, roundingMode);
+                                } else if (name.equals("減価償却費（ソフト）")) {
+                                    BigDecimal bd = new BigDecimal(money);
+                                    BigDecimal bd1 = new BigDecimal(value.get(17).toString());
                                     bd2 = bd.add(bd1).setScale(scale, roundingMode);
                                 }
                             }

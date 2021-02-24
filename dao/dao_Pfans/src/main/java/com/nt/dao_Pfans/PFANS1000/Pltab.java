@@ -18,15 +18,15 @@ import javax.persistence.Table;
  */
 public class Pltab extends BaseModel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Encryption
     private String pj;//项目-
     private String pj1;//共同项目-
 
     private String outst1;//外部受託-
-     private String outst2;
-     private String outst3;
+    private String outst2;
+    private String outst3;
 
     private String tax;//税金
 
@@ -131,7 +131,9 @@ public class Pltab extends BaseModel {
     //為替
     private String exchanges;
 
+    private String totalpro;
 
+    private String benefitrate;
 
 
 }
