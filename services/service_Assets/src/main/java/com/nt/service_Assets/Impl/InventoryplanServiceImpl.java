@@ -147,10 +147,10 @@ public class InventoryplanServiceImpl implements InventoryplanService {
     public int check(Inventoryplan inventoryplan) throws Exception {
         Inventoryplan condition = new Inventoryplan();
         condition.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-        //update gbb PSDCD_PFANS_20200921_XQ_007 start
+        //update gbb 20210223 PSDCD_PFANS_20200921_XQ_007 start
         //List<Inventoryplan> rst = inventoryplanMapper.select(condition);
         List<Inventoryplan> rst = inventoryplanMapper.selectList();
-        //update gbb PSDCD_PFANS_20200921_XQ_007 end
+        //update gbb 20210223 PSDCD_PFANS_20200921_XQ_007 end
         int count = 0;
         Date st = DateUtil.parse(inventoryplan.getInventorycycle().split("~")[0]);
         Date ed = DateUtil.parse(inventoryplan.getInventorycycle().split("~")[1]);
