@@ -19,6 +19,8 @@ import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS5000.PersonalProjects;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
+import com.nt.dao_Pfans.PFANS6000.Coststatistics;
+import com.nt.dao_Pfans.PFANS6000.CoststatisticsVo;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
 import com.nt.dao_Pfans.PFANS6000.PricesetGroup;
 import com.nt.service_Org.DictionaryService;
@@ -38,6 +40,11 @@ import com.nt.service_pfans.PFANS6000.mapper.PricesetGroupMapper;
 import com.nt.service_pfans.PFANS6000.mapper.PricesetMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -51,7 +58,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -90,6 +100,137 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
     private ComProjectMapper comProjectMapper;
     @Autowired
     private PricesetGroupMapper pricesetGroupMapper;
+
+
+    @Override
+    public XSSFWorkbook downloadExcel(String projectincomeid, HttpServletRequest request, HttpServletResponse resp) throws LogicalException {
+        try {
+            // 导出文件
+            ProjectIncome projectincome = new ProjectIncome();
+            projectincome.setProjectincomeid(projectincomeid);
+            ProjectIncome project = projectincomemapper.select(projectincome).get(0);
+            InputStream in = null;
+            FileOutputStream f = null;
+            XSSFWorkbook work = null;
+            //表格操作
+            in = getClass().getClassLoader().getResourceAsStream("jxls_templates/xiangmujiezhuanbiao.xlsx");
+            work = new XSSFWorkbook(in);
+            XSSFSheet sheet1 = work.getSheetAt(0);
+            //将数据放入Excel
+            JSONArray jsonArray = JSONArray.parseArray(project.getProjectincomevo1());
+            JSONArray jsonArray1 = JSONArray.parseArray(project.getProjectincomevo5());
+            int i = -1;
+            int k = 0;
+            int q = -1;
+            int g = -1;
+
+            String[] s = new String[100];
+            int[] shu = new int[5];
+            XSSFRow row = sheet1.createRow(0);
+            for (Object ob : jsonArray) {
+                i += 3;
+                q++;
+                CellRangeAddress callRangeAddress = new CellRangeAddress(0, 0, i, i + 2);
+                sheet1.addMergedRegion(callRangeAddress);
+                String companyproject = getProperty(ob, "companyproject");
+                s[q] = companyproject;
+                row.createCell(0).setCellValue("姓名");
+                row.createCell(1).setCellValue("人件费");
+            }
+            for (int h = 0; h < s.length; h++) {
+                g += 3;
+                row.createCell(g).setCellValue(s[h]);
+            }
+            for (Object ob1 : jsonArray1) {
+                int m = -2;
+                int n = -1;
+                k++;
+                XSSFRow row1 = sheet1.createRow(k);
+                for (Object ob : jsonArray) {
+                    n++;
+                    m += 3;
+                    String type = getProperty(ob1, "type");
+                    String works = getProperty(ob1, "works" + n);
+                    String cost = getProperty(ob1, "cost" + n);
+                    String radio = getProperty(ob1, "radio" + n);
+                    if (!type.equals("3")) {
+                        row1.createCell(m + 1).setCellValue(works);
+                        row1.createCell(m + 2).setCellValue(radio);
+                        row1.createCell(m + 3).setCellValue(cost);
+                    }
+                }
+                String name = getProperty(ob1, "name");
+                String money = getProperty(ob1, "money");
+                row1.createCell(0).setCellValue(name);
+                row1.createCell(1).setCellValue(money);
+            }
+
+            CellRangeAddress callRangeAddress0 = new CellRangeAddress(k - 4, k - 4, 0, 1);
+            XSSFRow row0 = sheet1.createRow(k - 4);
+            sheet1.addMergedRegion(callRangeAddress0);
+            row0.createCell(0).setCellValue("人件费合计");
+            CellRangeAddress callRangeAddress1 = new CellRangeAddress(k - 3, k - 3, 0, 1);
+            XSSFRow row11 = sheet1.createRow(k - 3);
+            sheet1.addMergedRegion(callRangeAddress1);
+            row11.createCell(0).setCellValue("外注费合计");
+            CellRangeAddress callRangeAddress2 = new CellRangeAddress(k - 2, k - 2, 0, 1);
+            XSSFRow row2 = sheet1.createRow(k - 2);
+            sheet1.addMergedRegion(callRangeAddress2);
+            row2.createCell(0).setCellValue("经费合计");
+            CellRangeAddress callRangeAddress3 = new CellRangeAddress(k - 1, k - 1, 0, 1);
+            XSSFRow row3 = sheet1.createRow(k - 1);
+            sheet1.addMergedRegion(callRangeAddress3);
+            row3.createCell(0).setCellValue("合计支出");
+            CellRangeAddress callRangeAddress4 = new CellRangeAddress(k, k, 0, 1);
+            XSSFRow row4 = sheet1.createRow(k);
+            sheet1.addMergedRegion(callRangeAddress4);
+            row4.createCell(0).setCellValue("合计收入");
+            int l = k - 5;
+            for (Object ob1 : jsonArray1) {
+                int m = -2;
+                int n = -1;
+                int p = 0;
+                for (Object ob : jsonArray) {
+                    p++;
+                    n++;
+                    m += 3;
+                    String type = getProperty(ob1, "type");
+                    String works = getProperty(ob1, "works" + n);
+                    String cost = getProperty(ob1, "cost" + n);
+                    String radio = getProperty(ob1, "radio" + n);
+                    if (type.equals("3")) {
+                        if (p == 1) {
+                            l++;
+                        }
+                        if (l == k - 4) {
+                            row0.createCell(m + 1).setCellValue(works);
+                            row0.createCell(m + 2).setCellValue(radio);
+                            row0.createCell(m + 3).setCellValue(cost);
+                        } else if (l == k - 3) {
+                            row11.createCell(m + 1).setCellValue(works);
+                            row11.createCell(m + 2).setCellValue(radio);
+                            row11.createCell(m + 3).setCellValue(cost);
+                        } else if (l == k - 2) {
+                            row2.createCell(m + 1).setCellValue(works);
+                            row2.createCell(m + 2).setCellValue(radio);
+                            row2.createCell(m + 3).setCellValue(cost);
+                        } else if (l == k - 1) {
+                            row3.createCell(m + 1).setCellValue(works);
+                            row3.createCell(m + 2).setCellValue(radio);
+                            row3.createCell(m + 3).setCellValue(cost);
+                        } else if (l == k) {
+                            row4.createCell(m + 1).setCellValue(works);
+                            row4.createCell(m + 2).setCellValue(radio);
+                            row4.createCell(m + 3).setCellValue(cost);
+                        }
+                    }
+                }
+            }
+            return work;
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
+        }
+    }
 
     @Override
     public ProjectIncome selectById(String projectincomeid) throws Exception {
@@ -345,6 +486,14 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
             if (projectincomelist.size() > 0) {
                 throw new LogicalException("本部门该年度事业计划已经创建，请到列表页中查找编辑。");
             }
+//            ProjectIncome project1 = new ProjectIncome();
+//            project1.setProjectincomeid(projectincomeid);
+//            projectincomemapper.delete(project1);
+//            ProjectIncome pro = new ProjectIncome();
+//            BeanUtils.copyProperties(projectincome, pro);
+//            pro.setProjectincomeid(UUID.randomUUID().toString());
+//            pro.preInsert(tokenModel);
+//            projectincomemapper.insert(pro);
             projectincome.preUpdate(tokenModel);
             projectincomemapper.updateByPrimaryKeySelective(projectincome);
         }
@@ -696,6 +845,9 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
         for (int i = 0; i < 5; i++) {
             Map<String, String> map = new HashMap<>();
             map.put("type", "3");
+            map.put("name", "");
+            map.put("nameid", "");
+            map.put("money", "");
             for (ProjectIncomeVo1 projectlist : projectincomevo1list) {
                 String key1 = "works" + i;
                 String key2 = "cost" + i;

@@ -1,5 +1,8 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.poi.excel.ExcelReader;
+import cn.hutool.poi.excel.ExcelUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.nt.dao_Org.CustomerInfo;
@@ -26,8 +29,13 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -61,6 +69,310 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     //@Autowired
     //private BusinessplandetMapper businessplandetMapper;
 
+    private String getProperty(Object o, String key) throws Exception {
+        try {
+            return org.apache.commons.beanutils.BeanUtils.getProperty(o, key);
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
+        }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
+        try {
+            List<String> Result = new ArrayList<String>();
+            MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
+            File f = null;
+            f = File.createTempFile("tmp", null);
+            file.transferTo(f);
+            ExcelReader reader = ExcelUtil.getReader(f);
+            List<List<Object>> list = reader.read();
+            List<Object> model = new ArrayList<Object>();
+            model.add("4月");
+            model.add("5月");
+            model.add("6月");
+            model.add("7月");
+            model.add("8月");
+            model.add("9月");
+            model.add("10月");
+            model.add("11月");
+            model.add("12月");
+            model.add("1月");
+            model.add("2月");
+            model.add("3月");
+            List<Object> key = list.get(0);
+            for (int i = 1; i < key.size(); i++) {
+                if (!key.get(i).toString().trim().equals(model.get(i - 1))) {
+                    throw new LogicalException("第" + (i) + "列标题错误，应为" + model.get(i - 1).toString());
+                }
+            }
+            int year = Integer.valueOf(DateUtil.format(new Date(), "MM")) >= 4 ? Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1 : Integer.valueOf(DateUtil.format(new Date(), "YYYY"));
+            int n = 1;
+            int accesscount = 0;
+            int error = 0;
+            List<Map<String, String>> listmap = new ArrayList<>();
+            for (int i = 1; i < list.size(); i++) {
+                Map<String, String> map = new HashMap<>();
+                List<Object> value = list.get(n);
+                n++;
+                if (value != null && !value.isEmpty()) {
+                    if (value.get(0).toString().equals("")) {
+                        continue;
+                    }
+                }
+                if (value.size() > 1) {
+
+
+
+                    Businessplan businessplan = new Businessplan();
+                    businessplan.setYear(String.valueOf(year));
+                    businessplan.setEncoding(value.get(0).toString().substring(0, 2));
+                    List<Businessplan> businessplanlist = businessplanMapper.select(businessplan);
+                    if (businessplanlist.size() == 0) {
+                        error = error + 1;
+                        Result.add("模板第" + (n - 1) + "行的部门未创建事业计划，请创建数据，导入失败");
+                        map.put("delete", value.get(0).toString());
+                        listmap.add(map);
+                        continue;
+                    }
+                }
+            }
+            if (listmap.size() > 0) {
+                for (int k = 0; k < listmap.size(); k++) {
+                    for (int m = 1; m < list.size(); m++) {
+                        List<Object> value = list.get(m);
+                        for (Map<String, String> map : listmap) {
+                            for (String s : map.values()) {
+                                if (value.get(0).toString().equals(s)) {
+                                    list.remove(m);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            int m = 1;
+            for (int i = 1; i < list.size(); i++) {
+                List<Map<String, String>> lists = new ArrayList<>();
+                List<Map<String, String>> lists1 = new ArrayList<>();
+                List<Object> value = list.get(m);
+                m++;
+                if (value.size() > 1) {
+                    Businessplan businessplan = new Businessplan();
+                    businessplan.setEncoding(value.get(0).toString().substring(0, 2));
+                    businessplan.setYear(String.valueOf(year));
+                    List<Businessplan> businessplanlist = businessplanMapper.select(businessplan);
+                    if (businessplanlist.size() > 0) {
+                        String money4 = "";
+                        String money5 = "";
+                        String money6 = "";
+                        String money7 = "";
+                        String money8 = "";
+                        String money9 = "";
+                        String money10 = "";
+                        String money11 = "";
+                        String money12 = "";
+                        String money1 = "";
+                        String money2 = "";
+                        String money3 = "";
+                        String name = "";
+                        String companyen = "";
+                        int scale = 2;//设置位数
+                        int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+                        JSONArray jsonArray = JSONArray.parseArray(businessplanlist.get(0).getAssets_lodyear());
+                        JSONArray jsonArray1 = JSONArray.parseArray(businessplanlist.get(0).getEquipment_lodyear());
+                        for (Object ob : jsonArray) {
+                            Map<String, String> map = new HashMap<>();
+                            money4 = getProperty(ob, "money4");
+                            money5 = getProperty(ob, "money5");
+                            money6 = getProperty(ob, "money6");
+                            money7 = getProperty(ob, "money7");
+                            money8 = getProperty(ob, "money8");
+                            money9 = getProperty(ob, "money9");
+                            money10 = getProperty(ob, "money10");
+                            money11 = getProperty(ob, "money11");
+                            money12 = getProperty(ob, "money12");
+                            money1 = getProperty(ob, "money1");
+                            money2 = getProperty(ob, "money2");
+                            money3 = getProperty(ob, "money3");
+                            name = getProperty(ob, "encoding");
+                            companyen = getProperty(ob, "companyen");
+                            BigDecimal money1s = new BigDecimal("0");
+                            BigDecimal money2s = new BigDecimal("0");
+                            BigDecimal money3s = new BigDecimal("0");
+                            BigDecimal money4s = new BigDecimal("0");
+                            BigDecimal money5s = new BigDecimal("0");
+                            BigDecimal money6s = new BigDecimal("0");
+                            BigDecimal money7s = new BigDecimal("0");
+                            BigDecimal money8s = new BigDecimal("0");
+                            BigDecimal money9s = new BigDecimal("0");
+                            BigDecimal money10s = new BigDecimal("0");
+                            BigDecimal money11s = new BigDecimal("0");
+                            BigDecimal money12s = new BigDecimal("0");
+                            if (name != null) {
+                                if (name.equals(value.get(0).toString().substring(0, 2))) {
+                                    BigDecimal money41 = new BigDecimal(money4);
+                                    BigDecimal money411 = new BigDecimal(value.get(1).toString());
+                                    money4s = money41.add(money411).setScale(scale, roundingMode);
+                                    BigDecimal money51 = new BigDecimal(money5);
+                                    BigDecimal money511 = new BigDecimal(value.get(2).toString());
+                                    money5s = money51.add(money511).setScale(scale, roundingMode);
+                                    BigDecimal money61 = new BigDecimal(money6);
+                                    BigDecimal money611 = new BigDecimal(value.get(3).toString());
+                                    money6s = money61.add(money611).setScale(scale, roundingMode);
+                                    BigDecimal money71 = new BigDecimal(money7);
+                                    BigDecimal money711 = new BigDecimal(value.get(4).toString());
+                                    money7s = money71.add(money711).setScale(scale, roundingMode);
+                                    BigDecimal money81 = new BigDecimal(money8);
+                                    BigDecimal money811 = new BigDecimal(value.get(5).toString());
+                                    money8s = money81.add(money811).setScale(scale, roundingMode);
+                                    BigDecimal money91 = new BigDecimal(money9);
+                                    BigDecimal money911 = new BigDecimal(value.get(6).toString());
+                                    money9s = money91.add(money911).setScale(scale, roundingMode);
+                                    BigDecimal money101 = new BigDecimal(money10);
+                                    BigDecimal money1011 = new BigDecimal(value.get(7).toString());
+                                    money10s = money101.add(money1011).setScale(scale, roundingMode);
+                                    BigDecimal money111 = new BigDecimal(money11);
+                                    BigDecimal money1111 = new BigDecimal(value.get(8).toString());
+                                    money11s = money111.add(money1111).setScale(scale, roundingMode);
+                                    BigDecimal money121 = new BigDecimal(money12);
+                                    BigDecimal money1211 = new BigDecimal(value.get(9).toString());
+                                    money12s = money121.add(money1211).setScale(scale, roundingMode);
+                                    BigDecimal money110 = new BigDecimal(money1);
+                                    BigDecimal money1110 = new BigDecimal(value.get(10).toString());
+                                    money1s = money110.add(money1110).setScale(scale, roundingMode);
+                                    BigDecimal money21 = new BigDecimal(money2);
+                                    BigDecimal money211 = new BigDecimal(value.get(11).toString());
+                                    money2s = money21.add(money211).setScale(scale, roundingMode);
+                                    BigDecimal money31 = new BigDecimal(money3);
+                                    BigDecimal money311 = new BigDecimal(value.get(12).toString());
+                                    money3s = money31.add(money311).setScale(scale, roundingMode);
+                                }
+                            }
+                            map.put("money4", money4s.toString());
+                            map.put("money5", money5s.toString());
+                            map.put("money6", money6s.toString());
+                            map.put("money7", money7s.toString());
+                            map.put("money8", money8s.toString());
+                            map.put("money9", money9s.toString());
+                            map.put("money10", money10s.toString());
+                            map.put("money11", money11s.toString());
+                            map.put("money12", money12s.toString());
+                            map.put("money1", money1s.toString());
+                            map.put("money2", money2s.toString());
+                            map.put("money3", money3s.toString());
+                            map.put("encoding", name);
+                            map.put("companyen", companyen);
+                            lists.add(map);
+                        }
+
+                        for (Object ob : jsonArray1) {
+                            Map<String, String> map = new HashMap<>();
+                            money4 = getProperty(ob, "money4");
+                            money5 = getProperty(ob, "money5");
+                            money6 = getProperty(ob, "money6");
+                            money7 = getProperty(ob, "money7");
+                            money8 = getProperty(ob, "money8");
+                            money9 = getProperty(ob, "money9");
+                            money10 = getProperty(ob, "money10");
+                            money11 = getProperty(ob, "money11");
+                            money12 = getProperty(ob, "money12");
+                            money1 = getProperty(ob, "money1");
+                            money2 = getProperty(ob, "money2");
+                            money3 = getProperty(ob, "money3");
+                            name = getProperty(ob, "encoding");
+                            companyen = getProperty(ob, "companyen");
+                            BigDecimal money1s = new BigDecimal("0");
+                            BigDecimal money2s = new BigDecimal("0");
+                            BigDecimal money3s = new BigDecimal("0");
+                            BigDecimal money4s = new BigDecimal("0");
+                            BigDecimal money5s = new BigDecimal("0");
+                            BigDecimal money6s = new BigDecimal("0");
+                            BigDecimal money7s = new BigDecimal("0");
+                            BigDecimal money8s = new BigDecimal("0");
+                            BigDecimal money9s = new BigDecimal("0");
+                            BigDecimal money10s = new BigDecimal("0");
+                            BigDecimal money11s = new BigDecimal("0");
+                            BigDecimal money12s = new BigDecimal("0");
+                            if (name != null) {
+                                if (name.equals(value.get(0).toString().substring(0, 2))) {
+                                    BigDecimal money41 = new BigDecimal(money4);
+                                    BigDecimal money411 = new BigDecimal(value.get(1).toString());
+                                    money4s = money41.add(money411).setScale(scale, roundingMode);
+                                    BigDecimal money51 = new BigDecimal(money5);
+                                    BigDecimal money511 = new BigDecimal(value.get(2).toString());
+                                    money5s = money51.add(money511).setScale(scale, roundingMode);
+                                    BigDecimal money61 = new BigDecimal(money6);
+                                    BigDecimal money611 = new BigDecimal(value.get(3).toString());
+                                    money6s = money61.add(money611).setScale(scale, roundingMode);
+                                    BigDecimal money71 = new BigDecimal(money7);
+                                    BigDecimal money711 = new BigDecimal(value.get(4).toString());
+                                    money7s = money71.add(money711).setScale(scale, roundingMode);
+                                    BigDecimal money81 = new BigDecimal(money8);
+                                    BigDecimal money811 = new BigDecimal(value.get(5).toString());
+                                    money8s = money81.add(money811).setScale(scale, roundingMode);
+                                    BigDecimal money91 = new BigDecimal(money9);
+                                    BigDecimal money911 = new BigDecimal(value.get(6).toString());
+                                    money9s = money91.add(money911).setScale(scale, roundingMode);
+                                    BigDecimal money101 = new BigDecimal(money10);
+                                    BigDecimal money1011 = new BigDecimal(value.get(7).toString());
+                                    money10s = money101.add(money1011).setScale(scale, roundingMode);
+                                    BigDecimal money111 = new BigDecimal(money11);
+                                    BigDecimal money1111 = new BigDecimal(value.get(8).toString());
+                                    money11s = money111.add(money1111).setScale(scale, roundingMode);
+                                    BigDecimal money121 = new BigDecimal(money12);
+                                    BigDecimal money1211 = new BigDecimal(value.get(9).toString());
+                                    money12s = money121.add(money1211).setScale(scale, roundingMode);
+                                    BigDecimal money110 = new BigDecimal(money1);
+                                    BigDecimal money1110 = new BigDecimal(value.get(10).toString());
+                                    money1s = money110.add(money1110).setScale(scale, roundingMode);
+                                    BigDecimal money21 = new BigDecimal(money2);
+                                    BigDecimal money211 = new BigDecimal(value.get(11).toString());
+                                    money2s = money21.add(money211).setScale(scale, roundingMode);
+                                    BigDecimal money31 = new BigDecimal(money3);
+                                    BigDecimal money311 = new BigDecimal(value.get(12).toString());
+                                    money3s = money31.add(money311).setScale(scale, roundingMode);
+                                }
+                            }
+                            map.put("money4", money4s.toString());
+                            map.put("money5", money5s.toString());
+                            map.put("money6", money6s.toString());
+                            map.put("money7", money7s.toString());
+                            map.put("money8", money8s.toString());
+                            map.put("money9", money9s.toString());
+                            map.put("money10", money10s.toString());
+                            map.put("money11", money11s.toString());
+                            map.put("money12", money12s.toString());
+                            map.put("money1", money1s.toString());
+                            map.put("money2", money2s.toString());
+                            map.put("money3", money3s.toString());
+                            map.put("encoding", name);
+                            map.put("companyen", companyen);
+                            lists1.add(map);
+                        }
+                        Businessplan business = new Businessplan();
+                        BeanUtils.copyProperties(businessplanlist.get(0), business);
+                        businessplanMapper.delete(business);
+                        Businessplan business1 = new Businessplan();
+                        BeanUtils.copyProperties(businessplanlist.get(0), business1);
+                        business1.preInsert(tokenModel);
+                        business1.setAssets_lodyear(JSONArray.toJSONString(lists));
+                        business1.setEquipment_lodyear(JSONArray.toJSONString(lists1));
+                        businessplanMapper.insert(business1);
+                        accesscount = accesscount + 1;
+                    }
+                }
+            }
+            Result.add("失败数：" + error);
+            Result.add("成功数：" + accesscount);
+            return Result;
+        } catch (Exception e) {
+            throw new LogicalException("导入失败");
+        }
+    }
+
+
     @Override
     public List<Businessplan> get(Businessplan businessplan) throws Exception {
         return businessplanMapper.select(businessplan);
@@ -76,6 +388,19 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 orgtreevo.set_id(org1.get_id());
                 orgtreevo.setCompanyen(org1.getCompanyen());
                 orgtreevo.setRedirict(org1.getRedirict());
+                orgtreevo.setEncoding(org1.getEncoding().substring(0, 2));
+                orgtreevo.setMoney4("0");
+                orgtreevo.setMoney5("0");
+                orgtreevo.setMoney6("0");
+                orgtreevo.setMoney7("0");
+                orgtreevo.setMoney8("0");
+                orgtreevo.setMoney9("0");
+                orgtreevo.setMoney10("0");
+                orgtreevo.setMoney11("0");
+                orgtreevo.setMoney12("0");
+                orgtreevo.setMoney1("0");
+                orgtreevo.setMoney2("0");
+                orgtreevo.setMoney3("0");
                 OrgTreeVolist.add(orgtreevo);
             }
         }
