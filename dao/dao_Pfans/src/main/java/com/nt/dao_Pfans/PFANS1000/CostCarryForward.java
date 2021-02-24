@@ -156,7 +156,7 @@ public class CostCarryForward extends BaseModel {
     private String costtotal;
     //    営業利益
     @Column(name = "OPERATING")
-    private String Operating;
+    private String operating;
     //    金利
     @Column(name = "INTERESTRATE")
     private String interestrate;
