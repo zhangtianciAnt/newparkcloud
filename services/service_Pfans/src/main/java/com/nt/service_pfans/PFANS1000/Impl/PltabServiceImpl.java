@@ -382,8 +382,9 @@ public class PltabServiceImpl implements PltabService {
                 BigDecimal outsourcingout = outsourcing1.divide(outsourcingpjhours1, scale, roundingMode);
                 costcarryforward.setEmhours(String.valueOf(outsourcingout));
                 costcarryforward.setEmployeeuptime(String.valueOf(outsourcingout));
+                BigDecimal bfb = new BigDecimal("100");
                 if (!outsourcingpjhours4.equals(new BigDecimal("0.00"))) {
-                    BigDecimal externalpjrate = outsourcingpjhoursout.divide(outsourcingpjhours4, scale, roundingMode);
+                    BigDecimal externalpjrate = outsourcingpjhoursout.divide(outsourcingpjhours4, scale, roundingMode).multiply(bfb);
                     costcarryforward.setExternalpjrate(String.valueOf(externalpjrate));
                     costcarryforward.setExternalinjectionrate(String.valueOf(externalpjrate));
                 } else {
@@ -392,7 +393,7 @@ public class PltabServiceImpl implements PltabService {
                 }
 
                 if (!outsourcing1.equals(new BigDecimal("0"))) {
-                    BigDecimal memberpjrate = outsourcingout.divide(outsourcing1, scale, roundingMode);
+                    BigDecimal memberpjrate = outsourcingout.divide(outsourcing1, scale, roundingMode).multiply(bfb);
                     costcarryforward.setMemberpjrate(String.valueOf(memberpjrate));
                     costcarryforward.setMembershiprate(String.valueOf(memberpjrate));
                 } else {
@@ -403,7 +404,7 @@ public class PltabServiceImpl implements PltabService {
                 BigDecimal pjrateemployees1 = outsourcingpjhoursout.add(outsourcingout);
                 BigDecimal pjrateemployees2 = outsourcingpjhours4.add(outsourcing1);
                 if (!pjrateemployees2.equals(new BigDecimal("0.00"))) {
-                    BigDecimal pjrateemployeesout = pjrateemployees1.divide(pjrateemployees2, scale, roundingMode);
+                    BigDecimal pjrateemployeesout = pjrateemployees1.divide(pjrateemployees2, scale, roundingMode).multiply(bfb);
                     costcarryforward.setPjrateemployees(String.valueOf(pjrateemployeesout));
                     costcarryforward.setStaffingrate(String.valueOf(pjrateemployeesout));
                 } else {
@@ -476,7 +477,7 @@ public class PltabServiceImpl implements PltabService {
                 costcarryforward.setOtherexpenses(String.valueOf(otherexpenses));
                 if (!costcarryforward.getIntotal().equals("0.00")) {
                     BigDecimal benefitrate = new BigDecimal(costcarryforward.getIntotal()).subtract(new BigDecimal(costr)).subtract(new BigDecimal(costw)).subtract(new BigDecimal(costcarryforward.getTravalcost())).subtract(new BigDecimal(costcarryforward.getResearchcost()));
-                    BigDecimal benefitrates = benefitrate.divide(new BigDecimal(costcarryforward.getIntotal()), scale, roundingMode);
+                    BigDecimal benefitrates = benefitrate.divide(new BigDecimal(costcarryforward.getIntotal()), scale, roundingMode).multiply(bfb);
                     costcarryforward.setBenefitrate(String.valueOf(benefitrates));
                 } else {
                     costcarryforward.setBenefitrate("---");
@@ -515,7 +516,7 @@ public class PltabServiceImpl implements PltabService {
                 costcarryforward.setTaxallowance("0.00");
                 costcarryforward.setPosttaxbenefit("0.00");
                 if (!costcarryforward.getIntotal().equals("0.00")) {
-                    BigDecimal operatingmargin = operating.divide(new BigDecimal(costcarryforward.getIntotal()), scale, roundingMode);
+                    BigDecimal operatingmargin = operating.divide(new BigDecimal(costcarryforward.getIntotal()), scale, roundingMode).multiply(bfb);
                     costcarryforward.setOperatingmargin(String.valueOf(operatingmargin));
                 } else {
                     costcarryforward.setOperatingmargin("0.00");
