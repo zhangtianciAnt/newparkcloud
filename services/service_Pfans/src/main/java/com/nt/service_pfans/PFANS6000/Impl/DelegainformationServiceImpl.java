@@ -155,6 +155,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
     @Override
     public void updateDeleginformation(List<Delegainformation> delegainformationList, TokenModel tokenModel) throws Exception {
         String sDate = DateUtil.format(new Date(), "MM");
+        String sDateyy = DateUtil.format(new Date(), "yyyy");
         for (Delegainformation delegainformation : delegainformationList) {
             if(sDate.equals("04")) {
                 delegainformation.setApril("");
@@ -199,6 +200,14 @@ public class DelegainformationServiceImpl implements DeleginformationService {
             else{
                 Delegainformation del = new Delegainformation();
                 del.setGroup_id(delegainformation.getGroup_id());
+                del.setAccount(delegainformation.getAccount());
+                //add ccm 1224 添加年度条件 fr
+                del.setYear(sDateyy);
+                if(Integer.valueOf(sDate) < 4)
+                {
+                    del.setYear(String.valueOf(Integer.valueOf(sDateyy) - 1));
+                }
+                //add ccm 1224 添加年度条件 to
                 del.setAccount(delegainformation.getAccount());
                 List<Delegainformation> tion = delegainformationMapper.select(del);
                 if(tion.size() > 0){
@@ -275,90 +284,93 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                             if(or.getType().equals("2"))
                             {
                                 delvoList = getYears(y,or.get_id(),a);
-                                for(DelegainformationVo vo : delvoList)
+                                if(delvoList.size()>0)
                                 {
-                                    Delegainformation del = new Delegainformation();
-                                    del.setDelegainformation_id(vo.getDelegainformation_id());
-                                    //四月
-                                    del.setApril(vo.getApril());
-                                    if(StringUtils.isNullOrEmpty(vo.getApril()))
+                                    for(DelegainformationVo vo : delvoList)
                                     {
-                                        del.setApril("0");
+                                        Delegainformation del = new Delegainformation();
+                                        del.setDelegainformation_id(vo.getDelegainformation_id());
+                                        //四月
+                                        del.setApril(vo.getApril());
+                                        if(StringUtils.isNullOrEmpty(vo.getApril()))
+                                        {
+                                            del.setApril("0");
+                                        }
+                                        //五月
+                                        del.setMay(vo.getMay());
+                                        if(StringUtils.isNullOrEmpty(vo.getMay()))
+                                        {
+                                            del.setMay("0");
+                                        }
+                                        //六月
+                                        del.setJune(vo.getJune());
+                                        if(StringUtils.isNullOrEmpty(vo.getJune()))
+                                        {
+                                            del.setJune("0");
+                                        }
+                                        //七月
+                                        del.setJuly(vo.getJuly());
+                                        if(StringUtils.isNullOrEmpty(vo.getJuly()))
+                                        {
+                                            del.setJuly("0");
+                                        }
+                                        //八月
+                                        del.setAugust(vo.getAugust());
+                                        if(StringUtils.isNullOrEmpty(vo.getAugust()))
+                                        {
+                                            del.setAugust("0");
+                                        }
+                                        //九月
+                                        del.setSeptember(vo.getSeptember());
+                                        if(StringUtils.isNullOrEmpty(vo.getSeptember()))
+                                        {
+                                            del.setSeptember("0");
+                                        }
+                                        //十月
+                                        del.setOctober(vo.getOctober());
+                                        if(StringUtils.isNullOrEmpty(vo.getOctober()))
+                                        {
+                                            del.setOctober("0");
+                                        }
+                                        //十一月
+                                        del.setNovember(vo.getNovember());
+                                        if(StringUtils.isNullOrEmpty(vo.getNovember()))
+                                        {
+                                            del.setNovember("0");
+                                        }
+                                        //十二月
+                                        del.setDecember(vo.getDecember());
+                                        if(StringUtils.isNullOrEmpty(vo.getDecember()))
+                                        {
+                                            del.setDecember("0");
+                                        }
+                                        //明年一月
+                                        del.setJanuary(vo.getJanuary());
+                                        if(StringUtils.isNullOrEmpty(vo.getJanuary()))
+                                        {
+                                            del.setJanuary("0");
+                                        }
+                                        //明年二月
+                                        del.setFebruary(vo.getFebruary());
+                                        if(StringUtils.isNullOrEmpty(vo.getFebruary()))
+                                        {
+                                            del.setFebruary("0");
+                                        }
+                                        //明年三月
+                                        del.setMarch(vo.getMarch());
+                                        if(StringUtils.isNullOrEmpty(vo.getMarch()))
+                                        {
+                                            del.setMarch("0");
+                                        }
+                                        del.setYear(vo.getYear());
+                                        del.setAccount(vo.getAccount());
+                                        del.setGroup_id(vo.getGroup_id());
+                                        delList.add(del);
                                     }
-                                    //五月
-                                    del.setMay(vo.getMay());
-                                    if(StringUtils.isNullOrEmpty(vo.getMay()))
-                                    {
-                                        del.setMay("0");
-                                    }
-                                    //六月
-                                    del.setJune(vo.getJune());
-                                    if(StringUtils.isNullOrEmpty(vo.getJune()))
-                                    {
-                                        del.setJune("0");
-                                    }
-                                    //七月
-                                    del.setJuly(vo.getJuly());
-                                    if(StringUtils.isNullOrEmpty(vo.getJuly()))
-                                    {
-                                        del.setJuly("0");
-                                    }
-                                    //八月
-                                    del.setAugust(vo.getAugust());
-                                    if(StringUtils.isNullOrEmpty(vo.getAugust()))
-                                    {
-                                        del.setAugust("0");
-                                    }
-                                    //九月
-                                    del.setSeptember(vo.getSeptember());
-                                    if(StringUtils.isNullOrEmpty(vo.getSeptember()))
-                                    {
-                                        del.setSeptember("0");
-                                    }
-                                    //十月
-                                    del.setOctober(vo.getOctober());
-                                    if(StringUtils.isNullOrEmpty(vo.getOctober()))
-                                    {
-                                        del.setOctober("0");
-                                    }
-                                    //十一月
-                                    del.setNovember(vo.getNovember());
-                                    if(StringUtils.isNullOrEmpty(vo.getNovember()))
-                                    {
-                                        del.setNovember("0");
-                                    }
-                                    //十二月
-                                    del.setDecember(vo.getDecember());
-                                    if(StringUtils.isNullOrEmpty(vo.getDecember()))
-                                    {
-                                        del.setDecember("0");
-                                    }
-                                    //明年一月
-                                    del.setJanuary(vo.getJanuary());
-                                    if(StringUtils.isNullOrEmpty(vo.getJanuary()))
-                                    {
-                                        del.setJanuary("0");
-                                    }
-                                    //明年二月
-                                    del.setFebruary(vo.getFebruary());
-                                    if(StringUtils.isNullOrEmpty(vo.getFebruary()))
-                                    {
-                                        del.setFebruary("0");
-                                    }
-                                    //明年三月
-                                    del.setMarch(vo.getMarch());
-                                    if(StringUtils.isNullOrEmpty(vo.getMarch()))
-                                    {
-                                        del.setMarch("0");
-                                    }
-                                    del.setYear(vo.getYear());
-                                    del.setAccount(vo.getAccount());
-                                    del.setGroup_id(vo.getGroup_id());
-                                    delList.add(del);
+                                    updateDeleginformation(delList,tokenModel);
+                                    Coststatistics coststatistics = new Coststatistics();
+                                    coststatisticsService.insertCoststatistics(or.get_id(),coststatistics,tokenModel);
                                 }
-                                updateDeleginformation(delList,tokenModel);
-                                Coststatistics coststatistics = new Coststatistics();
-                                coststatisticsService.insertCoststatistics(or.get_id(),coststatistics,tokenModel);
                             }
                         }
                     }
