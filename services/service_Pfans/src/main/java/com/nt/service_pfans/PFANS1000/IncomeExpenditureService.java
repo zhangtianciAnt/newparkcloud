@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface IncomeExpenditureService {
 
-    List<ThemePlan> getdatalist() throws Exception;
+    List<IncomeExpenditure> getdatalist() throws Exception;
 
     List<IncomeExpenditure> selectlist(String year, String group_id) throws Exception;
 
