@@ -5,6 +5,7 @@ import cn.hutool.http.HttpUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Log;
 import com.nt.dao_Org.UserAccount;
+import com.nt.dao_Org.Vo.UserAccountVo;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.LogService;
 import com.nt.service_Org.UserService;
@@ -15,11 +16,14 @@ import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.mongodb.core.query.Query;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,6 +56,10 @@ public class UserController {
 
     @Autowired
     private LogService logService;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
@@ -367,4 +375,20 @@ public class UserController {
         String userId = tokenModel.getUserId();//RequestUtils.CurrentUserId(request);
         return ApiResult.success(userService.getSigninlog(userId));
     }
+    //add-lyt-21/2/3-PSDCD_PFANS_20201124_XQ_033
+    @RequestMapping(value = "/checkpassword", method = {RequestMethod.GET})
+    public ApiResult checkpassword(UserAccountVo userAccountVo, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(userAccountVo.getUserid()));
+        query.addCriteria(Criteria.where("password").is(userAccountVo.getPassword()));
+        List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+        if (userAccountlist.size() > 0) {
+            return ApiResult.success("1");
+        } else {
+            return ApiResult.success("0");
+        }
+    }
 }
+
+

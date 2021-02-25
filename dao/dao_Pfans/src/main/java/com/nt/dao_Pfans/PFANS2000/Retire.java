@@ -53,5 +53,9 @@ public class Retire extends BaseModel {
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 
+    @Column(name = "ANNUALLEAVE")
+    private String annualleave;
 
+    @Column(name = "ANNUALLEAVEGIVE")
+    private String annualleavegive;
 }
