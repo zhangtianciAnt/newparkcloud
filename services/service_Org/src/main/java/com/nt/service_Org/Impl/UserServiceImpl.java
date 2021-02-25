@@ -2609,15 +2609,35 @@ public class UserServiceImpl implements UserService {
         List<Log.Logs> logslist = new ArrayList<>();
         Query query = new Query();
         List<Log> loglist = mongoTemplate.find(query, Log.class);
+        //UPD CCM 20210219 PSDCD_PFANS_20210209_BUG_014 FROM
+        //        if (loglist.size() > 0) {
+        //            logslist = loglist.get(0).getLogs();
+        //            if (logslist.size() > 0) {
+        //                logslist = logslist.stream().filter(coi -> (coi.getCreateby() != null)).collect(Collectors.toList());
+        //                logslist = logslist.stream().filter(coi -> (coi.getCreateby().contains(userId))).collect(Collectors.toList());
+        //                logslist = logslist.stream().sorted(Comparator.comparing(Log.Logs::getCreateon).reversed()).collect(Collectors.toList());
+        //            }
+        //        }
+        //        return logslist;
+        List<Log.Logs> logslists = new ArrayList<>();
         if (loglist.size() > 0) {
-            logslist = loglist.get(0).getLogs();
-            if (logslist.size() > 0) {
-                logslist = logslist.stream().filter(coi -> (coi.getCreateby() != null)).collect(Collectors.toList());
-                logslist = logslist.stream().filter(coi -> (coi.getCreateby().contains(userId))).collect(Collectors.toList());
-                logslist = logslist.stream().sorted(Comparator.comparing(Log.Logs::getCreateon).reversed()).collect(Collectors.toList());
+            for(Log log : loglist)
+            {
+                logslist = log.getLogs();
+                if (logslist.size() > 0) {
+                    for(Log.Logs logs:logslist)
+                    {
+                        if(logs.getCreateby()!=null && logs.getCreateby().contains(userId))
+                        {
+                            logslists.add(logs);
+                        }
+                    }
+                }
             }
         }
-        return logslist;
+        logslists = logslists.stream().sorted(Comparator.comparing(Log.Logs::getCreateon).reversed()).collect(Collectors.toList());
+        return logslists;
+        //UPD CCM 20210219 PSDCD_PFANS_20210209_BUG_014 TO
     }
 
     /**
