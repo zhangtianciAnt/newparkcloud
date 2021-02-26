@@ -156,12 +156,15 @@ public class ThemePlanDetailVo {
 
     private String sumamount4;
 
+    private String otherone;
 
 
 
+    private String othertwo;
 
 
 
+    private String otherthree;
 
     /**
      * theme plan detail list
