@@ -3593,12 +3593,17 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 Calendar born = Calendar.getInstance();
                 Calendar resign = Calendar.getInstance();
 
-                resign.setTime(Convert.toDate(c.getUserinfo().getResignation_date()));
+                //update gbb NT_PFANS_20210226_BUG_032 离职人员日期转换错误 start
+                //resign.setTime(Convert.toDate(c.getUserinfo().getResignation_date()));
                 String resignday = c.getUserinfo().getResignation_date().substring(0, 10);
                 if (c.getUserinfo().getResignation_date().length() >= 24) {
                     resign.setTime(Convert.toDate(resignday));
                     resign.add(Calendar.DAY_OF_YEAR, 1);
                 }
+                else{
+                    resign.setTime(Convert.toDate(c.getUserinfo().getResignation_date()));
+                }
+                //update gbb NT_PFANS_20210226_BUG_032 离职人员日期转换错误 end
                 born.setTime(Convert.toDate(c.getUserinfo().getBirthday()));
                 String birthday = c.getUserinfo().getBirthday().substring(0, 10);
                 if (c.getUserinfo().getBirthday().length() >= 24) {
