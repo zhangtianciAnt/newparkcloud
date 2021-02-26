@@ -36,7 +36,7 @@ public class IncomeExpenditure extends BaseModel {
     @Column(name = "BRANCH")
     private String branch;
 
-    @Column(name = "KIND")
+      @Column(name = "KIND")
     private String kind;
 
     @Column(name = "CURRENCYTYPE")
@@ -91,6 +91,17 @@ public class IncomeExpenditure extends BaseModel {
     private String planamount2;
     @Column(name = "PLANAMOUNT3")
     private String planamount3;
+
+    @Column(name = "OTHERONE")
+    private String otherone;
+
+
+    @Column(name = "OTHERTWO")
+    private String othertwo;
+
+
+    @Column(name = "OTHERTHREE")
+    private String otherthree;
 
 
 }

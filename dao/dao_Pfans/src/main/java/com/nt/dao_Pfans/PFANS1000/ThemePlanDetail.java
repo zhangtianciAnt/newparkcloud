@@ -194,4 +194,15 @@ public class ThemePlanDetail extends BaseModel {
 
     @Column(name = "MONTH")
     private String month;
+
+    @Column(name = "OTHERONE")
+    private String otherone;
+
+
+    @Column(name = "OTHERTWO")
+    private String othertwo;
+
+
+    @Column(name = "OTHERTHREE")
+    private String otherthree;
 }

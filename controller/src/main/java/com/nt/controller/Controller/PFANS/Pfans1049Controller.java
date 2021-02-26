@@ -40,6 +40,11 @@ public class Pfans1049Controller {
         return ApiResult.success(incomeexpenditureservice.selectlist(year, group_id));
     }
 
+    @GetMapping("/getradio")
+    public ApiResult getradio(HttpServletRequest request) throws Exception {
+        return ApiResult.success(incomeexpenditureservice.getradio("1", "4"));
+    }
+
     @PostMapping("/insert")
     public ApiResult insert(@RequestBody List<IncomeExpenditure> incomeexpenditure, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);

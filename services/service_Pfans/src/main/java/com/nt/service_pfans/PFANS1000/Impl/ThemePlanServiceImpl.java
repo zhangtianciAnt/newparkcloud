@@ -390,6 +390,9 @@ public class ThemePlanServiceImpl implements ThemePlanService {
                 //endregion
 
                 ctDetail.setRowindex(String.valueOf(rowindex));
+                ctDetail.setOtherone(vo.getOtherone());
+                ctDetail.setOthertwo(vo.getOthertwo());
+                ctDetail.setOtherthree(vo.getOtherthree());
                 if (!StringUtils.isNullOrEmpty(ctDetail.getThemeplandetail_id())) {
                     ctDetail.preInsert(tokenModel);
                     ctDetail.setThemeplandetail_id(themeplandetailid);
