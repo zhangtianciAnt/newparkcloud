@@ -16,7 +16,7 @@ import java.util.Map;
 
 public interface BusinessplanService {
 
-    List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
+    List<String> importUser(HttpServletRequest request, TokenModel tokenModel,String radio) throws Exception ;
 
     List<Businessplan> get(Businessplan businessplan) throws Exception;
 
