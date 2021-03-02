@@ -20,10 +20,10 @@ public class Pfans1036Controller {
     private TokenService tokenService;
 
     @PostMapping("/importUser")
-    public ApiResult importUser(HttpServletRequest request, String flag) {
+    public ApiResult importUser(HttpServletRequest request, String radio) {
         try {
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(businessplanService.importUser(request, tokenModel));
+            return ApiResult.success(businessplanService.importUser(request, tokenModel,radio));
         } catch (LogicalException e) {
             return ApiResult.fail(e.getMessage());
         } catch (Exception e) {
