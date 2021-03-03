@@ -1,8 +1,10 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS1000.PersonnelPlan;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExternalVo;
+import com.nt.dao_Pfans.PFANS2000.PersonalCost;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS1000.PersonnelplanService;
 import com.nt.service_pfans.PFANS1000.mapper.PersonnelplanMapper;
@@ -14,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -85,4 +88,28 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
 
       return  personnelPlan1;
     }
+    // add-lyt-21/1/29-禅道任务648-start
+    @Override
+    public List<PersonalCost> getPersonalCost(String id) throws Exception {
+        PersonnelPlan personnelplan = personnelplanMapper.selectByPrimaryKey(id);
+        String years = personnelplan.getYears();
+        JSONArray jsonArray = JSONArray.parseArray(personnelplan.getEmployed());
+        List<PersonalCost> model = new ArrayList<>();
+        for (Object ob : jsonArray) {
+            String userid = getProperty(ob, "userid");
+            List<PersonalCost> personalcost = personnelplanMapper.getPersonalCost(years, userid);
+            model.addAll(personalcost);
+        }
+        return model;
+    }
+
+    private String getProperty(Object o, String key) throws Exception {
+        try {
+            return org.apache.commons.beanutils.BeanUtils.getProperty(o, key);
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
+        }
+    }
+   // add-lyt-21/1/29-禅道任务648-end
+
 }

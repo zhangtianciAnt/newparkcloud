@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS1000;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS1000.PersonnelPlan;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExternalVo;
+import com.nt.dao_Pfans.PFANS2000.PersonalCost;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.utils.LogicalException;
@@ -20,4 +21,7 @@ public interface PersonnelplanService {
     void insert(PersonnelPlan personnelPlan, TokenModel tokenModel)throws LogicalException;
 
     List<PersonnelPlan> get(PersonnelPlan personnelPlan);
+    // add-lyt-21/1/29-禅道任务648-start
+    List<PersonalCost> getPersonalCost(String id) throws Exception;
+    // add-lyt-21/1/29-禅道任务648-start
 }
