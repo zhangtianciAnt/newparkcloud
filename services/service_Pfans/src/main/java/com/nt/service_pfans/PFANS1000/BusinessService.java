@@ -20,10 +20,12 @@ public interface BusinessService {
     List<Business> selectById3(String offshore_id) throws Exception;
     //add-ws-7/7-禅道153
 
-    public BusinessVo selectById(String businessid) throws Exception;
+    BusinessVo selectById(String businessid) throws Exception;
 
-    public void insertBusinessVo(BusinessVo businessvo, TokenModel tokenModel)throws Exception;
+    void insertBusinessVo(BusinessVo businessvo, TokenModel tokenModel)throws Exception;
 
-    public void updateBusinessVo(BusinessVo businessvo, TokenModel tokenModel)throws Exception;
+    void updateBusinessVo(BusinessVo businessvo, TokenModel tokenModel)throws Exception;
+
+    void saveDaka() throws Exception;
 
 }
