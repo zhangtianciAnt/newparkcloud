@@ -6,6 +6,7 @@ import com.nt.dao_Auth.Role;
 import com.nt.dao_Pfans.PFANS2000.Punchcard;
 import com.nt.service_Auth.AuthService;
 import com.nt.service_Auth.RoleService;
+import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS6000.DeleginformationService;
 import com.nt.service_pfans.PFANS6000.PricesetService;
@@ -51,6 +52,10 @@ public class AuthController {
 
     @Autowired
     private PricesetService pricesetService;
+
+    @Autowired
+    private BusinessService businessService;
+
 
     /**
      * @方法名：getActionsAuth
@@ -170,4 +175,11 @@ public class AuthController {
         return ApiResult.success();
     }
     //add ccm 20201212
+
+    //境外出差根据时长创建打卡记录 定时任务
+    @RequestMapping(value = "/saveDaka",method={RequestMethod.GET})
+    public ApiResult saveDaka(HttpServletRequest request) throws Exception {
+        businessService.saveDaka();
+        return ApiResult.success();
+    }
 }
