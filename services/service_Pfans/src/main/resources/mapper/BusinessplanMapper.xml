@@ -371,7 +371,6 @@ SUM(AMOUNT3) AS money3,
 SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9) AS moneyfirst,
 SUM(AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneysecond,
 SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9+AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneytotal
-from themeplandetail where type = 0 and contracttype = 'PJ142003' and year = #{year} and center_id = #{groupid}
 from themeplandetail where type = 0 and (contracttype = 'PJ142004' or contracttype = 'PJ142005' ) and year = #{year} and center_id = #{groupid} group by ASSIGNOR
     </select>
     <select id="getgroupB1" resultType="com.nt.dao_Pfans.PFANS1000.Vo.BusinessGroupA2Vo">
