@@ -53,13 +53,7 @@ public class GlobalAop {
 //        encoder
             AES aes = new AES();
             if(ret != null){
-                String res = aes.encrypt(JSONObject.toJSONString(((ApiResult) ret).getData(), SerializerFeature.WriteMapNullValue));
-                if(res.length() > 110000000){
-                    ((ApiResult) ret).setCode(-1);
-                    ((ApiResult) ret).setMessage("查询数据过多，操作无法执行！请联系管理员！");
-                }else{
-                    ((ApiResult) ret).setData(aes.encrypt(JSONObject.toJSONString(((ApiResult) ret).getData(), SerializerFeature.WriteMapNullValue)));
-                }
+                ((ApiResult) ret).setData(aes.encrypt(JSONObject.toJSONString(((ApiResult) ret).getData(), SerializerFeature.WriteMapNullValue)));
             }
         }
         //处理完请求，返回内容
