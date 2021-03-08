@@ -7233,7 +7233,7 @@ public class IncomeExpenditureServiceImpl implements IncomeExpenditureService {
 
     //汇率定时任务
 //    @Scheduled(cron = "0 */5 * * * ?")
-//    @Scheduled(cron = "0 10 0 1 12 ?")
+    @Scheduled(cron = "0 10 0 1 4 ?")
     public void getThemeDetatiList() throws Exception {
         SimpleDateFormat s = new SimpleDateFormat("MM");
         SimpleDateFormat s1 = new SimpleDateFormat("YYYY");
@@ -7251,31 +7251,62 @@ public class IncomeExpenditureServiceImpl implements IncomeExpenditureService {
                         String theme = list.getThemename();
                         for (int i = 1; i <= 12; i++) {
                             String month = i <= 9 ? "0" + i : String.valueOf(i);
-                            List<ProjectContract> projectcontractlist = incomeexpendituremapper.getprojectcontractlist(theme, String.valueOf(year), month);
-                            if (i == 1) {
-                                incomeexpenditures.setPlanamount1(projectcontractlist.get(0).getContractamount());
-                            } else if (i == 2) {
-                                incomeexpenditures.setPlanamount2(projectcontractlist.get(0).getContractamount());
-                            } else if (i == 3) {
-                                incomeexpenditures.setPlanamount3(projectcontractlist.get(0).getContractamount());
-                            } else if (i == 4) {
-                                incomeexpenditures.setPlanamount4(projectcontractlist.get(0).getContractamount());
-                            } else if (i == 5) {
-                                incomeexpenditures.setPlanamount5(projectcontractlist.get(0).getContractamount());
-                            } else if (i == 6) {
-                                incomeexpenditures.setPlanamount6(projectcontractlist.get(0).getContractamount());
-                            } else if (i == 7) {
-                                incomeexpenditures.setPlanamount7(projectcontractlist.get(0).getContractamount());
-                            } else if (i == 8) {
-                                incomeexpenditures.setPlanamount8(projectcontractlist.get(0).getContractamount());
-                            } else if (i == 9) {
-                                incomeexpenditures.setPlanamount9(projectcontractlist.get(0).getContractamount());
-                            } else if (i == 10) {
-                                incomeexpenditures.setPlanamount10(projectcontractlist.get(0).getContractamount());
-                            } else if (i == 11) {
-                                incomeexpenditures.setPlanamount11(projectcontractlist.get(0).getContractamount());
-                            } else if (i == 12) {
-                                incomeexpenditures.setPlanamount12(projectcontractlist.get(0).getContractamount());
+                            StringBuilder sb = new StringBuilder();
+                            sb.append(year).append("-").append(month);
+                            ProjectIncome projectincome = new ProjectIncome();
+                            projectincome.setYear(String.valueOf(year));
+                            projectincome.setGroup_id(org1.get_id());
+                            projectincome.setMonth(String.valueOf(sb));
+                            List<ProjectIncome> projectincomelist = projectincomemapper.select(projectincome);
+                            BigDecimal amount = new BigDecimal("0");
+                            if (projectincomelist.size() > 0) {
+                                JSONArray jsonArray = JSONArray.parseArray(projectincomelist.get(0).getProjectincomevo1());
+                                for (Object ob : jsonArray) {
+                                    String projectincomevo1theme = getProperty(ob, "theme");
+                                    String projectincomevo1contractamount = getProperty(ob, "contractamount");
+                                    if (projectincomevo1theme.equals(theme)) {
+                                        BigDecimal contractamount = new BigDecimal(projectincomevo1contractamount);
+                                        amount = amount.add(contractamount);
+                                    }
+                                }
+                                List<ProjectContract> projectcontractlist = incomeexpendituremapper.getprojectcontractlist(theme, String.valueOf(year), month);
+                                if (i == 1) {
+                                    BigDecimal planamount = new BigDecimal(projectcontractlist.get(0).getContractamount()).add(amount);
+                                    incomeexpenditures.setPlanamount1(String.valueOf(planamount));
+                                } else if (i == 2) {
+                                    BigDecimal planamount = new BigDecimal(projectcontractlist.get(0).getContractamount()).add(amount);
+                                    incomeexpenditures.setPlanamount2(String.valueOf(planamount));
+                                } else if (i == 3) {
+                                    BigDecimal planamount = new BigDecimal(projectcontractlist.get(0).getContractamount()).add(amount);
+                                    incomeexpenditures.setPlanamount3(String.valueOf(planamount));
+                                } else if (i == 4) {
+                                    BigDecimal planamount = new BigDecimal(projectcontractlist.get(0).getContractamount()).add(amount);
+                                    incomeexpenditures.setPlanamount4(String.valueOf(planamount));
+                                } else if (i == 5) {
+                                    BigDecimal planamount = new BigDecimal(projectcontractlist.get(0).getContractamount()).add(amount);
+                                    incomeexpenditures.setPlanamount5(String.valueOf(planamount));
+                                } else if (i == 6) {
+                                    BigDecimal planamount = new BigDecimal(projectcontractlist.get(0).getContractamount()).add(amount);
+                                    incomeexpenditures.setPlanamount6(String.valueOf(planamount));
+                                } else if (i == 7) {
+                                    BigDecimal planamount = new BigDecimal(projectcontractlist.get(0).getContractamount()).add(amount);
+                                    incomeexpenditures.setPlanamount7(String.valueOf(planamount));
+                                } else if (i == 8) {
+                                    BigDecimal planamount = new BigDecimal(projectcontractlist.get(0).getContractamount()).add(amount);
+                                    incomeexpenditures.setPlanamount8(String.valueOf(planamount));
+                                } else if (i == 9) {
+                                    BigDecimal planamount = new BigDecimal(projectcontractlist.get(0).getContractamount()).add(amount);
+                                    incomeexpenditures.setPlanamount9(String.valueOf(planamount));
+                                } else if (i == 10) {
+                                    BigDecimal planamount = new BigDecimal(projectcontractlist.get(0).getContractamount()).add(amount);
+                                    incomeexpenditures.setPlanamount10(String.valueOf(planamount));
+                                } else if (i == 11) {
+                                    BigDecimal planamount = new BigDecimal(projectcontractlist.get(0).getContractamount()).add(amount);
+                                    incomeexpenditures.setPlanamount11(String.valueOf(planamount));
+                                } else if (i == 12) {
+                                    BigDecimal planamount = new BigDecimal(projectcontractlist.get(0).getContractamount()).add(amount);
+                                    incomeexpenditures.setPlanamount12(String.valueOf(planamount));
+                                }
                             }
                         }
                         incomeexpenditures.setIncomeexpenditure_id(UUID.randomUUID().toString());
