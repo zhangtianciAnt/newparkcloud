@@ -20,4 +20,6 @@ public interface MonthlyRateService {
 
     List<MonthlyRate> slectlist2() throws Exception;
 
+    void getExchangeRateY() throws Exception;
+
 }
