@@ -8,6 +8,7 @@ import com.nt.dao_Pfans.PFANS2000.PersonalCost;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS1000.PersonnelplanService;
 import com.nt.service_pfans.PFANS1000.mapper.PersonnelplanMapper;
+import com.nt.service_pfans.PFANS2000.mapper.PersonalCostMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,8 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
     private PersonnelplanMapper personnelplanMapper;
     @Autowired
     private MongoTemplate mongoTemplate;
-
+    @Autowired
+    private PersonalCostMapper personalcostmapper;
     @Override
     public List<CustomerInfo> SelectCustomer(String id) {
         Query query = new Query();
@@ -90,25 +92,9 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
     }
     // add-lyt-21/1/29-禅道任务648-start
     @Override
-    public List<PersonalCost> getPersonalCost(String id) throws Exception {
-        PersonnelPlan personnelplan = personnelplanMapper.selectByPrimaryKey(id);
-        String years = personnelplan.getYears();
-        JSONArray jsonArray = JSONArray.parseArray(personnelplan.getEmployed());
-        List<PersonalCost> model = new ArrayList<>();
-        for (Object ob : jsonArray) {
-            String userid = getProperty(ob, "userid");
-            List<PersonalCost> personalcost = personnelplanMapper.getPersonalCost(years, userid);
-            model.addAll(personalcost);
-        }
-        return model;
-    }
-
-    private String getProperty(Object o, String key) throws Exception {
-        try {
-            return org.apache.commons.beanutils.BeanUtils.getProperty(o, key);
-        } catch (Exception e) {
-            throw new LogicalException(e.getMessage());
-        }
+    public List<PersonalCost> getPersonalCost(String groupid, String years) throws Exception {
+        List<PersonalCost> personalcost =  personalcostmapper.getPersonalCost(groupid,years);
+        return personalcost;
     }
    // add-lyt-21/1/29-禅道任务648-end
 

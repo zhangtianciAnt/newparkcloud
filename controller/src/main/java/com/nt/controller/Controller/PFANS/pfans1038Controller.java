@@ -95,9 +95,9 @@ public class pfans1038Controller {
     }
     // add-lyt-21/1/29-禅道任务648-start
     @RequestMapping(value = "/getPersonalCost", method = {RequestMethod.GET})
-    public ApiResult getPersonalCost(HttpServletRequest request, @RequestParam String id) throws Exception {
+    public ApiResult getPersonalCost(HttpServletRequest request,String groupid,String years) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        List<PersonalCost>  PersonalCostList =personnelplanService.getPersonalCost(id);
+        List<PersonalCost>  PersonalCostList =personnelplanService.getPersonalCost(groupid , years);
         return ApiResult.success(PersonalCostList);
     }
     // add-lyt-21/1/29-禅道任务648-start

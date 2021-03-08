@@ -22,6 +22,6 @@ public interface PersonnelplanService {
 
     List<PersonnelPlan> get(PersonnelPlan personnelPlan);
     // add-lyt-21/1/29-禅道任务648-start
-    List<PersonalCost> getPersonalCost(String id) throws Exception;
+    List<PersonalCost> getPersonalCost(String groupid,String years) throws Exception;
     // add-lyt-21/1/29-禅道任务648-start
 }

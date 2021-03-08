@@ -57,5 +57,14 @@
         </if>
     </select>
     <!--add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-end    -->
+<!--    add-lyt-21/1/29-禅道任务648-start-->
+    <select id="getPersonalCost"  resultType="com.nt.dao_Pfans.PFANS2000.PersonalCost">
+        SELECT yearsantid,username,aptoju,jutoma,exrank,ltrank,overtimepay,newpersonaldate FROM personalcost
+        WHERE yearsantid IN(SELECT yearsantid FROM personalcostyears WHERE YEARS= #{years})
+        AND GROUPID = #{groupid}
+        ORDER BY EXRANK DESC
+    </select>
+<!--    add-lyt-21/1/29-禅道任务648-start-->
 </mapper>
+
 
