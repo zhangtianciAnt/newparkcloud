@@ -567,7 +567,9 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                         contractrequestamount = contractrequestamounts.add(contractrequestamounts);
                     }
                     ProjectIncomeVo1 projectincomevo1 = new ProjectIncomeVo1();
-                    projectincomevo1.setCompanyproject(companyprojectslist.getProject_name());
+                    StringBuilder ab = new StringBuilder();
+                    ab.append(companyprojectslist.getProject_name()).append("_自主投资");
+                    projectincomevo1.setCompanyproject(String.valueOf(ab));
                     if (companyprojectslist.getToolstype().equals("0")) {
                         projectincomevo1.setContractamount(String.valueOf(contractamount));
                     } else {
