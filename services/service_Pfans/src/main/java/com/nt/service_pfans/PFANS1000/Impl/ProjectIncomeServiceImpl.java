@@ -567,12 +567,14 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                         contractrequestamount = contractrequestamounts.add(contractrequestamounts);
                     }
                     ProjectIncomeVo1 projectincomevo1 = new ProjectIncomeVo1();
+
                     StringBuilder ab = new StringBuilder();
                     ab.append(companyprojectslist.getProject_name()).append("_自主投资");
-                    projectincomevo1.setCompanyproject(String.valueOf(ab));
                     if (companyprojectslist.getToolstype().equals("0")) {
+                        projectincomevo1.setCompanyproject(String.valueOf(companyprojectslist.getProject_name()));
                         projectincomevo1.setContractamount(String.valueOf(contractamount));
                     } else {
+                        projectincomevo1.setCompanyproject(String.valueOf(ab));
                         projectincomevo1.setContractamount(String.valueOf(contractrequestamount));
                     }
                     if (projectcontractlist.size() == i) {
