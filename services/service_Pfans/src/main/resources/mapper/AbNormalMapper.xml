@@ -122,7 +122,25 @@
     </select>
     <select id="selectAbNormalParent" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
         select * from abnormal
-        where year(createon)=year(now())
+        <!-- UPDATE GBB 20210310 PSDCD_PFANS_20210223_BUG_021 家长会假每事业年度只能请两次 start-->
+        where
+        IF
+        (
+        MONTH (
+        <![CDATA[ IFNULL( RE_OCCURRENCE_DATE, OCCURRENCE_DATE )) < 4,]]>
+        YEAR (
+        IFNULL( RE_OCCURRENCE_DATE, OCCURRENCE_DATE )) - 1,
+        YEAR (
+        IFNULL( RE_OCCURRENCE_DATE, OCCURRENCE_DATE ))) =
+        IF
+        (
+        MONTH (
+        <![CDATA[ now()) < 4,]]>
+        YEAR (
+        now()) - 1,
+        YEAR (
+        now()))
+        <!-- UPDATE GBB 20210310 PSDCD_PFANS_20210223_BUG_021 家长会假每事业年度只能请两次 end-->
         and error_type = 'PR013014'
         and status not in ('1','3')
         and user_id = #{userid}
