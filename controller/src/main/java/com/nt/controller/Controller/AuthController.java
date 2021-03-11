@@ -193,4 +193,18 @@ public class AuthController {
         monthlyRateService.getExchangeRateY();
         return ApiResult.success();
     }
+
+    //事业年度开始之前3月31日晚11点半更新年度年休表
+    @RequestMapping(value = "/updateAnBefore",method={RequestMethod.GET})
+    public ApiResult updateAnBefore(HttpServletRequest request) throws Exception {
+        annualLeaveService.updateAnBefore();
+        return ApiResult.success();
+    }
+
+    //正式时间每年4月1日零时执行--事业年度开始获取年休
+    @RequestMapping(value = "/insert",method={RequestMethod.GET})
+    public ApiResult insert(HttpServletRequest request) throws Exception {
+        annualLeaveService.insert();
+        return ApiResult.success();
+    }
 }
