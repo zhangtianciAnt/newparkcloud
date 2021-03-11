@@ -90,6 +90,7 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
             }
         }
         //审批通过，入职区分默认待入职。add ccm 1113
+
         recruitJudgementMapper.updateByPrimaryKeySelective(recruitJudgement);
 //        add_fjl_06/02  --填写入职日并且审批通过的数据插入到人员信息，并给薪资担当发代办
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -101,24 +102,34 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
             Query query0 = new Query();
             UserAccount userAccount = new UserAccount();
             userAccount.setAccount(PinyinHelper.convertToPinyinString(recruitJudgement.getName(), "", PinyinFormat.WITHOUT_TONE));
-            userAccount.setPassword(PinyinHelper.convertToPinyinString(recruitJudgement.getName(), "", PinyinFormat.WITHOUT_TONE));
-            userAccount.setUsertype("0");
-            query0.addCriteria(Criteria.where("account").regex(userAccount.getAccount()));
-//            query0.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
-            query0.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
-            List<UserAccount> list = mongoTemplate.find(query0, UserAccount.class);
-            int uf = 0;
-            String us = "";
-            if (list.size() > 0) {
-                for (UserAccount ua : list) {
-                    uf++;
-                }
-                if (uf <= 9) {
-                    us = "00" + (uf + 1);
-                } else {
-                    us = "0" + (uf + 1);
-                }
-            }
+            //UPD CCM 20210311 PSDCD_PFANS_20210309_BUG_029 FR
+//            userAccount.setPassword(PinyinHelper.convertToPinyinString(recruitJudgement.getName(), "", PinyinFormat.WITHOUT_TONE));
+//            userAccount.setUsertype("0");
+//            query0.addCriteria(Criteria.where("account").regex(userAccount.getAccount()));
+////            query0.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+//            query0.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
+//            List<UserAccount> list = mongoTemplate.find(query0, UserAccount.class);
+//            int uf = 0;
+//            String us = "";
+//            if (list.size() > 0) {
+//                for (UserAccount ua : list) {
+//                    uf++;
+//                }
+//                if (uf <= 9) {
+//                    //UPD CCM 20210311 PSDCD_PFANS_20210309_BUG_029 FR
+////                    us = "00" + (uf + 1);
+//                    us = "00" + (uf);
+//                    //UPD CCM 20210311 PSDCD_PFANS_20210309_BUG_029 TO
+//                } else {
+//                    //UPD CCM 20210311 PSDCD_PFANS_20210309_BUG_029 FR
+////                    us = "0" + (uf + 1);
+//                    us = "0" + (uf);
+//                    //UPD CCM 20210311 PSDCD_PFANS_20210309_BUG_029 TO
+//                }
+//            }
+            String account = userAccount.getAccount();
+            account  = selectByAccount(account,"0",0);
+            //UPD CCM 20210311 PSDCD_PFANS_20210309_BUG_029 TO
             List<Role> rl = new ArrayList<>();
             Role role = new Role();
             role.set_id("5e7860c68f43163084351131");
@@ -127,8 +138,12 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
             role.setDefaultrole("true");
             rl.add(role);
             userAccount.setRoles(rl);
-            userAccount.setAccount(userAccount.getAccount() + us);
-            userAccount.setPassword(userAccount.getPassword() + us);
+            //UPD CCM 20210311 PSDCD_PFANS_20210309_BUG_029 FR
+//            userAccount.setAccount(userAccount.getAccount() + us);
+            userAccount.setAccount(account);
+            userAccount.setPassword(account);
+            userAccount.setUsertype("0");
+            //UPD CCM 20210311 PSDCD_PFANS_20210309_BUG_029 TO
             userAccount.preInsert(tokenModel);
             mongoTemplate.save(userAccount);
             query0 = new Query();
@@ -152,21 +167,27 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
                 CustomerInfo.UserInfo info = new CustomerInfo.UserInfo();
                 customerInfo.setUserid(_id);
                 Query query = new Query();
-                query.addCriteria(Criteria.where("userinfo.customername").regex(recruitJudgement.getName()));
-                List<CustomerInfo> cnameL = mongoTemplate.find(query, CustomerInfo.class);
-                int cn = 0;
-                String cs = "";
-                if (cnameL != null && cnameL.size() > 0) {
-                    for (CustomerInfo n : cnameL) {
-                        cn++;
-                    }
-                    if (cn <= 9) {
-                        cs = "00" + (cn + 1);
-                    } else {
-                        cs = "0" + (cn + 1);
-                    }
-                }
-                info.setCustomername(recruitJudgement.getName() + cs);
+                //UPD CCM 20210311 PSDCD_PFANS_20210309_BUG_029 FR
+//                query.addCriteria(Criteria.where("userinfo.customername").regex(recruitJudgement.getName()));
+//                List<CustomerInfo> cnameL = mongoTemplate.find(query, CustomerInfo.class);
+//                int cn = 0;
+//                String cs = "";
+//                if (cnameL != null && cnameL.size() > 0) {
+//                    for (CustomerInfo n : cnameL) {
+//                        cn++;
+//                    }
+//                    if (cn <= 9) {
+//                        cs = "00" + (cn + 1);
+//                    } else {
+//                        cs = "0" + (cn + 1);
+//                    }
+//                }
+//                info.setCustomername(recruitJudgement.getName() + cs);
+                String name = recruitJudgement.getName();
+                name = selectByName(name,0);
+                info.setCustomername(name);
+                //UPD CCM 20210311 PSDCD_PFANS_20210309_BUG_029 TO
+
                 info.setSex(recruitJudgement.getSex());
                 info.setBirthday(formatter.format(recruitJudgement.getBirthday()));
                 info.setEnterday(formatter.format(recruitJudgement.getEntrytime()));
@@ -235,6 +256,46 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
         }
 //        add_fjl_06/02  --填写入职日并且审批通过的数据插入到人员信息，并给薪资担当发代办
     }
+
+
+    //ADD CCM 20210311 PSDCD_PFANS_20210309_BUG_029 FR
+    public String selectByAccount(String account,String usertype,int count)throws Exception
+    {
+        String countString = "";
+        Query query0 = new Query();
+        query0.addCriteria(Criteria.where("account").is(account));
+//        query0.addCriteria(Criteria.where("usertype").is(usertype));
+        List<UserAccount> list = mongoTemplate.find(query0, UserAccount.class);
+        if(list.size()>0)
+        {
+            countString = "00"+(count+list.size());
+            if(list.size()+count>9)
+            {
+                countString = "0"+(list.size()+count);
+            }
+            return selectByAccount(account + countString,"0",list.size()+count);
+        }
+        return account;
+    }
+
+    public String selectByName(String name,int count)throws Exception
+    {
+        String countString = "";
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userinfo.customername").is(name));
+        List<CustomerInfo> cnameL = mongoTemplate.find(query, CustomerInfo.class);
+        if(cnameL.size()>0)
+        {
+            countString = "00"+(count+cnameL.size());
+            if(cnameL.size()+count>9)
+            {
+                countString = "0"+(cnameL.size()+count);
+            }
+            return selectByName(name + countString,cnameL.size()+count);
+        }
+        return name;
+    }
+    //ADD CCM 20210311 PSDCD_PFANS_20210309_BUG_029 TO
 
      public void userinsert(RecruitJudgement recruitJudgement){
         if(recruitJudgement.getStatus().equals("4")){
