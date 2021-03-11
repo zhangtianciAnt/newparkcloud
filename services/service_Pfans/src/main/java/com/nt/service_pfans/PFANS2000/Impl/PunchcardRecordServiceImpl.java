@@ -1037,6 +1037,16 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 } else {
                                                     ad.setYouthday(df.format(Math.floor(Double.valueOf(overtimeHours) / ((Double.valueOf(strovertime)) / 60 / 60 / 1000)) * ((Double.valueOf(strovertime)) / 60 / 60 / 1000)));
                                                 }
+                                                //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+                                                if (Ot.getStatus().equals("7"))
+                                                {
+                                                    ad.setTenantid("7");
+                                                }
+                                                else
+                                                {
+                                                    ad.setTenantid("4");
+                                                }
+                                                //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             } else if (Ot.getOvertimetype().equals("PR001008")) {//妇女节
                                                 if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
                                                     overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(ad.getWomensday())));
@@ -1049,6 +1059,16 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 } else {
                                                     ad.setWomensday(df.format(Math.floor(Double.valueOf(overtimeHours) / ((Double.valueOf(strovertime)) / 60 / 60 / 1000)) * ((Double.valueOf(strovertime)) / 60 / 60 / 1000)));
                                                 }
+                                                //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+                                                if (Ot.getStatus().equals("7"))
+                                                {
+                                                    ad.setTenantid("7");
+                                                }
+                                                else
+                                                {
+                                                    ad.setTenantid("4");
+                                                }
+                                                //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
                                         }
                                     }
@@ -1333,79 +1353,164 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         }
 
                                         if (Double.valueOf(shijiworkHoursAM) >= 4 && Double.valueOf(shijiworkHoursPM) >= 4) {
-                                            //上午>=4 && 下午>=4
-                                            ad.setNormal(df.format(Double.valueOf(workinghours)));
+                                            //上午>=4 &&下午>=4
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+                                            //ad.setNormal(df.format(Double.valueOf(workinghours)
+                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
+                                            ad.setNormal(Double.valueOf(ad.getNormal()) <= 0 ? null : df.format(Double.valueOf(ad.getNormal())));
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             if (ad.getYouthday() != null && !ad.getYouthday().isEmpty()) {
                                                 ad.setYouthday(df.format(Double.valueOf(workinghours)));
                                             }
                                             if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
                                                 ad.setWomensday(df.format(Double.valueOf(workinghours)));
                                             }
-                                        } else if (Double.valueOf(shijiworkHoursAM) >= 4 && Double.valueOf(shijiworkHoursPM) < 4) {
+                                        }
+                                        else if (Double.valueOf(shijiworkHoursAM) >= 4 && Double.valueOf(shijiworkHoursPM) < 4) {
                                             //上午>=4 && 下午<4
-                                            ad.setNormal(df.format(Double.valueOf(workinghours)));
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+                                            //ad.setNormal(df.format(Double.valueOf(workinghours)
+                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
+                                            ad.setNormal(Double.valueOf(ad.getNormal()) <= 0 ? null : df.format(Double.valueOf(ad.getNormal())));
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             if (ad.getYouthday() != null && !ad.getYouthday().isEmpty()) {
-                                                //下午上班时间 + 申请的假期 + 申请的因公外出 >= 4
-                                                if (Double.valueOf(shijiworkHoursPM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+//                                                //下午上班时间 + 申请的假期 + 申请的因公外出 >= 4
+//                                                if (Double.valueOf(shijiworkHoursPM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+//                                                    ad.setYouthday(df.format(Double.valueOf(workinghours)));
+//                                                } else {
+//                                                    ad.setYouthday(null);
+//                                                }
+                                                if(ad.getTenantid().equals("7"))
+                                                {
                                                     ad.setYouthday(df.format(Double.valueOf(workinghours)));
-                                                } else {
+                                                }
+                                                else if(ad.getTenantid().equals("4"))
+                                                {
                                                     ad.setYouthday(null);
                                                 }
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
                                             if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
-                                                //下午上班时间 + 申请的假期 + 申请的因公外出 >= 4
-                                                if (Double.valueOf(shijiworkHoursPM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+//                                                //下午上班时间 + 申请的假期 + 申请的因公外出 >= 4
+//                                                if (Double.valueOf(shijiworkHoursPM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+//                                                    ad.setWomensday(df.format(Double.valueOf(workinghours)));
+//                                                } else {
+//                                                    ad.setWomensday(null);
+//                                                }
+                                                if(ad.getTenantid().equals("7"))
+                                                {
                                                     ad.setWomensday(df.format(Double.valueOf(workinghours)));
-                                                } else {
+                                                }
+                                                else if(ad.getTenantid().equals("4"))
+                                                {
                                                     ad.setWomensday(null);
                                                 }
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
-                                        } else if (Double.valueOf(shijiworkHoursAM) < 4 && Double.valueOf(shijiworkHoursPM) >= 4) {
+                                        }
+                                        else if (Double.valueOf(shijiworkHoursAM) < 4 && Double.valueOf(shijiworkHoursPM) >= 4) {
                                             //上午<4 && 下午>=4
-                                            ad.setNormal(df.format(Double.valueOf(workinghours)));
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+                                            //ad.setNormal(df.format(Double.valueOf(workinghours)
+                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
+                                            ad.setNormal(Double.valueOf(ad.getNormal()) <= 0 ? null : df.format(Double.valueOf(ad.getNormal())));
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             if (ad.getYouthday() != null && !ad.getYouthday().isEmpty()) {
-                                                //上午上班时间 + 申请的假期 + 申请的因公外出 >= 4
-                                                if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+//                                                //上午上班时间 + 申请的假期 + 申请的因公外出 >= 4
+//                                                if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+//                                                    ad.setYouthday(df.format(Double.valueOf(workinghours)));
+//                                                } else {
+//                                                    ad.setYouthday(null);
+//                                                }
+                                                if(ad.getTenantid().equals("7"))
+                                                {
                                                     ad.setYouthday(df.format(Double.valueOf(workinghours)));
-                                                } else {
+                                                }
+                                                else if(ad.getTenantid().equals("4"))
+                                                {
                                                     ad.setYouthday(null);
                                                 }
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
                                             if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
                                                 //上午上班时间 + 申请的假期 + 申请的因公外出 >= 4
-                                                if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+//                                                if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+//                                                    ad.setWomensday(df.format(Double.valueOf(workinghours)));
+//                                                } else {
+//                                                    ad.setWomensday(null);
+//                                                }
+                                                if(ad.getTenantid().equals("7"))
+                                                {
                                                     ad.setWomensday(df.format(Double.valueOf(workinghours)));
-                                                } else {
+                                                }
+                                                else if(ad.getTenantid().equals("4"))
+                                                {
                                                     ad.setWomensday(null);
                                                 }
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
 
-                                        } else {
+                                        }
+                                        else {
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
                                             //上午<4 && 下午<4
-                                            if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(shijiworkHoursPM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 8) {
-                                                ad.setNormal(df.format(Double.valueOf(workinghours)));
-                                                if (ad.getYouthday() != null && !ad.getYouthday().isEmpty()) {
-                                                    ad.setYouthday(df.format(Double.valueOf(workinghours)));
+//                                            if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(shijiworkHoursPM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 8) {
+//                                                ad.setNormal(df.format(Double.valueOf(workinghours)));
+//                                                if (ad.getYouthday() != null && !ad.getYouthday().isEmpty()) {
+//                                                    ad.setYouthday(df.format(Double.valueOf(workinghours)));
+//                                                }
+//                                                if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
+//                                                    ad.setWomensday(df.format(Double.valueOf(workinghours)));
+//                                                }
+//                                            }
+//                                            else {
+//                                                String shijiworkHoursMax = "0";
+//                                                shijiworkHoursMax = Double.valueOf(shijiworkHoursAM) > Double.valueOf(shijiworkHoursPM) ? shijiworkHoursAM : shijiworkHoursPM;
+//                                                //取上午下午最大上班时间 + 申请的假期 + 申请的因公外出 >= 4
+//                                                if (Double.valueOf(shijiworkHoursMax) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+//                                                    ad.setNormal(df.format(Double.valueOf(workinghours)));
+//                                                    ad.setYouthday(null);
+//                                                    ad.setWomensday(null);
+//                                                } else {
+//                                                    ad.setNormal(df.format(Double.valueOf(shijiworkHoursMax) + Double.valueOf(nomal)));
+//                                                    ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+//                                                    ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+//                                                    ad.setYouthday(null);
+//                                                    ad.setWomensday(null);
+//                                                }
+//                                            }
+
+                                            String shijiworkHoursMax = "0";
+                                            shijiworkHoursMax = Double.valueOf(shijiworkHoursAM) > Double.valueOf(shijiworkHoursPM) ? shijiworkHoursAM : shijiworkHoursPM;
+                                            //取上午下午最大上班时间 + 申请的假期 + 申请的因公外出 >= 4
+                                            if (Double.valueOf(shijiworkHoursMax) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4)
+                                            {
+                                                ad.setNormal(df.format(Double.valueOf(shijiworkHoursMax) + Double.valueOf(nomal)));
+                                                ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+                                                ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+                                                if(ad.getTenantid().equals("7"))
+                                                {
+                                                    if (ad.getYouthday() != null && !ad.getYouthday().isEmpty())
+                                                    {
+                                                        ad.setYouthday(df.format(Double.valueOf(workinghours)));
+                                                    }
+                                                    else if(ad.getWomensday() != null && !ad.getWomensday().isEmpty())
+                                                    {
+                                                        ad.setWomensday(df.format(Double.valueOf(workinghours)));
+                                                    }
                                                 }
-                                                if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
-                                                    ad.setWomensday(df.format(Double.valueOf(workinghours)));
-                                                }
-                                            } else {
-                                                String shijiworkHoursMax = "0";
-                                                shijiworkHoursMax = Double.valueOf(shijiworkHoursAM) > Double.valueOf(shijiworkHoursPM) ? shijiworkHoursAM : shijiworkHoursPM;
-                                                //取上午下午最大上班时间 + 申请的假期 + 申请的因公外出 >= 4
-                                                if (Double.valueOf(shijiworkHoursMax) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
-                                                    ad.setNormal(df.format(Double.valueOf(workinghours)));
+                                                else
+                                                {
                                                     ad.setYouthday(null);
                                                     ad.setWomensday(null);
-                                                } else {
-                                                    ad.setNormal(df.format(Double.valueOf(shijiworkHoursMax) + Double.valueOf(nomal)));
-                                                    ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
-                                                    ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
-                                                    ad.setYouthday(null);
-                                                    ad.setWomensday(null);
                                                 }
+
                                             }
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                         }
                                     }
                                     else if (workinghours.equals("8")) {
@@ -1784,6 +1889,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             } else {
                                                 ad.setYouthday(df.format(Math.floor(Double.valueOf(overtimeHours) / ((Double.valueOf(strovertime)) / 60 / 60 / 1000)) * ((Double.valueOf(strovertime)) / 60 / 60 / 1000)));
                                             }
+                                            //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+                                            if (!Ot.getStatus().equals("7"))
+                                            {
+                                                ad.setYouthday(null);
+                                            }
+                                            //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                         } else if (Ot.getOvertimetype().equals("PR001008")) {//妇女节
                                             if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
                                                 overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(ad.getWomensday())));
@@ -1796,6 +1907,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             } else {
                                                 ad.setWomensday(df.format(Math.floor(Double.valueOf(overtimeHours) / ((Double.valueOf(strovertime)) / 60 / 60 / 1000)) * ((Double.valueOf(strovertime)) / 60 / 60 / 1000)));
                                             }
+                                            //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+                                            if (!Ot.getStatus().equals("7"))
+                                            {
+                                                ad.setWomensday(null);
+                                            }
+                                            //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                         }
                                     }
                                     if (workinghours.equals("0")) {
@@ -2649,6 +2766,16 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 } else {
                                                     ad.setYouthday(df.format(Math.floor(Double.valueOf(overtimeHours) / ((Double.valueOf(strovertime)) / 60 / 60 / 1000)) * ((Double.valueOf(strovertime)) / 60 / 60 / 1000)));
                                                 }
+                                                //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+                                                if (Ot.getStatus().equals("7"))
+                                                {
+                                                    ad.setTenantid("7");
+                                                }
+                                                else
+                                                {
+                                                    ad.setTenantid("4");
+                                                }
+                                                //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             } else if (Ot.getOvertimetype().equals("PR001008")) {//妇女节
                                                 if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
                                                     overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(ad.getWomensday())));
@@ -2661,6 +2788,16 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 } else {
                                                     ad.setWomensday(df.format(Math.floor(Double.valueOf(overtimeHours) / ((Double.valueOf(strovertime)) / 60 / 60 / 1000)) * ((Double.valueOf(strovertime)) / 60 / 60 / 1000)));
                                                 }
+                                                //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+                                                if (Ot.getStatus().equals("7"))
+                                                {
+                                                    ad.setTenantid("7");
+                                                }
+                                                else
+                                                {
+                                                    ad.setTenantid("4");
+                                                }
+                                                //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
                                         }
                                     }
@@ -2946,78 +3083,164 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 
                                         if (Double.valueOf(shijiworkHoursAM) >= 4 && Double.valueOf(shijiworkHoursPM) >= 4) {
                                             //上午>=4 && 下午>=4
-                                            ad.setNormal(df.format(Double.valueOf(workinghours)));
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+                                            //ad.setNormal(df.format(Double.valueOf(workinghours)
+                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
+                                            ad.setNormal(Double.valueOf(ad.getNormal()) <= 0 ? null : df.format(Double.valueOf(ad.getNormal())));
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             if (ad.getYouthday() != null && !ad.getYouthday().isEmpty()) {
                                                 ad.setYouthday(df.format(Double.valueOf(workinghours)));
                                             }
                                             if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
                                                 ad.setWomensday(df.format(Double.valueOf(workinghours)));
                                             }
-                                        } else if (Double.valueOf(shijiworkHoursAM) >= 4 && Double.valueOf(shijiworkHoursPM) < 4) {
+                                        }
+                                        else if (Double.valueOf(shijiworkHoursAM) >= 4 && Double.valueOf(shijiworkHoursPM) < 4) {
                                             //上午>=4 && 下午<4
-                                            ad.setNormal(df.format(Double.valueOf(workinghours)));
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+                                            //ad.setNormal(df.format(Double.valueOf(workinghours)
+                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
+                                            ad.setNormal(Double.valueOf(ad.getNormal()) <= 0 ? null : df.format(Double.valueOf(ad.getNormal())));
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             if (ad.getYouthday() != null && !ad.getYouthday().isEmpty()) {
-                                                //下午上班时间 + 申请的假期 + 申请的因公外出 >= 4
-                                                if (Double.valueOf(shijiworkHoursPM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+//                                                //下午上班时间 + 申请的假期 + 申请的因公外出 >= 4
+//                                                if (Double.valueOf(shijiworkHoursPM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+//                                                    ad.setYouthday(df.format(Double.valueOf(workinghours)));
+//                                                } else {
+//                                                    ad.setYouthday(null);
+//                                                }
+                                                if(ad.getTenantid().equals("7"))
+                                                {
                                                     ad.setYouthday(df.format(Double.valueOf(workinghours)));
-                                                } else {
+                                                }
+                                                else if(ad.getTenantid().equals("4"))
+                                                {
                                                     ad.setYouthday(null);
                                                 }
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
                                             if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
-                                                //下午上班时间 + 申请的假期 + 申请的因公外出 >= 4
-                                                if (Double.valueOf(shijiworkHoursPM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+//                                                //下午上班时间 + 申请的假期 + 申请的因公外出 >= 4
+//                                                if (Double.valueOf(shijiworkHoursPM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+//                                                    ad.setWomensday(df.format(Double.valueOf(workinghours)));
+//                                                } else {
+//                                                    ad.setWomensday(null);
+//                                                }
+                                                if(ad.getTenantid().equals("7"))
+                                                {
                                                     ad.setWomensday(df.format(Double.valueOf(workinghours)));
-                                                } else {
+                                                }
+                                                else if(ad.getTenantid().equals("4"))
+                                                {
                                                     ad.setWomensday(null);
                                                 }
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
-                                        } else if (Double.valueOf(shijiworkHoursAM) < 4 && Double.valueOf(shijiworkHoursPM) >= 4) {
+                                        }
+                                        else if (Double.valueOf(shijiworkHoursAM) < 4 && Double.valueOf(shijiworkHoursPM) >= 4) {
                                             //上午<4 && 下午>=4
-                                            ad.setNormal(df.format(Double.valueOf(workinghours)));
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+                                            //ad.setNormal(df.format(Double.valueOf(workinghours)
+                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
+                                            ad.setNormal(Double.valueOf(ad.getNormal()) <= 0 ? null : df.format(Double.valueOf(ad.getNormal())));
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             if (ad.getYouthday() != null && !ad.getYouthday().isEmpty()) {
-                                                //上午上班时间 + 申请的假期 + 申请的因公外出 >= 4
-                                                if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+//                                                //上午上班时间 + 申请的假期 + 申请的因公外出 >= 4
+//                                                if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+//                                                    ad.setYouthday(df.format(Double.valueOf(workinghours)));
+//                                                } else {
+//                                                    ad.setYouthday(null);
+//                                                }
+                                                if(ad.getTenantid().equals("7"))
+                                                {
                                                     ad.setYouthday(df.format(Double.valueOf(workinghours)));
-                                                } else {
+                                                }
+                                                else if(ad.getTenantid().equals("4"))
+                                                {
                                                     ad.setYouthday(null);
                                                 }
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
                                             if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
                                                 //上午上班时间 + 申请的假期 + 申请的因公外出 >= 4
-                                                if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+//                                                if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+//                                                    ad.setWomensday(df.format(Double.valueOf(workinghours)));
+//                                                } else {
+//                                                    ad.setWomensday(null);
+//                                                }
+                                                if(ad.getTenantid().equals("7"))
+                                                {
                                                     ad.setWomensday(df.format(Double.valueOf(workinghours)));
-                                                } else {
+                                                }
+                                                else if(ad.getTenantid().equals("4"))
+                                                {
                                                     ad.setWomensday(null);
                                                 }
+                                                //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
 
-                                        } else {
+                                        }
+                                        else {
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
                                             //上午<4 && 下午<4
-                                            if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(shijiworkHoursPM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 8) {
-                                                ad.setNormal(df.format(Double.valueOf(workinghours)));
-                                                if (ad.getYouthday() != null && !ad.getYouthday().isEmpty()) {
-                                                    ad.setYouthday(df.format(Double.valueOf(workinghours)));
+//                                            if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(shijiworkHoursPM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 8) {
+//                                                ad.setNormal(df.format(Double.valueOf(workinghours)));
+//                                                if (ad.getYouthday() != null && !ad.getYouthday().isEmpty()) {
+//                                                    ad.setYouthday(df.format(Double.valueOf(workinghours)));
+//                                                }
+//                                                if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
+//                                                    ad.setWomensday(df.format(Double.valueOf(workinghours)));
+//                                                }
+//                                            }
+//                                            else {
+//                                                String shijiworkHoursMax = "0";
+//                                                shijiworkHoursMax = Double.valueOf(shijiworkHoursAM) > Double.valueOf(shijiworkHoursPM) ? shijiworkHoursAM : shijiworkHoursPM;
+//                                                //取上午下午最大上班时间 + 申请的假期 + 申请的因公外出 >= 4
+//                                                if (Double.valueOf(shijiworkHoursMax) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
+//                                                    ad.setNormal(df.format(Double.valueOf(workinghours)));
+//                                                    ad.setYouthday(null);
+//                                                    ad.setWomensday(null);
+//                                                } else {
+//                                                    ad.setNormal(df.format(Double.valueOf(shijiworkHoursMax) + Double.valueOf(nomal)));
+//                                                    ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+//                                                    ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+//                                                    ad.setYouthday(null);
+//                                                    ad.setWomensday(null);
+//                                                }
+//                                            }
+
+                                            String shijiworkHoursMax = "0";
+                                            shijiworkHoursMax = Double.valueOf(shijiworkHoursAM) > Double.valueOf(shijiworkHoursPM) ? shijiworkHoursAM : shijiworkHoursPM;
+                                            //取上午下午最大上班时间 + 申请的假期 + 申请的因公外出 >= 4
+                                            if (Double.valueOf(shijiworkHoursMax) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4)
+                                            {
+                                                ad.setNormal(df.format(Double.valueOf(shijiworkHoursMax) + Double.valueOf(nomal)));
+                                                ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+                                                ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+                                                if(ad.getTenantid().equals("7"))
+                                                {
+                                                    if (ad.getYouthday() != null && !ad.getYouthday().isEmpty())
+                                                    {
+                                                        ad.setYouthday(df.format(Double.valueOf(workinghours)));
+                                                    }
+                                                    else if(ad.getWomensday() != null && !ad.getWomensday().isEmpty())
+                                                    {
+                                                        ad.setWomensday(df.format(Double.valueOf(workinghours)));
+                                                    }
                                                 }
-                                                if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
-                                                    ad.setWomensday(df.format(Double.valueOf(workinghours)));
-                                                }
-                                            } else {
-                                                String shijiworkHoursMax = "0";
-                                                shijiworkHoursMax = Double.valueOf(shijiworkHoursAM) > Double.valueOf(shijiworkHoursPM) ? shijiworkHoursAM : shijiworkHoursPM;
-                                                //取上午下午最大上班时间 + 申请的假期 + 申请的因公外出 >= 4
-                                                if (Double.valueOf(shijiworkHoursMax) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
-                                                    ad.setNormal(df.format(Double.valueOf(workinghours)));
+                                                else
+                                                {
                                                     ad.setYouthday(null);
                                                     ad.setWomensday(null);
-                                                } else {
-                                                    ad.setNormal(df.format(Double.valueOf(shijiworkHoursMax) + Double.valueOf(nomal)));
-                                                    ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
-                                                    ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
-                                                    ad.setYouthday(null);
-                                                    ad.setWomensday(null);
                                                 }
+
                                             }
+                                            //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
+
                                         }
                                     } else if (workinghours.equals("8")) {
                                         //申请了年休，代休
@@ -3325,6 +3548,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             } else {
                                                 ad.setYouthday(df.format(Math.floor(Double.valueOf(overtimeHours) / ((Double.valueOf(strovertime)) / 60 / 60 / 1000)) * ((Double.valueOf(strovertime)) / 60 / 60 / 1000)));
                                             }
+                                            //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+                                            if (!Ot.getStatus().equals("7"))
+                                            {
+                                                ad.setYouthday(null);
+                                            }
+                                            //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                         } else if (Ot.getOvertimetype().equals("PR001008")) {//妇女节
                                             if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
                                                 overtimeHours = String.valueOf(df.format(Double.valueOf(overtimeHours) + Double.valueOf(ad.getWomensday())));
@@ -3337,6 +3566,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             } else {
                                                 ad.setWomensday(df.format(Math.floor(Double.valueOf(overtimeHours) / ((Double.valueOf(strovertime)) / 60 / 60 / 1000)) * ((Double.valueOf(strovertime)) / 60 / 60 / 1000)));
                                             }
+                                            //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
+                                            if (!Ot.getStatus().equals("7"))
+                                            {
+                                                ad.setWomensday(null);
+                                            }
+                                            //ADD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                         }
                                     }
                                     if (workinghours.equals("0")) {
