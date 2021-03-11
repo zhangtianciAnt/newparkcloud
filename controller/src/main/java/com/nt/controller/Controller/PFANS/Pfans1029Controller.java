@@ -103,9 +103,9 @@ public class Pfans1029Controller {
         //20200427 add by ztc format data end
         data.put("cv",cv.getContract());
         data.put("ba1",cv.getNumberCount());
-        //add-lyt-NT_PFANS_20210227_BUG_036-添加販売契约判定-start
+        //add-lyt-21/3/11-NT_PFANS_20210227_BUG_036-添加販売契约判定-start
         if (cv.getContracttype().equals("HT008003") || cv.getContracttype().equals("HT008004") || cv.getContracttype().equals("HT008007") || cv.getContracttype().equals("HT008008")||cv.getContracttype().equals("HT008009")){
-            //add-lyt-NT_PFANS_20210227_BUG_036-添加販売契约判定-end
+            //add-lyt-21/3/11-NT_PFANS_20210227_BUG_036-添加販売契约判定-end
             ExcelOutPutUtil.OutPut(cv.getContract().getContractnumber().toUpperCase() + "_役務契約書(受託)-jp(cn)", "qiyueshu_yiwushoutuo.xlsx", data, response);
         } else if (cv.getContracttype().equals("HT008001") || cv.getContracttype().equals("HT008002") || cv.getContracttype().equals("HT008005") || cv.getContracttype().equals("HT008006")){
             ExcelOutPutUtil.OutPut(cv.getContract().getContractnumber().toUpperCase() + "_技術契約書(受託)-jp(cn)", "qiyueshu_shoutuo.xlsx", data, response);
