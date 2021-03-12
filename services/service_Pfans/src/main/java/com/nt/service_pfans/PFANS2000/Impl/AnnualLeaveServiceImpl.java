@@ -2063,7 +2063,15 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         }
                     }
                     //从第一次出门开始计算
-                    for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
+                    // update gbb 20210311 PSDCD_PFANS_20210303_BUG_025 16：45的定时任务修改 start
+                    //for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
+                    int intpun = punDetaillistevent2.size() - 1;
+                    //最后一条是进门记录的话时参与计算
+                    if(punDetaillistx.get(punDetaillistx.size() - 1).getEventno().equals("1")){
+                        intpun = punDetaillistevent2.size();
+                    }
+                    for (int i = 0; i < intpun; i ++){
+                        // update gbb 20210311 PSDCD_PFANS_20210303_BUG_025 16：45的定时任务修改 end
                         if(i < punDetaillistevent1.size() - 1){
                             Date DateStart = punDetaillistevent2.get(i).getPunchcardrecord_date();
                             Date DateEnd = punDetaillistevent1.get(i + 1).getPunchcardrecord_date();
@@ -2393,7 +2401,15 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     }
                 }
                 //从第一次出门开始计算
-                for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
+                // update gbb 20210311 PSDCD_PFANS_20210303_BUG_025 16：45的定时任务修改 start
+                //for (int i = 0; i < punDetaillistevent2.size() - 1; i ++){
+                int intpun = punDetaillistevent2.size() - 1;
+                //最后一条是进门记录的话时参与计算
+                if(punDetaillistx.get(punDetaillistx.size() - 1).getEventno().equals("1")){
+                    intpun = punDetaillistevent2.size();
+                }
+                for (int i = 0; i < intpun; i ++){
+                    // update gbb 20210311 PSDCD_PFANS_20210303_BUG_025 16：45的定时任务修改 end
                     if(i < punDetaillistevent1.size() - 1){
                         Date DateStart = punDetaillistevent2.get(i).getPunchcardrecord_date();
                         Date DateEnd = punDetaillistevent1.get(i + 1).getPunchcardrecord_date();
