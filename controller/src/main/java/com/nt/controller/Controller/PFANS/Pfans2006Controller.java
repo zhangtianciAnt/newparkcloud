@@ -23,11 +23,19 @@ public class Pfans2006Controller {
     private WagesService wagesService;
 
     @RequestMapping(value = "/getTaxestotalList", method = {RequestMethod.GET})
-    public ApiResult getList(String userid,HttpServletRequest request) throws Exception {
+    // update gbb 20210312 NT_PFANS_20210308_BUG_168 工资详细（个人）,根据日期组件筛选 start
+    //public ApiResult getList(String userid,HttpServletRequest request) throws Exception {
+    public ApiResult getList(String dates,String userid,HttpServletRequest request) throws Exception {
 //        TokenModel tokenModel = tokenService.getToken(request);
 //        wagesService.select(tokenModel);
         Wages wages=new Wages();
-        wages.setUser_id(userid);
+        if(StringUtils.isNotEmpty(userid)){
+            wages.setUser_id(userid);
+        }
+        if(StringUtils.isNotEmpty(dates)){
+            wages.setCreateonym(dates);
+        }
+        // update gbb 20210312 NT_PFANS_20210308_BUG_168 工资详细（个人）,根据日期组件筛选 end
         return ApiResult.success(wagesService.wagesList(wages));
     }
 
@@ -43,7 +51,7 @@ public class Pfans2006Controller {
     @RequestMapping(value = "/getBonusList", method = {RequestMethod.GET})
     // update gbb 20210312 NT_PFANS_20210308_BUG_166 工资详细（全社）,奖金详细数据根据日期组件筛选 start
     //public ApiResult BonusList(String userid,HttpServletRequest request) throws Exception {
-    public ApiResult BonusList(@RequestParam String dates,String userid,HttpServletRequest request) throws Exception {
+    public ApiResult BonusList(String dates,String userid,HttpServletRequest request) throws Exception {
         Bonussend bonussend =new Bonussend();
         //bonussend.setUser_id(userid);
         if(StringUtils.isNotEmpty(userid)){
