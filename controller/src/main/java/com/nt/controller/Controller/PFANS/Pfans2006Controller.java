@@ -4,10 +4,7 @@ import com.nt.dao_Pfans.PFANS2000.Bonussend;
 import com.nt.dao_Pfans.PFANS2000.Vo.BaseVo;
 import com.nt.dao_Pfans.PFANS2000.Wages;
 import com.nt.service_pfans.PFANS2000.WagesService;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,9 +41,18 @@ public class Pfans2006Controller {
     }
 
     @RequestMapping(value = "/getBonusList", method = {RequestMethod.GET})
-    public ApiResult BonusList(String userid,HttpServletRequest request) throws Exception {
+    // update gbb 20210312 NT_PFANS_20210308_BUG_166 工资详细（全社）,奖金详细数据根据日期组件筛选 start
+    //public ApiResult BonusList(String userid,HttpServletRequest request) throws Exception {
+    public ApiResult BonusList(@RequestParam String dates,String userid,HttpServletRequest request) throws Exception {
         Bonussend bonussend =new Bonussend();
-        bonussend.setUser_id(userid);
+        //bonussend.setUser_id(userid);
+        if(StringUtils.isNotEmpty(userid)){
+            bonussend.setUser_id(userid);
+        }
+        if(StringUtils.isNotEmpty(dates)){
+            bonussend.setYears(dates.substring(0,4));
+        }
+        // update gbb 20210312 NT_PFANS_20210308_BUG_166 工资详细（全社）,奖金详细数据根据日期组件筛选 end
         return ApiResult.success(wagesService.bonusList(bonussend));
     }
 
