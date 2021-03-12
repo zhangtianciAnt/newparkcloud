@@ -58,31 +58,20 @@ public class Pfans2007Controller {
     }
 
     @RequestMapping(value="/inserttodo",method = {RequestMethod.POST})
-    public ApiResult inserttodo(@RequestBody ToDoNotice toDoNotice, HttpServletRequest request) throws Exception{
-        if (toDoNotice == null) {
+    // update gbb 20210312 NT_PFANS_20210305_BUG_131 点击送信发送代办 start
+    public ApiResult inserttodo(@RequestBody List<Bonussend> bonussend, HttpServletRequest request) throws Exception{
+        if (bonussend == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        TokenModel tokenModel = tokenService.getToken(request);
-        toDoNotice.preInsert(tokenModel);
-        toDoNotice.setOwner(tokenModel.getUserId());
-        toDoNoticeService.save(toDoNotice);
-
-        bonussendService.updateSend(toDoNotice.getDataid());
-
-        return ApiResult.success();
-//        // 创建代办
-//        ToDoNotice toDoNotice = new ToDoNotice();
-//        List<String> params = new ArrayList<String>();
-//        params.add(workflowname);
-//        toDoNotice.setTitle("您的奖金已发送");
-//        toDoNotice.setInitiator(tokenModel.getUserId());
-//        toDoNotice.setContent(item.getNodename());
-//        toDoNotice.setDataid(dataId);
-//        toDoNotice.setUrl(url);
-//        toDoNotice.setWorkflowurl(workFlowurl);
+//        TokenModel tokenModel = tokenService.getToken(request);
 //        toDoNotice.preInsert(tokenModel);
-//        toDoNotice.setOwner(user);
+//        toDoNotice.setOwner(tokenModel.getUserId());
 //        toDoNoticeService.save(toDoNotice);
+//        bonussendService.updateSend(toDoNotice.getDataid());
+        TokenModel tokenModel = tokenService.getToken(request);
+        bonussendService.updateSend(bonussend,tokenModel);
+        // update gbb 20210312 NT_PFANS_20210305_BUG_131 点击送信发送代办 end
+        return ApiResult.success();
 
     }
 
