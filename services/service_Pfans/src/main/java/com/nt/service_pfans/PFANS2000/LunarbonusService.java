@@ -18,6 +18,6 @@ public interface LunarbonusService {
 
     public  void createTodonotice(Lunarbonus lunarbonus,TokenModel tokenModel) throws Exception;
 
-    public  void overTodonotice(TokenModel tokenModel) throws Exception;
+    public  void overTodonotice(Lunarbonus lunarbonus,TokenModel tokenModel) throws Exception;
 
 }

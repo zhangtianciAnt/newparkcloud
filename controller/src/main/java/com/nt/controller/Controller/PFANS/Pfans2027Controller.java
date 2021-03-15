@@ -118,9 +118,9 @@ public class Pfans2027Controller {
 
     //结束评价
     @RequestMapping(value="/overTodonotice",method = {RequestMethod.POST})
-    public ApiResult overTodonotice(HttpServletRequest request) throws Exception{
+    public ApiResult overTodonotice(@RequestBody Lunarbonus lunarbonus,HttpServletRequest request) throws Exception{
         TokenModel tokenModel = tokenService.getToken(request);
-        lunarbonusService.overTodonotice(tokenModel);
+        lunarbonusService.overTodonotice(lunarbonus,tokenModel);
         return ApiResult.success();
     }
 

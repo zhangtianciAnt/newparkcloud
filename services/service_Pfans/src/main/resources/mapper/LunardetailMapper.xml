@@ -44,6 +44,12 @@
         UPDATE lunardetail
         SET PROCESS = #{Process}
     </select>
+    <select id="updateProcess2" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
+        UPDATE lunarbonus
+        SET TENANTID = #{Process}
+        WHERE EVALUATIONDAY = #{Evaluationday}
+        AND SUBJECTMON = #{Subjectmon}
+    </select>
     <select id="selectProes" parameterType="list" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         select user_id
         from lunardetail

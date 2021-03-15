@@ -15,6 +15,7 @@ public interface LunardetailMapper extends MyMapper<Lunardetail>{
     List<Lunardetail> updateProcesG(@Param("Process") String Process, @Param("Gpid") String Gpid);
     List<Lunardetail> updateProcesC(@Param("Process") String Process, @Param("Crid") String Crid);
     List<Lunardetail> updateProcess1(@Param("Process") String Process);
+    List<Lunardetail> updateProcess2(@Param("Process") String Process, @Param("Evaluationday") String Evaluationday, @Param("Subjectmon") String Subjectmon);
     List<Lunardetail> selectTeam(@Param("lunardetailList") List<String> lunardetailList, @Param("Self") String Self);
     List<Lunardetail> selectGroup(@Param("lunardetailList") List<String> lunardetailList, @Param("Self") String Self);
     List<Lunardetail> selectCenter(@Param("lunardetailList") List<String> lunardetailList, @Param("Self") String Self);
