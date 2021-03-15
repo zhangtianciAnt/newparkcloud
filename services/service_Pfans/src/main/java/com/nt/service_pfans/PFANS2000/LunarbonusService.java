@@ -12,12 +12,12 @@ public interface LunarbonusService {
 
     List<Lunarbonus> getList(TokenModel tokenModel) throws Exception;
 
-    public void insert(LunardetailVo LunardetailVo, TokenModel tokenModel)throws Exception;
+    void insert(LunardetailVo LunardetailVo, TokenModel tokenModel)throws Exception;
 
-    public LunarAllVo getOne(String id,TokenModel tokenModel)throws Exception;
+    LunarAllVo getOne(String id, TokenModel tokenModel)throws Exception;
 
-    public  void createTodonotice(Lunarbonus lunarbonus,TokenModel tokenModel) throws Exception;
+    void createTodonotice(Lunarbonus lunarbonus, TokenModel tokenModel) throws Exception;
 
-    public  void overTodonotice(TokenModel tokenModel) throws Exception;
+    void overTodonotice(Lunarbonus lunarbonus, TokenModel tokenModel) throws Exception;
 
 }

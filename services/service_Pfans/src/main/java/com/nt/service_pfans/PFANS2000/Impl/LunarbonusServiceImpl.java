@@ -1,6 +1,8 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Auth.Role;
+import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
@@ -11,6 +13,7 @@ import com.nt.dao_Pfans.PFANS2000.Lunarbonus;
 import com.nt.dao_Pfans.PFANS2000.Lunardetail;
 import com.nt.dao_Pfans.PFANS2000.Vo.LunarAllVo;
 import com.nt.dao_Pfans.PFANS2000.Vo.LunardetailVo;
+import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS2000.LunarbonusService;
@@ -37,6 +40,9 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class LunarbonusServiceImpl implements LunarbonusService {
+
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private OrgTreeService orgTreeService;
@@ -100,8 +106,15 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                 }
             }
         }
+        Query query = new Query();
+        String roles = "";
+        query.addCriteria(Criteria.where("_id").is(tokenModel.getUserId()));
+        UserAccount account = mongoTemplate.findOne(query,UserAccount.class);
+        for(Role role : account.getRoles()){
+            roles = roles + role.getDescription();
+        }
         String lunarbonus1 = "";
-        if (!tokenModel.getUserId().equals("5e78b22c4e3b194874180f5f") && !tokenModel.getUserId().equals("5e78b2034e3b194874180e37") && !tokenModel.getUserId().equals("5e78fefff1560b363cdd6db7")) {
+        if (!roles.contains("人事总务部长") && !roles.contains("工资计算担当") && !roles.contains("总经理")) {
             for (OrgTreeVo orgTreeVo : OrgTreeVolist) {
                 if (orgTreeVo.getMoney3().equals(tokenModel.getUserId())) {
                     if (orgTreeVo.getMoney4().equals("1")) {
@@ -157,6 +170,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
             lunarbonus.preInsert(tokenModel);
             lunarbonus.preUpdate(tokenModel);
             lunarbonus.setLunarbonus_id(UUID.randomUUID().toString());
+            lunarbonus.setTenantid("0");
             lunarbonusMapper.insert(lunarbonus);
         } else {
             throw new LogicalException("不能重复评价");
@@ -331,6 +345,13 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                 }
             }
         }
+        Query query = new Query();
+        String roles = "";
+        query.addCriteria(Criteria.where("_id").is(tokenModel.getUserId()));
+        UserAccount account = mongoTemplate.findOne(query,UserAccount.class);
+        for(Role role : account.getRoles()){
+            roles = roles + role.getDescription();
+        }
         List<String> lunardetailList = new ArrayList<>();
         LunarAllVo LunarAllVo = new LunarAllVo();
         Lunarbonus lunarbonus = lunarbonusMapper.selectByPrimaryKey(id);
@@ -338,7 +359,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         List<Lunardetail> detal = new ArrayList<>();
         Lunardetail lunardetailCondition = new Lunardetail();
         lunardetailCondition.setLunarbonus_id(id);
-        if (!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId()) && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId())) {
+        if (!roles.contains("人事总务部长") && !roles.contains("工资计算担当") && !roles.contains("总经理")) {
             List<String> users = new ArrayList<String>();
             Query cusquery = new Query();
             cusquery.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
@@ -487,10 +508,17 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                 }
             }
         }
+        Query query = new Query();
+        String roles = "";
+        query.addCriteria(Criteria.where("_id").is(tokenModel.getUserId()));
+        UserAccount account = mongoTemplate.findOne(query,UserAccount.class);
+        for(Role role : account.getRoles()){
+            roles = roles + role.getDescription();
+        }
         String Grpup_id = "";
-//        start 人事给每个TL发送待办进行一次评价
+//        start 人事给每个TL发送待办进行一次评价 仅人事/薪资操作阶段
 
-        if (tokenModel.getUserId().equals("5e78b2034e3b194874180e37") || tokenModel.getUserId().equals("5e78b22c4e3b194874180f5f")) {
+        if (roles.contains("人事总务部长") || roles.contains("工资计算担当")) {
             List<OrgTreeVo> TreeVolistTL = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("1"))).collect(Collectors.toList());
             for (OrgTreeVo orgTreeVo0 : TreeVolistTL) {
                 ToDoNotice toDoNotice = new ToDoNotice();
@@ -505,7 +533,19 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                 toDoNoticeService.save(toDoNotice);
             }
             String Process = "1";
+            String subjectmon = "";
             lunardetailMapper.updateProcess1(Process);
+            lunarbonus.setLunarbonus_id(lunarbonus.getLunarbonus_id());
+            if (lunarbonus.getSubjectmon().equals("1-3月(10-12月実際を参考)")) {
+                subjectmon = "PJ103001";
+            } else if (lunarbonus.getSubjectmon().equals("4-6月(1-3月実際を参考)")) {
+                subjectmon = "PJ103002";
+            } else if (lunarbonus.getSubjectmon().equals("7-9月(4-6月実際を参考)")) {
+                subjectmon = "PJ103003";
+            } else if (lunarbonus.getSubjectmon().equals("10-12月(7-9月実際を参考)")) {
+                subjectmon = "PJ103004";
+            }
+            lunardetailMapper.updateProcess2(Process, lunarbonus.getEvaluationday(), subjectmon);
             String Month = "0";
             if (lunarbonus.getSubjectmon().equals("1-3月(10-12月実際を参考)")) {
                 Month = "1";
@@ -535,11 +575,10 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                 }
                 lunardetailMapper.insertListAllCols(newdetailLists);
             }
+            //        end 人事给每个TL发送待办进行一次评价
         } else {
-//        end 人事给每个TL发送待办进行一次评价
-//        start tl给下一级gm发待办
-
-            if (lunarbonus.getEvaluatenum().equals("一次評価") && (!tokenModel.getUserId().equals("5e78b2034e3b194874180e37") && !tokenModel.getUserId().equals("5e78b22c4e3b194874180f5f"))) {
+//        start tl给下一级gm发待办  仅tl职操作阶段
+            if (lunarbonus.getEvaluatenum().equals("一次評価") && (!roles.contains("人事总务部长") && !roles.contains("工资计算担当") && !roles.contains("总经理"))) {
                 List<OrgTreeVo> TreeVolistTLGroup = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("1") && item.getMoney3().equals(tokenModel.getUserId()))).collect(Collectors.toList());
                 for (OrgTreeVo orgTreeVo : TreeVolistTLGroup) {
                     List<OrgTreeVo> TreeVolistGroup = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("2") && item.getMoney1().equals(orgTreeVo.getMoney1()))).collect(Collectors.toList());
@@ -561,8 +600,8 @@ public class LunarbonusServiceImpl implements LunarbonusService {
             }
         }
 //        end tl给下一级gm发待办
-//        start gm 给下一级center长发待办
-        if (lunarbonus.getEvaluatenum().equals("二次評価")) {
+//        start gm 给下一级center长发待办  仅GM操作阶段
+        if (lunarbonus.getEvaluatenum().equals("二次評価") && (!roles.contains("人事总务部长") && !roles.contains("工资计算担当") && !roles.contains("总经理"))) {
             List<OrgTreeVo> TreeVolistGroupCenter = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("2") && item.getMoney3().equals(tokenModel.getUserId()))).collect(Collectors.toList());
             for (OrgTreeVo orgTreeVo: TreeVolistGroupCenter) {
                 List<OrgTreeVo> TreeVolistCenter = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("3") && item.get_id().equals(orgTreeVo.get_id()))).collect(Collectors.toList());
@@ -584,7 +623,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         }
 //        end gm 给下一级center长发待办
 //        start center长 给总经理发待办
-        if (lunarbonus.getEvaluatenum().equals("最终評価")) {
+        if (lunarbonus.getEvaluatenum().equals("最终評価") && (!roles.contains("人事总务部长") && !roles.contains("工资计算担当") && !roles.contains("总经理"))) {
             List<OrgTreeVo> TreeVolistCenterToZong = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("3") && item.getMoney3().equals(tokenModel.getUserId()))).collect(Collectors.toList());
             ToDoNotice toDoNotice1 = new ToDoNotice();
             toDoNotice1.setTitle("您有月度赏与评价需要确认，请注意查看。");
@@ -594,7 +633,11 @@ public class LunarbonusServiceImpl implements LunarbonusService {
             toDoNotice1.preInsert(tokenModel);
             toDoNotice1.setUrl("/PFANS2027View");
             toDoNotice1.setWorkflowurl("/PFANS2027View");
-            toDoNotice1.setOwner("5e78fefff1560b363cdd6db7");
+            List<MembersVo> rolelist = roleService.getMembers("5e785fd38f4316308435112d"); //总经理
+            if(rolelist.size() > 0)
+            {
+                toDoNotice1.setOwner(rolelist.get(0).getUserid());
+            }
             toDoNoticeService.save(toDoNotice1);
             String Process = "4";
             String Crid = TreeVolistCenterToZong.get(0).get_id();
@@ -602,7 +645,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         }
 //        end center长 给总经理发待办
 //        start 总经理给人事发待办
-        if (tokenModel.getUserId().equals("5e78fefff1560b363cdd6db7")) {
+        if (roles.contains("总经理")) {
             ToDoNotice toDoNotice1 = new ToDoNotice();
             toDoNotice1.setTitle("您有月度赏与评价需要确认，请注意查看。");
             toDoNotice1.setInitiator(tokenModel.getUserId());
@@ -611,14 +654,29 @@ public class LunarbonusServiceImpl implements LunarbonusService {
             toDoNotice1.preInsert(tokenModel);
             toDoNotice1.setUrl("/PFANS2027View");
             toDoNotice1.setWorkflowurl("/PFANS2027View");
-            toDoNotice1.setOwner("5e78b2034e3b194874180e37");
+            List<MembersVo> rolelist = roleService.getMembers("5e7861d38f43163084351133"); //人事
+            if(rolelist.size() > 0)
+            {
+                toDoNotice1.setOwner(rolelist.get(0).getUserid());
+            }
             toDoNoticeService.save(toDoNotice1);
         }
     }
 
     @Override
-    public void overTodonotice(TokenModel tokenModel) throws Exception {
+    public void overTodonotice(Lunarbonus lunarbonus,TokenModel tokenModel) throws Exception {
         String Process = "5";
         lunardetailMapper.updateProcess1(Process);
+        String subjectmon = "";
+        if (lunarbonus.getSubjectmon().equals("1-3月(10-12月実際を参考)")) {
+            subjectmon = "PJ103001";
+        } else if (lunarbonus.getSubjectmon().equals("4-6月(1-3月実際を参考)")) {
+            subjectmon = "PJ103002";
+        } else if (lunarbonus.getSubjectmon().equals("7-9月(4-6月実際を参考)")) {
+            subjectmon = "PJ103003";
+        } else if (lunarbonus.getSubjectmon().equals("10-12月(7-9月実際を参考)")) {
+            subjectmon = "PJ103004";
+        }
+        lunardetailMapper.updateProcess2(Process, lunarbonus.getEvaluationday(), subjectmon);
     }
 }
