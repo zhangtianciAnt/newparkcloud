@@ -321,7 +321,7 @@ public class Pfans2026Controller {
             if(Staff.getVersion() != null ){
                 staffexitprocedureVo.getStaffexitproce().setVersion(Staff.getVersion() + 1);
             }
-            // update gbb 20210315 NT_PFANS_20210228_BUG_044 数据【未开始】和【驳回】是可保存 start
+            // update gbb 20210315 NT_PFANS_20210228_BUG_044 数据【未开始】和【驳回】是可保存 end
             staffexitprocedureService.update2(staffexitprocedureVo, tokenModel);
             return ApiResult.success();
         }
