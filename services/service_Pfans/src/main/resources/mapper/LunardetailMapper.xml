@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_pfans.PFANS2000.mapper.LunardetailMapper">
-<!--    查询计算出勤率-->
+    <!--    查询计算出勤率-->
     <select id="selectWorkrate" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         SELECT `OWNER` user_id, TIME_START/my_AttendanceDays(#{YearM,jdbcType=VARCHAR}) workrate
         FROM
@@ -10,7 +10,7 @@
         WHERE   DATE_FORMAT(LOG_DATE,'%Y%m') = #{YearM,jdbcType=VARCHAR}
         GROUP BY `OWNER`) log
     </select>
-<!--    查询前年的赏与记号-->
+    <!--    查询前年的赏与记号-->
     <select id="selectSign" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         SELECT USER_ID, BONUSSIGN
         FROM lunardetail
@@ -24,7 +24,7 @@
         WHERE EVALUATIONDAY = #{Years} AND `MONTH` = #{Typess}
         GROUP BY USER_ID
     </select>
-<!--更新Process字段-->
+    <!--更新Process字段-->
     <select id="updateProcesT" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         UPDATE lunardetail
         SET PROCESS = #{Process}
@@ -43,6 +43,8 @@
     <select id="updateProcess1" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         UPDATE lunardetail
         SET PROCESS = #{Process}
+        WHERE EVALUATIONDAY = #{Evaluationday}
+        AND SUBJECTMON = #{Subjectmon}
     </select>
     <select id="updateProcess2" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         UPDATE lunarbonus
@@ -64,7 +66,8 @@
     <select id="selectTeam" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         SELECT *
         FROM lunardetail
-        WHERE  1 = 1 AND USER_ID !=  #{Self}
+        WHERE  1 = 1 AND USER_ID !=  #{Self} AND EVALUATIONDAY = #{Evaluationday}
+        AND SUBJECTMON = #{Subjectmon}
         <if test="lunardetailList != null and lunardetailList.size() > 0 ">
             AND TEAM_ID IN
             <foreach item="item" index="index" collection="lunardetailList"
@@ -79,6 +82,8 @@
         SELECT *
         FROM lunardetail
         WHERE  1 = 1 AND USER_ID !=  #{Self}
+        AND EVALUATIONDAY = #{Evaluationday}
+        AND SUBJECTMON = #{Subjectmon}
         <if test="lunardetailList != null and lunardetailList.size() > 0 ">
             AND GROUP_ID IN
             <foreach item="item" index="index" collection="lunardetailList"
@@ -93,6 +98,8 @@
         SELECT *
         FROM lunardetail
         WHERE  1 = 1 AND USER_ID !=  #{Self}
+        AND EVALUATIONDAY = #{Evaluationday}
+        AND SUBJECTMON = #{Subjectmon}
         <if test="lunardetailList != null and lunardetailList.size() > 0 ">
             AND CENTER_ID IN
             <foreach item="item" index="index" collection="lunardetailList"
