@@ -3,6 +3,247 @@
 <mapper namespace="com.nt.service_pfans.PFANS2000.mapper.ComprehensiveMapper">
     <select id="getcomprehensive" parameterType="com.nt.dao_Pfans.PFANS2000.Base"
             resultType="com.nt.dao_Pfans.PFANS2000.Vo.ComprehensiveVo">
-		SELECT * FROM COMPREHENSIVEVIEW
+		SELECT
+		`tablewages`.`GIVING_ID` AS `GIVING_ID`,
+		`tablewages`.`USER_ID` AS `USER_ID`,
+		`tablewages`.`TOTALBONUS1` AS `TOTALBONUS1`,
+		round( ifnull( `tablewages`.`month1wages`, 0 ), 2 ) AS `month1wages`,
+		round( ifnull( `tablewages`.`month1appreciation`, 0 ), 2 ) AS `month1appreciation`,
+		round( ifnull( `tablewages`.`month2wages`, 0 ), 2 ) AS `month2wages`,
+		round( ifnull( `tablewages`.`month2appreciation`, 0 ), 2 ) AS `month2appreciation`,
+		round( ifnull( `tablewages`.`month3wages`, 0 ), 2 ) AS `month3wages`,
+		round( ifnull( `tablewages`.`month3appreciation`, 0 ), 2 ) AS `month3appreciation`,
+		round( ifnull( `tablewages`.`month4wages`, 0 ), 2 ) AS `month4wages`,
+		round( ifnull( `tablewages`.`month4appreciation`, 0 ), 2 ) AS `month4appreciation`,
+		round( ifnull( `tablewages`.`month5wages`, 0 ), 2 ) AS `month5wages`,
+		round( ifnull( `tablewages`.`month5appreciation`, 0 ), 2 ) AS `month5appreciation`,
+		round( ifnull( `tablewages`.`month6wages`, 0 ), 2 ) AS `month6wages`,
+		round( ifnull( `tablewages`.`month6appreciation`, 0 ), 2 ) AS `month6appreciation`,
+		round( ifnull( `tablewages`.`month7wages`, 0 ), 2 ) AS `month7wages`,
+		round( ifnull( `tablewages`.`month7appreciation`, 0 ), 2 ) AS `month7appreciation`,
+		round( ifnull( `tablewages`.`month8wages`, 0 ), 2 ) AS `month8wages`,
+		round( ifnull( `tablewages`.`month8appreciation`, 0 ), 2 ) AS `month8appreciation`,
+		round( ifnull( `tablewages`.`month9wages`, 0 ), 2 ) AS `month9wages`,
+		round( ifnull( `tablewages`.`month9appreciation`, 0 ), 2 ) AS `month9appreciation`,
+		round( ifnull( `tablewages`.`month10wages`, 0 ), 2 ) AS `month10wages`,
+		round( ifnull( `tablewages`.`month10appreciation`, 0 ), 2 ) AS `month10appreciation`,
+		round( ifnull( `tablewages`.`month11wages`, 0 ), 2 ) AS `month11wages`,
+		round( ifnull( `tablewages`.`month11appreciation`, 0 ), 2 ) AS `month11appreciation`,
+		round( ifnull( `tablewages`.`month12wages`, 0 ), 2 ) AS `month12wages`,
+		round( ifnull( `tablewages`.`month12appreciation`, 0 ), 2 ) AS `month12appreciation`,(((((((((((
+		ifnull( `tablewages`.`month1appreciation`, 0 ) + ifnull( `tablewages`.`month2appreciation`, 0 )) + ifnull( `tablewages`.`month3appreciation`, 0 )) + ifnull( `tablewages`.`month4appreciation`, 0 )) + ifnull( `tablewages`.`month5appreciation`, 0 )) + ifnull( `tablewages`.`month6appreciation`, 0 )) + ifnull( `tablewages`.`month7appreciation`, 0 )) + ifnull( `tablewages`.`month8appreciation`, 0 )) + ifnull( `tablewages`.`month9appreciation`, 0 )) + ifnull( `tablewages`.`month10appreciation`, 0 )) + ifnull( `tablewages`.`month11appreciation`, 0 )) + ifnull( `tablewages`.`month12appreciation`, 0 )) AS `appreciationtotal`,
+		round((((((((((((((((((((((
+		ifnull( `tablewages`.`month1wages`, 0 ) + ifnull( `tablewages`.`month2wages`, 0 )) + ifnull( `tablewages`.`month3wages`, 0 )) + ifnull( `tablewages`.`month4wages`, 0 )) + ifnull( `tablewages`.`month5wages`, 0 )) + ifnull( `tablewages`.`month6wages`, 0 )) + ifnull( `tablewages`.`month7wages`, 0 )) + ifnull( `tablewages`.`month8wages`, 0 )) + ifnull( `tablewages`.`month9wages`, 0 )) + ifnull( `tablewages`.`month10wages`, 0 )) + ifnull( `tablewages`.`month11wages`, 0 )) + ifnull( `tablewages`.`month1appreciation`, 0 )) + ifnull( `tablewages`.`month2appreciation`, 0 )) + ifnull( `tablewages`.`month3appreciation`, 0 )) + ifnull( `tablewages`.`month4appreciation`, 0 )) + ifnull( `tablewages`.`month5appreciation`, 0 )) + ifnull( `tablewages`.`month6appreciation`, 0 )) + ifnull( `tablewages`.`month7appreciation`, 0 )) + ifnull( `tablewages`.`month8appreciation`, 0 )) + ifnull( `tablewages`.`month9appreciation`, 0 )) + ifnull( `tablewages`.`month10appreciation`, 0 )) + ifnull( `tablewages`.`month11appreciation`, 0 )),
+		2
+		) AS `totalwithout12`,
+		round((((((((((((((((((((((((
+		ifnull( `tablewages`.`month1wages`, 0 ) + ifnull( `tablewages`.`month2wages`, 0 )) + ifnull( `tablewages`.`month3wages`, 0 )) + ifnull( `tablewages`.`month4wages`, 0 )) + ifnull( `tablewages`.`month5wages`, 0 )) + ifnull( `tablewages`.`month6wages`, 0 )) + ifnull( `tablewages`.`month7wages`, 0 )) + ifnull( `tablewages`.`month8wages`, 0 )) + ifnull( `tablewages`.`month9wages`, 0 )) + ifnull( `tablewages`.`month10wages`, 0 )) + ifnull( `tablewages`.`month11wages`, 0 )) + ifnull( `tablewages`.`month12wages`, 0 )) + ifnull( `tablewages`.`month1appreciation`, 0 )) + ifnull( `tablewages`.`month2appreciation`, 0 )) + ifnull( `tablewages`.`month3appreciation`, 0 )) + ifnull( `tablewages`.`month4appreciation`, 0 )) + ifnull( `tablewages`.`month5appreciation`, 0 )) + ifnull( `tablewages`.`month6appreciation`, 0 )) + ifnull( `tablewages`.`month7appreciation`, 0 )) + ifnull( `tablewages`.`month8appreciation`, 0 )) + ifnull( `tablewages`.`month9appreciation`, 0 )) + ifnull( `tablewages`.`month10appreciation`, 0 )) + ifnull( `tablewages`.`month11appreciation`, 0 )) + ifnull( `tablewages`.`month12appreciation`, 0 )),
+		2
+		) AS `totalwithin12`
+		FROM
+		(
+		SELECT
+		`base`.`GIVING_ID` AS `GIVING_ID`,
+		`base`.`USER_ID` AS `USER_ID`,
+		ifnull( sum( `bonussend`.`TOTALBONUS1` ), 0 ) AS `TOTALBONUS1`,
+		max((
+		CASE
+
+		WHEN (
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' ) = concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '01' )) THEN
+		ifnull( `wages`.`SHOULDWAGES`, 0 )
+		END
+		)) AS `month1wages`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '01' ) THEN
+		ifnull( NULL, 0 )
+		END
+		)) AS `month1appreciation`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '02' ) THEN
+		ifnull( `wages`.`SHOULDWAGES`, 0 )
+		END
+		)) AS `month2wages`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '02' ) THEN
+		ifnull( NULL, 0 )
+		END
+		)) AS `month2appreciation`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '03' ) THEN
+		ifnull( `wages`.`SHOULDWAGES`, 0 )
+		END
+		)) AS `month3wages`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '03' ) THEN
+		ifnull( NULL, 0 )
+		END
+		)) AS `month3appreciation`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '04' ) THEN
+		ifnull( `wages`.`SHOULDWAGES`, 0 )
+		END
+		)) AS `month4wages`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '04' ) THEN
+		ifnull( NULL, 0 )
+		END
+		)) AS `month4appreciation`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '05' ) THEN
+		ifnull( `wages`.`SHOULDWAGES`, 0 )
+		END
+		)) AS `month5wages`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '05' ) THEN
+		ifnull( NULL, 0 )
+		END
+		)) AS `month5appreciation`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '06' ) THEN
+		ifnull( `wages`.`SHOULDWAGES`, 0 )
+		END
+		)) AS `month6wages`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '06' ) THEN
+		ifnull( NULL, 0 )
+		END
+		)) AS `month6appreciation`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '07' ) THEN
+		ifnull( `wages`.`SHOULDWAGES`, 0 )
+		END
+		)) AS `month7wages`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '07' ) THEN
+		ifnull( NULL, 0 )
+		END
+		)) AS `month7appreciation`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '08' ) THEN
+		ifnull( `wages`.`SHOULDWAGES`, 0 )
+		END
+		)) AS `month8wages`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '08' ) THEN
+		ifnull( NULL, 0 )
+		END
+		)) AS `month8appreciation`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '09' ) THEN
+		ifnull( `wages`.`SHOULDWAGES`, 0 )
+		END
+		)) AS `month9wages`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '09' ) THEN
+		ifnull( NULL, 0 )
+		END
+		)) AS `month9appreciation`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '10' ) THEN
+		ifnull( `wages`.`SHOULDWAGES`, 0 )
+		END
+		)) AS `month10wages`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '10' ) THEN
+		ifnull( NULL, 0 )
+		END
+		)) AS `month10appreciation`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '11' ) THEN
+		ifnull( `wages`.`SHOULDWAGES`, 0 )
+		END
+		)) AS `month11wages`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '11' ) THEN
+		ifnull( NULL, 0 )
+		END
+		)) AS `month11appreciation`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '12' ) THEN
+		ifnull( `wages`.`SHOULDWAGES`, 0 )
+		END
+		)) AS `month12wages`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '12' ) THEN
+		ifnull( NULL, 0 )
+		END
+		)) AS `month12appreciation`
+		FROM
+		((
+		`base`
+		LEFT JOIN `wages` ON (((
+		`base`.`USER_ID` = `wages`.`USER_ID`
+		)
+		AND ( ifnull( `wages`.`STATUS`, '0' ) = '0' )
+		AND (
+		substr( `wages`.`CREATEONYM`, 1, 4 ) = substr( #{strMonths}, 1, 4 ))
+		AND (
+		<![CDATA[ REPLACE ( `wages`.`CREATEONYM`, '-', '' ) < #{strMonths})))) ]]>
+		LEFT JOIN `bonussend` ON (((
+		`base`.`USER_ID` = `bonussend`.`USER_ID`
+		)
+		AND (
+		`bonussend`.`YEARS` = substr( #{strMonths}, 1, 4 ))
+		AND ((
+		`bonussend`.`METHOD` = '累计'
+		)
+		OR ( `bonussend`.`METHOD` = '累計' )))))
+		WHERE
+		(
+        `base`.GIVING_ID = #{givingid}
+        AND (
+		ifnull( `base`.`STATUS`, '0' ) = '0'
+		))
+		GROUP BY
+		`base`.`GIVING_ID`,
+		`base`.`USER_ID`
+		) `tablewages`
 	</select>
 </mapper>

@@ -3,6 +3,208 @@
 <mapper namespace="com.nt.service_pfans.PFANS2000.mapper.AccumulatedTaxMapper">
     <select id="getaccumulatedTax" parameterType="com.nt.dao_Pfans.PFANS2000.Base"
             resultType="com.nt.dao_Pfans.PFANS2000.Vo.AccumulatedTaxVo">
-        SELECT * FROM ACCUMULATEDTAXVIEW
+        SELECT
+        `tw`.`GIVING_ID` AS `GIVING_ID`,
+        `tw`.`USER_ID` AS `USER_ID`,
+        round( `tw`.`SHOULDWAGES`, 2 ) AS `SHOULDWAGES`,
+        round( `dic`.`VALUE2`, 2 ) AS `value2`,
+        round( `tw`.`january`, 2 ) AS `january`,
+        round( `tw`.`february`, 2 ) AS `february`,
+        round( `tw`.`march`, 2 ) AS `march`,
+        round( `tw`.`april`, 2 ) AS `april`,
+        round( `tw`.`may`, 2 ) AS `may`,
+        round( `tw`.`june`, 2 ) AS `june`,
+        round( `tw`.`july`, 2 ) AS `july`,
+        round( `tw`.`august`, 2 ) AS `august`,
+        round( `tw`.`september`, 2 ) AS `september`,
+        round( `tw`.`october`, 2 ) AS `october`,
+        round( `tw`.`november`, 2 ) AS `november`,
+        round( `tw`.`december`, 2 ) AS `december`,
+        round(((((((((((
+        `tw`.`january` + `tw`.`february`
+        ) + `tw`.`march`
+        ) + `tw`.`april`
+        ) + `tw`.`may`
+        ) + `tw`.`june`
+        ) + `tw`.`july`
+        ) + `tw`.`august`
+        ) + `tw`.`september`
+        ) + `tw`.`october`
+        ) + `tw`.`november`
+        ),
+        2
+        ) AS `sumThis`,
+        round((( `tw`.`SHOULDWAGES` * `dic`.`VALUE2` ) - `dic`.`VALUE3` ), 2 ) AS `Shouldtax`,
+        round(((((
+        `tw`.`SHOULDWAGES` * `dic`.`VALUE2`
+        ) - `dic`.`VALUE3`
+        ) - ((((((((((
+        `tw`.`january` + `tw`.`february`
+        ) + `tw`.`march`
+        ) + `tw`.`april`
+        ) + `tw`.`may`
+        ) + `tw`.`june`
+        ) + `tw`.`july`
+        ) + `tw`.`august`
+        ) + `tw`.`september`
+        ) + `tw`.`october`
+        ) + `tw`.`november`
+        )) - `tw`.`december`
+        ),
+        2
+        ) AS `balance`
+        FROM
+        ((
+        SELECT
+        `base`.`USER_ID` AS `USER_ID`,
+        `base`.`GIVING_ID` AS `GIVING_ID`,
+        sum(
+        ifnull( `wages`.`SHOULDWAGES`, 0 )) AS `SHOULDWAGES`,
+        max((
+        CASE
+        CONVERT ( REPLACE ( `wages`.`CREATEONYM`, '-', '' ) USING utf8mb4 )
+        WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '01' ) THEN
+        ifnull( `wages`.`THISMONTHADJUSTMENT`, 0 ) ELSE 0
+        END
+        )) AS `january`,
+        max((
+        CASE
+        CONVERT ( REPLACE ( `wages`.`CREATEONYM`, '-', '' ) USING utf8mb4 )
+        WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '02' ) THEN
+        ifnull( `wages`.`THISMONTHADJUSTMENT`, 0 ) ELSE 0
+        END
+        )) AS `february`,
+        max((
+        CASE
+        CONVERT ( REPLACE ( `wages`.`CREATEONYM`, '-', '' ) USING utf8mb4 )
+        WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '03' ) THEN
+        ifnull( `wages`.`THISMONTHADJUSTMENT`, 0 ) ELSE 0
+        END
+        )) AS `march`,
+        max((
+        CASE
+        CONVERT ( REPLACE ( `wages`.`CREATEONYM`, '-', '' ) USING utf8mb4 )
+        WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '04' ) THEN
+        ifnull( `wages`.`THISMONTHADJUSTMENT`, 0 ) ELSE 0
+        END
+        )) AS `april`,
+        max((
+        CASE
+        CONVERT ( REPLACE ( `wages`.`CREATEONYM`, '-', '' ) USING utf8mb4 )
+        WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '05' ) THEN
+        ifnull( `wages`.`THISMONTHADJUSTMENT`, 0 ) ELSE 0
+        END
+        )) AS `may`,
+        max((
+        CASE
+        CONVERT ( REPLACE ( `wages`.`CREATEONYM`, '-', '' ) USING utf8mb4 )
+        WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '06' ) THEN
+        ifnull( `wages`.`THISMONTHADJUSTMENT`, 0 ) ELSE 0
+        END
+        )) AS `june`,
+        max((
+        CASE
+        CONVERT ( REPLACE ( `wages`.`CREATEONYM`, '-', '' ) USING utf8mb4 )
+        WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '07' ) THEN
+        ifnull( `wages`.`THISMONTHADJUSTMENT`, 0 ) ELSE 0
+        END
+        )) AS `july`,
+        max((
+        CASE
+        CONVERT ( REPLACE ( `wages`.`CREATEONYM`, '-', '' ) USING utf8mb4 )
+        WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '08' ) THEN
+        ifnull( `wages`.`THISMONTHADJUSTMENT`, 0 ) ELSE 0
+        END
+        )) AS `august`,
+        max((
+        CASE
+        CONVERT ( REPLACE ( `wages`.`CREATEONYM`, '-', '' ) USING utf8mb4 )
+        WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '09' ) THEN
+        ifnull( `wages`.`THISMONTHADJUSTMENT`, 0 ) ELSE 0
+        END
+        )) AS `september`,
+        max((
+        CASE
+        CONVERT ( REPLACE ( `wages`.`CREATEONYM`, '-', '' ) USING utf8mb4 )
+        WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '10' ) THEN
+        ifnull( `wages`.`THISMONTHADJUSTMENT`, 0 ) ELSE 0
+        END
+        )) AS `october`,
+        max((
+        CASE
+        CONVERT ( REPLACE ( `wages`.`CREATEONYM`, '-', '' ) USING utf8mb4 )
+        WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '11' ) THEN
+        ifnull( `wages`.`THISMONTHADJUSTMENT`, 0 ) ELSE 0
+        END
+        )) AS `november`,
+        max((
+        CASE
+        CONVERT ( REPLACE ( `wages`.`CREATEONYM`, '-', '' ) USING utf8mb4 )
+        WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '12' ) THEN
+        ifnull( `wages`.`THISMONTHADJUSTMENT`, 0 ) ELSE 0
+        END
+        )) AS `december`
+        FROM
+        (
+        `base`
+        LEFT JOIN `wages` ON (((
+        `base`.`USER_ID` = `wages`.`USER_ID`
+        )
+        AND ( `wages`.`STATUS` = '0' )
+        AND (
+        substr( `wages`.`CREATEONYM`, 1, 4 ) = substr( #{strMonths}, 1, 4 ))
+        AND (
+        <![CDATA[ REPLACE ( `wages`.`CREATEONYM`, '-', '' ) < #{strMonths} )))) ]]>
+        WHERE
+        (
+        `base`.GIVING_ID = #{givingid}
+        AND (
+        ifnull( `base`.`STATUS`, '0' ) = '0'
+        ))
+        GROUP BY
+        `base`.`USER_ID`,
+        `base`.`GIVING_ID`
+        ) `tw`
+        LEFT JOIN `dictionary` `dic` ON (((
+        `dic`.`PCODE` = 'PR048'
+        )
+        AND ((
+        CASE
+
+        WHEN ((
+        `tw`.`SHOULDWAGES` >= 0
+        )
+        <![CDATA[ AND ( `tw`.`SHOULDWAGES` <= 36000 )) THEN ]]>
+        'PR048001'
+        WHEN ((
+        `tw`.`SHOULDWAGES` > 36000
+        )
+        <![CDATA[ AND ( `tw`.`SHOULDWAGES` <= 144000 )) THEN ]]>
+        'PR048002'
+        WHEN ((
+        `tw`.`SHOULDWAGES` > 144000
+        )
+        <![CDATA[ AND ( `tw`.`SHOULDWAGES` <= 300000 )) THEN ]]>
+        'PR048003'
+        WHEN ((
+        `tw`.`SHOULDWAGES` > 300000
+        )
+        <![CDATA[ AND ( `tw`.`SHOULDWAGES` <= 420000 )) THEN ]]>
+        'PR048004'
+        WHEN ((
+        `tw`.`SHOULDWAGES` > 420000
+        )
+        <![CDATA[ AND ( `tw`.`SHOULDWAGES` <= 660000 )) THEN ]]>
+        'PR048005'
+        WHEN ((
+        `tw`.`SHOULDWAGES` > 660000
+        )
+        <![CDATA[ AND ( `tw`.`SHOULDWAGES` <= 960000 )) THEN ]]>
+        'PR048006'
+        WHEN ( `tw`.`SHOULDWAGES` > 960000 ) THEN
+        'PR048007'
+        END
+        ) = `dic`.`CODE`
+        ))))
     </select>
 </mapper>

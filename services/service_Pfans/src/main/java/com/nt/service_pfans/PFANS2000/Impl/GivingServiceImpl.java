@@ -154,10 +154,15 @@ public class GivingServiceImpl implements GivingService {
         GivingVo givingVo = new GivingVo();
         Giving giving = new Giving();
         giving.setGiving_id(giving_id);
+        List<Giving> givinglist = givingMapper.select(giving);
+        String strMonths = "";
+        if(givinglist.size() > 0){
+            strMonths = givinglist.get(0).getMonths();
+        }
         givingVo.setGiving(giving);
 
         // region 专项控除 By SKAIXX
-        List<Disciplinary> disciplinary = disciplinaryMapper.getdisciplinary();
+        List<Disciplinary> disciplinary = disciplinaryMapper.getdisciplinary(giving_id,strMonths);
         disciplinary = disciplinary.stream().filter(coi -> (coi.getGiving_id().contains(giving_id))).collect(Collectors.toList());
         givingVo.setDisciplinaryVo(disciplinary);
         // endregion
@@ -229,19 +234,19 @@ public class GivingServiceImpl implements GivingService {
         givingVo.setContrast(contrastList);
 
         // region 累计税金 By SKAIXX
-        List<AccumulatedTaxVo> accumulatedTaxVolist = accumulatedTaxMapper.getaccumulatedTax();
+        List<AccumulatedTaxVo> accumulatedTaxVolist = accumulatedTaxMapper.getaccumulatedTax(giving_id,strMonths);
         accumulatedTaxVolist = accumulatedTaxVolist.stream().filter(coi -> (coi.getGiving_id().contains(giving_id))).collect(Collectors.toList());
         givingVo.setAccumulatedTaxVo(accumulatedTaxVolist);
         // endregion
 
         // region 免税 By SKAIXX
-        List<DutyfreeVo> dutyfreeVolist = dutyfreeMapper.getdutyfree();
+        List<DutyfreeVo> dutyfreeVolist = dutyfreeMapper.getdutyfree(giving_id,strMonths);
         dutyfreeVolist = dutyfreeVolist.stream().filter(coi -> (coi.getGiving_id().contains(giving_id))).collect(Collectors.toList());
         givingVo.setDutyfreeVo(dutyfreeVolist);
         // endregion
 
         // region 综合收入 By SKAIXX
-        List<ComprehensiveVo> comprehensiveVolist = comprehensiveMapper.getcomprehensive();
+        List<ComprehensiveVo> comprehensiveVolist = comprehensiveMapper.getcomprehensive(giving_id,strMonths);
         comprehensiveVolist = comprehensiveVolist.stream().filter(coi -> (coi.getGiving_id().contains(giving_id))).collect(Collectors.toList());
         givingVo.setComprehensiveVo(comprehensiveVolist);
         // endregion
