@@ -43,6 +43,8 @@
     <select id="updateProcess1" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         UPDATE lunardetail
         SET PROCESS = #{Process}
+        WHERE EVALUATIONDAY = #{Evaluationday}
+        AND SUBJECTMON = #{Subjectmon}
     </select>
     <select id="updateProcess2" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         UPDATE lunarbonus
@@ -64,7 +66,8 @@
     <select id="selectTeam" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         SELECT *
         FROM lunardetail
-        WHERE  1 = 1 AND USER_ID !=  #{Self}
+        WHERE  1 = 1 AND USER_ID !=  #{Self} AND EVALUATIONDAY = #{Evaluationday}
+        AND SUBJECTMON = #{Subjectmon}
         <if test="lunardetailList != null and lunardetailList.size() > 0 ">
             AND TEAM_ID IN
             <foreach item="item" index="index" collection="lunardetailList"
@@ -79,6 +82,8 @@
         SELECT *
         FROM lunardetail
         WHERE  1 = 1 AND USER_ID !=  #{Self}
+        AND EVALUATIONDAY = #{Evaluationday}
+        AND SUBJECTMON = #{Subjectmon}
         <if test="lunardetailList != null and lunardetailList.size() > 0 ">
             AND GROUP_ID IN
             <foreach item="item" index="index" collection="lunardetailList"
@@ -93,6 +98,8 @@
         SELECT *
         FROM lunardetail
         WHERE  1 = 1 AND USER_ID !=  #{Self}
+        AND EVALUATIONDAY = #{Evaluationday}
+        AND SUBJECTMON = #{Subjectmon}
         <if test="lunardetailList != null and lunardetailList.size() > 0 ">
             AND CENTER_ID IN
             <foreach item="item" index="index" collection="lunardetailList"
