@@ -64,7 +64,8 @@ public class OrgTreeController {
             orgTree.preInsert(tokenModel);
         }
         orgTree.preUpdate(tokenModel);
-        //新建组织架构(Status为1是不生效)
+        //update gbb 20210308  禅道任务708  start
+        //新建组织架构(Status为1时组织还未生效)
         if(orgTree.getType().equals("0")){
             OrgTree orgTreeold = orgTreeService.getTreeYears(orgTree.getYears(),"1");
             if(orgTreeold != null){
@@ -73,6 +74,7 @@ public class OrgTreeController {
             orgTree.setStatus("1");
             orgTree.setType("1");
         }
+        //update gbb 20210308  禅道任务708  end
         orgTreeService.save(orgTree);
         return ApiResult.success();
     }
@@ -94,7 +96,7 @@ public class OrgTreeController {
         orgTree.set_id(id);
         return ApiResult.success(orgTreeService.getById(orgTree));
     }
-
+    //update gbb 20210308  禅道任务708  start
     /**
      * @方法名：getTreeYears
      * @描述：获取历史组织架构
@@ -107,4 +109,5 @@ public class OrgTreeController {
     public ApiResult getTreeYears(String Years, String Status, HttpServletRequest request) throws Exception {
         return ApiResult.success(orgTreeService.getTreeYears(Years,Status));
     }
+    //update gbb 20210308  禅道任务708  emd
 }
