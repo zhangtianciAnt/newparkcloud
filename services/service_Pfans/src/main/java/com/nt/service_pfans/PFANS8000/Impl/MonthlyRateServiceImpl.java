@@ -30,7 +30,7 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
     //汇率定时任务
 //    @Scheduled(cron = "0 */5 * * * ?")
    @Scheduled(cron = "0 10 0 1 12 ?")
-    public void getdataExittime() throws Exception {
+    public void getExchangeRateY() throws Exception {
         List<MonthlyRate> monthlyratelist = new ArrayList<>();
         List<MonthlyRate> monthlyratelists = new ArrayList<>();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy");
