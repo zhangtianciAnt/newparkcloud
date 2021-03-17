@@ -48,9 +48,11 @@ public interface WagesService {
 
     void insertResidual(String  strFlg,String  givingid,TokenModel tokenModel)throws Exception;
 
+    void insertOthertab(String  givingid,TokenModel tokenModel)throws Exception;
+
     void insertContrast(String  givingid,TokenModel tokenModel)throws Exception;
 
-    void deletewages(String strTemp,List<Giving> givinglist)throws Exception;
+    void deletewages(String givinglist)throws Exception;
 
     List<String> importWages(HttpServletRequest request,TokenModel tokenModel) throws Exception;
 }

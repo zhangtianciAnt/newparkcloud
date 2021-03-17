@@ -245,7 +245,7 @@
 				( @BONUS = 2, @RNBASESALARY * DIC_JJJSXS2 / 12, 0 ),0)
 			) - @AMOUNT
 		) AS BONUSMONEY,#計上奨金
-        @NJJY :=  @BASETHISMONTHBASIC * 2 * base.remaining_annual_leave_lastyear as NJJY,
+        @NJJY := convert(IF(MONTH(CURRENT_DATE) = 4, @THISMONTH / 21.75 / 8 * 2 * base.remaining_annual_leave_lastyear ,0),decimal(10,2)) AS NJJY, #年休结余
         convert(IF(MONTH(CURRENT_DATE) = 4, @GZFZFDZJ + @NJJY + @JSJJ ,@GZFZFDZJ + @JSJJ),decimal(10,2)) AS TOTALBONUS #总计+計上奨金
         FROM
         baseView base
@@ -736,6 +736,16 @@
             and  USER_ID =  #{userid}
         </if>
         and TOTAL3 is not null
+    </select>
+
+
+    <select id="getActual" resultType="java.lang.String">
+        select ACTUAL
+        from wages
+        where  CREATEONYM = #{createonym}
+        <if test="userid != ''" >
+            and  USER_ID =  #{userid}
+        </if>
     </select>
 
 </mapper>

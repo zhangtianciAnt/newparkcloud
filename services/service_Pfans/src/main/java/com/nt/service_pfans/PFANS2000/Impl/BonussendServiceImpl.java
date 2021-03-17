@@ -3,6 +3,8 @@ package com.nt.service_pfans.PFANS2000.Impl;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.ToDoNotice;
+import com.nt.service_Org.ToDoNoticeService;
 import com.nt.dao_Pfans.PFANS2000.Bonussend;
 import com.nt.service_pfans.PFANS2000.BonussendService;
 import com.nt.service_pfans.PFANS2000.mapper.BonussendMapper;
@@ -39,6 +41,10 @@ public class BonussendServiceImpl implements BonussendService {
 
     @Autowired
     private BonussendMapper bonussendMapper;
+    // update gbb 20210312 NT_PFANS_20210305_BUG_131 点击送信发送代办 start
+    @Autowired
+    private ToDoNoticeService toDoNoticeService;
+    // update gbb 20210312 NT_PFANS_20210305_BUG_131 点击送信发送代办 send
 
     @Override
     public void update(List<Bonussend> bonussend, TokenModel tokenModel) throws Exception {
@@ -49,10 +55,30 @@ public class BonussendServiceImpl implements BonussendService {
     }
 
     @Override
-    public void updateSend(String id) throws Exception {
-        Bonussend bonussend = bonussendMapper.selectByPrimaryKey(id);
-        bonussend.setSent("1");
-        bonussendMapper.updateByPrimaryKeySelective(bonussend);
+    // update gbb 20210312 NT_PFANS_20210305_BUG_131 点击送信发送代办 start
+    //public void updateSend(String id) throws Exception {
+    public void updateSend(List<Bonussend> bonussend, TokenModel tokenModel) throws Exception {
+//        Bonussend bonussend = bonussendMapper.selectByPrimaryKey(id);
+//        bonussend.setSent("1");
+//        bonussendMapper.updateByPrimaryKeySelective(bonussend);
+        for (Bonussend bo : bonussend){
+            bo.preUpdate(tokenModel);
+            bo.setSent("1");
+            bonussendMapper.updateByPrimaryKey(bo);
+            // 创建代办
+            ToDoNotice toDoNotice = new ToDoNotice();
+            toDoNotice.setNoticeid(UUID.randomUUID().toString());
+            toDoNotice.setTitle("您的奖金已发送");
+            toDoNotice.setInitiator(bo.getUser_id());
+            toDoNotice.setContent("您的奖金已发送");
+            toDoNotice.setDataid(bo.getBonussend_id());
+            toDoNotice.setUrl("/PFANS2028View");
+            toDoNotice.setWorkflowurl("/PFANS2028View");
+            toDoNotice.preInsert(tokenModel);
+            toDoNotice.setOwner(bo.getUser_id());
+            toDoNoticeService.save(toDoNotice);
+        }
+        // update gbb 20210312 NT_PFANS_20210305_BUG_131 点击送信发送代办 end
     }
 
     @Override
@@ -117,20 +143,7 @@ public class BonussendServiceImpl implements BonussendService {
                 List<Object> value = list.get(k);
                 k++;
                 if (value != null && !value.isEmpty()) {
-                    bonussend.setYears(value.get(0).toString());
-                    bonussend.setJobnumber(value.get(1).toString());
-                    bonussend.setTotalbonus1(value.get(2).toString());
-                    bonussend.setMethod(value.get(3).toString());
-                    bonussend.setTaxable(value.get(4).toString());
-                    bonussend.setAmount(value.get(5).toString());
-                    bonussend.setPayable(value.get(6).toString());
-                    bonussend.setIncome(value.get(7).toString());
-                    bonussend.setTaxrate(value.get(8).toString());
-                    bonussend.setDeductions(value.get(9).toString());
-                    bonussend.setBonustax(value.get(10).toString());
-                    bonussend.setReceived(value.get(11).toString());
-                    bonussend.setRemarks(value.get(12).toString());
-
+                    // update gbb 20210312 NT_PFANS_20210305_BUG_131 点击送信发送代办 start
 //                    String click = "^([1-9][0-9]*)+(.[0-9]{1,2})?$";
 //                    if (!Pattern.matches(click, value.get(4).toString())) {
 //                        error = error + 1;
@@ -145,19 +158,59 @@ public class BonussendServiceImpl implements BonussendService {
 //                        }
 //                    }
                     Query query = new Query();
-                    String jobnumber = value.get(2).toString();
+                    String jobnumber = value.get(1).toString();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo == null) {
+                        error = error + 1;
+                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        continue;
+                    }
                     if (customerInfo != null) {
                         bonussend.setUser_id(customerInfo.getUserid());
-                        bonussend.setUsername(customerInfo.getUserid());
+                        bonussend.setUsername(customerInfo.getUserinfo().getCustomername());
                     }
-//                    if (customerInfo == null) {
-//                        error = error + 1;
-//                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
-//                        continue;
-//                    }
+                    if(value.size() > 0){
+                        bonussend.setYears(value.get(0).toString());
+                    }
+                    if(value.size() > 1){
+                        bonussend.setJobnumber(value.get(1).toString());
+                    }
+                    if(value.size() > 2){
+                        bonussend.setTotalbonus1(value.get(2).toString());
+                    }
+                    if(value.size() > 3){
+                        bonussend.setMethod(value.get(3).toString());
+                    }
+                    if(value.size() > 4){
+                        bonussend.setTaxable(value.get(4).toString());
+                    }
+                    if(value.size() > 5){
+                        bonussend.setAmount(value.get(5).toString());
+                    }
+                    if(value.size() > 6){
+                        bonussend.setPayable(value.get(6).toString());
+                    }
+                    if(value.size() > 7){
+                        bonussend.setIncome(value.get(7).toString());
+                    }
+                    if(value.size() > 8){
+                        bonussend.setTaxrate(value.get(8).toString());
+                    }
+                    if(value.size() > 9){
+                        bonussend.setDeductions(value.get(9).toString());
+                    }
+                    if(value.size() > 10){
+                        bonussend.setBonustax(value.get(10).toString());
+                    }
+                    if(value.size() > 11){
+                        bonussend.setReceived(value.get(11).toString());
+                    }
+                    if(value.size() > 12){
+                        bonussend.setRemarks(value.get(12).toString());
+                    }
                 }
+                // update gbb 20210312 NT_PFANS_20210305_BUG_131 点击送信发送代办 start
                 bonussend.preInsert();
                 bonussend.setBonussend_id(UUID.randomUUID().toString());
                 bonussendMapper.insert(bonussend);

@@ -287,4 +287,16 @@ public class Purchase  extends BaseModel {
     //废弃理由
     @Column(name = "TRASHREASON")
     private String trashreason;
+
+    //剩余未借款金额
+    @Column(name = "SURLOAPPMONEY")
+    private String surloappmoney;
+
+    //剩余未精算金额
+    @Column(name = "SURPUBILCMONEY")
+    private String surpubilcmoney;
+
+    //是否可多次申请暂借款
+    @Column(name = "ENABLEDUPLICATELOAN")
+    private String enableduplicateloan;
 }

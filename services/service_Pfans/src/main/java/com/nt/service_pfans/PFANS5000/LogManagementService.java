@@ -17,7 +17,12 @@ import java.util.List;
  */
 public interface LogManagementService {
 
-    void insert(LogManagement logmanagement, TokenModel tokenModel)throws Exception;
+
+    //add-ws-01/05-优化接口
+    List<LogManagement> sumlogdate(LogManagement logmanagemenr) throws Exception;
+    //add-ws-01/05-优化接口
+
+    void insert(LogManagement logmanagement, TokenModel tokenModel) throws Exception;
 
     public List<LogManagement> getDataList(LogManagement logmanagemenr) throws Exception;
 

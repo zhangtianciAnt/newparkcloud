@@ -1352,7 +1352,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             shijiworkHoursPM = "0";
                                         }
 
-                                        if (Double.valueOf(shijiworkHoursAM) >= 4 && Double.valueOf(shijiworkHoursPM) >= 4) {
+                                        //UPD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+//                                        if (Double.valueOf(shijiworkHoursAM) >= 4 && Double.valueOf(shijiworkHoursPM) >= 4) {
+                                        if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(shijiworkHoursPM) >= 8) {
+                                        //UPD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                             //上午>=4 &&下午>=4
                                             //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
                                             //ad.setNormal(df.format(Double.valueOf(workinghours)
@@ -1362,9 +1365,18 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if (ad.getYouthday() != null && !ad.getYouthday().isEmpty()) {
                                                 ad.setYouthday(df.format(Double.valueOf(workinghours)));
                                             }
-                                            if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
+                                            //UPD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+//                                          if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
+                                            else if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
+                                            //UPD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 ad.setWomensday(df.format(Double.valueOf(workinghours)));
                                             }
+                                            //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                            else
+                                            {
+                                                ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())));
+                                            }
+                                            //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                         }
                                         else if (Double.valueOf(shijiworkHoursAM) >= 4 && Double.valueOf(shijiworkHoursPM) < 4) {
                                             //上午>=4 && 下午<4
@@ -1388,6 +1400,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 else if(ad.getTenantid().equals("4"))
                                                 {
                                                     ad.setYouthday(null);
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
@@ -1406,6 +1421,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 else if(ad.getTenantid().equals("4"))
                                                 {
                                                     ad.setWomensday(null);
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
@@ -1432,6 +1450,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 else if(ad.getTenantid().equals("4"))
                                                 {
                                                     ad.setYouthday(null);
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
@@ -1450,6 +1471,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 else if(ad.getTenantid().equals("4"))
                                                 {
                                                     ad.setWomensday(null);
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
@@ -1507,6 +1531,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 {
                                                     ad.setYouthday(null);
                                                     ad.setWomensday(null);
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) - Double.valueOf(ad.getAbsenteeism())));
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
 
                                             }
@@ -2175,6 +2202,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             ad.setAbsenteeism("0");
                                         }
                                     }
+                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                    if (!StringUtils.isNullOrEmpty(ad.getWomensday()) || !StringUtils.isNullOrEmpty(ad.getYouthday()))
+                                    {
+                                        ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(leave) - Double.valueOf(ad.getNormal()) - Double.valueOf(ad.getAbsenteeism())));
+                                    }
+                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
 
                                 }
                                 else if (workinghours.equals("8")) {
@@ -3081,7 +3114,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             shijiworkHoursPM = "0";
                                         }
 
-                                        if (Double.valueOf(shijiworkHoursAM) >= 4 && Double.valueOf(shijiworkHoursPM) >= 4) {
+                                        //UPD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+//                                        if (Double.valueOf(shijiworkHoursAM) >= 4 && Double.valueOf(shijiworkHoursPM) >= 4) {
+                                        if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(shijiworkHoursPM) >= 8) {
+                                        //UPD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                             //上午>=4 && 下午>=4
                                             //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
                                             //ad.setNormal(df.format(Double.valueOf(workinghours)
@@ -3091,9 +3127,18 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if (ad.getYouthday() != null && !ad.getYouthday().isEmpty()) {
                                                 ad.setYouthday(df.format(Double.valueOf(workinghours)));
                                             }
-                                            if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
+                                            //UPD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+//                                          if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
+                                            else if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
+                                                //UPD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 ad.setWomensday(df.format(Double.valueOf(workinghours)));
                                             }
+                                            //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                            else
+                                            {
+                                                ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())));
+                                            }
+                                            //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                         }
                                         else if (Double.valueOf(shijiworkHoursAM) >= 4 && Double.valueOf(shijiworkHoursPM) < 4) {
                                             //上午>=4 && 下午<4
@@ -3117,6 +3162,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 else if(ad.getTenantid().equals("4"))
                                                 {
                                                     ad.setYouthday(null);
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
@@ -3135,6 +3183,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 else if(ad.getTenantid().equals("4"))
                                                 {
                                                     ad.setWomensday(null);
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
@@ -3161,6 +3212,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 else if(ad.getTenantid().equals("4"))
                                                 {
                                                     ad.setYouthday(null);
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
@@ -3179,6 +3233,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 else if(ad.getTenantid().equals("4"))
                                                 {
                                                     ad.setWomensday(null);
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
@@ -3236,6 +3293,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 {
                                                     ad.setYouthday(null);
                                                     ad.setWomensday(null);
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) - Double.valueOf(ad.getAbsenteeism())));
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
 
                                             }
@@ -3835,6 +3895,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             ad.setAbsenteeism("0");
                                         }
                                     }
+                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                    if (!StringUtils.isNullOrEmpty(ad.getWomensday()) || !StringUtils.isNullOrEmpty(ad.getYouthday()))
+                                    {
+                                        ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(leave) - Double.valueOf(ad.getNormal()) - Double.valueOf(ad.getAbsenteeism())));
+                                    }
+                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                 }
                                 else if (workinghours.equals("8")) {
                                     if (sf1ymd.parse(sf1ymd.format(calendar.getTime())).compareTo(sf1ymd.parse(sf1ymd.format(ad.getDates()))) > 0) {

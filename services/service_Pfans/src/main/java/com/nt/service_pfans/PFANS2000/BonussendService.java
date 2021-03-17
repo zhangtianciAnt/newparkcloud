@@ -16,5 +16,8 @@ public interface BonussendService {
 
     public void update(List<Bonussend> bonussend, TokenModel tokenModel) throws Exception;
 
-    public void updateSend(String id) throws Exception;
+    // update gbb 20210312 NT_PFANS_20210305_BUG_131 点击送信发送代办 start
+    //public void updateSend(String id) throws Exception;
+    public void updateSend(List<Bonussend> bonussend, TokenModel tokenModel) throws Exception;
+    // update gbb 20210312 NT_PFANS_20210305_BUG_130 点击送信发送代办 end
 }

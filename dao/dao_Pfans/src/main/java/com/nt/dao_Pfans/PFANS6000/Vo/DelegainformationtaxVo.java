@@ -2,6 +2,7 @@ package com.nt.dao_Pfans.PFANS6000.Vo;
 
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import com.nt.dao_Pfans.PFANS6000.Delegainformationtax;
+import com.nt.utils.Encryption.Encryption;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

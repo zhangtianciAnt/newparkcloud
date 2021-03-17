@@ -14,6 +14,10 @@ public interface GivingService {
 
     void insert(String generation, TokenModel tokenModel)throws Exception;
 
+    void insertInduction(String  givingid,TokenModel tokenModel)throws Exception;
+
+    void insertRetire(String  givingid,TokenModel tokenModel)throws Exception;
+
     void insertBase(String  givingid,TokenModel tokenModel)throws Exception;
 
     void insertOtherOne(String  givingid,TokenModel tokenModel)throws Exception;

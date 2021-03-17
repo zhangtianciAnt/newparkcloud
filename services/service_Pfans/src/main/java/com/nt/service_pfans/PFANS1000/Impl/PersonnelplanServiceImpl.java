@@ -1,11 +1,14 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS1000.PersonnelPlan;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExternalVo;
+import com.nt.dao_Pfans.PFANS2000.PersonalCost;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS1000.PersonnelplanService;
 import com.nt.service_pfans.PFANS1000.mapper.PersonnelplanMapper;
+import com.nt.service_pfans.PFANS2000.mapper.PersonalCostMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +17,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 public class PersonnelplanServiceImpl implements PersonnelplanService {
@@ -24,7 +27,8 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
     private PersonnelplanMapper personnelplanMapper;
     @Autowired
     private MongoTemplate mongoTemplate;
-
+    @Autowired
+    private PersonalCostMapper personalcostmapper;
     @Override
     public List<CustomerInfo> SelectCustomer(String id) {
         Query query = new Query();
@@ -42,7 +46,14 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
 
     @Override
     public List<ExternalVo> getExpatriatesinfor(String groupid) {
-        List<ExternalVo> externalVos = personnelplanMapper.getExternal(groupid);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM");
+        Date PD_DATE = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(PD_DATE); // 设置为当前时间
+        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) - 1); // 设置为上一个月
+        PD_DATE = calendar.getTime();
+        String pdStr = formatter.format(PD_DATE);
+        List<ExternalVo> externalVos = personnelplanMapper.getExternal(groupid,pdStr);
         return externalVos;
     }
 
@@ -85,4 +96,12 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
 
       return  personnelPlan1;
     }
+    // add-lyt-21/1/29-禅道任务648-start
+    @Override
+    public List<PersonalCost> getPersonalCost(String groupid, String years) throws Exception {
+        List<PersonalCost> personalcost =  personalcostmapper.getPersonalCost(groupid,years);
+        return personalcost;
+    }
+   // add-lyt-21/1/29-禅道任务648-end
+
 }

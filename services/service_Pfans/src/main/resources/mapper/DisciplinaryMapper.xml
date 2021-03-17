@@ -3,6 +3,148 @@
 <mapper namespace="com.nt.service_pfans.PFANS2000.mapper.DisciplinaryMapper">
     <select id="getdisciplinary" parameterType="com.nt.dao_Pfans.PFANS2000.Base"
             resultType="com.nt.dao_Pfans.PFANS2000.Disciplinary">
-		SELECT * FROM DISCIPLINARYVIEW
+		SELECT
+		`tablewages`.`GIVING_ID` AS `GIVING_ID`,
+		`tablewages`.`USER_ID` AS `USER_ID`,
+		`tablewages`.`JOBNUMBER` AS `JOBNUMBER`,
+		round( `tablewages`.`january`, 2 ) AS `month1`,
+		round( `tablewages`.`february`, 2 ) AS `month2`,
+		round( `tablewages`.`march`, 2 ) AS `month3`,
+		round( `tablewages`.`april`, 2 ) AS `month4`,
+		round( `tablewages`.`may`, 2 ) AS `month5`,
+		round( `tablewages`.`june`, 2 ) AS `month6`,
+		round( `tablewages`.`july`, 2 ) AS `month7`,
+		round( `tablewages`.`august`, 2 ) AS `month8`,
+		round( `tablewages`.`september`, 2 ) AS `month9`,
+		round( `tablewages`.`october`, 2 ) AS `month10`,
+		round( `tablewages`.`november`, 2 ) AS `month11`,
+		round( `tablewages`.`december`, 2 ) AS `month12`,
+		round((((((((((((
+		`tablewages`.`january` + `tablewages`.`february`
+		) + `tablewages`.`march`
+		) + `tablewages`.`april`
+		) + `tablewages`.`may`
+		) + `tablewages`.`june`
+		) + `tablewages`.`july`
+		) + `tablewages`.`august`
+		) + `tablewages`.`september`
+		) + `tablewages`.`october`
+		) + `tablewages`.`november`
+		) + `tablewages`.`december`
+		),
+		2
+		) AS `total`
+		FROM
+		(
+		SELECT
+		`base`.`GIVING_ID` AS `GIVING_ID`,
+		`base`.`USER_ID` AS `USER_ID`,
+		`base`.`JOBNUMBER` AS `JOBNUMBER`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '01' ) THEN
+		ifnull( `wages`.`DISCIPLINARYCONTROL`, 0 ) ELSE 0
+		END
+		)) AS `january`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '02' ) THEN
+		ifnull( `wages`.`DISCIPLINARYCONTROL`, 0 ) ELSE 0
+		END
+		)) AS `february`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '03' ) THEN
+		ifnull( `wages`.`DISCIPLINARYCONTROL`, 0 ) ELSE 0
+		END
+		)) AS `march`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '04' ) THEN
+		ifnull( `wages`.`DISCIPLINARYCONTROL`, 0 ) ELSE 0
+		END
+		)) AS `april`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '05' ) THEN
+		ifnull( `wages`.`DISCIPLINARYCONTROL`, 0 ) ELSE 0
+		END
+		)) AS `may`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '06' ) THEN
+		ifnull( `wages`.`DISCIPLINARYCONTROL`, 0 ) ELSE 0
+		END
+		)) AS `june`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '07' ) THEN
+		ifnull( `wages`.`DISCIPLINARYCONTROL`, 0 ) ELSE 0
+		END
+		)) AS `july`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '08' ) THEN
+		ifnull( `wages`.`DISCIPLINARYCONTROL`, 0 ) ELSE 0
+		END
+		)) AS `august`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '09' ) THEN
+		ifnull( `wages`.`DISCIPLINARYCONTROL`, 0 ) ELSE 0
+		END
+		)) AS `september`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '10' ) THEN
+		ifnull( `wages`.`DISCIPLINARYCONTROL`, 0 ) ELSE 0
+		END
+		)) AS `october`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '11' ) THEN
+		ifnull( `wages`.`DISCIPLINARYCONTROL`, 0 ) ELSE 0
+		END
+		)) AS `november`,
+		max((
+		CASE
+		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
+		WHEN concat( substr( `wages`.`CREATEONYM`, 1, 4 ), '12' ) THEN
+		ifnull( `wages`.`DISCIPLINARYCONTROL`, 0 ) ELSE 0
+		END
+		)) AS `december`
+		FROM
+		(
+		`base`
+		LEFT JOIN `wages` ON (((
+		`base`.`USER_ID` = `wages`.`USER_ID`
+		)
+		AND ( `wages`.`STATUS` = '0' )
+		AND (
+		substr( `wages`.`CREATEONYM`, 1, 4 ) = substr( #{strMonths}, 1, 4 ))
+		AND (
+		<![CDATA[ REPLACE ( `wages`.`CREATEONYM`, '-', '' ) < #{strMonths})))) ]]>
+		WHERE
+		(
+		`base`.GIVING_ID = #{givingid}
+		AND (
+		ifnull( `base`.`STATUS`, '0' ) = '0'
+		))
+		GROUP BY
+		`base`.`GIVING_ID`,
+		`base`.`USER_ID`,
+		`base`.`JOBNUMBER`
+		) `tablewages`
 	</select>
 </mapper>

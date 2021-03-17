@@ -58,17 +58,19 @@ public class Pfans2007Controller {
     }
 
     @RequestMapping(value="/inserttodo",method = {RequestMethod.POST})
-    public ApiResult inserttodo(@RequestBody ToDoNotice toDoNotice, HttpServletRequest request) throws Exception{
-        if (toDoNotice == null) {
+    // update gbb 20210312 NT_PFANS_20210305_BUG_131 点击送信发送代办 start
+    public ApiResult inserttodo(@RequestBody List<Bonussend> bonussend, HttpServletRequest request) throws Exception{
+        if (bonussend == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
+//        TokenModel tokenModel = tokenService.getToken(request);
+//        toDoNotice.preInsert(tokenModel);
+//        toDoNotice.setOwner(tokenModel.getUserId());
+//        toDoNoticeService.save(toDoNotice);
+//        bonussendService.updateSend(toDoNotice.getDataid());
         TokenModel tokenModel = tokenService.getToken(request);
-        toDoNotice.preInsert(tokenModel);
-        toDoNotice.setOwner(tokenModel.getUserId());
-        toDoNoticeService.save(toDoNotice);
-
-        bonussendService.updateSend(toDoNotice.getDataid());
-
+        bonussendService.updateSend(bonussend,tokenModel);
+        // update gbb 20210312 NT_PFANS_20210305_BUG_131 点击送信发送代办 end
         return ApiResult.success();
 //        // 创建代办
 //        ToDoNotice toDoNotice = new ToDoNotice();

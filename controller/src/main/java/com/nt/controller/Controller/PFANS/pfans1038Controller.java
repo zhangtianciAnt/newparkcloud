@@ -5,6 +5,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS1000.Businessplan;
 import com.nt.dao_Pfans.PFANS1000.PersonnelPlan;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExternalVo;
+import com.nt.dao_Pfans.PFANS2000.PersonalCost;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS1000.BusinessplanService;
@@ -92,5 +93,12 @@ public class pfans1038Controller {
         personnelplanService.insert(personnelPlan, tokenModel);
         return ApiResult.success();
     }
-
+    // add-lyt-21/1/29-禅道任务648-start
+    @RequestMapping(value = "/getPersonalCost", method = {RequestMethod.GET})
+    public ApiResult getPersonalCost(HttpServletRequest request,String groupid,String years) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        List<PersonalCost>  PersonalCostList =personnelplanService.getPersonalCost(groupid , years);
+        return ApiResult.success(PersonalCostList);
+    }
+    // add-lyt-21/1/29-禅道任务648-start
 }

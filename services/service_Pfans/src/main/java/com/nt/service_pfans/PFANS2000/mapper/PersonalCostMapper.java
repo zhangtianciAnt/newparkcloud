@@ -52,4 +52,12 @@ public interface PersonalCostMapper extends MyMapper<PersonalCost>{
     void updatePersonalCost(@Param("uplist") List<PersonalCost> personalCostList, @Param("tokenModel") TokenModel tokenModel);
 
     List<String> selectBirthUserid(@Param("year") String year);
+
+    //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-start
+    List<PersonalCost> getFuzzyQuery(@Param("yearsantid") String yearsantid,@Param("username") String username,@Param("allotmentAnt") String allotmentAnt,@Param("group_id") String group_id,@Param("rnAnt") String rnAnt);
+    //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-end
+
+    // add-lyt-21/1/29-禅道任务648-start
+    List<PersonalCost> getPersonalCost(@Param("groupid") String groupid,@Param("years") String years );
+    // add-lyt-21/1/29-禅道任务648-end
 }
