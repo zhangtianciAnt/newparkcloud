@@ -1,5 +1,7 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
+import ch.qos.logback.core.joran.spi.ElementSelector;
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
@@ -201,7 +203,26 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         }
 
     }
-
+    //ADD CCM 20210317 NT_PFANS_20210309_BUG_182 FR
+    public String selectByAccount(String account,String usertype,int count)throws Exception
+    {
+        String countString = "";
+        Query query0 = new Query();
+        query0.addCriteria(Criteria.where("account").is(account));
+//        query0.addCriteria(Criteria.where("usertype").is(usertype));
+        List<UserAccount> list = mongoTemplate.find(query0, UserAccount.class);
+        if(list.size()>0)
+        {
+            countString = "00"+(count+list.size());
+            if(list.size()+count>9)
+            {
+                countString = "0"+(list.size()+count);
+            }
+            return selectByAccount(account + countString,"0",list.size()+count);
+        }
+        return account;
+    }
+    //ADD CCM 20210317 NT_PFANS_20210309_BUG_182 TO
     @Override
     public void crAccount2(List<Expatriatesinfor> expatriatesinfor, TokenModel tokenModel) throws Exception {
 
@@ -213,16 +234,23 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                 userAccount.setUsertype("1");
 
                 Query query = new Query();
-                query.addCriteria(Criteria.where("account").regex(userAccount.getAccount()));
-//                query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
-                query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
-                List<UserAccount> list = mongoTemplate.find(query, UserAccount.class);
+                //UPD CCM 20210317 NT_PFANS_20210309_BUG_182 FR
+//                query.addCriteria(Criteria.where("account").regex(userAccount.getAccount()));
+////                query.addCriteria(Criteria.where("password").is(userAccount.getPassword()));
+//                query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
+//                List<UserAccount> list = mongoTemplate.find(query, UserAccount.class);
+//
+//                if (list.size() > 0) {
+//                    userAccount.setAccount(userAccount.getAccount() + Convert.toStr(list.size()));
+//                    userAccount.setPassword(userAccount.getAccount());
+////                    userAccount = list.get(0);
+//                }
+                String account = userAccount.getAccount();
+                account  = selectByAccount(account,"1",0);
+                userAccount.setAccount(account);
+                userAccount.setPassword(account);
+                //UPD CCM 20210317 NT_PFANS_20210309_BUG_182 FR
 
-                if (list.size() > 0) {
-                    userAccount.setAccount(userAccount.getAccount() + Convert.toStr(list.size()));
-                    userAccount.setPassword(userAccount.getAccount());
-//                    userAccount = list.get(0);
-                }
 
                 query = new Query();
                 query.addCriteria(Criteria.where("status").is(AuthConstants.DEL_FLAG_NORMAL));
@@ -780,20 +808,49 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                 expatriatesinforName.setExpname(expatriatesinfor.getExpname().trim());
                                 List<Expatriatesinfor> expatriatesinforList = new ArrayList<Expatriatesinfor>();
                                 expatriatesinforList = expatriatesinforMapper.select(expatriatesinforName);
-                                if (expatriatesinforList.size() > 0) {
+
+                                //UPD CCM 20210317 NT_PFANS_20210309_BUG_182 FR
+//                                if (expatriatesinforList.size() > 0) {
+//                                    throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
+//                                } else {
+//                                    UserAccount userAccount = new UserAccount();
+//                                    userAccount.setAccount("KK-" + PinyinHelper.convertToPinyinString(expatriatesinfor.getExpname(), "", PinyinFormat.WITHOUT_TONE));
+//                                    userAccount.setUsertype("1");
+//                                    Query query = new Query();
+//                                    query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+//                                    query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
+//                                    List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+//                                    if (userAccountlist.size() > 0) {
+//                                        throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+//                                    }
+//                                }
+
+                                if(expatriatesinforList.size() > 0)
+                                {
                                     throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
-                                } else {
-                                    UserAccount userAccount = new UserAccount();
-                                    userAccount.setAccount("KK-" + PinyinHelper.convertToPinyinString(expatriatesinfor.getExpname(), "", PinyinFormat.WITHOUT_TONE));
-                                    userAccount.setUsertype("1");
-                                    Query query = new Query();
-                                    query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
-                                    query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
-                                    List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
-                                    if (userAccountlist.size() > 0) {
-                                        throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                                }
+                                else
+                                {
+                                    if(!com.nt.utils.StringUtils.isBase64Encode(expatriatesinforName.getExpname())){
+                                        expatriatesinforName.setExpname(Base64.encode(expatriatesinforName.getExpname()));
+                                    }
+                                    expatriatesinforList = expatriatesinforMapper.select(expatriatesinforName);
+                                    if (expatriatesinforList.size() > 0) {
+                                        throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
+                                    } else {
+                                        UserAccount userAccount = new UserAccount();
+                                        userAccount.setAccount("KK-" + PinyinHelper.convertToPinyinString(expatriatesinfor.getExpname(), "", PinyinFormat.WITHOUT_TONE));
+                                        userAccount.setUsertype("1");
+                                        Query query = new Query();
+                                        query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+                                        query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
+                                        List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+                                        if (userAccountlist.size() > 0) {
+                                            throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                                        }
                                     }
                                 }
+                                //UPD CCM 20210317 NT_PFANS_20210309_BUG_182 TO
                             }
                             if (value.size() > 1) {
                                 String sex = Convert.toStr(value.get(1));
@@ -1129,20 +1186,47 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 expatriatesinforName.setExpname(expatriatesinforList.get(0).getExpname().trim());
                                                 List<Expatriatesinfor> inforList = new ArrayList<Expatriatesinfor>();
                                                 inforList = expatriatesinforMapper.select(expatriatesinforName);
-                                                if (inforList.size() > 0) {
+                                                //UPD CCM 20210317 NT_PFANS_20210309_BUG_182 FR
+//                                                if (inforList.size() > 0) {
+//                                                    throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
+//                                                } else {
+//                                                    UserAccount userAccount = new UserAccount();
+//                                                    userAccount.setAccount("KK-" + PinyinHelper.convertToPinyinString(expatriatesinforList.get(0).getExpname(), "", PinyinFormat.WITHOUT_TONE));
+//                                                    userAccount.setUsertype("1");
+//                                                    Query query = new Query();
+//                                                    query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+//                                                    query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
+//                                                    List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+//                                                    if (userAccountlist.size() > 0) {
+//                                                        throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+//                                                    }
+//                                                }
+                                                if(inforList.size() > 0)
+                                                {
                                                     throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
-                                                } else {
-                                                    UserAccount userAccount = new UserAccount();
-                                                    userAccount.setAccount("KK-" + PinyinHelper.convertToPinyinString(expatriatesinforList.get(0).getExpname(), "", PinyinFormat.WITHOUT_TONE));
-                                                    userAccount.setUsertype("1");
-                                                    Query query = new Query();
-                                                    query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
-                                                    query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
-                                                    List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
-                                                    if (userAccountlist.size() > 0) {
-                                                        throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                                                }
+                                                else
+                                                {
+                                                    if(!com.nt.utils.StringUtils.isBase64Encode(expatriatesinforName.getExpname())){
+                                                        expatriatesinforName.setExpname(Base64.encode(expatriatesinforName.getExpname()));
+                                                    }
+                                                    inforList = expatriatesinforMapper.select(expatriatesinforName);
+                                                    if (inforList.size() > 0) {
+                                                        throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
+                                                    } else {
+                                                        UserAccount userAccount = new UserAccount();
+                                                        userAccount.setAccount("KK-" + PinyinHelper.convertToPinyinString(expatriatesinforList.get(0).getExpname(), "", PinyinFormat.WITHOUT_TONE));
+                                                        userAccount.setUsertype("1");
+                                                        Query query = new Query();
+                                                        query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
+                                                        query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
+                                                        List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
+                                                        if (userAccountlist.size() > 0) {
+                                                            throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                                                        }
                                                     }
                                                 }
+                                                //UPD CCM 20210317 NT_PFANS_20210309_BUG_182 TO
                                             }
                                             break;
                                         case 1:
