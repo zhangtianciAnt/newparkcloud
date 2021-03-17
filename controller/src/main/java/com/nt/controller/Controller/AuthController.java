@@ -10,6 +10,7 @@ import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS6000.DeleginformationService;
 import com.nt.service_pfans.PFANS6000.PricesetService;
+import com.nt.service_pfans.PFANS8000.MonthlyRateService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -55,6 +56,9 @@ public class AuthController {
 
     @Autowired
     private BusinessService businessService;
+
+    @Autowired
+    private MonthlyRateService monthlyRateService;
 
     /**
      * @方法名：getActionsAuth
@@ -179,6 +183,13 @@ public class AuthController {
     @RequestMapping(value = "/saveDaka",method={RequestMethod.GET})
     public ApiResult saveDaka(HttpServletRequest request) throws Exception {
         businessService.saveDaka();
+        return ApiResult.success();
+    }
+
+    //每月汇率 定时任务
+    @RequestMapping(value = "/getExchangeRateY",method={RequestMethod.GET})
+    public ApiResult getExchangeRateY(HttpServletRequest request) throws Exception {
+        monthlyRateService.getExchangeRateY();
         return ApiResult.success();
     }
 
