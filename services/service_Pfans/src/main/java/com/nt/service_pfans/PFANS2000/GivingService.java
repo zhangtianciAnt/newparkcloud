@@ -10,7 +10,9 @@ import java.util.List;
 
 public interface GivingService {
 
-    GivingVo List(String giving_id) throws Exception;
+    GivingVo givinglist(String giving_id) throws Exception;
+
+    void initial()throws Exception;
 
     void insert(String generation, TokenModel tokenModel)throws Exception;
 

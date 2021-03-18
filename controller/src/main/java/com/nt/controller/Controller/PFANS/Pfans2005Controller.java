@@ -60,7 +60,7 @@ public class Pfans2005Controller {
     @RequestMapping(value = "/givinglist", method = {RequestMethod.GET})
     public ApiResult get(String giving_id,HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(givingService.List(giving_id));
+        return ApiResult.success(givingService.givinglist(giving_id));
     }
 
 
