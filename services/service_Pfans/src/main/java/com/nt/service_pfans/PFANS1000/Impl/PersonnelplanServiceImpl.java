@@ -1,7 +1,11 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Pfans.PFANS1000.Employed;
+import com.nt.dao_Pfans.PFANS1000.Moneyavg;
 import com.nt.dao_Pfans.PFANS1000.PersonnelPlan;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExternalVo;
 import com.nt.dao_Pfans.PFANS2000.PersonalCost;
@@ -17,6 +21,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -86,6 +91,26 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
         }
         personnelPlan.preInsert(tokenModel);
         personnelPlan.setPersonnelplanid(UUID.randomUUID().toString());
+        List<Moneyavg> moneyavgList = JSON.parseArray(personnelPlan.getEmployed(), Moneyavg.class);
+        BigDecimal moneyavgSum = new BigDecimal("0.0");
+        int perNum = 0;
+        for(Moneyavg mavg : moneyavgList){
+            perNum ++;
+            BigDecimal summerMoney = new BigDecimal(mavg.getSummerplanpc());
+            BigDecimal winterMoney = new BigDecimal(mavg.getWinterplanpc());
+            moneyavgSum = moneyavgSum.add(summerMoney.add(winterMoney));
+        }
+
+        List<Moneyavg> newmoneyavgList = JSON.parseArray(personnelPlan.getNewentry(), Moneyavg.class);
+        for(Moneyavg newmavg : newmoneyavgList){
+            perNum ++;
+            BigDecimal newsummerMoney = newmavg.getSummerplanpc() == null? new BigDecimal(0.0) : new BigDecimal(newmavg.getSummerplanpc());
+            BigDecimal newwinterMoney = newmavg.getSummerplanpc() == null? new BigDecimal(0.0) : new BigDecimal(newmavg.getSummerplanpc());
+            moneyavgSum = moneyavgSum.add(newsummerMoney.add(newwinterMoney));
+        }
+        BigDecimal perNumBig = new BigDecimal(String.valueOf(perNum));
+        moneyavgSum = moneyavgSum.divide(perNumBig,2, BigDecimal.ROUND_HALF_UP);
+        personnelPlan.setMoneyavg(moneyavgSum.toString());
         personnelplanMapper.insert(personnelPlan);
     }
 
