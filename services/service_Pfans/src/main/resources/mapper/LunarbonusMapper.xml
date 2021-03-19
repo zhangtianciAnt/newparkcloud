@@ -13,5 +13,6 @@
                 #{item}
             </foreach>
         </if>
+        ORDER BY EVALUATIONDAY DESC, SUBJECTMON DESC, EVALUATENUM DESC
     </select>
 </mapper>

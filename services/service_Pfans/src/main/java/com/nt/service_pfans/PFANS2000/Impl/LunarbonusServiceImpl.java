@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import cn.hutool.core.convert.Convert;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Auth.Vo.MembersVo;
@@ -291,15 +292,30 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                     lunardetail.setSalary(customerInfo.getUserinfo().getSalary());
                     lunardetail.setTeam_id(customerInfo.getUserinfo().getTeamid());
                     lunardetail.setCenter_id(customerInfo.getUserinfo().getCenterid());
-                    lunardetail.setDifference(customerInfo.getUserinfo().getDifference());
-                    lunardetail.setProcess("0");
-                    if (customerInfo.getUserinfo().getDifference() != null) {
-                        if (customerInfo.getUserinfo().getDifference().equals("1")) {
+                    if (customerInfo.getUserinfo().getEnddate() != null && customerInfo.getUserinfo().getEnddate().length() > 0) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+                        Calendar rightNow = Calendar.getInstance();
+                        String enddate = customerInfo.getUserinfo().getEnddate().substring(0, 10);
+                        if (customerInfo.getUserinfo().getEnddate().length() >= 24) {
+                            rightNow.setTime(Convert.toDate(enddate));
+                            rightNow.add(Calendar.DAY_OF_YEAR, 1);
+                            enddate = sdf.format(rightNow.getTime());
+                        }
+                        String newdate = sdf.format(date);
+                        if (sdf.parse(newdate).getTime() > sdf.parse(enddate).getTime()) {
+                            lunardetail.setDifference("2");
+                        } else {
+                            lunardetail.setDifference("1");
+                        }
+                    }
+                    if (lunardetail.getDifference() != null) {
+                        if (lunardetail.getDifference().equals("1")) {
                             lunardetail.setPrize("无");
-                        } else if (customerInfo.getUserinfo().getDifference().equals("2")) {
+                        } else if (lunardetail.getDifference().equals("2")) {
                             lunardetail.setPrize("有");
                         }
                     }
+                    lunardetail.setProcess("0");
                     lunardetail.setOccupationtype(customerInfo.getUserinfo().getOccupationtype());
                     lunardetailMapper.insert(lunardetail);
                 }
@@ -378,7 +394,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                             lunardetailList.add(detailLevel);
                         }
                     }
-                    detal = lunardetailMapper.selectTeam(lunardetailList, tokenModel.getUserId());
+                    detal = lunardetailMapper.selectTeam(lunardetailList, tokenModel.getUserId(), lunarbonus.getEvaluationday(), lunarbonus.getSubjectmon());
                 }
                 if (lunarbonus.getEvaluatenum().equals("PJ104002")) {
                     for (OrgTreeVo orgTreeVo : OrgTreeVolist) {
@@ -387,7 +403,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                             lunardetailList.add(detailLevel);
                         }
                     }
-                    detal = lunardetailMapper.selectGroup(lunardetailList, tokenModel.getUserId());
+                    detal = lunardetailMapper.selectGroup(lunardetailList, tokenModel.getUserId(), lunarbonus.getEvaluationday(), lunarbonus.getSubjectmon());
                 }
                 if (lunarbonus.getEvaluatenum().equals("PJ104003")) {
                     for (OrgTreeVo orgTreeVo : OrgTreeVolist) {
@@ -396,7 +412,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                             lunardetailList.add(detailLevel);
                         }
                     }
-                    detal = lunardetailMapper.selectCenter(lunardetailList, tokenModel.getUserId());
+                    detal = lunardetailMapper.selectCenter(lunardetailList, tokenModel.getUserId(), lunarbonus.getEvaluationday(), lunarbonus.getSubjectmon());
                 }
 //                if (!StringUtils.isNullOrEmpty(teamid)) {
 //                    lunardetailCondition.setTeam_id(teamid);
@@ -534,7 +550,6 @@ public class LunarbonusServiceImpl implements LunarbonusService {
             }
             String Process = "1";
             String subjectmon = "";
-            lunardetailMapper.updateProcess1(Process);
             lunarbonus.setLunarbonus_id(lunarbonus.getLunarbonus_id());
             if (lunarbonus.getSubjectmon().equals("1-3月(10-12月実際を参考)")) {
                 subjectmon = "PJ103001";
@@ -545,6 +560,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
             } else if (lunarbonus.getSubjectmon().equals("10-12月(7-9月実際を参考)")) {
                 subjectmon = "PJ103004";
             }
+            lunardetailMapper.updateProcess1(Process, lunarbonus.getEvaluationday(), subjectmon);
             lunardetailMapper.updateProcess2(Process, lunarbonus.getEvaluationday(), subjectmon);
             String Month = "0";
             if (lunarbonus.getSubjectmon().equals("1-3月(10-12月実際を参考)")) {
@@ -666,7 +682,6 @@ public class LunarbonusServiceImpl implements LunarbonusService {
     @Override
     public void overTodonotice(Lunarbonus lunarbonus,TokenModel tokenModel) throws Exception {
         String Process = "5";
-        lunardetailMapper.updateProcess1(Process);
         String subjectmon = "";
         if (lunarbonus.getSubjectmon().equals("1-3月(10-12月実際を参考)")) {
             subjectmon = "PJ103001";
@@ -677,6 +692,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         } else if (lunarbonus.getSubjectmon().equals("10-12月(7-9月実際を参考)")) {
             subjectmon = "PJ103004";
         }
+        lunardetailMapper.updateProcess1(Process, lunarbonus.getEvaluationday(), subjectmon);
         lunardetailMapper.updateProcess2(Process, lunarbonus.getEvaluationday(), subjectmon);
     }
 }
