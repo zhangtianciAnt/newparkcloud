@@ -19,6 +19,7 @@ import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
 import com.nt.service_pfans.PFANS2000.WagesService;
+import com.nt.service_pfans.PFANS2000.GivingService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
@@ -124,6 +125,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     private WagesMapper wagesMapper;
     @Autowired
     private WagesService wagesservice;
+    @Autowired
+    private GivingService givingService;
     @Autowired
     private DictionaryMapper dictionaryMapper;
 
@@ -886,12 +889,6 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     @Scheduled(cron="0 50 16 * * ?") //每天下午4点50分执行  GBB add -- 取当外驻员工天下午4点50分之前打卡记录
     public void selectattendancebpTask()throws Exception {
         selectattendancebp();
-    }
-
-    //系统服务--取当天打卡记录BP//正式时间每天下午4点50分执行  GBB add
-    @Scheduled(cron="0 0 23 30 * ?") //每月30号晚23点计算实际工资  GBB add
-    public void selectrealwagesTask()throws Exception {
-        getrealwages();
     }
 
     //系统服务--取打卡记录
@@ -3744,7 +3741,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
 
     //系统服务-每月最后一天计算实际工资  GBB add
+    @Scheduled(cron="0 0 23 28-31 * ?") //每月最后一天晚23点计算实际工资  GBB add
     public void getrealwages()throws Exception {
+        System.out.println("实际工资开始");
+        long startTime =  System.currentTimeMillis();
         TokenModel tokenModel = new TokenModel();
         String StaffNoList = "00000";
         int rowundex = 1;
@@ -3773,7 +3773,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 .lte(now.get(Calendar.YEAR) + "-" + getMonth(sfymd.format(now.getTime())) + "-" + lastDay);
         query.addCriteria(criteria);
         List<CustomerInfo> customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
-        //List<CustomerInfo> customerInfoList = new ArrayList<>();
+
         if (customerInfoList.size() > 0) {
             for(CustomerInfo info :customerInfoList){
                 StaffNoList = info.getUserinfo().getJobnumber();
@@ -4242,47 +4242,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         }
         //endregion 入职
 
-        //region 退职
-        rowundex = 1;
-        Retire ret = new Retire();
-        ret.setGiving_id(oldgivingid);
-        List<Retire> retireList = retireMapper.select(ret);
-        if (retireList.size() > 0) {
-            for (Retire retire : retireList) {
-                retire.setGiving_id(givingid);
-                retire.setRetire_id(UUID.randomUUID().toString());
-                if (tokenModel != null) {
-                    retire.preInsert(tokenModel);
-                } else {
-                    retire.preInsert();
-                }
-                retire.setRowindex(rowundex);
-                retireMapper.insert(retire);
-                rowundex++;
-            }
-        }
-        //endregion 退职
-
-        //region 基数
-        rowundex = 1;
-        Base ba = new Base();
-        ba.setGiving_id(oldgivingid);
-        List<Base> baseList = baseMapper.select(ba);
-        if (baseList.size() > 0) {
-            for (Base base : baseList) {
-                base.setGiving_id(givingid);
-                base.setBase_id(UUID.randomUUID().toString());
-                if (tokenModel != null) {
-                    base.preInsert(tokenModel);
-                } else {
-                    base.preInsert();
-                }
-                base.setRowindex(rowundex);
-                baseMapper.insert(base);
-                rowundex++;
-            }
-        }
-        //endregion 基数
+        //退职
+        givingService.insertRetire(givingid, tokenModel);//0.3
+        //基数
+        givingService.insertBase(givingid, tokenModel);//0.6
 
         //region 其他2
         rowundex = 1;
@@ -4504,7 +4467,10 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             wagesservice.insertWages(wagesList,tokenModel);
         }
         //endregion 实际工资
-
+        long endTime =  System.currentTimeMillis();
+        long usedTime = (endTime-startTime)/1000;
+        System.out.println("实际工资结束");
+        System.out.println("用时：" + String.valueOf(usedTime) + "秒");
     }
 
     public void deletewages(List<Giving> givinglist) {
@@ -5056,10 +5022,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
         // 判断员工当月级别是否为R8及以上
         boolean isOverR8 = false;
-        String rn = com.nt.utils.StringUtils.isEmpty(base.getRn()) || "その他".equals(base.getRn()) ? "PR021001" : base.getRn();
-        if (Integer.parseInt(rn.substring(rn.length() - 2)) > 5) {
-            isOverR8 = true;
-        }
+        //update gbb 20210318 从2020年4月开始取消R8以及以上人员的加班费用限制 start
+//        String rn = com.nt.utils.StringUtils.isEmpty(base.getRn()) || "その他".equals(base.getRn()) ? "PR021001" : base.getRn();
+//        if (Integer.parseInt(rn.substring(rn.length() - 2)) > 5) {
+//            isOverR8 = true;
+//        }
+        //update gbb 20210318 从2020年4月开始取消R8以及以上人员的加班费用限制 end
 
         if ("pre".equals(mode)) {   // 前月加班费计算
             // 3个月前小时工资 = 月工资÷21.75天÷8小时
@@ -5068,7 +5036,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             // 前月小时工资
             //double salaryPerHour = Double.parseDouble(base.getThismonth()) / 21.75d / 8d;
             //上月基本工资
-            double salaryPerHour = Double.parseDouble(base.getLastmonthbasic()) / 21.75d / 8d;
+            //double salaryPerHour = Double.parseDouble(base.getLastmonthbasic()) / 21.75d / 8d;
+            double salaryPerHour = Double.parseDouble(base.getLastmonth()) / 21.75d / 8d;
             // 2020/06/05 UPDATE by myt END //GBB
             // 平日加班费 150%
             total += isOverR8 ? 0d : Double.parseDouble(ifNull(residual.getLastweekdays())) * salaryPerHour * 1.5d;

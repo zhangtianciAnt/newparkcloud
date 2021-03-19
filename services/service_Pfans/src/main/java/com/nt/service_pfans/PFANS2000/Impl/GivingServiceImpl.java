@@ -145,12 +145,32 @@ public class GivingServiceImpl implements GivingService {
         customerinfoAll = mongoTemplate.findAll(CustomerInfo.class);
     }
 
+    @Override
+    public void initial() throws Exception {
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar now = Calendar.getInstance();
+        now.set(Calendar.DAY_OF_MONTH, 1);
+        Query query = new Query();
+        Criteria criteria = Criteria.where("status").is("0").and("userinfo.type").is("0").orOperator(Criteria.where("userinfo.resignation_date")
+                .gte(sf.format(now.getTime())), Criteria.where("userinfo.resignation_date").is(null), Criteria.where("userinfo.resignation_date").is(""));
+        query.addCriteria(criteria);
+        customerInfos = mongoTemplate.find(query, CustomerInfo.class);
+        customerinfoAll = mongoTemplate.findAll(CustomerInfo.class);
+        //获取上月工资
+        SimpleDateFormat sfYM = new SimpleDateFormat("yyyy-MM");
+        Calendar lastMonthDate = Calendar.getInstance();
+        lastMonthDate.add(Calendar.MONTH, -1);
+        lastwages = wagesMapper.lastWages(sfYM.format(lastMonthDate.getTime()),"");
+        //获取所有有字典
+        dictionaryAll = dictionaryMapper.selectAll();
+    }
+
     /**
      * 生成基数表
      * FJL
      */
     @Override
-    public GivingVo List(String giving_id) throws Exception {
+    public GivingVo givinglist(String giving_id) throws Exception {
         GivingVo givingVo = new GivingVo();
         Giving giving = new Giving();
         giving.setGiving_id(giving_id);
@@ -227,6 +247,7 @@ public class GivingServiceImpl implements GivingService {
         givingVo.setAppreciation(appreciationlist);
         // endregion
 
+        //个人对比
         Contrast contrast = new Contrast();
         contrast.setGiving_id(giving_id);
         List<Contrast> contrastList = contrastMapper.select(contrast);
@@ -285,6 +306,25 @@ public class GivingServiceImpl implements GivingService {
             givingVo.setWagesList(wagesList.stream().sorted(Comparator.comparing(Wages::getUser_id)).collect(Collectors.toList()));
         } else {
             givingVo.setWagesList(wagesMapper.getWagesByGivingId(giving_id,""));
+            //更新个人对比
+            if(contrastList.size() > 0){
+                for (Contrast con : contrastList) {
+                    if(givingVo.getWagesList().size() > 0){
+                        List<Wages> waList = givingVo.getWagesList().stream().filter(coi -> (coi.getUser_id().contains(con.getUser_id()))).collect(Collectors.toList());
+                        if(waList.size() > 0){
+                            //当月实发工资
+                            con.setThismonth(waList.get(0).getRealwages());
+                            if(con.getThismonth() != null && con.getLastmonth() != null){
+                                double Differenc = Double.parseDouble(base.getThismonth()) - Double.parseDouble(base.getLastmonth());
+                                //差额
+                                con.setDifference(new BigDecimal(Differenc).setScale(2, RoundingMode.HALF_UP).toPlainString());
+                            }
+                            contrastMapper.updateByPrimaryKeySelective(con);
+                        }
+                    }
+                }
+                givingVo.setContrast(contrastList);
+            }
         }
         return givingVo;
         // zqu end
@@ -294,7 +334,7 @@ public class GivingServiceImpl implements GivingService {
     public void insertOtherOne(String givingid, TokenModel tokenModel) throws Exception {
         System.out.println("其他1");
         /*获取 customerInfos-lxx*/
-        //init();
+        //initial();
         /*获取 customerInfos-lxx*/
         List<OtherOne> otherOnes = new ArrayList<>();
         DecimalFormat df = new DecimalFormat("#.00");
@@ -430,7 +470,7 @@ public class GivingServiceImpl implements GivingService {
     public void insertBase(String givingid, TokenModel tokenModel) throws Exception {
         System.out.println("基数");
         /*获取 customerInfos-lxx*/
-        //init();
+        initial();
         /*获取 customerInfos-lxx*/
         List<Base> bases = new ArrayList<>();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
@@ -955,29 +995,10 @@ public class GivingServiceImpl implements GivingService {
                 contrast.setOwner(base1.getUser_id());
                 contrast.setRowindex(rowindex);
                 contrast.setDepartment_id(base1.getDepartment_id());
-
-                Wages wages = new Wages();
-                wages.setUser_id(base1.getUser_id());
-                wages.setActual("0");
-                List<Wages> wageslist = wagesMapper.select(wages);
-                if (wageslist != null) {
-                    for (Wages wa : wageslist) {
-                        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM");
-                        String strTemp = sf1.format(new Date());
-                        String strTemp1 = sf1.format(wa.getCreateon());
-                        Date delDate = sf1.parse(strTemp);
-                        Calendar c = Calendar.getInstance();
-                        c.setTime(delDate);
-                        c.add(Calendar.MONTH, -1);
-                        String year1 = String.valueOf(c.get(Calendar.YEAR));    //获取年
-                        String month1 = String.valueOf(c.get(Calendar.MONTH) + 1);
-                        String aa = year1 + "-" + month1;
-                        if (strTemp.equals(strTemp1)) {
-                            contrast.setThismonth(wa.getRealwages());
-                        } else if (strTemp1.equals(aa)) {
-                            contrast.setLastmonth(wa.getRealwages());
-                        }
-                    }
+                //上月【当月实发工资】
+                List<Wages> Wages = lastwages.stream().filter(coi -> (coi.getUser_id().contains(base1.getUser_id()))).collect(Collectors.toList());
+                if(Wages.size() > 0){
+                    contrast.setLastmonth(Wages.get(0).getRealwages());
                 }
                 contrastMapper.insertSelective(contrast);
             }
@@ -988,14 +1009,7 @@ public class GivingServiceImpl implements GivingService {
     public void insert(String generation, TokenModel tokenModel) throws Exception {
         System.out.println("givingStart");
         // 生成工资单的时候重新调用init方法获取最新的人员信息 By Skaixx
-        init();
-        //获取上月工资
-        SimpleDateFormat sfYM = new SimpleDateFormat("yyyy-MM");
-        Calendar lastMonthDate = Calendar.getInstance();
-        lastMonthDate.add(Calendar.MONTH, -1);
-        lastwages = wagesMapper.lastWages(sfYM.format(lastMonthDate.getTime()),"");
-        //获取所有有字典
-        dictionaryAll = dictionaryMapper.selectAll();
+        initial();
         String givingid = UUID.randomUUID().toString();
         // 时间格式
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMM");
@@ -1687,10 +1701,12 @@ public class GivingServiceImpl implements GivingService {
 
         // 判断员工当月级别是否为R8及以上
         boolean isOverR8 = false;
-        String rn = StringUtils.isEmpty(base.getRn()) || "その他".equals(base.getRn()) ? "PR021001" : base.getRn();
-        if (Integer.parseInt(rn.substring(rn.length() - 2)) > 5) {
-            isOverR8 = true;
-        }
+        //update gbb 20210318 从2020年4月开始取消R8以及以上人员的加班费用限制 start
+//        String rn = com.nt.utils.StringUtils.isEmpty(base.getRn()) || "その他".equals(base.getRn()) ? "PR021001" : base.getRn();
+//        if (Integer.parseInt(rn.substring(rn.length() - 2)) > 5) {
+//            isOverR8 = true;
+//        }
+        //update gbb 20210318 从2020年4月开始取消R8以及以上人员的加班费用限制 end
 
         if ("pre".equals(mode)) {   // 前月加班费计算
             // 3个月前小时工资 = 月工资÷21.75天÷8小时
@@ -2249,6 +2265,7 @@ public class GivingServiceImpl implements GivingService {
     // 退职表插入数据
     public void insertRetire(String givingid, TokenModel tokenModel) throws Exception {
         System.out.println("退职");
+        initial();
         int rowundex = 1;
         List<Retire> retireList = getRetire(givingid);
         if (retireList.size() > 0) {
@@ -2269,7 +2286,7 @@ public class GivingServiceImpl implements GivingService {
     // 入职
     public List<Induction> getInduction(String givingId) throws Exception {
         /*获取 customerInfos-lxx*/
-        //init();
+        //initial();
         /*获取 customerInfos-lxx*/
         List<Induction> inductions = new ArrayList<>();
         // 今月日期
@@ -2514,10 +2531,10 @@ public class GivingServiceImpl implements GivingService {
                 induction.setLunch(df.format(officialSubsidy / 21.75 * thisMonthDays));
             }
             else if (DateUtil.format(new Date(), "yyyy").equals(String.valueOf(calEnddate.get(Calendar.YEAR)))
-                && DateUtil.format(new Date(), "M").equals(String.valueOf(calEnddate.get(Calendar.MONTH) + 1))
-                && lastday.equals(String.valueOf(calEnddate.get(Calendar.DATE)))) {//试用期500
-                    //calEnddate.get(Calendar.MONTH) 取出的月份月份少一个月
-                    induction.setLunch(df.format(trialSubsidy));
+                    && DateUtil.format(new Date(), "M").equals(String.valueOf(calEnddate.get(Calendar.MONTH) + 1))
+                    && lastday.equals(String.valueOf(calEnddate.get(Calendar.DATE)))) {//试用期500
+                //calEnddate.get(Calendar.MONTH) 取出的月份月份少一个月
+                induction.setLunch(df.format(trialSubsidy));
             }
             else{
                 //ROUND(1000-500/21.75*I3,2)//本月转正有试用期的
@@ -2584,7 +2601,7 @@ public class GivingServiceImpl implements GivingService {
         // 查询退职人员信息（本月退职人员为对象）
         Criteria criteria = Criteria.where("userinfo.resignation_date")
                 .gte(lastMonth.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(lastMonth.getTime())) + "-" + lastMonthLastDay)
-                .lt(thisMonth.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(thisMonth.getTime())) + "-" + thisMonthLastDay)
+                .lte(thisMonth.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(thisMonth.getTime())) + "-" + thisMonthLastDay)
                 .and("status").is("0");
         query.addCriteria(criteria);
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
@@ -2788,7 +2805,7 @@ public class GivingServiceImpl implements GivingService {
         // 查询退职人员信息（本月退职人员为对象）
         Criteria criteria = Criteria.where("userinfo.resignation_date")
                 .gte(thisMonth.get(Calendar.YEAR)  + "-" + getMouth(sfChina.format(lastMonth.getTime())) + "-" + '1')
-                .lt(thisMonth.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(lastMonth.getTime())) + "-" + thisMonthLastDay)
+                .lte(thisMonth.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(lastMonth.getTime())) + "-" + thisMonthLastDay)
                 .and("status").is("0");
         query.addCriteria(criteria);
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
