@@ -529,8 +529,20 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
         if (groupid.equals("")) {
             groupid = projectincomevo4list.get(0).getGroupid();
         }
+
         //PJ起案相应项目获取
-        String check = year + month;
+        String check = month;
+        //年度  year
+        //自然年 naturalYear
+        //月份 month
+        String naturalYear = year;
+        if(!StringUtils.isNullOrEmpty(month))
+        {
+            naturalYear = month.substring(0,4);
+            month = month.substring(5,7);
+        }
+
+
         CompanyProjects companyprojects = new CompanyProjects();
         companyprojects.setGroup_id(groupid);
         companyprojects.setStatus("4");
@@ -538,7 +550,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
         if (companyProjectsList.size() > 0) {
             for (CompanyProjects companyprojectslist : companyProjectsList) {
                 String id = companyprojectslist.getCompanyprojects_id();
-                List<ProjectContract> projectcontractlist = projectincomemapper.getprojectcontract(id, year, month);
+                List<ProjectContract> projectcontractlist = projectincomemapper.getprojectcontract(id, naturalYear, month);
                 if (projectcontractlist.size() > 0) {
                     BigDecimal contractamount = new BigDecimal("0");
                     BigDecimal contractrequestamount = new BigDecimal("0");
@@ -680,7 +692,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
             projectincomevo2list.add(projectincomevo2);
         }
         //外注费
-        String yearmonth = year + "-" + month;
+        String yearmonth = naturalYear + "-" + month;
         PricesetGroup pricesetGroup = new PricesetGroup();
         pricesetGroup.setPd_date(yearmonth);
         List<PricesetGroup> pricesetgrouplist = pricesetGroupMapper.select(pricesetGroup);
@@ -767,7 +779,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
             for (ProjectIncomeVo1 projectlist : projectincomevo1list) {
                 String projectid = projectlist.getCompanyprojectid();
                 String createby = list1.getNameid();
-                List<LogManagement> logmanagementlist = projectincomemapper.getlogmanagement(projectid, createby, year, month);
+                List<LogManagement> logmanagementlist = projectincomemapper.getlogmanagement(projectid, createby, naturalYear, month);
                 if (logmanagementlist.size() > 0) {
                     ratio = new BigDecimal(logmanagementlist.get(0).getTime_start());
                     ratio1s = ratio1s.add(ratio);
@@ -781,7 +793,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                 String key3 = "radio" + i;
                 String projectid = projectlist.getCompanyprojectid();
                 String createby = list1.getNameid();
-                List<LogManagement> logmanagementlist = projectincomemapper.getlogmanagement(projectid, createby, year, month);
+                List<LogManagement> logmanagementlist = projectincomemapper.getlogmanagement(projectid, createby, naturalYear, month);
                 if (logmanagementlist.size() > 0) {
                     BigDecimal bai = new BigDecimal("100");
                     BigDecimal work = new BigDecimal(logmanagementlist.get(0).getTime_start());
@@ -818,7 +830,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
             for (ProjectIncomeVo1 projectlist : projectincomevo1list) {
                 String projectid = projectlist.getCompanyprojectid();
                 String createby = list2.getNameid();
-                List<LogManagement> logmanagementlist = projectincomemapper.getlogmanagement(projectid, createby, year, month);
+                List<LogManagement> logmanagementlist = projectincomemapper.getlogmanagementBP(projectid, createby, naturalYear, month);
                 if (logmanagementlist.size() > 0) {
                     ratio3 = new BigDecimal(logmanagementlist.get(0).getTime_start());
                     ratio3s = ratio3s.add(ratio3);
@@ -831,7 +843,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                 String key3 = "radio" + i;
                 String projectid = projectlist.getCompanyprojectid();
                 String createby = list2.getNameid();
-                List<LogManagement> logmanagementlist = projectincomemapper.getlogmanagement(projectid, createby, year, month);
+                List<LogManagement> logmanagementlist = projectincomemapper.getlogmanagementBP(projectid, createby, naturalYear, month);
                 if (logmanagementlist.size() > 0) {
                     BigDecimal bai = new BigDecimal("100");
                     BigDecimal work = new BigDecimal(logmanagementlist.get(0).getTime_start());
