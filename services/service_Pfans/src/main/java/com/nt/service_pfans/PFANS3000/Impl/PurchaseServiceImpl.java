@@ -125,6 +125,7 @@ public class PurchaseServiceImpl implements PurchaseService {
                 && purchase.getCollectionday() == null
                 && (purchase.getRecipients() == null || purchase.getRecipients().equals(""))
                 && (purchase.getAcceptstatus() == null || purchase.getAcceptstatus().equals(""))
+                && (purchase.getEnableduplicateloan().equals("PJ055002"))
         )
         {
             //审批结束的更新，状态是4，预算不足为空，入库日为空，领取日，领取人为空，精算日，精算金额为空

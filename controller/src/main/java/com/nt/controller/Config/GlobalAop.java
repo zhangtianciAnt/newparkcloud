@@ -54,7 +54,7 @@ public class GlobalAop {
             AES aes = new AES();
             if(ret != null){
                 String res = aes.encrypt(JSONObject.toJSONString(((ApiResult) ret).getData(), SerializerFeature.WriteMapNullValue));
-                if(res.length() > 11264000){
+                if(res.length() > 19000000){
                     ((ApiResult) ret).setCode(-1);
                     ((ApiResult) ret).setMessage("查询数据过多，操作无法执行！请联系管理员！");
                 }else{

@@ -1374,7 +1374,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
                                             else
                                             {
-                                                ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())));
+                                                ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal()) - Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                             }
                                             //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                         }
@@ -1401,12 +1401,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 {
                                                     ad.setYouthday(null);
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
-                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())) );
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
-                                            if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
+                                           else if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
 //                                                //下午上班时间 + 申请的假期 + 申请的因公外出 >= 4
 //                                                if (Double.valueOf(shijiworkHoursPM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
@@ -1422,10 +1422,14 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 {
                                                     ad.setWomensday(null);
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
-                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
+                                            }
+                                           else
+                                            {
+                                                ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                             }
                                         }
                                         else if (Double.valueOf(shijiworkHoursAM) < 4 && Double.valueOf(shijiworkHoursPM) >= 4) {
@@ -1451,12 +1455,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 {
                                                     ad.setYouthday(null);
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
-                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
-                                            if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
+                                           else if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
                                                 //上午上班时间 + 申请的假期 + 申请的因公外出 >= 4
 //                                                if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
@@ -1472,12 +1476,15 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 {
                                                     ad.setWomensday(null);
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
-                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
-
+                                            else
+                                            {
+                                                ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
+                                            }
                                         }
                                         else {
                                             //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
@@ -1532,7 +1539,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ad.setYouthday(null);
                                                     ad.setWomensday(null);
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
-                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) - Double.valueOf(ad.getAbsenteeism())));
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal()) - Double.valueOf(ad.getAbsenteeism())+ Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
 
@@ -2205,7 +2212,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
                                     if (!StringUtils.isNullOrEmpty(ad.getWomensday()) || !StringUtils.isNullOrEmpty(ad.getYouthday()))
                                     {
-                                        ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(leave) - Double.valueOf(ad.getNormal()) - Double.valueOf(ad.getAbsenteeism())));
+                                        ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leave) - Double.valueOf(ad.getAbsenteeism()) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
+
                                     }
                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
 
@@ -3136,7 +3144,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
                                             else
                                             {
-                                                ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())));
+                                                ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal()) - Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                             }
                                             //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                         }
@@ -3163,12 +3171,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 {
                                                     ad.setYouthday(null);
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
-                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
-                                            if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
+                                            else if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
 //                                                //下午上班时间 + 申请的假期 + 申请的因公外出 >= 4
 //                                                if (Double.valueOf(shijiworkHoursPM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
@@ -3184,10 +3192,14 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 {
                                                     ad.setWomensday(null);
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
-                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
+                                            }
+                                            else
+                                            {
+                                                ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                             }
                                         }
                                         else if (Double.valueOf(shijiworkHoursAM) < 4 && Double.valueOf(shijiworkHoursPM) >= 4) {
@@ -3213,12 +3225,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 {
                                                     ad.setYouthday(null);
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
-                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                             }
-                                            if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
+                                            else if (ad.getWomensday() != null && !ad.getWomensday().isEmpty()) {
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 FR
                                                 //上午上班时间 + 申请的假期 + 申请的因公外出 >= 4
 //                                                if (Double.valueOf(shijiworkHoursAM) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4) {
@@ -3234,10 +3246,14 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 {
                                                     ad.setWomensday(null);
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
-                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime)));
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
                                                 //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
+                                            }
+                                            else
+                                            {
+                                                ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                             }
 
                                         }
@@ -3294,7 +3310,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ad.setYouthday(null);
                                                     ad.setWomensday(null);
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
-                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) - Double.valueOf(ad.getAbsenteeism())));
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) - Double.valueOf(ad.getAbsenteeism()) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
 
@@ -3898,7 +3914,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
                                     if (!StringUtils.isNullOrEmpty(ad.getWomensday()) || !StringUtils.isNullOrEmpty(ad.getYouthday()))
                                     {
-                                        ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(leave) - Double.valueOf(ad.getNormal()) - Double.valueOf(ad.getAbsenteeism())));
+                                        ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(leave) - Double.valueOf(ad.getNormal()) - Double.valueOf(ad.getAbsenteeism())+ Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                     }
                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                 }
