@@ -410,6 +410,8 @@ public class WagesServiceImpl implements WagesService {
     //获取离职人员工资
     @Override
     public List<Wages> getWagesByResign(String user_id,TokenModel tokenModel) throws Exception {
+        System.out.println("离职工资开始");
+        long startTime =  System.currentTimeMillis();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 
         Date date = new Date();
@@ -482,6 +484,10 @@ public class WagesServiceImpl implements WagesService {
                 wagesList.add(actualwagesList.get(0));
             }
         }
+        long endTime =  System.currentTimeMillis();
+        long usedTime = (endTime-startTime)/1000;
+        System.out.println("离职工资结束");
+        System.out.println("用时：" + String.valueOf(usedTime) + "秒");
         return wagesList;
     }
 
@@ -1856,8 +1862,7 @@ public class WagesServiceImpl implements WagesService {
             // 前月小时工资
             //double salaryPerHour = Double.parseDouble(base.getThismonth()) / 21.75d / 8d;
             //上月基本工资
-            //double salaryPerHour = Double.parseDouble(base.getLastmonthbasic()) / 21.75d / 8d;
-            double salaryPerHour = Double.parseDouble(base.getLastmonth()) / 21.75d / 8d;
+            double salaryPerHour = Double.parseDouble(base.getLastmonthbasic()) / 21.75d / 8d;
             // 2020/06/05 UPDATE by myt END //GBB
             // 平日加班费 150%
             total += isOverR8 ? 0d : Double.parseDouble(ifNull(residual.getLastweekdays())) * salaryPerHour * 1.5d;
