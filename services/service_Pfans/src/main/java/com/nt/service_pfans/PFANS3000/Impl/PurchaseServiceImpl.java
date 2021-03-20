@@ -125,6 +125,7 @@ public class PurchaseServiceImpl implements PurchaseService {
                 && purchase.getCollectionday() == null
                 && (purchase.getRecipients() == null || purchase.getRecipients().equals(""))
                 && (purchase.getAcceptstatus() == null || purchase.getAcceptstatus().equals(""))
+                && (purchase.getEnableduplicateloan().equals("PJ055002"))
         )
         {
             //审批结束的更新，状态是4，预算不足为空，入库日为空，领取日，领取人为空，精算日，精算金额为空
@@ -221,7 +222,6 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public void insert(Purchase purchase, TokenModel tokenModel) throws Exception {
-
         //add-ws-根据当前年月日从001开始增加采购编号
         List<Purchase> purchaselist = purchaseMapper.selectAll();
         SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
@@ -252,7 +252,8 @@ public class PurchaseServiceImpl implements PurchaseService {
         //add-ws-根据当前年月日从001开始增加采购编号
         purchase.preInsert(tokenModel);
         purchase.setPurnumbers(Numbers);
-        purchase.setPurchase_id(UUID.randomUUID().toString()) ;
+        purchase.setPurchase_id(UUID.randomUUID().toString());
+        purchase.setSurloappmoney(purchase.getTotalamount());
         purchaseMapper.insert(purchase);
     }
 
