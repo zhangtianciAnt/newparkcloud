@@ -315,7 +315,7 @@ public class GivingServiceImpl implements GivingService {
                             //当月实发工资
                             con.setThismonth(waList.get(0).getRealwages());
                             if(con.getThismonth() != null && con.getLastmonth() != null){
-                                double Differenc = Double.parseDouble(base.getThismonth()) - Double.parseDouble(base.getLastmonth());
+                                double Differenc = Double.parseDouble(con.getThismonth()) - Double.parseDouble(con.getLastmonth());
                                 //差额
                                 con.setDifference(new BigDecimal(Differenc).setScale(2, RoundingMode.HALF_UP).toPlainString());
                             }
@@ -1007,7 +1007,8 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insert(String generation, TokenModel tokenModel) throws Exception {
-        System.out.println("givingStart");
+        System.out.println("生成当月工资开始");
+        long startTime =  System.currentTimeMillis();
         // 生成工资单的时候重新调用init方法获取最新的人员信息 By Skaixx
         initial();
         String givingid = UUID.randomUUID().toString();
@@ -1105,7 +1106,10 @@ public class GivingServiceImpl implements GivingService {
         insertLackattendance(givingid, tokenModel);
         //加班
         insertResidual(givingid, tokenModel);
-        System.out.println("givingEnd");
+        long endTime =  System.currentTimeMillis();
+        long usedTime = (endTime-startTime)/1000;
+        System.out.println("生成当月工资结束");
+        System.out.println("用时：" + String.valueOf(usedTime) + "秒");
     }
 
 
@@ -1715,8 +1719,7 @@ public class GivingServiceImpl implements GivingService {
             // 前月小时工资
             //double salaryPerHour = Double.parseDouble(base.getThismonth()) / 21.75d / 8d;
             //上月基本工资
-            //double salaryPerHour = Double.parseDouble(base.getLastmonthbasic()) / 21.75d / 8d;
-            double salaryPerHour = Double.parseDouble(base.getLastmonth()) / 21.75d / 8d;
+            double salaryPerHour = Double.parseDouble(base.getLastmonthbasic()) / 21.75d / 8d;
             // 2020/06/05 UPDATE by myt END //GBB
             // 平日加班费 150%
             total += isOverR8 ? 0d : Double.parseDouble(ifNull(residual.getLastweekdays())) * salaryPerHour * 1.5d;
