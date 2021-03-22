@@ -25,4 +25,8 @@ public interface ProjectIncomeMapper extends MyMapper<ProjectIncome> {
 
     @Select("select sum(TIME_START) as TIME_START from logmanagement where PROJECT_ID = #{projectid}  and  date_format((LOG_DATE),'%Y') = #{year}  and  date_format((LOG_DATE),'%m') = #{month} and CREATEBY = #{createby}  GROUP BY PROJECT_ID")
     List<LogManagement> getlogmanagement(@Param("projectid") String projectid, @Param("createby") String createby, @Param("year") String year, @Param("month") String month);
+
+    @Select("select sum(TIME_START) as TIME_START from logmanagement l INNER JOIN expatriatesinfor e on l.CREATEBY = e.account where PROJECT_ID = #{projectid}  and  date_format((LOG_DATE),'%Y') = #{year}  and  date_format((LOG_DATE),'%m') = #{month} and e.EXPATRIATESINFOR_ID = #{createby}  GROUP BY PROJECT_ID")
+    List<LogManagement> getlogmanagementBP(@Param("projectid") String projectid, @Param("createby") String createby, @Param("year") String year, @Param("month") String month);
+
 }

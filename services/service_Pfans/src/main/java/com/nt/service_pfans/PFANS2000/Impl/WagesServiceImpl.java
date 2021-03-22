@@ -476,7 +476,7 @@ public class WagesServiceImpl implements WagesService {
                 wagesList.add(getwages("1",tokenModel));
             }
             //实际工資
-            //wagesList.add(getwages("2",tokenModel));
+            wagesList.add(getwages("2",tokenModel));
         }
         else if(Integer.parseInt(nowData) > Integer.parseInt(resignationDate.replace("-","").substring(0,6))) {//查询已经离职的数据
             //实际工资
