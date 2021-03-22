@@ -33,5 +33,10 @@ public class InformationDelivery extends BaseModel {
     @Column(name = "RICHTEXT")
     private String richtext;
 
+    /**
+     * 附件
+     */
+    @Column(name = "UPLOADFILE")
+    private String uploadfile;
 
 }
