@@ -253,7 +253,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         purchase.preInsert(tokenModel);
         purchase.setPurnumbers(Numbers);
         purchase.setPurchase_id(UUID.randomUUID().toString());
-        purchase.setSurloappmoney(purchase.getTotalamount());
+        //purchase.setSurloappmoney(purchase.getTotalamount());
         purchaseMapper.insert(purchase);
     }
 

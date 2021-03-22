@@ -21,7 +21,7 @@ public interface PersonnelplanService {
     void insert(PersonnelPlan personnelPlan, TokenModel tokenModel)throws LogicalException;
 
     List<PersonnelPlan> get(PersonnelPlan personnelPlan);
-    // add-lyt-21/1/29-禅道任务648-start
+    // add-lyt-21/1/29-648-start
     List<PersonalCost> getPersonalCost(String groupid,String years) throws Exception;
-    // add-lyt-21/1/29-禅道任务648-start
+    // add-lyt-21/1/29-648-start
 }
