@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.IntStream;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -147,328 +146,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
             for (Dictionary item : curList1) {
                 dic += item.getValue2() + ",";
             }
-            Map<String, Double> moneyMap = new HashMap<String, Double>();
-            Map<String, String> distinguiMap = new HashMap<String, String>();
-            //JC-其他业务决裁、CG-采购决裁、WF FG NF NH-委托决裁、JJF-交际费决裁、QY-千元以下、C-境内外出差
-            List<String> numAntList = Arrays.asList(loanapplication.getJudgements_name().split(","));
-            List<String> idAntList = Arrays.asList(loanapplication.getJudgements().split(","));
-            Map<String, String> numidAntMap = IntStream.range(0, numAntList.size()).collect(
-                    HashMap<String, String>::new, (m, i) -> m.put(numAntList.get(i), idAntList.get(i)), (m1, m2) -> {
-                    });
-            //numidAntMap key:决裁号 value：决裁号
-            for (String numAnt : numidAntMap.keySet()) {
-                String loanAnt = "";
-                if (numAnt.substring(0, 2).equals("JC")) {//其他业务决裁
-                    String idAnt = numidAntMap.get(numAnt);
-                    Judgement judgement = new Judgement();
-                    judgement.setJudgementid(idAnt);
-                    loanAnt = judgementMapper.select(judgement).get(0).getMoney();
-                    moneyMap.put(idAnt, Double.valueOf(loanAnt));
-                    distinguiMap.put(idAnt, numAnt.substring(0, 2));
-                } else if (numAnt.substring(0, 2).substring(0, 2).equals("CG")) {//采购决裁
-                    String idAnt = numidAntMap.get(numAnt);
-                    Purchase purchase = new Purchase();
-                    purchase.setPurchase_id(idAnt);
-                    loanAnt = purchaseMapper.select(purchase).get(0).getTotalamount();
-                    moneyMap.put(idAnt, Double.valueOf(loanAnt));
-                    distinguiMap.put(idAnt, numAnt.substring(0, 2));
-                } else if (dic.contains(loanapplication.getJudgements_name().substring(0, 2))) {//委托决裁
-                    String idAnt = numidAntMap.get(numAnt);
-                    Award award = new Award();
-                    award.setAward_id(idAnt);
-                    loanAnt = awardMapper.select(award).get(0).getClaimamount();
-                    moneyMap.put(idAnt, Double.valueOf(loanAnt));
-                    distinguiMap.put(idAnt, numAnt.substring(0, 2));
-                } else if (numAnt.substring(0, 2).substring(0, 3).equals("JJF")) {//交际费决裁
-                    String idAnt = numidAntMap.get(numAnt);
-                    Communication communication = new Communication();
-                    communication.setCommunication_id(idAnt);
-                    loanAnt = communicationMapper.select(communication).get(0).getMoneys();
-                    moneyMap.put(idAnt, Double.valueOf(loanAnt));
-                    distinguiMap.put(idAnt, numAnt.substring(0, 2));
-                } else if (numAnt.substring(0, 2).substring(0, 2).equals("QY")) {//千元决裁
-                    String idAnt = numidAntMap.get(numAnt);
-                    PurchaseApply purchaseApply = new PurchaseApply();
-                    purchaseApply.setPurchaseapply_id(idAnt);
-                    loanAnt = purchaseapplyMapper.select(purchaseApply).get(0).getSummoney();
-                    moneyMap.put(idAnt, Double.valueOf(loanAnt));
-                    distinguiMap.put(idAnt, numAnt.substring(0, 2));
-                } else if (numAnt.substring(0, 2).substring(0, 1).equals("C")) {//出差决裁
-                    String idAnt = numidAntMap.get(numAnt);
-                    Business business = new Business();
-                    business.setBusiness_id(idAnt);
-                    loanAnt = businessMapper.select(business).get(0).getMoneys();
-                    moneyMap.put(idAnt, Double.valueOf(loanAnt));
-                    distinguiMap.put(idAnt, numAnt.substring(0, 2));
-                } else if (numAnt.substring(0, 2).substring(0, 1).equals("WC")) {//无偿设备
-                    String idAnt = numidAntMap.get(numAnt);
-                    Judgement judgement = new Judgement();
-                    judgement.setJudgementid(idAnt);
-                    loanAnt = judgementMapper.select(judgement).get(0).getMoney();
-                    moneyMap.put(idAnt, Double.valueOf(loanAnt));
-                    distinguiMap.put(idAnt, numAnt.substring(0, 2));
-                }
-            }
-            //moneyMap key：决裁ID value：决裁总金额
-            //distinguiMap key：决裁类别 value：决裁ID
-            //sortListMap 【升序后的moneyMap】 key：决裁ID value：决裁总金额
-            if (moneyMap.size() > 1) {
-                //暂借款不能新建，暂借款必定关联决裁，只有废弃时暂借款与决裁的关联全部断掉
-                //暂借款申请金额
-                Double applyMoney = Double.valueOf(loanapplication.getMoneys()); //5600
-                List<Map.Entry<String, Double>> sortListMap = sortMapAnt(moneyMap);
-                for (Map.Entry<String, Double> lm : sortListMap) {//升序 600 1000 1500 2500
-                    if (applyMoney > 0) {
-                        applyMoney = subAnt(applyMoney, lm.getValue()); //2500-2500=0
-                        //被减后的申请金额如果小于等于0，说明已经完成抵消
-                        String distAnt = distinguiMap.get(lm.getKey());
-                        if (distAnt.equals("JC")) {//其他业务决裁
-                            Judgement judgement = new Judgement();
-                            judgement.setJudgementid(lm.getKey());
-                            judgement.setSurloappmoney(lm.getValue().toString());
-                            judgement.preUpdate(tokenModel);
-                            judgementMapper.updateByPrimaryKeySelective(judgement);
-                        } else if (distAnt.substring(0, 2).equals("CG")) {//采购决裁
-                            Purchase purchase = new Purchase();
-                            purchase.setPurchase_id(lm.getKey());
-                            purchase.setSurloappmoney(lm.getValue().toString());
-                            purchase.preUpdate(tokenModel);
-                            purchaseMapper.updateByPrimaryKeySelective(purchase);
-                        } else if (dic.contains(distAnt)) {//委托决裁
-                            Award award = new Award();
-                            award.setAward_id(lm.getKey());
-                            award.setSurloappmoney(lm.getValue().toString());
-                            award.preUpdate(tokenModel);
-                            awardMapper.updateByPrimaryKeySelective(award);
-                        } else if (distAnt.equals("JJF")) {//交际费决裁
-                            Communication communication = new Communication();
-                            communication.setCommunication_id(lm.getKey());
-                            communication.setSurloappmoney(lm.getValue().toString());
-                            communication.preUpdate(tokenModel);
-                            communicationMapper.updateByPrimaryKeySelective(communication);
-                        } else if (distAnt.equals("QY")) {//千元决裁
-                            PurchaseApply purchaseApply = new PurchaseApply();
-                            purchaseApply.setPurchaseapply_id(lm.getKey());
-                            purchaseApply.setSurloappmoney(lm.getValue().toString());
-                            purchaseApply.preUpdate(tokenModel);
-                            purchaseapplyMapper.updateByPrimaryKeySelective(purchaseApply);
-                        } else if (distAnt.equals("C")) {//出差决裁
-                            Business business = new Business();
-                            business.setBusiness_id(lm.getKey());
-                            business.setSurloappmoney(lm.getValue().toString());
-                            business.preUpdate(tokenModel);
-                            businessMapper.updateByPrimaryKeySelective(business);
-                        } else if (distAnt.equals("WC")) {//无偿设备
-                            Judgement judgement = new Judgement();
-                            judgement.setJudgementid(lm.getKey());
-                            judgement.setSurloappmoney(lm.getValue().toString());
-                            judgement.preUpdate(tokenModel);
-                            judgementMapper.updateByPrimaryKeySelective(judgement);
-                        }
-                    }
-                }
-                //moneyMap key：决裁ID value：决裁总金额
-                //distinguiMap key：决裁ID value：决裁类别
-                //sortListMap 【升序后的moneyMap】 key：决裁ID value：决裁总金额
-            } else if (moneyMap.size() == 1) { //一个暂借款 只关联一个决裁
-                String id = (String)moneyMap.keySet().toArray()[0];
-                String distAnt = distinguiMap.get(id);
-                    if (distAnt.equals("JC")) {//其他业务决裁
-                        Judgement judgement = new Judgement();
-                        judgement.setJudgementid(moneyMap.keySet().toArray()[0].toString());
-                        judgement.setSurloappmoney(moneyMap.values().toArray()[0].toString());
-                        judgement.preUpdate(tokenModel);
-                        judgementMapper.updateByPrimaryKeySelective(judgement);
-                    } else if (distAnt.equals("CG")) {//采购决裁
-                        Purchase purchase = new Purchase();
-                        purchase.setPurchase_id(moneyMap.keySet().toArray()[0].toString());
-                        purchase.setSurloappmoney(moneyMap.values().toArray()[0].toString());
-                        purchase.preUpdate(tokenModel);
-                        purchaseMapper.updateByPrimaryKeySelective(purchase);
-                    } else if (dic.contains(distAnt)) {//委托决裁
-                        Award award = new Award();
-                        award.setAward_id(moneyMap.keySet().toArray()[0].toString());
-                        award.setSurloappmoney(moneyMap.values().toArray()[0].toString());
-                        award.preUpdate(tokenModel);
-                        awardMapper.updateByPrimaryKeySelective(award);
-                    } else if (distAnt.equals("JJF")) {//交际费决裁
-                        Communication communication = new Communication();
-                        communication.setCommunication_id(moneyMap.keySet().toArray()[0].toString());
-                        communication.setSurloappmoney(moneyMap.values().toArray()[0].toString());
-                        communication.preUpdate(tokenModel);
-                        communicationMapper.updateByPrimaryKeySelective(communication);
-                    } else if (distAnt.equals("QY")) {//千元决裁
-                        PurchaseApply purchaseApply = new PurchaseApply();
-                        purchaseApply.setPurchaseapply_id(moneyMap.keySet().toArray()[0].toString());
-                        purchaseApply.setSurloappmoney(moneyMap.values().toArray()[0].toString());
-                        purchaseApply.preUpdate(tokenModel);
-                        purchaseapplyMapper.updateByPrimaryKeySelective(purchaseApply);
-                    } else if (distAnt.equals("C")) {//出差决裁
-                        Business business = new Business();
-                        business.setBusiness_id(moneyMap.keySet().toArray()[0].toString());
-                        business.setSurloappmoney(moneyMap.values().toArray()[0].toString());
-                        business.preUpdate(tokenModel);
-                        businessMapper.updateByPrimaryKeySelective(business);
-                    } else if (distAnt.equals("WC")) {//无偿设备
-                        Judgement judgement = new Judgement();
-                        judgement.setJudgementid(moneyMap.keySet().toArray()[0].toString());
-                        judgement.setSurloappmoney(moneyMap.values().toArray()[0].toString());
-                        judgement.preUpdate(tokenModel);
-                        judgementMapper.updateByPrimaryKeySelective(judgement);
-                    }
-                }
-
-                if (StringUtils.isNotEmpty(loanapplication.getJudgements_name())) {
-                    if (dic != "") {
-                        if (dic.contains(loanapplication.getJudgements_name().substring(0, 2))) //委托决裁
-                        {
-                            String[] pur = loanapplication.getJudgements_name().split(",");
-                            for (String p : pur) {
-                                Award award = new Award();
-                                award.setContractnumber(p);
-                                List<Award> awardList = awardMapper.select(award);
-                                if (awardList.size() > 0) {
-                                    if (StringUtils.isNotEmpty(awardList.get(0).getLoanapno()) && awardList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
-                                        awardList.get(0).setLoanapno(awardList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
-                                        awardList.get(0).setLoanapplication_id(awardList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
-                                    }
-                                    awardList.get(0).preUpdate(tokenModel);
-                                    awardMapper.updateByPrimaryKey(awardList.get(0));
-                                }
-                            }
-                        }
-                    }
-                    if (loanapplication.getJudgements_name().substring(0, 2).equals("CG")) //采购
-                    {
-                        String[] pur = loanapplication.getJudgements_name().split(",");
-                        for (String p : pur) {
-                            Purchase purchase = new Purchase();
-                            purchase.setPurnumbers(p);
-                            List<Purchase> purchaseList = purchaseMapper.select(purchase);
-                            if (purchaseList.size() > 0) {
-                                if (StringUtils.isNotEmpty(purchaseList.get(0).getLoanapno()) && purchaseList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
-                                    purchaseList.get(0).setLoanapno(purchaseList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
-                                    purchaseList.get(0).setLoanapplication_id(purchaseList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
-                                }
-
-                                purchaseList.get(0).preUpdate(tokenModel);
-                                purchaseMapper.updateByPrimaryKey(purchaseList.get(0));
-                            }
-                        }
-                    } else if (loanapplication.getJudgements_name().substring(0, 3).equals("JJF"))//交际费
-                    {
-                        String[] pur = loanapplication.getJudgements_name().split(",");
-                        for (String p : pur) {
-                            Communication communication = new Communication();
-                            communication.setNumbercation(p);
-                            List<Communication> communicationList = communicationMapper.select(communication);
-                            if (communicationList.size() > 0) {
-                                if (StringUtils.isNotEmpty(communicationList.get(0).getLoanapno()) && communicationList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
-                                    communicationList.get(0).setLoanapno(communicationList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
-                                    communicationList.get(0).setLoanapplication_id(communicationList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
-                                }
-
-                                communicationList.get(0).preUpdate(tokenModel);
-                                communicationMapper.updateByPrimaryKey(communicationList.get(0));
-                            }
-                        }
-                    } else if (loanapplication.getJudgements_name().substring(0, 2).equals("JC") || loanapplication.getJudgements_name().substring(0, 2).equals("WC"))//其他业务//无偿设备
-                    {
-                        String[] pur = loanapplication.getJudgements_name().split(",");
-                        for (String p : pur) {
-                            Judgement judgement = new Judgement();
-                            judgement.setJudgnumbers(p);
-                            List<Judgement> judgementList = judgementMapper.select(judgement);
-                            if (judgementList.size() > 0) {
-                                if (StringUtils.isNotEmpty(judgementList.get(0).getLoanapno()) && judgementList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
-                                    judgementList.get(0).setLoanapno(judgementList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
-                                    judgementList.get(0).setLoanapplication_id(judgementList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
-                                }
-                                judgementList.get(0).preUpdate(tokenModel);
-                                judgementMapper.updateByPrimaryKey(judgementList.get(0));
-                            }
-                        }
-                    } else if (loanapplication.getJudgements_name().substring(0, 2).equals("QY"))//千元费用
-                    {
-                        String[] pur = loanapplication.getJudgements_name().split(",");
-                        for (String p : pur) {
-                            PurchaseApply purchaseapply = new PurchaseApply();
-                            purchaseapply.setPurchasenumbers(p);
-                            List<PurchaseApply> purchaseapplyList = purchaseapplyMapper.select(purchaseapply);
-                            if (purchaseapplyList.size() > 0) {
-                                if (StringUtils.isNotEmpty(purchaseapplyList.get(0).getLoanapno()) && purchaseapplyList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
-                                    purchaseapplyList.get(0).setLoanapno(purchaseapplyList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
-                                    purchaseapplyList.get(0).setLoanapplication_id(purchaseapplyList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
-                                }
-
-                                purchaseapplyList.get(0).preUpdate(tokenModel);
-                                purchaseapplyMapper.updateByPrimaryKey(purchaseapplyList.get(0));
-                            }
-                        }
-                    } else if (loanapplication.getJudgements_name().substring(0, 1).equals("C"))//境内外出差
-                    {
-                        String[] pur = loanapplication.getJudgements_name().split(",");
-                        for (String p : pur) {
-                            Business business = new Business();
-                            business.setBusiness_number(p);
-                            List<Business> businessList = businessMapper.select(business);
-                            if (businessList.size() > 0) {
-                                if (StringUtils.isNotEmpty(businessList.get(0).getLoanapno()) && businessList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
-                                    businessList.get(0).setLoanapno(businessList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
-                                    businessList.get(0).setLoanapplication_id(businessList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
-                                }
-                                businessList.get(0).preUpdate(tokenModel);
-                                businessMapper.updateByPrimaryKey(businessList.get(0));
-                            }
-                        }
-                    }
-                }
-                loanapp.setJudgements("");
-                loanapp.setJudgements_name("");
-                loanapp.setJudgements_moneys("");
-                loanapp.setJudgements_type("");
-            }
-            //add_fjl_0929  添加作废时决裁数据回滚  end
-            loanapplicationMapper.updateByPrimaryKey(loanapp);
-            //upd-8/20-ws-禅道468任务
-        }
-
-        public Float aFloat (Float a){
-            return a > 0 ? a : -a;
-        }
-
-
-        @Override
-        public void insert (LoanApplication loanapplication, TokenModel tokenModel) throws Exception {
-//        add_fjl_05/27  --添加申请编号
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String year = sdf.format(new Date());
-            String no = "";
-            if (loanapplicationMapper.getLoappCount(year) != null) {
-                int count = loanapplicationMapper.getLoappCount(year);
-                no = String.format("%2d", count + 1).replace(" ", "0");
-            } else {
-                no = "01";
-            }
-
-            String apdate = year.replace("-", "");
-            String loanapNo = "Z" + apdate + no;
-            loanapplication.setLoanapno(loanapNo);
-//        add_fjl_05/27  --添加申请编号
-            loanapplication.preInsert(tokenModel);
-            loanapplication.setLoanapplication_id(UUID.randomUUID().toString());
-            loanapplicationMapper.insert(loanapplication);
-            //add_fjl_0807  获取委托合同番号的命名规则
-            String dic = "";
-            List<Dictionary> curList1 = dictionaryService.getForSelect("HT014");
-            for (Dictionary item : curList1) {
-                dic += item.getValue2() + ",";
-            }
-//        float money = Float.parseFloat(loanapplication.getMoneys());
-            //add_fjl_0807  获取委托合同番号的命名规则
-            //CCM ADD 0726
-            if (loanapplication.getJudgements_name() != null && !loanapplication.getJudgements_name().equals("")) {
-                //add_fjl_0807
+            if (StringUtils.isNotEmpty(loanapplication.getJudgements_name())) {
                 if (dic != "") {
                     if (dic.contains(loanapplication.getJudgements_name().substring(0, 2))) //委托决裁
                     {
@@ -478,30 +156,16 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                             award.setContractnumber(p);
                             List<Award> awardList = awardMapper.select(award);
                             if (awardList.size() > 0) {
-//                            float diff = money - Float.parseFloat(awardList.get(0).getBalancejude());
-//                            if (diff >= 0) {
-//                                diff = 0;
-//                                money = diff;
-//                            } else {
-//                                aFloat(diff);
-//                            }
-//                            awardList.get(0).setBalancejude(String.valueOf(diff));
-                                //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                                if (StringUtils.isNotBlank(awardList.get(0).getLoanapplication_id())) {
-                                    awardList.get(0).setLoanapplication_id(awardList.get(0).getLoanapplication_id() + "," + loanapplication.getLoanapplication_id());
-                                    awardList.get(0).setLoanapno(awardList.get(0).getLoanapno() + "," + loanapplication.getLoanapno());
-                                } else {
-                                    awardList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
-                                    awardList.get(0).setLoanapno(loanapplication.getLoanapno());
+                                if (StringUtils.isNotEmpty(awardList.get(0).getLoanapno()) && awardList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
+                                    awardList.get(0).setLoanapno(awardList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
+                                    awardList.get(0).setLoanapplication_id(awardList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
                                 }
-                                //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                                 awardList.get(0).preUpdate(tokenModel);
                                 awardMapper.updateByPrimaryKey(awardList.get(0));
                             }
                         }
                     }
                 }
-                //add_fjl_0807
                 if (loanapplication.getJudgements_name().substring(0, 2).equals("CG")) //采购
                 {
                     String[] pur = loanapplication.getJudgements_name().split(",");
@@ -510,71 +174,16 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         purchase.setPurnumbers(p);
                         List<Purchase> purchaseList = purchaseMapper.select(purchase);
                         if (purchaseList.size() > 0) {
-//                        float diff = money - Float.parseFloat(purchaseList.get(0).getBalancejude());
-//                        if (diff >= 0) {
-//                            diff = 0;
-//                            money = diff;
-//                        } else {
-//                            aFloat(diff);
-//                        }
-//                        purchaseList.get(0).setBalancejude(String.valueOf(diff));
-                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                            if (StringUtils.isNotBlank(purchaseList.get(0).getLoanapplication_id())) {
-                                purchaseList.get(0).setLoanapplication_id(purchaseList.get(0).getLoanapplication_id() + "," + loanapplication.getLoanapplication_id());
-                                purchaseList.get(0).setLoanapno(purchaseList.get(0).getLoanapno() + "," + loanapplication.getLoanapno());
-                            } else {
-                                purchaseList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
-                                purchaseList.get(0).setLoanapno(loanapplication.getLoanapno());
+                            if (StringUtils.isNotEmpty(purchaseList.get(0).getLoanapno()) && purchaseList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
+                                purchaseList.get(0).setLoanapno(purchaseList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
+                                purchaseList.get(0).setLoanapplication_id(purchaseList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
                             }
-                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
 
                             purchaseList.get(0).preUpdate(tokenModel);
-                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                             purchaseMapper.updateByPrimaryKey(purchaseList.get(0));
                         }
                     }
-                    if (loanapplication.getPublicradio() != "1") {
-                        //禅道447 处理可用暂借款金额 ztc
-                        Map<String, Double> moneyMap = new HashMap<String, Double>();
-                        List<Purchase> surLoappmoneyList = new ArrayList<>();
-                        for (String l : pur) {
-                            Purchase purchase = new Purchase();
-                            purchase.setPurnumbers(l);
-                            surLoappmoneyList = purchaseMapper.select(purchase);
-                            moneyMap.put(surLoappmoneyList.get(0).getPurchase_id(), Double.valueOf(surLoappmoneyList.get(0).getSurloappmoney()));
-                        }
-                        if (moneyMap.size() > 1) {
-                            //暂借款申请金额
-                            Double applyMoney = Double.valueOf(loanapplication.getMoneys());
-                            List<Map.Entry<String, Double>> halePurListMap = sortMapAnt(moneyMap);
-                            for (Map.Entry<String, Double> lm : halePurListMap) {
-                                if (applyMoney > 0) {
-                                    applyMoney = subAnt(applyMoney, lm.getValue());
-                                    //被减后的申请金额如果小于等于0，说明已经完成抵消
-                                    if (applyMoney <= 0) {
-                                        Purchase purchase = purchaseMapper.selectByPrimaryKey(lm.getKey());
-                                        Double abapplyMoney = applyMoney * -1;
-                                        purchase.setSurloappmoney(abapplyMoney.toString());
-                                        purchaseMapper.updateByPrimaryKey(purchase);
-                                    } else {
-                                        Purchase purchase = purchaseMapper.selectByPrimaryKey(lm.getKey());
-                                        purchase.setSurloappmoney("0");
-                                        purchaseMapper.updateByPrimaryKey(purchase);
-                                    }
-                                }
-                            }
-                        } else {
-                            Double surplusM = Double.valueOf(surLoappmoneyList.get(0).getSurloappmoney());
-                            Double useM = Double.valueOf(loanapplication.getMoneys());
-                            //期望暂借款金额 传入
-                            Double surLoappmLast = subAnt(surplusM, useM);
-                            surLoappmoneyList.get(0).setSurloappmoney(surLoappmLast.toString());
-                            purchaseMapper.updateByPrimaryKey(surLoappmoneyList.get(0));
-                        }
-                    }
-                }
-                //ADD_FJL_0730  start
-                else if (loanapplication.getJudgements_name().substring(0, 3).equals("JJF"))//交际费
+                } else if (loanapplication.getJudgements_name().substring(0, 3).equals("JJF"))//交际费
                 {
                     String[] pur = loanapplication.getJudgements_name().split(",");
                     for (String p : pur) {
@@ -582,29 +191,16 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         communication.setNumbercation(p);
                         List<Communication> communicationList = communicationMapper.select(communication);
                         if (communicationList.size() > 0) {
-//                        float diff = money - Float.parseFloat(communicationList.get(0).getBalancejude());
-//                        if (diff >= 0) {
-//                            diff = 0;
-//                            money = diff;
-//                        } else {
-//                            aFloat(diff);
-//                        }
-//                        communicationList.get(0).setBalancejude(String.valueOf(diff));
-                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                            if (StringUtils.isNotBlank(communicationList.get(0).getLoanapplication_id())) {
-                                communicationList.get(0).setLoanapplication_id(communicationList.get(0).getLoanapplication_id() + "," + loanapplication.getLoanapplication_id());
-                                communicationList.get(0).setLoanapno(communicationList.get(0).getLoanapno() + "," + loanapplication.getLoanapno());
-                            } else {
-                                communicationList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
-                                communicationList.get(0).setLoanapno(loanapplication.getLoanapno());
+                            if (StringUtils.isNotEmpty(communicationList.get(0).getLoanapno()) && communicationList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
+                                communicationList.get(0).setLoanapno(communicationList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
+                                communicationList.get(0).setLoanapplication_id(communicationList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
                             }
-                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
 
                             communicationList.get(0).preUpdate(tokenModel);
                             communicationMapper.updateByPrimaryKey(communicationList.get(0));
                         }
                     }
-                } else if (loanapplication.getJudgements_name().substring(0, 2).equals("JC"))//其他业务
+                } else if (loanapplication.getJudgements_name().substring(0, 2).equals("JC") || loanapplication.getJudgements_name().substring(0, 2).equals("WC"))//其他业务//无偿设备
                 {
                     String[] pur = loanapplication.getJudgements_name().split(",");
                     for (String p : pur) {
@@ -612,54 +208,10 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         judgement.setJudgnumbers(p);
                         List<Judgement> judgementList = judgementMapper.select(judgement);
                         if (judgementList.size() > 0) {
-//                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
-//                        if (diff >= 0) {
-//                            diff = 0;
-//                            money = diff;
-//                        } else {
-//                            aFloat(diff);
-//                        }
-//                        judgementList.get(0).setBalancejude(String.valueOf(diff));
-                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                            if (StringUtils.isNotBlank(judgementList.get(0).getLoanapplication_id())) {
-                                judgementList.get(0).setLoanapplication_id(judgementList.get(0).getLoanapplication_id() + "," + loanapplication.getLoanapplication_id());
-                                judgementList.get(0).setLoanapno(judgementList.get(0).getLoanapno() + "," + loanapplication.getLoanapno());
-                            } else {
-                                judgementList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
-                                judgementList.get(0).setLoanapno(loanapplication.getLoanapno());
+                            if (StringUtils.isNotEmpty(judgementList.get(0).getLoanapno()) && judgementList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
+                                judgementList.get(0).setLoanapno(judgementList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
+                                judgementList.get(0).setLoanapplication_id(judgementList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
                             }
-                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-
-                            judgementList.get(0).preUpdate(tokenModel);
-                            judgementMapper.updateByPrimaryKey(judgementList.get(0));
-                        }
-                    }
-                } else if (loanapplication.getJudgements_name().substring(0, 2).equals("WC"))//无偿设备
-                {
-                    String[] pur = loanapplication.getJudgements_name().split(",");
-                    for (String p : pur) {
-                        Judgement judgement = new Judgement();
-                        judgement.setJudgnumbers(p);
-                        List<Judgement> judgementList = judgementMapper.select(judgement);
-                        if (judgementList.size() > 0) {
-//                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
-//                        if (diff >= 0) {
-//                            diff = 0;
-//                            money = diff;
-//                        } else {
-//                            aFloat(diff);
-//                        }
-//                        judgementList.get(0).setBalancejude(String.valueOf(diff));
-                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                            if (StringUtils.isNotBlank(judgementList.get(0).getLoanapplication_id())) {
-                                judgementList.get(0).setLoanapplication_id(judgementList.get(0).getLoanapplication_id() + "," + loanapplication.getLoanapplication_id());
-                                judgementList.get(0).setLoanapno(judgementList.get(0).getLoanapno() + "," + loanapplication.getLoanapno());
-                            } else {
-                                judgementList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
-                                judgementList.get(0).setLoanapno(loanapplication.getLoanapno());
-                            }
-                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-
                             judgementList.get(0).preUpdate(tokenModel);
                             judgementMapper.updateByPrimaryKey(judgementList.get(0));
                         }
@@ -672,29 +224,15 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         purchaseapply.setPurchasenumbers(p);
                         List<PurchaseApply> purchaseapplyList = purchaseapplyMapper.select(purchaseapply);
                         if (purchaseapplyList.size() > 0) {
-//                        float diff = money - Float.parseFloat(purchaseapplyList.get(0).getBalancejude());
-//                        if (diff >= 0) {
-//                            diff = 0;
-//                            money = diff;
-//                        } else {
-//                            aFloat(diff);
-//                        }
-//                        purchaseapplyList.get(0).setBalancejude(String.valueOf(diff));
-                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                            if (StringUtils.isNotBlank(purchaseapplyList.get(0).getLoanapplication_id())) {
-                                purchaseapplyList.get(0).setLoanapplication_id(purchaseapplyList.get(0).getLoanapplication_id() + "," + loanapplication.getLoanapplication_id());
-                                purchaseapplyList.get(0).setLoanapno(purchaseapplyList.get(0).getLoanapno() + "," + loanapplication.getLoanapno());
-                            } else {
-                                purchaseapplyList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
-                                purchaseapplyList.get(0).setLoanapno(loanapplication.getLoanapno());
+                            if (StringUtils.isNotEmpty(purchaseapplyList.get(0).getLoanapno()) && purchaseapplyList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
+                                purchaseapplyList.get(0).setLoanapno(purchaseapplyList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
+                                purchaseapplyList.get(0).setLoanapplication_id(purchaseapplyList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
                             }
-                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
 
                             purchaseapplyList.get(0).preUpdate(tokenModel);
                             purchaseapplyMapper.updateByPrimaryKey(purchaseapplyList.get(0));
                         }
                     }
-                    //ADD_FJL_0730  end
                 } else if (loanapplication.getJudgements_name().substring(0, 1).equals("C"))//境内外出差
                 {
                     String[] pur = loanapplication.getJudgements_name().split(",");
@@ -703,6 +241,296 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         business.setBusiness_number(p);
                         List<Business> businessList = businessMapper.select(business);
                         if (businessList.size() > 0) {
+                            if (StringUtils.isNotEmpty(businessList.get(0).getLoanapno()) && businessList.get(0).getLoanapno().contains(loanapplication.getLoanapno())) {
+                                businessList.get(0).setLoanapno(businessList.get(0).getLoanapno().replace(loanapplication.getLoanapno(), ""));
+                                businessList.get(0).setLoanapplication_id(businessList.get(0).getLoanapplication_id().replace(loanapplication.getLoanapplication_id(), ""));
+                            }
+                            businessList.get(0).preUpdate(tokenModel);
+                            businessMapper.updateByPrimaryKey(businessList.get(0));
+                        }
+                    }
+                }
+            }
+            loanapp.setJudgements("");
+            loanapp.setJudgements_name("");
+            loanapp.setJudgements_moneys("");
+            loanapp.setJudgements_type("");
+        }
+        //add_fjl_0929  添加作废时决裁数据回滚  end
+        loanapplicationMapper.updateByPrimaryKey(loanapp);
+        //upd-8/20-ws-禅道468任务
+    }
+
+    public Float aFloat(Float a) {
+        return a > 0 ? a : -a;
+    }
+
+    @Override
+    public void insert(LoanApplication loanapplication, TokenModel tokenModel) throws Exception {
+//        add_fjl_05/27  --添加申请编号
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String year = sdf.format(new Date());
+        String no = "";
+        if (loanapplicationMapper.getLoappCount(year) != null) {
+            int count = loanapplicationMapper.getLoappCount(year);
+            no = String.format("%2d", count + 1).replace(" ", "0");
+        } else {
+            no = "01";
+        }
+
+        String apdate = year.replace("-", "");
+        String loanapNo = "Z" + apdate + no;
+        loanapplication.setLoanapno(loanapNo);
+//        add_fjl_05/27  --添加申请编号
+        loanapplication.preInsert(tokenModel);
+        loanapplication.setLoanapplication_id(UUID.randomUUID().toString());
+        loanapplicationMapper.insert(loanapplication);
+        //add_fjl_0807  获取委托合同番号的命名规则
+        String dic = "";
+        List<Dictionary> curList1 = dictionaryService.getForSelect("HT014");
+        for (Dictionary item : curList1) {
+            dic += item.getValue2() + ",";
+        }
+//        float money = Float.parseFloat(loanapplication.getMoneys());
+        //add_fjl_0807  获取委托合同番号的命名规则
+        //CCM ADD 0726
+        if (loanapplication.getJudgements_name() != null && !loanapplication.getJudgements_name().equals("")) {
+            //add_fjl_0807
+            if (dic != "") {
+                if (dic.contains(loanapplication.getJudgements_name().substring(0, 2))) //委托决裁
+                {
+                    String[] pur = loanapplication.getJudgements_name().split(",");
+                    for (String p : pur) {
+                        Award award = new Award();
+                        award.setContractnumber(p);
+                        List<Award> awardList = awardMapper.select(award);
+                        if (awardList.size() > 0) {
+//                            float diff = money - Float.parseFloat(awardList.get(0).getBalancejude());
+//                            if (diff >= 0) {
+//                                diff = 0;
+//                                money = diff;
+//                            } else {
+//                                aFloat(diff);
+//                            }
+//                            awardList.get(0).setBalancejude(String.valueOf(diff));
+                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                            if (StringUtils.isNotBlank(awardList.get(0).getLoanapplication_id())) {
+                                awardList.get(0).setLoanapplication_id(awardList.get(0).getLoanapplication_id() + "," + loanapplication.getLoanapplication_id());
+                                awardList.get(0).setLoanapno(awardList.get(0).getLoanapno() + "," + loanapplication.getLoanapno());
+                            } else {
+                                awardList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                                awardList.get(0).setLoanapno(loanapplication.getLoanapno());
+                            }
+                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                            awardList.get(0).preUpdate(tokenModel);
+                            awardMapper.updateByPrimaryKey(awardList.get(0));
+                        }
+                    }
+                }
+            }
+            //add_fjl_0807
+            if (loanapplication.getJudgements_name().substring(0, 2).equals("CG"))
+            //采购
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    Purchase purchase = new Purchase();
+                    purchase.setPurnumbers(p);
+                    List<Purchase> purchaseList = purchaseMapper.select(purchase);
+                    if (purchaseList.size() > 0) {
+//                        float diff = money - Float.parseFloat(purchaseList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        purchaseList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if (StringUtils.isNotBlank(purchaseList.get(0).getLoanapplication_id())) {
+                            purchaseList.get(0).setLoanapplication_id(purchaseList.get(0).getLoanapplication_id() + "," + loanapplication.getLoanapplication_id());
+                            purchaseList.get(0).setLoanapno(purchaseList.get(0).getLoanapno() + "," + loanapplication.getLoanapno());
+                        } else {
+                            purchaseList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                            purchaseList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+
+                        purchaseList.get(0).preUpdate(tokenModel);
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        purchaseMapper.updateByPrimaryKey(purchaseList.get(0));
+                    }
+                }
+//                    if (loanapplication.getPublicradio() != "1") {
+//                        //禅道447 处理可用暂借款金额 ztc
+//                        Map<String, Double> moneyMap = new HashMap<String, Double>();
+//                        List<Purchase> surLoappmoneyList = new ArrayList<>();
+//                        for (String l : pur) {
+//                            Purchase purchase = new Purchase();
+//                            purchase.setPurnumbers(l);
+//                            surLoappmoneyList = purchaseMapper.select(purchase);
+//                            moneyMap.put(surLoappmoneyList.get(0).getPurchase_id(), Double.valueOf(surLoappmoneyList.get(0).getSurloappmoney()));
+//                        }
+//                        if (moneyMap.size() > 1) {
+//                            //暂借款申请金额
+//                            Double applyMoney = Double.valueOf(loanapplication.getMoneys());
+//                            List<Map.Entry<String, Double>> halePurListMap = sortMapAnt(moneyMap);
+//                            for (Map.Entry<String, Double> lm : halePurListMap) {
+//                                if (applyMoney > 0) {
+//                                    applyMoney = subAnt(applyMoney, lm.getValue());
+//                                    //被减后的申请金额如果小于等于0，说明已经完成抵消
+//                                    if (applyMoney <= 0) {
+//                                        Purchase purchase = purchaseMapper.selectByPrimaryKey(lm.getKey());
+//                                        Double abapplyMoney = applyMoney * -1;
+//                                        purchase.setSurloappmoney(abapplyMoney.toString());
+//                                        purchaseMapper.updateByPrimaryKey(purchase);
+//                                    } else {
+//                                        Purchase purchase = purchaseMapper.selectByPrimaryKey(lm.getKey());
+//                                        purchase.setSurloappmoney("0");
+//                                        purchaseMapper.updateByPrimaryKey(purchase);
+//                                    }
+//                                }
+//                            }
+//                        } else {
+//                            Double surplusM = Double.valueOf(surLoappmoneyList.get(0).getSurloappmoney());
+//                            Double useM = Double.valueOf(loanapplication.getMoneys());
+//                            //期望暂借款金额 传入
+//                            Double surLoappmLast = subAnt(surplusM, useM);
+//                            surLoappmoneyList.get(0).setSurloappmoney(surLoappmLast.toString());
+//                            purchaseMapper.updateByPrimaryKey(surLoappmoneyList.get(0));
+//                        }
+//                    }
+            }
+            //ADD_FJL_0730  start
+            else if (loanapplication.getJudgements_name().substring(0, 3).equals("JJF"))//交际费
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    Communication communication = new Communication();
+                    communication.setNumbercation(p);
+                    List<Communication> communicationList = communicationMapper.select(communication);
+                    if (communicationList.size() > 0) {
+//                        float diff = money - Float.parseFloat(communicationList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        communicationList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if (StringUtils.isNotBlank(communicationList.get(0).getLoanapplication_id())) {
+                            communicationList.get(0).setLoanapplication_id(communicationList.get(0).getLoanapplication_id() + "," + loanapplication.getLoanapplication_id());
+                            communicationList.get(0).setLoanapno(communicationList.get(0).getLoanapno() + "," + loanapplication.getLoanapno());
+                        } else {
+                            communicationList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                            communicationList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+
+                        communicationList.get(0).preUpdate(tokenModel);
+                        communicationMapper.updateByPrimaryKey(communicationList.get(0));
+                    }
+                }
+            } else if (loanapplication.getJudgements_name().substring(0, 2).equals("JC"))//其他业务
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    Judgement judgement = new Judgement();
+                    judgement.setJudgnumbers(p);
+                    List<Judgement> judgementList = judgementMapper.select(judgement);
+                    if (judgementList.size() > 0) {
+//                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        judgementList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if (StringUtils.isNotBlank(judgementList.get(0).getLoanapplication_id())) {
+                            judgementList.get(0).setLoanapplication_id(judgementList.get(0).getLoanapplication_id() + "," + loanapplication.getLoanapplication_id());
+                            judgementList.get(0).setLoanapno(judgementList.get(0).getLoanapno() + "," + loanapplication.getLoanapno());
+                        } else {
+                            judgementList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                            judgementList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+
+                        judgementList.get(0).preUpdate(tokenModel);
+                        judgementMapper.updateByPrimaryKey(judgementList.get(0));
+                    }
+                }
+            } else if (loanapplication.getJudgements_name().substring(0, 2).equals("WC"))//无偿设备
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    Judgement judgement = new Judgement();
+                    judgement.setJudgnumbers(p);
+                    List<Judgement> judgementList = judgementMapper.select(judgement);
+                    if (judgementList.size() > 0) {
+//                        float diff = money - Float.parseFloat(judgementList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        judgementList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if (StringUtils.isNotBlank(judgementList.get(0).getLoanapplication_id())) {
+                            judgementList.get(0).setLoanapplication_id(judgementList.get(0).getLoanapplication_id() + "," + loanapplication.getLoanapplication_id());
+                            judgementList.get(0).setLoanapno(judgementList.get(0).getLoanapno() + "," + loanapplication.getLoanapno());
+                        } else {
+                            judgementList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                            judgementList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+
+                        judgementList.get(0).preUpdate(tokenModel);
+                        judgementMapper.updateByPrimaryKey(judgementList.get(0));
+                    }
+                }
+            } else if (loanapplication.getJudgements_name().substring(0, 2).equals("QY"))//千元费用
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    PurchaseApply purchaseapply = new PurchaseApply();
+                    purchaseapply.setPurchasenumbers(p);
+                    List<PurchaseApply> purchaseapplyList = purchaseapplyMapper.select(purchaseapply);
+                    if (purchaseapplyList.size() > 0) {
+//                        float diff = money - Float.parseFloat(purchaseapplyList.get(0).getBalancejude());
+//                        if (diff >= 0) {
+//                            diff = 0;
+//                            money = diff;
+//                        } else {
+//                            aFloat(diff);
+//                        }
+//                        purchaseapplyList.get(0).setBalancejude(String.valueOf(diff));
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        if (StringUtils.isNotBlank(purchaseapplyList.get(0).getLoanapplication_id())) {
+                            purchaseapplyList.get(0).setLoanapplication_id(purchaseapplyList.get(0).getLoanapplication_id() + "," + loanapplication.getLoanapplication_id());
+                            purchaseapplyList.get(0).setLoanapno(purchaseapplyList.get(0).getLoanapno() + "," + loanapplication.getLoanapno());
+                        } else {
+                            purchaseapplyList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                            purchaseapplyList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+
+                        purchaseapplyList.get(0).preUpdate(tokenModel);
+                        purchaseapplyMapper.updateByPrimaryKey(purchaseapplyList.get(0));
+                    }
+                }
+                //ADD_FJL_0730  end
+            } else if (loanapplication.getJudgements_name().substring(0, 1).equals("C"))//境内外出差
+            {
+                String[] pur = loanapplication.getJudgements_name().split(",");
+                for (String p : pur) {
+                    Business business = new Business();
+                    business.setBusiness_number(p);
+                    List<Business> businessList = businessMapper.select(business);
+                    if (businessList.size() > 0) {
 //                        float diff = money - Float.parseFloat(businessList.get(0).getBalancejude());
 //                        if (diff >= 0) {
 //                            diff = 0;
@@ -711,84 +539,84 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
 //                            aFloat(diff);
 //                        }
 //                        businessList.get(0).setBalancejude(String.valueOf(diff));
-                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                            //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
-                            businessList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
-                            businessList.get(0).setLoanapno(loanapplication.getLoanapno());
-                            businessList.get(0).setLoanday(new Date());
-                            businessList.get(0).setLoanmoney(loanapplication.getMoneys());
-                            businessList.get(0).preUpdate(tokenModel);
-                            businessMapper.updateByPrimaryKey(businessList.get(0));
-                        }
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
+                        businessList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
+                        businessList.get(0).setLoanapno(loanapplication.getLoanapno());
+                        businessList.get(0).setLoanday(new Date());
+                        businessList.get(0).setLoanmoney(loanapplication.getMoneys());
+                        businessList.get(0).preUpdate(tokenModel);
+                        businessMapper.updateByPrimaryKey(businessList.get(0));
                     }
                 }
             }
         }
+    }
 
-        /**
-         * 描述：将决裁剩余可用金额（暂借款，公共费用）升序排列
-         * 并根据使用金额消耗选择单的可用金额
-         * <p>
-         * ztc
-         */
-        public static List<Map.Entry<String, Double>> sortMapAnt (Map < String, Double > waitListMap){
-            //升序排列
-            List<Map.Entry<String, Double>> paresList = new ArrayList<Map.Entry<String, Double>>(waitListMap.entrySet());
-            Comparator<Map.Entry<String, Double>> comparator = new Comparator<Map.Entry<String, Double>>() {
-                @Override
-                public int compare(Map.Entry<String, Double> o1, Map.Entry<String, Double> o2) {
-                    return o1.getValue().compareTo(o2.getValue());
-                }
-            };
-            Collections.sort(paresList, comparator);
-            return paresList;
+    /**
+     * 描述：将决裁剩余可用金额（暂借款，公共费用）升序排列
+     * 并根据使用金额消耗选择单的可用金额
+     * <p>
+     * ztc
+     */
+    public static List<Map.Entry<String, Double>> sortMapAnt(Map<String, Double> waitListMap) {
+        //升序排列
+        List<Map.Entry<String, Double>> paresList = new ArrayList<Map.Entry<String, Double>>(waitListMap.entrySet());
+        Comparator<Map.Entry<String,Double>>comparator = new Comparator<Map.Entry<String,Double>>() {
+            @Override
+            public int compare(Map.Entry<String,Double> o1, Map.Entry<String,Double> o2) {
+                return o1.getValue().compareTo(o2.getValue());
+            }
+        };
+        Collections.sort(paresList,comparator);
+        return paresList;
 
-        }
+    }
 
-        /**
-         * 精确减法 ztc
-         */
-        public static double subAnt ( double val1, double val2){
-            BigDecimal surMouney1 = BigDecimal.valueOf(val1);
-            BigDecimal surMouney2 = BigDecimal.valueOf(val2);
-            return surMouney1.subtract(surMouney2).doubleValue();
-        }
+    /**
+     * 精确减法 ztc
+     */
+    public static double subAnt(double val1, double val2) {
+        BigDecimal surMouney1 = BigDecimal.valueOf(val1);
+        BigDecimal surMouney2 = BigDecimal.valueOf(val2);
+        return surMouney1.subtract(surMouney2).doubleValue();
+    }
 
-        public Map<String, String> getworkfolwPurchaseData (LoanApplication loanapplication) throws Exception {
-            Map<String, String> getpurchaseMap = new HashMap<String, String>();
-            Map<String, String> getpurchaseMapsub = new HashMap<String, String>();
-            loanapplication = loanapplicationMapper.selectByPrimaryKey(loanapplication.getLoanapplication_id());
-            if (loanapplication.getJudgements_name() != null && !loanapplication.getJudgements_name().equals("")) {
-                String[] pusname = loanapplication.getJudgements_name().split(",");
-                String[] pusid = loanapplication.getJudgements().split(",");
-                if (pusname.length > 0) {
-                    for (int i = 0; i < pusname.length; i++) {
-                        if (pusname[i].substring(0, 2).equals("CG")) {
-                            Purchase purchase = new Purchase();
-                            purchase.setPurnumbers(pusname[i]);
-                            List<Purchase> purchaseList = new ArrayList<Purchase>();
-                            purchaseList = purchaseMapper.select(purchase);
-                            if (purchaseList.size() > 0) {
-                                //采购决裁
-                                if (getpurchaseMap.containsKey("purchase")) {
-                                    String val = getpurchaseMap.get("purchase") + ";" + purchaseList.get(0).getPurchase_id() + "," + purchaseList.get(0).getStatus();
-                                    getpurchaseMap.put("purchase", val);
-                                } else {
-                                    getpurchaseMap.put("purchase", purchaseList.get(0).getPurchase_id() + "," + purchaseList.get(0).getStatus());
-                                }
-                                //暂借款
-                                if (getpurchaseMap.containsKey("loanApplication")) {
-                                    String val = getpurchaseMap.get("loanApplication") + ";" + loanapplication.getLoanapplication_id() + "," + loanapplication.getStatus();
-                                    getpurchaseMap.put("loanApplication", val);
-                                } else {
-                                    getpurchaseMap.put("loanApplication", loanapplication.getLoanapplication_id() + "," + loanapplication.getStatus());
-                                }
+    public Map<String, String> getworkfolwPurchaseData(LoanApplication loanapplication) throws Exception {
+        Map<String, String> getpurchaseMap = new HashMap<String, String>();
+        Map<String, String> getpurchaseMapsub = new HashMap<String, String>();
+        loanapplication = loanapplicationMapper.selectByPrimaryKey(loanapplication.getLoanapplication_id());
+        if (loanapplication.getJudgements_name() != null && !loanapplication.getJudgements_name().equals("")) {
+            String[] pusname = loanapplication.getJudgements_name().split(",");
+            String[] pusid = loanapplication.getJudgements().split(",");
+            if (pusname.length > 0) {
+                for (int i = 0; i < pusname.length; i++) {
+                    if (pusname[i].substring(0, 2).equals("CG")) {
+                        Purchase purchase = new Purchase();
+                        purchase.setPurnumbers(pusname[i]);
+                        List<Purchase> purchaseList = new ArrayList<Purchase>();
+                        purchaseList = purchaseMapper.select(purchase);
+                        if (purchaseList.size() > 0) {
+                            //采购决裁
+                            if (getpurchaseMap.containsKey("purchase")) {
+                                String val = getpurchaseMap.get("purchase") + ";" + purchaseList.get(0).getPurchase_id() + "," + purchaseList.get(0).getStatus();
+                                getpurchaseMap.put("purchase", val);
+                            } else {
+                                getpurchaseMap.put("purchase", purchaseList.get(0).getPurchase_id() + "," + purchaseList.get(0).getStatus());
+                            }
+                            //暂借款
+                            if (getpurchaseMap.containsKey("loanApplication")) {
+                                String val = getpurchaseMap.get("loanApplication") + ";" + loanapplication.getLoanapplication_id() + "," + loanapplication.getStatus();
+                                getpurchaseMap.put("loanApplication", val);
+                            } else {
+                                getpurchaseMap.put("loanApplication", loanapplication.getLoanapplication_id() + "," + loanapplication.getStatus());
                             }
                         }
                     }
                 }
             }
-            return getpurchaseMap;
         }
-
+        return getpurchaseMap;
     }
+
+}

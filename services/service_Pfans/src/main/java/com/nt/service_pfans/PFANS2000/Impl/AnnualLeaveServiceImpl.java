@@ -2073,10 +2073,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             Date DateStart = punDetaillistevent2.get(i).getPunchcardrecord_date();
                             Date DateEnd = punDetaillistevent1.get(i + 1).getPunchcardrecord_date();
                             //个人出门时间
-                            long startl = sdhm.parse(sdhm.format(DateStart)).getTime();
+                            //update gbb 20210322 打卡记录获取添加秒 start
+                            long startl = sdhms.parse(sdhms.format(DateStart)).getTime();
                             //个人出门之后再次进门时间
-                            long endl = sdhm.parse(sdhm.format(DateEnd)).getTime();
-
+                            long endl = sdhms.parse(sdhms.format(DateEnd)).getTime();
+                            //update gbb 20210322 打卡记录获取添加秒 end
                             //region 考勤用外出时间合计
                             //个人出门时间小于8点
                             if(startl < sdhm.parse(workshift_start).getTime()){
@@ -2090,7 +2091,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                     //午餐结束时间
                                     long fromlunchbreak_end = sdhm.parse(lunchbreak_end).getTime();
                                     //时间出门到进门的相差分钟数
-                                    Double minutesi = Convert.toDouble((endl - fromlunchbreak_end)/(1000 * 60));
+                                    Double minutesi = (double)(endl - fromlunchbreak_end)/(1000 * 60);
                                     //累计欠勤时间(上午欠勤+午餐结束完归时间)
                                     minute = minute + 240D + minutesi;
                                 }
@@ -2102,7 +2103,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                 //进门时间跨8点的情况
                                 else if(endl > sdhm.parse(workshift_start).getTime()){
                                     //时间出门到进门的相差分钟数
-                                    Double minutes =Convert.toDouble((endl - sdhm.parse(workshift_start).getTime())/(1000 * 60));
+                                    Double minutes =(double)(endl - sdhm.parse(workshift_start).getTime())/(1000 * 60);
                                     minute = minute + minutes;
                                     minuteam = minuteam + minutes;
                                 }
@@ -2121,7 +2122,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                 //个人出门之后再次进门时间
                                 long to = sf.parse(sf.format(DateEnd)).getTime();
                                 //时间出门到进门的相差分钟数
-                                Double minutes =Convert.toDouble((to - from)/(1000 * 60));
+                                Double minutes =(double)(to - from)/(1000 * 60);
                                 minute = minute + minutes;
                                 minuteam = minuteam + minutes;
                             }
@@ -2135,12 +2136,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                 //出门时间再18点之后
                                 if(sdhm.parse(closingtime_end).getTime() <= endl){
                                     //18点减18之前的最后一次出门时间
-                                    Double minutes = Convert.toDouble((sdhm.parse(closingtime_end).getTime() - startl)/(1000 * 60));
+                                    Double minutes = (double)(sdhm.parse(closingtime_end).getTime() - startl)/(1000 * 60);
                                     minute = minute + minutes;
                                 }
                                 else{
                                     //时间出门到进门的相差分钟数
-                                    Double minutes = Convert.toDouble((to - from)/(1000 * 60));
+                                    Double minutes = (double)(to - from)/(1000 * 60);
                                     minute = minute + minutes;
                                 }
                             }
@@ -2151,13 +2152,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                 //午餐开始时间
                                 long to = sdhm.parse(lunchbreak_start).getTime();
                                 //12点减12点之前最后一次出门时间
-                                Double minutes = Convert.toDouble((to - from)/(1000 * 60));
+                                Double minutes = (double)(to - from)/(1000 * 60);
                                 //累计欠勤时间
                                 minute = minute + minutes;
                                 minuteam = minuteam + minutes;
                                 if(sdhm.parse(closingtime_end).getTime() <= endl){
                                     //18点减18之前的最后一次出门时间
-                                    Double minutesi = Convert.toDouble((sdhm.parse(closingtime_end).getTime() - sdhm.parse(lunchbreak_end).getTime())/(1000 * 60));
+                                    Double minutesi = (double)(sdhm.parse(closingtime_end).getTime() - sdhm.parse(lunchbreak_end).getTime())/(1000 * 60);
                                     minute = minute + minutesi;
                                 }
                                 //午餐结束之后进门的情况3
@@ -2167,7 +2168,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                     //午餐结束之后进门
                                     long toendl = endl;
                                     //时间出门到进门的相差分钟数
-                                    Double minutesi = Convert.toDouble((toendl - fromlunchbreak_end)/(1000 * 60));
+                                    Double minutesi = (double)(toendl - fromlunchbreak_end)/(1000 * 60);
                                     //累计欠勤时间
                                     minute = minute + minutesi;
                                 }
@@ -2181,12 +2182,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                 long to = endl;
                                 if(sdhm.parse(closingtime_end).getTime() <= to){
                                     //18点减18之前的最后一次出门时间
-                                    Double minutes = Convert.toDouble((sdhm.parse(closingtime_end).getTime() - from)/(1000 * 60));
+                                    Double minutes = (double)(sdhm.parse(closingtime_end).getTime() - from)/(1000 * 60);
                                     minute = minute + minutes;
                                 }
                                 else{
                                     //时间出门到进门的相差分钟数
-                                    Double minutes = Convert.toDouble((to - from)/(1000 * 60));
+                                    Double minutes = (double)(to - from)/(1000 * 60);
                                     //累计欠勤时间
                                     minute = minute + minutes;
                                 }
@@ -2411,10 +2412,11 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         Date DateStart = punDetaillistevent2.get(i).getPunchcardrecord_date();
                         Date DateEnd = punDetaillistevent1.get(i + 1).getPunchcardrecord_date();
                         //个人出门时间
-                        long startl = sdhm.parse(sdhm.format(DateStart)).getTime();
+                        //update gbb 20210322 打卡记录获取添加秒 start
+                        long startl = sdhms.parse(sdhms.format(DateStart)).getTime();
                         //个人出门之后再次进门时间
-                        long endl = sdhm.parse(sdhm.format(DateEnd)).getTime();
-
+                        long endl = sdhms.parse(sdhms.format(DateEnd)).getTime();
+                        //update gbb 20210322 打卡记录获取添加秒 end
                         //region 考勤用外出时间合计
                         //个人出门时间小于8点
                         if(startl < sdhm.parse(workshift_start).getTime()){
@@ -2428,7 +2430,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                 //午餐结束时间
                                 long fromlunchbreak_end = sdhm.parse(lunchbreak_end).getTime();
                                 //时间出门到进门的相差分钟数
-                                Double minutesi = Convert.toDouble((endl - fromlunchbreak_end)/(1000 * 60));
+                                Double minutesi = (double)(endl - fromlunchbreak_end)/(1000 * 60);
                                 //累计欠勤时间(上午欠勤+午餐结束完归时间)
                                 minute = minute + 240D + minutesi;
                             }
@@ -2440,7 +2442,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             //进门时间跨8点的情况
                             else if(endl > sdhm.parse(workshift_start).getTime()){
                                 //时间出门到进门的相差分钟数
-                                Double minutes =Convert.toDouble((endl - sdhm.parse(workshift_start).getTime())/(1000 * 60));
+                                Double minutes =(double)(endl - sdhm.parse(workshift_start).getTime())/(1000 * 60);
                                 minute = minute + minutes;
                                 minuteam = minuteam + minutes;
                             }
@@ -2459,7 +2461,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             //个人出门之后再次进门时间
                             long to = sf.parse(sf.format(DateEnd)).getTime();
                             //时间出门到进门的相差分钟数
-                            Double minutes =Convert.toDouble((to - from)/(1000 * 60));
+                            Double minutes =(double)(to - from)/(1000 * 60);
                             minute = minute + minutes;
                             minuteam = minuteam + minutes;
                         }
@@ -2473,12 +2475,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             //出门时间再18点之后
                             if(sdhm.parse(closingtime_end).getTime() <= endl){
                                 //18点减18之前的最后一次出门时间
-                                Double minutes = Convert.toDouble((sdhm.parse(closingtime_end).getTime() - startl)/(1000 * 60));
+                                Double minutes = (double)(sdhm.parse(closingtime_end).getTime() - startl)/(1000 * 60);
                                 minute = minute + minutes;
                             }
                             else{
                                 //时间出门到进门的相差分钟数
-                                Double minutes = Convert.toDouble((to - from)/(1000 * 60));
+                                Double minutes = (double)(to - from)/(1000 * 60);
                                 minute = minute + minutes;
                             }
                         }
@@ -2489,13 +2491,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             //午餐开始时间
                             long to = sdhm.parse(lunchbreak_start).getTime();
                             //12点减12点之前最后一次出门时间
-                            Double minutes = Convert.toDouble((to - from)/(1000 * 60));
+                            Double minutes = (double)(to - from)/(1000 * 60);
                             //累计欠勤时间
                             minute = minute + minutes;
                             minuteam = minuteam + minutes;
                             if(sdhm.parse(closingtime_end).getTime() <= endl){
                                 //18点减18之前的最后一次出门时间
-                                Double minutesi = Convert.toDouble((sdhm.parse(closingtime_end).getTime() - sdhm.parse(lunchbreak_end).getTime())/(1000 * 60));
+                                Double minutesi = (double)(sdhm.parse(closingtime_end).getTime() - sdhm.parse(lunchbreak_end).getTime())/(1000 * 60);
                                 minute = minute + minutesi;
                             }
                             //午餐结束之后进门的情况3
@@ -2505,7 +2507,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                 //午餐结束之后进门
                                 long toendl = endl;
                                 //时间出门到进门的相差分钟数
-                                Double minutesi = Convert.toDouble((toendl - fromlunchbreak_end)/(1000 * 60));
+                                Double minutesi = (double)(toendl - fromlunchbreak_end)/(1000 * 60);
                                 //累计欠勤时间
                                 minute = minute + minutesi;
                             }
@@ -2519,12 +2521,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             long to = endl;
                             if(sdhm.parse(closingtime_end).getTime() <= to){
                                 //18点减18之前的最后一次出门时间
-                                Double minutes = Convert.toDouble((sdhm.parse(closingtime_end).getTime() - from)/(1000 * 60));
+                                Double minutes = (double)(sdhm.parse(closingtime_end).getTime() - from)/(1000 * 60);
                                 minute = minute + minutes;
                             }
                             else{
                                 //时间出门到进门的相差分钟数
-                                Double minutes = Convert.toDouble((to - from)/(1000 * 60));
+                                Double minutes = (double)(to - from)/(1000 * 60);
                                 //累计欠勤时间
                                 minute = minute + minutes;
                             }

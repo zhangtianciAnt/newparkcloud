@@ -1325,8 +1325,8 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
             toDoNotice3.setInitiator(Userid);
             toDoNotice3.setContent("您的离职申请已审批通过！");
             toDoNotice3.setDataid(staffexitprocedureVo.getStaffexitproce().getStaffexitproce_id());
-            toDoNotice3.setUrl("/PFANS2026FormView");
-            toDoNotice3.setWorkflowurl("/PFANS2026View");
+            toDoNotice3.setUrl("/PFANS2032FormView");
+            toDoNotice3.setWorkflowurl("/PFANS2032View");
             toDoNotice3.preInsert(tokenModel);
             toDoNotice3.setOwner(staffexitprocedureVo.getStaffexitproce().getReporter());
             toDoNoticeService.save(toDoNotice3);
