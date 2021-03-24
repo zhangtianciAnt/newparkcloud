@@ -480,6 +480,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
         for (ToDoNotice item :
                 rst1) {
             item.setStatus(AuthConstants.TODO_STATUS_DONE);
+            //update gbb 20210324 代办更新时修改更新时间,更新人 start
+            item.preUpdate(tokenModel);
+            //update gbb 20210324 代办更新时修改更新时间,更新人 end
             toDoNoticeService.updateNoticesStatus(item);
         }
         Workflownodeinstance nodeinstance = workflownodeinstanceMapper
@@ -499,6 +502,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
             for (ToDoNotice item :
                     rst) {
                 item.setStatus(AuthConstants.TODO_STATUS_DELETE);
+                //update gbb 20210324 代办更新时修改更新时间,更新人 start
+                item.preUpdate(tokenModel);
+                //update gbb 20210324 代办更新时修改更新时间,更新人 end
                 toDoNoticeService.updateNoticesStatus(item);
             }
 
@@ -1282,6 +1288,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                                     for (ToDoNotice itemToDoNotice :
                                             rst1) {
                                         itemToDoNotice.setStatus(AuthConstants.TODO_STATUS_DONE);
+                                        //update gbb 20210324 代办更新时修改更新时间,更新人 start
+                                        itemToDoNotice.preUpdate(tokenModel);
+                                        //update gbb 20210324 代办更新时修改更新时间,更新人 end
                                         toDoNoticeService.updateNoticesStatus(itemToDoNotice);
                                     }
                                 }
@@ -1307,6 +1316,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                                     for (ToDoNotice itemToDoNotice :
                                             rst1) {
                                         itemToDoNotice.setStatus(AuthConstants.TODO_STATUS_DONE);
+                                        //update gbb 20210324 代办更新时修改更新时间,更新人 start
+                                        itemToDoNotice.preUpdate(tokenModel);
+                                        //update gbb 20210324 代办更新时修改更新时间,更新人 end
                                         toDoNoticeService.updateNoticesStatus(itemToDoNotice);
                                     }
                                 }
@@ -1394,6 +1406,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
         for (ToDoNotice item :
                 rst1) {
             item.setStatus(AuthConstants.TODO_STATUS_DONE);
+            //update gbb 20210324 代办更新时修改更新时间,更新人 start
+            item.preUpdate(tokenModel);
+            //update gbb 20210324 代办更新时修改更新时间,更新人 end
             toDoNoticeService.updateNoticesStatus(item);
         }
 
