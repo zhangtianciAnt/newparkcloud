@@ -933,15 +933,17 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     //编辑
     @Override
     public void update(PublicExpenseVo publicExpenseVo, TokenModel tokenModel) throws Exception {
-        String invoiceNos = "";
-        Calendar cal = Calendar.getInstance();
-        String year = new SimpleDateFormat("yy", Locale.CHINESE).format(Calendar.getInstance().getTime());
-        int month = cal.get(Calendar.MONTH) + 1;
-        int day = cal.get(Calendar.DATE);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String no = "";
-        String id = publicExpenseVo.getPublicexpense().getPublicexpenseid();
-        PublicExpense publics = publicExpenseMapper.selectByPrimaryKey(id);
+        //        del-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-start
+//        String invoiceNos = "";
+//        Calendar cal = Calendar.getInstance();
+//        String year = new SimpleDateFormat("yy", Locale.CHINESE).format(Calendar.getInstance().getTime());
+//        int month = cal.get(Calendar.MONTH) + 1;
+//        int day = cal.get(Calendar.DATE);
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        String no = "";
+//        String id = publicExpenseVo.getPublicexpense().getPublicexpenseid();
+//        PublicExpense publics = publicExpenseMapper.selectByPrimaryKey(id);
+        //        del-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-end
         if(publicExpenseVo.getPublicexpense().getModuleid().equals("GL")){
             publicExpenseVo.getPublicexpense().setModuleid("PJ002002");
         }else if(publicExpenseVo.getPublicexpense().getModuleid().equals("AP")){
@@ -977,9 +979,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 //            }
 //        }
 //        del-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-start
-        else {
-            invoiceNos = publicExpenseVo.getPublicexpense().getInvoiceno();
-        }
+//        add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-start
+          String  invoiceNos = publicExpenseVo.getPublicexpense().getInvoiceno();
+//        add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-end
 
         PublicExpense publicExpense = new PublicExpense();
         BeanUtils.copyProperties(publicExpenseVo.getPublicexpense(), publicExpense);
