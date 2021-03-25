@@ -1,6 +1,7 @@
 package com.nt.controller.Config;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -54,8 +55,9 @@ public class GlobalAop {
             AES aes = new AES();
             if(ret != null){
                 String res = aes.encrypt(JSONObject.toJSONString(((ApiResult) ret).getData(), SerializerFeature.WriteMapNullValue));
-                if(res.length() > 19000000){
+                if(res.length() > 102400000){
                     ((ApiResult) ret).setCode(-1);
+//                    ((ApiResult) ret).setData("");
                     ((ApiResult) ret).setMessage("查询数据过多，操作无法执行！请联系管理员！");
                 }else{
                     ((ApiResult) ret).setData(aes.encrypt(JSONObject.toJSONString(((ApiResult) ret).getData(), SerializerFeature.WriteMapNullValue)));
