@@ -3,6 +3,7 @@ package com.nt.service_Org.Impl;
 import cn.hutool.core.util.ImageUtil;
 import com.nt.dao_Org.OrgTree;
 import com.nt.service_Org.OrgTreeService;
+import com.nt.utils.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -63,6 +64,9 @@ public class OrgTreeServiceImpl implements OrgTreeService {
     public List<OrgTree> getById(OrgTree orgTree) throws Exception {
         Query query = new Query();
         query.addCriteria(Criteria.where("_id").is(orgTree.get_id()));
+        // update gbb 20210325 查询组织架构添加【有效】条件 start
+        query.addCriteria(Criteria.where("status").is("0"));
+        // update gbb 20210325 查询组织架构添加【有效】条件 end
         List<OrgTree> orgTrees = mongoTemplate.find(query, OrgTree.class);
         if (orgTrees == null || orgTrees.size() == 0) {
 //            Query queryOrg = new Query();
@@ -90,6 +94,9 @@ public class OrgTreeServiceImpl implements OrgTreeService {
         String dynamicsQuery = query.replace("_id", "") + "orgs._id";
         Query queryOrg = new Query();
         queryOrg.addCriteria(Criteria.where(dynamicsQuery).is(id));
+        // update gbb 20210325 查询组织架构添加【有效】条件 start
+        queryOrg.addCriteria(Criteria.where("status").is("0"));
+        // update gbb 20210325 查询组织架构添加【有效】条件 end
         List<OrgTree> orgTrees = mongoTemplate.find(queryOrg, OrgTree.class);
         if (orgTrees.size() == 0) {
             orgTrees = dynamicsQuery(dynamicsQuery, id);
@@ -97,6 +104,7 @@ public class OrgTreeServiceImpl implements OrgTreeService {
         return orgTrees;
     }
 
+    //update gbb 20210308  禅道任务708  start
     @Override
     public OrgTree getTreeYears(String Years,String Status) throws Exception {
         Query query = new Query();
@@ -112,5 +120,24 @@ public class OrgTreeServiceImpl implements OrgTreeService {
             }
         }
         return orgtree;
+    }
+    //update gbb 20210308  禅道任务708  end
+
+    @Override
+    public void updateStatus(String Years) throws Exception {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("status").is("0"));
+        List<OrgTree> orgtreeList = mongoTemplate.find(query, OrgTree.class);
+        if (orgtreeList.size() > 0) {
+            for (OrgTree orgTree0 : orgtreeList) {
+                orgTree0.setStatus("1");
+                mongoTemplate.save(orgTree0);
+            }
+        }
+        Query query1 = new Query();
+        query1.addCriteria(Criteria.where("years").is(Years));
+        OrgTree orgTree1 = mongoTemplate.findOne(query1, OrgTree.class);
+        orgTree1.setStatus("0");
+        mongoTemplate.save(orgTree1);
     }
 }

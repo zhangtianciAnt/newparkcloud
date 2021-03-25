@@ -6,12 +6,12 @@
         where REIMBURSEMENTDATE = #{reimbursementDate}
         group by REIMBURSEMENTDATE
     </select>
-
-    <select id="getAporGlNo" resultType="Integer">
-         select count(*) from publicexpense
+<!--    add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-更改返回值类型，更改后返回当日数最大的精算号-start-->
+    <select id="getAporGlNo" resultType="String">
+          select MAX(INVOICENO)  from publicexpense
         where REIMBURSEMENTDATE = #{reimbursementDate} and INVOICENO like CONCAT('%',#{AporGl},'%')
     </select>
-
+<!--    add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-更改返回值类型，更改后返回当日数最大的精算号-end-->
     <select id="getpublicelist"  resultType="com.nt.dao_Pfans.PFANS1000.PublicExpense">
      select * from publicexpense where JUDGEMENT like CONCAT('%',#{code},'%')
     </select>

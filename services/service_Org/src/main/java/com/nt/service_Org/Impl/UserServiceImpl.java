@@ -1068,6 +1068,13 @@ public class UserServiceImpl implements UserService {
         int k = 1;
         int accesscount = 0;
         int error = 0;
+        // update gbb 20210325 查询组织架构添加【有效】条件 start
+        Query queryorg = CustmizeQuery(new OrgTree());
+        queryorg.addCriteria(Criteria.where("status").is("0"));
+        OrgTree orgTree = mongoTemplate.findOne(queryorg, OrgTree.class);
+        List<OrgTree> orgTreeList = new ArrayList<>();
+        orgTreeList.add(orgTree);
+        // update gbb 20210325 查询组织架构添加【有效】条件 end
         List<String> useradd = new ArrayList<String>();
         if (resultInsUpd) {
             for (Map<String, Object> item : readAll) {
@@ -1153,7 +1160,9 @@ public class UserServiceImpl implements UserService {
                         userinfo.setTeamid("废弃");
                     }
                     else{
-                        List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
+                        //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
                         int cf = 0;
                         if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                             for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
@@ -1193,7 +1202,9 @@ public class UserServiceImpl implements UserService {
                     String grp = item.get("group").toString();
                     int cf = 0;
                     int gf = 0;
-                    List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
+                    //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 ene
                     if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                         for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
                             if (gf == 0) {
@@ -1252,7 +1263,9 @@ public class UserServiceImpl implements UserService {
                     int cf = 0;
                     int gf = 0;
                     int tf = 0;
-                    List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
+                    //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
                     if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                         for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
                             if (tf == 0 && gf == 0) {
@@ -1846,7 +1859,9 @@ public class UserServiceImpl implements UserService {
                     //center
                     if (item.get("center●") != null) {
                         String cen = item.get("center●").toString();
-                        List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
+                        //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
                         int cf = 0;
                         if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                             for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
@@ -1885,7 +1900,9 @@ public class UserServiceImpl implements UserService {
                         String grp = item.get("group●").toString();
                         int cf = 0;
                         int gf = 0;
-                        List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
+                        //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
                         if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                             for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
                                 if (gf == 0) {
@@ -1944,7 +1961,9 @@ public class UserServiceImpl implements UserService {
                         int cf = 0;
                         int gf = 0;
                         int tf = 0;
-                        List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
+                        //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
                         if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                             for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
                                 if (tf == 0 && gf == 0) {
