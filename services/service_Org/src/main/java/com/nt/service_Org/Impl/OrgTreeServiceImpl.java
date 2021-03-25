@@ -63,6 +63,9 @@ public class OrgTreeServiceImpl implements OrgTreeService {
     public List<OrgTree> getById(OrgTree orgTree) throws Exception {
         Query query = new Query();
         query.addCriteria(Criteria.where("_id").is(orgTree.get_id()));
+        // update gbb 20210325 查询组织架构添加【有效】条件 start
+        query.addCriteria(Criteria.where("status").is("0"));
+        // update gbb 20210325 查询组织架构添加【有效】条件 end
         List<OrgTree> orgTrees = mongoTemplate.find(query, OrgTree.class);
         if (orgTrees == null || orgTrees.size() == 0) {
 //            Query queryOrg = new Query();
@@ -90,6 +93,9 @@ public class OrgTreeServiceImpl implements OrgTreeService {
         String dynamicsQuery = query.replace("_id", "") + "orgs._id";
         Query queryOrg = new Query();
         queryOrg.addCriteria(Criteria.where(dynamicsQuery).is(id));
+        // update gbb 20210325 查询组织架构添加【有效】条件 start
+        queryOrg.addCriteria(Criteria.where("status").is("0"));
+        // update gbb 20210325 查询组织架构添加【有效】条件 end
         List<OrgTree> orgTrees = mongoTemplate.find(queryOrg, OrgTree.class);
         if (orgTrees.size() == 0) {
             orgTrees = dynamicsQuery(dynamicsQuery, id);
