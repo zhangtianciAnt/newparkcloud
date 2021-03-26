@@ -214,6 +214,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         if (cnList != null) {
             int rowindex = 0;
             ToDoNotice toDoNotice = new ToDoNotice();
+            //update gbb 20210326 查询【契約番号申请】所有代办,提示效率 start
+            toDoNotice.setUrl("/PFANS1026FormView");
+            //update gbb 20210326 查询【契約番号申请】所有代办,提示效率 end
             List<ToDoNotice> toDoNoticeList = toDoNoticeService.list(toDoNotice);
             for (Contractnumbercount number : numberList) {
                 rowindex = rowindex + 1;
