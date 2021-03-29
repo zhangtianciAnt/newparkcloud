@@ -53,7 +53,7 @@ public class PersonalCostServiceImpl implements PersonalCostService {
     private OrgTreeService orgTreeService;
 
     //系统定时任务每月1号自动保存单价
-    @Scheduled(cron = "1 2 14 25 3 ?")
+    @Scheduled(cron = "1 48 10 29 3 ?")
     public void savePersonalCost() throws Exception {
         LocalDate nowDate = LocalDate.now();
         String onYearStr = String.valueOf(nowDate.getYear());
@@ -775,7 +775,7 @@ public class PersonalCostServiceImpl implements PersonalCostService {
             pctFind.setPersonalcostid(pct.getPersonalcostid());
             pctFindList = personalCostMapper.select(pctFind);
             if(pctFindList.get(0).getLtrank() != pct.getLtrank()){
-                changePctList.add(pctFindList.get(0));
+                changePctList.add(pct);
             }
         }
         changePctWork(changePctList);
