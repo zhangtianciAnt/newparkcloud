@@ -194,6 +194,9 @@ public class SealServiceImpl implements SealService {
             seal.setAcceptor(tokenModel.getUserId());
 //            总经理代办
             ToDoNotice toDoNotice = new ToDoNotice();
+            //update gbb 20210326 代办查询添加dataid条件 start
+            toDoNotice.setDataid(seal.getSealid());
+            //update gbb 20210326 代办查询添加dataid条件 end
             toDoNotice.setUrl("/PFANS4001View");
             toDoNotice.setTitle("【印章申请】有需要您盖印承认得数据");
             toDoNotice.setStatus("0");
@@ -416,6 +419,9 @@ public class SealServiceImpl implements SealService {
                         sealMapper.updateByPrimaryKey(seal);
                     }
                     ToDoNotice toDoNotice = new ToDoNotice();
+                    //update gbb 20210326 代办查询添加dataid条件 start
+                    toDoNotice.setDataid(seal.getSealid());
+                    //update gbb 20210326 代办查询添加dataid条件 end
                     toDoNotice.setUrl("/PFANS4001View");
                     toDoNotice.setTitle("总经理已承认【印章申请】，需要您监管盖印");
                     toDoNotice.setOwner(sealdetaillist.get(0).getSealdetailname());
