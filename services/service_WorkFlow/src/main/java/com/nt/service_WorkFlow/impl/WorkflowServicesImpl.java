@@ -573,8 +573,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 orgId = user.getCustomerInfo().getUserinfo().getCenterid();
             }
         }
-
-        OrgTree orgs = orgTreeService.get(new OrgTree());
+        OrgTree condition = new OrgTree();
+        condition.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        OrgTree orgs = orgTreeService.get(condition);
 
         OrgTree currentOrg = getCurrentOrg(orgs, orgId);
 
@@ -782,7 +783,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                         //TL
                         if (item.getNodename().toUpperCase().contains("TL")) {
                             if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getTeamid())) {
-                                OrgTree orgs = orgTreeService.get(new OrgTree());
+                                OrgTree condition1 = new OrgTree();
+                                condition1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                                OrgTree orgs = orgTreeService.get(condition1);
                                 OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getTeamid());
                                 if (currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())) {
                                     throw new LogicalException("无上级人员信息！");
@@ -877,7 +880,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                             if (StrUtil.isEmpty(userInfo.getCustomerInfo().getUserinfo().getTeamid())) {
 
                                 if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getGroupid())) {
-                                    OrgTree orgs = orgTreeService.get(new OrgTree());
+                                    OrgTree condition1 = new OrgTree();
+                                    condition1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                                    OrgTree orgs = orgTreeService.get(condition1);
                                     OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getGroupid());
                                     if (currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())) {
                                         throw new LogicalException("无上级人员信息！");
@@ -968,7 +973,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                                 }
                             } else {
                                 if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getGroupid())) {
-                                    OrgTree orgs = orgTreeService.get(new OrgTree());
+                                    OrgTree condition1 = new OrgTree();
+                                    condition1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                                    OrgTree orgs = orgTreeService.get(condition1);
                                     OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getGroupid());
                                     if (currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())) {
                                         throw new LogicalException("无上级人员信息！");
@@ -1009,7 +1016,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                             if (StrUtil.isEmpty(userInfo.getCustomerInfo().getUserinfo().getTeamid()) && StrUtil.isEmpty(userInfo.getCustomerInfo().getUserinfo().getGroupid())) {
 
                                 if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getCenterid())) {
-                                    OrgTree orgs = orgTreeService.get(new OrgTree());
+                                    OrgTree condition1 = new OrgTree();
+                                    condition1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                                    OrgTree orgs = orgTreeService.get(condition1);
                                     OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getCenterid());
                                     if (currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())) {
                                         throw new LogicalException("无上级人员信息！");
