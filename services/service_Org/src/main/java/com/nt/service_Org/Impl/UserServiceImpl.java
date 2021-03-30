@@ -552,8 +552,18 @@ public class UserServiceImpl implements UserService {
     public List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype, TokenModel tokenModel) throws Exception {
         Query query = new Query();
         if (StrUtil.isNotBlank(orgid)) {
-            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
-                    Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
+            //update gbb 20210330 选择树根节点时显示总经理和副总经理 start
+            if(orgtype.equals("1")){
+                //职务为总经理或副总经理
+                query.addCriteria(Criteria.where("userinfo.post").in("PG021013","PG021017"));
+            }
+            else{
+                //职务不为总经理或副总经理的数据
+                query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
+                        Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid))
+                        .andOperator(Criteria.where("userinfo.post").nin("PG021013","PG021017")));
+            }
+            //update gbb 20210330 选择树根节点时显示总经理和副总经理 end
         }
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         for (CustomerInfo item : customerInfos) {
