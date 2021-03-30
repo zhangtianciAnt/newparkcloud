@@ -27,7 +27,6 @@ public class Pfans6008Controller {
     @Autowired
     private CoststatisticsService coststatisticsService;
 
-
     @Autowired
     private TokenService tokenService;
 
@@ -40,17 +39,17 @@ public class Pfans6008Controller {
     }
 
     @RequestMapping(value = "/getCostBygroupid", method = {RequestMethod.GET})
-    public ApiResult getCostBygroupid(String groupid,HttpServletRequest request) throws Exception {
+    public ApiResult getCostBygroupid(String groupid,String year,HttpServletRequest request) throws Exception {
         //Coststatistics coststatistics = new Coststatistics();
-        return ApiResult.success(coststatisticsService.getCostListBygroupid(groupid));
+        return ApiResult.success(coststatisticsService.getCostListBygroupid(groupid,year));
     }
 
     @RequestMapping(value = "/insertCoststatistics", method = {RequestMethod.GET})
-    public ApiResult insertCoststatistics(String groupid,HttpServletRequest request) throws Exception {
+    public ApiResult insertCoststatistics(String groupid,String year,HttpServletRequest request) throws Exception {
         Coststatistics coststatistics = new Coststatistics();
         TokenModel tokenModel = tokenService.getToken(request);
 //        coststatistics.setOwner(tokenModel.getUserId());
-        return ApiResult.success(coststatisticsService.insertCoststatistics(groupid,coststatistics, tokenModel));
+        return ApiResult.success(coststatisticsService.insertCoststatistics(groupid,year,coststatistics, tokenModel));
     }
 
     /**
