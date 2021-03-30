@@ -15,9 +15,9 @@ import java.util.Map;
 
 public interface CoststatisticsService {
     List<Coststatistics> getCostList(Coststatistics coststatistics) throws Exception;
-    List<Coststatistics> getCostListBygroupid(String groupid) throws Exception;
+    List<Coststatistics> getCostListBygroupid(String groupid,String year) throws Exception;
 
-    Integer insertCoststatistics(String groupid,Coststatistics coststatistics, TokenModel tokenModel) throws Exception;
+    Integer insertCoststatistics(String groupid,String year,Coststatistics coststatistics, TokenModel tokenModel) throws Exception;
 
     Map<String, Double> getUserPriceMap() throws Exception;
     Map<String, Double> getUserPriceMapBygroupid(String groupid,String years) throws Exception;

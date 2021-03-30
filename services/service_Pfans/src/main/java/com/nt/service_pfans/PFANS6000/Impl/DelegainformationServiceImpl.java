@@ -416,7 +416,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                                     updateDeleginformation(taxvo,tokenModel);
                                     //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
                                     Coststatistics coststatistics = new Coststatistics();
-                                    coststatisticsService.insertCoststatistics(or.get_id(),coststatistics,tokenModel);
+                                    coststatisticsService.insertCoststatistics(or.get_id(),y,coststatistics,tokenModel);
                                 }
                             }
                         }
