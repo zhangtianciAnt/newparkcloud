@@ -99,31 +99,31 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     }
 
     @Override
-    public List<Coststatistics> getCostListBygroupid(String groupid) throws Exception {
+    public List<Coststatistics> getCostListBygroupid(String groupid,String year) throws Exception {
         Calendar calendar = Calendar.getInstance();
-        int year = 0;
-        int month = calendar.get(Calendar.MONTH)+1;
-        if(month >= 1 && month <= 3) {
-            year = calendar.get(Calendar.YEAR) - 1;
-        }else {
-            year = calendar.get(Calendar.YEAR);
-        }
+//        int year = 0;
+//        int month = calendar.get(Calendar.MONTH)+1;
+//        if(month >= 1 && month <= 3) {
+//            year = calendar.get(Calendar.YEAR) - 1;
+//        }else {
+//            year = calendar.get(Calendar.YEAR);
+//        }
         return coststatisticsMapper.selectBygroupid(groupid,String.valueOf(year));
     }
 
     @Override
-    public Integer insertCoststatistics(String groupid,Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
+    public Integer insertCoststatistics(String groupid,String year ,Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
         Calendar calendar = Calendar.getInstance();
-        int year = 0;
-        int month = calendar.get(Calendar.MONTH)+1;
-        if(month >= 1 && month <= 3) {
-            year = calendar.get(Calendar.YEAR) - 1;
-        }else {
-            year = calendar.get(Calendar.YEAR);
-        }
+//        int year = 0;
+//        int month = calendar.get(Calendar.MONTH)+1;
+//        if(month >= 1 && month <= 3) {
+//            year = calendar.get(Calendar.YEAR) - 1;
+//        }else {
+//            year = calendar.get(Calendar.YEAR);
+//        }
 
 
-        List<Coststatistics> allCostList = getCostList(groupid,coststatistics, tokenModel);
+        List<Coststatistics> allCostList = getCostList(groupid,year,coststatistics, tokenModel);
 
         for (Coststatistics c : allCostList) {
 
@@ -140,18 +140,18 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         return insertCount;
     }
 
-    private List<Coststatistics> getCostList(String groupid,Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
+    private List<Coststatistics> getCostList(String groupid,String year ,Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
         //获取经费
         Variousfunds variousfunds = new Variousfunds();
 //        variousfunds.setOwner(tokenModel.getUserId());
         Calendar calendar = Calendar.getInstance();
-        int year = 0;
-        int month = calendar.get(Calendar.MONTH)+1;
-        if(month >= 1 && month <= 3) {
-            year = calendar.get(Calendar.YEAR) - 1;
-        }else {
-            year = calendar.get(Calendar.YEAR);
-        }
+//        int year = 0;
+//        int month = calendar.get(Calendar.MONTH)+1;
+//        if(month >= 1 && month <= 3) {
+//            year = calendar.get(Calendar.YEAR) - 1;
+//        }else {
+//            year = calendar.get(Calendar.YEAR);
+//        }
         List<Variousfunds> allVariousfunds = variousfundsMapper.selectBygroupid(groupid, String.valueOf(year));
         Map<String, Double> variousfundsMap = new HashMap<String, Double>();
         for ( Variousfunds v : allVariousfunds ) {
@@ -198,7 +198,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 //            year = calendar.get(Calendar.YEAR);
 //        }
         // 获取活用情报信息
-        List<Coststatistics> allCostList = coststatisticsMapper.getCoststatisticsBygroupid(year, groupid);
+        List<Coststatistics> allCostList = coststatisticsMapper.getCoststatisticsBygroupid(Integer.valueOf(year), groupid);
         for ( Coststatistics c : allCostList ) {
             // 合计费用
             double totalmanhours = 0;
