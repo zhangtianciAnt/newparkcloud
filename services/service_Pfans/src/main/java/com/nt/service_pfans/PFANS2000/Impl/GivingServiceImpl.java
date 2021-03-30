@@ -1113,7 +1113,7 @@ public class GivingServiceImpl implements GivingService {
     }
 
 
-    @Scheduled(cron = "0 0 1 10 * ?")
+    @Scheduled(cron = "0 0 1 10 * ?")//系统服务--每月10号凌晨1点开始自动计算当月工资
     protected void autoCreateGiving() throws Exception {
         insert("1", null);
     }
@@ -2666,8 +2666,9 @@ public class GivingServiceImpl implements GivingService {
                     year = calendar.get(Calendar.YEAR);
                 }
                 String remaning = "0";
+                //离职剩余年休天数
                 remaning = annualLeaveService.remainingAnnual(customerInfo.getUserid(),String.valueOf(year));
-                BigDecimal b1 = new BigDecimal(Double.parseDouble(thisMonthSalary) / dateBase / 8 * 2 * Double.parseDouble(remaning));
+                BigDecimal b1 = new BigDecimal(Double.parseDouble(thisMonthSalary) / dateBase * 2 * Double.parseDouble(remaning));
                 BigDecimal b2 = new BigDecimal(retire.getGive());
                 double strannualleavegive = b1.add(b2).doubleValue();
                 //4月份计算工资此处无需计算，工资详情中的最终工资会集中体现

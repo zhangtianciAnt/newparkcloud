@@ -986,8 +986,54 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         for (ActualPL pl : actualPl) {
             Convert(pl, "code");
         }
-        List<PersonPlanTable> personPlanTables = businessplanMapper.selectPersonTable(groupid);
         PersonnelPlan personnelPlan = new PersonnelPlan();
+        personnelPlan.setGroupid(groupid);
+        List<PersonnelPlan> personnelPlanList = personnelplanMapper.select(personnelPlan);
+        //List<PersonPlanTable> personPlanTables = businessplanMapper.selectPersonTable(groupid);
+        List<PersonPlanTable> personPlanTables = new ArrayList<>();
+        List<PersonalAvgVo> personalAvgVoList = JSON.parseArray(personnelPlanList.get(0).getEmployed(), PersonalAvgVo.class);
+        //统计rank出现的个数
+        Map<String,Integer> rankNum = new HashMap<>();
+        for (PersonalAvgVo pav : personalAvgVoList) {
+            if(null == rankNum.get(pav.getNextyear())){
+                rankNum.put(pav.getNextyear(),1);
+            }else {
+                rankNum.put(pav.getNextyear(),rankNum.get(pav.getNextyear())+1);
+            }
+        }
+        Map<String,Double> summerplanpcSumMap = personalAvgVoList.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getSummerplanpc)));
+        Map<String,Double> winterplanpcSumMap = personalAvgVoList.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getWinterplanpc)));
+        Map<String,Double> overtimepaySumMap = personalAvgVoList.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getOvertimepay)));
+        Map<String,Double> payhourSumMap = personalAvgVoList.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getOvertimehour)));
+        for (Map.Entry<String, Integer> rm : rankNum.entrySet()) {
+            PersonPlanTable personPlanTable = new PersonPlanTable();
+            //46
+            BigDecimal sppcSum = new BigDecimal(summerplanpcSumMap.get(rm.getKey()));
+            //73
+            BigDecimal wppcSum = new BigDecimal(winterplanpcSumMap.get(rm.getKey()));
+            //加班时给
+            BigDecimal otpcSum = new BigDecimal(overtimepaySumMap.get(rm.getKey()));
+            //加班时给
+            BigDecimal phscSum = new BigDecimal(payhourSumMap.get(rm.getKey()));
+            //人数
+            BigDecimal perNum = new BigDecimal(rm.getValue());
+            //46Avg
+            BigDecimal sppcAvg = sppcSum.divide(perNum,2, BigDecimal.ROUND_HALF_UP);
+            //73Avg
+            BigDecimal wppcAvg = wppcSum.divide(perNum,2, BigDecimal.ROUND_HALF_UP);
+            //加班时给Avg
+            BigDecimal otpcAvg = otpcSum.divide(perNum,2, BigDecimal.ROUND_HALF_UP);
+            //加班小时Avg
+            BigDecimal phscAvg = phscSum.divide(perNum,2, BigDecimal.ROUND_HALF_UP);
+            personPlanTable.setCode(rm.getKey());
+            personPlanTable.setMoney46(sppcAvg.toString());
+            personPlanTable.setMoney73(wppcAvg.toString());
+            personPlanTable.setPayhour(otpcAvg.toString());
+            personPlanTable.setOvertimehour(phscAvg.toString());
+            personPlanTables.add(personPlanTable);
+        }
+        //升序
+        personPlanTables = personPlanTables.stream().sorted(Comparator.comparing(PersonPlanTable::getCode)).collect(Collectors.toList());
         personnelPlan.setYears(year);
         personnelPlan.setGroupid(groupid);
         List<PersonnelPlan> personnelPlans = personnelplanMapper.select(personnelPlan);

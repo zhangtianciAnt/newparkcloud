@@ -189,6 +189,12 @@ public class PersonalCost extends BaseModel {
     private String overtimepay;
 
     /**
+     * 加班小时数
+     */
+    @Column(name = "OVERTIMEHOUR")
+    private String overtimehour;
+
+    /**
      * 是否大连户籍
      */
     @Column(name = "INDALIAN")

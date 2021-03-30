@@ -197,12 +197,18 @@ public class SupplierinforServiceImpl implements SupplierinforService {
                             throw new LogicalException("第" + i + "行 供应商编码（合同用） 长度超长，最大长度为50");
                         }
                         if (supplierinfor.getVendornum() != null && !supplierinfor.getVendornum().isEmpty()) {
-                            Supplierinfor sup = new Supplierinfor();
-                            sup.setVendornum(supplierinfor.getVendornum().trim());
-                            List<Supplierinfor> supList = supplierinforMapper.select(sup);
-                            if (supList.size() > 0) {
-                                throw new LogicalException("第" + i + "行 供应商编码（合同用） 已经存在，请确认。");
+                            //add fr 添加免check供应商编码（合同用）为0的情况
+                            Pattern pattern = Pattern.compile("[0]*");
+                            Matcher isNum = pattern.matcher(supplierinfor.getVendornum());
+                            if (!isNum.matches()) {
+                                Supplierinfor sup = new Supplierinfor();
+                                sup.setVendornum(supplierinfor.getVendornum().trim());
+                                List<Supplierinfor> supList = supplierinforMapper.select(sup);
+                                if (supList.size() > 0) {
+                                    throw new LogicalException("第" + i + "行 供应商编码（合同用） 已经存在，请确认。");
+                                }
                             }
+                            //add to 添加免check供应商编码（合同用）为0的情况
                         }
                     }
                     if (value.size() > 6) {

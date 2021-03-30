@@ -498,7 +498,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         Staffexitprocelist = Staffexitprocelist.stream().filter(item -> (item.getStatus().equals("4"))).collect(Collectors.toList());
         for (Staffexitproce list : Staffexitprocelist) {
             if (Integer.valueOf(month1) <= Integer.valueOf(sd.format(list.getResignation_date())) && Integer.valueOf(sd.format(list.getResignation_date())) <= Integer.valueOf(month2)) {
-                //审批权限交接
+                //审批权限交接 gbb 20210326 此处不需要dataid,应将离职人员的所有代办转给数据权限交接担当
                 ToDoNotice condition = new ToDoNotice();
                 condition.setOwner(list.getUser_id());
                 condition.setStatus(AuthConstants.TODO_STATUS_TODO);
@@ -1373,6 +1373,9 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
 
 
             ToDoNotice condition = new ToDoNotice();
+            //update gbb 20210326 退职者调书审批通过之后将该数据涉及到的代办更新办结状态 start
+            condition.setDataid(staffexitprocedureVo.getStaffexitproce().getStaffexitproce_id());
+            //update gbb 20210326 退职者调书审批通过之后将该数据涉及到的代办更新办结状态 end
             condition.setOwner(staffexitprocedureVo.getStaffexitproce().getUser_id());
             condition.setStatus(AuthConstants.TODO_STATUS_TODO);
             List<ToDoNotice> list = todoNoticeMapper.select(condition);

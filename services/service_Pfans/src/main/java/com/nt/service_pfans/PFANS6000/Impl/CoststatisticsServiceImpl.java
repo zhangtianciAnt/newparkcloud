@@ -35,6 +35,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bytedeco.javacpp.presets.opencv_core;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.mongodb.core.query.Query;
@@ -481,6 +482,9 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     public List<Coststatistics>  getcostMonthList(String dates,String role,String groupid,TokenModel tokenModel) throws Exception {
         List<String> groupIdList = new ArrayList<String>();
         Query query = CustmizeQuery(new OrgTree());
+        // update gbb 20210325 查询组织架构添加【有效】条件 start
+        query.addCriteria(Criteria.where("status").is("0"));
+        // update gbb 20210325 查询组织架构添加【有效】条件 end
         OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
         List<OrgTree>  orgTrees =  orgTree.getOrgs();
         String[] groupArray = null;
@@ -521,6 +525,9 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     public List<Map<String, String>>  getcostMonth(String dates,String role,String groupid,TokenModel tokenModel) throws Exception {
         List<String> groupIdList = new ArrayList<String>();
         Query query = CustmizeQuery(new OrgTree());
+        // update gbb 20210325 查询组织架构添加【有效】条件 start
+        query.addCriteria(Criteria.where("status").is("0"));
+        // update gbb 20210325 查询组织架构添加【有效】条件 end
         OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
         List<OrgTree>  orgTrees =  orgTree.getOrgs();
         //外驻担当看全部
