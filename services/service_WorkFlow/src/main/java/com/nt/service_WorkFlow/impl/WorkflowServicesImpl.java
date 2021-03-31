@@ -597,7 +597,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                         userId = "";
                     }
 
-                    if(nodeName.toUpperCase().contains("三次上司")){
+                    if(upOrgs != null && nodeName.toUpperCase().contains("三次上司")){
                         upFlg = "0";
                         upOrgs = upCurrentOrg(orgs, upOrgs.get_id());
                         if (upOrgs != null) {
