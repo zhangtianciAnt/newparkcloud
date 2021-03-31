@@ -554,7 +554,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     }
 
-    private String getUpUser(String curentUser, String nodeName) throws Exception {
+    private String getUpUser(String curentUser, String nodeName,String outOrg) throws Exception {
         String userId = "";
         UserVo user = userService.getAccountCustomerById(curentUser);
         String orgId = "";
@@ -577,6 +577,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
         condition.setStatus(AuthConstants.DEL_FLAG_NORMAL);
         OrgTree orgs = orgTreeService.get(condition);
 
+        if(StrUtil.isNotBlank(orgId) && orgId.equals(outOrg)){
+            return "";
+        }
+
         OrgTree currentOrg = getCurrentOrg(orgs, orgId);
 
         if (currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())) {
@@ -586,12 +590,19 @@ public class WorkflowServicesImpl implements WorkflowServices {
             upFlg = "0";
             OrgTree upOrgs = upCurrentOrg(orgs, orgId);
             if (upOrgs != null) {
+                if(StrUtil.isNotBlank(upOrgs.get_id()) && upOrgs.get_id().equals(outOrg)){
+                    return "";
+                }
+
                 userId = upOrgs.getUser();
 
                 if (nodeName.toUpperCase().contains("二次上司") || nodeName.toUpperCase().contains("三次上司")){
                     upFlg = "0";
                     upOrgs = upCurrentOrg(orgs, upOrgs.get_id());
                     if (upOrgs != null) {
+                        if(StrUtil.isNotBlank(upOrgs.get_id()) && upOrgs.get_id().equals(outOrg)){
+                            return "";
+                        }
                         userId = upOrgs.getUser();
                     }else{
                         userId = "";
@@ -601,6 +612,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                         upFlg = "0";
                         upOrgs = upCurrentOrg(orgs, upOrgs.get_id());
                         if (upOrgs != null) {
+                            if(StrUtil.isNotBlank(upOrgs.get_id()) && upOrgs.get_id().equals(outOrg)){
+                                return "";
+                            }
                             userId = upOrgs.getUser();
                         }else{
                             userId = "";
@@ -615,6 +629,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 upFlg = "0";
                 OrgTree upOrgs = upCurrentOrg(orgs, orgId);
                 if (upOrgs != null) {
+
+                    if(StrUtil.isNotBlank(upOrgs.get_id()) && upOrgs.get_id().equals(outOrg)){
+                        return "";
+                    }
+
                     userId = upOrgs.getUser();
                 }else{
                     userId = "";
@@ -624,6 +643,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     upFlg = "0";
                     upOrgs = upCurrentOrg(orgs, upOrgs.get_id());
                     if (upOrgs != null) {
+                        if(StrUtil.isNotBlank(upOrgs.get_id()) && upOrgs.get_id().equals(outOrg)){
+                            return "";
+                        }
                         userId = upOrgs.getUser();
                     }else{
                         userId = "";
@@ -1069,7 +1091,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                             }
                         }
 
-                        user = getUpUser(workflowinstance.getOwner(), item.getNodename().toUpperCase());
+                        user = getUpUser(workflowinstance.getOwner(), item.getNodename().toUpperCase(),item.getOutorg());
                         if (StrUtil.isEmpty(user)) {
 
                             // 如果节点为最后一个节点时，结束流程
