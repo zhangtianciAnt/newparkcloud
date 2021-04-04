@@ -4,7 +4,7 @@
     <select id="selectByuserId" resultType="com.nt.dao_Pfans.PFANS2000.TalentPlan">
         SELECT t.*
         FROM `talentplan` as t
-        where  1=1
+        where  1=1 and year= #{years}
         <if test="userIdList != null and userIdList.size() > 0 ">
             and
             t.user_id in
