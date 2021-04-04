@@ -549,12 +549,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype, TokenModel tokenModel) throws Exception {
+    public List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype, String virtual,TokenModel tokenModel) throws Exception {
         Query query = new Query();
         if (StrUtil.isNotBlank(orgid)) {
             //update gbb 20210330 选择树根节点时显示总经理和副总经理 start
-            if(orgtype.equals("1")){
-                //职务为总经理或副总经理
+            if(orgtype.equals("1") && !virtual.equals("")){
+                //职务为总经理或副总经理+虚拟组织
                 query.addCriteria(Criteria.where("userinfo.post").in("PG021013","PG021017"));
             }
             else{
