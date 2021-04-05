@@ -312,11 +312,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             an.setYears(Newdate.substring(0,4));
         }
         List<AnnualLeave> thisyearsList = annualLeaveMapper.select(an);
+        TokenModel tokenModel = new TokenModel();
         if (thisyearsList != null) {
             for (AnnualLeave thisyears : thisyearsList) {
                 List<AnnualLeave> AnnualList = viewList.stream().filter(coi -> (coi.getUser_id().contains(thisyears.getUser_id()))).collect(Collectors.toList());
                 if(AnnualList.size() > 0 ){
                     thisyears.setRemaining_annual_leave_thisyear(AnnualList.get(0).getRemaining_annual_leave_thisyear().subtract(AnnualList.get(0).getAnnual_leave_shenqingzhong()));
+                    thisyears.preUpdate(tokenModel);
                     annualLeaveMapper.updateByPrimaryKey(thisyears);
                 }
             }
