@@ -751,7 +751,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             model.add("供应商中文名称");
             model.add("Rn");
             model.add("邮箱地址");
-            model.add("group");
+            model.add("部门");
             model.add("作業場所");
             model.add("卡号");
             model.add("作業分類");
@@ -934,16 +934,16 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                 String groupName = Convert.toStr(value.get(10));
                                 if (groupName != null && !groupName.isEmpty()) {
                                     Query query = new Query();
-                                    query.addCriteria(Criteria.where("userinfo.groupname").is(groupName));
+                                    query.addCriteria(Criteria.where("userinfo.centername").is(groupName));
                                     List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
                                     customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
                                     if (customerInfoList.size() > 0) {
-                                        expatriatesinfor.setGroup_id(customerInfoList.get(0).getUserinfo().getGroupid());
+                                        expatriatesinfor.setGroup_id(customerInfoList.get(0).getUserinfo().getCenterid());
                                     } else {
-                                        throw new LogicalException("第" + i + "行的group名称不存在，请确认。");
+                                        throw new LogicalException("第" + i + "行的部门名称不存在，请确认。");
                                     }
                                 } else {
-                                    throw new LogicalException("第" + i + "行的group名称不能为空，请确认。");
+                                    throw new LogicalException("第" + i + "行的部门名称不能为空，请确认。");
                                 }
                             }
                             if (value.size() > 11) {
@@ -995,13 +995,13 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                 String interviewdep = Convert.toStr(value.get(15));
                                 if (interviewdep != null && !interviewdep.isEmpty()) {
                                     Query query = new Query();
-                                    query.addCriteria(Criteria.where("userinfo.groupname").is(interviewdep));
+                                    query.addCriteria(Criteria.where("userinfo.centername").is(interviewdep));
                                     List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
                                     customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
                                     if (customerInfoList.size() > 0) {
-                                        expatriatesinfor.setInterviewdep(customerInfoList.get(0).getUserinfo().getGroupid());
+                                        expatriatesinfor.setInterviewdep(customerInfoList.get(0).getUserinfo().getCenterid());
                                         if (expatriatesinfor.getGroup_id() == null || expatriatesinfor.getGroup_id().equals("")) {
-                                            expatriatesinfor.setGroup_id(customerInfoList.get(0).getUserinfo().getGroupid());
+                                            expatriatesinfor.setGroup_id(customerInfoList.get(0).getUserinfo().getCenterid());
                                         }
                                     } else {
                                         expatriatesinfor.setInterviewdep(interviewdep);

@@ -56,7 +56,7 @@ public interface UserService {
     // 根据orgid获取用户及用户信息列表
     List<CustomerInfo> getAccountCustomer(String orgid, String orgtype,TokenModel tokenModel) throws Exception;
 
-    List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype,TokenModel tokenModel) throws Exception;
+    List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype,String virtual,TokenModel tokenModel) throws Exception;
     //add-ws-9/12-财务人员编码处理
     List<CustomerInfo> getAccountCustomer3(String orgid, String orgtype,TokenModel tokenModel) throws Exception;
     //add-ws-9/12-财务人员编码处理
