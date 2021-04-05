@@ -30,20 +30,19 @@ public class GoalManagementServiceImpl implements GoalManagementService {
     private UserService userService;
 
     @Override
-    public List<GoalManagement> list(GoalManagement goalManagement ) throws Exception {
-        SimpleDateFormat sfym = new SimpleDateFormat("yyyy-MM");
-        Calendar calend = Calendar.getInstance();
-        calend.setTime(new Date());
-        String yearmm  = sfym.format(calend.getTime());
-        String years = yearmm.substring(0,4);
-        String month = yearmm.substring(5,7);
-        if(Integer.valueOf(month)<4)
-        {
-            years = String.valueOf(Integer.valueOf(years)-1);
-        }
-        goalManagement.setYears(years);
+    public List<GoalManagement> list(GoalManagement goalManagement) throws Exception {
+//        SimpleDateFormat sfym = new SimpleDateFormat("yyyy-MM");
+//        Calendar calend = Calendar.getInstance();
+//        calend.setTime(new Date());
+//        String yearmm  = sfym.format(calend.getTime());
+//        String years = yearmm.substring(0,4);
+//        String month = yearmm.substring(5,7);
+//        if(Integer.valueOf(month)<4)
+//        {
+//            years = String.valueOf(Integer.valueOf(years)-1);
+//        }
         List<GoalManagement> goalManagementList = goalmanagementMapper.select(goalManagement);
-        List<CustomerInfo> customerInfoList = userService.getCustomerInfoResign(years);
+        List<CustomerInfo> customerInfoList = userService.getCustomerInfoResign(goalManagement.getYears());
         for(CustomerInfo c:customerInfoList)
         {
             goalManagementList = goalManagementList.stream().filter(item -> (!item.getUser_id().equals(c.getUserid()))).collect(Collectors.toList());

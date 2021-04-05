@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -64,11 +61,13 @@ public class Pfans2023Controller {
     }
 
     @RequestMapping(value="/list", method={RequestMethod.POST})
-    public ApiResult List(@RequestBody GoalManagement goalManagement, HttpServletRequest request) throws Exception {
-        if (goalManagement == null) {
+    public ApiResult List(@RequestParam String years, HttpServletRequest request) throws Exception {
+        if (years == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        GoalManagement goalManagement = new GoalManagement();
+        goalManagement.setYears(years);
         goalManagement.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(goalmanagementService.list(goalManagement));
     }

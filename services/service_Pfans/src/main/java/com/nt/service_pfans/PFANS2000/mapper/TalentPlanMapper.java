@@ -8,5 +8,5 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface TalentPlanMapper extends MyMapper<TalentPlan> {
-    List<TalentPlan> selectByuserId(@Param("userIdList")List<String> userIdList);
+    List<TalentPlan> selectByuserId(@Param("userIdList")List<String> userIdList,@Param("years") String years );
 }
