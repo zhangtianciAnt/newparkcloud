@@ -177,7 +177,7 @@ public class LogManagementServiceImpl implements LogManagementService {
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
         String Groupid = "";
         if (customerInfo != null) {
-            Groupid = customerInfo.getUserinfo().getGroupid();
+            Groupid = customerInfo.getUserinfo().getCenterid();
         }
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
         expatriatesinfor.setGroup_id(Groupid);
