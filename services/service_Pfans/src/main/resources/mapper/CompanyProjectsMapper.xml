@@ -163,7 +163,7 @@
             FIELD as
             FIELD,
             c.OWNER as OWNER,
-            c.GROUP_ID as group_id,
+            c.CENTER_ID as group_id,
             pp.contractno as contractno
         from `companyprojects` c
              left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
