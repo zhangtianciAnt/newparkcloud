@@ -29,6 +29,5 @@ public class LogServiceImpl implements LogService {
             mongoTemplate.save(log);
         //}
         //upd gbb 20210209 PSDCD_PFANS_20210209_BUG_014 登录log保存数据修改 to
-
     }
 }

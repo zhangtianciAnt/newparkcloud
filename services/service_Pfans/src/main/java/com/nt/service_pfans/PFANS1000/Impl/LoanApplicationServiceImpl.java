@@ -360,45 +360,45 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         purchaseMapper.updateByPrimaryKey(purchaseList.get(0));
                     }
                 }
-                if (loanapplication.getPublicradio() != "1") {
-                    //禅道447 处理可用暂借款金额 ztc
-                    Map<String, Double> moneyMap = new HashMap<String, Double>();
-                    List<Purchase> surLoappmoneyList = new ArrayList<>();
-                    for (String l : pur) {
-                        Purchase purchase = new Purchase();
-                        purchase.setPurnumbers(l);
-                        surLoappmoneyList = purchaseMapper.select(purchase);
-                        moneyMap.put(surLoappmoneyList.get(0).getPurchase_id(), Double.valueOf(surLoappmoneyList.get(0).getSurloappmoney()));
-                    }
-                    if (moneyMap.size() > 1) {
-                        //暂借款申请金额
-                        Double applyMoney = Double.valueOf(loanapplication.getMoneys());
-                        List<Map.Entry<String, Double>> halePurListMap =  sortMapAnt(moneyMap);
-                        for(Map.Entry<String, Double> lm : halePurListMap){
-                            if(applyMoney > 0){
-                                 applyMoney = subAnt(applyMoney,lm.getValue());
-                                 //被减后的申请金额如果小于等于0，说明已经完成抵消
-                                 if(applyMoney <= 0){
-                                     Purchase purchase = purchaseMapper.selectByPrimaryKey(lm.getKey());
-                                     Double abapplyMoney = applyMoney * -1;
-                                     purchase.setSurloappmoney(abapplyMoney.toString());
-                                     purchaseMapper.updateByPrimaryKey(purchase);
-                                 }else{
-                                     Purchase purchase = purchaseMapper.selectByPrimaryKey(lm.getKey());
-                                     purchase.setSurloappmoney("0");
-                                     purchaseMapper.updateByPrimaryKey(purchase);
-                                 }
-                            }
-                        }
-                    } else {
-                        Double surplusM = Double.valueOf(surLoappmoneyList.get(0).getSurloappmoney());
-                        Double useM = Double.valueOf(loanapplication.getMoneys());
-                        //期望暂借款金额 传入
-                        Double surLoappmLast = subAnt(surplusM, useM);
-                        surLoappmoneyList.get(0).setSurloappmoney(surLoappmLast.toString());
-                        purchaseMapper.updateByPrimaryKey(surLoappmoneyList.get(0));
-                    }
-                }
+//                    if (loanapplication.getPublicradio() != "1") {
+//                        //禅道447 处理可用暂借款金额 ztc
+//                        Map<String, Double> moneyMap = new HashMap<String, Double>();
+//                        List<Purchase> surLoappmoneyList = new ArrayList<>();
+//                        for (String l : pur) {
+//                            Purchase purchase = new Purchase();
+//                            purchase.setPurnumbers(l);
+//                            surLoappmoneyList = purchaseMapper.select(purchase);
+//                            moneyMap.put(surLoappmoneyList.get(0).getPurchase_id(), Double.valueOf(surLoappmoneyList.get(0).getSurloappmoney()));
+//                        }
+//                        if (moneyMap.size() > 1) {
+//                            //暂借款申请金额
+//                            Double applyMoney = Double.valueOf(loanapplication.getMoneys());
+//                            List<Map.Entry<String, Double>> halePurListMap = sortMapAnt(moneyMap);
+//                            for (Map.Entry<String, Double> lm : halePurListMap) {
+//                                if (applyMoney > 0) {
+//                                    applyMoney = subAnt(applyMoney, lm.getValue());
+//                                    //被减后的申请金额如果小于等于0，说明已经完成抵消
+//                                    if (applyMoney <= 0) {
+//                                        Purchase purchase = purchaseMapper.selectByPrimaryKey(lm.getKey());
+//                                        Double abapplyMoney = applyMoney * -1;
+//                                        purchase.setSurloappmoney(abapplyMoney.toString());
+//                                        purchaseMapper.updateByPrimaryKey(purchase);
+//                                    } else {
+//                                        Purchase purchase = purchaseMapper.selectByPrimaryKey(lm.getKey());
+//                                        purchase.setSurloappmoney("0");
+//                                        purchaseMapper.updateByPrimaryKey(purchase);
+//                                    }
+//                                }
+//                            }
+//                        } else {
+//                            Double surplusM = Double.valueOf(surLoappmoneyList.get(0).getSurloappmoney());
+//                            Double useM = Double.valueOf(loanapplication.getMoneys());
+//                            //期望暂借款金额 传入
+//                            Double surLoappmLast = subAnt(surplusM, useM);
+//                            surLoappmoneyList.get(0).setSurloappmoney(surLoappmLast.toString());
+//                            purchaseMapper.updateByPrimaryKey(surLoappmoneyList.get(0));
+//                        }
+//                    }
             }
             //ADD_FJL_0730  start
             else if (loanapplication.getJudgements_name().substring(0, 3).equals("JJF"))//交际费
