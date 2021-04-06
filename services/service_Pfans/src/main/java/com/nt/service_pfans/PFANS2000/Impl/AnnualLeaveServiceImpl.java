@@ -743,8 +743,16 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         int year = 0;
         startCal = startCal.substring(0,10);
         Calendar cal = Calendar.getInstance();
-        String this_year = String.valueOf(cal.get(cal.YEAR));
-        String endCal = this_year + "-04-01";
+//        String this_year = String.valueOf(cal.get(cal.YEAR));
+
+        int this_year = 0;
+        int month1 = cal.get(Calendar.MONTH)+1;
+        if(month1 >= 1 && month1 <= 3) {
+            this_year = cal.get(Calendar.YEAR) - 1;
+        }else {
+            this_year = cal.get(Calendar.YEAR);
+        }
+        String endCal = String.valueOf(this_year) + "-04-01";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date startDate = sdf.parse(Convert.toStr(sdf.format(Convert.toDate(startCal))));
         Date endDate = sdf.parse(endCal);
