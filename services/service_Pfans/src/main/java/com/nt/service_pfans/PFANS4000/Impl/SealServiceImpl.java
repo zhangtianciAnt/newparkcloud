@@ -194,27 +194,28 @@ public class SealServiceImpl implements SealService {
             seal.setAcceptor(tokenModel.getUserId());
 //            总经理代办
             ToDoNotice toDoNotice = new ToDoNotice();
+            //!!DATAID不能加，特殊需求（张总【印章申请】待办不存在时再发待办，存在【印章申请】待办不需要再发）  ztc start
             //update gbb 20210326 代办查询添加dataid条件 start
-            toDoNotice.setDataid(seal.getSealid());
+            //toDoNotice.setDataid(seal.getSealid());
             //update gbb 20210326 代办查询添加dataid条件 end
             toDoNotice.setUrl("/PFANS4001View");
-            toDoNotice.setTitle("【印章申请】有需要您盖印承认得数据");
+            toDoNotice.setTitle("【印章申请】有需要您盖印承认的数据");
             toDoNotice.setStatus("0");
             List<ToDoNotice> todonoticelist = todoNoticeMapper.select(toDoNotice);
             if (todonoticelist.size() == 0) {
                 List<MembersVo> rolelist = roleService.getMembers("5e785fd38f4316308435112d");
                 if (rolelist.size() > 0) {
                     ToDoNotice toDoNotice3 = new ToDoNotice();
-                    toDoNotice3.setTitle("【印章申请】有需要您盖印承认得数据");
+                    toDoNotice3.setTitle("【印章申请】有需要您盖印承认的数据");
                     toDoNotice3.setInitiator(seal.getUserid());
-                    toDoNotice3.setContent("【印章申请】有需要您盖印承认得数据");
+                    toDoNotice3.setContent("【印章申请】有需要您盖印承认的数据");
                     toDoNotice3.setDataid(seal.getSealid());
                     toDoNotice3.setUrl("/PFANS4001View");
                     toDoNotice3.setWorkflowurl("/PFANS4001View");
                     toDoNotice3.preInsert(tokenModel);
                     toDoNotice3.setOwner(rolelist.get(0).getUserid());
                     toDoNoticeService.save(toDoNotice3);
-                }
+                }//!!DATAID不能加，特殊需求（张总待办总不存在时再发待办，存在待办不需要再发）  ztc edn
             } else {
                 ToDoNotice todonotice = new ToDoNotice();
                 BeanUtils.copyProperties(todonoticelist.get(0), todonotice);
