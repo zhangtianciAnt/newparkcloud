@@ -2,11 +2,13 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Assets.Assets;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS1000.Softwaretransfer;
 import com.nt.dao_Pfans.PFANS1000.Notification;
 import com.nt.dao_Pfans.PFANS1000.Vo.SoftwaretransferVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.SoftwaretransferVo2;
 import com.nt.service_Assets.mapper.AssetsMapper;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.SoftwaretransferService;
 import com.nt.service_pfans.PFANS1000.mapper.SoftwaretransferMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NotificationMapper;
@@ -18,11 +20,14 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.nt.utils.MongoObject.CustmizeQuery;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -36,6 +41,8 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
     private NotificationMapper notificationMapper;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private OrgTreeService orgTreeService;
 
 //    @Override
 //    public List<Softwaretransfer> getSoftwaretransfer(Softwaretransfer softwaretransfer) throws Exception {
@@ -80,6 +87,7 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
                 notification.setSoftwaretransferid(ssoftwaretransferid);
                 notification.setRowindex(rowindex);
                 notificationMapper.insertSelective(notification);
+                //PSDCD_PFANS_20210406_BUG_040 ztc 资产转移BUG start
                 if(softwaretransfer.getStatus().equals("4")){
                     Assets assets = new Assets();
                     assets.setBarcode(notification.getManagement());
@@ -87,19 +95,36 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
                     for(Assets ast : assetsList){
                         ast.setOwner(notification.getEafter());
                         ast.setPrincipal(notification.getEafter());
-                        Query query = new Query();
-                        CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                        query.addCriteria(Criteria.where("userinfo.groupid").is(softwaretransfer.getTubegroup_id()));
-                        customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                        if (customerInfo != null) {
-                            ast.setUsedepartment(customerInfo.getUserinfo().getGroupname());
-                        }
+                        String flgid = softwaretransfer.getTubecenter_id();
+                        OrgTree orgs = orgTreeService.get(new OrgTree());
+                        OrgTree currentOrg = getCurrentOrg(orgs, flgid);
+                        ast.setUsedepartment(currentOrg.getCompanyen());
                         assetsMapper.updateByPrimaryKeySelective(ast);
                     }
                 }
             }
         }
     }
+
+
+    private OrgTree getCurrentOrg(OrgTree org, String orgId) throws Exception {
+        if (org.get_id().equals(orgId)) {
+            return org;
+        } else {
+            if (org.getOrgs() != null) {
+                for (OrgTree item : org.getOrgs()) {
+                    OrgTree or = getCurrentOrg(item, orgId);
+                    if (or.get_id().equals(orgId)) {
+                        return or;
+                    }
+                }
+            }
+
+        }
+        return org;
+    }
+
+//PSDCD_PFANS_20210406_BUG_040 ztc 资产转移BUG end
 
     @Override
     public void insert(SoftwaretransferVo softwaretransferVo, TokenModel tokenModel) throws Exception {
