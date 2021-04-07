@@ -33,6 +33,7 @@ public class OrgTreeServiceImpl implements OrgTreeService {
      */
     @Override
     public OrgTree get(OrgTree orgTree) throws Exception {
+        orgTree.setStatus("0");
         Query query = CustmizeQuery(orgTree);
         orgTree = mongoTemplate.findOne(query, OrgTree.class);
         return orgTree;
