@@ -309,6 +309,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                 y = String.valueOf(Integer.valueOf(y) - 1);
             }
 
+
             if(Integer.valueOf(dd) == Integer.valueOf(dictionaryL.get(0).getValue1()) + 1)
             {
                 List<DelegainformationVo> delvoList = new ArrayList<DelegainformationVo>();

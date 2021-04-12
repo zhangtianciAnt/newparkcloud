@@ -64,15 +64,6 @@ public class OrgTreeController {
             orgTree.preInsert(tokenModel);
         }
         orgTree.preUpdate(tokenModel);
-        //新建组织架构(Status为1是不生效)
-        if(orgTree.getType().equals("0")){
-            OrgTree orgTreeold = orgTreeService.getTreeYears(orgTree.getYears(),"1");
-            if(orgTreeold != null){
-                return ApiResult.fail("新组织已存在");
-            }
-            orgTree.setStatus("1");
-            orgTree.setType("1");
-        }
         orgTreeService.save(orgTree);
         return ApiResult.success();
     }
@@ -93,18 +84,5 @@ public class OrgTreeController {
 //        orgTree.setOwners(tokenModel.getOwnerList());
         orgTree.set_id(id);
         return ApiResult.success(orgTreeService.getById(orgTree));
-    }
-
-    /**
-     * @方法名：getTreeYears
-     * @描述：获取历史组织架构
-     * @创建日期：2020/12/30
-     * @作者：GAOBINGBING
-     * @参数：[id, request]
-     * @返回值：com.nt.utils.ApiResult
-     */
-    @RequestMapping(value = "/getTreeYears", method = {RequestMethod.GET})
-    public ApiResult getTreeYears(String Years, String Status, HttpServletRequest request) throws Exception {
-        return ApiResult.success(orgTreeService.getTreeYears(Years,Status));
     }
 }

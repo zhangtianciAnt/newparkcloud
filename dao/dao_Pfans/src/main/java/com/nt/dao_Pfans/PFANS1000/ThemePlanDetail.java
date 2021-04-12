@@ -35,6 +35,12 @@ public class ThemePlanDetail extends BaseModel {
     @Column(name = "YEAR")
     private String year;
 
+    @Column(name = "MONTH")
+    private String month;
+
+    @Column(name = "THEME_ID")
+    private String theme_id;
+
     @Column(name = "THEMENAME")
     private String themename;
 
@@ -56,6 +62,23 @@ public class ThemePlanDetail extends BaseModel {
     @Column(name = "ASSIGNOR")
     private String assignor;
 
+    @Column(name = "PERSONNEL191")
+    private String personnel191;
+
+    @Column(name = "AMOUNT191")
+    private String amount191;
+
+    @Column(name = "PERSONNEL192")
+    private String personnel192;
+
+    @Column(name = "AMOUNT192")
+    private String amount192;
+
+    @Column(name = "PERSONNEL193")
+    private String personnel193;
+
+    @Column(name = "AMOUNT193")
+    private String amount193;
 
     @Column(name = "PERSONNEL4")
     private String personnel4;
@@ -129,69 +152,12 @@ public class ThemePlanDetail extends BaseModel {
     @Column(name = "AMOUNT3")
     private String amount3;
 
+    @Column(name = "TYPE")
+    private String type;
+
     @Column(name = "ROWINDEX")
     private String rowindex;
 
     @Column(name = "ROWID")
     private String rowid;
-
-    @Column(name = "SUPPLIERINFOR_ID")
-    private String supplierinfor_id;
-    @Column(name = "CUSTOMERINFOR_ID")
-    private String customerinfor_id;
-
-    @Column(name = "WPERSONNEL4")
-    private String wpersonnel4;
-    @Column(name = "WPERSONNEL5")
-    private String wpersonnel5;
-    @Column(name = "WPERSONNEL6")
-    private String wpersonnel6;
-    @Column(name = "WPERSONNEL7")
-    private String wpersonnel7;
-    @Column(name = "WPERSONNEL8")
-    private String wpersonnel8;
-    @Column(name = "WPERSONNEL9")
-    private String wpersonnel9;
-    @Column(name = "WPERSONNEL10")
-    private String wpersonnel10;
-    @Column(name = "WPERSONNEL11")
-    private String wpersonnel11;
-    @Column(name = "WPERSONNEL12")
-    private String wpersonnel12;
-    @Column(name = "WPERSONNEL1")
-    private String wpersonnel1;
-    @Column(name = "WPERSONNEL2")
-    private String wpersonnel2;
-    @Column(name = "WPERSONNEL3")
-    private String wpersonnel3;
-    @Column(name = "SUMPERSONNEL1")
-    private String sumpersonnel1;
-    @Column(name = "SUMWPERSONNEL1")
-    private String sumwpersonnel1;
-    @Column(name = "SUMAMOUNT1")
-    private String sumamount1;
-    @Column(name = "SUMPERSONNEL2")
-    private String sumpersonnel2;
-    @Column(name = "SUMWPERSONNEL2")
-    private String sumwpersonnel2;
-    @Column(name = "SUMAMOUNT2")
-    private String sumamount2;
-    @Column(name = "SUMPERSONNEL3")
-    private String sumpersonnel3;
-    @Column(name = "SUMWPERSONNEL3")
-    private String sumwpersonnel3;
-    @Column(name = "SUMAMOUNT3")
-    private String sumamount3;
-    @Column(name = "SUMPERSONNEL4")
-    private String sumpersonnel4;
-    @Column(name = "SUMWPERSONNEL4")
-    private String sumwpersonnel4;
-    @Column(name = "SUMAMOUNT4")
-    private String sumamount4;
-
-    @Column(name = "TYPE")
-    private String type;
-
-    @Column(name = "MONTH")
-    private String month;
 }

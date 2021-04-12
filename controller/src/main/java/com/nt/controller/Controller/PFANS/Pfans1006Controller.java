@@ -188,9 +188,9 @@ public class Pfans1006Controller {
                     wfList2 = sign.startGraphics2D(wfList2);
                 }
                 if (wfList.get(3).getRemark() != null) {
-//                    if (wfList.get(3).getRemark().equals("系统自动跳过")) {
-//                        wfList3 = "";
-//                    } else {
+                    if (wfList.get(3).getRemark().equals("系统自动跳过")) {
+                        wfList3 = "";
+                    } else {
                         query = new Query();
                         query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
                         customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -198,7 +198,7 @@ public class Pfans1006Controller {
                             wfList3 = customerInfo.getUserinfo().getCustomername();
                             wfList3 = sign.startGraphics2D(wfList3);
                         }
-//                    }
+                    }
                 } else {
                     query = new Query();
                     query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
@@ -209,9 +209,9 @@ public class Pfans1006Controller {
                     }
                 }
                 if (wfList.get(4).getRemark() != null) {
-//                    if (wfList.get(4).getRemark().equals("系统自动跳过")) {
-//                        wfList4 = "";
-//                    } else {
+                    if (wfList.get(4).getRemark().equals("系统自动跳过")) {
+                        wfList4 = "";
+                    } else {
                         query = new Query();
                         query.addCriteria(Criteria.where("userid").is(wfList.get(4).getUserId()));
                         customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -219,7 +219,7 @@ public class Pfans1006Controller {
                             wfList4 = customerInfo.getUserinfo().getCustomername();
                             wfList4 = sign.startGraphics2D(wfList4);
                         }
-//                    }
+                    }
                 } else {
                     query = new Query();
                     query.addCriteria(Criteria.where("userid").is(wfList.get(4).getUserId()));

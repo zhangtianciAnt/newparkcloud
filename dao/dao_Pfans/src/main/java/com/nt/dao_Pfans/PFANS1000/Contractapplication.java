@@ -1,6 +1,5 @@
 package com.nt.dao_Pfans.PFANS1000;
 
-import com.nt.utils.Encryption.Encryption;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -109,19 +108,15 @@ public class Contractapplication extends BaseModel {
     @Column(name = "CLAIMDATE")
     private Date claimdate;
 
-    //@Encryption
     @Column(name = "CUSTOJAPANESE")
     private String custojapanese;
 
-    //@Encryption
     @Column(name = "CUSTOENGLISH")
     private String custoenglish;
 
-    //@Encryption
     @Column(name = "CUSTOABBREVIATION")
     private String custoabbreviation;
 
-    //@Encryption
     @Column(name = "CUSTOCHINESE")
     private String custochinese;
 
@@ -131,43 +126,33 @@ public class Contractapplication extends BaseModel {
     @Column(name = "VARTO")
     private String varto;
 
-    //@Encryption
     @Column(name = "PLACEJAPANESE")
     private String placejapanese;
 
-    //@Encryption
     @Column(name = "PLACEENGLISH")
     private String  placeenglish;
 
-    //@Encryption
     @Column(name = "PLACECHINESE")
     private String placechinese;
 
-    //@Encryption
     @Column(name = "RESPONJAPANESE")
     private String responjapanese;
 
-    //@Encryption
     @Column(name = "RESPONERGLISH")
     private String responerglish;
 
-    //@Encryption
     @Column(name = "RESPONPHONE")
     private String responphone;
 
-    //@Encryption
     @Column(name = "RESPONEMAIL")
     private String responemail;
 
-    //@Encryption
     @Column(name = "CONJAPANESE")
     private String conjapanese;
 
-    //@Encryption
     @Column(name = "CONENGLISH")
     private String conenglish;
 
-    //@Encryption
     @Column(name = "CONCHINESE")
     private String conchinese;
 
