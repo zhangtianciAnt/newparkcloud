@@ -890,7 +890,14 @@ public class EvectionServiceImpl implements EvectionService {
         String no = "";
         if (evectionMapper.getInvoiceNo(sdf.format(evectionVo.getEvection().getReimbursementdate())) != null) {
             int count = evectionMapper.getInvoiceNo(sdf.format(evectionVo.getEvection().getReimbursementdate()));
-            no = String.format("%2d", count + 1).replace(" ", "0");
+//       upd-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-start
+            if(count<99) {
+                no = String.format("%2d", count + 1).replace(" ", "0");
+            }
+            else{
+                no = String.format("%3d", count + 1).replace(" ", "0");
+            }
+//           upd-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-end
         } else {
             no = "01";
         }

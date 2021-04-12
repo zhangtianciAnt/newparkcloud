@@ -290,74 +290,71 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         int day = cal.get(Calendar.DATE);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String no = "";
-        if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002002"))) {
-//            upd-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-更改对应变量类型—start
-            String count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "GL");
-//            upd-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-更改对应变量类型—end
+        //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-start
+        if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002002"))&&(publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "GL")) != null) {
+            //        add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-end
+            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "GL");
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-代码回退，添加对应判定-start
+            if(count <99){
+                no = String.format("%2d", count + 1).replace(" ", "0");
+            }
+            else{
+                no = String.format("%3d", count + 1).replace(" ", "0");
+            }
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-代码回退，添加对应判定-end
             String month1 = String.format("%2d", month).replace(" ", "0");
             String day1 = String.format("%2d", day).replace(" ", "0");
-//            add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-start
-            String tempNo = "DL4GL" + year + month1 + day1;
-            if(count == null){
-                count = "00";
-            }else{
-                count = count.replace(tempNo,"");
-            }
-            int numberOfCount =Integer.parseInt(count);
-            if (numberOfCount<99) {
-                no = String.format("%2d", numberOfCount + 1).replace(" ", "0");
-            } else{
-                no = String.format("%3d", numberOfCount + 1).replace(" ", "0");
-            }
-//            add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-end
             invoiceNo = "DL4GL" + year + month1 + day1 + no;
-        } else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002001"))) {
-//            upd-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-更改对应变量类型—start
-            String count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AP");
-//            upd-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-更改对应变量类型—end
+        }
+        //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-start
+        else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002001"))&&(publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AP")) != null) {
+        //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-end
+            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AP");
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-代码回退，添加对应判定-start
+            if(count <99){
+                no = String.format("%2d", count + 1).replace(" ", "0");
+            }
+            else{
+                no = String.format("%3d", count + 1).replace(" ", "0");
+            }
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-代码回退，添加对应判定-end
             String month1 = String.format("%2d", month).replace(" ", "0");
             String day1 = String.format("%2d", day).replace(" ", "0");
-//            add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-start
-            String tempNo = "DL4AP" + year + month1 + day1;
-            if(count == null){
-                count = "00";
-            }else{
-                count = count.replace(tempNo,"");
-            }
-            int numberOfCount =Integer.parseInt(count);
-            if (numberOfCount<99) {
-                no = String.format("%2d", numberOfCount + 1).replace(" ", "0");
-            } else{
-                no = String.format("%3d", numberOfCount + 1).replace(" ", "0");
-            }
-//            add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-end
             invoiceNo = "DL4AP" + year + month1 + day1 + no;
-        } else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002003"))) {
-//            upd-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-更改对应变量类型—start
-            String count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AR");
-//            upd-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-更改对应变量类型—end
+        }
+        //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-start
+        else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002003"))&&(publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AR")) != null) {
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-end
+           int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AR");
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-代码回退，添加对应判定-start
+            if(count <99){
+                no = String.format("%2d", count + 1).replace(" ", "0");
+            }
+            else{
+                no = String.format("%3d", count + 1).replace(" ", "0");
+            }
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-代码回退，添加对应判定-end
             String month1 = String.format("%2d", month).replace(" ", "0");
             String day1 = String.format("%2d", day).replace(" ", "0");
-//            add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-start
-            String tempNo = "DL4AR" + year + month1 + day1;
-            if(count == null){
-                count = "00";
-            }else{
-                count = count.replace(tempNo,"");
-            }
-            int numberOfCount =Integer.parseInt(count);
-            if (numberOfCount<99) {
-                no = String.format("%2d", numberOfCount + 1).replace(" ", "0");
-            } else{
-                no = String.format("%3d", numberOfCount + 1).replace(" ", "0");
-            }
-//            add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-end
             invoiceNo = "DL4AR" + year + month1 + day1 + no;
         } else {
             no = "01";
             String month1 = String.format("%2d", month).replace(" ", "0");
             String day1 = String.format("%2d", day).replace(" ", "0");
-            invoiceNo = "DL4AP" + year + month1 + day1 + no;
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-机制修改，现在为利用SQL截取号码的后两位-start
+            if(publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002001")){
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-机制修改，现在为利用SQL截取号码的后两位-end
+                invoiceNo = "DL4AP" + year + month1 + day1 + no;
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-机制修改，现在为利用SQL截取号码的后两位-start
+            }
+            if(publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002002")){
+               invoiceNo = "DL4GL" + year + month1 + day1 + no;
+            }
+            if(publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002003")){
+               invoiceNo = "DL4AR" + year + month1 + day1 + no;
+            }
+
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-机制修改，现在为利用SQL截取号码的后两位-end
         }
 
 //        String month1 = String.format("%2d", month).replace(" ", "0");
