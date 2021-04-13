@@ -393,23 +393,7 @@ public class AssetsServiceImpl implements AssetsService {
                             continue;
                         }
                     }
-                    //                    upd-lyt-21/4/2-start
-                    // 启用日期 （固定资产&无形资产适用）
-                    if (value != null && !value.isEmpty() && ("固定资产".equals(value.get(0).toString()) || "无形资产".equals(value.get(0).toString()))) {
-                        if (!StringUtils.isEmpty(trim(value.get(11)))) {
-                            String date1 = trim(value.get(11));
-                            SimpleDateFormat sf = new SimpleDateFormat("dd-MM-yyyy");
-                            SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
-                            Date date2 = sf.parse(date1);
-                            assets.setActivitiondate(sf1.parse(sf1.format(date2)));//111
-                            assets.setInparams4(sf1.parse(sf1.format(date2)));
-                        }
-                    } else {
-                        error++;
-                        Result.add("模板第" + lineNo + "行的启用日期没有找到，导入失败");
-                        continue;
-                    }
-                    //                    upd-lyt-21/4/2-end
+
                     //启用日期,在库状态,购入时间,价格,帐面净值,型号,PC管理号,PSDCD_借还情况,PSDCD_带出理由,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_是否逾期,PSDCD_对方单位,PSDCD_责任人,PSDCD_归还确认,备注
                     //String[] gudingCols = "activitiondate,stockstatus,purchasetime,price,realprice,model,pcno,psdcddebitsituation,psdcdbringoutreason,psdcdperiod,psdcdreturndate,psdcdisoverdue,psdcdcounterparty,psdcdresponsible,psdcdreturnconfirmation,remarks".split(",");
 
@@ -418,6 +402,24 @@ public class AssetsServiceImpl implements AssetsService {
                     //add_fjl_0911  添加条码类型 必填 添加启用日期
                     int start = 9;
                     setOrderedValues(start, assets, gudingCols, value);
+                    //                    upd-lyt-21/4/2-start
+                    // 启用日期 （固定资产&无形资产适用）
+                    if (value != null && !value.isEmpty() && ("固定资产".equals(value.get(0).toString()) || "无形资产".equals(value.get(0).toString()))) {
+                        if (!StringUtils.isEmpty(trim(value.get(11)))) {
+                            String date1 = trim(value.get(11));
+                            SimpleDateFormat sf = new SimpleDateFormat("dd-MM-yyyy");
+                            SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
+                            Date date2 = sf.parse(date1);
+
+                            assets.setInparams4(sf1.parse(sf1.format(date2)));
+                            assets.setActivitiondate(sf1.parse(sf1.format(date2)));//111
+                        }
+                    } else {
+                        error++;
+                        Result.add("模板第" + lineNo + "行的启用日期没有找到，导入失败");
+                        continue;
+                    }
+                    //                    upd-lyt-21/4/2-end
 //                    }
                 }
 
