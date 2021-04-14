@@ -51,7 +51,7 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
 
     @Override
     public  List<SoftwaretransferVo2> getSoftwaretransfer(Softwaretransfer softwaretransfer) throws Exception {
-        return softwaretransferMapper.getSoftware(softwaretransfer.getOwners());
+        return softwaretransferMapper.getSoftware(softwaretransfer.getOwners()).stream().sorted(Comparator.comparing(SoftwaretransferVo2::getCreateon).reversed()).collect(Collectors.toList());
     }
 
     @Override
