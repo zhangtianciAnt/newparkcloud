@@ -327,6 +327,12 @@ public class Wages extends BaseModel {
     @Column(name = "COMBIRTHINSURANCE")
     private String combirthinsurance;       // 生育保险
 
+    @Column(name = "SOCIALSECURITY")
+    private String socialsecurity;       // 公司负担社保总计
+
+    @Column(name = "UPDATELIST")
+    private String updatelist;       //修改字段
+
     @Column(name = "COMHEATING")
     private String comheating;              // 暖房费
 
