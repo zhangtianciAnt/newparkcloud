@@ -2601,6 +2601,19 @@ public class GivingServiceImpl implements GivingService {
                 officialSubsidy = Double.parseDouble(diction.getValue2());
             }
         }
+        //region add gbb 20210408 退职人员剩余年休查询 start
+        AnnualLeave an = new AnnualLeave();
+        String Newdate = DateUtil.format(new Date(), "yyyy-MM");
+        //1、2、3月的时年间以
+        if(Newdate.substring(5,7).equals("01") || Newdate.substring(5,7).equals("02") || Newdate.substring(5,7).equals("03")){
+            an.setYears(String.valueOf(Integer.valueOf(Newdate.substring(0,4)) - 1));
+        }
+        else{
+
+            an.setYears(Newdate.substring(0,4));
+        }
+        List<AnnualLeave> thisyearsList = annualLeaveMapper.select(an);
+        //region add gbb 20210408 退职人员剩余年休查询 start
         // 查询退职人员信息（本月退职人员为对象）
         Criteria criteria = Criteria.where("userinfo.resignation_date")
                 .gte(lastMonth.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(lastMonth.getTime())) + "-" + lastMonthLastDay)
@@ -2665,21 +2678,33 @@ public class GivingServiceImpl implements GivingService {
                 }else {
                     year = calendar.get(Calendar.YEAR);
                 }
-                String remaning = "0";
-                //离职剩余年休天数
-                remaning = annualLeaveService.remainingAnnual(customerInfo.getUserid(),String.valueOf(year));
-                BigDecimal b1 = new BigDecimal(Double.parseDouble(thisMonthSalary) / dateBase * 2 * Double.parseDouble(remaning));
-                BigDecimal b2 = new BigDecimal(retire.getGive());
-                double strannualleavegive = b1.add(b2).doubleValue();
+                //region add gbb 20210408 退职人员剩余年休查询 start
                 //4月份计算工资此处无需计算，工资详情中的最终工资会集中体现
                 if(month != 4){
+                    String remaning = "0";
+                    //离职剩余年休天数
+                    remaning = annualLeaveService.remainingAnnual(customerInfo.getUserid(),String.valueOf(year));
+                    //离职总剩余年修
+                    BigDecimal quitCount = new BigDecimal(remaning);
+                    //上年度剩余年修
+                    List<AnnualLeave> userAn = thisyearsList.stream().filter(item -> (item.getUser_id().equals(customerInfo.getUserid()))).collect(Collectors.toList());
+                    if(userAn.size() > 0){
+                        quitCount = new BigDecimal(remaning).add(userAn.get(0).getRemaining_annual_leave_lastyear());
+                    }
+                    //离职年修金额
+                    BigDecimal bigquitCount = new BigDecimal(Double.parseDouble(thisMonthSalary) / dateBase * 2 * Double.parseDouble(quitCount.toString()));
+                    //离职其他金额
+                    BigDecimal bigGive = new BigDecimal(retire.getGive());
+                    //离职总金额
+                    double strannualleavegive = bigquitCount.add(bigGive).doubleValue();
                     ///剩余年休
-                    retire.setAnnualleave(remaning);
+                    retire.setAnnualleave(quitCount.toString());
                     //年休结算
-                    retire.setAnnualleavegive(b1.toString());
+                    retire.setAnnualleavegive(bigquitCount.toString());
                     //给料
                     retire.setGive(df.format(strannualleavegive));
                 }
+                //region add gbb 20210408 退职人员剩余年休查询 end
                 //insert gbb NT_PFANS_20210222_BUG_024 退职人员结算年休  end
                 retires.add(retire);
             }
@@ -2783,6 +2808,11 @@ public class GivingServiceImpl implements GivingService {
 
         //祝礼金申请
         casgiftApplyMapper.updpayment(generationdate.substring(0,7),tokenModel.getUserId());
+        // add gbb 20210416 4月份工资发放之后清空上一年度剩余年休 start
+        if(generationdate.substring(5,7).equals("04")){
+            annualLeaveMapper.updateremaining_annual_leave_lastyear(generationdate.substring(0,4));
+        }
+        // add gbb 20210416 4月份工资发放之后清空上一年度剩余年休 end
     }
 
     /**
