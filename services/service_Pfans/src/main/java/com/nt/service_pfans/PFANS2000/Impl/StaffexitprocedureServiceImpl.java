@@ -350,6 +350,16 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         staffexitprocedureMapper.updateByPrimaryKey(staff);
     }
 
+    @Override
+    public void change2(Staffexitproce staffexitproce, TokenModel tokenModel) throws Exception {
+        Staffexitproce staff = staffexitproceMapper.selectByPrimaryKey(staffexitproce.getStaffexitproce_id());
+        staff.setCenter_id(staffexitproce.getCenter_id());
+        staff.setGroup_id(staffexitproce.getGroup_id());
+        staff.setTeam_id(staffexitproce.getTeam_id());
+        staff.preUpdate(tokenModel);
+        staffexitproceMapper.updateByPrimaryKey(staff);
+    }
+
     //更新
     @Override
     public void update(StaffexitprocedureVo staffexitprocedureVo, TokenModel tokenModel) throws Exception {

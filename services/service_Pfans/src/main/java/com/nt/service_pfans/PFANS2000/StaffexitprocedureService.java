@@ -23,6 +23,7 @@ public interface StaffexitprocedureService {
 
     //数据转结
     void change(Staffexitprocedure Staffexitprocedure, TokenModel tokenModel) throws Exception;
+    void change2(Staffexitproce Staffexitproce, TokenModel tokenModel) throws Exception;
 
     //按id查询
     StaffexitprocedureVo selectById(String staffexitprocedureid) throws Exception;
