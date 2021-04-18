@@ -39,4 +39,6 @@ public interface OrgTreeService {
     OrgTree getCurrentOrg(OrgTree orgTree, String orgId) throws Exception;
     //根据部门id获取当前部门信息
     OrgTreeVo getDepartmentinfo(String departid) throws  Exception;
+
+    OrgTree getOrgInfo(OrgTree org, String compn) throws  Exception;
 }
