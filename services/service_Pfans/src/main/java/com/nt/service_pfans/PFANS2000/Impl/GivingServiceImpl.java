@@ -675,7 +675,7 @@ public class GivingServiceImpl implements GivingService {
      * @return
      * @Method suitAndDaysCalc
      * @Author LXX
-     * @Description 试用正式天数计算
+     * @Description 试用正式天数计算【入职计算和基数表用】
      * @Date 2020/3/18 9:45
      * @Param userinfo
      **/
@@ -890,6 +890,7 @@ public class GivingServiceImpl implements GivingService {
                     if (calEnterDay.getTime().getTime() > calLastOne.getTime().getTime()) {
                         tempStart = calEnterDay.getTime();
                     }
+                    calSuitDate.add(Calendar.DATE, -1);//转正日当天不算使用
                     lastMonthSuitDays = getTrialWorkDaysExceptWeekend(tempStart, calLast.getTime());
                     thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), calSuitDate.getTime());
                 }
@@ -2417,7 +2418,7 @@ public class GivingServiceImpl implements GivingService {
         return inductions;
     }
 
-    // 计算給料和补助--入职用
+    // 计算給料和补助--只用于入职
     private void calculateSalaryAndSubsidy(Induction induction, CustomerInfo customerInfo, String staffStartDate, double trialSubsidy, double officialSubsidy,
                                            double wageDeductionProportion, SimpleDateFormat sf, DecimalFormat df,int intflg) throws Exception {
         // 用户ID
@@ -2692,7 +2693,7 @@ public class GivingServiceImpl implements GivingService {
                         quitCount = new BigDecimal(remaning).add(userAn.get(0).getRemaining_annual_leave_lastyear());
                     }
                     //离职年修金额
-                    BigDecimal bigquitCount = new BigDecimal(Double.parseDouble(thisMonthSalary) / dateBase * 2 * Double.parseDouble(quitCount.toString()));
+                    BigDecimal bigquitCount = new BigDecimal(Double.parseDouble(thisMonthSalary) / dateBase * 2 * Double.parseDouble(quitCount.toString())).setScale(2, RoundingMode.HALF_UP);
                     //离职其他金额
                     BigDecimal bigGive = new BigDecimal(retire.getGive());
                     //离职总金额

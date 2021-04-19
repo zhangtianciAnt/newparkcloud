@@ -60,6 +60,7 @@ public class OtherTwoServiceImpl implements OtherTwoService {
         try {
             OtherTwo two = new OtherTwo();
             two.setGiving_id(Givingid);
+            two.setType("1");//只删除导入的部分
             othertwoMapper.delete(two);
             List<CustomerInfo> customerinfoAll = mongoTemplate.findAll(CustomerInfo.class);
             List<OtherTwo> listVo = new ArrayList<OtherTwo>();
