@@ -40,9 +40,6 @@ public interface UserService {
     // 用户登陆
     JsTokenModel login(UserAccount userAccount, String locale) throws Exception;
 
-    // 单点登录
-    Object activeDirectory(UserAccount userAccount, String locale, String firstTime) throws Exception;
-
     //获取客户信息
     List<CustomerInfo> getCustomerInfo(CustomerInfo customerInfo) throws Exception;
 

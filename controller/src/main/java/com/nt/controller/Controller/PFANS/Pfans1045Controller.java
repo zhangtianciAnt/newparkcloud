@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -254,7 +253,7 @@ public class Pfans1045Controller {
             for (PolicyContract list : policylist) {
                 String starttime = list.getYearss().substring(0, 7);
                 String endtime = list.getYearss().substring(10, 17);
-                //数开<=条结 && 数结>=条开
+                  //数开<=条结 && 数结>=条开
                 //1.数开<=条开  && 数结<=条结
                 //2.数开<=条开  && 数结>=条结
                 //3.数开>=条开  && 数结>=条结

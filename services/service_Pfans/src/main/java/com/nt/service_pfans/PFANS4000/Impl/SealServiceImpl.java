@@ -397,6 +397,7 @@ public class SealServiceImpl implements SealService {
     public List<SealDetail> selectcognition() throws Exception {
         return sealdetailmapper.selectAll();
     }
+
     @Override
     public void insertrecognition(String sealid, TokenModel tokenModel) throws Exception {
         String[] sealidlist = sealid.split(",");
