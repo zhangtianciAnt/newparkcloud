@@ -297,7 +297,7 @@ public class PltabServiceImpl implements PltabService {
 
                 ThemeInfor themeinfor = new ThemeInfor();
                 themeinfor.setThemename(theme);
-                themeinfor.setGroupid(groupid);
+                themeinfor.setCenterid(groupid);
                 themeinfor.setYear(year);
                 List<ThemeInfor> themeinforlist = themeinformapper.select(themeinfor);
                 costcarryforward.setPj(name);
