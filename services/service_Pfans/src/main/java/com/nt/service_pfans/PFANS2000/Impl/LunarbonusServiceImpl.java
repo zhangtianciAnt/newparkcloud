@@ -295,7 +295,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                     if (customerInfo.getUserinfo().getEnddate() != null && customerInfo.getUserinfo().getEnddate().length() > 0) {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
                         Calendar rightNow = Calendar.getInstance();
-                        String enddate = customerInfo.getUserinfo().getEnddate().substring(0, 10);
+                        String enddate = customerInfo.getUserinfo().getEnddate().substring(0, 10).replace("-","/");
                         if (customerInfo.getUserinfo().getEnddate().length() >= 24) {
                             rightNow.setTime(Convert.toDate(enddate));
                             rightNow.add(Calendar.DAY_OF_YEAR, 1);
