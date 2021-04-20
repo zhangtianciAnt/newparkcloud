@@ -83,7 +83,7 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
     public void insert(PersonnelPlan personnelPlan, TokenModel tokenModel) throws LogicalException{
         PersonnelPlan personnel = new PersonnelPlan();
         personnel.setYears(personnelPlan.getYears());
-        personnel.setCenterid(personnelPlan.getGroupid());
+        personnel.setCenterid(personnelPlan.getCenterid());
         personnel.setType(personnelPlan.getType());
         List<PersonnelPlan>  personnelPlanList = personnelplanMapper.select(personnel);
         if(personnelPlanList.size()>0){
