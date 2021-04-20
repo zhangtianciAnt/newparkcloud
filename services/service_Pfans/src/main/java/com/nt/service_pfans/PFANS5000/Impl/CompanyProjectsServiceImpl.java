@@ -107,8 +107,12 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     //pj起案数据结转
     @Override
     public void update1(CompanyProjects companyprojects, TokenModel tokenModel) throws Exception {
-         companyprojects.preUpdate(tokenModel);
-         companyprojectsMapper.updateByPrimaryKeySelective(companyprojects);
+        CompanyProjects comp = companyprojectsMapper.selectByPrimaryKey(companyprojects);
+        comp.setCenter_id(companyprojects.getCenter_id());
+        comp.setGroup_id(companyprojects.getGroup_id());
+        comp.setTeam_id(companyprojects.getTeam_id());
+        comp.preUpdate(tokenModel);
+        companyprojectsMapper.updateByPrimaryKey(comp);
     }
 
     @Override
