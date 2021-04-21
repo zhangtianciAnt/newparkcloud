@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ArrayUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
@@ -16,15 +17,19 @@ import com.nt.service_pfans.PFANS2000.mapper.WagesMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+
+import static com.nt.utils.MongoObject.CustmizeQuery;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -466,17 +471,69 @@ public class PersonalCostServiceImpl implements PersonalCostService {
         return personalCostList;
     }
 
+
+    private OrgTree getCurrentOrg(OrgTree org,String orgId) throws Exception {
+        if (org.get_id().equals(orgId)) {
+            return org;
+        } else {
+            if (org.getOrgs() != null) {
+                for (OrgTree item : org.getOrgs()) {
+                    OrgTree or = getCurrentOrg(item,orgId);
+                    if (or.get_id().equals(orgId)) {
+                        return or;
+                    }
+                }
+            }
+
+        }
+        return org;
+    }
+
     @Override
     public List<PersonalCostBmSum> gettableBm(String yearsantid) throws Exception {
         List<PersonalCostBmSum> pcbslist = new ArrayList<>();
         List<String> groupList = personalCostMapper.getGroupId(yearsantid);
+        OrgTree org = new OrgTree();
+        org.setStatus("0");
+        Query query = CustmizeQuery(org);
+        org = mongoTemplate.findOne(query, OrgTree.class);
+        List<String> decomposeGruop = new ArrayList<>();
+        List<String> removeGroup = new ArrayList<>();
+        for(String cerid : groupList){
+            OrgTree orgTreeProcess = new OrgTree();
+            orgTreeProcess = getCurrentOrg(org,cerid);
+            if(orgTreeProcess.getEncoding().isBlank() && orgTreeProcess.getOrgs().size() > 0){
+                removeGroup.add(orgTreeProcess.get_id());
+                for(OrgTree otre : orgTreeProcess.getOrgs()){
+                    decomposeGruop.add(otre.get_id());
+                }
+            }
+        }
+        for(String remGp : removeGroup){
+            groupList.remove(remGp);
+        }
         for (String gr : groupList) {
             PersonalCostBmSum personalCostBmSum = personalCostMapper.getPersonalCostBmSum(gr, yearsantid);
+            if(personalCostBmSum.getDepartshortBmSum() == null){
+                continue;
+            }
             personalCostBmSum.setExrankBmSum("合计");
             pcbslist.add(personalCostBmSum);
             List<String> groupinRanks = personalCostMapper.getGroupinRanks(gr, yearsantid);
             for (String rank : groupinRanks) {
                 pcbslist.add(personalCostMapper.getPersonalCostSum(gr, rank, yearsantid));
+            }
+        }
+        for (String decGp : decomposeGruop) {
+            PersonalCostBmSum personalCostBmSum = personalCostMapper.getPersonalCostBmSumGs(decGp, yearsantid);
+            if(personalCostBmSum.getDepartshortBmSum() == null ){
+                continue;
+            }
+            personalCostBmSum.setExrankBmSum("合计");
+            pcbslist.add(personalCostBmSum);
+            List<String> groupinRanks = personalCostMapper.getGroupinRanksGp(decGp, yearsantid);
+            for (String rank : groupinRanks) {
+                pcbslist.add(personalCostMapper.getPersonalCostSumGp(decGp, rank, yearsantid));
             }
         }
         return pcbslist;
@@ -763,50 +820,171 @@ public class PersonalCostServiceImpl implements PersonalCostService {
 
     @Override
     public void upPersonalCost(List<PersonalCost> personalCostList, TokenModel tokenModel) throws Exception {
+        List<PersonalCost> changePctList = new ArrayList<>();
+        for(PersonalCost pct : personalCostList){
+            PersonalCost pctFind = new PersonalCost();
+            List<PersonalCost> pctFindList = new ArrayList<>();
+            pctFind.setPersonalcostid(pct.getPersonalcostid());
+            pctFindList = personalCostMapper.select(pctFind);
+            if(pctFindList.get(0).getLtrank() != pct.getLtrank()){
+                changePctList.add(pct);
+            }
+        }
+        changePctWork(changePctList);
         personalCostMapper.updatePersonalCost(personalCostList, tokenModel);
     }
-//
-//    @Override
-//    public void insert(Recruit recruit, TokenModel tokenModel) throws Exception {
-////add-ws-8/4-禅道任务296--
-//        SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
-//        Date date = new Date();
-//        List<Recruit> recruitlist = recruitMapper.selectAll();
-//        String year = sf1.format(date);
-//        int number = 0;
-//        String Numbers = "";
-//        String no = "";
-//        if (recruitlist.size() > 0) {
-//            for (Recruit recr : recruitlist) {
-//                if (recr.getNumbers() != "" && recr.getNumbers() != null) {
-//                    String checknumber = StringUtils.uncapitalize(StringUtils.substring(recr.getNumbers(), 2, 10));
-//                    if (Integer.valueOf(year).equals(Integer.valueOf(checknumber))) {
-//                        number = number + 1;
-//                    }
-//                }
-//
-//            }
-//            if (number <= 8) {
-//                no = "00" + (number + 1);
-//            } else {
-//                no = "0" + (number + 1);
-//            }
-//        } else {
-//            no = "001";
-//        }
-//        Numbers = "ZP" + year + no;
-//        //add-ws-8/4-禅道任务296--
-//        recruit.preInsert(tokenModel);
-//        recruit.setNumbers(Numbers);
-//        recruit.setRecruitid(UUID.randomUUID().toString());
-//        recruitMapper.insert(recruit);
-//    }
-//
-//    @Override
-//    public List<Recruit> getRecruitList(Recruit recruit, HttpServletRequest request) throws Exception {
-//
-//        return recruitMapper.select(recruit);
-//    }
+
+    private void changePctWork(List<PersonalCost> changePctListAnt) throws Exception{
+        /*
+         * 基本给\职责给\月工资\一括补贴\取暖补贴\扩展项补贴(午餐)
+         * 扩展项补贴(交通)\补贴总计\月度奖金月数\月度奖金\年度奖金月数\年度奖金
+         * 工资总额\工会经费\加班费时给\社保公司负担总计\4月-6月人件费\7月-3月人件费\加班小时数
+         * */
+        BigDecimal twelveAnt = new BigDecimal("12");
+        //Rank各种标准
+        List<Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
+        //基本给
+        Map<String, String> basicallMap = new HashMap<>();
+        //职责给
+        Map<String, String> responsibilityMap = new HashMap<>();
+        //一括补贴
+        Map<String, String> allowanceantMap = new HashMap<>();
+        //取暖补贴
+        Map<String, String> qnbtMap = new HashMap<>();
+        //扩展项补贴(午餐)
+        Map<String, String> expandOneMap = new HashMap<>();
+        //扩展项补贴(交通)
+        Map<String, String> expandTwoMap = new HashMap<>();
+        //月度奖金月数
+        Map<String, String> monthlyBonusMonthsMap = new HashMap<>();
+        //年度奖金月数
+        Map<String, String> annualBonusMonthsMap = new HashMap<>();
+        //加班小时数
+        Map<String, String> overtimehourMap = new HashMap<>();
+        //工会比重
+        List<Dictionary> dictionaryUnion = dictionaryService.getForSelect("PR070");
+        BigDecimal unionAnt = new BigDecimal(dictionaryUnion.get(0).getValue1());
+        //加班时给
+        List<Dictionary> dictionaryOver = dictionaryService.getForSelect("PR071");
+        BigDecimal muwokBig = new BigDecimal(dictionaryOver.get(0).getValue1());
+        BigDecimal daowkBig = new BigDecimal(dictionaryOver.get(0).getValue2());
+        BigDecimal basesBig = new BigDecimal(dictionaryOver.get(0).getValue3());
+        for (Dictionary dic : dictionaryRank) {
+            //基本给2
+            basicallMap.put(dic.getCode(), dic.getValue2());
+            //职责给3
+            responsibilityMap.put(dic.getCode(), dic.getValue3());
+            //一括补贴6
+            allowanceantMap.put(dic.getCode(), dic.getValue6());
+            //取暖补贴7
+            qnbtMap.put(dic.getCode(), dic.getValue7());
+            //拓展项1 8
+            expandOneMap.put(dic.getCode(), dic.getValue8());
+            //拓展项2 9
+            expandTwoMap.put(dic.getCode(), dic.getValue9());
+            //奖金计上（月度）4
+            monthlyBonusMonthsMap.put(dic.getCode(), dic.getValue4());
+            //奖金计上（年度）5
+            annualBonusMonthsMap.put(dic.getCode(), dic.getValue5());
+            //加班小时数 10
+            overtimehourMap.put(dic.getCode(), dic.getValue10());
+        }
+
+        for(PersonalCost pcst : changePctListAnt){
+            String perranks = pcst.getLtrank();
+            //基本给
+            String basic = basicallMap.get(perranks);
+            pcst.setBasicallyant(basic);
+            //职责给
+            String respo = responsibilityMap.get(perranks);
+            pcst.setResponsibilityant(respo);
+            //月工资
+            BigDecimal basicBig = new BigDecimal(basic);
+            BigDecimal respoBig = new BigDecimal(respo);
+            String monthlysalaryle = (basicBig.add(respoBig)).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+            pcst.setMonthlysalary(monthlysalaryle);
+            BigDecimal monthlyBig = new BigDecimal(monthlysalaryle);
+            //一括补贴
+            String allce = allowanceantMap.get(perranks);
+            pcst.setAllowanceant(allce);
+            //取暖补贴-旧
+            String qnuanOld = pcst.getQnbt();
+            BigDecimal qnOldBig = new BigDecimal(qnuanOld);
+            //取暖补贴-新
+            String qnuan = qnbtMap.get(perranks);
+            pcst.setQnbt(qnuan);
+            //扩展项补贴(午餐)
+            String otone = expandOneMap.get(perranks);
+            pcst.setOtherantone(otone);
+            //扩展项补贴(交通)
+            String ottwo = expandTwoMap.get(perranks);
+            pcst.setOtheranttwo(ottwo);
+            //补贴总计
+            BigDecimal allceBig = new BigDecimal(allce);
+            BigDecimal qnuanBig = new BigDecimal(qnuan);
+            BigDecimal otoneBig = new BigDecimal(otone);
+            BigDecimal ottwoBig = new BigDecimal(ottwo);
+            BigDecimal oncldBig = new BigDecimal(pcst.getOnlychild());
+            String tosub = ((((allceBig.add(qnuanBig)).add(otoneBig).add(ottwoBig)).add(oncldBig))).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+            pcst.setTotalsubsidies(tosub);
+            BigDecimal tosubBig = new BigDecimal(tosub);
+            //月度奖金月数
+            String monbom = monthlyBonusMonthsMap.get(perranks);
+            pcst.setMonthlybonusmonths(monbom);
+            //月度奖金
+            BigDecimal monbomBig = new BigDecimal(monbom);
+            String monbos = (monbomBig.multiply(basicBig)).divide(twelveAnt,2, RoundingMode.HALF_UP).toString();
+            pcst.setMonthlybonus(monbos);
+            BigDecimal monbosBig = new BigDecimal(monbos);
+            //年度奖金月数
+            String yearbom = annualBonusMonthsMap.get(perranks);
+            pcst.setAnnualbonusmonths(yearbom);
+            //年度奖金
+            BigDecimal yearbomBig = new BigDecimal(yearbom);
+            String yearbos = (yearbomBig.multiply(basicBig)).divide(twelveAnt,2, RoundingMode.HALF_UP).toString();
+            pcst.setAnnualbonus(yearbos);
+            BigDecimal yearbosBig = new BigDecimal(yearbos);
+            //工资总额 = 月度工资+补贴总计+月度奖金+年度奖金
+            BigDecimal totmonOldBig = new BigDecimal(pcst.getTotalwages());
+            String totmon =  monthlyBig.add(tosubBig).add(monbosBig).add(yearbosBig).toString();
+            pcst.setTotalwages(totmon);
+            BigDecimal totmonBig = new BigDecimal(totmon);
+            //独生子女费
+            BigDecimal olycidBig = new BigDecimal(pcst.getOnlychild());
+            //工会经费 = (工资总额-取暖补贴-独生子女费)*0.02
+            BigDecimal unfdsOldBig = new BigDecimal(pcst.getTradeunionfunds());
+            String unfds = ((totmonBig.subtract(qnuanBig)).subtract(olycidBig)).divide(unionAnt,2,RoundingMode.HALF_UP).toString();
+            pcst.setTradeunionfunds(unfds);
+            BigDecimal unfdsNewBig = new BigDecimal(unfds);
+            //加班费时给
+            String ovtme = ((basicBig.divide(muwokBig, 2, BigDecimal.ROUND_HALF_UP)).divide(daowkBig, 2, BigDecimal.ROUND_HALF_UP)).multiply(basesBig).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+            pcst.setOvertimepay(ovtme);
+            //加班小时数
+            String ovhor = overtimehourMap.get(perranks);
+            pcst.setOvertimehour(ovhor);
+            //社保公司负担总计4=社保企业+取暖补贴+大病险
+            String sbgsFOld = pcst.getSbgsaj();
+            BigDecimal sbgsFOldBig = new BigDecimal(sbgsFOld);
+            String sbgsFNew = sbgsFOldBig.subtract(qnOldBig).add(qnuanBig).toString();
+            pcst.setSbgsaj(sbgsFNew);
+            BigDecimal sbgsFNewBig = new BigDecimal(sbgsFNew);
+            //4月-6月 工资总额+社保公司负担总计+公积金公司负担总计+工会经费。
+            BigDecimal aptojuBig = new BigDecimal(pcst.getAptoju());
+            String aptijuNew = aptojuBig.subtract(totmonOldBig).subtract(unfdsOldBig).subtract(sbgsFOldBig).add(totmonBig).add(unfdsNewBig).add(sbgsFNewBig).toString();
+            pcst.setAptoju(aptijuNew);
+            //社保公司负担总计7=社保企业+取暖补贴+大病险
+            String sbgsSOld = pcst.getSbgsjm();
+            BigDecimal sbgsSOldBig = new BigDecimal(sbgsSOld);
+            String sbgsSNew = sbgsSOldBig.subtract(qnOldBig).add(qnuanBig).toString();
+            pcst.setSbgsaj(sbgsSNew);
+            BigDecimal sbgsSNewBig = new BigDecimal(sbgsSNew);
+            //7月-3月 工资总额+社保公司负担总计+公积金公司负担总计+工会经费。
+            BigDecimal jutomaBig = new BigDecimal(pcst.getJutoma());
+            String jutomaNew = jutomaBig.subtract(totmonOldBig).subtract(unfdsOldBig).subtract(sbgsSOldBig).add(totmonBig).add(unfdsNewBig).add(sbgsSNewBig).toString();
+            pcst.setJutoma(jutomaNew);
+            personalCostMapper.updateByPrimaryKey(pcst);
+        }
+    }
 
     //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-start
     @Override
