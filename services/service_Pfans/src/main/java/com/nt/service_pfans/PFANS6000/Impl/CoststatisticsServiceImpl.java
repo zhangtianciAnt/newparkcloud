@@ -529,23 +529,24 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     @Override
     public List<Map<String, String>>  getcostMonth(String dates,String role,String groupid,TokenModel tokenModel) throws Exception {
         List<String> groupIdList = new ArrayList<String>();
-        Query query = CustmizeQuery(new OrgTree());
-        // update gbb 20210325 查询组织架构添加【有效】条件 start
-        query.addCriteria(Criteria.where("status").is("0"));
-        // update gbb 20210325 查询组织架构添加【有效】条件 end
-        OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
-        List<OrgTree>  orgTrees =  orgTree.getOrgs();
-        //外驻担当看全部
-        if(role.equals("4")){
-            for (OrgTree org: orgTrees ) {
-                for (OrgTree org1: org.getOrgs() ) {
-                    groupIdList.add(org1.get_id());
-                }
-            }
-        }
-        else{
-            groupIdList.add(groupid);
-        }
+//        Query query = CustmizeQuery(new OrgTree());
+//        // update gbb 20210325 查询组织架构添加【有效】条件 start
+//        query.addCriteria(Criteria.where("status").is("0"));
+//        // update gbb 20210325 查询组织架构添加【有效】条件 end
+//        OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
+//        List<OrgTree>  orgTrees =  orgTree.getOrgs();
+//        //外驻担当看全部
+//        if(role.equals("4")){
+//            for (OrgTree org: orgTrees ) {
+//                for (OrgTree org1: org.getOrgs() ) {
+//                    groupIdList.add(org1.get_id());
+//                }
+//            }
+//        }
+//        else{
+//            groupIdList.add(groupid);
+//        }
+        groupIdList = Arrays.asList(groupid.split(","));
         //月份
         String months = String.valueOf(Integer.valueOf(dates.substring(dates.length() - 2,7)));
         //工数

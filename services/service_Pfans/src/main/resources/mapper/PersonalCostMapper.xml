@@ -61,7 +61,7 @@
     <select id="getPersonalCost"  resultType="com.nt.dao_Pfans.PFANS2000.PersonalCost">
         SELECT yearsantid,username,aptoju,jutoma,exrank,ltrank,overtimepay,overtimehour,newpersonaldate FROM personalcost
         WHERE yearsantid IN(SELECT yearsantid FROM personalcostyears WHERE YEARS= #{years})
-        AND GROUPID = #{groupid}
+        AND CENTERID = #{groupid}
         ORDER BY EXRANK DESC
     </select>
 <!--    add-lyt-21/1/29-禅道任务648-start-->

@@ -473,7 +473,7 @@ public class IncomeExpenditureServiceImpl implements IncomeExpenditureService {
 
                         PersonnelPlan personnelplan = new PersonnelPlan();
                         personnelplan.setYears(String.valueOf(year));
-                        personnelplan.setGroupid(org1.get_id());
+                        personnelplan.setCenterid(org1.get_id());
                         List<PersonnelPlan> personnelplanlist = personnelplanmapper.select(personnelplan);
                         BigDecimal personnel1 = new BigDecimal("0");
                         BigDecimal personnel2 = new BigDecimal("0");
@@ -2966,7 +2966,7 @@ public class IncomeExpenditureServiceImpl implements IncomeExpenditureService {
 
                         PersonnelPlan personnelplan = new PersonnelPlan();
                         personnelplan.setYears(String.valueOf(year));
-                        personnelplan.setGroupid(org1.get_id());
+                        personnelplan.setCenterid(org1.get_id());
                         List<PersonnelPlan> personnelplanlist = personnelplanmapper.select(personnelplan);
                         BigDecimal personnel1 = new BigDecimal("0");
                         BigDecimal personnel2 = new BigDecimal("0");
@@ -5073,7 +5073,7 @@ public class IncomeExpenditureServiceImpl implements IncomeExpenditureService {
 
                         PersonnelPlan personnelplan = new PersonnelPlan();
                         personnelplan.setYears(String.valueOf(year));
-                        personnelplan.setGroupid(org1.get_id());
+                        personnelplan.setCenterid(org1.get_id());
                         List<PersonnelPlan> personnelplanlist = personnelplanmapper.select(personnelplan);
                         BigDecimal personnel1 = new BigDecimal("0");
                         BigDecimal personnel2 = new BigDecimal("0");
