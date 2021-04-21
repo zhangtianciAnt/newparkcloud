@@ -58,22 +58,24 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
 
     @Override
     public List<ToDoNotice> getDataList(String status,String createon,String userid) throws Exception {
-        String STATUS = status;
-        List<ToDoNotice> todonotice = todoNoticeMapper.getDataList(STATUS,userid);
+        List<ToDoNotice> todonotice = todoNoticeMapper.getDataList(status,userid);
         if (createon != null && createon != "") {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             Date created = formatter.parse(createon);
             if (todonotice.size() > 0) {
-                todonotice = todonotice.stream().filter(item -> item.getCreateon().after(created)).sorted(Comparator.comparing(ToDoNotice::getCreateon).reversed()).collect(Collectors.toList());
-            } else if (todonotice.size() == 0) {
+                if(status.equals("0")){
+                    todonotice = todonotice.stream().filter(item -> item.getCreateon().after(created)).sorted(Comparator.comparing(ToDoNotice::getCreateon).reversed()).collect(Collectors.toList());
+                }else{
+                    todonotice = todonotice.stream().filter(item -> item.getCreateon().after(created)).sorted(Comparator.comparing(ToDoNotice::getModifyon).reversed()).collect(Collectors.toList());
+                }
+            } else {
                 return null;
             }
             return todonotice;
         } else {
             if (todonotice.size() > 0) {
                 todonotice = todonotice.stream().sorted(Comparator.comparing(ToDoNotice::getCreateon).reversed()).collect(Collectors.toList());
-            }
-            else if (todonotice.size()==0) {
+            } else {
                 return null;
             }
             return todonotice;
@@ -152,6 +154,7 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
         ToDoNotice toDoNotice = new ToDoNotice();
         toDoNotice.preUpdate(tokenModel);
         toDoNotice.setStatus(AuthConstants.TODO_STATUS_DONE);
+        toDoNotice.setModifyon(new Date());
         toDoNotice.setNoticeid(todonoticeid);
         todoNoticeMapper.updateByPrimaryKeySelective(toDoNotice);
     }

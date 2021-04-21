@@ -53,31 +53,31 @@ public class ThemeInforServiceImpl implements ThemeInforService {
 
     @Override
     public void insert(ThemeInfor themeinfor, TokenModel tokenModel) throws Exception {
-        ThemeInfor infor = new ThemeInfor();
-        infor.setThemename(themeinfor.getThemename());
-        List<ThemeInfor> themeinforlist = themeinformapper.select(infor);
-        if (themeinforlist.size() > 0) {
-            throw new LogicalException("theme名称已存在，请勿重复添加");
-        } else {
+//        ThemeInfor infor = new ThemeInfor();
+//        infor.setThemename(themeinfor.getThemename());
+//        List<ThemeInfor> themeinforlist = themeinformapper.select(infor);
+//        if (themeinforlist.size() > 0) {
+//            throw new LogicalException("theme名称已存在，请勿重复添加");
+//        } else {
             themeinfor.preInsert(tokenModel);
             themeinfor.setThemeinfor_id(UUID.randomUUID().toString());
             themeinformapper.insert(themeinfor);
-        }
+//        }
     }
 
     @Override
     public void upd(ThemeInfor themeinfor, TokenModel tokenModel) throws Exception {
-        ThemeInfor infor = new ThemeInfor();
-        String themeinfor_id = themeinfor.getThemeinfor_id();
-        infor.setThemename(themeinfor.getThemename());
-        List<ThemeInfor> themeinforlist = themeinformapper.select(infor);
-        themeinforlist = themeinforlist.stream().filter(item -> (!item.getThemeinfor_id().equals(themeinfor_id))).collect(Collectors.toList());
-        if (themeinforlist.size() > 0) {
-            throw new LogicalException("theme名称已存在，请勿重复添加");
-        } else {
+//        ThemeInfor infor = new ThemeInfor();
+//        String themeinfor_id = themeinfor.getThemeinfor_id();
+//        infor.setThemename(themeinfor.getThemename());
+//        List<ThemeInfor> themeinforlist = themeinformapper.select(infor);
+//        themeinforlist = themeinforlist.stream().filter(item -> (!item.getThemeinfor_id().equals(themeinfor_id))).collect(Collectors.toList());
+//        if (themeinforlist.size() > 0) {
+//            throw new LogicalException("theme名称已存在，请勿重复添加");
+//        } else {
             themeinfor.preUpdate(tokenModel);
             themeinformapper.updateByPrimaryKey(themeinfor);
-        }
+//        }
     }
 
     @Override

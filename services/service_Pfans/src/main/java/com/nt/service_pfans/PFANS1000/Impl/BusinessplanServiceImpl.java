@@ -263,14 +263,14 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                                 map.put("companyen", companyen);
                                 lists.add(map);
                             }
-                            Businessplan business = new Businessplan();
-                            BeanUtils.copyProperties(businessplanlist.get(0), business);
-                            businessplanMapper.delete(business);
+//                            Businessplan business = new Businessplan();
+//                            BeanUtils.copyProperties(businessplanlist.get(0), business);
+//                            businessplanMapper.delete(business);
                             Businessplan business1 = new Businessplan();
                             BeanUtils.copyProperties(businessplanlist.get(0), business1);
-                            business1.preInsert(tokenModel);
+                            business1.preUpdate(tokenModel);
                             business1.setAssets_lodyear(JSONArray.toJSONString(lists));
-                            businessplanMapper.insert(business1);
+                            businessplanMapper.updateByPrimaryKey(business1);
                         } else if (radio.equals("2")) {
                             JSONArray jsonArray1 = JSONArray.parseArray(businessplanlist.get(0).getEquipment_lodyear());
                             for (Object ob : jsonArray1) {
@@ -357,14 +357,15 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                                 map.put("companyen", companyen);
                                 lists1.add(map);
                             }
-                            Businessplan business = new Businessplan();
-                            BeanUtils.copyProperties(businessplanlist.get(0), business);
-                            businessplanMapper.delete(business);
+//                            Businessplan business = new Businessplan();
+//                            BeanUtils.copyProperties(businessplanlist.get(0), business);
+//                            businessplanMapper.delete(business);
                             Businessplan business1 = new Businessplan();
                             BeanUtils.copyProperties(businessplanlist.get(0), business1);
-                            business1.preInsert(tokenModel);
+//                            business1.preInsert(tokenModel);
+                            business1.preUpdate(tokenModel);
                             business1.setEquipment_lodyear(JSONArray.toJSONString(lists1));
-                            businessplanMapper.insert(business1);
+                            businessplanMapper.updateByPrimaryKey(business1);
                         }
                         accesscount = accesscount + 1;
                     }
@@ -394,7 +395,10 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 orgtreevo.set_id(org1.get_id());
                 orgtreevo.setCompanyen(org1.getCompanyen());
                 orgtreevo.setRedirict(org1.getRedirict());
-                orgtreevo.setEncoding(org1.getEncoding().substring(0, 2));
+                if(org1.getEncoding()!=null && !org1.getEncoding().equals(""))
+                {
+                    orgtreevo.setEncoding(org1.getEncoding().substring(0, 2));
+                }
                 orgtreevo.setMoney4("0");
                 orgtreevo.setMoney5("0");
                 orgtreevo.setMoney6("0");
@@ -455,7 +459,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
 
         for (BusinessGroupA2Vo vo2 : getgroup) {
             PersonnelPlan personnelplan = new PersonnelPlan();
-            personnelplan.setGroupid(vo2.getGroupname());
+            personnelplan.setCenterid(vo2.getGroupname());
             personnelplan.setYears(year);
             List<PersonnelPlan> personnelplanlist = personnelplanMapper.select(personnelplan);
             if (personnelplanlist.size() > 0) {
@@ -514,7 +518,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             for (String str : conditionKeys) {
                 PersonnelPlan personnelplan = new PersonnelPlan();
                 BusinessGroupA2Vo businessgroupa2 = new BusinessGroupA2Vo();
-                personnelplan.setGroupid(str);
+                personnelplan.setCenterid(str);
                 personnelplan.setYears(year);
                 if (type.equals("2") || type.equals("3")) {
                     personnelplan.setType(1);
@@ -987,7 +991,9 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             Convert(pl, "code");
         }
         PersonnelPlan personnelPlan = new PersonnelPlan();
-        personnelPlan.setGroupid(groupid);
+        personnelPlan.setCenterid(groupid);
+        personnelPlan.setYears(year);
+        personnelPlan.setType(0);
         List<PersonnelPlan> personnelPlanList = personnelplanMapper.select(personnelPlan);
         //List<PersonPlanTable> personPlanTables = businessplanMapper.selectPersonTable(groupid);
         List<PersonPlanTable> personPlanTables = new ArrayList<>();
@@ -1032,10 +1038,10 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             personPlanTable.setOvertimehour(phscAvg.toString());
             personPlanTables.add(personPlanTable);
         }
-        //升序
-        personPlanTables = personPlanTables.stream().sorted(Comparator.comparing(PersonPlanTable::getCode)).collect(Collectors.toList());
+        //降序
+        personPlanTables = personPlanTables.stream().sorted(Comparator.comparing(PersonPlanTable::getCode).reversed()).collect(Collectors.toList());
         personnelPlan.setYears(year);
-        personnelPlan.setGroupid(groupid);
+        personnelPlan.setCenterid(groupid);
         List<PersonnelPlan> personnelPlans = personnelplanMapper.select(personnelPlan);
         if (personnelPlans.size() > 0) {
             personnelPlan = personnelPlans.get(0);
