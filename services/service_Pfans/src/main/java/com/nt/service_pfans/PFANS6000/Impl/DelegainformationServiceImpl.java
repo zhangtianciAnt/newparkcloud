@@ -176,23 +176,23 @@ public class DelegainformationServiceImpl implements DeleginformationService {
     //public void updateDeleginformation(List<Delegainformation> delegainformationList, TokenModel tokenModel) throws Exception {
     public void updateDeleginformation(DelegainformationtaxVo taxVo, TokenModel tokenModel) throws Exception {
         List<Delegainformation> delegainformationList = taxVo.getDelegainformationList();
-        List<Delegainformationtax> taxList = taxVo.getDelegainformationtaxList();
-        if(taxList.size() > 0){
-            Delegainformationtax tax = taxList.get(0);
-            Delegainformationtax taxup = new Delegainformationtax();
-            taxup.setYear(tax.getYear());
-            taxup.setGroup_id(tax.getGroup_id());
-            List<Delegainformationtax> taxlistup = delegainformationtaxMapper.select(taxup);
-            if(taxlistup.size() > 0){
-                tax.preUpdate(tokenModel);
-                delegainformationtaxMapper.updateByPrimaryKey(tax);
-            }
-            else{
-                tax.preInsert(tokenModel);
-                tax.setDelegainformationtax_id(UUID.randomUUID().toString());
-                delegainformationtaxMapper.insert(tax);
-            }
-        }
+//        List<Delegainformationtax> taxList = taxVo.getDelegainformationtaxList();
+//        if(taxList.size() > 0){
+//            Delegainformationtax tax = taxList.get(0);
+//            Delegainformationtax taxup = new Delegainformationtax();
+//            taxup.setYear(tax.getYear());
+//            taxup.setGroup_id(tax.getGroup_id());
+//            List<Delegainformationtax> taxlistup = delegainformationtaxMapper.select(taxup);
+//            if(taxlistup.size() > 0){
+//                tax.preUpdate(tokenModel);
+//                delegainformationtaxMapper.updateByPrimaryKey(tax);
+//            }
+//            else{
+//                tax.preInsert(tokenModel);
+//                tax.setDelegainformationtax_id(UUID.randomUUID().toString());
+//                delegainformationtaxMapper.insert(tax);
+//            }
+//        }
         //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
         String sDate = DateUtil.format(new Date(), "MM");
         String sDateyy = DateUtil.format(new Date(), "yyyy");
