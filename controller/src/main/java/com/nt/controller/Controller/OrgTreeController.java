@@ -118,4 +118,17 @@ public class OrgTreeController {
         return ApiResult.success();
     }
 
+    /**
+     * @方法名：get
+     * @描述：获取所有组织机构树形结构
+     * @创建日期：2021/04/21
+     * @作者：GAOBINGBING
+     * @参数：
+     * @返回值：java.util.List<com.nt.dao_Org.OrgTree>
+     */
+    @RequestMapping(value = "/getOrgAll", method = {RequestMethod.GET})
+    public ApiResult getOrgAll(HttpServletRequest request) throws Exception {
+        return ApiResult.success(orgTreeService.getOrgAll());
+    }
+
 }
