@@ -114,7 +114,7 @@ public class LogManagementServiceImpl implements LogManagementService {
 
     public String selectEcodeById(String id) throws Exception
     {
-        String ecode = null;
+        String ecode = id;
         OrgTree orgs = orgTreeService.get(new OrgTree());
         //副总
         for (OrgTree orgfu : orgs.getOrgs()) {
