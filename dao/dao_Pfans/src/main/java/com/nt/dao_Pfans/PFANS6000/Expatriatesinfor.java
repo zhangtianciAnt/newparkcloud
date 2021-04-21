@@ -267,4 +267,10 @@ public class Expatriatesinfor extends BaseModel {
     @Column(name = "ACCOUNTNAME")
     private String accountname;
 
+    /**
+     * 更衣柜号
+     */
+    @Column(name = "LOCKERNUMBER")
+    private String lockernumber;
+
 }
