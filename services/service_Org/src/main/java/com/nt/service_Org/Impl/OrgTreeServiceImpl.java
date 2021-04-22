@@ -152,26 +152,6 @@ public class OrgTreeServiceImpl implements OrgTreeService {
      */
     @Override
     public List<OrgTree> getOrgAll() throws Exception {
-        List<OrgTree> orgTreeAll = new ArrayList<>();
-        List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
-        for(OrgTree org :orgTreeList){
-            orgTreeAll.add(org);
-            if (org.getOrgs() != null) {
-                for (OrgTree org1 : org.getOrgs()) {
-                    orgTreeAll.add(org1);
-                    if (org1.getOrgs() != null) {
-                        for (OrgTree org2 : org1.getOrgs()) {
-                            orgTreeAll.add(org2);
-                            if (org2.getOrgs() != null) {
-                                for (OrgTree org3 : org2.getOrgs()) {
-                                    orgTreeAll.add(org3);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return orgTreeAll;
+        return mongoTemplate.findAll(OrgTree.class);
     }
 }
