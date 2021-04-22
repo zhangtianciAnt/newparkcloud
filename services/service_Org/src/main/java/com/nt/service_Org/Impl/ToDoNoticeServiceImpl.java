@@ -21,10 +21,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
@@ -60,8 +58,7 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
 
     @Override
     public List<ToDoNotice> getDataList(String status,String userid) throws Exception {
-        String STATUS = status;
-        List<ToDoNotice> todonotice = todoNoticeMapper.getDataList(STATUS,userid);
+        List<ToDoNotice> todonotice = todoNoticeMapper.getDataList(status,userid);
         if (todonotice.size() > 0) {
             todonotice = todonotice.stream().sorted(Comparator.comparing(ToDoNotice::getCreateon).reversed()).collect(Collectors.toList());
         }
@@ -143,6 +140,7 @@ public class ToDoNoticeServiceImpl implements ToDoNoticeService {
         ToDoNotice toDoNotice = new ToDoNotice();
         toDoNotice.preUpdate(tokenModel);
         toDoNotice.setStatus(AuthConstants.TODO_STATUS_DONE);
+        toDoNotice.setModifyon(new Date());
         toDoNotice.setNoticeid(todonoticeid);
         todoNoticeMapper.updateByPrimaryKeySelective(toDoNotice);
     }

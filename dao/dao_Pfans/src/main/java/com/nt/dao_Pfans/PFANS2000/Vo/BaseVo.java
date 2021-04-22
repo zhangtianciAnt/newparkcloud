@@ -249,6 +249,12 @@ public class BaseVo {
     private String combirthinsurance;
 
 
+    private String socialsecurity;
+
+
+    private String updatelist;
+
+
     private String comheating;
 
 

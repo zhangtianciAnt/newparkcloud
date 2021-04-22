@@ -141,4 +141,17 @@ public class OrgTreeServiceImpl implements OrgTreeService {
         orgTree1.setStatus("0");
         mongoTemplate.save(orgTree1);
     }
+
+    /**
+     * @方法名：get
+     * @描述：获取所有组织机构树形结构
+     * @创建日期：2021/04/21
+     * @作者：GAOBINGBING
+     * @参数：
+     * @返回值：java.util.List<com.nt.dao_Org.OrgTree>
+     */
+    @Override
+    public List<OrgTree> getOrgAll() throws Exception {
+        return mongoTemplate.findAll(OrgTree.class);
+    }
 }

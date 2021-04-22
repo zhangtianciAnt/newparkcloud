@@ -32,4 +32,6 @@ public interface OrgTreeService {
     //update gbb 20210308  禅道任务708  end
 
     void updateStatus(String Years) throws Exception;
+    // 获取所有组织机构树形结构
+    List<OrgTree> getOrgAll() throws Exception;
 }

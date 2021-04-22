@@ -230,9 +230,10 @@
         @SYBXGRFDHS := convert( @SHIYEJS * DIC_SYBXGRFDHS, decimal(10,2) ) AS COMUNEMPLOYMENTINSURANCE,#失业保险
         @GSBXHS := convert( @GONGSHANGJS * DIC_GSBXHS, decimal(10,2)) AS COMINJURYINSURANCE,#工伤保险
         @SYBXHS := convert( @SHENGYUJS * DIC_SYBXHS, decimal(10,2)) AS COMBIRTHINSURANCE,#生育保险
+        @SOCIALSECURITY := convert( ( @YLBXHS + @YILIAOBXHS + @SYBXGRFDHS + @GSBXHS + @SYBXHS ), decimal(10,2)) AS SOCIALSECURITY,#社保总计
         @NFF := ( IF ( ( @REGISTERED &lt;=> '1' AND @YANGLAOJS != 0 ), convert(DIC_DLHXNFF,decimal(10,2)), round(0,2) ) ) AS COMHEATING,#暖房费
         @ZFGJJ := convert( @ACCUMULATION * DIC_GJJHSFD, decimal(10,2)) AS COMACCUMULATIONFUND,#住房公积金
-        @SUMHS := convert( ( @YLBXHS + @YILIAOBXHS + @SYBXGRFDHS + @GSBXHS + @SYBXHS + @NFF + @ZFGJJ ), decimal(10,2)) AS TOTAL,#总计
+        @SUMHS := convert( ( @SOCIALSECURITY + @NFF + @ZFGJJ ), decimal(10,2)) AS TOTAL,#总计
         @GHJFJS := convert(@XJ1 + @AMOUNT,decimal(10,2)) AS LABOURUNIONBASE,#工会经费基数gbb base.THISMONTHBASIC + base.THISMONTHDUTY + @AMOUNT
         @GHJF := convert( @GHJFJS * 0.02, decimal(10,2)) AS LABOURUNIONFUNDS,#工会经费
         @GZFZFDZJ := convert( ( @GZZE + @OTHERFOUR_TOTAL + @OTHERFIVE_TOTAL + @SUMHS + @GHJF ), decimal(10,2)) AS COMTOTALWAGES,#工资总额(纳税+免税)+福祉+公司負担+工会経費总计

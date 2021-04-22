@@ -143,7 +143,7 @@ public class PurchaseServiceImpl implements PurchaseService {
                     toDoNotice.setUrl("/PFANS3005FormView");
                     toDoNotice.setWorkflowurl("/PFANS3005View");
                     toDoNotice.preInsert(tokenModel);
-                    toDoNotice.setOwner(rolelist.get(0).getUserid());
+                    toDoNotice.setOwner(rolelist.get(i).getUserid());
                     toDoNoticeService.save(toDoNotice);
                 }
             }
