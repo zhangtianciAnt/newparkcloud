@@ -39,7 +39,7 @@ public class AssetinformationServiceImpl implements AssetinformationService {
 
     @Override
     public List<Assetinformation> getAssetinformation(Assetinformation assetinformation)  throws Exception{
-        return assetinformationMapper.select(assetinformation);
+       return assetinformationMapper.select(assetinformation).stream().sorted(Comparator.comparing(Assetinformation::getCreateon).reversed()).collect(Collectors.toList());
     }
 
     @Override

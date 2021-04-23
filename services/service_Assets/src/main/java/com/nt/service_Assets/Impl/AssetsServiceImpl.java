@@ -336,6 +336,7 @@ public class AssetsServiceImpl implements AssetsService {
                         CustomerInfo customerInfo = this.getCustomerInfoPer(value.get(5).toString());
                         if (customerInfo != null) {
                             assets.setPrincipal(customerInfo.getUserid());
+                            assets.setOwner(customerInfo.getUserid());
                         }
                         if (customerInfo == null) {
                             error = error + 1;
@@ -462,6 +463,7 @@ public class AssetsServiceImpl implements AssetsService {
                         CustomerInfo customerInfo = this.getCustomerInfoPer(value.get(5).toString());
                         if (customerInfo != null) {
                             assets.setPrincipal(customerInfo.getUserid());
+                            assets.setOwner(customerInfo.getUserid());
                         }
                         if (customerInfo == null) {
                             error = error + 1;
@@ -548,6 +550,7 @@ public class AssetsServiceImpl implements AssetsService {
                         CustomerInfo customerInfo = this.getCustomerInfoname(value.get(3).toString());
                         if (customerInfo != null) {
                             assets.setPrincipal(customerInfo.getUserid());
+                            assets.setOwner(customerInfo.getUserid());
                         }
                         if (customerInfo == null) {
                             error = error + 1;
