@@ -48,7 +48,7 @@ public class SendEmailServicesImpl implements SendEmailServices {
                 @Override
                 public PasswordAuthentication getPasswordAuthentication() {
                     //填写自己的163邮箱的登录帐号和授权密码，授权密码的获取，在后面会进行讲解。
-                    return new PasswordAuthentication("bachfirebrigade@163.com","ADOSDBRZTJGJMGNJ");
+                    return new PasswordAuthentication("bachfirebrigade@163.com","FHWDTKTPXSUXEPYB");
                 }
             };
             Session mailSession = Session.getInstance(properties, authenticator);
