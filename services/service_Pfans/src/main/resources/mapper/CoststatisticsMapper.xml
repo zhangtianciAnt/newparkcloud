@@ -117,8 +117,10 @@
 	<select id="selectBygroupid" resultType="com.nt.dao_Pfans.PFANS6000.Coststatistics">
 		select c.*
 		from coststatistics as c
+		where 1=1
+		and c.years = #{year}
 		<if test="groupid!=null and groupid !=''">
-			where c.GROUP_ID = #{groupid}
+			and  c.GROUP_ID = #{groupid}
 		</if>
 	</select>
 

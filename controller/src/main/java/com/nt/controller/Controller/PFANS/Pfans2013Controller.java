@@ -41,7 +41,7 @@ public class Pfans2013Controller {
         Calendar cal = Calendar.getInstance();
         String this_year = String.valueOf(cal.get(cal.YEAR));
         //add ccm 20201223 年度和年区分  年度
-        String month = String.valueOf(cal.get(cal.MONTH));
+        String month = String.valueOf(cal.get(cal.MONTH) + 1);
         if(Integer.valueOf(month) < 4)
         {
             this_year = String.valueOf(Integer.valueOf(this_year)-1);

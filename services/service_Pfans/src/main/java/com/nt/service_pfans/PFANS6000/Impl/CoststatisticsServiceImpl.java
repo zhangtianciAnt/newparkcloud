@@ -99,15 +99,22 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 
     @Override
     public List<Coststatistics> getCostListBygroupid(String groupid) throws Exception {
-
-        return coststatisticsMapper.selectBygroupid(groupid);
+        Calendar calendar = Calendar.getInstance();
+        int year = 0;
+        int month = calendar.get(Calendar.MONTH)+1;
+        if(month >= 1 && month <= 3) {
+            year = calendar.get(Calendar.YEAR) - 1;
+        }else {
+            year = calendar.get(Calendar.YEAR);
+        }
+        return coststatisticsMapper.selectBygroupid(groupid,String.valueOf(year));
     }
 
     @Override
     public Integer insertCoststatistics(String groupid,Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
         Calendar calendar = Calendar.getInstance();
         int year = 0;
-        int month = calendar.get(Calendar.MONTH);
+        int month = calendar.get(Calendar.MONTH)+1;
         if(month >= 1 && month <= 3) {
             year = calendar.get(Calendar.YEAR) - 1;
         }else {
@@ -138,7 +145,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 //        variousfunds.setOwner(tokenModel.getUserId());
         Calendar calendar = Calendar.getInstance();
         int year = 0;
-        int month = calendar.get(Calendar.MONTH);
+        int month = calendar.get(Calendar.MONTH)+1;
         if(month >= 1 && month <= 3) {
             year = calendar.get(Calendar.YEAR) - 1;
         }else {
@@ -256,7 +263,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         // 获取所有人的单价设定
         Calendar now = Calendar.getInstance();
         int year = 0;
-        int month = now.get(Calendar.MONTH);
+        int month = now.get(Calendar.MONTH)+1;
         if(month >= 1 && month <= 3) {
             year = now.get(Calendar.YEAR) - 1;
         }else {

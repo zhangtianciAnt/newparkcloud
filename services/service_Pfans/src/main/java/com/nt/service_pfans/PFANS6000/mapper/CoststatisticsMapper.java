@@ -11,7 +11,7 @@ import java.util.Map;
 public interface CoststatisticsMapper extends MyMapper<Coststatistics> {
 
     List<Coststatistics> getExpatriatesinfor(@Param("year") int year,@Param("groupid") String groupid);
-    List<Coststatistics> selectBygroupid(@Param("groupid") String groupid);
+    List<Coststatistics> selectBygroupid(@Param("groupid") String groupid,@Param("year") String year);
     List<Coststatistics> getCoststatisticsBygroupid(@Param("year") int year,@Param("groupid") String groupid);
     int insertAll(List<Coststatistics> allCostList);
     //gbb add 0804 月度赏与列表

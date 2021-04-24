@@ -276,7 +276,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         Calendar now = Calendar.getInstance();
         int month = now.get(Calendar.MONTH) + 1;
 
-        if (month >= 1 && month <= 4) {
+        if (month >= 1 && month <= 3) {
             String yearL = String.valueOf(now.get(Calendar.YEAR) - 1);
             String year = String.valueOf(now.get(Calendar.YEAR));
             arr[0] = yearL;
