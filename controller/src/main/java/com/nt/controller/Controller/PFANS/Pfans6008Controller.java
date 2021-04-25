@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS6000.Coststatistics;
 import com.nt.dao_Pfans.PFANS6000.CoststatisticsVo;
@@ -78,6 +79,10 @@ public class Pfans6008Controller {
     //gbb add 0804 月度赏与列表
     @RequestMapping(value = "/getcostMonthList", method = {RequestMethod.GET})
     public ApiResult getcostMonthList(String dates,String role,String groupid,HttpServletRequest request) throws Exception {
+        if(StringUtils.isNullOrEmpty(groupid))
+        {
+            groupid = "1";
+        }
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(coststatisticsService.getcostMonthList(dates,role,groupid,tokenModel));
     }
