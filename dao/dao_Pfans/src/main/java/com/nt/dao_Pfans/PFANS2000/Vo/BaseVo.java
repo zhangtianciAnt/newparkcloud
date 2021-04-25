@@ -292,6 +292,8 @@ public class BaseVo {
 
     private String thisbasic;
 
+    private String basethismonthbasic;
+
     private String thismonthduty;
 
     private String rnbasesalary;
