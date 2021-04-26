@@ -1114,7 +1114,7 @@ public class GivingServiceImpl implements GivingService {
     }
 
 
-    @Scheduled(cron = "0 0 1 10 * ?")//系统服务--每月10号凌晨1点开始自动计算当月工资
+    //@Scheduled(cron = "0 0 1 10 * ?")//系统服务--每月10号凌晨1点开始自动计算当月工资【康san确认无用】
     protected void autoCreateGiving() throws Exception {
         insert("1", null);
     }
@@ -2602,19 +2602,6 @@ public class GivingServiceImpl implements GivingService {
                 officialSubsidy = Double.parseDouble(diction.getValue2());
             }
         }
-        //region add gbb 20210408 退职人员剩余年休查询 start
-        AnnualLeave an = new AnnualLeave();
-        String Newdate = DateUtil.format(new Date(), "yyyy-MM");
-        //1、2、3月的时年间以
-        if(Newdate.substring(5,7).equals("01") || Newdate.substring(5,7).equals("02") || Newdate.substring(5,7).equals("03")){
-            an.setYears(String.valueOf(Integer.valueOf(Newdate.substring(0,4)) - 1));
-        }
-        else{
-
-            an.setYears(Newdate.substring(0,4));
-        }
-        List<AnnualLeave> thisyearsList = annualLeaveMapper.select(an);
-        //region add gbb 20210408 退职人员剩余年休查询 start
         // 查询退职人员信息（本月退职人员为对象）
         Criteria criteria = Criteria.where("userinfo.resignation_date")
                 .gte(lastMonth.get(Calendar.YEAR) + "-" + getMouth(sfChina.format(lastMonth.getTime())) + "-" + lastMonthLastDay)
@@ -2679,27 +2666,26 @@ public class GivingServiceImpl implements GivingService {
                 }else {
                     year = calendar.get(Calendar.YEAR);
                 }
-                //region add gbb 20210408 退职人员剩余年休查询 start
                 //4月份计算工资此处无需计算，工资详情中的最终工资会集中体现
                 if(month != 4){
                     String remaning = "0";
                     //离职剩余年休天数
                     remaning = annualLeaveService.remainingAnnual(customerInfo.getUserid(),String.valueOf(year));
-                    //离职总剩余年修
-                    BigDecimal quitCount = new BigDecimal(remaning);
-                    //上年度剩余年修
-                    List<AnnualLeave> userAn = thisyearsList.stream().filter(item -> (item.getUser_id().equals(customerInfo.getUserid()))).collect(Collectors.toList());
-                    if(userAn.size() > 0){
-                        quitCount = new BigDecimal(remaning).add(userAn.get(0).getRemaining_annual_leave_lastyear());
-                    }
+//                    //离职总剩余年修
+//                    BigDecimal quitCount = new BigDecimal(remaning);
+//                    //上年度剩余年修
+//                    List<AnnualLeave> userAn = thisyearsList.stream().filter(item -> (item.getUser_id().equals(customerInfo.getUserid()))).collect(Collectors.toList());
+//                    if(userAn.size() > 0){
+//                        quitCount = new BigDecimal(remaning).add(userAn.get(0).getRemaining_annual_leave_lastyear());
+//                    }
                     //离职年修金额
-                    BigDecimal bigquitCount = new BigDecimal(Double.parseDouble(thisMonthSalary) / dateBase * 2 * Double.parseDouble(quitCount.toString())).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal bigquitCount = new BigDecimal(Double.parseDouble(thisMonthSalary) / dateBase * 2 * Double.parseDouble(remaning)).setScale(2, RoundingMode.HALF_UP);
                     //离职其他金额
                     BigDecimal bigGive = new BigDecimal(retire.getGive());
                     //离职总金额
                     double strannualleavegive = bigquitCount.add(bigGive).doubleValue();
                     ///剩余年休
-                    retire.setAnnualleave(quitCount.toString());
+                    retire.setAnnualleave(bigquitCount.toString());
                     //年休结算
                     retire.setAnnualleavegive(bigquitCount.toString());
                     //给料
