@@ -34,4 +34,6 @@ public interface OrgTreeService {
     void updateStatus(String Years) throws Exception;
     // 获取所有组织机构树形结构
     List<OrgTree> getOrgAll() throws Exception;
+    // 根据ID获取组织机构树形结构
+    OrgTree getCurrentOrg(OrgTree orgTree, String orgId) throws Exception;
 }
