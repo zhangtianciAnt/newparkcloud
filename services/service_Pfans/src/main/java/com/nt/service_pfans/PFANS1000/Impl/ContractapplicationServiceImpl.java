@@ -1085,7 +1085,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         Contractapplication co = new Contractapplication();
                         co.setCareeryear(citation.getCareeryear());
                         co.setContracttype(citation.getContracttype());
-                        co.setGroup_id(citation.getGroup_id());
+                        //每年更换组织，groupid会改变，只能用预算编码去检索 ztc start
+                        //co.setGroup_id(citation.getGroup_id());
+                        co.setOrgnumber(citation.getOrgnumber());
+                        //每年更换组织，groupid会改变，只能用预算编码去检索 ztc end
                         co.setType(citation.getType());
                         if (citation.getType().equals("0")) {
                             //取引先会社
