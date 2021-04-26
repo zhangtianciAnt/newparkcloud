@@ -154,4 +154,32 @@ public class OrgTreeServiceImpl implements OrgTreeService {
     public List<OrgTree> getOrgAll() throws Exception {
         return mongoTemplate.findAll(OrgTree.class);
     }
+    /**
+     * @方法名：get
+     * @描述：根据ID获取组织机构树形结构
+     * @创建日期：2021/04/23
+     * @作者：GAOBINGBING
+     * @参数：
+     * @返回值：OrgTree
+     */
+    @Override
+    public OrgTree getCurrentOrg(OrgTree org, String orgId) throws Exception {
+        OrgTree returnorg = new OrgTree();
+        if (org.get_id().equals(orgId)) {
+            return org;
+        } else {
+            if (org.getOrgs() != null) {
+                for (OrgTree item : org.getOrgs()) {
+                    returnorg = getCurrentOrg(item, orgId);
+                    if(returnorg.get_id() != null){
+                        if (returnorg.get_id().equals(orgId)) {
+                            return returnorg;
+                        }
+                    }
+                }
+            }
+
+        }
+        return new OrgTree();
+    }
 }
