@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS1000.Employed;
 import com.nt.dao_Pfans.PFANS1000.Moneyavg;
@@ -110,14 +111,34 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
         }
 
         List<Moneyavg> newmoneyavgList = JSON.parseArray(personnelPlan.getNewentry(), Moneyavg.class);
-        for(Moneyavg newmavg : newmoneyavgList){
-            perNum ++;
-            BigDecimal newsummerMoney = newmavg.getSummerplanpc() == null? new BigDecimal(0.0) : new BigDecimal(newmavg.getSummerplanpc());
-            BigDecimal newwinterMoney = newmavg.getSummerplanpc() == null? new BigDecimal(0.0) : new BigDecimal(newmavg.getSummerplanpc());
-            moneyavgSum = moneyavgSum.add(newsummerMoney.add(newwinterMoney));
+        if(newmoneyavgList!=null)
+        {
+            for(Moneyavg newmavg : newmoneyavgList){
+                perNum ++;
+                if(newmavg.getSummerplanpc() != null){
+                    BigDecimal newsummerMoney = new BigDecimal(newmavg.getSummerplanpc());
+                    BigDecimal newwinterMoney = new BigDecimal(newmavg.getSummerplanpc());
+                    moneyavgSum = moneyavgSum.add(newsummerMoney.add(newwinterMoney));
+                }
+                else
+                {
+                    BigDecimal unitprice = new BigDecimal(newmavg.getUnitprice());
+                    moneyavgSum = moneyavgSum.add(unitprice);
+                }
+
+            }
         }
+
         BigDecimal perNumBig = new BigDecimal(String.valueOf(perNum));
-        moneyavgSum = moneyavgSum.divide(perNumBig,2, BigDecimal.ROUND_HALF_UP);
+        if(personnelPlan.getType()==0)
+        {
+            moneyavgSum = moneyavgSum.divide(perNumBig.multiply(new BigDecimal(2)),2, BigDecimal.ROUND_HALF_UP);
+        }
+        else if(personnelPlan.getType()==1)
+        {
+            moneyavgSum = moneyavgSum.divide((perNumBig),2, BigDecimal.ROUND_HALF_UP);
+        }
+
         personnelPlan.setMoneyavg(moneyavgSum.toString());
         personnelplanMapper.insert(personnelPlan);
     }
