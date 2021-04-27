@@ -769,6 +769,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             model.add("业务影响");
             model.add("対策");
             model.add("备注");
+            model.add("更衣柜号");
             List<Object> key = list.get(0);
 //           上传模板与标准模板 校验
 
@@ -1142,6 +1143,9 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                             if (value.size() > 27) {
                                 expatriatesinfor.setRemarks(Convert.toStr(value.get(27)));
                             }
+                            if (value.size() > 28) {
+                                expatriatesinfor.setLockernumber(Convert.toStr(value.get(28)));
+                            }
                         } else {
                             throw new LogicalException("第" + i + "行 卡号 不能为空，请确认。");
                         }
@@ -1511,6 +1515,9 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                             break;
                                         case 27:
                                             expatriatesinforList.get(0).setRemarks(Convert.toStr(value.get(27)));
+                                            break;
+                                        case 28:
+                                            expatriatesinforList.get(0).setLockernumber(Convert.toStr(value.get(28)));
                                             break;
                                     }
                                 }
