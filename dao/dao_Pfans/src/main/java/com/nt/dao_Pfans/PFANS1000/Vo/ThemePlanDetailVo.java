@@ -29,6 +29,9 @@ public class ThemePlanDetailVo {
 
     private String year;
 
+    private String month;
+
+    private String theme_id;
 
     private String themename;
 
@@ -43,6 +46,18 @@ public class ThemePlanDetailVo {
     private String currencytype;
 
     private String assignor;
+
+    private String personnel191;
+
+    private String amount191;
+
+    private String personnel192;
+
+    private String amount192;
+
+    private String personnel193;
+
+    private String amount193;
 
     private String personnel4;
 
@@ -92,6 +107,10 @@ public class ThemePlanDetailVo {
 
     private String amount3;
 
+    private String type;
+
+    private String plantype;
+
     private String plancount;
 
     private String rowindex;
@@ -99,72 +118,6 @@ public class ThemePlanDetailVo {
     private String rowid;
 
     private String status;
-
-    private String type;
-
-    private String customerinfor_id;
-
-    private String supplierinfor_id;
-
-    private String month;
-
-    private String wpersonnel4;
-
-    private String wpersonnel5;
-
-    private String wpersonnel6;
-
-    private String wpersonnel7;
-
-    private String wpersonnel8;
-
-    private String wpersonnel9;
-
-    private String wpersonnel10;
-
-    private String wpersonnel11;
-
-    private String wpersonnel12;
-
-    private String wpersonnel1;
-
-    private String wpersonnel2;
-
-    private String wpersonnel3;
-
-    private String sumpersonnel1;
-
-    private String sumwpersonnel1;
-
-    private String sumamount1;
-
-    private String sumpersonnel2;
-
-    private String sumwpersonnel2;
-
-    private String sumamount2;
-
-    private String sumpersonnel3;
-
-    private String sumwpersonnel3;
-
-    private String sumamount3;
-
-    private String sumpersonnel4;
-
-    private String sumwpersonnel4;
-
-    private String sumamount4;
-
-    private String otherone;
-
-
-
-    private String othertwo;
-
-
-
-    private String otherthree;
 
     /**
      * theme plan detail list

@@ -5,6 +5,8 @@ import com.nt.dao_Org.Log;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserAccountVo;
 import com.nt.dao_Org.Vo.UserVo;
+import com.nt.utils.ApiResult;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
 
@@ -38,9 +40,6 @@ public interface UserService {
     // 用户登陆
     JsTokenModel login(UserAccount userAccount, String locale) throws Exception;
 
-    // 单点登录
-    Object activeDirectory(UserAccount userAccount, String locale, String firstTime) throws Exception;
-
     //获取客户信息
     List<CustomerInfo> getCustomerInfo(CustomerInfo customerInfo) throws Exception;
 
@@ -56,7 +55,7 @@ public interface UserService {
     // 根据orgid获取用户及用户信息列表
     List<CustomerInfo> getAccountCustomer(String orgid, String orgtype,TokenModel tokenModel) throws Exception;
 
-    List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype,TokenModel tokenModel) throws Exception;
+    List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype,String virtual,TokenModel tokenModel) throws Exception;
     //add-ws-9/12-财务人员编码处理
     List<CustomerInfo> getAccountCustomer3(String orgid, String orgtype,TokenModel tokenModel) throws Exception;
     //add-ws-9/12-财务人员编码处理

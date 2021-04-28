@@ -49,7 +49,7 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private AnnualLeaveService annualLeaveService;
+     private AnnualLeaveService annualLeaveService;
 
     @Autowired
     private TokenService tokenService;
@@ -106,10 +106,6 @@ public class UserController {
             if (userAccount == null) {
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
             }
-
-            //域登录
-            //userService.activeDirectory(userAccount,RequestUtils.CurrentLocale(request),"0");
-
             JsTokenModel tokenModel = userService.login(userAccount,RequestUtils.CurrentLocale(request));
 
             var log = new Log();
@@ -128,6 +124,7 @@ public class UserController {
         } catch (LogicalException ex) {
             return ApiResult.fail(ex.getMessage());
         }
+
     }
 
     //获取当前用户信息
@@ -203,6 +200,8 @@ public class UserController {
             annualLeaveService.insertannualLeave(info);
             id = info.getUserid();
         }
+
+
         return ApiResult.success(id);
     }
 
@@ -245,13 +244,13 @@ public class UserController {
      * @描述：根据orgid获取用户账号及用户信息
      * @创建日期：2018/12/06
      * @作者：ZHANGYING
-     * @参数：[orgid, orgtype, request]
+     * @参数：[orgid, orgtype,virtual, request]
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/getAccountCustomer2", method = {RequestMethod.GET})
-    public ApiResult getAccountCustomer2(String orgid, String orgtype, HttpServletRequest request) throws Exception {
+    public ApiResult getAccountCustomer2(String orgid, String orgtype, String virtual,HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(userService.getAccountCustomer2(orgid, orgtype,tokenModel));
+        return ApiResult.success(userService.getAccountCustomer2(orgid, orgtype,virtual,tokenModel));
     }
 
     //add-ws-9/12-财务人员编码处理

@@ -19,7 +19,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -65,7 +64,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         for (String l : loa) {
             lo = loanapplicationMapper.selectByPrimaryKey(l);
             if (lo != null && !loaList.contains(lo)) {
-                if (lo.getStatus().equals("4")) {
+                if(lo.getStatus().equals("4"))
+                {
                     loaList.add(lo);
                 }
             }
@@ -78,13 +78,13 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
             LoanApplication loanapplication = new LoanApplication();
             if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getGroupid())) {
                 loanapplication.setGroup_id(customerInfo.getUserinfo().getGroupid());
-            } else if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getCenterid())) {
+            }else  if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getCenterid())) {
                 loanapplication.setCenter_id(customerInfo.getUserinfo().getCenterid());
             }
             loanapplication.setPublicradio("1");
             loanapplication.setStatus("4");
             List<LoanApplication> LoanApplicationlist = loanapplicationMapper.select(loanapplication);
-            for (LoanApplication loan : LoanApplicationlist) {
+            for(LoanApplication loan :LoanApplicationlist){
                 loaList.add(loan);
             }
         }
@@ -100,7 +100,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         for (String l : loa) {
             lo = loanapplicationMapper.selectByPrimaryKey(l);
             if (lo != null && !loaList.contains(lo)) {
-                if (lo.getStatus().equals("4")) {
+                if(lo.getStatus().equals("4"))
+                {
                     loaList.add(lo);
                 }
             }
@@ -360,45 +361,6 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         purchaseMapper.updateByPrimaryKey(purchaseList.get(0));
                     }
                 }
-                if (loanapplication.getPublicradio() != "1") {
-                    //禅道447 处理可用暂借款金额 ztc
-                    Map<String, Double> moneyMap = new HashMap<String, Double>();
-                    List<Purchase> surLoappmoneyList = new ArrayList<>();
-                    for (String l : pur) {
-                        Purchase purchase = new Purchase();
-                        purchase.setPurnumbers(l);
-                        surLoappmoneyList = purchaseMapper.select(purchase);
-                        moneyMap.put(surLoappmoneyList.get(0).getPurchase_id(), Double.valueOf(surLoappmoneyList.get(0).getSurloappmoney()));
-                    }
-                    if (moneyMap.size() > 1) {
-                        //暂借款申请金额
-                        Double applyMoney = Double.valueOf(loanapplication.getMoneys());
-                        List<Map.Entry<String, Double>> halePurListMap =  sortMapAnt(moneyMap);
-                        for(Map.Entry<String, Double> lm : halePurListMap){
-                            if(applyMoney > 0){
-                                 applyMoney = subAnt(applyMoney,lm.getValue());
-                                 //被减后的申请金额如果小于等于0，说明已经完成抵消
-                                 if(applyMoney <= 0){
-                                     Purchase purchase = purchaseMapper.selectByPrimaryKey(lm.getKey());
-                                     Double abapplyMoney = applyMoney * -1;
-                                     purchase.setSurloappmoney(abapplyMoney.toString());
-                                     purchaseMapper.updateByPrimaryKey(purchase);
-                                 }else{
-                                     Purchase purchase = purchaseMapper.selectByPrimaryKey(lm.getKey());
-                                     purchase.setSurloappmoney("0");
-                                     purchaseMapper.updateByPrimaryKey(purchase);
-                                 }
-                            }
-                        }
-                    } else {
-                        Double surplusM = Double.valueOf(surLoappmoneyList.get(0).getSurloappmoney());
-                        Double useM = Double.valueOf(loanapplication.getMoneys());
-                        //期望暂借款金额 传入
-                        Double surLoappmLast = subAnt(surplusM, useM);
-                        surLoappmoneyList.get(0).setSurloappmoney(surLoappmLast.toString());
-                        purchaseMapper.updateByPrimaryKey(surLoappmoneyList.get(0));
-                    }
-                }
             }
             //ADD_FJL_0730  start
             else if (loanapplication.getJudgements_name().substring(0, 3).equals("JJF"))//交际费
@@ -550,35 +512,6 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 }
             }
         }
-    }
-
-    /**
-     * 描述：将决裁剩余可用金额（暂借款，公共费用）升序排列
-     * 并根据使用金额消耗选择单的可用金额
-     * <p>
-     * ztc
-     */
-    public static List<Map.Entry<String, Double>> sortMapAnt(Map<String, Double> waitListMap) {
-        //升序排列
-        List<Map.Entry<String, Double>> paresList = new ArrayList<Map.Entry<String, Double>>(waitListMap.entrySet());
-        Comparator<Map.Entry<String,Double>>comparator = new Comparator<Map.Entry<String,Double>>() {
-            @Override
-            public int compare(Map.Entry<String,Double> o1, Map.Entry<String,Double> o2) {
-                return o1.getValue().compareTo(o2.getValue());
-            }
-        };
-        Collections.sort(paresList,comparator);
-        return paresList;
-
-    }
-
-    /**
-     * 精确减法 ztc
-     */
-    public static double subAnt(double val1, double val2) {
-        BigDecimal surMouney1 = BigDecimal.valueOf(val1);
-        BigDecimal surMouney2 = BigDecimal.valueOf(val2);
-        return surMouney1.subtract(surMouney2).doubleValue();
     }
 
     public Map<String, String> getworkfolwPurchaseData(LoanApplication loanapplication) throws Exception {

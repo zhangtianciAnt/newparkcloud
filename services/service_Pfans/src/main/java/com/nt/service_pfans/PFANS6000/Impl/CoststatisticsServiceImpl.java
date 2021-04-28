@@ -481,42 +481,47 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     @Override
     public List<Coststatistics>  getcostMonthList(String dates,String role,String groupid,TokenModel tokenModel) throws Exception {
         List<String> groupIdList = new ArrayList<String>();
-        Query query = CustmizeQuery(new OrgTree());
-        // update gbb 20210325 查询组织架构添加【有效】条件 start
-        query.addCriteria(Criteria.where("status").is("0"));
-        // update gbb 20210325 查询组织架构添加【有效】条件 end
-        OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
-        List<OrgTree>  orgTrees =  orgTree.getOrgs();
         String[] groupArray = null;
         if(StringUtils.isNotBlank(groupid))
         {
-           groupArray = groupid.split(",");
-        }
-        if(role.equals("2")){
-            for (OrgTree org: orgTrees ) {
-                for(String group :groupArray)
-                {
-                    if(org.get_id().equals(group)){
-                        for (OrgTree org1: org.getOrgs() ) {
-                            groupIdList.add(org1.get_id());
-                        }
-                    }
-                }
-            }
-        }
-        else if(role.equals("4")){
-            for (OrgTree org: orgTrees ) {
-                for (OrgTree org1: org.getOrgs() ) {
-                    groupIdList.add(org1.get_id());
-                }
-            }
-        }
-        else{
+            groupArray = groupid.split(",");
             for(String group :groupArray)
             {
                 groupIdList.add(group);
             }
         }
+//        Query query = CustmizeQuery(new OrgTree());
+//        // update gbb 20210325 查询组织架构添加【有效】条件 start
+//        query.addCriteria(Criteria.where("status").is("0"));
+//        // update gbb 20210325 查询组织架构添加【有效】条件 end
+//        OrgTree orgTree = mongoTemplate.findOne(query, OrgTree.class);
+//        List<OrgTree>  orgTrees =  orgTree.getOrgs();
+
+//        if(role.equals("2")){
+//            for (OrgTree org: orgTrees ) {
+//                for(String group :groupArray)
+//                {
+//                    if(org.get_id().equals(group)){
+//                        for (OrgTree org1: org.getOrgs() ) {
+//                            groupIdList.add(org1.get_id());
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        else if(role.equals("4")){
+//            for (OrgTree org: orgTrees ) {
+//                for (OrgTree org1: org.getOrgs() ) {
+//                    groupIdList.add(org1.get_id());
+//                }
+//            }
+//        }
+//        else{
+//            for(String group :groupArray)
+//            {
+//                groupIdList.add(group);
+//            }
+//        }
         List<Coststatistics> costMonthList = coststatisticsMapper.getcostMonthList(dates,groupIdList);
         return costMonthList;
     }
@@ -704,6 +709,17 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         }
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         for(int x=0;x<dataList.size();x++ ){
+//            if(!String.valueOf(dataList.get(x).get("bpcostcount")).equals("0.0")){
+//                if(!String.valueOf(dataList.get(x).get("bpcostcount")).equals("0")){
+//                    Map<String,String> map = dataList.get(x);
+//                    list.add(map);
+//                }
+//            }
+//            if(!String.valueOf(dataList.get(x).get("ex1usercount0")).equals("")
+//                    || !String.valueOf(dataList.get(x).get("ex2usercount0")).equals("")){
+//                Map<String,String> map = dataList.get(x);
+//                list.add(map);
+//            }
             if(!String.valueOf(dataList.get(x).get("bpcostcount")).equals("0.0")){
                 if(!String.valueOf(dataList.get(x).get("bpcostcount")).equals("0")){
                     Map<String,String> map = dataList.get(x);

@@ -179,7 +179,11 @@ public class DelegainformationServiceImpl implements DeleginformationService {
         List<Delegainformationtax> taxList = taxVo.getDelegainformationtaxList();
         if(taxList.size() > 0){
             Delegainformationtax tax = taxList.get(0);
-            if(!tax.getDelegainformationtax_id().equals("")){
+            Delegainformationtax taxup = new Delegainformationtax();
+            taxup.setYear(tax.getYear());
+            taxup.setGroup_id(tax.getGroup_id());
+            List<Delegainformationtax> taxlistup = delegainformationtaxMapper.select(taxup);
+            if(taxlistup.size() > 0){
                 tax.preUpdate(tokenModel);
                 delegainformationtaxMapper.updateByPrimaryKey(tax);
             }
@@ -238,11 +242,11 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                 del.setGroup_id(delegainformation.getGroup_id());
                 del.setAccount(delegainformation.getAccount());
                 //add ccm 1224 添加年度条件 fr
-                del.setYear(sDateyy);
-                if(Integer.valueOf(sDate) < 4)
-                {
-                    del.setYear(String.valueOf(Integer.valueOf(sDateyy) - 1));
-                }
+                del.setYear(delegainformation.getYear());
+//                if(Integer.valueOf(sDate) < 4)
+//                {
+//                    del.setYear(String.valueOf(Integer.valueOf(sDateyy) - 1));
+//                }
                 //add ccm 1224 添加年度条件 to
                 List<Delegainformation> tion = delegainformationMapper.select(del);
                 if(tion.size() > 0){
@@ -308,6 +312,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
             {
                 y = String.valueOf(Integer.valueOf(y) - 1);
             }
+
 
             if(Integer.valueOf(dd) == Integer.valueOf(dictionaryL.get(0).getValue1()) + 1)
             {

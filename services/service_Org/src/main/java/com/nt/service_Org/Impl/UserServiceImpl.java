@@ -9,7 +9,6 @@ import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.*;
 import com.nt.dao_Org.Dictionary;
-import com.nt.dao_Org.Vo.UserAccountVo;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
@@ -213,83 +212,83 @@ public class UserServiceImpl implements UserService {
      * @作者：SHUBO
      * @参数：[userAccount]
      */
-    @Override
-    public Object activeDirectory(UserAccount userAccount, String locale, String firstTime) throws Exception {
-
-        String sn = " ";
-        String givenName = " ";
-        String name = " ";
-        String username = userAccount.getAccount();
-        String password = userAccount.getPassword();
-        DirContext ctx;
-        List<String> nameList = new ArrayList();
-        Hashtable env = new Hashtable();
-        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-        //域LDAPURL/dc=域名,dc=域名.后面的。例子:newtouch.com
-        env.put(Context.PROVIDER_URL, "ldap://192.168.1.102:389/dc=yiduanhen,dc=com");
-        env.put(Context.SECURITY_PRINCIPAL, username);
-        env.put(Context.SECURITY_CREDENTIALS, password);
-
-        try {
-            ctx = new InitialDirContext(env);
-            //测试用firstTime
-//            firstTime = "1";
-            if (firstTime.equals("1")) {
-                int totalResults = 0;
-                String searchFilter = "objectClass=User";
-                SearchControls searchCtls = new SearchControls();
-                searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-                //返回属性sn=姓，givenName=名
-                String returnedAtts[] = {"sn", "givenName"};
-                searchCtls.setReturningAttributes(returnedAtts);
-                //组织OU="组织名称"
-                String searchBase = "OU=p";
-                NamingEnumeration answer = ctx.search(searchBase, searchFilter,
-                        searchCtls);
-                while (answer.hasMoreElements()) {
-                    SearchResult sr = (SearchResult) answer.next();
-                    String dn = sr.getName();
-                    String match = dn.split("CN=")[1].split(",")[0];
-                    if (username.equals(match)) {
-                        BasicAttributes Attrs = (BasicAttributes) sr.getAttributes();
-                        if (Attrs != null) {
-                            try {
-                                Iterator ite = Attrs.getIDs().asIterator();
-                                //迭代器取得key,在下面用for去取
-//                                while (ite.hasNext()){
-//                                  String keyId =  (String) ite.next();
-//                                    System.out.println(keyId);
+//    @Override
+//    public Object activeDirectory(UserAccount userAccount, String locale, String firstTime) throws Exception {
+//
+//        String sn = " ";
+//        String givenName = " ";
+//        String name = " ";
+//        String username = userAccount.getAccount();
+//        String password = userAccount.getPassword();
+//        DirContext ctx;
+//        List<String> nameList = new ArrayList();
+//        Hashtable env = new Hashtable();
+//        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
+//        //域LDAPURL/dc=域名,dc=域名.后面的。例子:newtouch.com
+//        env.put(Context.PROVIDER_URL, "ldap://192.168.1.102:389/dc=yiduanhen,dc=com");
+//        env.put(Context.SECURITY_PRINCIPAL, username);
+//        env.put(Context.SECURITY_CREDENTIALS, password);
+//
+//        try {
+//            ctx = new InitialDirContext(env);
+//            //测试用firstTime
+////            firstTime = "1";
+//            if (firstTime.equals("1")) {
+//                int totalResults = 0;
+//                String searchFilter = "objectClass=User";
+//                SearchControls searchCtls = new SearchControls();
+//                searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+//                //返回属性sn=姓，givenName=名
+//                String returnedAtts[] = {"sn", "givenName"};
+//                searchCtls.setReturningAttributes(returnedAtts);
+//                //组织OU="组织名称"
+//                String searchBase = "OU=p";
+//                NamingEnumeration answer = ctx.search(searchBase, searchFilter,
+//                        searchCtls);
+//                while (answer.hasMoreElements()) {
+//                    SearchResult sr = (SearchResult) answer.next();
+//                    String dn = sr.getName();
+//                    String match = dn.split("CN=")[1].split(",")[0];
+//                    if (username.equals(match)) {
+//                        BasicAttributes Attrs = (BasicAttributes) sr.getAttributes();
+//                        if (Attrs != null) {
+//                            try {
+//                                Iterator ite = Attrs.getIDs().asIterator();
+//                                //迭代器取得key,在下面用for去取
+////                                while (ite.hasNext()){
+////                                  String keyId =  (String) ite.next();
+////                                    System.out.println(keyId);
+////                                }
+//                                for (NamingEnumeration ne = Attrs.getAll(); ne.hasMore(); ) {
+//                                    Attribute Attr = (Attribute) ne.next();
+//                                    for (NamingEnumeration e = Attr.getAll(); e.hasMore(); totalResults++) {
+//                                        String keyId = (String) ite.next();
+//                                        switch (keyId) {
+//                                            case "sn":
+//                                                sn = e.next().toString();
+//                                                break;
+//                                            case "givenName":
+//                                                givenName = e.next().toString();
+//                                                break;
+//                                        }
+//                                    }
 //                                }
-                                for (NamingEnumeration ne = Attrs.getAll(); ne.hasMore(); ) {
-                                    Attribute Attr = (Attribute) ne.next();
-                                    for (NamingEnumeration e = Attr.getAll(); e.hasMore(); totalResults++) {
-                                        String keyId = (String) ite.next();
-                                        switch (keyId) {
-                                            case "sn":
-                                                sn = e.next().toString();
-                                                break;
-                                            case "givenName":
-                                                givenName = e.next().toString();
-                                                break;
-                                        }
-                                    }
-                                }
-                                name = sn + givenName;
-                                ctx.close();
-                                return name;
-                            } catch (NamingException e) {
-                                throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04, locale));
-                            }
-                        }
-                    }
-                }
-            }
-            ctx.close();
-        } catch (AuthenticationException e) {
-            throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04, locale));
-        }
-        return null;
-    }
+//                                name = sn + givenName;
+//                                ctx.close();
+//                                return name;
+//                            } catch (NamingException e) {
+//                                throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04, locale));
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            ctx.close();
+//        } catch (AuthenticationException e) {
+//            throw new LogicalException(MessageUtil.getMessage(MsgConstants.ERROR_04, locale));
+//        }
+//        return null;
+//    }
 
     /**
      * @方法名：getCustomerInfo
@@ -1068,13 +1067,6 @@ public class UserServiceImpl implements UserService {
         int k = 1;
         int accesscount = 0;
         int error = 0;
-        // update gbb 20210325 查询组织架构添加【有效】条件 start
-        Query queryorg = CustmizeQuery(new OrgTree());
-        queryorg.addCriteria(Criteria.where("status").is("0"));
-        OrgTree orgTree = mongoTemplate.findOne(queryorg, OrgTree.class);
-        List<OrgTree> orgTreeList = new ArrayList<>();
-        orgTreeList.add(orgTree);
-        // update gbb 20210325 查询组织架构添加【有效】条件 end
         List<String> useradd = new ArrayList<String>();
         if (resultInsUpd) {
             for (Map<String, Object> item : readAll) {
@@ -1151,36 +1143,25 @@ public class UserServiceImpl implements UserService {
                 //center
                 if (item.get("center") != null) {
                     String cen = item.get("center").toString();
-                    if(cen.equals("废弃")){
-                        userinfo.setCentername("废弃");
-                        userinfo.setCenterid("废弃");
-                        userinfo.setGroupname("废弃");
-                        userinfo.setGroupid("废弃");
-                        userinfo.setTeamname("废弃");
-                        userinfo.setTeamid("废弃");
-                    }
-                    else{
-                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
-                        //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
-                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
-                        int cf = 0;
-                        if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
-                            for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
-                                    cf++;
-                                    userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
-                                    userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
-                                    userinfo.setGroupname(null);
-                                    userinfo.setGroupid(null);
-                                    userinfo.setTeamname(null);
-                                    userinfo.setTeamid(null);
-                                    break;
-                                }
-                            }
-                            if (cf == 0) {
-                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
+                    List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+                    int cf = 0;
+                    if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
+                        for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
+                            if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
+                                cf++;
+                                userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
+                                userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+                                userinfo.setGroupname(null);
+                                userinfo.setGroupid(null);
+                                userinfo.setTeamname(null);
+                                userinfo.setTeamid(null);
+                                break;
                             }
                         }
+                        if (cf == 0) {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
+                        }
+                    }
 
 //                    Query query = new Query();
 //                    query.addCriteria(Criteria.where("userinfo.centername").is(cen.trim()));
@@ -1191,7 +1172,6 @@ public class UserServiceImpl implements UserService {
 //                    } else {
 //                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在，或者有空格！");
 //                    }
-                    }
                 }
                 //group
                 if (item.get("group") != null) {
@@ -1202,9 +1182,7 @@ public class UserServiceImpl implements UserService {
                     String grp = item.get("group").toString();
                     int cf = 0;
                     int gf = 0;
-                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
-                    //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
-                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 ene
+                    List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
                     if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                         for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
                             if (gf == 0) {
@@ -1263,9 +1241,7 @@ public class UserServiceImpl implements UserService {
                     int cf = 0;
                     int gf = 0;
                     int tf = 0;
-                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
-                    //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
-                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
+                    List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
                     if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                         for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
                             if (tf == 0 && gf == 0) {
@@ -1451,26 +1427,6 @@ public class UserServiceImpl implements UserService {
                 if (item.get("毕业年月日") != null) {
                     userinfo.setGraduationday(item.get("毕业年月日").toString());
                 }
-                if (item.get("婚姻状况") != null) {
-                    String children = item.get("婚姻状况").toString();
-                    if (children != null) {
-                        userinfo.setMarital(children);
-                    }
-                }
-                if (item.get("最终学历") != null) {
-                    String degree = item.get("最终学历").toString();
-                    if (degree != null) {
-                        Dictionary dictionary = new Dictionary();
-                        dictionary.setValue1(degree.trim());
-                        dictionary.setPcode("PR016");
-                        List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
-                        if (dictionaryList.size() > 0) {
-                            userinfo.setDegree(dictionaryList.get(0).getCode());
-                        } else {
-                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的最终学历（" + item.get("最终学历").toString() + "）在字典中不存在！");
-                        }
-                    }
-                }
                 //最终学位
                 if (item.get("最终学位") != null) {
                     String degree = item.get("最终学位").toString();
@@ -1539,7 +1495,7 @@ public class UserServiceImpl implements UserService {
                 if (item.get("退职日") != null) {
                     //upd_fjl_0916 修改退职日的保存格式 start
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    String regindate = item.get("退职日").toString();
+                    String regindate = item.get("退职日●").toString();
                     Calendar cal = Calendar.getInstance();
                     cal.setTime(sdf.parse(regindate));//设置起时间
                     cal.add(Calendar.DATE, -1);//减1天
@@ -1788,12 +1744,12 @@ public class UserServiceImpl implements UserService {
                     customerInfo.setUserid(userAccountlist.get(0).get_id());
                 }
                 else{
-                    customerInfo.setUserid(UUID.randomUUID().toString());//111
+                    customerInfo.setUserid(UUID.randomUUID().toString());
                 }
                 mongoTemplate.save(customerInfo);
-                accesscount = accesscount + 1;
                 //成功人员
                 useradd.add(customerInfo.getUserid());
+                accesscount = accesscount + 1;
             }
         } else {
             for (Map<String, Object> item : readAll) {
@@ -1859,9 +1815,7 @@ public class UserServiceImpl implements UserService {
                     //center
                     if (item.get("center●") != null) {
                         String cen = item.get("center●").toString();
-                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
-                        //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
-                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
+                        List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
                         int cf = 0;
                         if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                             for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
@@ -1900,15 +1854,13 @@ public class UserServiceImpl implements UserService {
                         String grp = item.get("group●").toString();
                         int cf = 0;
                         int gf = 0;
-                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
-                        //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
-                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
+                        List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
                         if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                             for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
                                 if (gf == 0) {
 
 //                                }
-                                    if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
+                                    if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
                                         cf++;
                                         customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
                                         customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
@@ -1961,9 +1913,7 @@ public class UserServiceImpl implements UserService {
                         int cf = 0;
                         int gf = 0;
                         int tf = 0;
-                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
-                        //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
-                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
+                        List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
                         if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
                             for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
                                 if (tf == 0 && gf == 0) {
@@ -2743,18 +2693,5 @@ public class UserServiceImpl implements UserService {
             }
         }
         return customerInfoList;
-    }
-    //add-21/2/3-PSDCD_PFANS_20201124_XQ_033
-    @Override
-    public void checkpassword(UserAccountVo userAccountVo) throws Exception {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("_id").is(userAccountVo.getUserid()));
-        query.addCriteria(Criteria.where("password").is(userAccountVo.getPassword()));
-        List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
-        if (userAccountlist.size() > 0) {
-            throw new LogicalException("1");
-        } else {
-            throw new LogicalException("0");
-        }
     }
 }

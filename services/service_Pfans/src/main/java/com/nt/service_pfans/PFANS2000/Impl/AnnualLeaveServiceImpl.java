@@ -312,11 +312,13 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             an.setYears(Newdate.substring(0,4));
         }
         List<AnnualLeave> thisyearsList = annualLeaveMapper.select(an);
+        TokenModel tokenModel = new TokenModel();
         if (thisyearsList != null) {
             for (AnnualLeave thisyears : thisyearsList) {
                 List<AnnualLeave> AnnualList = viewList.stream().filter(coi -> (coi.getUser_id().contains(thisyears.getUser_id()))).collect(Collectors.toList());
                 if(AnnualList.size() > 0 ){
                     thisyears.setRemaining_annual_leave_thisyear(AnnualList.get(0).getRemaining_annual_leave_thisyear().subtract(AnnualList.get(0).getAnnual_leave_shenqingzhong()));
+                    thisyears.preUpdate(tokenModel);
                     annualLeaveMapper.updateByPrimaryKey(thisyears);
                 }
             }
@@ -741,8 +743,16 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         int year = 0;
         startCal = startCal.substring(0,10);
         Calendar cal = Calendar.getInstance();
-        String this_year = String.valueOf(cal.get(cal.YEAR));
-        String endCal = this_year + "-04-01";
+//        String this_year = String.valueOf(cal.get(cal.YEAR));
+
+        int this_year = 0;
+        int month1 = cal.get(Calendar.MONTH)+1;
+        if(month1 >= 1 && month1 <= 3) {
+            this_year = cal.get(Calendar.YEAR) - 1;
+        }else {
+            this_year = cal.get(Calendar.YEAR);
+        }
+        String endCal = String.valueOf(this_year) + "-04-01";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date startDate = sdf.parse(Convert.toStr(sdf.format(Convert.toDate(startCal))));
         Date endDate = sdf.parse(endCal);

@@ -31,7 +31,7 @@ public class TalentPlanServiceImpl implements TalentPlanService {
     private MongoTemplate mongoTemplate;
 
     @Override
-    public List<TalentPlan> list(TalentPlan talentPlan,TokenModel tokenModel ) throws Exception {
+    public List<TalentPlan> list(String years,TalentPlan talentPlan,TokenModel tokenModel ) throws Exception {
         List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
         List<CustomerInfo> customerInfoListCENTER = new ArrayList<CustomerInfo>();
         List<CustomerInfo> customerInfoListGM = new ArrayList<CustomerInfo>();
@@ -375,12 +375,12 @@ public class TalentPlanServiceImpl implements TalentPlanService {
                 }
             }
         }
-        talentPlanListALL = talentPlanMapper.selectByuserId(userIdList);
+        talentPlanListALL = talentPlanMapper.selectByuserId(userIdList,years);
         //冷美琴 康奕凝
         if(roles.contains("工资计算担当") || roles.contains("人事总务部长"))
         {
             userIdList = null;
-            talentPlanListALL = talentPlanMapper.selectByuserId(userIdList);
+            talentPlanListALL = talentPlanMapper.selectByuserId(userIdList,years);
         }
 
         return talentPlanListALL;
@@ -388,7 +388,7 @@ public class TalentPlanServiceImpl implements TalentPlanService {
     //add-ws-6/4-禅道031-人才育成修改各人员查看数据范围修改
     @Override
     public List<TalentPlan> getDataList(TalentPlan talentplan) throws Exception {
-        return talentPlanMapper.selectByuserId(talentplan.getOwners());
+        return talentPlanMapper.selectByuserId(talentplan.getOwners(),talentplan.getYear());
     }
     //add-ws-6/4-禅道031-人才育成修改各人员查看数据范围修改
     @Override

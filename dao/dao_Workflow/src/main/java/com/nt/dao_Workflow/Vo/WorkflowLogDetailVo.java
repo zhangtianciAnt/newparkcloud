@@ -26,4 +26,6 @@ public class WorkflowLogDetailVo implements Serializable {
 	private Date edata;
 	// 0：虚拟，1：真实
 	private String isvirtual;
+	// 节点名字
+	private String nodename;
 }

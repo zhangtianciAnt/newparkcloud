@@ -69,4 +69,11 @@
         order by
         RESTDAYS
     </select>
+
+    <select id="updateremaining_annual_leave_lastyear" parameterType="com.nt.dao_Pfans.PFANS2000.AnnualLeave">
+    update annualleave
+    set remaining_annual_leave_lastyear = '0.0'
+    where years = #{years}
+    </select>
+
 </mapper>

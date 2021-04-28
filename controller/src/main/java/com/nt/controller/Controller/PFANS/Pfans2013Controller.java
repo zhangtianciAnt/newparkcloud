@@ -40,6 +40,7 @@ public class Pfans2013Controller {
 //        annualLeave.setOwner(tokenModel.getUserId());
         Calendar cal = Calendar.getInstance();
         String this_year = String.valueOf(cal.get(cal.YEAR));
+        annualLeave.setYears(this_year);
         //add ccm 20201223 年度和年区分  年度
         String month = String.valueOf(cal.get(cal.MONTH) + 1);
         if(Integer.valueOf(month) < 4)
@@ -47,7 +48,6 @@ public class Pfans2013Controller {
             this_year = String.valueOf(Integer.valueOf(this_year)-1);
         }
         //add ccm 20201223 年度和年区分  年度
-        annualLeave.setYears(this_year);
         return ApiResult.success(annualLeaveService.getDataList(tokenModel));
     }
 

@@ -46,40 +46,42 @@
         END AS TENANTID
         FROM
         (
-            SELECT
-            USER_ID,
-            error_type AS errortype,
-            MIN( CASE WHEN STATUS = '7' THEN re_occurrence_date ELSE occurrence_date END ) occurrencedate,
-            MAX( CASE WHEN STATUS = '7' THEN re_finished_date ELSE finished_date END ) finisheddate,
-            my_WorkingDays (
-            date_format( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' ))/ 8 AS worktime,
-            my_AttendanceDays (
-            date_format( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' ))/ 8 AS relengthtime
-            FROM
-            abnormal
-            WHERE
-            STATUS >= 4
-            AND error_type = 'PR013012'
-            AND DATE_FORMAT( occurrence_date, '%Y%m' ) &lt;= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' ) AND DATE_FORMAT( finished_date, '%Y%m' ) >= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' )
-            GROUP BY
-            USER_ID UNION ALL
-            SELECT
-            USER_ID,
-            error_type AS errortype,
-            MIN( CASE WHEN STATUS = '7' THEN re_occurrence_date ELSE occurrence_date END ) occurrencedate,
-            MAX( CASE WHEN STATUS = '7' THEN re_finished_date ELSE finished_date END ) finisheddate,
-            my_WorkingDays (
-            date_format( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' ))/ 8 AS worktime,
-            my_AttendanceDays (
-            date_format( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' ))/ 8 AS relengthtime
-            FROM
-            abnormal
-            WHERE
-            STATUS >= 4
-            AND error_type = 'PR013013'
-            AND DATE_FORMAT( occurrence_date, '%Y%m' ) &lt;= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' ) AND DATE_FORMAT( finished_date, '%Y%m' ) >= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' )
-            GROUP BY
-            USER_ID
+        SELECT
+        USER_ID,
+        error_type AS errortype,
+        MIN( CASE WHEN STATUS = '7' THEN re_occurrence_date ELSE occurrence_date END ) occurrencedate,
+        MAX( CASE WHEN STATUS = '7' THEN re_finished_date ELSE finished_date END ) finisheddate,
+        my_WorkingDays (
+        date_format( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' ))/ 8 AS worktime,
+        my_AttendanceDays (
+        date_format( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' ))/ 8 AS relengthtime
+        FROM
+        abnormal
+        WHERE
+        STATUS >= 4
+        AND error_type = 'PR013012'
+        AND DATE_FORMAT( occurrence_date, '%Y%m' ) &lt;= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' )
+        AND DATE_FORMAT( finished_date, '%Y%m' ) >= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' )
+        GROUP BY
+        USER_ID UNION ALL
+        SELECT
+        USER_ID,
+        error_type AS errortype,
+        MIN( CASE WHEN STATUS = '7' THEN re_occurrence_date ELSE occurrence_date END ) occurrencedate,
+        MAX( CASE WHEN STATUS = '7' THEN re_finished_date ELSE finished_date END ) finisheddate,
+        my_WorkingDays (
+        date_format( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' ))/ 8 AS worktime,
+        my_AttendanceDays (
+        date_format( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' ))/ 8 AS relengthtime
+        FROM
+        abnormal
+        WHERE
+        STATUS >= 4
+        AND error_type = 'PR013013'
+        AND DATE_FORMAT( occurrence_date, '%Y%m' ) &lt;= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' )
+        AND DATE_FORMAT( finished_date, '%Y%m' ) >= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' )
+        GROUP BY
+        USER_ID
         ) newtable
     </select>
     <select id="selectAbNormalThisYear" resultType="Double">

@@ -7,10 +7,7 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,24 +38,26 @@ public class Pfans2024Controller {
     }
 
     @RequestMapping(value="/list", method={RequestMethod.POST})
-    public ApiResult List(@RequestBody TalentPlan talentPlan, HttpServletRequest request) throws Exception {
-        if (talentPlan == null) {
+    public ApiResult List(@RequestParam String years, TalentPlan talentPlan, HttpServletRequest request) throws Exception {
+        if (talentPlan == null||years == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
         talentPlan.setOwners(tokenModel.getOwnerList());
         List<TalentPlan> talentPlanList = new ArrayList<TalentPlan>();
-        talentPlanList = talentplanService.list(talentPlan,tokenModel);
+        talentPlanList = talentplanService.list(years,talentPlan,tokenModel);
         talentPlanList = talentPlanList.stream().filter(item -> (!item.getUser_id().equals(tokenModel.getUserId()))).collect(Collectors.toList());
         return ApiResult.success(talentPlanList);
     }
     //add-ws-6/4-禅道031-人才育成修改各人员查看数据范围修改
     @RequestMapping(value = "/getDataList", method = {RequestMethod.POST})
-    public ApiResult getDataList(@RequestBody TalentPlan talentPlan, HttpServletRequest request) throws Exception {
-        if (talentPlan == null) {
+    public ApiResult getDataList(@RequestParam String years, HttpServletRequest request) throws Exception {
+        if (years == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        TalentPlan talentPlan = new TalentPlan();
+        talentPlan.setYear(years);
         talentPlan.setOwners(tokenModel.getOwnerList());
         List<TalentPlan> talentPlanList = talentplanService.getDataList(talentPlan);
         talentPlanList = talentPlanList.stream().filter(item -> (!item.getUser_id().equals(tokenModel.getUserId()))).collect(Collectors.toList());

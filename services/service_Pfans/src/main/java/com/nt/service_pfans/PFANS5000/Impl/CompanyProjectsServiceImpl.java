@@ -1257,6 +1257,24 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         }
         return org;
     }
+    //获取center上级
+    private OrgTree getOrgCenterLeader(OrgTree org, String centerId) throws Exception {
+        if (org.getOrgs() != null) {
+            for (OrgTree item : org.getOrgs()) {
+                if (item.get_id().equals(centerId)) {
+                    return org;
+                }
+                if (item.getOrgs() != null) {
+                    for (OrgTree center : item.getOrgs()) {
+                        if (center.get_id().equals(centerId)) {
+                            return item;
+                        }
+                    }
+                }
+            }
+        }
+        return org;
+    }
 
     //给即将到退场日的PL的leader发代办
     //@Scheduled(cron = "0 10 0 * * ?")
@@ -1270,11 +1288,14 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 for (Projectsystem ps : projeclist) {
                     if (ps.getExittime() != null) {
 //                    if(ps.getPosition().toUpperCase().equals("PL")){
-                        if (daysBetween(sdf.format(ps.getExittime()), sdf.format(new Date())) == 7) {
+                        //退场前7天发代办,之前的代码时间弄反了
+                        //if (daysBetween(sdf.format(ps.getExittime()), sdf.format(new Date())) == 7) {
+                        if (daysBetween(sdf.format(new Date()),sdf.format(ps.getExittime())) == 7) {
                             String comis = ps.getCompanyprojects_id();
                             CompanyProjects companyProjects = companyprojectsMapper.selectByPrimaryKey(comis);
-                            ;
-                            UserVo userInfo = userService.getAccountCustomerById(companyProjects.getCreateby());
+                            //设计权限交接所改成owner
+                            //UserVo userInfo = userService.getAccountCustomerById(companyProjects.getCreateby());
+                            UserVo userInfo = userService.getAccountCustomerById(companyProjects.getOwner());
                             OrgTree orgs = orgTreeService.get(new OrgTree());
                             String flgid = "";
                             String curuser = "";
@@ -1311,7 +1332,11 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                                     } else if (cus.getGroupid() != null && StrUtil.isNotEmpty(cus.getGroupid())) {
                                         flgid = cus.getCenterid();
                                     } else if (cus.getCenterid() != null && StrUtil.isNotEmpty(cus.getCenterid())) {
-                                        flgid = "";
+                                        //获取center的上级
+                                        OrgTree OrgCenterLeader = getOrgCenterLeader(orgs, cus.getCenterid());
+                                        if(OrgCenterLeader != null){
+                                            flgid = OrgCenterLeader.get_id();
+                                        }
                                     }
                                 }
                             }
@@ -1405,7 +1430,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         if (projectsystemList != null) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             //2019
-            //String thisYear_s = String.valueOf(Integer.parseInt(DateUtil.format(new Date(), "YYYY")) - 1);
+            //String thisYear_s = String.valueOf(Integer.parseInt(DateUtil.format(new Date(), "yyyy")) - 1);
             String thisYear_s = DateUtil.format(new Date(), "yyyy");
             //2020
 //            int thatYear_i = Integer.parseInt(thisYear_s) + 1;
