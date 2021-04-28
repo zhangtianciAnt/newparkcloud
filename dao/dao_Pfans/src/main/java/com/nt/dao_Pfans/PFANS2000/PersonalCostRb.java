@@ -16,6 +16,10 @@ public class PersonalCostRb extends BaseModel {
      * 姓名
      */
     private String useridRb;
+    /**
+     * 姓名
+     */
+    private String usernameRb;
 
     /**
      * 部门简称
@@ -31,6 +35,11 @@ public class PersonalCostRb extends BaseModel {
      *工资总额
      */
     private String totalwagesRb ;
+
+    /**
+     *工资总额
+     */
+    private String overtimepayRb ;
 
     /**
      *养老保险基4

@@ -51,6 +51,28 @@ public interface PersonalCostMapper extends MyMapper<PersonalCost>{
     PersonalCost getPersonalCostDetail(@Param("yearsantid") String yearsantid, @Param("userid") String userid);
 
 
+    @Select("select \n" +
+            "USERID as useridRb,\n" +
+            "USERNAME as usernameRb,\n" +
+            "DEPARTSHORT as departshortRb,\n" +
+            "LTRANK as ltrankRb,\n" +
+            "TOTALWAGES as totalwagesRb,\n" +
+            "OLDYLBXJAJ as oldylbxjajRb,\n" +
+            "LOSSYBXJAJ as lossybxjajRb,\n" +
+            "GSBXJAJ as gsbxjajRb,\n" +
+            "YLBXJAJ as ylbxjajRb,\n" +
+            "SYBXJAJ as sybxjajRb,\n" +
+            "GJJJSAJ as gjjjsajRb,\n" +
+            "OLDYLBXJJM as oldylbxjjmRb,\n" +
+            "LOSSYBXJJM as lossybxjjmRb,\n" +
+            "GSBXJJM as gsbxjjmRb,\n" +
+            "YLBXJJM as ylbxjjmRb,\n" +
+            "SYBXJJM as sybxjjmRb,\n" +
+            "GJJJSJM as gjjjsjmRb\n" +
+            "from personalcost where yearsantid = #{yearsantid}")
+    List<PersonalCostRb> getPersonalCostRb(@Param("yearsantid") String yearsantid);
+
+
 
 
 

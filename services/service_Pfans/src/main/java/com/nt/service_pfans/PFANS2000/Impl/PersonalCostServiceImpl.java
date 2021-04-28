@@ -554,10 +554,8 @@ public class PersonalCostServiceImpl implements PersonalCostService {
     }
 
     @Override
-    public List<PersonalCost> gettableRb(String yearsantid) throws Exception {
-        PersonalCost personalCost = new PersonalCost();
-        personalCost.setYearsantid(yearsantid);
-        List<PersonalCost> personalCostList = personalCostMapper.select(personalCost);
+    public List<PersonalCostRb> gettableRb(String yearsantid) throws Exception {
+        List<PersonalCostRb> personalCostList = personalCostMapper.getPersonalCostRb(yearsantid);
         return personalCostList;
     }
 

@@ -19,7 +19,7 @@ public interface PersonalCostService {
 
     public List<PersonalCostGsSum> gettableGs(String yearsantid) throws Exception;
 
-    public List<PersonalCost> gettableRb(String yearsantid) throws Exception;
+    public List<PersonalCostRb> gettableRb(String yearsantid) throws Exception;
 
 
 
