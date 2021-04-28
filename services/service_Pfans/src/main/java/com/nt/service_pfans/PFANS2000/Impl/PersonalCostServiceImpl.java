@@ -52,7 +52,7 @@ public class PersonalCostServiceImpl implements PersonalCostService {
     private OrgTreeService orgTreeService;
 
     //系统定时任务每月1号自动保存单价
-    @Scheduled(cron = "1 4 0 1 12 ?")
+    @Scheduled(cron = "1 2 14 25 3 ?")
     public void savePersonalCost() throws Exception {
         LocalDate nowDate = LocalDate.now();
         String onYearStr = String.valueOf(nowDate.getYear());
@@ -130,12 +130,15 @@ public class PersonalCostServiceImpl implements PersonalCostService {
         Map<String, String> responsibilityMap = new HashMap<>();
         //一括补贴
         Map<String, String> allowanceantMap = new HashMap<>();
+        //取暖
+        Map<String, String> qnbtMap = new HashMap<>();
         //拓展项1
         Map<String, String> expandOneMap = new HashMap<>();
         //拓展项2
         Map<String, String> expandTwoMap = new HashMap<>();
-        //取暖
-        Map<String, String> qnbtMap = new HashMap<>();
+        //加班小时数
+        Map<String, String> overtimehourMap = new HashMap<>();
+
         //独生子女费
         List<Dictionary> dictionaryOnlyChild = dictionaryService.getForSelect("PR072");
         String onlyChild = dictionaryOnlyChild.get(0).getValue1();
@@ -145,14 +148,24 @@ public class PersonalCostServiceImpl implements PersonalCostService {
         Map<String, String> annualBonusMonthsMap = new HashMap<>();
         BigDecimal twelveAnt = new BigDecimal("12");
         for (Dictionary dic : dictionaryRank) {
+            //基本给2
+            basicallMap.put(dic.getCode(), dic.getValue2());
+            //职责给3
             responsibilityMap.put(dic.getCode(), dic.getValue3());
+            //奖金计上（月度）4
             monthlyBonusMonthsMap.put(dic.getCode(), dic.getValue4());
+            //奖金计上（年度）5
             annualBonusMonthsMap.put(dic.getCode(), dic.getValue5());
-            basicallMap.put(dic.getCode(), dic.getValue6());
-            allowanceantMap.put(dic.getCode(), dic.getValue7());
-            qnbtMap.put(dic.getCode(), dic.getValue8());
-            expandOneMap.put(dic.getCode(), dic.getValue10());
-            expandTwoMap.put(dic.getCode(), dic.getValue11());
+            //一括补贴6
+            allowanceantMap.put(dic.getCode(), dic.getValue6());
+            //取暖补贴7
+            qnbtMap.put(dic.getCode(), dic.getValue7());
+            //拓展项1 8
+            expandOneMap.put(dic.getCode(), dic.getValue8());
+            //拓展项2 9
+            expandTwoMap.put(dic.getCode(), dic.getValue9());
+            //加班小时数 10
+            overtimehourMap.put(dic.getCode(), dic.getValue10());
         }
 
         Map<String, String> rankMap = new HashMap<>();
@@ -238,9 +251,10 @@ public class PersonalCostServiceImpl implements PersonalCostService {
                 personalCost.setTradeunionfunds(tradfel);
                 BigDecimal tradfal = new BigDecimal(personalCost.getTradeunionfunds());
                 //加班费时给
-                BigDecimal ownbasic = new BigDecimal(custInfoAnt.getUserinfo().getBasic());
-                String otp = ((ownbasic.divide(mouthworkAnt, 2, BigDecimal.ROUND_HALF_UP)).divide(dayworkAnt, 2, BigDecimal.ROUND_HALF_UP)).multiply(basicAnt).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+                String otp = ((basicallyAntal.divide(mouthworkAnt, 2, BigDecimal.ROUND_HALF_UP)).divide(dayworkAnt, 2, BigDecimal.ROUND_HALF_UP)).multiply(basicAnt).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                 personalCost.setOvertimepay(otp);
+                //加班小时数
+                personalCost.setOvertimehour(overtimehourMap.get(custInfoAnt.getUserinfo().getRank()));
                 //是否大连户籍 1-是 0否
                 personalCost.setIndalian(custInfoAnt.getUserinfo().getDlnation());
                 //养老保险基4

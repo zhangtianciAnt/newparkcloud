@@ -35,6 +35,7 @@ public class OrgTreeController {
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult get(HttpServletRequest request) throws Exception {
         OrgTree orgTree = new OrgTree();
+        orgTree.setStatus("0");
         TokenModel tokenModel = tokenService.getToken(request);
         //权限
 //        orgTree.setTenantid(tokenModel.getTenantId());
@@ -110,4 +111,11 @@ public class OrgTreeController {
         return ApiResult.success(orgTreeService.getTreeYears(Years,Status));
     }
     //update gbb 20210308  禅道任务708  emd
+
+    @RequestMapping(value = "/updateStatus", method = {RequestMethod.GET})
+    public ApiResult updateStatus(String Years, HttpServletRequest request) throws Exception {
+        orgTreeService.updateStatus(Years);
+        return ApiResult.success();
+    }
+
 }
