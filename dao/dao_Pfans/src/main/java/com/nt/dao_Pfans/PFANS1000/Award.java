@@ -201,11 +201,11 @@ public class Award extends BaseModel {
     private String regindiff;
     //add-ws-8/13-禅道任务432
 
-    //剩余未借款金额
-    //@Column(name = "SURLOAPPMONEY")
-    //private String surloappmoney;
-
-    //剩余未精算金额
-    //@Column(name = "SURPUBILCMONEY")
-    //private String surpubilcmoney;
+//    //剩余未借款金额
+//    @Column(name = "SURLOAPPMONEY")
+//    private String surloappmoney;
+//
+//    //剩余未精算金额
+//    @Column(name = "SURPUBILCMONEY")
+//    private String surpubilcmoney;
 }

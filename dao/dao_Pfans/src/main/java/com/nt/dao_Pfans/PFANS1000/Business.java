@@ -400,11 +400,11 @@ public class Business extends BaseModel {
     private String balancejude;
     //add_fjl_0813
 
-    //剩余未借款金额
-    //@Column(name = "SURLOAPPMONEY")
-    //private String surloappmoney;
-
-    //剩余未精算金额
-    //@Column(name = "SURPUBILCMONEY")
-    //private String surpubilcmoney;
+//    //剩余未借款金额
+////    @Column(name = "SURLOAPPMONEY")
+////    private String surloappmoney;
+////
+////    //剩余未精算金额
+////    @Column(name = "SURPUBILCMONEY")
+////    private String surpubilcmoney;
 }
