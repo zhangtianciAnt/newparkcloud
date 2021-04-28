@@ -120,7 +120,7 @@ public class Pfans2026Controller {
             query6.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
             CustomerInfo customerInfo6 = mongoTemplate.findOne(query6, CustomerInfo.class);
             if (customerInfo6 != null) {
-                wfList4 = customerInfo.getUserinfo().getCustomername();
+                wfList4 = customerInfo6.getUserinfo().getCustomername();
                 wfList4 = sign.startGraphics2D(wfList4);
             }
 
