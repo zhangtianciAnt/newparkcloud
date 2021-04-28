@@ -961,7 +961,7 @@ public class UserServiceImpl implements UserService {
 //        }
 //    }
     //系统服务--每天00:05 更新离职人员的信息，已经离职人员不能登录系统  fjl add start
-    @Scheduled(cron = "0 05 0 * * ?")
+    //@Scheduled(cron = "0 05 0 * * ?")
     public void updUseraccountStatus() throws Exception {
         SimpleDateFormat st = new SimpleDateFormat("yyyy-MM-dd");
         String redate = st.format(new Date());

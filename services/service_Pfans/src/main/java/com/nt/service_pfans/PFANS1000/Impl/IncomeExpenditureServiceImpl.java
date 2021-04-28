@@ -7232,8 +7232,8 @@ public class IncomeExpenditureServiceImpl implements IncomeExpenditureService {
     }
 
     //汇率定时任务
-//    @Scheduled(cron = "0 */5 * * * ?")
-    @Scheduled(cron = "0 10 0 1 4 ?")
+//    //@Scheduled(cron = "0 */5 * * * ?")
+    //@Scheduled(cron = "0 10 0 1 4 ?")
     public void getThemeDetatiList() throws Exception {
         SimpleDateFormat s = new SimpleDateFormat("MM");
         SimpleDateFormat s1 = new SimpleDateFormat("YYYY");

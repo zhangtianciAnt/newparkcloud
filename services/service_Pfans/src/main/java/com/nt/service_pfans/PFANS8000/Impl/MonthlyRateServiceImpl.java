@@ -28,8 +28,8 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
     private DictionaryService dictionaryService;
 
     //汇率定时任务
-//    @Scheduled(cron = "0 */5 * * * ?")
-   @Scheduled(cron = "0 10 0 1 12 ?")
+//    //@Scheduled(cron = "0 */5 * * * ?")
+   //@Scheduled(cron = "0 10 0 1 12 ?")
     public void getExchangeRateY() throws Exception {
         List<MonthlyRate> monthlyratelist = new ArrayList<>();
         List<MonthlyRate> monthlyratelists = new ArrayList<>();
