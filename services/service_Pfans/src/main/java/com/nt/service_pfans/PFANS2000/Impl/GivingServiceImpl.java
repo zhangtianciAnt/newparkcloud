@@ -1113,7 +1113,7 @@ public class GivingServiceImpl implements GivingService {
     }
 
 
-    @Scheduled(cron = "0 0 1 10 * ?")//系统服务--每月10号凌晨1点开始自动计算当月工资
+    //@Scheduled(cron = "0 0 1 10 * ?")//系统服务--每月10号凌晨1点开始自动计算当月工资
     protected void autoCreateGiving() throws Exception {
         insert("1", null);
     }

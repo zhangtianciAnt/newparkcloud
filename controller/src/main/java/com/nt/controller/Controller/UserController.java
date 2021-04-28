@@ -389,6 +389,16 @@ public class UserController {
             return ApiResult.success("0");
         }
     }
+
+    //重置密码
+    @RequestMapping(value = "/resetPassword", method = {RequestMethod.POST})
+    public ApiResult upCurrentUserInfo(@RequestBody List<String> userList, HttpServletRequest request) throws Exception {
+        if (userList == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+
+        return ApiResult.success(userService.resetPassword(userList));
+    }
 }
 
 

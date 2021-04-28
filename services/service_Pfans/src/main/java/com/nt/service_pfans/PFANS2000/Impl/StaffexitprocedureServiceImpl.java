@@ -483,7 +483,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
     }
 
     //进行数据权限和审批权限交接
-    @Scheduled(cron = "0 05 0 * * ?")
+    //@Scheduled(cron = "0 05 0 * * ?")
     public void getdataExittime() throws Exception {
         SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
         String month2 = sd.format(new Date());

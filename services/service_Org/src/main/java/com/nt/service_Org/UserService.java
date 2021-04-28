@@ -100,4 +100,7 @@ public interface UserService {
 
     ////add-21/2/3-PSDCD_PFANS_20201124_XQ_033-人员管理添加密码校验
     void checkpassword(UserAccountVo userAccountVo) throws Exception;
+
+    //参数：years，年度
+    public List<String> resetPassword(String years) throws Exception;
 }
