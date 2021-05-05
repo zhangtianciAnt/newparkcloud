@@ -11,7 +11,7 @@
 		#{workflowinstance.dataid}
 		AND FORMID = #{workflowinstance.formid} AND
 			(TENANTID =
-		#{workflowinstance.tenantid} OR TENANTID IS NULL) ORDER BY CREATEON DESC LIMIT 1)
+		#{workflowinstance.tenantid} OR TENANTID IS NULL OR TENANTID = '') ORDER BY CREATEON DESC LIMIT 1)
 		WI
 		INNER JOIN
 		workflownodeinstance WNI
