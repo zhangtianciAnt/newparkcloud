@@ -97,6 +97,10 @@ public class LogManagementServiceImpl implements LogManagementService {
             logmanagement.setJobnumber(customerInfo.getUserinfo().getJobnumber());
             if (logmanagement.getProject_id().equals("PP024001") || logmanagement.getProject_id().isEmpty()) {
                 logmanagement.setGroup_id(customerInfo.getUserinfo().getGroupid());
+                if(customerInfo.getUserinfo().getGroupid() == null || customerInfo.getUserinfo().getGroupid().isEmpty())
+                {
+                    logmanagement.setGroup_id(customerInfo.getUserinfo().getCenterid());
+                }
             }
         }
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
