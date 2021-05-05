@@ -2276,7 +2276,51 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 rst.add(item);
             }
         }
+
+        //ADD
+        for(CompanyProjectsVo2 it:rst)
+        {
+            if(com.mysql.jdbc.StringUtils.isNullOrEmpty(it.getGroup_id()))
+            {
+                CompanyProjects cp = new CompanyProjects();
+                cp = companyprojectsMapper.selectByPrimaryKey(it.getCompanyprojects_id());
+                if(cp!=null)
+                {
+                    it.setGroup_id(cp.getCenter_id());
+                }
+            }
+            it.setGroup_id(selectEcodeById(it.getGroup_id()));
+        }
+        //ADD
         return rst;
+    }
+
+    public String selectEcodeById(String id) throws Exception
+    {
+        String ecode = id;
+        OrgTree orgs = orgTreeService.get(new OrgTree());
+        //副总
+        for (OrgTree orgfu : orgs.getOrgs()) {
+            //Center
+            for (OrgTree orgCenter : orgfu.getOrgs()) {
+                for(OrgTree orgGroup : orgCenter.getOrgs())
+                {
+                    if(orgGroup.get_id().equals(id))
+                    {
+                        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(orgCenter.getEncoding()))
+                        {
+                            ecode = orgCenter.get_id();
+                        }
+                        else
+                        {
+                            ecode = id;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return ecode;
     }
 
     @Override
