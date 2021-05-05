@@ -97,6 +97,10 @@ public class LogManagementServiceImpl implements LogManagementService {
             logmanagement.setJobnumber(customerInfo.getUserinfo().getJobnumber());
             if (logmanagement.getProject_id().equals("PP024001") || logmanagement.getProject_id().isEmpty()) {
                 logmanagement.setGroup_id(customerInfo.getUserinfo().getGroupid());
+                if(customerInfo.getUserinfo().getGroupid() == null || customerInfo.getUserinfo().getGroupid().isEmpty())
+                {
+                    logmanagement.setGroup_id(customerInfo.getUserinfo().getCenterid());
+                }
             }
         }
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
@@ -107,6 +111,17 @@ public class LogManagementServiceImpl implements LogManagementService {
                 logmanagement.setGroup_id(expatriatesinforList.get(0).getGroup_id());
             }
         }
+        //ADD
+        if(!logmanagement.getProject_id().equals("PP024001") && !logmanagement.getProject_id().isEmpty())
+        {
+            CompanyProjects cp = new CompanyProjects();
+            cp = companyprojectsMapper.selectByPrimaryKey(logmanagement.getProject_id());
+            if(cp!=null && StringUtils.isNullOrEmpty(logmanagement.getGroup_id()))
+            {
+                logmanagement.setGroup_id(cp.getCenter_id());
+            }
+        }
+        //ADD
         logmanagement.setGroup_id(selectEcodeById(logmanagement.getGroup_id()));
         logmanagement.setConfirmstatus("0");
         logmanagementmapper.insert(logmanagement);
