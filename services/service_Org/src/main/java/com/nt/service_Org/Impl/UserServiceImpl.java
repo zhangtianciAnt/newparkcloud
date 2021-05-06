@@ -2438,10 +2438,9 @@ public class UserServiceImpl implements UserService {
                         }
                         //add gbb 0724 等级联动职责工资 end
                     }
-                    if (item.get("給料変更日●") != null && item.get("給料変更日●").toString().length() >= 10) {
-//                            personal.setDate(item.get("給料変更日●").toString());
-                        String dateSubs = item.get("給料変更日●").toString().substring(0, 10);
-                        personal.setDate(dateSubs);
+                    if (item.get("給料変更日●") != null) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        personal.setDate(DateUtil.format(sdf.parse(item.get("給料変更日●").toString()), "yyyy-MM-dd"));
                     }
                     if (item.get("养老保险基数●") != null) {
                         customerInfoList.get(0).getUserinfo().setYanglaoinsurance(item.get("养老保险基数●").toString());
@@ -2506,8 +2505,8 @@ public class UserServiceImpl implements UserService {
                                 if (pp.getDate().length() >= 10) {
                                     pp.setDate(pp.getDate().substring(0, 10));
                                 }
-                                int aa = Integer.valueOf(personal.getDate().replace("-", ""));
-                                int bb = Integer.valueOf(pp.getDate().replace("-", ""));
+                                int aa = Integer.valueOf(personal.getDate().replace("-", "").replace("/", ""));
+                                int bb = Integer.valueOf(pp.getDate().replace("-", "").replace("/", ""));
                                 if (aa >= bb) {
                                     if (item.get("现职责工资●") != null) {
                                         customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
