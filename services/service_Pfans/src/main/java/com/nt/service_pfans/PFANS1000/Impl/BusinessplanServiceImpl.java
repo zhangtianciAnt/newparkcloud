@@ -386,47 +386,79 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     }
 
     @Override
-    public List<OrgTreeVo> getgroupcompanyen(String year) throws Exception {
+    public List<OrgTreeVo> getgroupcompanyen(String year,String groupid) throws Exception {
         List<OrgTreeVo> OrgTreeVolist = new ArrayList<>();
         OrgTree orgs = orgTreeService.get(new OrgTree());
         for (OrgTree org : orgs.getOrgs()) {
-            for (OrgTree org1 : org.getOrgs()) {
-                OrgTreeVo orgtreevo = new OrgTreeVo();
-                orgtreevo.set_id(org1.get_id());
-                orgtreevo.setCompanyen(org1.getCompanyen());
-                orgtreevo.setRedirict(org1.getRedirict());
-                if(org1.getEncoding()!=null && !org1.getEncoding().equals(""))
+            for (OrgTree orgC : org.getOrgs()) {
+                if(orgC.get_id().equals(groupid))
                 {
-                    orgtreevo.setEncoding(org1.getEncoding().substring(0, 2));
+                    OrgTreeVo orgtreevo = new OrgTreeVo();
+                    orgtreevo.set_id(orgC.get_id());
+                    orgtreevo.setCompanyen(orgC.getCompanyen());
+                    orgtreevo.setRedirict(orgC.getRedirict());
+                    if(orgC.getEncoding()!=null && !orgC.getEncoding().equals(""))
+                    {
+                        orgtreevo.setEncoding(orgC.getEncoding().substring(0, 2));
+                    }
+                    orgtreevo.setMoney4("0");
+                    orgtreevo.setMoney5("0");
+                    orgtreevo.setMoney6("0");
+                    orgtreevo.setMoney7("0");
+                    orgtreevo.setMoney8("0");
+                    orgtreevo.setMoney9("0");
+                    orgtreevo.setMoney10("0");
+                    orgtreevo.setMoney11("0");
+                    orgtreevo.setMoney12("0");
+                    orgtreevo.setMoney1("0");
+                    orgtreevo.setMoney2("0");
+                    orgtreevo.setMoney3("0");
+                    OrgTreeVolist.add(orgtreevo);
                 }
-                orgtreevo.setMoney4("0");
-                orgtreevo.setMoney5("0");
-                orgtreevo.setMoney6("0");
-                orgtreevo.setMoney7("0");
-                orgtreevo.setMoney8("0");
-                orgtreevo.setMoney9("0");
-                orgtreevo.setMoney10("0");
-                orgtreevo.setMoney11("0");
-                orgtreevo.setMoney12("0");
-                orgtreevo.setMoney1("0");
-                orgtreevo.setMoney2("0");
-                orgtreevo.setMoney3("0");
-                OrgTreeVolist.add(orgtreevo);
+                else
+                {
+                    for (OrgTree orgG : orgC.getOrgs()) {
+                        if(orgC.get_id().equals(groupid))
+                        {
+                            OrgTreeVo orgtreevo = new OrgTreeVo();
+                            orgtreevo.set_id(orgC.get_id());
+                            orgtreevo.setCompanyen(orgC.getCompanyen());
+                            orgtreevo.setRedirict(orgC.getRedirict());
+                            if(orgC.getEncoding()!=null && !orgC.getEncoding().equals(""))
+                            {
+                                orgtreevo.setEncoding(orgC.getEncoding().substring(0, 2));
+                            }
+                            orgtreevo.setMoney4("0");
+                            orgtreevo.setMoney5("0");
+                            orgtreevo.setMoney6("0");
+                            orgtreevo.setMoney7("0");
+                            orgtreevo.setMoney8("0");
+                            orgtreevo.setMoney9("0");
+                            orgtreevo.setMoney10("0");
+                            orgtreevo.setMoney11("0");
+                            orgtreevo.setMoney12("0");
+                            orgtreevo.setMoney1("0");
+                            orgtreevo.setMoney2("0");
+                            orgtreevo.setMoney3("0");
+                            OrgTreeVolist.add(orgtreevo);
+                        }
+                    }
+                }
             }
         }
-        Businessplan businessplan = new Businessplan();
-        businessplan.setYear(year);
-        businessplan.setStatus("4");
-        businessplan.setGroup_id("91B253A1C605E9CA814462FB4C4D2605F43F");
-        List<Businessplan> businessplanlist = businessplanMapper.select(businessplan);
-        if (businessplanlist.size() > 0) {
-            OrgTreeVolist.get(0).setType("1");
-            OrgTreeVolist.get(0).setAssets_lodyear(businessplanlist.get(0).getAssets_lodyear());
-            OrgTreeVolist.get(0).setEquipment_lodyear(businessplanlist.get(0).getEquipment_lodyear());
-        } else {
-            OrgTreeVolist.get(0).setType("0");
-
-        }
+//        Businessplan businessplan = new Businessplan();
+//        businessplan.setYear(year);
+//        businessplan.setStatus("4");
+//        businessplan.setGroup_id("91B253A1C605E9CA814462FB4C4D2605F43F");
+//        List<Businessplan> businessplanlist = businessplanMapper.select(businessplan);
+//        if (businessplanlist.size() > 0) {
+//            OrgTreeVolist.get(0).setType("1");
+//            OrgTreeVolist.get(0).setAssets_lodyear(businessplanlist.get(0).getAssets_lodyear());
+//            OrgTreeVolist.get(0).setEquipment_lodyear(businessplanlist.get(0).getEquipment_lodyear());
+//        } else {
+//            OrgTreeVolist.get(0).setType("0");
+//
+//        }
         return OrgTreeVolist;
     }
 
