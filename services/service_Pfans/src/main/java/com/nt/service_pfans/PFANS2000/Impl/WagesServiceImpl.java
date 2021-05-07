@@ -2951,6 +2951,12 @@ public class WagesServiceImpl implements WagesService {
                 if (customerInfo != null) {
                     wages.setJobnumber(customerInfo.getUserinfo().getJobnumber());  //工号
                     wages.setUser_id(customerInfo.getUserid());
+                    //region 删除已经存在的数据
+                    Wages del_wage = new Wages();
+                    del_wage.setCreateonym(Createonym.substring(0,7));
+                    del_wage.setUser_id(customerInfo.getUserid());
+                    wagesMapper.delete(del_wage);
+                    //endregion 查询是否已经存在
                     //upd_fjl_0910
 //                    wages.setWorkdate(customerInfo.getUserinfo().getEnterday());//入社时间
                     String resignationDate = formatStringDateadd(customerInfo.getUserinfo().getEnterday());
