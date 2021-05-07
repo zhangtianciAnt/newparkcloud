@@ -6,11 +6,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentVo;
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS6000.PjExternalInjection;
+import com.nt.dao_Pfans.PFANS6000.Variousfunds;
 import com.nt.dao_Pfans.PFANS6000.Vo.PjExternalInjectionVo;
 import com.nt.service_Org.OrgTreeService;
+import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.service_pfans.PFANS6000.PjExternalInjectionService;
 import com.nt.service_pfans.PFANS6000.mapper.PjExternalInjectionMapper;
+import com.nt.service_pfans.PFANS6000.mapper.VariousfundsMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -33,6 +37,12 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
 
     @Autowired
     private OrgTreeService orgTreeService;
+
+    @Autowired
+    private VariousfundsMapper variousfundsMapper;
+
+    @Autowired
+    private CompanyProjectsMapper companyProjectsMapper;
 
     //pj别外注费统计定时任务
     //每月日凌晨点
@@ -85,6 +95,17 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
         String year = sfYM.format(lastMonthDate.getTime());
         for (DepartmentVo departvo : departmentVoList) {
             List<PjExternalInjectionVo> pjlistVo = pjExternalInjectionMapper.getThemeCompany(year, departvo.getDepartmentId());
+
+            String VarYear = new Date().toString();
+            VarYear = VarYear.substring(VarYear.length()-4, VarYear.length()) + "-01-01";
+            SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
+            Date varyear = sim.parse(VarYear);
+            Variousfunds variousfunds = new Variousfunds();
+            variousfunds.setYear(varyear);
+            List<Variousfunds> variousfundsList = variousfundsMapper.select(variousfunds);
+            CompanyProjects companyProjects = new CompanyProjects();
+
+
             PjExternalInjection pjExternal = new PjExternalInjection();
             List<PjExternalInjection> insertpjExternal = new ArrayList<>();
             List<PjExternalInjection> updatepjExternal = new ArrayList<>();
@@ -141,6 +162,27 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
                         }
                     }
 
+                    if (variousfundsList.size() > 0) {
+                        for (Variousfunds various : variousfundsList) {
+                            companyProjects = new CompanyProjects();
+                            companyProjects.setNumbers(various.getPjname().substring(0, 13));
+                            List<CompanyProjects> comList = companyProjectsMapper.select(companyProjects);
+                            if (comList.get(0).getCompanyprojects_id().equals(pjExternalInjectionVo.getCompanyprojects_id())
+                                    && various.getBpclubname().equals(pjExternalInjectionVo.getCompany())) {
+
+                                if (various.getPlmonthplan().equals("BP013001")) {
+                                    pjExternal.setJune(String.valueOf(Integer.valueOf(pjExternal.getJune()) + Integer.valueOf(various.getPayment())));
+                                } else if (various.getPlmonthplan().equals("BP013002")) {
+                                    pjExternal.setSeptember(String.valueOf(Integer.valueOf(pjExternal.getSeptember()) + Integer.valueOf(various.getPayment())));
+                                } else if (various.getPlmonthplan().equals("BP013003")) {
+                                    pjExternal.setDecember(String.valueOf(Integer.valueOf(pjExternal.getDecember()) + Integer.valueOf(various.getPayment())));
+                                } else if (various.getPlmonthplan().equals("BP013004")) {
+                                    pjExternal.setMarch(String.valueOf(Integer.valueOf(pjExternal.getMarch()) + Integer.valueOf(various.getPayment())));
+                                }
+                            }
+                        }
+                    }
+
                     PjExternalInjection injection = new PjExternalInjection();
                     injection.setYears(year.substring(0, 4));
                     injection.setCompanyprojects_id(pjExternalInjectionVo.getCompanyprojects_id());
@@ -186,6 +228,27 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
                                 pjExternal.setFebruary(pjExternalInjectionVo.getMoney());
                             } else if (year.substring(4, 6).equals("03")) {
                                 pjExternal.setMarch(pjExternalInjectionVo.getMoney());
+                            }
+                        }
+
+                        if (variousfundsList.size() > 0) {
+                            for (Variousfunds various : variousfundsList) {
+                                companyProjects = new CompanyProjects();
+                                companyProjects.setNumbers(various.getPjname().substring(0, 13));
+                                List<CompanyProjects> comList = companyProjectsMapper.select(companyProjects);
+                                if (comList.get(0).getCompanyprojects_id().equals(pjExternalInjectionVo.getCompanyprojects_id())
+                                        && various.getBpclubname().equals(pjExternalInjectionVo.getCompany())) {
+
+                                    if (various.getPlmonthplan().equals("BP013001")) {
+                                        pjExternal.setJune(String.valueOf(Integer.valueOf(pjExternal.getJune()) + Integer.valueOf(various.getPayment())));
+                                    } else if (various.getPlmonthplan().equals("BP013002")) {
+                                        pjExternal.setSeptember(String.valueOf(Integer.valueOf(pjExternal.getSeptember()) + Integer.valueOf(various.getPayment())));
+                                    } else if (various.getPlmonthplan().equals("BP013003")) {
+                                        pjExternal.setDecember(String.valueOf(Integer.valueOf(pjExternal.getDecember()) + Integer.valueOf(various.getPayment())));
+                                    } else if (various.getPlmonthplan().equals("BP013004")) {
+                                        pjExternal.setMarch(String.valueOf(Integer.valueOf(pjExternal.getMarch()) + Integer.valueOf(various.getPayment())));
+                                    }
+                                }
                             }
                         }
                         pjExternal.setTotal(String.valueOf(new BigDecimal(pjExternal.getApril()).add(new BigDecimal(pjExternal.getMay())).add(new BigDecimal(pjExternal.getJune()))

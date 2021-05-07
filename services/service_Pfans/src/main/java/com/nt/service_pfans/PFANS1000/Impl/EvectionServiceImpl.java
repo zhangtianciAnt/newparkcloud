@@ -9,10 +9,14 @@ import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.EvectionVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TravelCostVo;
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS5000.Comproject;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS1000.EvectionService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.service_pfans.PFANS5000.mapper.ComProjectMapper;
+import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
@@ -83,6 +87,10 @@ public class EvectionServiceImpl implements EvectionService {
     private DictionaryMapper dictionaryMapper;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private CompanyProjectsMapper companyProjectsMapper;
+    @Autowired
+    private ComProjectMapper comprojectMapper;
 
     @Override
     public Map<String, Object> exportjs(String evectionid, HttpServletRequest request) throws Exception {
@@ -229,6 +237,7 @@ public class EvectionServiceImpl implements EvectionService {
         return resultMap;
     }
 
+    //打印功能调用
     private Map<String, Object> oldmergeDetailList(List<Object> detailList) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         Map<String, Float> specialMap = new HashMap<>();
@@ -242,7 +251,7 @@ public class EvectionServiceImpl implements EvectionService {
             String currency = getProperty(detail, "currency");
             String accountcode = getProperty(detail, "accountcode");
             String mergeKey = "";
-            mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber + " ... " + currency;
+            mergeKey = budgetcoding + " ... " + subjectnumber + " ... " + currency;
             // 行合并
             float money = getPropertyFloat(detail, "rmb");
             float moneysum = getPropertyFloat(detail, "foreigncurrency");
@@ -268,7 +277,28 @@ public class EvectionServiceImpl implements EvectionService {
 
     @Override
     public List<Evection> get(Evection evection) throws Exception {
-        return evectionMapper.select(evection);
+        //region add_qhr_20210810 添加项目名称
+        List<Evection> evectionList = evectionMapper.select(evection);
+        List<Evection> evectionListf = new ArrayList<>();
+        for (Evection evect : evectionList) {
+            if (evect.getProject_id().equals("PP024001")) {
+                evect.setProjectname("共通项目（会议研修等）");
+            }
+            CompanyProjects companyProject = companyProjectsMapper.selectByPrimaryKey(evect.getProject_id());
+            Comproject comproject = comprojectMapper.selectByPrimaryKey(evect.getProject_id());
+            if (companyProject != null) {
+                if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(companyProject.getProject_name())) {
+                    evect.setProjectname(companyProject.getProject_name());
+                }
+            } else if (comproject != null) {
+                if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(comproject.getProject_name())) {
+                    evect.setProjectname(comproject.getProject_name());
+                }
+            }
+            evectionListf.add(evect);
+        }
+        return evectionListf;
+        //endregion add_qhr_20210810 添加项目名称
     }
 
     @Override
@@ -520,7 +550,7 @@ public class EvectionServiceImpl implements EvectionService {
             String subjectnumber = getProperty(detail, "subjectnumber");
             String mergeKey;
 
-            mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber + " ... " + currency;
+            mergeKey = budgetcoding + " ... " + subjectnumber + " ... " + currency;
 
             // 行合并
             float money = getPropertyFloat(detail, "foreigncurrency");
@@ -625,7 +655,7 @@ public class EvectionServiceImpl implements EvectionService {
             String budgetcoding = getProperty(detail, "budgetcoding");
             String subjectnumber = getProperty(detail, "subjectnumber");
             String mergeKey;
-            mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber;
+            mergeKey = budgetcoding + " ... " + subjectnumber;
             // 行合并
             float money = getPropertyFloat(detail, "rmb");
             float moneysum = getPropertyFloat(detail, "subsidies");

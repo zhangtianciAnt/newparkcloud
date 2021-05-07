@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 @Data
@@ -199,6 +200,10 @@ public class Evection extends BaseModel {
      */
     @Column(name = "PROJECT_ID")
     private String project_id;
+
+//add_qhr_20210810 添加项目名称
+    @Transient
+    private String projectname;
 
     /**
      * 报销日
