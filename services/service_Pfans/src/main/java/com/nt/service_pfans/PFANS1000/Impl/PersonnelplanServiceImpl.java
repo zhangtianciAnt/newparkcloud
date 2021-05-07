@@ -122,8 +122,12 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
                 }
                 else
                 {
-                    BigDecimal unitprice = new BigDecimal(newmavg.getUnitprice());
-                    moneyavgSum = moneyavgSum.add(unitprice);
+                    //add gbb 20210507 人员计划报错出错 start
+                    if(newmavg.getUnitprice() != null){
+                        BigDecimal unitprice = new BigDecimal(newmavg.getUnitprice());
+                        moneyavgSum = moneyavgSum.add(unitprice);
+                    }
+                    //add gbb 20210507 人员计划报错出错 end
                 }
 
             }
