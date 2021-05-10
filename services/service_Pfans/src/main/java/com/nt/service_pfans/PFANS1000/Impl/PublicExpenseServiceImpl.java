@@ -445,7 +445,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         if (com.nt.utils.StringUtils.isNotBlank(communicationList.get(0).getPublicexpense_id())) {
                             communicationList.get(0).setPublicexpense_id(communicationList.get(0).getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
-                            communicationList.get(0).setInvoiceno(communicationList.get(0).getLoanapno() + "," + publicExpense.getInvoiceno());
+                            communicationList.get(0).setInvoiceno(communicationList.get(0).getInvoiceno() + "," + publicExpense.getInvoiceno());
                         } else {
                             communicationList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                             communicationList.get(0).setInvoiceno(publicExpense.getInvoiceno());
@@ -475,7 +475,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         if (com.nt.utils.StringUtils.isNotBlank(judgementList.get(0).getPublicexpense_id())) {
                             judgementList.get(0).setPublicexpense_id(judgementList.get(0).getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
-                            judgementList.get(0).setInvoiceno(judgementList.get(0).getLoanapno() + "," + publicExpense.getInvoiceno());
+                            judgementList.get(0).setInvoiceno(judgementList.get(0).getInvoiceno() + "," + publicExpense.getInvoiceno());
                         } else {
                             judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                             judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
@@ -504,7 +504,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         if (com.nt.utils.StringUtils.isNotBlank(judgementList.get(0).getPublicexpense_id())) {
                             judgementList.get(0).setPublicexpense_id(judgementList.get(0).getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
-                            judgementList.get(0).setInvoiceno(judgementList.get(0).getLoanapno() + "," + publicExpense.getInvoiceno());
+                            judgementList.get(0).setInvoiceno(judgementList.get(0).getInvoiceno() + "," + publicExpense.getInvoiceno());
                         } else {
                             judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                             judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
@@ -533,7 +533,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         if (com.nt.utils.StringUtils.isNotBlank(purchaseapplyList.get(0).getPublicexpense_id())) {
                             purchaseapplyList.get(0).setPublicexpense_id(purchaseapplyList.get(0).getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
-                            purchaseapplyList.get(0).setInvoiceno(purchaseapplyList.get(0).getLoanapno() + "," + publicExpense.getInvoiceno());
+                            purchaseapplyList.get(0).setInvoiceno(purchaseapplyList.get(0).getInvoiceno() + "," + publicExpense.getInvoiceno());
                         } else {
                             purchaseapplyList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                             purchaseapplyList.get(0).setInvoiceno(publicExpense.getInvoiceno());

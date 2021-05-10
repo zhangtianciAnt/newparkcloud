@@ -16,6 +16,8 @@ import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS1000.EvectionService;
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
+import com.nt.service_pfans.PFANS1000.mapper.EvectionMapper;
+import com.nt.service_pfans.PFANS1000.mapper.PublicExpenseMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -54,6 +56,9 @@ public class Pfans1013Controller {
 
     @Autowired
     private LoanApplicationService loanapplicationService;
+
+    @Autowired
+    private EvectionMapper evectionMapper;
 
     private static final String TAX_KEY = "__TAX_KEY__";
 
@@ -675,5 +680,24 @@ public class Pfans1013Controller {
     @RequestMapping(value = "/getLoanApplication", method = {RequestMethod.GET})
     public ApiResult getLoanApplication(HttpServletRequest request) throws Exception {
         return ApiResult.success(loanapplicationService.getLoapp());
+    }
+
+    @RequestMapping(value = "/one2", method = {RequestMethod.POST})
+    public ApiResult one2(@RequestBody Business business, HttpServletRequest request) throws Exception {
+        if (business == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        List<Evection> evectionList = new ArrayList<>();
+//        if(com.nt.utils.StringUtils.isNotBlank(business.getPublicexpense_id() != )
+        String pubid[] = business.getPublicexpense_id().split(",");
+        if (pubid.length > 0) {
+            for (int i = 0; i < pubid.length; i++) {
+                Evection evection = new Evection();
+                evection.setEvectionid(pubid[i]);
+                List<Evection> eveList = evectionMapper.select(evection);
+                evectionList.addAll(0, eveList);
+            }
+        }
+        return ApiResult.success(evectionList);
     }
 }
