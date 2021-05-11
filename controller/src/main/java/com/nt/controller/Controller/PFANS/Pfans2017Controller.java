@@ -28,6 +28,7 @@ public class Pfans2017Controller {
     public ApiResult getDataList(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         PunchcardRecord punchcardrecord = new PunchcardRecord();
+        punchcardrecord.setUser_id(tokenModel.getUserId());
         return ApiResult.success(punchcardrecordService.getDataList(punchcardrecord,tokenModel));
     }
 
