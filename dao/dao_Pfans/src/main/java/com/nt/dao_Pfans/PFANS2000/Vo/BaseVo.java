@@ -1,6 +1,7 @@
 package com.nt.dao_Pfans.PFANS2000.Vo;
 
 import com.nt.dao_Pfans.PFANS2000.*;
+import com.nt.utils.Encryption.Encryption;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -230,7 +231,8 @@ public class BaseVo {
 
     private String thisadjustment;
 
-  private String realwages;
+    @Encryption
+    private String realwages;
 
 
 
