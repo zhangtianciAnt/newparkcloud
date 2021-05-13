@@ -189,6 +189,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
             for (Contractapplication citation : cnList) {
+                //去掉多次觉书无用数据
+                if (citation.getContractnumber().indexOf("-") != -1 && citation.getState().equals("无效")) {
+                    continue;
+                }
                 for (Contractnumbercount contractRemarks : numberList) {
                     if (contractRemarks.getQingremarksqh() != null && !contractRemarks.getQingremarksqh().isEmpty()) {
                         strBuffer.append(contractRemarks.getQingremarksqh());

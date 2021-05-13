@@ -1,5 +1,6 @@
 package com.nt.dao_Pfans.PFANS2000;
 
+import com.nt.utils.Encryption.Encryption;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -309,6 +310,7 @@ public class Wages extends BaseModel {
     @Column(name = "THISADJUSTMENT")
     private String thisadjustment;          //  调整数     手工录入     本月应扣缴所得税       edit
 
+    @Encryption
     @Column(name = "REALWAGES")
     private String realwages;               //  当月实发工资   需要添加其他6字段    add
 
