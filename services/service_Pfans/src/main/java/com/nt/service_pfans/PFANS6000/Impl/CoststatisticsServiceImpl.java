@@ -782,6 +782,9 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 //            }
 //        }
         Expatriatesinfor infor = new Expatriatesinfor();
+        infor.setExits("1");
+        infor.setWhetherentry("BP006001");
+        infor.setExitime(null);
         List<Expatriatesinfor> inforlist = expatriatesinforMapper.select(infor);
         Map<String,List<Expatriatesinfor>> userGroupMap = inforlist.stream().collect(Collectors.groupingBy(Expatriatesinfor::getGroup_id));
         for (String key : userGroupMap.keySet()) {

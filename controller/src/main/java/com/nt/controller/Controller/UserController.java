@@ -193,12 +193,14 @@ public class UserController {
         CustomerInfo info = new CustomerInfo();
         if (StrUtil.isNotBlank(userVo.getUserAccount().get_id())) {
             userVo.getUserAccount().preUpdate(tokenModel);
+            userVo.getCustomerInfo().preUpdate(tokenModel);
             info = userService.addAccountCustomer(userVo);
             id = info.getUserid();
             annualLeaveService.insertannualLeave(info);
         } else {
             userVo.getUserAccount().preInsert(tokenModel);
             userVo.getUserAccount().setPassword(userVo.getCustomerInfo().getUserinfo().getAdfield());
+            userVo.getCustomerInfo().preInsert(tokenModel);
             info = userService.addAccountCustomer(userVo);
             annualLeaveService.insertannualLeave(info);
             id = info.getUserid();

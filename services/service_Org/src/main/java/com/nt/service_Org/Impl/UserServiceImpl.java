@@ -328,7 +328,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void upCustomerInfo(CustomerInfo customerInfo) throws Exception {
-        mongoTemplate.save(customerInfo);
+        mongoTemplate.save(customerInfo);//没有用到
     }
 
     /**
@@ -1874,6 +1874,7 @@ public class UserServiceImpl implements UserService {
                 else{
                     customerInfo.setUserid(UUID.randomUUID().toString());//111
                 }
+                customerInfo.preInsert(tokenModel);
                 mongoTemplate.save(customerInfo);
                 accesscount = accesscount + 1;
                 //成功人员
@@ -2759,6 +2760,7 @@ public class UserServiceImpl implements UserService {
                     cupList8 = cupList8.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                     customerInfoList.get(0).getUserinfo().setHouseData(cupList8);
                 }
+                customerInfoList.get(0).preUpdate(tokenModel);
                 mongoTemplate.save(customerInfoList.get(0));
                 //如果更新登录账户,登录名和密码默认设置成登录账户
                 if (userAccount.getPassword() != null && userAccount.getAccount() != null) {
