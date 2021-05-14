@@ -73,6 +73,8 @@ public class EvectionServiceImpl implements EvectionService {
     @Autowired
     private TravelCostMapper travelcostmapper;
     @Autowired
+    private BusinessMapper businessMapper;
+    @Autowired
     private DictionaryService dictionaryService;
     @Autowired
     private OrgTreeService orgTreeService;
@@ -1059,6 +1061,23 @@ public class EvectionServiceImpl implements EvectionService {
                 currencyexchangeMapper.insertSelective(curr);
             }
         }
+        if(com.nt.utils.StringUtils.isNotBlank(evection.getBusiness_id())){
+            Business business = new Business();
+            business.setBusiness_id(evection.getBusiness_id());
+            List<Business> businessList = businessMapper.select(business);
+            if(businessList.size() > 0){
+                if (com.nt.utils.StringUtils.isNotBlank(businessList.get(0).getPublicexpense_id())) {
+                    businessList.get(0).setPublicexpense_id(businessList.get(0).getPublicexpense_id() + "," + evection.getEvectionid());
+                    businessList.get(0).setInvoiceno(businessList.get(0).getInvoiceno() + "," + evection.getInvoiceno());
+                } else {
+                    businessList.get(0).setPublicexpense_id(evection.getEvectionid());
+                    businessList.get(0).setInvoiceno(evection.getInvoiceno());
+                }
+                businessList.get(0).preUpdate(tokenModel);
+                businessMapper.updateByPrimaryKey(businessList.get(0));
+            }
+        }
+
         saveTravelCostList(invoiceNo, trafficdetailslist, accommodationdetailslist, otherdetailslist, invoicelist, currencyexchangeList, evectionVo, tokenModel, evectionid);
 
     }
