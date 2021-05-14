@@ -16,6 +16,7 @@ import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS1000.EvectionService;
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
+import com.nt.service_pfans.PFANS1000.mapper.BusinessMapper;
 import com.nt.service_pfans.PFANS1000.mapper.EvectionMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PublicExpenseMapper;
 import com.nt.utils.*;
@@ -59,8 +60,30 @@ public class Pfans1013Controller {
 
     @Autowired
     private EvectionMapper evectionMapper;
+    @Autowired
+    private BusinessMapper businessMapper;
 
     private static final String TAX_KEY = "__TAX_KEY__";
+
+
+    //ztc  临时接口  处理出差 精算
+    @RequestMapping(value = "/antInfo", method = {RequestMethod.GET})
+    public void antInfo(HttpServletRequest request) throws Exception {
+        List<Evection> evectionList = evectionMapper.selectAll();
+        for(Evection evt : evectionList){
+            Business business = new Business();
+            business.setBusiness_id(evt.getBusiness_id());
+            List<Business> businessList = businessMapper.select(business);
+            if(businessList.size() > 0){
+                businessList.get(0).setPublicexpense_id(evt.getEvectionid());
+                businessList.get(0).setInvoiceno(evt.getInvoiceno());
+            }
+            System.out.println(businessList.get(0));
+            businessMapper.updateByPrimaryKey(businessList.get(0));
+        }
+    }
+
+
 
     @RequestMapping(value = "/exportjs", method = {RequestMethod.GET})
     public void exportjs(String evectionid, HttpServletRequest request, HttpServletResponse response) throws Exception {
