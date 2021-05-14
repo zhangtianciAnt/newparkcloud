@@ -1390,6 +1390,26 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
 //        if(staffexitprocedureVo.getStaffexitprocedure().getStage().equals("1") && staffexitprocedureVo.getStaffexitprocedure().getStatus().equals("4")) {
         BeanUtils.copyProperties(staffexitprocedureVo.getStaffexitproce(), staffexitproce);
         staffexitproce.preUpdate(tokenModel);
+
+        //add ccm 20210513
+        Staffexitproce sta = new Staffexitproce();
+        sta = staffexitproceMapper.selectByPrimaryKey(staffexitprocedureVo.getStaffexitproce().getStaffexitproce_id());
+        if(sta.getStatus().equals("0") && staffexitprocedureVo.getStaffexitproce().getStatus().equals("2"))
+        {
+            //发提醒给离职者
+            ToDoNotice toDoNotice = new ToDoNotice();
+            toDoNotice.setTitle("【系统消息:您的调书已经创建完成，请处理离职手续！】");
+            toDoNotice.setInitiator(staffexitprocedureVo.getStaffexitproce().getReporter());
+            toDoNotice.setContent("您的调书已经创建完成，请处理离职手续！");
+            toDoNotice.setDataid(staffexitprocedureVo.getStaffexitproce().getStaffexitproce_id());
+            toDoNotice.setUrl("/PFANS2032FormView");
+            toDoNotice.setWorkflowurl("/PFANS2032View");
+            toDoNotice.preInsert(tokenModel);
+            toDoNotice.setOwner(staffexitprocedureVo.getStaffexitproce().getUser_id());
+            toDoNoticeService.save(toDoNotice);
+        }
+        //add ccm 20210513
+
         staffexitproceMapper.updateByPrimaryKey(staffexitproce);
         String staffexitproceid = staffexitproce.getStaffexitproce_id();
         Citation cita = new Citation();
