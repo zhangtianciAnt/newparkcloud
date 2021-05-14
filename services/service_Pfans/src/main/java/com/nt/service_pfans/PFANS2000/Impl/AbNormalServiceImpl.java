@@ -266,6 +266,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                                 customerInfoList.get(0).getUserinfo().setAnnualyear(String.valueOf(annual_leave_thisyear));
                                 //今年法定年休数
                                 customerInfoList.get(0).getUserinfo().setRestyear(String.valueOf(annual_leave_thisyear));
+                                customerInfoList.get(0).preUpdate(tokenModel);
                                 mongoTemplate.save(customerInfoList.get(0));
                             }
                         }

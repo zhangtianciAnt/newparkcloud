@@ -234,6 +234,7 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
                 customerInfo.setType("1");
                 customerInfo.setStatus("0");
                 customerInfo.setUserinfo(info);
+                customerInfo.preInsert(tokenModel);
                 mongoTemplate.save(customerInfo);
                 List<MembersVo> rolelist = roleService.getMembers("5e7863668f43163084351139");
                 if (rolelist.size() > 0) {
