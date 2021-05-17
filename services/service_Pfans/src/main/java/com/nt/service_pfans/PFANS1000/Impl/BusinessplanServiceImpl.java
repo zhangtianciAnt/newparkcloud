@@ -1067,14 +1067,14 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 }
             }
             //ADD
-            List<PersonalAvgVo> personalAvgVoListNEW = JSON.parseArray(personnelPlanList.get(0).getNewentry(), PersonalAvgVo.class);
-            for (PersonalAvgVo pav : personalAvgVoListNEW) {
-                if(null == rankNum.get(pav.getNextyear())){
-                    rankNum.put(pav.getNextyear(),1);
-                }else {
-                    rankNum.put(pav.getNextyear(),rankNum.get(pav.getNextyear())+1);
-                }
-            }
+//            List<PersonalAvgVo> personalAvgVoListNEW = JSON.parseArray(personnelPlanList.get(0).getNewentry(), PersonalAvgVo.class);
+//            for (PersonalAvgVo pav : personalAvgVoListNEW) {
+//                if(null == rankNum.get(pav.getNextyear())){
+//                    rankNum.put(pav.getNextyear(),1);
+//                }else {
+//                    rankNum.put(pav.getNextyear(),rankNum.get(pav.getNextyear())+1);
+//                }
+//            }
             //ADD
 
             Map<String,Double> summerplanpcSumMap = personalAvgVoList.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getSummerplanpc)));
