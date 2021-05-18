@@ -232,14 +232,20 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
      */
     @Override
     public List<Vehicleinformation> getDailyVehicleInfo() throws Exception {
-        String urlToken = "http://gatecheck.dowann.cn/api/ws/token?username=bachapi&password=123456";
-        String urlDailyInfo = "http://gatecheck.dowann.cn/api/out/dailyInfo";
+        // 2021.05.18 门检系统升级，数据接口调整 start by nt-ma
+        // String urlToken = "http://gatecheck.dowann.cn/api/ws/token?username=bachapi&password=123456";
+        // String urlDailyInfo = "http://gatecheck.dowann.cn/api/out/dailyInfo";
+        String urlToken = "https://e-gate.api.basf.com/api/ws_auth/login?username=bachapi&password=Aa123456";
+        String urlDailyInfo = "https://e-gate.api.basf.com/api/out/dailyInfo";
+        // 2021.05.18 门检系统升级，数据接口调整 end by nt-ma
         // 获取token
         ResponseEntity<String> rst = restTemplate.exchange(urlToken, HttpMethod.GET, null, String.class);
         String value = rst.getBody();
-        JSONObject string_to_json = JSONUtil.parseObj(value);
+        // 2021.05.18 门检系统升级，数据结构变化对应 start by nt-ma
+        // JSONObject string_to_json = JSONUtil.parseObj(value);
+        JSONObject string_to_json = JSONUtil.parseObj(value).getJSONObject("data");
+        // 2021.05.18 门检系统升级，数据结构变化对应 end by nt-ma
         String token = string_to_json.get("access_token").toString();
-        System.out.println("token:" + token);
 
         // 通过token获取实时车辆信息
         List<HttpMessageConverter<?>> httpMessageConverters = restTemplate.getMessageConverters();
