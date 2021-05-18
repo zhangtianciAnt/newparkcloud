@@ -387,6 +387,15 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     tokenModel.setExpireDate(new Date());
                                     saveAttendance(attendance, "1", tokenModel);
                                 }
+                                else
+                                {
+                                    attendanceList.get(0).setCenter_id(customerInfo.getUserinfo().getCentername());
+                                    attendanceList.get(0).setGroup_id(customerInfo.getUserinfo().getGroupname());
+                                    attendanceList.get(0).setTeam_id(customerInfo.getUserinfo().getTeamname());
+                                    tokenModel.setUserId(attendanceList.get(0).getUser_id());
+                                    tokenModel.setExpireDate(new Date());
+                                    saveAttendance(attendanceList.get(0), "0", tokenModel);
+                                }
                             }
                             else
                             {
