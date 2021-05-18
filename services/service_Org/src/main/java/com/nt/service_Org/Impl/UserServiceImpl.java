@@ -1457,6 +1457,21 @@ public class UserServiceImpl implements UserService {
                         }
                     }
                 }
+                //职级类型
+                if (item.get("职级类型") != null) {
+                    String occupationtype = item.get("职级类型").toString();
+                    if (occupationtype != null) {
+                        Dictionary dictionary = new Dictionary();
+                        dictionary.setValue1(occupationtype.trim());
+                        dictionary.setPcode("PR055");
+                        List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                        if (dictionaryList.size() > 0) {
+                            userinfo.setOccupationtype(dictionaryList.get(0).getCode());
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的职级类型（" + item.get("职级类型").toString() + "）在字典中不存在！");
+                        }
+                    }
+                }
                 //性别
                 if (item.get("性别") != null) {
                     String sex = item.get("性别").toString();
@@ -2278,6 +2293,20 @@ public class UserServiceImpl implements UserService {
                                 customerInfoList.get(0).getUserinfo().setSex(dictionaryList.get(0).getCode());
                             } else {
                                 throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的性别（" + item.get("性别●").toString() + "）在字典中不存在！");
+                            }
+                        }
+                    }
+                    if (item.get("职级类型●") != null) {
+                        String occupationtype = item.get("职级类型●").toString();
+                        if (occupationtype != null) {
+                            Dictionary dictionary = new Dictionary();
+                            dictionary.setValue1(occupationtype.trim());
+                            dictionary.setPcode("PR055");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if (dictionaryList.size() > 0) {
+                                customerInfoList.get(0).getUserinfo().setOccupationtype(dictionaryList.get(0).getCode());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的职级类型（" + item.get("职级类型●").toString() + "）在字典中不存在！");
                             }
                         }
                     }
