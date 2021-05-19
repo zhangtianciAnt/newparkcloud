@@ -2,8 +2,10 @@ package com.nt.service_pfans.PFANS2000;
 
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.*;
+import com.nt.dao_Pfans.PFANS2000.Vo.PersonalCostExpVo;
 import com.nt.utils.dao.TokenModel;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface PersonalCostService {
@@ -22,7 +24,9 @@ public interface PersonalCostService {
     public List<PersonalCostRb> gettableRb(String yearsantid) throws Exception;
 
 
+    public List<PersonalCostExpVo> exportinfo(String yearsantid) throws Exception;
 
+    List<String> importPersInfo(HttpServletRequest request, TokenModel tokenModel) throws Exception;
 
 
     List<PersonalCostYears> getPerCostYarList(PersonalCostYears personalCostYears) throws Exception;
