@@ -3,7 +3,7 @@
 <mapper namespace="com.nt.service_pfans.PFANS2000.mapper.LunardetailMapper">
 <!--    查询计算出勤率-->
     <select id="selectWorkrate" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
-        SELECT `OWNER` user_id, TIME_START/my_AttendanceDays(#{YearM,jdbcType=VARCHAR}) workrate
+        SELECT `OWNER` user_id, TIME_START/my_WorkingDays(#{YearM,jdbcType=VARCHAR}) workrate
         FROM
         (SELECT `OWNER`, SUM(TIME_START) TIME_START
         FROM logmanagement
@@ -27,28 +27,35 @@
 <!--更新Process字段-->
     <select id="updateProcesT" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         UPDATE lunardetail
-        SET PROCESS = #{Process}
+        SET PROCESS = #{Process},
+        MODIFYON = NOW()
         WHERE TEAM_ID = #{Tmid}
     </select>
     <select id="updateProcesG" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         UPDATE lunardetail
-        SET PROCESS = #{Process}
-        WHERE GROUP_ID = #{Gpid}
+        SET PROCESS = #{Process},
+        MODIFYON = NOW()
+        WHERE lunarbonus_id = #{lunarbonus_id}
+        and group_id = #{groupid}
     </select>
     <select id="updateProcesC" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         UPDATE lunardetail
-        SET PROCESS = #{Process}
-        WHERE CENTER_ID = #{Crid}
+        SET PROCESS = #{Process},
+        MODIFYON = NOW()
+        WHERE lunarbonus_id = #{lunarbonus_id}
+        and center_id = #{centerid}
     </select>
     <select id="updateProcess1" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         UPDATE lunardetail
-        SET PROCESS = #{Process}
+        SET PROCESS = #{Process},
+        MODIFYON = NOW()
         WHERE EVALUATIONDAY = #{Evaluationday}
         AND SUBJECTMON = #{Subjectmon}
     </select>
     <select id="updateProcess2" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         UPDATE lunarbonus
-        SET TENANTID = #{Process}
+        SET TENANTID = #{Process},
+        MODIFYON = NOW()
         WHERE EVALUATIONDAY = #{Evaluationday}
         AND SUBJECTMON = #{Subjectmon}
     </select>
@@ -84,6 +91,7 @@
         WHERE  1 = 1 AND USER_ID !=  #{Self}
         AND EVALUATIONDAY = #{Evaluationday}
         AND SUBJECTMON = #{Subjectmon}
+        AND lunarbonus_id = #{lunarbonus_id}
         <if test="lunardetailList != null and lunardetailList.size() > 0 ">
             AND GROUP_ID IN
             <foreach item="item" index="index" collection="lunardetailList"
@@ -94,12 +102,31 @@
         ORDER BY USER_ID, `MONTH`
     </select>
 
+    <select id="selectGroupCount" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
+        SELECT count(1) as GROUPCOUNT
+        FROM lunardetail
+        WHERE
+        EVALUATIONDAY = #{Evaluationday}
+        AND SUBJECTMON = #{Subjectmon}
+        AND lunarbonus_id = #{lunarbonus_id}
+        <if test="lunardetailList != null and lunardetailList.size() > 0 ">
+            AND CENTER_ID IN
+            <foreach item="item" index="index" collection="lunardetailList"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        AND PROCESS = '2'
+        GROUP BY GROUP_ID
+    </select>
+
     <select id="selectCenter" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         SELECT *
         FROM lunardetail
         WHERE  1 = 1 AND USER_ID !=  #{Self}
         AND EVALUATIONDAY = #{Evaluationday}
         AND SUBJECTMON = #{Subjectmon}
+        AND lunarbonus_id = #{lunarbonus_id}
         <if test="lunardetailList != null and lunardetailList.size() > 0 ">
             AND CENTER_ID IN
             <foreach item="item" index="index" collection="lunardetailList"
@@ -110,10 +137,28 @@
         ORDER BY USER_ID, `MONTH`
     </select>
 
+    <select id="selectCenterCount" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
+        SELECT count(1) as GROUPCOUNT
+        FROM lunardetail
+        WHERE
+        EVALUATIONDAY = #{Evaluationday}
+        AND SUBJECTMON = #{Subjectmon}
+        AND lunarbonus_id = #{lunarbonus_id}
+        <if test="lunardetailList != null and lunardetailList.size() > 0 ">
+            AND CENTER_ID IN
+            <foreach item="item" index="index" collection="lunardetailList"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        AND PROCESS = '3'
+        GROUP BY CENTER_ID
+    </select>
+
     <select id="selectResult" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         SELECT *
         FROM lunardetail
-        WHERE  EVALUATENUM = #{Evanum} AND EVALUATIONDAY = #{Evaday} AND SUBJECTMON = #{Submon} AND USER_ID !=  #{Self}
+        WHERE EVALUATIONDAY = #{Evaday} AND SUBJECTMON = #{Submon} AND USER_ID !=  #{Self}
         ORDER BY USER_ID, `MONTH`
     </select>
 </mapper>

@@ -19,4 +19,6 @@ public class LunarAllVo {
     private List<Lunardetail> lunardetail;
 
     private List<Lunarbasic> lunarbasic;
+    //判断是否可提交
+    private String submitFlg;
 }

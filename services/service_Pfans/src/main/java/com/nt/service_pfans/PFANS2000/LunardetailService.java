@@ -12,8 +12,6 @@ public interface LunardetailService {
 
     List<Lunardetail> getLunardetail(LunardetailVo lunardetailVo) throws  Exception;
 
-    List<Examinationproject> getExam(String id) throws  Exception;
-
     void update(LunarAllVo lunarAllVo, TokenModel tokenModel) throws Exception;
 
 }

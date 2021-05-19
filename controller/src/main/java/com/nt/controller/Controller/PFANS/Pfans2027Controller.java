@@ -5,7 +5,6 @@ import com.nt.dao_Pfans.PFANS2000.Lunarbonus;
 import com.nt.dao_Pfans.PFANS2000.Lunardetail;
 import com.nt.dao_Pfans.PFANS2000.Vo.LunarAllVo;
 import com.nt.dao_Pfans.PFANS2000.Vo.LunardetailVo;
-import com.nt.service_pfans.PFANS2000.ExaminationobjectService;
 import com.nt.service_pfans.PFANS2000.LunarbonusService;
 import com.nt.service_pfans.PFANS2000.LunardetailService;
 import com.nt.utils.ApiResult;
@@ -24,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping("/Getlunarbonus")
+@RequestMapping("/lunarbonus")
 public class Pfans2027Controller {
 
     @Autowired
@@ -36,21 +35,11 @@ public class Pfans2027Controller {
     @Autowired
     private LunardetailService lunardetailService;
 
-    @Autowired
-    private ExaminationobjectService examinationobjectService;
-
     @RequestMapping(value = "/getList", method = {RequestMethod.GET})
     public ApiResult getList(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
 //        wagesService.select(tokenModel);
         return ApiResult.success(lunarbonusService.getList(tokenModel));
-    }
-//考课对象List
-    @RequestMapping(value = "/getExaminationobject", method = {RequestMethod.GET})
-    public ApiResult getExaminationobject(HttpServletRequest request) throws Exception {
-//        TokenModel tokenModel = tokenService.getToken(request);
-//        wagesService.select(tokenModel);
-        return ApiResult.success(examinationobjectService.getList());
     }
 
     //新建
@@ -76,17 +65,6 @@ public class Pfans2027Controller {
 
         return ApiResult.success(lunardetailService.getLunardetail(lunardetailVo));
     }
-
-    //获取详情状态
-    @RequestMapping(value = "/getStatus", method = {RequestMethod.GET})
-    public ApiResult selStatus(String ids, HttpServletRequest request) throws Exception {
-        if(ids==null){
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
-        }
-
-        return ApiResult.success(lunardetailService.getExam(ids));
-    }
-
 
     @RequestMapping(value="/update",method = {RequestMethod.POST})
     public ApiResult update(@RequestBody LunarAllVo lunarAllVo, HttpServletRequest request) throws Exception{
