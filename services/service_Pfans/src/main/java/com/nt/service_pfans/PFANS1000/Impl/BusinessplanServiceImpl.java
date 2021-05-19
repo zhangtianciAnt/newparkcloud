@@ -560,56 +560,56 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         }
 //        if (conditionKeys.size() > 0) {
 //            for (String str : conditionKeys) {
-        if(getgroup.size()==0)
-        {
-            PersonnelPlan personnelplan = new PersonnelPlan();
-            BusinessGroupA2Vo businessgroupa2 = new BusinessGroupA2Vo();
-            personnelplan.setCenterid(groupid);
-            personnelplan.setYears(year);
-            if (type.equals("2") || type.equals("3")) {
-                personnelplan.setType(1);
-            } else if (type.equals("1") || type.equals("4")) {
-                personnelplan.setType(0);
-            }
-            List<PersonnelPlan> personnelplanlist = personnelplanMapper.select(personnelplan);
-            if (personnelplanlist.size() > 0) {
-                businessgroupa2.setCommission(personnelplanlist.get(0).getMoneyavg());
-            } else {
-                businessgroupa2.setCommission("0");
-            }
-            businessgroupa2.setMoney1("0");
-            businessgroupa2.setMoney2("0");
-            businessgroupa2.setMoney3("0");
-            businessgroupa2.setMoney4("0");
-            businessgroupa2.setMoney5("0");
-            businessgroupa2.setMoney6("0");
-            businessgroupa2.setMoney7("0");
-            businessgroupa2.setMoney8("0");
-            businessgroupa2.setMoney9("0");
-            businessgroupa2.setMoney10("0");
-            businessgroupa2.setMoney11("0");
-            businessgroupa2.setMoney12("0");
-            businessgroupa2.setMoneyfirst("0");
-            businessgroupa2.setMoneysecond("0");
-            businessgroupa2.setMoneytotal("0");
-            businessgroupa2.setNumber1("0");
-            businessgroupa2.setNumber2("0");
-            businessgroupa2.setNumber3("0");
-            businessgroupa2.setNumber4("0");
-            businessgroupa2.setNumber5("0");
-            businessgroupa2.setNumber6("0");
-            businessgroupa2.setNumber7("0");
-            businessgroupa2.setNumber8("0");
-            businessgroupa2.setNumber9("0");
-            businessgroupa2.setNumber10("0");
-            businessgroupa2.setNumber11("0");
-            businessgroupa2.setNumber12("0");
-            businessgroupa2.setNumberfirst("0");
-            businessgroupa2.setNumbersecond("0");
-            businessgroupa2.setNumbertotal("0");
-            businessgroupa2.setGroupname(groupid);
-            VoList.add(businessgroupa2);
-        }
+//        if(getgroup.size()==0)
+//        {
+//            PersonnelPlan personnelplan = new PersonnelPlan();
+//            BusinessGroupA2Vo businessgroupa2 = new BusinessGroupA2Vo();
+//            personnelplan.setCenterid(groupid);
+//            personnelplan.setYears(year);
+//            if (type.equals("2") || type.equals("3")) {
+//                personnelplan.setType(1);
+//            } else if (type.equals("1") || type.equals("4")) {
+//                personnelplan.setType(0);
+//            }
+//            List<PersonnelPlan> personnelplanlist = personnelplanMapper.select(personnelplan);
+//            if (personnelplanlist.size() > 0) {
+//                businessgroupa2.setCommission(personnelplanlist.get(0).getMoneyavg());
+//            } else {
+//                businessgroupa2.setCommission("0");
+//            }
+//            businessgroupa2.setMoney1("0");
+//            businessgroupa2.setMoney2("0");
+//            businessgroupa2.setMoney3("0");
+//            businessgroupa2.setMoney4("0");
+//            businessgroupa2.setMoney5("0");
+//            businessgroupa2.setMoney6("0");
+//            businessgroupa2.setMoney7("0");
+//            businessgroupa2.setMoney8("0");
+//            businessgroupa2.setMoney9("0");
+//            businessgroupa2.setMoney10("0");
+//            businessgroupa2.setMoney11("0");
+//            businessgroupa2.setMoney12("0");
+//            businessgroupa2.setMoneyfirst("0");
+//            businessgroupa2.setMoneysecond("0");
+//            businessgroupa2.setMoneytotal("0");
+//            businessgroupa2.setNumber1("0");
+//            businessgroupa2.setNumber2("0");
+//            businessgroupa2.setNumber3("0");
+//            businessgroupa2.setNumber4("0");
+//            businessgroupa2.setNumber5("0");
+//            businessgroupa2.setNumber6("0");
+//            businessgroupa2.setNumber7("0");
+//            businessgroupa2.setNumber8("0");
+//            businessgroupa2.setNumber9("0");
+//            businessgroupa2.setNumber10("0");
+//            businessgroupa2.setNumber11("0");
+//            businessgroupa2.setNumber12("0");
+//            businessgroupa2.setNumberfirst("0");
+//            businessgroupa2.setNumbersecond("0");
+//            businessgroupa2.setNumbertotal("0");
+//            businessgroupa2.setGroupname(groupid);
+//            VoList.add(businessgroupa2);
+//        }
 
 //            }
 //        }
