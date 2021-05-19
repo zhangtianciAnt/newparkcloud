@@ -445,7 +445,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                             }
                         }
                     }
-                    detal = lunardetailMapper.selectCenter(lunardetailCenterList, tokenModel.getUserId(), lunarbonus.getLunarbonus_id(),lunarbonus.getEvaluationday(), lunarbonus.getSubjectmon());
+                    detal = lunardetailMapper.selectCenter(lunardetailCenterList, tokenModel.getUserId(), lunarbonus.getLunarbonus_id(),lunarbonus.getEvaluationday(), lunarbonus.getSubject());
                 }
 
         } else {
