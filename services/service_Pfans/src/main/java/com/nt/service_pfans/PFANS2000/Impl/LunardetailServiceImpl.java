@@ -66,23 +66,8 @@ public class LunardetailServiceImpl implements LunardetailService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");
         String evaluationday = simpleDateFormat.format(lunardetailVo.getEvaluationday());
         lunardetail.setEvaluationday(evaluationday);
-        lunardetail.setExaminationobject_id(lunardetailVo.getExaminationobject_id());
-
-//
-//        Examinationproject examinationproject = new Examinationproject();
-//        examinationproject.setExaminationobject_id(lunardetailVo.getExaminationobject_id());
-//        List<Examinationproject> list =  examinationprojectMapper.select(examinationproject);
 
         return lunardetailMapper.select(lunardetail);
-    }
-//获取详情状态
-    @Override
-    public List<Examinationproject> getExam(String id) throws Exception {
-        Examinationproject e = new Examinationproject();
-        e.setExaminationobject_id(id);
-        List<Examinationproject>  ExaminationprojectList =  examinationprojectMapper.select(e);
-        ExaminationprojectList = ExaminationprojectList.stream().sorted(Comparator.comparing(Examinationproject::getIndex)).collect(Collectors.toList());
-        return ExaminationprojectList;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS2000.mapper;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
+import com.nt.dao_Pfans.PFANS2000.Vo.PersonalCostExpVo;
 import com.nt.utils.MyMapper;
 import com.nt.utils.dao.TokenModel;
 import org.apache.ibatis.annotations.Param;
@@ -50,26 +51,7 @@ public interface PersonalCostMapper extends MyMapper<PersonalCost>{
     @Select("select APTOJU,JUTOMA FROM personalcost where userid = #{userid} and yearsantid = #{yearsantid}")
     PersonalCost getPersonalCostDetail(@Param("yearsantid") String yearsantid, @Param("userid") String userid);
 
-
-    @Select("select \n" +
-            "USERID as useridRb,\n" +
-            "USERNAME as usernameRb,\n" +
-            "DEPARTSHORT as departshortRb,\n" +
-            "LTRANK as ltrankRb,\n" +
-            "TOTALWAGES as totalwagesRb,\n" +
-            "OLDYLBXJAJ as oldylbxjajRb,\n" +
-            "LOSSYBXJAJ as lossybxjajRb,\n" +
-            "GSBXJAJ as gsbxjajRb,\n" +
-            "YLBXJAJ as ylbxjajRb,\n" +
-            "SYBXJAJ as sybxjajRb,\n" +
-            "GJJJSAJ as gjjjsajRb,\n" +
-            "OLDYLBXJJM as oldylbxjjmRb,\n" +
-            "LOSSYBXJJM as lossybxjjmRb,\n" +
-            "GSBXJJM as gsbxjjmRb,\n" +
-            "YLBXJJM as ylbxjjmRb,\n" +
-            "SYBXJJM as sybxjjmRb,\n" +
-            "GJJJSJM as gjjjsjmRb\n" +
-            "from personalcost where yearsantid = #{yearsantid}")
+    @Select("select username as useridRb, departshort as departshortRb, ltrank as ltrankRb, totalwages as totalwagesRb,oldylbxjaj as oldylbxjajRb, lossybxjaj as lossybxjajRb, gsbxjaj as gsbxjajRb, ylbxjaj as ylbxjajRb, sybxjaj as sybxjajRb, gjjjsaj as gjjjsajRb, oldylbxjjm as oldylbxjjmRb, lossybxjjm as lossybxjjmRb, gsbxjjm as gsbxjjmRb, ylbxjjm as ylbxjjmRb,sybxjjm as sybxjjmRb, gjjjsjm as gjjjsjmRb,aprilTrue,mayTrue,juneTrue,julyTrue,augTrue,sepTrue,octTrue,noveTrue,deceTrue,janTrue,febTrue,marTrue from personalcost where yearsantid = #{yearsantid}")
     List<PersonalCostRb> getPersonalCostRb(@Param("yearsantid") String yearsantid);
 
 
@@ -88,6 +70,17 @@ public interface PersonalCostMapper extends MyMapper<PersonalCost>{
     //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-end
 
     // add-lyt-21/1/29-禅道任务648-start
+
     List<PersonalCost> getPersonalCost(@Param("groupid") String groupid,@Param("years") String years );
+    // add-lyt-21/1/29-禅道任务648-end
+
+    // add-lyt-21/1/29-禅道任务648-start
+    @Select("select * from personalcost where yearsantid = #{yearsantid}")
+    List<PersonalCostExpVo> percostVo(@Param("yearsantid") String yearsantid);
+    // add-lyt-21/1/29-禅道任务648-end
+
+    // add-lyt-21/1/29-禅道任务648-start
+    @Select("select count(username) from personalcost where username LIKE '%新人%'")
+    Integer seleNew();
     // add-lyt-21/1/29-禅道任务648-end
 }
