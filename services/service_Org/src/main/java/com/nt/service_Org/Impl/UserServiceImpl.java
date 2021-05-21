@@ -460,10 +460,12 @@ public class UserServiceImpl implements UserService {
                         cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                     }
                     userInfo.setGridData(cupList);
-                    if (userInfo.getGridData().size() > 0) {
-                        userInfo.setBasic(userInfo.getGridData().get(0).getBasic());
-                        userInfo.setDuty(userInfo.getGridData().get(0).getDuty());
-                    }
+//del ccm  工资数据不能反向覆盖 不可以用履历盖原值 fr
+//                    if (userInfo.getGridData().size() > 0) {
+//                        userInfo.setBasic(userInfo.getGridData().get(0).getBasic());
+//                        userInfo.setDuty(userInfo.getGridData().get(0).getDuty());
+//                    }
+//del ccm  工资数据不能反向覆盖 不可以用履历盖原值 to
                 }
 //                ADD_FJL_05/21   --添加降序
                 customerInfo.setUserinfo(userInfo);
