@@ -30,6 +30,8 @@ public interface LogManagementService {
     public List<LogManagement> getDataListByLog_date(LogManagement logmanagemenr) throws Exception;
     //add ccm 1118 日志优化
 
+    public List<LogManagement> getOrgOwnerList(LogManagement logmanagemenr) throws Exception;
+
     //add_fjl_0716_添加PL权限的人查看日志一览  start
     public List<LogManagement> getDataListPL(TokenModel tokenModel) throws Exception;
     //add_fjl_0716_添加PL权限的人查看日志一览  end
