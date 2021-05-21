@@ -318,109 +318,213 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                 List<DelegainformationVo> delvoList = new ArrayList<DelegainformationVo>();
                 List<Delegainformation> delList = new ArrayList<Delegainformation>();
                 List<String> a = new ArrayList<String>();
-                List<OrgTree> orgsList =  orgTreeService.getById(new OrgTree());
-                for(OrgTree orgTree:orgsList)
+                OrgTree orgsList = orgTreeService.get(new OrgTree());
+                //副总
+                for(OrgTree orgfu:orgsList.getOrgs())
                 {
-                    for(OrgTree org:orgTree.getOrgs())
+                    //center
+                    for(OrgTree orgC:orgfu.getOrgs())
                     {
-                        for(OrgTree or:org.getOrgs())
+                        if(!StringUtils.isNullOrEmpty(orgC.getEncoding()))
                         {
-                            if(or.getType().equals("2"))
+                            //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 start
+                            //delvoList = getYears(y,or.get_id(),a);
+                            DelegainformationtaxVo taxvo = getYears(y,orgC.get_id(),a);
+                            delvoList = taxvo.getDelegainformationVo();
+                            //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
+                            if(delvoList.size()>0)
                             {
-                                //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 start
-                                //delvoList = getYears(y,or.get_id(),a);
-                                DelegainformationtaxVo taxvo = getYears(y,or.get_id(),a);
-                                delvoList = taxvo.getDelegainformationVo();
-                                //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
-                                if(delvoList.size()>0)
+                                for(DelegainformationVo vo : delvoList)
                                 {
-                                    for(DelegainformationVo vo : delvoList)
+                                    Delegainformation del = new Delegainformation();
+                                    del.setDelegainformation_id(vo.getDelegainformation_id());
+                                    //四月
+                                    del.setApril(vo.getApril());
+                                    if(StringUtils.isNullOrEmpty(vo.getApril()))
                                     {
-                                        Delegainformation del = new Delegainformation();
-                                        del.setDelegainformation_id(vo.getDelegainformation_id());
-                                        //四月
-                                        del.setApril(vo.getApril());
-                                        if(StringUtils.isNullOrEmpty(vo.getApril()))
-                                        {
-                                            del.setApril("0");
-                                        }
-                                        //五月
-                                        del.setMay(vo.getMay());
-                                        if(StringUtils.isNullOrEmpty(vo.getMay()))
-                                        {
-                                            del.setMay("0");
-                                        }
-                                        //六月
-                                        del.setJune(vo.getJune());
-                                        if(StringUtils.isNullOrEmpty(vo.getJune()))
-                                        {
-                                            del.setJune("0");
-                                        }
-                                        //七月
-                                        del.setJuly(vo.getJuly());
-                                        if(StringUtils.isNullOrEmpty(vo.getJuly()))
-                                        {
-                                            del.setJuly("0");
-                                        }
-                                        //八月
-                                        del.setAugust(vo.getAugust());
-                                        if(StringUtils.isNullOrEmpty(vo.getAugust()))
-                                        {
-                                            del.setAugust("0");
-                                        }
-                                        //九月
-                                        del.setSeptember(vo.getSeptember());
-                                        if(StringUtils.isNullOrEmpty(vo.getSeptember()))
-                                        {
-                                            del.setSeptember("0");
-                                        }
-                                        //十月
-                                        del.setOctober(vo.getOctober());
-                                        if(StringUtils.isNullOrEmpty(vo.getOctober()))
-                                        {
-                                            del.setOctober("0");
-                                        }
-                                        //十一月
-                                        del.setNovember(vo.getNovember());
-                                        if(StringUtils.isNullOrEmpty(vo.getNovember()))
-                                        {
-                                            del.setNovember("0");
-                                        }
-                                        //十二月
-                                        del.setDecember(vo.getDecember());
-                                        if(StringUtils.isNullOrEmpty(vo.getDecember()))
-                                        {
-                                            del.setDecember("0");
-                                        }
-                                        //明年一月
-                                        del.setJanuary(vo.getJanuary());
-                                        if(StringUtils.isNullOrEmpty(vo.getJanuary()))
-                                        {
-                                            del.setJanuary("0");
-                                        }
-                                        //明年二月
-                                        del.setFebruary(vo.getFebruary());
-                                        if(StringUtils.isNullOrEmpty(vo.getFebruary()))
-                                        {
-                                            del.setFebruary("0");
-                                        }
-                                        //明年三月
-                                        del.setMarch(vo.getMarch());
-                                        if(StringUtils.isNullOrEmpty(vo.getMarch()))
-                                        {
-                                            del.setMarch("0");
-                                        }
-                                        del.setYear(vo.getYear());
-                                        del.setAccount(vo.getAccount());
-                                        del.setGroup_id(vo.getGroup_id());
-                                        delList.add(del);
+                                        del.setApril("0");
                                     }
+                                    //五月
+                                    del.setMay(vo.getMay());
+                                    if(StringUtils.isNullOrEmpty(vo.getMay()))
+                                    {
+                                        del.setMay("0");
+                                    }
+                                    //六月
+                                    del.setJune(vo.getJune());
+                                    if(StringUtils.isNullOrEmpty(vo.getJune()))
+                                    {
+                                        del.setJune("0");
+                                    }
+                                    //七月
+                                    del.setJuly(vo.getJuly());
+                                    if(StringUtils.isNullOrEmpty(vo.getJuly()))
+                                    {
+                                        del.setJuly("0");
+                                    }
+                                    //八月
+                                    del.setAugust(vo.getAugust());
+                                    if(StringUtils.isNullOrEmpty(vo.getAugust()))
+                                    {
+                                        del.setAugust("0");
+                                    }
+                                    //九月
+                                    del.setSeptember(vo.getSeptember());
+                                    if(StringUtils.isNullOrEmpty(vo.getSeptember()))
+                                    {
+                                        del.setSeptember("0");
+                                    }
+                                    //十月
+                                    del.setOctober(vo.getOctober());
+                                    if(StringUtils.isNullOrEmpty(vo.getOctober()))
+                                    {
+                                        del.setOctober("0");
+                                    }
+                                    //十一月
+                                    del.setNovember(vo.getNovember());
+                                    if(StringUtils.isNullOrEmpty(vo.getNovember()))
+                                    {
+                                        del.setNovember("0");
+                                    }
+                                    //十二月
+                                    del.setDecember(vo.getDecember());
+                                    if(StringUtils.isNullOrEmpty(vo.getDecember()))
+                                    {
+                                        del.setDecember("0");
+                                    }
+                                    //明年一月
+                                    del.setJanuary(vo.getJanuary());
+                                    if(StringUtils.isNullOrEmpty(vo.getJanuary()))
+                                    {
+                                        del.setJanuary("0");
+                                    }
+                                    //明年二月
+                                    del.setFebruary(vo.getFebruary());
+                                    if(StringUtils.isNullOrEmpty(vo.getFebruary()))
+                                    {
+                                        del.setFebruary("0");
+                                    }
+                                    //明年三月
+                                    del.setMarch(vo.getMarch());
+                                    if(StringUtils.isNullOrEmpty(vo.getMarch()))
+                                    {
+                                        del.setMarch("0");
+                                    }
+                                    del.setYear(vo.getYear());
+                                    del.setAccount(vo.getAccount());
+                                    del.setGroup_id(vo.getGroup_id());
+                                    delList.add(del);
+                                }
+                                //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 start
+                                taxvo.setDelegainformationList(delList);
+                                updateDeleginformation(taxvo,tokenModel);
+                                //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
+                                Coststatistics coststatistics = new Coststatistics();
+                                coststatisticsService.insertCoststatistics(orgC.get_id(),y,coststatistics,tokenModel);
+                            }
+                        }
+                        else
+                        {
+                            //group
+                            for(OrgTree orG:orgC.getOrgs())
+                            {
+                                if(!StringUtils.isNullOrEmpty(orG.getEncoding()))
+                                {
                                     //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 start
-                                    taxvo.setDelegainformationList(delList);
-                                    updateDeleginformation(taxvo,tokenModel);
+                                    //delvoList = getYears(y,or.get_id(),a);
+                                    DelegainformationtaxVo taxvo = getYears(y,orG.get_id(),a);
+                                    delvoList = taxvo.getDelegainformationVo();
                                     //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
-                                    Coststatistics coststatistics = new Coststatistics();
-                                    coststatisticsService.insertCoststatistics(or.get_id(),y,coststatistics,tokenModel);
+                                    if(delvoList.size()>0)
+                                    {
+                                        for(DelegainformationVo vo : delvoList)
+                                        {
+                                            Delegainformation del = new Delegainformation();
+                                            del.setDelegainformation_id(vo.getDelegainformation_id());
+                                            //四月
+                                            del.setApril(vo.getApril());
+                                            if(StringUtils.isNullOrEmpty(vo.getApril()))
+                                            {
+                                                del.setApril("0");
+                                            }
+                                            //五月
+                                            del.setMay(vo.getMay());
+                                            if(StringUtils.isNullOrEmpty(vo.getMay()))
+                                            {
+                                                del.setMay("0");
+                                            }
+                                            //六月
+                                            del.setJune(vo.getJune());
+                                            if(StringUtils.isNullOrEmpty(vo.getJune()))
+                                            {
+                                                del.setJune("0");
+                                            }
+                                            //七月
+                                            del.setJuly(vo.getJuly());
+                                            if(StringUtils.isNullOrEmpty(vo.getJuly()))
+                                            {
+                                                del.setJuly("0");
+                                            }
+                                            //八月
+                                            del.setAugust(vo.getAugust());
+                                            if(StringUtils.isNullOrEmpty(vo.getAugust()))
+                                            {
+                                                del.setAugust("0");
+                                            }
+                                            //九月
+                                            del.setSeptember(vo.getSeptember());
+                                            if(StringUtils.isNullOrEmpty(vo.getSeptember()))
+                                            {
+                                                del.setSeptember("0");
+                                            }
+                                            //十月
+                                            del.setOctober(vo.getOctober());
+                                            if(StringUtils.isNullOrEmpty(vo.getOctober()))
+                                            {
+                                                del.setOctober("0");
+                                            }
+                                            //十一月
+                                            del.setNovember(vo.getNovember());
+                                            if(StringUtils.isNullOrEmpty(vo.getNovember()))
+                                            {
+                                                del.setNovember("0");
+                                            }
+                                            //十二月
+                                            del.setDecember(vo.getDecember());
+                                            if(StringUtils.isNullOrEmpty(vo.getDecember()))
+                                            {
+                                                del.setDecember("0");
+                                            }
+                                            //明年一月
+                                            del.setJanuary(vo.getJanuary());
+                                            if(StringUtils.isNullOrEmpty(vo.getJanuary()))
+                                            {
+                                                del.setJanuary("0");
+                                            }
+                                            //明年二月
+                                            del.setFebruary(vo.getFebruary());
+                                            if(StringUtils.isNullOrEmpty(vo.getFebruary()))
+                                            {
+                                                del.setFebruary("0");
+                                            }
+                                            //明年三月
+                                            del.setMarch(vo.getMarch());
+                                            if(StringUtils.isNullOrEmpty(vo.getMarch()))
+                                            {
+                                                del.setMarch("0");
+                                            }
+                                            del.setYear(vo.getYear());
+                                            del.setAccount(vo.getAccount());
+                                            del.setGroup_id(vo.getGroup_id());
+                                            delList.add(del);
+                                        }
+                                        //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 start
+                                        taxvo.setDelegainformationList(delList);
+                                        updateDeleginformation(taxvo,tokenModel);
+                                        //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
+                                        Coststatistics coststatistics = new Coststatistics();
+                                        coststatisticsService.insertCoststatistics(orG.get_id(),y,coststatistics,tokenModel);
+                                    }
                                 }
                             }
                         }
