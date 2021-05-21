@@ -395,6 +395,14 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                     //detal = lunardetailMapper.selectTeam(lunardetailList, tokenModel.getUserId(), lunarbonus.getEvaluationday(), lunarbonus.getSubject());
                     detal = lunardetailMapper.selectGroup(lunardetailList, tokenModel.getUserId(),lunarbonus.getLunarbonus_id(), lunarbonus.getEvaluationday(), lunarbonus.getSubject());
                     LunarAllVo.setSubmitFlg("1");//可提交
+                    for (Lunardetail aaa: detal) {
+                        if (aaa.getProcess().equals("1")) {
+                            LunarAllVo.setSubmitFlg("1");//可提交
+                        } else if (!aaa.getProcess().equals("1")) {
+                            LunarAllVo.setSubmitFlg("0");//不可提交
+                            break;
+                        }
+                    }
                 }
                 //center二次评价
                 if (lunarbonus.getEvaluatenum().equals("PJ104002")) {
@@ -418,7 +426,14 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                         }
                     }
                     detal = lunardetailMapper.selectCenter(lunardetailList, tokenModel.getUserId(), lunarbonus.getLunarbonus_id(),lunarbonus.getEvaluationday(), lunarbonus.getSubject());
-
+                    for (Lunardetail aaa: detal) {
+                        if (aaa.getProcess().equals("2")) {
+                            LunarAllVo.setSubmitFlg("1");//可提交
+                        } else if (!aaa.getProcess().equals("2")) {
+                            LunarAllVo.setSubmitFlg("0");//不可提交
+                            break;
+                        }
+                    }
                 }
                 if (lunarbonus.getEvaluatenum().equals("PJ104003")) {
                     //副总下一次评价的center个数
@@ -446,6 +461,14 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                         }
                     }
                     detal = lunardetailMapper.selectCenter(lunardetailCenterList, tokenModel.getUserId(), lunarbonus.getLunarbonus_id(),lunarbonus.getEvaluationday(), lunarbonus.getSubject());
+                    for (Lunardetail aaa: detal) {
+                        if (aaa.getProcess().equals("3")) {
+                            LunarAllVo.setSubmitFlg("1");//可提交
+                        } else if (!aaa.getProcess().equals("3")) {
+                            LunarAllVo.setSubmitFlg("0");//不可提交
+                            break;
+                        }
+                    }
                 }
 
         } else {
@@ -475,6 +498,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
             orgtreevo.setMoney2("");//team_id-group
             orgtreevo.setMoney3(org.getUser());//负责人
             orgtreevo.setMoney4("3");//center-副总
+            orgtreevo.setMoney5("");//上级
             OrgTreeVolist.add(orgtreevo);
             if(org.getOrgs() != null){
                 for (OrgTree org1 : org.getOrgs()) {//group-center
@@ -484,6 +508,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                     orgtreevo.setMoney2("");//team_id-group
                     orgtreevo.setMoney3(org1.getUser());//负责人
                     orgtreevo.setMoney4("2");//group-center
+                    orgtreevo.setMoney5(org.getOwner());//上级
                     OrgTreeVolist.add(orgtreevo);
                     if(org1.getOrgs() != null){
                         for (OrgTree org2 : org1.getOrgs()) {//team
@@ -493,6 +518,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                             orgtreevo.setMoney2(org2.get_id());//team_id-group
                             orgtreevo.setMoney3(org2.getUser());//负责人
                             orgtreevo.setMoney4("1");//team-group
+                            orgtreevo.setMoney5("");//上级
                             OrgTreeVolist.add(orgtreevo);
                         }
                     }
@@ -695,7 +721,8 @@ public class LunarbonusServiceImpl implements LunarbonusService {
 
             //region 副总给下一级总经理发待办  仅副总职操作阶段
             if (lunarbonus.getEvaluatenum().equals("PJ104003") && (!roles.contains("人事总务部长") && !roles.contains("工资计算担当") && !roles.contains("总经理"))) {
-                List<OrgTreeVo> TreeVolistCenterToZong = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("3") && item.getMoney3().equals(tokenModel.getUserId()))).collect(Collectors.toList());
+                List<OrgTreeVo> TreeVolistFuToZong = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("2"))).collect(Collectors.toList());
+                List<OrgTreeVo> FuzongCenter = TreeVolistFuToZong.stream().distinct().filter(item -> (item.getMoney5().equals(tokenModel.getUserId()))).collect(Collectors.toList());
                 ToDoNotice toDoNotice1 = new ToDoNotice();
                 toDoNotice1.setTitle("您有月度赏与评价需要确认，请注意查看。");
                 toDoNotice1.setInitiator(tokenModel.getUserId());
@@ -710,9 +737,30 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                     toDoNotice1.setOwner(rolelist.get(0).getUserid());
                 }
                 toDoNoticeService.save(toDoNotice1);
+                //修改评价状态
                 String Process = "4";
-                String Crid = TreeVolistCenterToZong.get(0).get_id();
-                //lunardetailMapper.updateProcesC(Process, Crid);
+                for (int i = 0; i < FuzongCenter.size(); i++) {
+                    //把副总的状态单独更新一下
+                    if (i == 0) {
+                        List<OrgTreeVo> Fuzong = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("3") && item.getMoney3().equals(tokenModel.getUserId()))).collect(Collectors.toList());
+                        String FuzongId = Fuzong.get(0).get_id();
+                        lunardetailMapper.updateProcesC(Process, lunarbonus.getLunarbonus_id(),FuzongId);
+                    }
+                    String Crid = FuzongCenter.get(i).get_id();
+                    lunardetailMapper.updateProcesC(Process, lunarbonus.getLunarbonus_id(),Crid);
+                }
+
+                //变更评价提交人代办状态
+                toDoNotice1 = new ToDoNotice();
+                toDoNotice1.setDataid(lunarbonus.getLunarbonus_id());
+                toDoNotice1.setOwner(tokenModel.getUserId());
+                List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
+                if (rst1.size() > 0) {
+                    for (ToDoNotice item : rst1) {
+                        item.setStatus(AuthConstants.TODO_STATUS_DONE);
+                        toDoNoticeService.updateNoticesStatus(item);
+                    }
+                }
             }
             //endregion 副总给下一级总经理发待办  仅副总职操作阶段
 
@@ -734,6 +782,18 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                 toDoNotice1.setOwner(rolelist.get(0).getUserid());
             }
             toDoNoticeService.save(toDoNotice1);
+
+            //变更评价提交人代办状态
+            toDoNotice1 = new ToDoNotice();
+            toDoNotice1.setDataid(lunarbonus.getLunarbonus_id());
+            toDoNotice1.setOwner(tokenModel.getUserId());
+            List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
+            if (rst1.size() > 0) {
+                for (ToDoNotice item : rst1) {
+                    item.setStatus(AuthConstants.TODO_STATUS_DONE);
+                    toDoNoticeService.updateNoticesStatus(item);
+                }
+            }
         }
     }
 
@@ -752,5 +812,17 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         }
         lunardetailMapper.updateProcess1(Process, lunarbonus.getEvaluationday(), subjectmon);
         lunardetailMapper.updateProcess2(Process, lunarbonus.getEvaluationday(), subjectmon);
+
+        //变更评价提交人代办状态
+        ToDoNotice toDoNotice1 = new ToDoNotice();
+        toDoNotice1.setDataid(lunarbonus.getLunarbonus_id());
+        toDoNotice1.setOwner(tokenModel.getUserId());
+        List<ToDoNotice> rst1 = toDoNoticeService.get(toDoNotice1);
+        if (rst1.size() > 0) {
+            for (ToDoNotice item : rst1) {
+                item.setStatus(AuthConstants.TODO_STATUS_DONE);
+                toDoNoticeService.updateNoticesStatus(item);
+            }
+        }
     }
 }
