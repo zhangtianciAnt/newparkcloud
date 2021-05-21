@@ -373,6 +373,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     workflowLogDetailVo.setSdata(it.getCreateon());
                     workflowLogDetailVo.setEdata(it.getModifyon());
                     workflowLogDetailVo.setIsvirtual("1");
+                    workflowLogDetailVo.setNodename(it.getName());
                     rst.add(workflowLogDetailVo);
                 }
 
@@ -384,6 +385,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     workflowLogDetailVo.setSdata(item.getCreateon());
                     workflowLogDetailVo.setEdata(item.getCreateon());
                     workflowLogDetailVo.setIsvirtual("0");
+                    workflowLogDetailVo.setNodename("");
                     rst.add(workflowLogDetailVo);
                 }
             }
@@ -554,7 +556,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     }
 
-    private String getUpUser(String curentUser, String nodeName) throws Exception {
+    private String getUpUser(String curentUser, String nodeName,String outOrg) throws Exception {
         String userId = "";
         UserVo user = userService.getAccountCustomerById(curentUser);
         String orgId = "";
@@ -573,8 +575,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 orgId = user.getCustomerInfo().getUserinfo().getCenterid();
             }
         }
+        OrgTree condition = new OrgTree();
+        condition.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        OrgTree orgs = orgTreeService.get(condition);
 
-        OrgTree orgs = orgTreeService.get(new OrgTree());
+        if(StrUtil.isNotBlank(orgId) && orgId.equals(outOrg)){
+            return "";
+        }
 
         OrgTree currentOrg = getCurrentOrg(orgs, orgId);
 
@@ -585,21 +592,31 @@ public class WorkflowServicesImpl implements WorkflowServices {
             upFlg = "0";
             OrgTree upOrgs = upCurrentOrg(orgs, orgId);
             if (upOrgs != null) {
+                if(StrUtil.isNotBlank(upOrgs.get_id()) && upOrgs.get_id().equals(outOrg)){
+                    return "";
+                }
+
                 userId = upOrgs.getUser();
 
                 if (nodeName.toUpperCase().contains("二次上司") || nodeName.toUpperCase().contains("三次上司")){
                     upFlg = "0";
                     upOrgs = upCurrentOrg(orgs, upOrgs.get_id());
                     if (upOrgs != null) {
+                        if(StrUtil.isNotBlank(upOrgs.get_id()) && upOrgs.get_id().equals(outOrg)){
+                            return "";
+                        }
                         userId = upOrgs.getUser();
                     }else{
                         userId = "";
                     }
 
-                    if(nodeName.toUpperCase().contains("三次上司")){
+                    if(upOrgs != null && nodeName.toUpperCase().contains("三次上司")){
                         upFlg = "0";
                         upOrgs = upCurrentOrg(orgs, upOrgs.get_id());
                         if (upOrgs != null) {
+                            if(StrUtil.isNotBlank(upOrgs.get_id()) && upOrgs.get_id().equals(outOrg)){
+                                return "";
+                            }
                             userId = upOrgs.getUser();
                         }else{
                             userId = "";
@@ -614,6 +631,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 upFlg = "0";
                 OrgTree upOrgs = upCurrentOrg(orgs, orgId);
                 if (upOrgs != null) {
+
+                    if(StrUtil.isNotBlank(upOrgs.get_id()) && upOrgs.get_id().equals(outOrg)){
+                        return "";
+                    }
+
                     userId = upOrgs.getUser();
                 }else{
                     userId = "";
@@ -623,6 +645,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     upFlg = "0";
                     upOrgs = upCurrentOrg(orgs, upOrgs.get_id());
                     if (upOrgs != null) {
+                        if(StrUtil.isNotBlank(upOrgs.get_id()) && upOrgs.get_id().equals(outOrg)){
+                            return "";
+                        }
                         userId = upOrgs.getUser();
                     }else{
                         userId = "";
@@ -782,7 +807,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                         //TL
                         if (item.getNodename().toUpperCase().contains("TL")) {
                             if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getTeamid())) {
-                                OrgTree orgs = orgTreeService.get(new OrgTree());
+                                OrgTree condition1 = new OrgTree();
+                                condition1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                                OrgTree orgs = orgTreeService.get(condition1);
                                 OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getTeamid());
                                 if (currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())) {
                                     throw new LogicalException("无上级人员信息！");
@@ -877,7 +904,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                             if (StrUtil.isEmpty(userInfo.getCustomerInfo().getUserinfo().getTeamid())) {
 
                                 if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getGroupid())) {
-                                    OrgTree orgs = orgTreeService.get(new OrgTree());
+                                    OrgTree condition1 = new OrgTree();
+                                    condition1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                                    OrgTree orgs = orgTreeService.get(condition1);
                                     OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getGroupid());
                                     if (currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())) {
                                         throw new LogicalException("无上级人员信息！");
@@ -968,7 +997,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                                 }
                             } else {
                                 if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getGroupid())) {
-                                    OrgTree orgs = orgTreeService.get(new OrgTree());
+                                    OrgTree condition1 = new OrgTree();
+                                    condition1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                                    OrgTree orgs = orgTreeService.get(condition1);
                                     OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getGroupid());
                                     if (currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())) {
                                         throw new LogicalException("无上级人员信息！");
@@ -1009,7 +1040,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                             if (StrUtil.isEmpty(userInfo.getCustomerInfo().getUserinfo().getTeamid()) && StrUtil.isEmpty(userInfo.getCustomerInfo().getUserinfo().getGroupid())) {
 
                                 if (StrUtil.isNotBlank(userInfo.getCustomerInfo().getUserinfo().getCenterid())) {
-                                    OrgTree orgs = orgTreeService.get(new OrgTree());
+                                    OrgTree condition1 = new OrgTree();
+                                    condition1.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+                                    OrgTree orgs = orgTreeService.get(condition1);
                                     OrgTree currentOrg = getCurrentOrg(orgs, userInfo.getCustomerInfo().getUserinfo().getCenterid());
                                     if (currentOrg.getUser() == null || StrUtil.isEmpty(currentOrg.getUser())) {
                                         throw new LogicalException("无上级人员信息！");
@@ -1060,8 +1093,34 @@ public class WorkflowServicesImpl implements WorkflowServices {
                             }
                         }
 
-                        user = getUpUser(workflowinstance.getOwner(), item.getNodename().toUpperCase());
+                        user = getUpUser(workflowinstance.getOwner(), item.getNodename().toUpperCase(),item.getOutorg());
                         if (StrUtil.isEmpty(user)) {
+
+                            // 如果节点为最后一个节点时，结束流程
+                            if (item == workflownodeinstancelist.get(workflownodeinstancelist.size() - 1)) {
+                                workflowinstance.setModifyby(tokenModel.getUserId());
+                                workflowinstance.setModifyon(new Date());
+                                workflowinstance.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                workflowinstanceMapper.updateByPrimaryKeySelective(workflowinstance);
+                                outOperationWorkflowVo.setState("2");
+                                outOperationWorkflowVo.setWorkflowCode(workflowinstance.getCode());
+
+                                ToDoNotice toDoNotice = new ToDoNotice();
+                                List<String> params = new ArrayList<String>();
+                                params.add(workflowname);
+                                toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_11, params, tokenModel.getLocale()));
+                                toDoNotice.setInitiator(workflowinstance.getOwner());
+                                toDoNotice.setContent(item.getNodename());
+                                toDoNotice.setDataid(dataId);
+                                toDoNotice.setUrl(url);
+                                toDoNotice.setWorkflowurl(workFlowurl);
+                                toDoNotice.preInsert(tokenModel);
+                                toDoNotice.setOwner(workflowinstance.getOwner());
+                                toDoNoticeService.save(toDoNotice);
+
+                                return outOperationWorkflowVo;
+                            }
+
                             continue;
                         }
 

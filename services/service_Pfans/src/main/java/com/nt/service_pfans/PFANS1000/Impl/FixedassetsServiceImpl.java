@@ -12,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -27,7 +29,7 @@ public class FixedassetsServiceImpl  implements FixedassetsService {
 
     @Override
     public List<Fixedassets> getFixedassets(Fixedassets fixedassets) {
-        return fixedassetsMapper.select(fixedassets);
+        return fixedassetsMapper.select(fixedassets).stream().sorted(Comparator.comparing(Fixedassets::getCreateon).reversed()).collect(Collectors.toList());
     }
 
     @Override

@@ -26,7 +26,7 @@ public class LogServiceImpl implements LogService {
 //            rst.get(0).getLogs().addAll(log.getLogs());
 //            mongoTemplate.save(rst.get(0));
 //        }else{
-        mongoTemplate.save(log);
+            mongoTemplate.save(log);
         //}
         //upd gbb 20210209 PSDCD_PFANS_20210209_BUG_014 登录log保存数据修改 to
     }

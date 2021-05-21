@@ -74,4 +74,10 @@ public class Workflownodeinstance extends BaseModel {
      */
     @Column(name = "REMARKS")
     private String remarks;
+
+    /**
+     * 出口组织
+     */
+    @Column(name = "OUTORG")
+    private String outorg;
 }

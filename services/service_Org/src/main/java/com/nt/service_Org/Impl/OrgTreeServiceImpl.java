@@ -3,6 +3,7 @@ package com.nt.service_Org.Impl;
 import cn.hutool.core.util.ImageUtil;
 import com.nt.dao_Org.OrgTree;
 import com.nt.service_Org.OrgTreeService;
+import com.nt.utils.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -32,6 +33,7 @@ public class OrgTreeServiceImpl implements OrgTreeService {
      */
     @Override
     public OrgTree get(OrgTree orgTree) throws Exception {
+        orgTree.setStatus("0");
         Query query = CustmizeQuery(orgTree);
         orgTree = mongoTemplate.findOne(query, OrgTree.class);
         return orgTree;
@@ -138,5 +140,46 @@ public class OrgTreeServiceImpl implements OrgTreeService {
         OrgTree orgTree1 = mongoTemplate.findOne(query1, OrgTree.class);
         orgTree1.setStatus("0");
         mongoTemplate.save(orgTree1);
+    }
+
+    /**
+     * @方法名：get
+     * @描述：获取所有组织机构树形结构
+     * @创建日期：2021/04/21
+     * @作者：GAOBINGBING
+     * @参数：
+     * @返回值：java.util.List<com.nt.dao_Org.OrgTree>
+     */
+    @Override
+    public List<OrgTree> getOrgAll() throws Exception {
+        return mongoTemplate.findAll(OrgTree.class);
+    }
+    /**
+     * @方法名：get
+     * @描述：根据ID获取组织机构树形结构
+     * @创建日期：2021/04/23
+     * @作者：GAOBINGBING
+     * @参数：
+     * @返回值：OrgTree
+     */
+    @Override
+    public OrgTree getCurrentOrg(OrgTree org, String orgId) throws Exception {
+        OrgTree returnorg = new OrgTree();
+        if (org.get_id().equals(orgId)) {
+            return org;
+        } else {
+            if (org.getOrgs() != null) {
+                for (OrgTree item : org.getOrgs()) {
+                    returnorg = getCurrentOrg(item, orgId);
+                    if(returnorg.get_id() != null){
+                        if (returnorg.get_id().equals(orgId)) {
+                            return returnorg;
+                        }
+                    }
+                }
+            }
+
+        }
+        return new OrgTree();
     }
 }

@@ -16,6 +16,9 @@ import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS1000.EvectionService;
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
+import com.nt.service_pfans.PFANS1000.mapper.BusinessMapper;
+import com.nt.service_pfans.PFANS1000.mapper.EvectionMapper;
+import com.nt.service_pfans.PFANS1000.mapper.PublicExpenseMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -55,7 +58,32 @@ public class Pfans1013Controller {
     @Autowired
     private LoanApplicationService loanapplicationService;
 
+    @Autowired
+    private EvectionMapper evectionMapper;
+    @Autowired
+    private BusinessMapper businessMapper;
+
     private static final String TAX_KEY = "__TAX_KEY__";
+
+
+    //ztc  临时接口  处理出差 精算
+    @RequestMapping(value = "/antInfo", method = {RequestMethod.GET})
+    public void antInfo(HttpServletRequest request) throws Exception {
+        List<Evection> evectionList = evectionMapper.selectAll();
+        for(Evection evt : evectionList){
+            Business business = new Business();
+            business.setBusiness_id(evt.getBusiness_id());
+            List<Business> businessList = businessMapper.select(business);
+            if(businessList.size() > 0){
+                businessList.get(0).setPublicexpense_id(evt.getEvectionid());
+                businessList.get(0).setInvoiceno(evt.getInvoiceno());
+            }
+            System.out.println(businessList.get(0));
+            businessMapper.updateByPrimaryKey(businessList.get(0));
+        }
+    }
+
+
 
     @RequestMapping(value = "/exportjs", method = {RequestMethod.GET})
     public void exportjs(String evectionid, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -232,7 +260,14 @@ public class Pfans1013Controller {
             userim = customerInfo.getUserinfo().getCustomername();
             userim = sign.startGraphics2D(userim);
             //部门
-            evevo.getEvection().setGroupid(customerInfo.getUserinfo().getGroupname());
+//            evevo.getEvection().setGroupid(customerInfo.getUserinfo().getGroupname());
+            query = new Query();
+            query.addCriteria(Criteria.where("userinfo.centerid").is(evevo.getEvection().getCenterid()));
+            List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
+            customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
+            if (customerInfoList.size() > 0) {
+                evevo.getEvection().setCenterid(customerInfoList.get(0).getUserinfo().getCentername());
+            }
         }
         //获取审批节点的负责人
         String wfList1 = "";
@@ -288,8 +323,34 @@ public class Pfans1013Controller {
 
             }
             //upd-ws-6/29-禅道175问提修改
-        } else if (useridcheck.equals("5e78b2264e3b194874180f35")) {
-            //upd-ws-6/29-禅道175问提修改
+//        } else if (useridcheck.equals("5e78b2264e3b194874180f35")) {
+//            //upd-ws-6/29-禅道175问提修改
+//            if (wfList.size() > 0) {
+//                query = new Query();
+//                query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+//                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                if (customerInfo != null) {
+//                    wfList1 = customerInfo.getUserinfo().getCustomername();
+//                    wfList1 = sign.startGraphics2D(wfList1);
+//                }
+//                query = new Query();
+//                query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+//                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                if (customerInfo != null) {
+//                    wfList2 = customerInfo.getUserinfo().getCustomername();
+//                    wfList2 = sign.startGraphics2D(wfList2);
+//                }
+//                query = new Query();
+//                query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+//                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                if (customerInfo != null) {
+//                    wfList3 = customerInfo.getUserinfo().getCustomername();
+//                    wfList3 = sign.startGraphics2D(wfList3);
+//                }
+//
+//            }
+        }
+        else {
             if (wfList.size() > 0) {
                 query = new Query();
                 query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
@@ -304,51 +365,25 @@ public class Pfans1013Controller {
                 if (customerInfo != null) {
                     wfList2 = customerInfo.getUserinfo().getCustomername();
                     wfList2 = sign.startGraphics2D(wfList2);
-                }
-                query = new Query();
-                query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
-                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                if (customerInfo != null) {
-                    wfList3 = customerInfo.getUserinfo().getCustomername();
-                    wfList3 = sign.startGraphics2D(wfList3);
                 }
 
-            }
-        } else {
-            if (wfList.size() > 0) {
-                query = new Query();
-                query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
-                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                if (customerInfo != null) {
-                    wfList1 = customerInfo.getUserinfo().getCustomername();
-                    wfList1 = sign.startGraphics2D(wfList1);
-                }
-                query = new Query();
-                query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
-                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                if (customerInfo != null) {
-                    wfList2 = customerInfo.getUserinfo().getCustomername();
-                    wfList2 = sign.startGraphics2D(wfList2);
-                }
-                //add_fjl_0723  添加是否有二次上司的判断  start
-                if (wfList.size() > 4 && wfList.get(4).getUserId().equals(useridcheck)) {
+                List<WorkflowLogDetailVo> erci = wfList.stream().filter(item -> (item.getNodename().equals("二次上司"))).collect(Collectors.toList());
+                if(erci.size()>0)
+                {
                     query = new Query();
-                    query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                    query.addCriteria(Criteria.where("userid").is(erci.get(0).getUserId()));
                     customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
                         wfList3 = customerInfo.getUserinfo().getCustomername();
                         wfList3 = sign.startGraphics2D(wfList3);
                     }
+                }
+
+                List<WorkflowLogDetailVo> yici = wfList.stream().filter(item -> (item.getNodename().equals("一次上司"))).collect(Collectors.toList());
+                if(yici.size()>0)
+                {
                     query = new Query();
-                    query.addCriteria(Criteria.where("userid").is(wfList.get(3).getUserId()));
-                    customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
-                        wfList4 = customerInfo.getUserinfo().getCustomername();
-                        wfList4 = sign.startGraphics2D(wfList4);
-                    }
-                } else {//二次上司为空的场合
-                    query = new Query();
-                    query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                    query.addCriteria(Criteria.where("userid").is(yici.get(0).getUserId()));
                     customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo != null) {
                         wfList4 = customerInfo.getUserinfo().getCustomername();
@@ -579,7 +614,7 @@ public class Pfans1013Controller {
 
         //upd-ws-6/17-禅道101
         //upd-ws-6/29-禅道175问提修改
-        if (useridcheck.equals("5e78b2264e3b194874180f35") || (check.equals("总经理"))) {
+        if (check.equals("总经理")) {
             //upd-ws-6/29-禅道175问提修改
             if (evevo.getEvection().getType().equals("0")) {
                 ExcelOutPutUtil.OutPutPdf("境内出差旅费精算书", "newjingneijingsuanshu.xls", data, response);
@@ -668,5 +703,24 @@ public class Pfans1013Controller {
     @RequestMapping(value = "/getLoanApplication", method = {RequestMethod.GET})
     public ApiResult getLoanApplication(HttpServletRequest request) throws Exception {
         return ApiResult.success(loanapplicationService.getLoapp());
+    }
+
+    @RequestMapping(value = "/one2", method = {RequestMethod.POST})
+    public ApiResult one2(@RequestBody Business business, HttpServletRequest request) throws Exception {
+        if (business == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        List<Evection> evectionList = new ArrayList<>();
+//        if(com.nt.utils.StringUtils.isNotBlank(business.getPublicexpense_id() != )
+        String pubid[] = business.getPublicexpense_id().split(",");
+        if (pubid.length > 0) {
+            for (int i = 0; i < pubid.length; i++) {
+                Evection evection = new Evection();
+                evection.setEvectionid(pubid[i]);
+                List<Evection> eveList = evectionMapper.select(evection);
+                evectionList.addAll(0, eveList);
+            }
+        }
+        return ApiResult.success(evectionList);
     }
 }

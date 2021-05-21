@@ -12,6 +12,7 @@ import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
+import com.nt.service_Org.mapper.TodoNoticeMapper;
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
@@ -60,6 +61,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 
     @Autowired
     private PublicExpenseMapper publicExpenseMapper;
+
+    @Autowired
+    private TodoNoticeMapper todoNoticeMapper;
 
     @Autowired
     private InvoiceMapper invoicemapper;
@@ -290,74 +294,71 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         int day = cal.get(Calendar.DATE);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String no = "";
-        if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002002"))) {
-//            upd-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-更改对应变量类型—start
-            String count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "GL");
-//            upd-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-更改对应变量类型—end
+        //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-start
+        if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002002"))&&(publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "GL")) != null) {
+            //        add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-end
+            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "GL");
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-代码回退，添加对应判定-start
+            if(count <99){
+                no = String.format("%2d", count + 1).replace(" ", "0");
+            }
+            else{
+                no = String.format("%3d", count + 1).replace(" ", "0");
+            }
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-代码回退，添加对应判定-end
             String month1 = String.format("%2d", month).replace(" ", "0");
             String day1 = String.format("%2d", day).replace(" ", "0");
-//            add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-start
-            String tempNo = "DL4GL" + year + month1 + day1;
-            if(count == null){
-                count = "00";
-            }else{
-                count = count.replace(tempNo,"");
-            }
-            int numberOfCount =Integer.parseInt(count);
-            if (numberOfCount<99) {
-                no = String.format("%2d", numberOfCount + 1).replace(" ", "0");
-            } else{
-                no = String.format("%3d", numberOfCount + 1).replace(" ", "0");
-            }
-//            add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-end
             invoiceNo = "DL4GL" + year + month1 + day1 + no;
-        } else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002001"))) {
-//            upd-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-更改对应变量类型—start
-            String count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AP");
-//            upd-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-更改对应变量类型—end
+        }
+        //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-start
+        else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002001"))&&(publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AP")) != null) {
+        //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-end
+            int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AP");
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-代码回退，添加对应判定-start
+            if(count <99){
+                no = String.format("%2d", count + 1).replace(" ", "0");
+            }
+            else{
+                no = String.format("%3d", count + 1).replace(" ", "0");
+            }
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-代码回退，添加对应判定-end
             String month1 = String.format("%2d", month).replace(" ", "0");
             String day1 = String.format("%2d", day).replace(" ", "0");
-//            add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-start
-            String tempNo = "DL4AP" + year + month1 + day1;
-            if(count == null){
-                count = "00";
-            }else{
-                count = count.replace(tempNo,"");
-            }
-            int numberOfCount =Integer.parseInt(count);
-            if (numberOfCount<99) {
-                no = String.format("%2d", numberOfCount + 1).replace(" ", "0");
-            } else{
-                no = String.format("%3d", numberOfCount + 1).replace(" ", "0");
-            }
-//            add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-end
             invoiceNo = "DL4AP" + year + month1 + day1 + no;
-        } else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002003"))) {
-//            upd-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-更改对应变量类型—start
-            String count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AR");
-//            upd-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-更改对应变量类型—end
+        }
+        //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-start
+        else if (publicExpenseMapper.getInvoiceNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate())) != null && (publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002003"))&&(publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AR")) != null) {
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-end
+           int count = publicExpenseMapper.getAporGlNo(sdf.format(publicExpenseVo.getPublicexpense().getReimbursementdate()), "AR");
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-代码回退，添加对应判定-start
+            if(count <99){
+                no = String.format("%2d", count + 1).replace(" ", "0");
+            }
+            else{
+                no = String.format("%3d", count + 1).replace(" ", "0");
+            }
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-代码回退，添加对应判定-end
             String month1 = String.format("%2d", month).replace(" ", "0");
             String day1 = String.format("%2d", day).replace(" ", "0");
-//            add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-start
-            String tempNo = "DL4AR" + year + month1 + day1;
-            if(count == null){
-                count = "00";
-            }else{
-                count = count.replace(tempNo,"");
-            }
-            int numberOfCount =Integer.parseInt(count);
-            if (numberOfCount<99) {
-                no = String.format("%2d", numberOfCount + 1).replace(" ", "0");
-            } else{
-                no = String.format("%3d", numberOfCount + 1).replace(" ", "0");
-            }
-//            add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-end
             invoiceNo = "DL4AR" + year + month1 + day1 + no;
         } else {
             no = "01";
             String month1 = String.format("%2d", month).replace(" ", "0");
             String day1 = String.format("%2d", day).replace(" ", "0");
-            invoiceNo = "DL4AP" + year + month1 + day1 + no;
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-机制修改，现在为利用SQL截取号码的后两位-start
+            if(publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002001")){
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-机制修改，现在为利用SQL截取号码的后两位-end
+                invoiceNo = "DL4AP" + year + month1 + day1 + no;
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-机制修改，现在为利用SQL截取号码的后两位-start
+            }
+            if(publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002002")){
+               invoiceNo = "DL4GL" + year + month1 + day1 + no;
+            }
+            if(publicExpenseVo.getPublicexpense().getModuleid().equals("PJ002003")){
+               invoiceNo = "DL4AR" + year + month1 + day1 + no;
+            }
+
+            //            add-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-机制修改，现在为利用SQL截取号码的后两位-end
         }
 
 //        String month1 = String.format("%2d", month).replace(" ", "0");
@@ -444,7 +445,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         if (com.nt.utils.StringUtils.isNotBlank(communicationList.get(0).getPublicexpense_id())) {
                             communicationList.get(0).setPublicexpense_id(communicationList.get(0).getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
-                            communicationList.get(0).setInvoiceno(communicationList.get(0).getLoanapno() + "," + publicExpense.getInvoiceno());
+                            communicationList.get(0).setInvoiceno(communicationList.get(0).getInvoiceno() + "," + publicExpense.getInvoiceno());
                         } else {
                             communicationList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                             communicationList.get(0).setInvoiceno(publicExpense.getInvoiceno());
@@ -474,7 +475,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         if (com.nt.utils.StringUtils.isNotBlank(judgementList.get(0).getPublicexpense_id())) {
                             judgementList.get(0).setPublicexpense_id(judgementList.get(0).getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
-                            judgementList.get(0).setInvoiceno(judgementList.get(0).getLoanapno() + "," + publicExpense.getInvoiceno());
+                            judgementList.get(0).setInvoiceno(judgementList.get(0).getInvoiceno() + "," + publicExpense.getInvoiceno());
                         } else {
                             judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                             judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
@@ -503,7 +504,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         if (com.nt.utils.StringUtils.isNotBlank(judgementList.get(0).getPublicexpense_id())) {
                             judgementList.get(0).setPublicexpense_id(judgementList.get(0).getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
-                            judgementList.get(0).setInvoiceno(judgementList.get(0).getLoanapno() + "," + publicExpense.getInvoiceno());
+                            judgementList.get(0).setInvoiceno(judgementList.get(0).getInvoiceno() + "," + publicExpense.getInvoiceno());
                         } else {
                             judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                             judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
@@ -532,7 +533,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         if (com.nt.utils.StringUtils.isNotBlank(purchaseapplyList.get(0).getPublicexpense_id())) {
                             purchaseapplyList.get(0).setPublicexpense_id(purchaseapplyList.get(0).getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
-                            purchaseapplyList.get(0).setInvoiceno(purchaseapplyList.get(0).getLoanapno() + "," + publicExpense.getInvoiceno());
+                            purchaseapplyList.get(0).setInvoiceno(purchaseapplyList.get(0).getInvoiceno() + "," + publicExpense.getInvoiceno());
                         } else {
                             purchaseapplyList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                             purchaseapplyList.get(0).setInvoiceno(publicExpense.getInvoiceno());
@@ -837,10 +838,10 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 int scale1 = 2;//设置位数
                 int roundingMode1 = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
                 // 税拔
-                String lineCost = FNUM.format(new BigDecimal(money).divide(rate.add(new BigDecimal(1)),scale1, roundingMode1));
+                String lineCost = FNUM.format(new BigDecimal(money).divide(rate.add(new BigDecimal(1)), scale1, roundingMode1));
                 // 税金
                 String lineRate = FNUM.format(gettaxes);
-                String lineRateNo = FNUM.format(new BigDecimal(money).divide(rate.add(new BigDecimal(1)),scale1, roundingMode1).multiply(rate));
+                String lineRateNo = FNUM.format(new BigDecimal(money).divide(rate.add(new BigDecimal(1)), scale1, roundingMode1).multiply(rate));
                 if (money > 0) {
                     // 税
                     //add-ws-4/22-税金不为0存2302-00-01A0
@@ -944,11 +945,11 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 //        String id = publicExpenseVo.getPublicexpense().getPublicexpenseid();
 //        PublicExpense publics = publicExpenseMapper.selectByPrimaryKey(id);
         //        del-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-end
-        if(publicExpenseVo.getPublicexpense().getModuleid().equals("GL")) {
+        if(publicExpenseVo.getPublicexpense().getModuleid().equals("GL")){
             publicExpenseVo.getPublicexpense().setModuleid("PJ002002");
-        }else if(publicExpenseVo.getPublicexpense().getModuleid().equals("AP")) {
+        }else if(publicExpenseVo.getPublicexpense().getModuleid().equals("AP")){
             publicExpenseVo.getPublicexpense().setModuleid("PJ002001");
-        }else if(publicExpenseVo.getPublicexpense().getModuleid().equals("AR")) {
+        }else if(publicExpenseVo.getPublicexpense().getModuleid().equals("AR")){
             publicExpenseVo.getPublicexpense().setModuleid("PJ002003");
         }
 //        del-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-start
@@ -977,11 +978,10 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 //                String day1 = String.format("%2d", day).replace(" ", "0");
 //                invoiceNos = "DL4AP" + year + month1 + day1 + no;
 //            }
-//        } else {
-//        del-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-end
+//        }
+//        del-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-start
 //        add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-start
-        String invoiceNos = publicExpenseVo.getPublicexpense().getInvoiceno();
-//    }
+          String  invoiceNos = publicExpenseVo.getPublicexpense().getInvoiceno();
 //        add-lyt-21/3/24-PSDCD_PFANS_20210318_BUG_035-end
 
         PublicExpense publicExpense = new PublicExpense();
@@ -1155,26 +1155,38 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         toDoNotice.setTitle("【有采购申请需您维护资产信息】");
                         toDoNotice.setInitiator(purchaseList.get(0).getUser_id());
                         toDoNotice.setContent("有一个采购申请已经精算完成，请维护资产相关信息！");
-                        toDoNotice.setDataid(purchaseList.get(0).getPurchase_id());
                         toDoNotice.setUrl("/PFANS3005FormView");
                         toDoNotice.setWorkflowurl("/PFANS3005View");
-                        toDoNotice.preInsert(tokenModel);
-                        //财务担当
-                        List<MembersVo> rolelist = roleService.getMembers("5f88210582e49438647c6100");
-                        if (rolelist.size() > 0) {
-                            for (int i = 0; i < rolelist.size(); i++) {
-                                toDoNotice.setOwner(rolelist.get(i).getUserid());
-                                toDoNoticeService.save(toDoNotice);
-                            }
-                        }
+                        toDoNotice.setDataid(purchaseList.get(0).getPurchase_id());
 
-
-                        //IT
-                        List<MembersVo> rolelist1 = roleService.getMembers("5f8820dc82e49438647c60ff");
-                        if (rolelist1.size() > 0) {
-                            for (int t = 0; t < rolelist1.size(); t++) {
-                                toDoNotice.setOwner(rolelist1.get(t).getUserid());
-                                toDoNoticeService.save(toDoNotice);
+                        if(purchaseList.get(0).getProcurementproject() != ""){
+                            if(purchaseList.get(0).getProcurementproject() == "PJ005005"
+                                    || purchaseList.get(0).getProcurementproject() == "PJ005006"
+                                    || purchaseList.get(0).getProcurementproject() == "PJ005020"
+                                ){
+                                //IT
+                                List<MembersVo> rolelist1 = roleService.getMembers("5f8820dc82e49438647c60ff");
+                                if (rolelist1.size() > 0) {
+                                    for (int t = 0; t < rolelist1.size(); t++) {
+                                        toDoNotice.setOwner(rolelist1.get(t).getUserid());
+                                        List<ToDoNotice> existTnList_It = todoNoticeMapper.select(toDoNotice);
+                                        if(existTnList_It.size() == 0){
+                                            toDoNoticeService.save(toDoNotice);
+                                        }
+                                    }
+                                }
+                            }else{
+                                //财务担当
+                                List<MembersVo> rolelist = roleService.getMembers("5f88210582e49438647c6100");
+                                if (rolelist.size() > 0) {
+                                    for (int i = 0; i < rolelist.size(); i++) {
+                                        toDoNotice.setOwner(rolelist.get(i).getUserid());
+                                        List<ToDoNotice> existTnList_Fe = todoNoticeMapper.select(toDoNotice);
+                                        if(existTnList_Fe.size() == 0){
+                                            toDoNoticeService.save(toDoNotice);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }

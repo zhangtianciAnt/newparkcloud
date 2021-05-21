@@ -72,19 +72,6 @@ public class Pfans2007Controller {
         bonussendService.updateSend(bonussend,tokenModel);
         // update gbb 20210312 NT_PFANS_20210305_BUG_131 点击送信发送代办 end
         return ApiResult.success();
-//        // 创建代办
-//        ToDoNotice toDoNotice = new ToDoNotice();
-//        List<String> params = new ArrayList<String>();
-//        params.add(workflowname);
-//        toDoNotice.setTitle("您的奖金已发送");
-//        toDoNotice.setInitiator(tokenModel.getUserId());
-//        toDoNotice.setContent(item.getNodename());
-//        toDoNotice.setDataid(dataId);
-//        toDoNotice.setUrl(url);
-//        toDoNotice.setWorkflowurl(workFlowurl);
-//        toDoNotice.preInsert(tokenModel);
-//        toDoNotice.setOwner(user);
-//        toDoNoticeService.save(toDoNotice);
 
     }
 

@@ -71,9 +71,8 @@ public class OrgTree extends BaseModel {
     private List<Bankinfo> bankinfo;
     private String upcompany;
     private String redirict;
-    //update gbb 20210308  禅道任务708  start
     private String years;
-    //update gbb 20210308  禅道任务708  end
+    private String virtual; //1：公司；2：部门
     /**
      * 组织单元	ORGS
      */

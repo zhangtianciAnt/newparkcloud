@@ -230,9 +230,10 @@
         @SYBXGRFDHS := convert( @SHIYEJS * DIC_SYBXGRFDHS, decimal(10,2) ) AS COMUNEMPLOYMENTINSURANCE,#失业保险
         @GSBXHS := convert( @GONGSHANGJS * DIC_GSBXHS, decimal(10,2)) AS COMINJURYINSURANCE,#工伤保险
         @SYBXHS := convert( @SHENGYUJS * DIC_SYBXHS, decimal(10,2)) AS COMBIRTHINSURANCE,#生育保险
+        @SOCIALSECURITY := convert( ( @YLBXHS + @YILIAOBXHS + @SYBXGRFDHS + @GSBXHS + @SYBXHS ), decimal(10,2)) AS SOCIALSECURITY,#社保总计
         @NFF := ( IF ( ( @REGISTERED &lt;=> '1' AND @YANGLAOJS != 0 ), convert(DIC_DLHXNFF,decimal(10,2)), round(0,2) ) ) AS COMHEATING,#暖房费
         @ZFGJJ := convert( @ACCUMULATION * DIC_GJJHSFD, decimal(10,2)) AS COMACCUMULATIONFUND,#住房公积金
-        @SUMHS := convert( ( @YLBXHS + @YILIAOBXHS + @SYBXGRFDHS + @GSBXHS + @SYBXHS + @NFF + @ZFGJJ ), decimal(10,2)) AS TOTAL,#总计
+        @SUMHS := convert( ( @SOCIALSECURITY + @NFF + @ZFGJJ ), decimal(10,2)) AS TOTAL,#总计
         @GHJFJS := convert(@XJ1 + @AMOUNT,decimal(10,2)) AS LABOURUNIONBASE,#工会经费基数gbb base.THISMONTHBASIC + base.THISMONTHDUTY + @AMOUNT
         @GHJF := convert( @GHJFJS * 0.02, decimal(10,2)) AS LABOURUNIONFUNDS,#工会经费
         @GZFZFDZJ := convert( ( @GZZE + @OTHERFOUR_TOTAL + @OTHERFIVE_TOTAL + @SUMHS + @GHJF ), decimal(10,2)) AS COMTOTALWAGES,#工资总额(纳税+免税)+福祉+公司負担+工会経費总计
@@ -282,7 +283,7 @@
             ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
             ROUND(SUM(socialinsurance),2) as socialinsurance,#社保（个人）
             ROUND(SUM(accumulationfund),2) as accumulationfund,#公积金（个人）
-            ROUND(SUM(realwages),2) as realwages,#实发工资
+            ROUND(SUM(from_base64(realwages)),2) as realwages,#实发工资
             ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
             if(otherfour.total is null,0,otherfour.total) +socialinsurance),2) as shouldcumulative,#社保总计
             ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6,#公积金总计
@@ -329,7 +330,7 @@
                 ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
                 ROUND(SUM(socialinsurance),2) as socialinsurance,#社保（个人）
                 ROUND(SUM(accumulationfund),2) as accumulationfund,#公积金（个人）
-                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(from_base64(realwages)),2) as realwages,#实发工资
                 ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
                       if(otherfour.total is null,0,otherfour.total) +socialinsurance),2) as shouldcumulative,#社保总计
                 ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6,#公积金总计
@@ -375,7 +376,7 @@
                 ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
                 ROUND(SUM(socialinsurance),2) as socialinsurance,#社保（个人）
                 ROUND(SUM(accumulationfund),2) as accumulationfund,#公积金（个人）
-                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(from_base64(realwages)),2) as realwages,#实发工资
                 ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
                       if(otherfour.total is null,0,otherfour.total) +socialinsurance),2) as shouldcumulative,#社保总计
                 ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6,#公积金总计
@@ -451,7 +452,7 @@
                 ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
                 ROUND(SUM(socialinsurance),2) as socialinsurance,#社保（个人）
                 ROUND(SUM(accumulationfund),2) as accumulationfund,#公积金（个人）
-                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(from_base64(realwages)),2) as realwages,#实发工资
                 ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
                       if(otherfour.total is null,0,otherfour.total) +socialinsurance),2) as shouldcumulative,#社保总计
                 ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6,#公积金总计
@@ -495,7 +496,7 @@
                 ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
                 ROUND(SUM(socialinsurance),2) as socialinsurance,#社保（个人）
                 ROUND(SUM(accumulationfund),2) as accumulationfund,#公积金（个人）
-                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(from_base64(realwages)),2) as realwages,#实发工资
                 ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
                       if(otherfour.total is null,0,otherfour.total) +socialinsurance),2) as shouldcumulative,#社保总计
                 ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6,#公积金总计
@@ -533,7 +534,7 @@
             ROUND(SUM(taxestotal + total3+comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as total,#人件費总计
             ROUND(SUM(overtimesubsidy),2) as overtimesubsidy,#残業手当
             ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
-            ROUND(SUM(realwages),2) as realwages,#实发工资
+            ROUND(SUM(from_base64(realwages)),2) as realwages,#实发工资
             ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
             if(otherfour.total is null,0,otherfour.total)+socialinsurance),2) as shouldcumulative,#社保总计
             ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6#公积金总计
@@ -569,7 +570,7 @@
                 ROUND(SUM(taxestotal + total3+comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as total,#人件費总计
                 ROUND(SUM(overtimesubsidy),2) as overtimesubsidy,#残業手当
                 ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
-                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(from_base64(realwages)),2) as realwages,#实发工资
                 ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
                 if(otherfour.total is null,0,otherfour.total)+socialinsurance),2) as shouldcumulative,#社保总计
                 ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6#公积金总计
@@ -604,7 +605,7 @@
                 ROUND(SUM(taxestotal + total3+comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as total,#人件費总计
                 ROUND(SUM(overtimesubsidy),2) as overtimesubsidy,#残業手当
                 ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
-                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(from_base64(realwages)),2) as realwages,#实发工资
                 ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
                 if(otherfour.total is null,0,otherfour.total)+socialinsurance),2) as shouldcumulative,#社保总计
                 ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6#公积金总计
@@ -659,7 +660,7 @@
                 ROUND(SUM(taxestotal + total3+comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as total,#人件費总计
                 ROUND(SUM(overtimesubsidy),2) as overtimesubsidy,#残業手当
                 ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
-                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(from_base64(realwages)),2) as realwages,#实发工资
                 ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
                 if(otherfour.total is null,0,otherfour.total)+socialinsurance),2) as shouldcumulative,#社保总计
                 ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6#公积金总计
@@ -692,7 +693,7 @@
                 ROUND(SUM(taxestotal + total3+comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating),2) as total,#人件費总计
                 ROUND(SUM(overtimesubsidy),2) as overtimesubsidy,#残業手当
                 ROUND(SUM(thismonthadjustment),2) as thismonthadjustment,#应缴税金
-                ROUND(SUM(realwages),2) as realwages,#实发工资
+                ROUND(SUM(from_base64(realwages)),2) as realwages,#实发工资
                 ROUND(SUM(comendowmentinsurance+commedicalinsurance+comunemploymentinsurance+cominjuryinsurance+combirthinsurance+comheating+
                 if(otherfour.total is null,0,otherfour.total)+socialinsurance),2) as shouldcumulative,#社保总计
                 ROUND(SUM(comaccumulationfund+accumulationfund),2) as other6#公积金总计

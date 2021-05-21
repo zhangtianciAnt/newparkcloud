@@ -131,22 +131,22 @@ public class PurchaseServiceImpl implements PurchaseService {
             //审批结束的更新，状态是4，预算不足为空，入库日为空，领取日，领取人为空，精算日，精算金额为空
             purchase.preUpdate(tokenModel);
             purchaseMapper.updateByPrimaryKey(purchase);
-            //发待办给采购担当
-            ToDoNotice toDoNotice = new ToDoNotice();
-            toDoNotice.setTitle("【您有一个采购需处理】");
-            toDoNotice.setInitiator(purchase.getUser_id());
-            toDoNotice.setContent("有一个采购申请已经通过审批，需要您处理！");
-            toDoNotice.setDataid(purchase.getPurchase_id());
-            toDoNotice.setUrl("/PFANS3005FormView");
-            toDoNotice.setWorkflowurl("/PFANS3005View");
-            toDoNotice.preInsert(tokenModel);
-            //给采购担当发待办
             List<MembersVo> rolelist = roleService.getMembers("5e7863d88f4316308435113b");
-            if(rolelist.size()>0)
-            {
-                toDoNotice.setOwner(rolelist.get(0).getUserid());
+            if(rolelist.size()>0){
+                for(int i = 0; i < rolelist.size();i++){
+                    //发待办给采购担当
+                    ToDoNotice toDoNotice = new ToDoNotice();
+                    toDoNotice.setTitle("【您有一个采购需处理】");
+                    toDoNotice.setInitiator(purchase.getUser_id());
+                    toDoNotice.setContent("有一个采购申请已经通过审批，需要您处理！");
+                    toDoNotice.setDataid(purchase.getPurchase_id());
+                    toDoNotice.setUrl("/PFANS3005FormView");
+                    toDoNotice.setWorkflowurl("/PFANS3005View");
+                    toDoNotice.preInsert(tokenModel);
+                    toDoNotice.setOwner(rolelist.get(i).getUserid());
+                    toDoNoticeService.save(toDoNotice);
+                }
             }
-            toDoNoticeService.save(toDoNotice);
         }
         if(purchase.getStatus().equals("4")
                 && (purchase.getYusuanbuzu() !=null && !purchase.getYusuanbuzu().equals(""))
@@ -253,7 +253,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         purchase.preInsert(tokenModel);
         purchase.setPurnumbers(Numbers);
         purchase.setPurchase_id(UUID.randomUUID().toString());
-//        purchase.setSurloappmoney(purchase.getTotalamount());
+        //purchase.setSurloappmoney(purchase.getTotalamount());
         purchaseMapper.insert(purchase);
     }
 

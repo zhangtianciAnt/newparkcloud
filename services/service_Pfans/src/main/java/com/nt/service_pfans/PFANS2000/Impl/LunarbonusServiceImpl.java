@@ -295,7 +295,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                     if (customerInfo.getUserinfo().getEnddate() != null && customerInfo.getUserinfo().getEnddate().length() > 0) {
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
                         Calendar rightNow = Calendar.getInstance();
-                        String enddate = customerInfo.getUserinfo().getEnddate().substring(0, 10);
+                        String enddate = customerInfo.getUserinfo().getEnddate().substring(0, 10).replace("-","/");
                         if (customerInfo.getUserinfo().getEnddate().length() >= 24) {
                             rightNow.setTime(Convert.toDate(enddate));
                             rightNow.add(Calendar.DAY_OF_YEAR, 1);
@@ -387,33 +387,33 @@ public class LunarbonusServiceImpl implements LunarbonusService {
 //                String groupid = cus.getUserinfo().getGroupid();
 //                String centerid = cus.getUserinfo().getCenterid();
             String detailLevel = "";
-            if (lunarbonus.getEvaluatenum().equals("PJ104001")) {
-                for (OrgTreeVo orgTreeVo : OrgTreeVolist) {
-                    if (orgTreeVo.getMoney3().equals(tokenModel.getUserId()) && orgTreeVo.getMoney4().equals("1")) {
-                        detailLevel = orgTreeVo.getMoney2();
-                        lunardetailList.add(detailLevel);
+                if (lunarbonus.getEvaluatenum().equals("PJ104001")) {
+                    for (OrgTreeVo orgTreeVo : OrgTreeVolist) {
+                        if (orgTreeVo.getMoney3().equals(tokenModel.getUserId()) && orgTreeVo.getMoney4().equals("1")) {
+                            detailLevel = orgTreeVo.getMoney2();
+                            lunardetailList.add(detailLevel);
+                        }
                     }
+                    detal = lunardetailMapper.selectTeam(lunardetailList, tokenModel.getUserId(), lunarbonus.getEvaluationday(), lunarbonus.getSubjectmon());
                 }
-                detal = lunardetailMapper.selectTeam(lunardetailList, tokenModel.getUserId(), lunarbonus.getEvaluationday(), lunarbonus.getSubjectmon());
-            }
-            if (lunarbonus.getEvaluatenum().equals("PJ104002")) {
-                for (OrgTreeVo orgTreeVo : OrgTreeVolist) {
-                    if (orgTreeVo.getMoney3().equals(tokenModel.getUserId()) && orgTreeVo.getMoney4().equals("2")) {
-                        detailLevel = orgTreeVo.getMoney1();
-                        lunardetailList.add(detailLevel);
+                if (lunarbonus.getEvaluatenum().equals("PJ104002")) {
+                    for (OrgTreeVo orgTreeVo : OrgTreeVolist) {
+                        if (orgTreeVo.getMoney3().equals(tokenModel.getUserId()) && orgTreeVo.getMoney4().equals("2")) {
+                            detailLevel = orgTreeVo.getMoney1();
+                            lunardetailList.add(detailLevel);
+                        }
                     }
+                    detal = lunardetailMapper.selectGroup(lunardetailList, tokenModel.getUserId(), lunarbonus.getEvaluationday(), lunarbonus.getSubjectmon());
                 }
-                detal = lunardetailMapper.selectGroup(lunardetailList, tokenModel.getUserId(), lunarbonus.getEvaluationday(), lunarbonus.getSubjectmon());
-            }
-            if (lunarbonus.getEvaluatenum().equals("PJ104003")) {
-                for (OrgTreeVo orgTreeVo : OrgTreeVolist) {
-                    if (orgTreeVo.getMoney3().equals(tokenModel.getUserId()) && orgTreeVo.getMoney4().equals("3")) {
-                        detailLevel = orgTreeVo.get_id();
-                        lunardetailList.add(detailLevel);
+                if (lunarbonus.getEvaluatenum().equals("PJ104003")) {
+                    for (OrgTreeVo orgTreeVo : OrgTreeVolist) {
+                        if (orgTreeVo.getMoney3().equals(tokenModel.getUserId()) && orgTreeVo.getMoney4().equals("3")) {
+                            detailLevel = orgTreeVo.get_id();
+                            lunardetailList.add(detailLevel);
+                        }
                     }
+                    detal = lunardetailMapper.selectCenter(lunardetailList, tokenModel.getUserId(), lunarbonus.getEvaluationday(), lunarbonus.getSubjectmon());
                 }
-                detal = lunardetailMapper.selectCenter(lunardetailList, tokenModel.getUserId(), lunarbonus.getEvaluationday(), lunarbonus.getSubjectmon());
-            }
 //                if (!StringUtils.isNullOrEmpty(teamid)) {
 //                    lunardetailCondition.setTeam_id(teamid);
 //                } else if (!StringUtils.isNullOrEmpty(groupid)) {
@@ -485,7 +485,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         return LunarAllVo;
     }
 
-    //    人事发起待办
+//    人事发起待办
     @Override
     public void createTodonotice(Lunarbonus lunarbonus,TokenModel tokenModel) throws Exception {
 //        通过查寻树建立表

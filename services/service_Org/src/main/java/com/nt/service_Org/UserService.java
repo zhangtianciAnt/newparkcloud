@@ -58,7 +58,7 @@ public interface UserService {
     // 根据orgid获取用户及用户信息列表
     List<CustomerInfo> getAccountCustomer(String orgid, String orgtype,TokenModel tokenModel) throws Exception;
 
-    List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype,TokenModel tokenModel) throws Exception;
+    List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype,String virtual,TokenModel tokenModel) throws Exception;
     //add-ws-9/12-财务人员编码处理
     List<CustomerInfo> getAccountCustomer3(String orgid, String orgtype,TokenModel tokenModel) throws Exception;
     //add-ws-9/12-财务人员编码处理
@@ -100,6 +100,6 @@ public interface UserService {
     //参数：years，年度
     public List<CustomerInfo> getCustomerInfoResign(String years) throws Exception;
 
-    //获取工资tab页登录密码
+    ////add-21/2/3-PSDCD_PFANS_20201124_XQ_033-人员管理添加密码校验
     void checkpassword(UserAccountVo userAccountVo) throws Exception;
 }

@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ExternalVo {
     //id
-   private String expatriatesinfor_id;
-   //人名
-   @Encryption
-   private String name;
-     //供应商
-     @Encryption
+    private String expatriatesinfor_id;
+    //人名
+    @Encryption
+    private String name;
+    //供应商
+    @Encryption
     private String suppliername;
     //rn
     private String thisyear;

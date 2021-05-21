@@ -328,7 +328,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void upCustomerInfo(CustomerInfo customerInfo) throws Exception {
-        mongoTemplate.save(customerInfo);
+        mongoTemplate.save(customerInfo);//没有用到
     }
 
     /**
@@ -460,10 +460,12 @@ public class UserServiceImpl implements UserService {
                         cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                     }
                     userInfo.setGridData(cupList);
-                    if (userInfo.getGridData().size() > 0) {
-                        userInfo.setBasic(userInfo.getGridData().get(0).getBasic());
-                        userInfo.setDuty(userInfo.getGridData().get(0).getDuty());
-                    }
+//del ccm  工资数据不能反向覆盖 不可以用履历盖原值 fr
+//                    if (userInfo.getGridData().size() > 0) {
+//                        userInfo.setBasic(userInfo.getGridData().get(0).getBasic());
+//                        userInfo.setDuty(userInfo.getGridData().get(0).getDuty());
+//                    }
+//del ccm  工资数据不能反向覆盖 不可以用履历盖原值 to
                 }
 //                ADD_FJL_05/21   --添加降序
                 customerInfo.setUserinfo(userInfo);
@@ -549,12 +551,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype, TokenModel tokenModel) throws Exception {
+    public List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype, String virtual,TokenModel tokenModel) throws Exception {
         Query query = new Query();
         if (StrUtil.isNotBlank(orgid)) {
             //update gbb 20210330 选择树根节点时显示总经理和副总经理 start
-            if(orgtype.equals("1")){
-                //职务为总经理或副总经理
+            if(orgtype.equals("1") && !virtual.equals("")){
+                //职务为总经理或副总经理+虚拟组织
                 query.addCriteria(Criteria.where("userinfo.post").in("PG021013","PG021017"));
             }
             else{
@@ -1457,6 +1459,21 @@ public class UserServiceImpl implements UserService {
                         }
                     }
                 }
+                //职级类型
+                if (item.get("职级类型") != null) {
+                    String occupationtype = item.get("职级类型").toString();
+                    if (occupationtype != null) {
+                        Dictionary dictionary = new Dictionary();
+                        dictionary.setValue1(occupationtype.trim());
+                        dictionary.setPcode("PR055");
+                        List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                        if (dictionaryList.size() > 0) {
+                            userinfo.setOccupationtype(dictionaryList.get(0).getCode());
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的职级类型（" + item.get("职级类型").toString() + "）在字典中不存在！");
+                        }
+                    }
+                }
                 //性别
                 if (item.get("性别") != null) {
                     String sex = item.get("性别").toString();
@@ -1874,6 +1891,7 @@ public class UserServiceImpl implements UserService {
                 else{
                     customerInfo.setUserid(UUID.randomUUID().toString());//111
                 }
+                customerInfo.preInsert(tokenModel);
                 mongoTemplate.save(customerInfo);
                 accesscount = accesscount + 1;
                 //成功人员
@@ -2280,6 +2298,20 @@ public class UserServiceImpl implements UserService {
                             }
                         }
                     }
+                    if (item.get("职级类型●") != null) {
+                        String occupationtype = item.get("职级类型●").toString();
+                        if (occupationtype != null) {
+                            Dictionary dictionary = new Dictionary();
+                            dictionary.setValue1(occupationtype.trim());
+                            dictionary.setPcode("PR055");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if (dictionaryList.size() > 0) {
+                                customerInfoList.get(0).getUserinfo().setOccupationtype(dictionaryList.get(0).getCode());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的职级类型（" + item.get("职级类型●").toString() + "）在字典中不存在！");
+                            }
+                        }
+                    }
                     if (item.get("预算编码●") != null) {
                         customerInfoList.get(0).getUserinfo().setBudgetunit(item.get("预算编码●").toString());
                     }
@@ -2438,10 +2470,9 @@ public class UserServiceImpl implements UserService {
                         }
                         //add gbb 0724 等级联动职责工资 end
                     }
-                    if (item.get("給料変更日●") != null && item.get("給料変更日●").toString().length() >= 10) {
-//                            personal.setDate(item.get("給料変更日●").toString());
-                        String dateSubs = item.get("給料変更日●").toString().substring(0, 10);
-                        personal.setDate(dateSubs);
+                    if (item.get("給料変更日●") != null) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        personal.setDate(DateUtil.format(sdf.parse(item.get("給料変更日●").toString()), "yyyy-MM-dd"));
                     }
                     if (item.get("养老保险基数●") != null) {
                         customerInfoList.get(0).getUserinfo().setYanglaoinsurance(item.get("养老保险基数●").toString());
@@ -2506,8 +2537,8 @@ public class UserServiceImpl implements UserService {
                                 if (pp.getDate().length() >= 10) {
                                     pp.setDate(pp.getDate().substring(0, 10));
                                 }
-                                int aa = Integer.valueOf(personal.getDate().replace("-", ""));
-                                int bb = Integer.valueOf(pp.getDate().replace("-", ""));
+                                int aa = Integer.valueOf(personal.getDate().replace("-", "").replace("/", ""));
+                                int bb = Integer.valueOf(pp.getDate().replace("-", "").replace("/", ""));
                                 if (aa >= bb) {
                                     if (item.get("现职责工资●") != null) {
                                         customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
@@ -2760,6 +2791,7 @@ public class UserServiceImpl implements UserService {
                     cupList8 = cupList8.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                     customerInfoList.get(0).getUserinfo().setHouseData(cupList8);
                 }
+                customerInfoList.get(0).preUpdate(tokenModel);
                 mongoTemplate.save(customerInfoList.get(0));
                 //如果更新登录账户,登录名和密码默认设置成登录账户
                 if (userAccount.getPassword() != null && userAccount.getAccount() != null) {

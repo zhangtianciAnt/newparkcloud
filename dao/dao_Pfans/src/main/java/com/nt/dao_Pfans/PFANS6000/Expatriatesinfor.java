@@ -111,6 +111,13 @@ public class Expatriatesinfor extends BaseModel {
     @Column(name = "ADMISSIONTIME")
     private Date admissiontime;
 
+
+    /**
+     * 预计退场时间
+     */
+    @Column(name = "YJEXITIME")
+    private Date yjexitime;
+
     /**
      * 退场时间
      */
@@ -266,5 +273,11 @@ public class Expatriatesinfor extends BaseModel {
      */
     @Column(name = "ACCOUNTNAME")
     private String accountname;
+
+    /**
+     * 更衣柜号
+     */
+    @Column(name = "LOCKERNUMBER")
+    private String lockernumber;
 
 }

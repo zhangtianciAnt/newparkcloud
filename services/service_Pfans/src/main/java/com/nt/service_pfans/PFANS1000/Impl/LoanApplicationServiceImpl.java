@@ -329,8 +329,7 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                 }
             }
             //add_fjl_0807
-            if (loanapplication.getJudgements_name().substring(0, 2).equals("CG"))
-            //采购
+            if (loanapplication.getJudgements_name().substring(0, 2).equals("CG")) //采购
             {
                 String[] pur = loanapplication.getJudgements_name().split(",");
                 for (String p : pur) {

@@ -18,12 +18,12 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.mongodb.core.query.Query;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,16 +49,17 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-     private AnnualLeaveService annualLeaveService;
+    private AnnualLeaveService annualLeaveService;
 
     @Autowired
     private TokenService tokenService;
 
     @Autowired
-    private MongoTemplate mongoTemplate;
+    private LogService logService;
 
     @Autowired
-    private LogService logService;
+    private MongoTemplate mongoTemplate;
+
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
@@ -105,6 +106,10 @@ public class UserController {
             if (userAccount == null) {
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
             }
+
+            //域登录
+            //userService.activeDirectory(userAccount,RequestUtils.CurrentLocale(request),"0");
+
             JsTokenModel tokenModel = userService.login(userAccount,RequestUtils.CurrentLocale(request));
 
             var log = new Log();
@@ -123,7 +128,6 @@ public class UserController {
         } catch (LogicalException ex) {
             return ApiResult.fail(ex.getMessage());
         }
-
     }
 
     //获取当前用户信息
@@ -189,18 +193,18 @@ public class UserController {
         CustomerInfo info = new CustomerInfo();
         if (StrUtil.isNotBlank(userVo.getUserAccount().get_id())) {
             userVo.getUserAccount().preUpdate(tokenModel);
+            userVo.getCustomerInfo().preUpdate(tokenModel);
             info = userService.addAccountCustomer(userVo);
             id = info.getUserid();
             annualLeaveService.insertannualLeave(info);
         } else {
             userVo.getUserAccount().preInsert(tokenModel);
             userVo.getUserAccount().setPassword(userVo.getCustomerInfo().getUserinfo().getAdfield());
+            userVo.getCustomerInfo().preInsert(tokenModel);
             info = userService.addAccountCustomer(userVo);
             annualLeaveService.insertannualLeave(info);
             id = info.getUserid();
         }
-
-
         return ApiResult.success(id);
     }
 
@@ -243,13 +247,13 @@ public class UserController {
      * @描述：根据orgid获取用户账号及用户信息
      * @创建日期：2018/12/06
      * @作者：ZHANGYING
-     * @参数：[orgid, orgtype, request]
+     * @参数：[orgid, orgtype,virtual, request]
      * @返回值：com.nt.utils.ApiResult
      */
     @RequestMapping(value = "/getAccountCustomer2", method = {RequestMethod.GET})
-    public ApiResult getAccountCustomer2(String orgid, String orgtype, HttpServletRequest request) throws Exception {
+    public ApiResult getAccountCustomer2(String orgid, String orgtype, String virtual,HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(userService.getAccountCustomer2(orgid, orgtype,tokenModel));
+        return ApiResult.success(userService.getAccountCustomer2(orgid, orgtype,virtual,tokenModel));
     }
 
     //add-ws-9/12-财务人员编码处理
@@ -373,7 +377,7 @@ public class UserController {
         String userId = tokenModel.getUserId();//RequestUtils.CurrentUserId(request);
         return ApiResult.success(userService.getSigninlog(userId));
     }
-    //获取工资tab页登录密码
+    //add-lyt-21/2/3-PSDCD_PFANS_20201124_XQ_033
     @RequestMapping(value = "/checkpassword", method = {RequestMethod.GET})
     public ApiResult checkpassword(UserAccountVo userAccountVo, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
@@ -388,3 +392,5 @@ public class UserController {
         }
     }
 }
+
+

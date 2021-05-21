@@ -87,13 +87,15 @@ public class ToDoNoticeController {
     }
 
     //    ADD_FJL_05/25  -- 删除驳回之后无用代办
-    @RequestMapping(value = "/delToDoNotice", method = {RequestMethod.GET})
-    public ApiResult delToDoNotice(String todonoticeid, HttpServletRequest request) throws Exception {
-        if (todonoticeid == null || StringUtils.isEmpty(todonoticeid)) {
+    @RequestMapping(value = "/delToDoNotice", method = {RequestMethod.POST})
+    public ApiResult delToDoNotice(@RequestBody List<String> noticelist, HttpServletRequest request) throws Exception {
+        if (noticelist == null || StringUtils.isEmpty(noticelist)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        toDoNoticeService.delToDoNotice(todonoticeid, tokenModel);
+        for (int i = 0; i < noticelist.size(); i++) {
+            toDoNoticeService.delToDoNotice(noticelist.get(i), tokenModel);
+        }
         return ApiResult.success();
     }
     //    ADD_FJL_05/25  -- 删除驳回之后无用代办

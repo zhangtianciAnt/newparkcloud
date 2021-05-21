@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.PersonalProjects;
 import cn.hutool.poi.excel.ExcelReader;
@@ -15,6 +16,7 @@ import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
@@ -81,6 +83,9 @@ public class LogManagementServiceImpl implements LogManagementService {
     @Autowired
     private ExpatriatesinforMapper expatriatesinforMapper;
 
+    @Autowired
+    private OrgTreeService orgTreeService;
+
     @Override
     public void insert(LogManagement logmanagement, TokenModel tokenModel) throws Exception {
         logmanagement.preInsert(tokenModel);
@@ -92,6 +97,10 @@ public class LogManagementServiceImpl implements LogManagementService {
             logmanagement.setJobnumber(customerInfo.getUserinfo().getJobnumber());
             if (logmanagement.getProject_id().equals("PP024001") || logmanagement.getProject_id().isEmpty()) {
                 logmanagement.setGroup_id(customerInfo.getUserinfo().getGroupid());
+                if(customerInfo.getUserinfo().getGroupid() == null || customerInfo.getUserinfo().getGroupid().isEmpty())
+                {
+                    logmanagement.setGroup_id(customerInfo.getUserinfo().getCenterid());
+                }
             }
         }
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
@@ -102,8 +111,48 @@ public class LogManagementServiceImpl implements LogManagementService {
                 logmanagement.setGroup_id(expatriatesinforList.get(0).getGroup_id());
             }
         }
+        //ADD
+        if(!logmanagement.getProject_id().equals("PP024001") && !logmanagement.getProject_id().isEmpty())
+        {
+            CompanyProjects cp = new CompanyProjects();
+            cp = companyprojectsMapper.selectByPrimaryKey(logmanagement.getProject_id());
+            if(cp!=null && StringUtils.isNullOrEmpty(logmanagement.getGroup_id()))
+            {
+                logmanagement.setGroup_id(cp.getCenter_id());
+            }
+        }
+        //ADD
+        logmanagement.setGroup_id(selectEcodeById(logmanagement.getGroup_id()));
         logmanagement.setConfirmstatus("0");
         logmanagementmapper.insert(logmanagement);
+    }
+
+    public String selectEcodeById(String id) throws Exception
+    {
+        String ecode = id;
+        OrgTree orgs = orgTreeService.get(new OrgTree());
+        //副总
+        for (OrgTree orgfu : orgs.getOrgs()) {
+            //Center
+            for (OrgTree orgCenter : orgfu.getOrgs()) {
+                for(OrgTree orgGroup : orgCenter.getOrgs())
+                {
+                    if(orgGroup.get_id().equals(id))
+                    {
+                        if(!StringUtils.isNullOrEmpty(orgCenter.getEncoding()))
+                        {
+                            ecode = orgCenter.get_id();
+                        }
+                        else
+                        {
+                            ecode = id;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return ecode;
     }
 
     //add-ws-01/05-优化接口
@@ -177,7 +226,7 @@ public class LogManagementServiceImpl implements LogManagementService {
         CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
         String Groupid = "";
         if (customerInfo != null) {
-            Groupid = customerInfo.getUserinfo().getGroupid();
+            Groupid = customerInfo.getUserinfo().getCenterid();
         }
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
         expatriatesinfor.setGroup_id(Groupid);

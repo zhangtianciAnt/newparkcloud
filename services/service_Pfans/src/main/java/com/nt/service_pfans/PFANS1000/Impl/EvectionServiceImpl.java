@@ -5,12 +5,15 @@ import cn.hutool.core.convert.Convert;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.EvectionVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TravelCostVo;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS1000.EvectionService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +23,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import com.nt.service_Org.OrgTreeService;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -69,7 +73,13 @@ public class EvectionServiceImpl implements EvectionService {
     @Autowired
     private TravelCostMapper travelcostmapper;
     @Autowired
+    private BusinessMapper businessMapper;
+    @Autowired
     private DictionaryService dictionaryService;
+    @Autowired
+    private OrgTreeService orgTreeService;
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
     @Autowired
     private MongoTemplate mongoTemplate;
 
@@ -815,9 +825,30 @@ public class EvectionServiceImpl implements EvectionService {
         currencyexchangeMapper.delete(currencyexchange);
         List<Currencyexchange> currencyexchangeList = evectionVo.getCurrencyexchanges();
 
+        //update gbb 20210426 出差精算书科目编码重新赋值 start
+        OrgTree condition = new OrgTree();
+        condition.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        OrgTree orgsall = orgTreeService.get(condition);
+        //所有字典信息
+        List<Dictionary> dictionaryAll = dictionaryMapper.selectAll();
         if (trafficdetailslist != null) {
             int rowindex = 0;
             for (TrafficDetails trafficdetails : trafficdetailslist) {
+                String evection_id = trafficdetails.getEvectionid();
+                OrgTree org = orgTreeService.getCurrentOrg(orgsall, trafficdetails.getDepartmentname());
+                if(org.get_id() != null){
+                    List<Dictionary> dictionary = new ArrayList<>();
+                    if (org.getRedirict().equals("0")) {//5101_制造费用/差旅费/住宿费
+                        dictionary = dictionaryAll.stream().filter(item -> (item.getCode().equals(evection_id != null ? "PJ119002" : "PJ119004"))).collect(Collectors.toList());
+                        trafficdetails.setAccountcode(evection_id != null ? "PJ119002" : "PJ119004");
+                        trafficdetails.setSubjectnumber(dictionary.get(0).getValue2());
+                    }
+                    else if (org.getRedirict().equals("1")) {//6602_管理费用/差旅费/住宿费
+                        dictionary = dictionaryAll.stream().filter(item -> (item.getCode().equals(evection_id != null ? "PJ132002" : "PJ132004"))).collect(Collectors.toList());
+                        trafficdetails.setAccountcode(evection_id != null ? "PJ132002" : "PJ132004");
+                        trafficdetails.setSubjectnumber(dictionary.get(0).getValue2());
+                    }
+                }
                 rowindex = rowindex + 1;
                 trafficdetails.preInsert(tokenModel);
                 trafficdetails.setTrafficdetails_id(UUID.randomUUID().toString());
@@ -829,6 +860,21 @@ public class EvectionServiceImpl implements EvectionService {
         if (accommodationdetailslist != null) {
             int rowindex = 0;
             for (AccommodationDetails accommodationdetails : accommodationdetailslist) {
+                OrgTree org = orgTreeService.getCurrentOrg(orgsall, accommodationdetails.getDepartmentname());
+                if(org.get_id() != null){
+                    List<Dictionary> dictionary = new ArrayList<>();
+                    if (org.getRedirict().equals("0")) {//5101_制造费用/差旅费/住宿费
+                        dictionary = dictionaryAll.stream().filter(item -> (item.getCode().equals("PJ119001"))).collect(Collectors.toList());
+                        accommodationdetails.setAccountcode("PJ119001");
+                        accommodationdetails.setSubjectnumber(dictionary.get(0).getValue2());
+                    }
+                    else if (org.getRedirict().equals("1")) {//6602_管理费用/差旅费/住宿费
+                        dictionary = dictionaryAll.stream().filter(item -> (item.getCode().equals("PJ132001"))).collect(Collectors.toList());
+                        accommodationdetails.setAccountcode("PJ132001");
+                        accommodationdetails.setSubjectnumber(dictionary.get(0).getValue2());
+                    }
+                }
+                //update gbb 20210426 出差精算书科目编码重新赋值 end
                 rowindex = rowindex + 1;
                 accommodationdetails.preInsert(tokenModel);
                 accommodationdetails.setAccommodationdetails_id(UUID.randomUUID().toString());
@@ -890,7 +936,14 @@ public class EvectionServiceImpl implements EvectionService {
         String no = "";
         if (evectionMapper.getInvoiceNo(sdf.format(evectionVo.getEvection().getReimbursementdate())) != null) {
             int count = evectionMapper.getInvoiceNo(sdf.format(evectionVo.getEvection().getReimbursementdate()));
-            no = String.format("%2d", count + 1).replace(" ", "0");
+//       upd-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-start
+            if(count<99) {
+                no = String.format("%2d", count + 1).replace(" ", "0");
+            }
+            else{
+                no = String.format("%3d", count + 1).replace(" ", "0");
+            }
+//           upd-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-添加判定条件-end
         } else {
             no = "01";
         }
@@ -915,9 +968,29 @@ public class EvectionServiceImpl implements EvectionService {
         List<Invoice> invoicelist = evectionVo.getInvoice();
         List<Currencyexchange> currencyexchangeList = evectionVo.getCurrencyexchanges();
 
+        //update gbb 20210426 出差精算书科目编码重新赋值 start
+        OrgTree condition = new OrgTree();
+        condition.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        OrgTree orgsall = orgTreeService.get(condition);
+        //所有字典信息
+        List<Dictionary> dictionaryAll = dictionaryMapper.selectAll();
         if (trafficdetailslist != null) {
             int rowindex = 0;
             for (TrafficDetails trafficdetails : trafficdetailslist) {
+                OrgTree org = orgTreeService.getCurrentOrg(orgsall, trafficdetails.getDepartmentname());
+                if(org.get_id() != null){
+                    List<Dictionary> dictionary = new ArrayList<>();
+                    if (org.getRedirict().equals("0")) {//5101_制造费用/差旅费/住宿费
+                        dictionary = dictionaryAll.stream().filter(item -> (item.getCode().equals("PJ119002"))).collect(Collectors.toList());
+                        trafficdetails.setAccountcode("PJ119002");
+                        trafficdetails.setSubjectnumber(dictionary.get(0).getValue2());
+                    }
+                    else if (org.getRedirict().equals("1")) {//6602_管理费用/差旅费/住宿费
+                        dictionary = dictionaryAll.stream().filter(item -> (item.getCode().equals("PJ132002"))).collect(Collectors.toList());
+                        trafficdetails.setAccountcode("PJ132002");
+                        trafficdetails.setSubjectnumber(dictionary.get(0).getValue2());
+                    }
+                }
                 rowindex = rowindex + 1;
                 trafficdetails.preInsert(tokenModel);
                 trafficdetails.setTrafficdetails_id(UUID.randomUUID().toString());
@@ -930,6 +1003,21 @@ public class EvectionServiceImpl implements EvectionService {
         if (accommodationdetailslist != null) {
             int rowindex = 0;
             for (AccommodationDetails accommodationdetails : accommodationdetailslist) {
+                OrgTree org = orgTreeService.getCurrentOrg(orgsall, accommodationdetails.getDepartmentname());
+                if(org.get_id() != null){
+                    List<Dictionary> dictionary = new ArrayList<>();
+                    if (org.getRedirict().equals("0")) {//5101_制造费用/差旅费/住宿费
+                        dictionary = dictionaryAll.stream().filter(item -> (item.getCode().equals("PJ119001"))).collect(Collectors.toList());
+                        accommodationdetails.setAccountcode("PJ119001");
+                        accommodationdetails.setSubjectnumber(dictionary.get(0).getValue2());
+                    }
+                    else if (org.getRedirict().equals("1")) {//6602_管理费用/差旅费/住宿费
+                        dictionary = dictionaryAll.stream().filter(item -> (item.getCode().equals("PJ132001"))).collect(Collectors.toList());
+                        accommodationdetails.setAccountcode("PJ132001");
+                        accommodationdetails.setSubjectnumber(dictionary.get(0).getValue2());
+                    }
+                }
+                //update gbb 20210426 出差精算书科目编码重新赋值 end
                 rowindex = rowindex + 1;
                 accommodationdetails.preInsert(tokenModel);
                 accommodationdetails.setAccommodationdetails_id(UUID.randomUUID().toString());
@@ -973,6 +1061,23 @@ public class EvectionServiceImpl implements EvectionService {
                 currencyexchangeMapper.insertSelective(curr);
             }
         }
+        if(com.nt.utils.StringUtils.isNotBlank(evection.getBusiness_id())){
+            Business business = new Business();
+            business.setBusiness_id(evection.getBusiness_id());
+            List<Business> businessList = businessMapper.select(business);
+            if(businessList.size() > 0){
+                if (com.nt.utils.StringUtils.isNotBlank(businessList.get(0).getPublicexpense_id())) {
+                    businessList.get(0).setPublicexpense_id(businessList.get(0).getPublicexpense_id() + "," + evection.getEvectionid());
+                    businessList.get(0).setInvoiceno(businessList.get(0).getInvoiceno() + "," + evection.getInvoiceno());
+                } else {
+                    businessList.get(0).setPublicexpense_id(evection.getEvectionid());
+                    businessList.get(0).setInvoiceno(evection.getInvoiceno());
+                }
+                businessList.get(0).preUpdate(tokenModel);
+                businessMapper.updateByPrimaryKey(businessList.get(0));
+            }
+        }
+
         saveTravelCostList(invoiceNo, trafficdetailslist, accommodationdetailslist, otherdetailslist, invoicelist, currencyexchangeList, evectionVo, tokenModel, evectionid);
 
     }

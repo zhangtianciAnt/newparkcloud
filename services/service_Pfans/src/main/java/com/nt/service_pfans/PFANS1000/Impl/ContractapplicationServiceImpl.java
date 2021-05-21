@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Vo.MembersVo;
@@ -188,6 +189,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
             for (Contractapplication citation : cnList) {
+                //去掉多次觉书无用数据
+                if (citation.getContractnumber().indexOf("-") != -1 && citation.getState().equals("无效")) {
+                    continue;
+                }
                 for (Contractnumbercount contractRemarks : numberList) {
                     if (contractRemarks.getQingremarksqh() != null && !contractRemarks.getQingremarksqh().isEmpty()) {
                         strBuffer.append(contractRemarks.getQingremarksqh());
@@ -214,9 +219,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         if (cnList != null) {
             int rowindex = 0;
             ToDoNotice toDoNotice = new ToDoNotice();
-            //update gbb 20210326 只查询【契約番号申请】所有代办,提升效率 start
+            //update gbb 20210326 查询【契約番号申请】所有代办,提示效率 start
             toDoNotice.setUrl("/PFANS1026FormView");
-            //update gbb 20210326 只查询【契約番号申请】所有代办,提升效率 end
+            //update gbb 20210326 查询【契約番号申请】所有代办,提示效率 end
             List<ToDoNotice> toDoNoticeList = toDoNoticeService.list(toDoNotice);
             for (Contractnumbercount number : numberList) {
                 rowindex = rowindex + 1;
@@ -994,26 +999,28 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     List<Contractapplication> clist1 = contractapplicationMapper.select(contractapplication);
                     if (clist1.size() > 0) {
                         //纳品担当
-                        List<MembersVo> rolelist = roleService.getMembers("5ef193069729aa04e0f9ea0c");
-                        if (rolelist.size() > 0) {
-                            for (MembersVo rt : rolelist) {
-                                //发起人创建代办
-                                ToDoNotice toDoNotice = new ToDoNotice();
-                                List<String> params = new ArrayList<String>();
-                                toDoNotice.setTitle("您有一个【" + cN.getContractnumber() + "】" + cN.getClaimtype() + "纳品书待处理");
-                                toDoNotice.setInitiator(cN.getCreateby());
-                                toDoNotice.setContent("您有一个【" + cN.getContractnumber() + "】" + cN.getClaimtype() + "纳品书待处理");
-                                toDoNotice.setDataid(cN.getContractnumber());
-                                toDoNotice.setUrl("/PFANS1026FormView");
-                                toDoNotice.setWorkflowurl("/PFANS1026View");
-//                                toDoNotice.preInsert(tokenModel);
-                                toDoNotice.setCreateby(clist1.get(0).getCreateby());
-                                toDoNotice.setCreateon(new Date());
-                                toDoNotice.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-                                toDoNotice.setOwner(rt.getUserid());
-                                toDoNoticeService.save(toDoNotice);
-                            }
-                        }
+                        //upd gbb 20210422 纳品担当目前只有李娜一人，她没有委託契约和受託契约权限，代码暂时注掉
+//                        List<MembersVo> rolelist = roleService.getMembers("5ef193069729aa04e0f9ea0c");
+//                        if (rolelist.size() > 0) {
+//                            for (MembersVo rt : rolelist) {
+//                                //发起人创建代办
+//                                ToDoNotice toDoNotice = new ToDoNotice();
+//                                List<String> params = new ArrayList<String>();
+//                                toDoNotice.setTitle("您有一个【" + cN.getContractnumber() + "】" + cN.getClaimtype() + "纳品书待处理");
+//                                toDoNotice.setInitiator(cN.getCreateby());
+//                                toDoNotice.setContent("您有一个【" + cN.getContractnumber() + "】" + cN.getClaimtype() + "纳品书待处理");
+//                                toDoNotice.setDataid(cN.getContractnumber());
+//                                toDoNotice.setUrl("/PFANS1026FormView");
+//                                toDoNotice.setWorkflowurl("/PFANS1026View");
+////                                toDoNotice.preInsert(tokenModel);
+//                                toDoNotice.setCreateby(clist1.get(0).getCreateby());
+//                                toDoNotice.setCreateon(new Date());
+//                                toDoNotice.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+//                                toDoNotice.setOwner(rt.getUserid());
+//                                toDoNoticeService.save(toDoNotice);
+//                            }
+//                        }
+                        //upd gbb 20210422 纳品担当目前只有李娜一人，她没有委託契约和受託契约权限，代码暂时注掉 end
                     }
                 }
             }
@@ -1082,7 +1089,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         Contractapplication co = new Contractapplication();
                         co.setCareeryear(citation.getCareeryear());
                         co.setContracttype(citation.getContracttype());
-                        co.setGroup_id(citation.getGroup_id());
+                        //每年更换组织，groupid会改变，只能用预算编码去检索 ztc start
+                        //co.setGroup_id(citation.getGroup_id());
+                        co.setOrgnumber(citation.getOrgnumber());
+                        //每年更换组织，groupid会改变，只能用预算编码去检索 ztc end
                         co.setType(citation.getType());
                         if (citation.getType().equals("0")) {
                             //取引先会社
@@ -1207,23 +1217,25 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         }
                         if (number.getDeliverydate() != null && Integer.parseInt(stt.format(number.getDeliverydate())) <= Integer.parseInt(stt.format(new Date()))) {
                             //纳品担当
-                            List<MembersVo> rolelist = roleService.getMembers("5ef193069729aa04e0f9ea0c");
-                            if (rolelist.size() > 0) {
-                                for (MembersVo rt : rolelist) {
-                                    //发起人创建代办
-                                    ToDoNotice toDoNotice = new ToDoNotice();
-                                    List<String> params = new ArrayList<String>();
-                                    toDoNotice.setTitle("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
-                                    toDoNotice.setInitiator(number.getCreateby());
-                                    toDoNotice.setContent("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
-                                    toDoNotice.setDataid(number.getContractnumber());
-                                    toDoNotice.setUrl("/PFANS1026FormView");
-                                    toDoNotice.setWorkflowurl("/PFANS1026View");
-                                    toDoNotice.preInsert(tokenModel);
-                                    toDoNotice.setOwner(rt.getUserid());
-                                    toDoNoticeService.save(toDoNotice);
-                                }
-                            }
+                            //upd gbb 20210422 纳品担当目前只有李娜一人，她没有委託契约和受託契约权限，代码暂时注掉 start
+//                            List<MembersVo> rolelist = roleService.getMembers("5ef193069729aa04e0f9ea0c");
+//                            if (rolelist.size() > 0) {
+//                                for (MembersVo rt : rolelist) {
+//                                    //发起人创建代办
+//                                    ToDoNotice toDoNotice = new ToDoNotice();
+//                                    List<String> params = new ArrayList<String>();
+//                                    toDoNotice.setTitle("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
+//                                    toDoNotice.setInitiator(number.getCreateby());
+//                                    toDoNotice.setContent("您有一个【" + number.getContractnumber() + "】" + number.getClaimtype() + "纳品书待处理");
+//                                    toDoNotice.setDataid(number.getContractnumber());
+//                                    toDoNotice.setUrl("/PFANS1026FormView");
+//                                    toDoNotice.setWorkflowurl("/PFANS1026View");
+//                                    toDoNotice.preInsert(tokenModel);
+//                                    toDoNotice.setOwner(rt.getUserid());
+//                                    toDoNoticeService.save(toDoNotice);
+//                                }
+//                            }
+                            //upd gbb 20210422 纳品担当目前只有李娜一人，她没有委託契约和受託契约权限，代码暂时注掉 end
                         }
                     }
                     //add_fjl_添加合同回款相关  end

@@ -1257,6 +1257,24 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         }
         return org;
     }
+    //获取center上级
+    private OrgTree getOrgCenterLeader(OrgTree org, String centerId) throws Exception {
+        if (org.getOrgs() != null) {
+            for (OrgTree item : org.getOrgs()) {
+                if (item.get_id().equals(centerId)) {
+                    return org;
+                }
+                if (item.getOrgs() != null) {
+                    for (OrgTree center : item.getOrgs()) {
+                        if (center.get_id().equals(centerId)) {
+                            return item;
+                        }
+                    }
+                }
+            }
+        }
+        return org;
+    }
 
     //给即将到退场日的PL的leader发代办
     @Scheduled(cron = "0 10 0 * * ?")
@@ -1270,11 +1288,14 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 for (Projectsystem ps : projeclist) {
                     if (ps.getExittime() != null) {
 //                    if(ps.getPosition().toUpperCase().equals("PL")){
-                        if (daysBetween(sdf.format(ps.getExittime()), sdf.format(new Date())) == 7) {
+                        //退场前7天发代办,之前的代码时间弄反了
+                        //if (daysBetween(sdf.format(ps.getExittime()), sdf.format(new Date())) == 7) {
+                        if (daysBetween(sdf.format(new Date()),sdf.format(ps.getExittime())) == 7) {
                             String comis = ps.getCompanyprojects_id();
                             CompanyProjects companyProjects = companyprojectsMapper.selectByPrimaryKey(comis);
-                            ;
-                            UserVo userInfo = userService.getAccountCustomerById(companyProjects.getCreateby());
+                            //设计权限交接所改成owner
+                            //UserVo userInfo = userService.getAccountCustomerById(companyProjects.getCreateby());
+                            UserVo userInfo = userService.getAccountCustomerById(companyProjects.getOwner());
                             OrgTree orgs = orgTreeService.get(new OrgTree());
                             String flgid = "";
                             String curuser = "";
@@ -1311,7 +1332,11 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                                     } else if (cus.getGroupid() != null && StrUtil.isNotEmpty(cus.getGroupid())) {
                                         flgid = cus.getCenterid();
                                     } else if (cus.getCenterid() != null && StrUtil.isNotEmpty(cus.getCenterid())) {
-                                        flgid = "";
+                                        //获取center的上级
+                                        OrgTree OrgCenterLeader = getOrgCenterLeader(orgs, cus.getCenterid());
+                                        if(OrgCenterLeader != null){
+                                            flgid = OrgCenterLeader.get_id();
+                                        }
                                     }
                                 }
                             }
@@ -2251,7 +2276,51 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                 rst.add(item);
             }
         }
+
+        //ADD
+        for(CompanyProjectsVo2 it:rst)
+        {
+            if(com.mysql.jdbc.StringUtils.isNullOrEmpty(it.getGroup_id()))
+            {
+                CompanyProjects cp = new CompanyProjects();
+                cp = companyprojectsMapper.selectByPrimaryKey(it.getCompanyprojects_id());
+                if(cp!=null)
+                {
+                    it.setGroup_id(cp.getCenter_id());
+                }
+            }
+            it.setGroup_id(selectEcodeById(it.getGroup_id()));
+        }
+        //ADD
         return rst;
+    }
+
+    public String selectEcodeById(String id) throws Exception
+    {
+        String ecode = id;
+        OrgTree orgs = orgTreeService.get(new OrgTree());
+        //副总
+        for (OrgTree orgfu : orgs.getOrgs()) {
+            //Center
+            for (OrgTree orgCenter : orgfu.getOrgs()) {
+                for(OrgTree orgGroup : orgCenter.getOrgs())
+                {
+                    if(orgGroup.get_id().equals(id))
+                    {
+                        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(orgCenter.getEncoding()))
+                        {
+                            ecode = orgCenter.get_id();
+                        }
+                        else
+                        {
+                            ecode = id;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        return ecode;
     }
 
     @Override

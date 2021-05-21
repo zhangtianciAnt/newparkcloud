@@ -265,19 +265,14 @@ public class Judgement extends BaseModel {
 //    @Column(name = "SPENDJUDE")
 //    private Float spendjude;
     //add_fjl_0824
-    //剩余未借款金额
-//    @Column(name = "SURLOAPPMONEY")
-//    private String surloappmoney;
-
-//    //剩余未精算金额
-//    @Column(name = "SURPUBILCMONEY")
-//    private String surpubilcmoney;
 
     //决裁类型（流程相关）
     @Column(name = "DECISION")
     private String decision;
 
-    //是否允许多次暂借款
+    //是否可多次申请暂借款
     @Column(name = "ENABLEDUPLICATELOAN")
     private String enableduplicateloan;
+
+
 }

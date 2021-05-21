@@ -234,7 +234,7 @@ public class ThemePlanServiceImpl implements ThemePlanService {
     @Override
     public List<PersonnelPlan> getAll(String groupid, String year) throws Exception {
         PersonnelPlan personnelplan = new PersonnelPlan();
-        personnelplan.setGroupid(groupid);
+        personnelplan.setCenterid(groupid);
         personnelplan.setYears(year);
         return personnelplanMapper.select(personnelplan);
     }

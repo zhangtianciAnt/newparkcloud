@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelReader;
@@ -335,6 +336,24 @@ public class WagesServiceImpl implements WagesService {
             wagesMapper.delete(del_wage);
             for (Wages wage : wages) {
                 wage.setWages_id(UUID.randomUUID().toString());
+                //update gbb 20210511 【当月实发工资】数据库加密 start
+                if (StringUtils.isNotEmpty(wage.getRealwages())) {
+                    if(!StringUtils.isBase64Encode(wage.getRealwages())){
+                        wage.setRealwages(Base64.encode(wage.getRealwages()));
+                    }else{
+                        // 进行解密特殊字符串不识别base64的处理
+                        String encryptData = cn.hutool.core.codec.Base64.decodeStr(wage.getRealwages());
+                        if(encryptData.indexOf("�") < 0){
+                            // 不为空时，就进行加密
+                            wage.setRealwages(Base64.encode(wage.getRealwages()));
+                        }
+                        else{
+                            // 不为空时，就进行加密
+                            wage.setRealwages(Base64.encode(wage.getRealwages()));
+                        }
+                    }
+                }
+                //update gbb 20210511 【当月实发工资】数据库加密 end
                 wage.setCreateonym(DateUtil.format(new Date(), "yyyy-MM"));
                 wage.setActual(actual);
                 List<CustomerInfo> customerinfo = customerInfoList.stream().filter(coi -> (coi.getUserid().contains(wage.getUser_id()))).collect(Collectors.toList());
@@ -2951,6 +2970,12 @@ public class WagesServiceImpl implements WagesService {
                 if (customerInfo != null) {
                     wages.setJobnumber(customerInfo.getUserinfo().getJobnumber());  //工号
                     wages.setUser_id(customerInfo.getUserid());
+                    //region 删除已经存在的数据
+                    Wages del_wage = new Wages();
+                    del_wage.setCreateonym(Createonym.substring(0,7));
+                    del_wage.setUser_id(customerInfo.getUserid());
+                    wagesMapper.delete(del_wage);
+                    //endregion 查询是否已经存在
                     //upd_fjl_0910
 //                    wages.setWorkdate(customerInfo.getUserinfo().getEnterday());//入社时间
                     String resignationDate = formatStringDateadd(customerInfo.getUserinfo().getEnterday());

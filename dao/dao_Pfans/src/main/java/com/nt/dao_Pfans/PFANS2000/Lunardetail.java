@@ -16,7 +16,7 @@ import java.util.Date;
 @Table(name = "lunardetail")
 public class Lunardetail extends BaseModel {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
     @Id
     @Column(name = "LUNARDETAIL_ID")
@@ -144,7 +144,7 @@ public class Lunardetail extends BaseModel {
     @Column(name = "OCCUPATIONTYPE")
     private String occupationtype;
 
-    //    评价进程
+//    评价进程
     @Column(name = "PROCESS")
     private String process;
 

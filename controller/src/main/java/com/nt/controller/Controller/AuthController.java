@@ -8,6 +8,7 @@ import com.nt.service_Auth.AuthService;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
+import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS6000.DeleginformationService;
 import com.nt.service_pfans.PFANS6000.PricesetService;
 import com.nt.service_pfans.PFANS8000.MonthlyRateService;
@@ -60,6 +61,8 @@ public class AuthController {
     @Autowired
     private MonthlyRateService monthlyRateService;
 
+    @Autowired
+    private CompanyProjectsService companyProjectsService;
 
     /**
      * @方法名：getActionsAuth
@@ -205,6 +208,13 @@ public class AuthController {
     @RequestMapping(value = "/insert",method={RequestMethod.GET})
     public ApiResult insert(HttpServletRequest request) throws Exception {
         annualLeaveService.insert();
+        return ApiResult.success();
+    }
+
+    //pl退场前7天给上级发送待办
+    @RequestMapping(value = "/getPLLeader",method={RequestMethod.GET})
+    public ApiResult getPLLeader(HttpServletRequest request) throws Exception {
+        companyProjectsService.getPLLeader();
         return ApiResult.success();
     }
 }
