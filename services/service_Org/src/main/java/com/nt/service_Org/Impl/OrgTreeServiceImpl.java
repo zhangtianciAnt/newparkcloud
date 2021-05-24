@@ -3,6 +3,7 @@ package com.nt.service_Org.Impl;
 import cn.hutool.core.util.ImageUtil;
 import com.nt.dao_Org.OrgTree;
 import com.nt.service_Org.OrgTreeService;
+import com.nt.utils.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -97,6 +98,7 @@ public class OrgTreeServiceImpl implements OrgTreeService {
         return orgTrees;
     }
 
+    //update gbb 20210308  禅道任务708  start
     @Override
     public OrgTree getTreeYears(String Years,String Status) throws Exception {
         Query query = new Query();
@@ -112,5 +114,24 @@ public class OrgTreeServiceImpl implements OrgTreeService {
             }
         }
         return orgtree;
+    }
+    //update gbb 20210308  禅道任务708  end
+
+    @Override
+    public void updateStatus(String Years) throws Exception {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("status").is("0"));
+        List<OrgTree> orgtreeList = mongoTemplate.find(query, OrgTree.class);
+        if (orgtreeList.size() > 0) {
+            for (OrgTree orgTree0 : orgtreeList) {
+                orgTree0.setStatus("1");
+                mongoTemplate.save(orgTree0);
+            }
+        }
+        Query query1 = new Query();
+        query1.addCriteria(Criteria.where("years").is(Years));
+        OrgTree orgTree1 = mongoTemplate.findOne(query1, OrgTree.class);
+        orgTree1.setStatus("0");
+        mongoTemplate.save(orgTree1);
     }
 }
