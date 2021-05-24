@@ -1520,18 +1520,33 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             //取上午下午最大上班时间 + 申请的假期 + 申请的因公外出 >= 4
                                             if (Double.valueOf(shijiworkHoursMax) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4)
                                             {
-                                                ad.setNormal(df.format(Double.valueOf(shijiworkHoursMax) + Double.valueOf(nomal)));
+                                                ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
                                                 ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
-                                                ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
-                                                if(ad.getTenantid().equals("7"))
+                                                //ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+                                                if (ad.getYouthday() != null && !ad.getYouthday().isEmpty())
                                                 {
-                                                    if (ad.getYouthday() != null && !ad.getYouthday().isEmpty())
+                                                    if(ad.getTenantid().equals("7"))
                                                     {
                                                         ad.setYouthday(df.format(Double.valueOf(workinghours)));
                                                     }
-                                                    else if(ad.getWomensday() != null && !ad.getWomensday().isEmpty())
+                                                    else if(ad.getTenantid().equals("4"))
+                                                    {
+                                                        ad.setYouthday(null);
+                                                        ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
+
+                                                    }
+                                                }
+                                                else if(ad.getWomensday() != null && !ad.getWomensday().isEmpty())
+                                                {
+                                                    if(ad.getTenantid().equals("7"))
                                                     {
                                                         ad.setWomensday(df.format(Double.valueOf(workinghours)));
+                                                    }
+                                                    else if(ad.getTenantid().equals("4"))
+                                                    {
+                                                        ad.setWomensday(null);
+                                                        ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
+
                                                     }
                                                 }
                                                 else
@@ -1539,11 +1554,49 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ad.setYouthday(null);
                                                     ad.setWomensday(null);
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
-                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal()) - Double.valueOf(ad.getAbsenteeism())+ Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal()) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
-
                                             }
+                                            else{
+                                                    ad.setNormal(df.format(Double.valueOf(shijiworkHoursMax) + Double.valueOf(nomal)));
+                                                    ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+                                                    ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+                                                    if (ad.getYouthday() != null && !ad.getYouthday().isEmpty())
+                                                    {
+                                                        if(ad.getTenantid().equals("7"))
+                                                        {
+                                                            ad.setYouthday(df.format(Double.valueOf(workinghours)));
+                                                        }
+                                                        else if(ad.getTenantid().equals("4"))
+                                                        {
+                                                            ad.setYouthday(null);
+                                                            ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())-  Double.valueOf(ad.getAbsenteeism())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
+
+                                                        }
+                                                    }
+                                                    else if(ad.getWomensday() != null && !ad.getWomensday().isEmpty())
+                                                    {
+                                                        if(ad.getTenantid().equals("7"))
+                                                        {
+                                                            ad.setWomensday(df.format(Double.valueOf(workinghours)));
+                                                        }
+                                                        else if(ad.getTenantid().equals("4"))
+                                                        {
+                                                            ad.setWomensday(null);
+                                                            ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())-  Double.valueOf(ad.getAbsenteeism())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
+
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                    ad.setYouthday(null);
+                                                    ad.setWomensday(null);
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(leavetime) -  Double.valueOf(ad.getAbsenteeism())- Double.valueOf(ad.getNormal()) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
+                                                }
+                                                }
                                             //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
                                         }
                                     }
@@ -2210,7 +2263,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         }
                                     }
                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
-                                    if (!StringUtils.isNullOrEmpty(ad.getWomensday()) || !StringUtils.isNullOrEmpty(ad.getYouthday()))
+                                    if (StringUtils.isNullOrEmpty(ad.getWomensday()) || StringUtils.isNullOrEmpty(ad.getYouthday()))
                                     {
                                         ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leave) - Double.valueOf(ad.getAbsenteeism()) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
 
@@ -3291,18 +3344,33 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             //取上午下午最大上班时间 + 申请的假期 + 申请的因公外出 >= 4
                                             if (Double.valueOf(shijiworkHoursMax) + Double.valueOf(leavetime) + Double.valueOf(nomal) >= 4)
                                             {
-                                                ad.setNormal(df.format(Double.valueOf(shijiworkHoursMax) + Double.valueOf(nomal)));
+                                                ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
                                                 ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
-                                                ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
-                                                if(ad.getTenantid().equals("7"))
+                                                //ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+                                                if (ad.getYouthday() != null && !ad.getYouthday().isEmpty())
                                                 {
-                                                    if (ad.getYouthday() != null && !ad.getYouthday().isEmpty())
+                                                    if(ad.getTenantid().equals("7"))
                                                     {
                                                         ad.setYouthday(df.format(Double.valueOf(workinghours)));
                                                     }
-                                                    else if(ad.getWomensday() != null && !ad.getWomensday().isEmpty())
+                                                    else if(ad.getTenantid().equals("4"))
+                                                    {
+                                                        ad.setYouthday(null);
+                                                        ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
+
+                                                    }
+                                                }
+                                                else if(ad.getWomensday() != null && !ad.getWomensday().isEmpty())
+                                                {
+                                                    if(ad.getTenantid().equals("7"))
                                                     {
                                                         ad.setWomensday(df.format(Double.valueOf(workinghours)));
+                                                    }
+                                                    else if(ad.getTenantid().equals("4"))
+                                                    {
+                                                        ad.setWomensday(null);
+                                                        ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
+
                                                     }
                                                 }
                                                 else
@@ -3310,10 +3378,48 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ad.setYouthday(null);
                                                     ad.setWomensday(null);
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
-                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())- Double.valueOf(leavetime) - Double.valueOf(ad.getAbsenteeism()) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal()) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
                                                 }
+                                            }
+                                            else{
+                                                ad.setNormal(df.format(Double.valueOf(shijiworkHoursMax) + Double.valueOf(nomal)));
+                                                ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+                                                ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+                                                if (ad.getYouthday() != null && !ad.getYouthday().isEmpty())
+                                                {
+                                                    if(ad.getTenantid().equals("7"))
+                                                    {
+                                                        ad.setYouthday(df.format(Double.valueOf(workinghours)));
+                                                    }
+                                                    else if(ad.getTenantid().equals("4"))
+                                                    {
+                                                        ad.setYouthday(null);
+                                                        ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())-  Double.valueOf(ad.getAbsenteeism())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
 
+                                                    }
+                                                }
+                                                else if(ad.getWomensday() != null && !ad.getWomensday().isEmpty())
+                                                {
+                                                    if(ad.getTenantid().equals("7"))
+                                                    {
+                                                        ad.setWomensday(df.format(Double.valueOf(workinghours)));
+                                                    }
+                                                    else if(ad.getTenantid().equals("4"))
+                                                    {
+                                                        ad.setWomensday(null);
+                                                        ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(ad.getNormal())-  Double.valueOf(ad.getAbsenteeism())- Double.valueOf(leavetime) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
+
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    ad.setYouthday(null);
+                                                    ad.setWomensday(null);
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
+                                                    ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(leavetime) -  Double.valueOf(ad.getAbsenteeism())- Double.valueOf(ad.getNormal()) + Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
+                                                    //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 TO
+                                                }
                                             }
                                             //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
 
@@ -3912,7 +4018,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         }
                                     }
                                     //ADD CCM 20210316 PSDCD_PFANS_20210309_BUG_028 FR
-                                    if (!StringUtils.isNullOrEmpty(ad.getWomensday()) || !StringUtils.isNullOrEmpty(ad.getYouthday()))
+                                    if (StringUtils.isNullOrEmpty(ad.getWomensday()) || StringUtils.isNullOrEmpty(ad.getYouthday()))
                                     {
                                         ad.setWelfare(df.format(Double.valueOf("8") - Double.valueOf(leave) - Double.valueOf(ad.getNormal()) - Double.valueOf(ad.getAbsenteeism())+ Double.valueOf(StringUtils.isNullOrEmpty(ad.getWelfare()) ? "0":ad.getWelfare())));
                                     }
