@@ -228,9 +228,10 @@ public class Pfans5008Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         LogManagement logmanagement = new LogManagement();
-        logmanagement.setOwners(tokenModel.getOwnerList());
+//        logmanagement.setOwners(tokenModel.getOwnerList());
+        logmanagement.setCreateby(conditon.getCreateby());
         List<LogManagement> list = logmanagementService.getDataList(logmanagement);
-        list = list.stream().filter(item -> item.getCreateby().equals(conditon.getCreateby())).collect(Collectors.toList());
+//        list = list.stream().filter(item -> item.getCreateby().equals(conditon.getCreateby())).collect(Collectors.toList());
         return ApiResult.success(list);
     }
     // add-ws-5/26-No.68
