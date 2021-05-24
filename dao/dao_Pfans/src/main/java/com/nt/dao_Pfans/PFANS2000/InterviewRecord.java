@@ -126,10 +126,16 @@ public class InterviewRecord  extends BaseModel {
     private String rn;
 
     /**
-     * 薪资
+     * 基本给
      */
     @Column(name = "SALARY")
     private String salary;
+
+    /**
+     * 职责给
+     */
+    @Column(name = "DUTYSALARY")
+    private String dutysalary;
 
     /**
      * 结果说明

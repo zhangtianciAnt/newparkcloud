@@ -208,6 +208,7 @@ public class RecruitJudgementServiceImpl implements RecruitJudgementService {
                 // endregion add gbb 0724 职级联动职责工资
 
                 info.setBasic(String.valueOf(recruitJudgement.getGiving()));
+                info.setDuty(String.valueOf(recruitJudgement.getDutygiving()));
                 info.setAdfield(userAccount.getAccount());
                 query = new Query();
                 query.addCriteria(Criteria.where("userinfo.centerid").is(recruitJudgement.getCenter_id()));
