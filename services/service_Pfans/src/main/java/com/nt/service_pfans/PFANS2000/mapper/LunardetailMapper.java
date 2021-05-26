@@ -21,5 +21,5 @@ public interface LunardetailMapper extends MyMapper<Lunardetail>{
     List<Lunardetail> selectGroupCount(@Param("lunardetailList") List<String> lunardetailList, @Param("Self") String Self, @Param("lunarbonus_id") String lunarbonus_id,@Param("Evaluationday") String Evaluationday, @Param("Subjectmon") String Subjectmon);
     List<Lunardetail> selectCenter(@Param("lunardetailList") List<String> lunardetailList, @Param("Self") String Self, @Param("lunarbonus_id") String lunarbonus_id,@Param("Evaluationday") String Evaluationday, @Param("Subjectmon") String Subjectmon);
     List<Lunardetail> selectCenterCount(@Param("lunardetailList") List<String> lunardetailList, @Param("Self") String Self, @Param("lunarbonus_id") String lunarbonus_id,@Param("Evaluationday") String Evaluationday, @Param("Subjectmon") String Subjectmon);
-    List<Lunardetail> selectResult(@Param("Evaday") String Evaday, @Param("Submon") String Submon, @Param("Self") String Self);
+    List<Lunardetail> selectResult(@Param("Evaday") String Evaday, @Param("Submon") String Submon, @Param("Lunarbonus_id") String Lunarbonus_id, @Param("Self") String Self);
 }

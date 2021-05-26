@@ -554,7 +554,10 @@ public class Pfans1012Controller {
             }
         }
         String str_format = "";
-        DecimalFormat df = new DecimalFormat("###,###.00");
+        //PSDCD_PFANS_20210521_BUG_009 解决0.12bug scc fr
+//        DecimalFormat df = new DecimalFormat("###,###.00");
+        DecimalFormat df = new DecimalFormat("###,##0.00");
+        //PSDCD_PFANS_20210521_BUG_009 解决0.12bug scc to
 
 //add-ws-6/29-禅道171问题修正
         String currenct = "";
