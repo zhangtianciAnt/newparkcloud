@@ -286,6 +286,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                         lunardetail.setPrize("有");
                     }
                 }
+                lunardetail.setIsexperienced(customerInfo.getUserinfo().getExperience());
                 lunardetail.setProcess("0");
                 lunardetail.setOccupationtype(customerInfo.getUserinfo().getOccupationtype());
                 lunardetailMapper.insert(lunardetail);
@@ -361,6 +362,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         }
         roles = roles.replace("副总经理","副总");
         List<String> lunardetailList = new ArrayList<>();
+        List<String> detailList = new ArrayList<>();
         LunarAllVo LunarAllVo = new LunarAllVo();
         LunarAllVo.setSubmitFlg("0");
         Lunarbonus lunarbonus = lunarbonusMapper.selectByPrimaryKey(id);
@@ -395,10 +397,10 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                     //detal = lunardetailMapper.selectTeam(lunardetailList, tokenModel.getUserId(), lunarbonus.getEvaluationday(), lunarbonus.getSubject());
                     detal = lunardetailMapper.selectGroup(lunardetailList, tokenModel.getUserId(),lunarbonus.getLunarbonus_id(), lunarbonus.getEvaluationday(), lunarbonus.getSubject());
                     LunarAllVo.setSubmitFlg("1");//可提交
-                    for (Lunardetail aaa: detal) {
-                        if (aaa.getProcess().equals("1")) {
+                    for (Lunardetail checkPro: detal) {
+                        if (checkPro.getProcess().equals("1")) {
                             LunarAllVo.setSubmitFlg("1");//可提交
-                        } else if (!aaa.getProcess().equals("1")) {
+                        } else if (!checkPro.getProcess().equals("1")) {
                             LunarAllVo.setSubmitFlg("0");//不可提交
                             break;
                         }
@@ -410,28 +412,35 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                     OrgTreeVolistowner = OrgTreeVolistowner.stream().distinct().filter(item -> (item.getMoney4().equals("2"))).collect(Collectors.toList());
                     for (OrgTreeVo orgTreeVo : OrgTreeVolistowner) {
                         //center
+                        detailList = new ArrayList<>();
                         detailLevel = orgTreeVo.getMoney1();
                         lunardetailList.add(detailLevel);
+                        detailList.add(detailLevel);
                         //查询一次评价
                         List<Lunarbonus> lunarbonusev = lunarbonusALLList.stream().distinct().filter(item -> (item.getEvaluatenum().equals("PJ104001"))).collect(Collectors.toList());
                         if(lunarbonusev.size() > 0){
                             //获取center下group
                             List<OrgTreeVo> TreeVoGrouplist = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney1().equals(orgTreeVo.getMoney1()))).collect(Collectors.toList());
                             //center下一次评价的group个数
-                            List<Lunardetail> detalGroup = lunardetailMapper.selectGroupCount(lunardetailList, tokenModel.getUserId(), lunarbonusev.get(0).getLunarbonus_id(),lunarbonus.getEvaluationday(), lunarbonus.getSubject());
+                            List<Lunardetail> detalGroup = lunardetailMapper.selectGroupCount(detailList, tokenModel.getUserId(), lunarbonusev.get(0).getLunarbonus_id(),lunarbonus.getEvaluationday(), lunarbonus.getSubject());
                             //如果相同说明center下所有group已提交一次评价
                             if(TreeVoGrouplist.size() - 1 == detalGroup.size()){
                                 LunarAllVo.setSubmitFlg("1");//可提交
+                            } else {
+                                LunarAllVo.setSubmitFlg("0");//不可提交
+                                break;
                             }
                         }
                     }
                     detal = lunardetailMapper.selectCenter(lunardetailList, tokenModel.getUserId(), lunarbonus.getLunarbonus_id(),lunarbonus.getEvaluationday(), lunarbonus.getSubject());
-                    for (Lunardetail aaa: detal) {
-                        if (aaa.getProcess().equals("2")) {
-                            LunarAllVo.setSubmitFlg("1");//可提交
-                        } else if (!aaa.getProcess().equals("2")) {
-                            LunarAllVo.setSubmitFlg("0");//不可提交
-                            break;
+                    if (LunarAllVo.getSubmitFlg().equals("1")) {
+                        for (Lunardetail checkPro : detal) {
+                            if (checkPro.getProcess().equals("2")) {
+                                LunarAllVo.setSubmitFlg("1");//可提交
+                            } else if (!checkPro.getProcess().equals("2")) {
+                                LunarAllVo.setSubmitFlg("0");//不可提交
+                                break;
+                            }
                         }
                     }
                 }
@@ -455,18 +464,32 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                                 lunardetailCenterList.add(detailLevel);
                             }
                             List<Lunardetail> detalCenter = lunardetailMapper.selectCenterCount(lunardetailCenterList, tokenModel.getUserId(), lunarbonusev.get(0).getLunarbonus_id(),lunarbonus.getEvaluationday(), lunarbonus.getSubject());
-                            if(TreeVoCenterlist.size() == detalCenter.size()){//此处无需减1
+                            //去重拿到center下有group的有效center
+                            List<String> groupNumber = new ArrayList<>();
+                            List<OrgTreeVo> orgGroup = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("1"))).collect(Collectors.toList());
+                            for (OrgTreeVo cen: TreeVoCenterlist) {
+                                for (OrgTreeVo gro: orgGroup) {
+                                    if (gro.getMoney1().equals(cen.getMoney1())) {
+                                        groupNumber.add(cen.getMoney1());
+                                    }
+                                }
+                            }
+                            groupNumber = groupNumber.stream().distinct().collect(Collectors.toList());
+                            //比较两个集合的大小
+                            if(groupNumber.size() == detalCenter.size()){//此处无需减1
                                 LunarAllVo.setSubmitFlg("1");//可提交
                             }
                         }
                     }
                     detal = lunardetailMapper.selectCenter(lunardetailCenterList, tokenModel.getUserId(), lunarbonus.getLunarbonus_id(),lunarbonus.getEvaluationday(), lunarbonus.getSubject());
-                    for (Lunardetail aaa: detal) {
-                        if (aaa.getProcess().equals("3")) {
-                            LunarAllVo.setSubmitFlg("1");//可提交
-                        } else if (!aaa.getProcess().equals("3")) {
-                            LunarAllVo.setSubmitFlg("0");//不可提交
-                            break;
+                    if (LunarAllVo.getSubmitFlg().equals("1")) {
+                        for (Lunardetail checkPro : detal) {
+                            if (checkPro.getProcess().equals("3")) {
+                                LunarAllVo.setSubmitFlg("1");//可提交
+                            } else if (!checkPro.getProcess().equals("3")) {
+                                LunarAllVo.setSubmitFlg("0");//不可提交
+                                break;
+                            }
                         }
                     }
                 }
@@ -474,7 +497,50 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         } else {
             String Evaday = lunarbonus.getEvaluationday();
             String Submon = lunarbonus.getSubject();
-            detal = lunardetailMapper.selectResult(Evaday, Submon, tokenModel.getUserId());
+            String Lunarbonus_id = lunarbonus.getLunarbonus_id();
+            detal = lunardetailMapper.selectResult(Evaday, Submon, Lunarbonus_id, tokenModel.getUserId());
+            if (roles.contains("人事总务部长") || roles.contains("工资计算担当")) {
+                Query query1 = new Query();
+                query1.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
+                CustomerInfo customerInfo = mongoTemplate.findOne(query1,CustomerInfo.class);
+                if (customerInfo.getUserinfo() != null) {
+                    if (customerInfo.getUserinfo().getGroupid() != null) {
+                        String RSgroupid = customerInfo.getUserinfo().getGroupid();
+                        for (Lunardetail lunardetail: detal) {
+                            if (lunardetail.getGroup_id() != null) {
+                                if (lunardetail.getGroup_id().equals(RSgroupid) && lunardetail.getProcess().equals("1")) {
+                                    LunarAllVo.setSubmitFlg("1");//可提交
+                                } else {
+                                    if (lunardetail.getGroup_id().equals(RSgroupid) && !lunardetail.getProcess().equals("1")) {
+                                        LunarAllVo.setSubmitFlg("0");//不可提交
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    } else if (customerInfo.getUserinfo().getCenterid() != null) {
+                        String RScenterid = customerInfo.getUserinfo().getCenterid();
+                        for (Lunardetail lunardetail: detal) {
+                            if (lunardetail.getCenter_id().equals(RScenterid) && lunardetail.getProcess().equals("2")) {
+                                LunarAllVo.setSubmitFlg("1");//可提交
+                            } else if (lunardetail.getCenter_id().equals(RScenterid) && !lunardetail.getProcess().equals("2")) {
+                                LunarAllVo.setSubmitFlg("0");//不可提交
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (roles.contains("总经理")) {
+                for (Lunardetail checkPro : detal) {
+                    if (checkPro.getProcess().equals("4")) {
+                        LunarAllVo.setSubmitFlg("1");//可提交
+                    } else if (!checkPro.getProcess().equals("4")) {
+                        LunarAllVo.setSubmitFlg("0");//不可提交
+                        break;
+                    }
+                }
+            }
         }
         LunarAllVo.setLunardetail(detal);
         Lunarbasic lunarbasicConditon = new Lunarbasic();
@@ -568,6 +634,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                 lunardetailMapper.updateProcess2(Process, lunarbonus.getEvaluationday(), subjectmon);
                 lunarbonus.setEvaluatenum("PJ104001");//一次評価
                 lunarbonus.preUpdate(tokenModel);
+                lunarbonus.setSubjectmon(subjectmon);
                 lunarbonusMapper.updateByPrimaryKeySelective(lunarbonus);
             }
             //endregion 人事给每个GM发送待办进行一次评价 仅人事/薪资操作阶段
@@ -575,7 +642,7 @@ public class LunarbonusServiceImpl implements LunarbonusService {
         }
         else{
             //region GM给下一级CENTER发待办  仅GM职操作阶段
-            if (lunarbonus.getEvaluatenum().equals("PJ104001") && (!roles.contains("人事总务部长") && !roles.contains("工资计算担当") && !roles.contains("总经理"))) {
+            if (lunarbonus.getEvaluatenum().equals("PJ104001") && (!roles.contains("总经理"))) {
                 List<OrgTreeVo> TreeVolistTLGroup = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("1") && item.getMoney3().equals(tokenModel.getUserId()))).collect(Collectors.toList());
                 for (OrgTreeVo orgTreeVo : TreeVolistTLGroup) {
                     List<OrgTreeVo> TreeVolistGroup = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("2") && item.getMoney1().equals(orgTreeVo.getMoney1()))).collect(Collectors.toList());
@@ -595,9 +662,9 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                 List<Lunarbonus> bonustwo = lunarbonusMapper.select(bonusone);
                 if (bonustwo.size() == 0) {
                     bonus.setEvaluatenum("PJ104002");//二次评价
-                    bonus.setTenantid("0");
                     bonus.preInsert(tokenModel);
                     bonus.setLunarbonus_id(strLunarbonus_id);
+                    bonus.setTenantid("1");
                     lunarbonusMapper.insert(bonus);
                 }
                 else{
@@ -618,9 +685,22 @@ public class LunarbonusServiceImpl implements LunarbonusService {
 
                 //修改评价详情状态
                 String Process = "2";
-                String Gpid = TreeVolistTLGroup.get(0).getMoney2();
-                lunardetailMapper.updateProcesG(Process, lunarbonus.getLunarbonus_id(),Gpid);
-
+                for (int i = 0; i < TreeVolistTLGroup.size(); i++) {
+                    String Gpid = TreeVolistTLGroup.get(i).getMoney2();
+                    lunardetailMapper.updateProcesG(Process, lunarbonus.getLunarbonus_id(), Gpid);
+                    //复制一次评价详情的值给二次评价
+                    Lunardetail detail = new Lunardetail();
+                    detail.setLunarbonus_id(lunarbonus.getLunarbonus_id());
+                    detail.setGroup_id(Gpid);
+                    List<Lunardetail> LunardetailList = lunardetailMapper.select(detail);
+                    if(LunardetailList.size() > 0){
+                        for (Lunardetail Lu : LunardetailList) {
+                            Lu.setLunarbonus_id(strLunarbonus_id);
+                            Lu.setLunardetail_id(UUID.randomUUID().toString());
+                            lunardetailMapper.insert(Lu);
+                        }
+                    }
+                }
                 //变更评价提交人代办状态
                 toDoNotice = new ToDoNotice();
                 toDoNotice.setDataid(lunarbonus.getLunarbonus_id());
@@ -632,23 +712,12 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                         toDoNoticeService.updateNoticesStatus(item);
                     }
                 }
-                //复制一次评价详情的值给二次评价
-                Lunardetail detail = new Lunardetail();
-                detail.setLunarbonus_id(lunarbonus.getLunarbonus_id());
-                detail.setGroup_id(Gpid);
-                List<Lunardetail> LunardetailList = lunardetailMapper.select(detail);
-                if(LunardetailList.size() > 0){
-                    for (Lunardetail Lu : LunardetailList) {
-                        Lu.setLunarbonus_id(strLunarbonus_id);
-                        Lu.setLunardetail_id(UUID.randomUUID().toString());
-                        lunardetailMapper.insert(Lu);
-                    }
-                }
+
             }
             //endregion GM给下一级CENTER发待办  仅GM职操作阶段
 
             //region CENTER给下一级副总发待办  仅CENTER职操作阶段
-            if (lunarbonus.getEvaluatenum().equals("PJ104002") && (!roles.contains("人事总务部长") && !roles.contains("工资计算担当") && !roles.contains("总经理"))) {
+            if (lunarbonus.getEvaluatenum().equals("PJ104002") && (!roles.contains("总经理"))) {
                 List<OrgTreeVo> TreeVolistGroupCenter = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("2") && item.getMoney3().equals(tokenModel.getUserId()))).collect(Collectors.toList());
                 for (OrgTreeVo orgTreeVo: TreeVolistGroupCenter) {
                     List<OrgTreeVo> TreeVolistCenter = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("3") && item.get_id().equals(orgTreeVo.get_id()))).collect(Collectors.toList());
@@ -664,13 +733,13 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                 bonusone.setEvaluationday(bonus.getEvaluationday());
                 bonusone.setSubject(bonus.getSubject());
                 bonusone.setEvaluatenum("PJ104003");//三次评价
-                //查询二次评价是否存在
+                //查询三次评价是否存在
                 List<Lunarbonus> bonustwo = lunarbonusMapper.select(bonusone);
                 if (bonustwo.size() == 0) {
                     bonus.setEvaluatenum("PJ104003");//三次评价
-                    bonus.setTenantid("0");
                     bonus.preInsert(tokenModel);
                     bonus.setLunarbonus_id(strLunarbonus_id);
+                    bonus.setTenantid("1");
                     lunarbonusMapper.insert(bonus);
                 }
                 else{
@@ -690,9 +759,22 @@ public class LunarbonusServiceImpl implements LunarbonusService {
 
                 //修改评价详情状态
                 String Process = "3";
-                String centerid = TreeVolistGroupCenter.get(0).getMoney1();
-                lunardetailMapper.updateProcesC(Process, lunarbonus.getLunarbonus_id(),centerid);
-
+                for (int i = 0; i < TreeVolistGroupCenter.size(); i++) {
+                    String centerid = TreeVolistGroupCenter.get(i).getMoney1();
+                    lunardetailMapper.updateProcesC(Process, lunarbonus.getLunarbonus_id(), centerid);
+                    //复制二次评价的值给三次评价
+                    Lunardetail detail = new Lunardetail();
+                    detail.setLunarbonus_id(lunarbonus.getLunarbonus_id());
+                    detail.setCenter_id(centerid);
+                    List<Lunardetail> LunardetailList = lunardetailMapper.select(detail);
+                    if(LunardetailList.size() > 0){
+                        for (Lunardetail Lu : LunardetailList) {
+                            Lu.setLunarbonus_id(strLunarbonus_id);
+                            Lu.setLunardetail_id(UUID.randomUUID().toString());
+                            lunardetailMapper.insert(Lu);
+                        }
+                    }
+                }
                 //变更评价提交人代办状态
                 toDoNotice1 = new ToDoNotice();
                 toDoNotice1.setDataid(lunarbonus.getLunarbonus_id());
@@ -704,25 +786,24 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                         toDoNoticeService.updateNoticesStatus(item);
                     }
                 }
-                //复制二次评价的值给三次评价
-                Lunardetail detail = new Lunardetail();
-                detail.setLunarbonus_id(lunarbonus.getLunarbonus_id());
-                detail.setCenter_id(centerid);
-                List<Lunardetail> LunardetailList = lunardetailMapper.select(detail);
-                if(LunardetailList.size() > 0){
-                    for (Lunardetail Lu : LunardetailList) {
-                        Lu.setLunarbonus_id(strLunarbonus_id);
-                        Lu.setLunardetail_id(UUID.randomUUID().toString());
-                        lunardetailMapper.insert(Lu);
-                    }
-                }
+
             }
             //endregion CENTER给下一级副总发待办  仅CENTER职操作阶段
 
             //region 副总给下一级总经理发待办  仅副总职操作阶段
             if (lunarbonus.getEvaluatenum().equals("PJ104003") && (!roles.contains("人事总务部长") && !roles.contains("工资计算担当") && !roles.contains("总经理"))) {
-                List<OrgTreeVo> TreeVolistFuToZong = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("2"))).collect(Collectors.toList());
-                List<OrgTreeVo> FuzongCenter = TreeVolistFuToZong.stream().distinct().filter(item -> (item.getMoney5().equals(tokenModel.getUserId()))).collect(Collectors.toList());
+
+                List<String> centeridList = new ArrayList<>();
+                List<OrgTreeVo> OrgTreeVolistowner = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney3().equals(tokenModel.getUserId()))).collect(Collectors.toList());
+                OrgTreeVolistowner = OrgTreeVolistowner.stream().distinct().filter(item -> (item.getMoney4().equals("3"))).collect(Collectors.toList());
+                for (OrgTreeVo orgTreeVo : OrgTreeVolistowner) {
+                    List<OrgTreeVo> TreeVoCenterlist = OrgTreeVolist.stream().distinct().filter(item -> (item.get_id().equals(orgTreeVo.get_id()))).collect(Collectors.toList());
+                    TreeVoCenterlist = TreeVoCenterlist.stream().distinct().filter(item -> (item.getMoney4().equals("2"))).collect(Collectors.toList());
+                    for (OrgTreeVo orgTreeVo1: TreeVoCenterlist) {
+                        centeridList.add(orgTreeVo1.getMoney1());
+                    }
+                }
+
                 ToDoNotice toDoNotice1 = new ToDoNotice();
                 toDoNotice1.setTitle("您有月度赏与评价需要确认，请注意查看。");
                 toDoNotice1.setInitiator(tokenModel.getUserId());
@@ -739,15 +820,14 @@ public class LunarbonusServiceImpl implements LunarbonusService {
                 toDoNoticeService.save(toDoNotice1);
                 //修改评价状态
                 String Process = "4";
-                for (int i = 0; i < FuzongCenter.size(); i++) {
+                for (int i = 0; i < centeridList.size(); i++) {
                     //把副总的状态单独更新一下
                     if (i == 0) {
                         List<OrgTreeVo> Fuzong = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney4().equals("3") && item.getMoney3().equals(tokenModel.getUserId()))).collect(Collectors.toList());
                         String FuzongId = Fuzong.get(0).get_id();
-                        lunardetailMapper.updateProcesC(Process, lunarbonus.getLunarbonus_id(),FuzongId);
+                        lunardetailMapper.updateProcesC(Process, lunarbonus.getLunarbonus_id(), FuzongId);
                     }
-                    String Crid = FuzongCenter.get(i).get_id();
-                    lunardetailMapper.updateProcesC(Process, lunarbonus.getLunarbonus_id(),Crid);
+                    lunardetailMapper.updateProcesC(Process, lunarbonus.getLunarbonus_id(), centeridList.get(i));
                 }
 
                 //变更评价提交人代办状态

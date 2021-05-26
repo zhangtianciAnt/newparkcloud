@@ -148,5 +148,8 @@ public class Lunardetail extends BaseModel {
     @Column(name = "PROCESS")
     private String process;
 
+    //是否有工作经验
+    @Column(name = "ISEXPERIENCED")
+    private String isexperienced;
 
 }
