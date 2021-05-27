@@ -85,7 +85,25 @@ public class Evection extends BaseModel {
      */
     @Column(name = "DATENUMBER")
     private String datenumber;
+    //region add_qhr_0527  添加实际出差开始日期、实际出差结束日期、实际出差天数
+    /**
+     * 实际出差开始日期
+     */
+    @Column(name = "REALSTARTDATE")
+    private Date realstartdate;
 
+    /**
+     * 实际出差结束日期
+     */
+    @Column(name = "REALENDDATE")
+    private Date realenddate;
+
+    /**
+     * 实际出差日数
+     */
+    @Column(name = "REALDATENUMBER")
+    private String realdatenumber;
+    //endregion
     /**
      * 预算单位
      */
