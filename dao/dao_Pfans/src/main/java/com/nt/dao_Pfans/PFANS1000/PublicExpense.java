@@ -195,4 +195,9 @@ public class PublicExpense extends BaseModel {
     @Column(name = "PROCESSINGSTATUS")
     private String processingstatus;
     // add-ws-8/12-禅道任务446
+
+//    PSDCD_PFANS_20210519_BUG_006
+    @Column(name = "LOANTYPE")
+    private String loantype;
+//    PSDCD_PFANS_20210519_BUG_006
 }
