@@ -554,7 +554,10 @@ public class Pfans1012Controller {
             }
         }
         String str_format = "";
-        DecimalFormat df = new DecimalFormat("###,###.00");
+        //PSDCD_PFANS_20210521_BUG_009 解决0.12bug scc fr
+//        DecimalFormat df = new DecimalFormat("###,###.00");
+        DecimalFormat df = new DecimalFormat("###,##0.00");
+        //PSDCD_PFANS_20210521_BUG_009 解决0.12bug scc to
 
 //add-ws-6/29-禅道171问题修正
         String currenct = "";
@@ -685,6 +688,37 @@ public class Pfans1012Controller {
 //        FileUtil.del("E:\\PFANS\\image" + "/" + wfList7);
 //        FileUtil.del("E:\\PFANS\\image" + "/" + userim);
     }
+
+
+//    PSDCD_PFANS_20210519_BUG_006 临时接口
+    @RequestMapping(value = "/puloanInfo", method = {RequestMethod.GET})
+    public void puloanInfo(HttpServletRequest request) throws Exception {
+        List<PublicExpense> peList = publicExpenseMapper.getEmpty();
+        for(PublicExpense pl : peList){
+            PublicExpense expense = new PublicExpense();
+            expense.setPublicexpenseid(pl.getPublicexpenseid());
+            PublicExpense expensesList = publicExpenseMapper.selectByPrimaryKey(expense);
+//            for(int i = 0; i < expensesList.size(); i++){
+                if(!expensesList.getLoan().equals("")){
+                    String[] loanID = expensesList.getLoan().split(",");
+                    LoanApplication loanApplication = new LoanApplication();
+//                    loanApplication.setLoanapplication_id(expensesList.get(i).getLoan());
+                    loanApplication.setLoanapplication_id(loanID[0]);
+                    loanApplication = loanapplicationMapper.selectByPrimaryKey(loanApplication);
+                    String codeOrName = !com.mysql.jdbc.StringUtils.isNullOrEmpty(loanApplication.getPayeecode()) ? loanApplication.getPayeecode() : loanApplication.getName();
+                    if("PJ015001".equals(loanApplication.getPaymentmethod()) || "PJ015003".equals(loanApplication.getPaymentmethod())){
+                        expensesList.setLoantype("1"+ "," + codeOrName);
+                    }else if("PJ015002".equals(loanApplication.getPaymentmethod())){
+                        expensesList.setLoantype("0"+ "," + codeOrName);
+                    }else{
+                        expensesList.setLoantype("");
+                    }
+                    publicExpenseMapper.updateByPrimaryKey(expensesList);
+                }
+            }
+        }
+//      PSDCD_PFANS_20210519_BUG_006 临时接口
+
 
     //ws-8/14-决裁子任务
     @RequestMapping(value = "/one2", method = {RequestMethod.POST})
