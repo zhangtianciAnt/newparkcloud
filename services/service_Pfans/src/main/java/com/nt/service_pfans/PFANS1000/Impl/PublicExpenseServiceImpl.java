@@ -867,11 +867,13 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 TotalCost taxCost = new TotalCost();
                 int scale1 = 2;//设置位数
                 int roundingMode1 = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+                //PSDCD_PFANS_20210519_BUG_007 前端画面实际会略微调整，后台不需要重新计算税额 fr
                 // 税拔
-                String lineCost = FNUM.format(new BigDecimal(money).divide(rate.add(new BigDecimal(1)), scale1, roundingMode1));
+                String lineCost = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(gettaxes)));
                 // 税金
                 String lineRate = FNUM.format(gettaxes);
-                String lineRateNo = FNUM.format(new BigDecimal(money).divide(rate.add(new BigDecimal(1)), scale1, roundingMode1).multiply(rate));
+                String lineRateNo = FNUM.format(new BigDecimal(gettaxes));
+                //PSDCD_PFANS_20210519_BUG_007 前端画面实际会略微调整，后台不需要重新计算税额 to
                 if (money > 0) {
                     // 税
                     //add-ws-4/22-税金不为0存2302-00-01A0
