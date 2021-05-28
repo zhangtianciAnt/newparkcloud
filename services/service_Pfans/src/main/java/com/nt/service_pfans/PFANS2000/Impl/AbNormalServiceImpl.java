@@ -459,7 +459,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                         for (AbNormal a : list) {
                             if (a.getStatus().equals("2")) {
                                 shenqing = shenqing + Double.valueOf(a.getLengthtime());
-                            } else if (a.getStatus().equals("5") ) {
+                            } else if (a.getStatus().equals("5")) {
                                 shenqing = shenqing + Double.valueOf(a.getRelengthtime());
                             }
                         }
@@ -825,7 +825,7 @@ public class AbNormalServiceImpl implements AbNormalService {
     {
         Calendar calendar = Calendar.getInstance();
         int year = 0;
-        int month = calendar.get(Calendar.MONTH)+1;
+        int month = calendar.get(Calendar.MONTH) + 1;
         if(month >= 1 && month <= 3) {
             year = calendar.get(Calendar.YEAR) - 1;
         }else {
