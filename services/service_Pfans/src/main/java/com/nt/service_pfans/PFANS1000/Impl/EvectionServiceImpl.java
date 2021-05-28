@@ -645,11 +645,16 @@ public class EvectionServiceImpl implements EvectionService {
             String getRmb = getProperty(detail, "rmb");
             String gettaxes = getProperty(detail, "taxes");
             String redirictchheck = getProperty(detail, "redirict");
+            //PSDCD_PFANS_20210519_BUG_004 ztc fr
+            if(Float.parseFloat(gettaxes) > 0){
+                String lineCost = FNUM.format(new BigDecimal(getRmb).subtract(new BigDecimal(gettaxes)));
+                setProperty(detail, "rmb", lineCost);
+            }
             // 如果是专票，处理税
             //updfjl_0722  添加增值税明细数据  start
             if (specialMap.containsKey(keyNo) && Float.parseFloat(gettaxes) > 0) {
-                float taxes = 0;
-                float taxesSUM = 0;
+                float taxes = 0f;
+//                float taxesSUM = 0f;
                 if (invoicelist.size() > 0) {
                     for (Invoice inv : invoicelist) {
                         taxes = Float.parseFloat(inv.getFacetax());
@@ -657,9 +662,9 @@ public class EvectionServiceImpl implements EvectionService {
                         resultMap.put(TAX_KEY, taxList);
                         BigDecimal rate = specialMap.get(keyNo);
                         TravelCost taxCost = new TravelCost();
-                        taxesSUM += taxes;
+//                        taxesSUM += taxes;
                         // 税拔
-                        String lineCost = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(taxesSUM)));
+//                        String lineCost = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(taxesSUM)));
                         String lineCostNo = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(taxes)));
                         // 税金
                         String lineRate = FNUM.format(taxes);
@@ -679,8 +684,9 @@ public class EvectionServiceImpl implements EvectionService {
                             taxCost.setCurrency("CNY");
                             taxList.add(taxCost);
                             // 税拔
-                            setProperty(detail, "rmb", lineCost);
-                            BigDecimal diff = new BigDecimal(taxes).add(new BigDecimal(lineCostNo)).subtract(new BigDecimal(money));
+                            //setProperty(detail, "rmb", lineCost);
+                            BigDecimal diff = new BigDecimal(String.valueOf(taxes)).add(new BigDecimal(lineCostNo)).subtract(new BigDecimal(String.valueOf(money)));
+                            //PSDCD_PFANS_20210519_BUG_004 ztc to
                             if (diff.compareTo(new BigDecimal(0)) == 1) {
                                 TravelCost padding = new TravelCost();
                                 padding.setLineamount(diff + "");
