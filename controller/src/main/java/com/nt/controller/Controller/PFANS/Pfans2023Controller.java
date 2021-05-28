@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -137,7 +138,10 @@ public class Pfans2023Controller {
 //        }
 //        禅道613 印章删掉 ztc end
 
-        data.put("now", DateUtil.year(new Date()));
+        //region add_qhr_20210528 目标管理导出年度修改
+        SimpleDateFormat sd = new SimpleDateFormat("YYYY");
+        data.put("now", DateUtil.year(sd.parse(gmt.getYears())));
+        //endregion add_qhr_20210528 目标管理导出年度修改
         ExcelOutPutUtil.OutPutPdf("目标管理", "mubiaoguanli.xlsx", data, response);
 
 
