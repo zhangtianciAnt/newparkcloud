@@ -688,7 +688,9 @@ public class GivingServiceImpl implements GivingService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
         //当月日期1号
         Calendar calNowOne = Calendar.getInstance();
-        calNowOne.add(Calendar.MONTH, 0);
+        //region  qhr_20210528 无作用代码注释
+        //calNowOne.add(Calendar.MONTH, 0);
+        //endregion qhr_20210528 无作用代码注释
         calNowOne.set(Calendar.DAY_OF_MONTH, 1);
         //当月日期月末
         Calendar calNowLast = Calendar.getInstance();
@@ -1110,7 +1112,7 @@ public class GivingServiceImpl implements GivingService {
         long endTime =  System.currentTimeMillis();
         long usedTime = (endTime-startTime)/1000;
         System.out.println("生成当月工资结束");
-        System.out.println("用时：" + String.valueOf(usedTime) + "秒");
+        System.out.println("用时：" + usedTime + "秒");
     }
 
 
@@ -2342,11 +2344,23 @@ public class GivingServiceImpl implements GivingService {
                 // 试用期截止日不为空的情况
                 // 转正日小于当月的除外
                 Date endDate = new Date();
+                //region  add_qhr_20210528  更改转正日计算形式
+                Calendar rightNow = Calendar.getInstance();
                 if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getEnddate())){
-                    if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
-                        customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
+//                    if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
+//                        customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
+//                    }
+//                    endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
+                    String endddate = customerInfo.getUserinfo().getEnddate().substring(0, 10);
+                    rightNow.setTime(Convert.toDate(endddate));
+                    if (customerInfo.getUserinfo().getEnddate().length() >= 24) {
+                        rightNow.add(Calendar.DAY_OF_YEAR, 2);
+                    } else {
+                        rightNow.add(Calendar.DAY_OF_YEAR, 1);
                     }
-                    endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
+                    endddate = sfChina.format(rightNow.getTime());
+                    endDate = sfChina.parse(endddate);
+                    //endregion  add_qhr_20210528  更改转正日计算形式
                     if (endDate.getTime() < mouthStart) {
                         continue;
                     }
@@ -2494,7 +2508,7 @@ public class GivingServiceImpl implements GivingService {
                             && DateUtil.format(induction.getWorddate(), "dd").equals(lastday))){
                         // 今月試用社員出勤日数
                         thisMonthSuitDays = 0d;
-                        induction.setTrial(String.valueOf(""));
+                        induction.setTrial("");
                         induction.setGive(df.format(Double.parseDouble(thisMonthSalary)));
                     }
                     else{
@@ -2511,7 +2525,7 @@ public class GivingServiceImpl implements GivingService {
             if(!DateUtil.format(new Date(), "yyyyMM").equals(strEnterday)){//非当月入社的人员
                 // 今月試用社員出勤日数
                 thisMonthSuitDays = 0d;
-                induction.setTrial(String.valueOf(""));
+                induction.setTrial("");
             }
             if(intflg == 0){//上月未发工资的人
                 //上月工资 / 21.75 * 上月出勤天数 + 本月工资
