@@ -1,14 +1,19 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Assets.Assets;
+import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS1000.Softwaretransfer;
 import com.nt.dao_Pfans.PFANS1000.Notification;
 import com.nt.dao_Pfans.PFANS1000.Vo.SoftwaretransferVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.SoftwaretransferVo2;
 import com.nt.service_Assets.mapper.AssetsMapper;
+import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.OrgTreeService;
+import com.nt.service_Org.ToDoNoticeService;
+import com.nt.service_Org.mapper.TodoNoticeMapper;
 import com.nt.service_pfans.PFANS1000.SoftwaretransferService;
 import com.nt.service_pfans.PFANS1000.mapper.SoftwaretransferMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NotificationMapper;
@@ -43,6 +48,12 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private OrgTreeService orgTreeService;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private ToDoNoticeService toDoNoticeService;
+    @Autowired
+    private TodoNoticeMapper todoNoticeMapper;
 
 //    @Override
 //    public List<Softwaretransfer> getSoftwaretransfer(Softwaretransfer softwaretransfer) throws Exception {
@@ -100,6 +111,21 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
                         OrgTree currentOrg = getCurrentOrg(orgs, flgid);
                         ast.setUsedepartment(currentOrg.getCompanyen());
                         assetsMapper.updateByPrimaryKeySelective(ast);
+                    }
+                    ToDoNotice toDoNotice = new ToDoNotice();
+                    toDoNotice.setTitle("有一个【资产部门间转移及管理者变更决裁】审批已结束，请注意查看！");
+                    toDoNotice.setInitiator(softwaretransfer.getUser_id());
+                    toDoNotice.setContent("有一个【资产部门间转移及管理者变更决裁】审批已结束，请注意查看！");
+                    toDoNotice.setUrl("/PFANS1008FormView");
+                    toDoNotice.setWorkflowurl("/PFANS1008FormView");
+                    toDoNotice.setDataid(softwaretransfer.getSoftwaretransferid());
+                    toDoNotice.preInsert(tokenModel);
+                    List<MembersVo> rolelist = roleService.getMembers("606bef4253b22307706e52e7");
+                    if (rolelist.size() > 0) {
+                        for (int t = 0; t < rolelist.size(); t++) {
+                            toDoNotice.setOwner(rolelist.get(t).getUserid());
+                            toDoNoticeService.save(toDoNotice);
+                        }
                     }
                 }
             }
