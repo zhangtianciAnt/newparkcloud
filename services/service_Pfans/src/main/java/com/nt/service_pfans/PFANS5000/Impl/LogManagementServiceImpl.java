@@ -185,8 +185,8 @@ public class LogManagementServiceImpl implements LogManagementService {
     //add ccm 1118 日志优化
     @Override
     public List<LogManagement> getDataListByLog_date(LogManagement logmanagement) throws Exception {
-        String log_date = DateUtil.format(logmanagement.getLog_date(), "yyyy-MM");
-        return logmanagementmapper.getDataListByLog_date(logmanagement.getOwners(), log_date);
+        String log_date = DateUtil.format(logmanagement.getLog_date(),"yyyy-MM");
+        return logmanagementmapper.getDataListByLog_date(logmanagement.getOwners(),log_date);
     }
     //add ccm 1118 日志优化
 
@@ -219,7 +219,7 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
-    public List<Projectsystem> CheckList(Projectsystem projectsystem, TokenModel tokenModel) throws Exception {
+    public List<Projectsystem> CheckList(Projectsystem projectsystem,TokenModel tokenModel) throws Exception {
         projectsystem.setName(tokenModel.getUserId());
         List<Projectsystem> projectsystemlist = projectsystemMapper.select(projectsystem);
         return projectsystemlist;

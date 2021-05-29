@@ -92,6 +92,8 @@ public class RecruitJudgement extends BaseModel {
 
     private int giving;
 
+    private int dutygiving;
+
     private String adoption;
 
     private String others;

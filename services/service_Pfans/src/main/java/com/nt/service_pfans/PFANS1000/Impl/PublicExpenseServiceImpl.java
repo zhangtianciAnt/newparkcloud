@@ -364,6 +364,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 //        String month1 = String.format("%2d", month).replace(" ", "0");
 //        String day1 = String.format("%2d", day).replace(" ", "0");
 //        invoiceNo = "DL4AP" + year + month1 + day1 + no;
+        //PSDCD_PFANS_20210519_BUG_006 修改供应商编码 供应商地点错误 fr
         //add-ws-9/25-禅道567
         if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpenseVo.getPublicexpense().getJudgement())) {
             Award award1 = new Award();
@@ -383,10 +384,39 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 awardMapper.updateByPrimaryKey(award.get(0));
             }
         }
-        //add-ws-9/25-禅道567
+                //add-ws-9/25-禅道567
         String publicexpenseid = UUID.randomUUID().toString();
         PublicExpense publicExpense = new PublicExpense();
         BeanUtils.copyProperties(publicExpenseVo.getPublicexpense(), publicExpense);
+        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpenseVo.getPublicexpense().getLoan())){
+            List<String> loanTypeList = new ArrayList();
+            String pecode = "";
+            String[] loaList = publicExpenseVo.getPublicexpense().getLoan().split(",");
+            if (loaList.length > 0) {
+                for (String lo : loaList) {
+                    LoanApplication loan = new LoanApplication();
+                    loan.setLoanapplication_id(lo);
+                    List<LoanApplication> loanApplicationList = loanApplicationMapper.select(loan);
+                    if(loanApplicationList.size() > 0){
+                        loanTypeList.add(loanApplicationList.get(0).getPaymentmethod());
+                    }
+                }
+                LoanApplication loanCode = new LoanApplication();
+                loanCode.setLoanapplication_id(loaList[0]);
+                loanCode = loanApplicationMapper.selectByPrimaryKey(loanCode);
+                pecode = !com.mysql.jdbc.StringUtils.isNullOrEmpty(loanCode.getPayeecode()) ? loanCode.getPayeecode() : loanCode.getName();
+            }
+            if(loanTypeList.size() > 0){
+                if(loanTypeList.contains("PJ015002")){
+                    publicExpense.setLoantype("0" + "," + pecode);
+                }else if(loanTypeList.contains("PJ015001") || loanTypeList.contains("PJ015003")){
+                    publicExpense.setLoantype("1" + "," + pecode);
+                }else{
+                    publicExpense.setLoantype("");
+                }
+            }
+        }
+        //PSDCD_PFANS_20210519_BUG_006 修改供应商编码 供应商地点错误 to
         publicExpense.setInvoiceno(invoiceNo);
         publicExpense.preInsert(tokenModel);
         publicExpense.setPublicexpenseid(publicexpenseid);
@@ -837,11 +867,13 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 TotalCost taxCost = new TotalCost();
                 int scale1 = 2;//设置位数
                 int roundingMode1 = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+                //PSDCD_PFANS_20210519_BUG_007 前端画面实际会略微调整，后台不需要重新计算税额 fr
                 // 税拔
-                String lineCost = FNUM.format(new BigDecimal(money).divide(rate.add(new BigDecimal(1)), scale1, roundingMode1));
+                String lineCost = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(gettaxes)));
                 // 税金
                 String lineRate = FNUM.format(gettaxes);
-                String lineRateNo = FNUM.format(new BigDecimal(money).divide(rate.add(new BigDecimal(1)), scale1, roundingMode1).multiply(rate));
+                String lineRateNo = FNUM.format(new BigDecimal(gettaxes));
+                //PSDCD_PFANS_20210519_BUG_007 前端画面实际会略微调整，后台不需要重新计算税额 to
                 if (money > 0) {
                     // 税
                     //add-ws-4/22-税金不为0存2302-00-01A0
