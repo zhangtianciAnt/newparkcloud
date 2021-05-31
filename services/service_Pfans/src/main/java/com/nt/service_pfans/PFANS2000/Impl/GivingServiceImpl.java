@@ -892,7 +892,8 @@ public class GivingServiceImpl implements GivingService {
                     if (calEnterDay.getTime().getTime() > calLastOne.getTime().getTime()) {
                         tempStart = calEnterDay.getTime();
                     }
-                    calSuitDate.add(Calendar.DATE, -1);//转正日当天不算使用
+//                    add 试用员工当月转正的当月试用天数 fr
+                    //calSuitDate.add(Calendar.DATE, -1);//转正日当天不算使用
                     lastMonthSuitDays = getTrialWorkDaysExceptWeekend(tempStart, calLast.getTime());
                     thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), calSuitDate.getTime());
                 }
