@@ -1203,6 +1203,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                                         toDoNotice.setOwner(rolelist1.get(t).getUserid());
                                         List<ToDoNotice> existTnList_It = todoNoticeMapper.select(toDoNotice);
                                         if(existTnList_It.size() == 0){
+                                            toDoNotice.preInsert(tokenModel);
                                             toDoNoticeService.save(toDoNotice);
                                         }
                                     }
@@ -1215,6 +1216,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                                         toDoNotice.setOwner(rolelist.get(i).getUserid());
                                         List<ToDoNotice> existTnList_Fe = todoNoticeMapper.select(toDoNotice);
                                         if(existTnList_Fe.size() == 0){
+                                            toDoNotice.preInsert(tokenModel);
                                             toDoNoticeService.save(toDoNotice);
                                         }
                                     }

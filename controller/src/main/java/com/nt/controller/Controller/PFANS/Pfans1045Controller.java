@@ -85,7 +85,7 @@ public class Pfans1045Controller {
         List<PolicyContract> policycontractlist2 = new ArrayList<>();
         String year = "";
         if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(policycontract.getInformation())) {
-            int years = Integer.valueOf(policycontract.getInformation().substring(5, 7)) < 4 ? Integer.valueOf(policycontract.getInformation().substring(0, 4)) + 1 : Integer.valueOf(policycontract.getInformation().substring(0, 4));
+            int years = Integer.valueOf(policycontract.getInformation().substring(5, 7)) <= 3 ? Integer.valueOf(policycontract.getInformation().substring(0, 4)) + 1 : Integer.valueOf(policycontract.getInformation().substring(0, 4));
             year = String.valueOf(years) + policycontract.getInformation().substring(5, 7);
         }
         PolicyContract policy = new PolicyContract();

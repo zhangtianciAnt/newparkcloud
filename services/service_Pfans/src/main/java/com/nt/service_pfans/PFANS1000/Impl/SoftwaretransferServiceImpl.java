@@ -52,8 +52,6 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
     private RoleService roleService;
     @Autowired
     private ToDoNoticeService toDoNoticeService;
-    @Autowired
-    private TodoNoticeMapper todoNoticeMapper;
 
 //    @Override
 //    public List<Softwaretransfer> getSoftwaretransfer(Softwaretransfer softwaretransfer) throws Exception {
