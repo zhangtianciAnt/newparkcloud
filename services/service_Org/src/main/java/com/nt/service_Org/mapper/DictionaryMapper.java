@@ -10,4 +10,6 @@ public interface DictionaryMapper extends MyMapper<Dictionary> {
     List<Dictionary> getDictionary(Dictionary attendance);
 
     List<Dictionary> selectOrder(@Param("code") String code);
+
+    List<Dictionary> getForSelectCode(@Param("code") String code);
 }

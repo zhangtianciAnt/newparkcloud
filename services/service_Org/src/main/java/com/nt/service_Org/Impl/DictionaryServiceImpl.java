@@ -69,5 +69,11 @@ public class DictionaryServiceImpl implements DictionaryService {
             }
         }
     }
+
+
+    @Override
+    public List<Dictionary> getForSelectCode(String code) throws Exception{
+        return dictionaryMapper.getForSelectCode(code);
+    }
 }
 

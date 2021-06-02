@@ -408,7 +408,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
 
             //发起人创建代办
             ToDoNotice toDoNotice = new ToDoNotice();
-            toDoNotice.setTitle("【您的离职申请已审批通过，系统中如有进行中的流程，请及时处理。您现可以提前进行离职日前的考勤承认】");
+            toDoNotice.setTitle("【您的离职申请已审批通过，系统中如有进行中的流程，请及时处理。您可以提前进行离职日前的考勤承认】");
             toDoNotice.setInitiator(Userid);
             toDoNotice.setContent("您的离职申请已审批通过！");
             toDoNotice.setDataid(staffexitprocedureVo.getStaffexitprocedure().getStaffexitprocedure_id());

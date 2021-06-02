@@ -68,7 +68,7 @@ public class PersonalCostServiceImpl implements PersonalCostService {
     private OrgTreeService orgTreeService;
 
     //系统定时任务每月1号自动保存单价
-    @Scheduled(cron = "1 18 13 23 3 ?")
+    @Scheduled(cron = "1 45 16 19 5 ?")
     public void savePersonalCost() throws Exception {
         LocalDate nowDate = LocalDate.now();
         String onYearStr = String.valueOf(nowDate.getYear());
@@ -188,13 +188,18 @@ public class PersonalCostServiceImpl implements PersonalCostService {
         for (Iterator<CustomerInfo> CustomerInfoListAnt = customerInfos.iterator(); CustomerInfoListAnt.hasNext(); ) {
             int flag = 0;
             CustomerInfo custInfoAnt = CustomerInfoListAnt.next();
-            if (custInfoAnt.getUserinfo().getEnterday().indexOf(onYearStr) != -1) {
-                flag++;
+            if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(custInfoAnt.getUserinfo().getEnterday())){
+                if (custInfoAnt.getUserinfo().getEnterday().indexOf(onYearStr) != -1) {
+                    flag++;
+                }
             }
             //清除去年离职 张建波 番正聪志
             if (StringUtils.isNullOrEmpty(custInfoAnt.getUserinfo().getResignation_date())
                     && !custInfoAnt.getUserid().equals("5e78b2574e3b194874181099")
-                    && !custInfoAnt.getUserid().equals("5e78fefff1560b363cdd6db7")) {
+                    && !custInfoAnt.getUserid().equals("5e78fefff1560b363cdd6db7")
+                    && !custInfoAnt.getUserid().equals("18fe6bc5-a854-47e9-aeac-f71553fbaad2")
+                    && !custInfoAnt.getUserid().equals("05fc4249-9237-4abb-8d1a-dd6b00831566")
+            ) {
                 PersonalCost personalCost = new PersonalCost();
                 personalCost.setYearsantid(personalCostYerasid);
                 personalCost.preInsert(tokenModel);
