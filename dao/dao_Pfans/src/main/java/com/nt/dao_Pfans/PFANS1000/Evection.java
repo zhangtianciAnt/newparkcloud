@@ -224,7 +224,10 @@ public class Evection extends BaseModel {
 
     @Column(name = "ARRIVENIGHT")
     private String arrivenight;
-
+    //region      add_qhr_20210528 添加夜间返回字段
+    @Column(name = "BACKNIGHT")
+    private String backnight;
+    //endregion   add_qhr_20210528 添加夜间返回字段
     //地域名称
     @Column(name = "REGIONNAME")
     private String regionname;
