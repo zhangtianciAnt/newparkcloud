@@ -18,6 +18,7 @@ import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.mapper.DictionaryMapper;
+import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.mapper.BusinessplanMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
@@ -91,6 +92,8 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     private BusinessplanMapper businessplanMapper;
     @Autowired
     private ContractapplicationMapper contractapplicationMapper;
+    @Autowired
+    private WorkflowinstanceMapper workflowinstanceMapper;
 
 
     @Override
@@ -122,21 +125,332 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 //            year = calendar.get(Calendar.YEAR);
 //        }
 
+        //add ccm fr 2021-04
+        Integer months = 4;
+        //字符串月份 04
+        String wlm = "04";
+        if(year.length()==7)
+        {
+            String [] ym = year.split("-");
+            year = ym[0];
+            wlm = ym[1];
+            months = Integer.parseInt(ym[1]);
+        }
+        else
+        {
+            months = calendar.get(Calendar.MONTH);
+            if(months == 0)
+            {
+                months = 12;
+            }
+
+            if(months<10)
+            {
+                wlm = "0"+months;
+            }
+            else
+            {
+                wlm = months.toString();
+            }
+        }
+        List<Workflowinstance> wL =new ArrayList<>();
+        Workflowinstance w = new Workflowinstance();
+        String dataid = "";
+        dataid = groupid +","+year+","+wlm;
+        w.setDataid(dataid);
+        wL = workflowinstanceMapper.select(w);
+        if(wL.size()>0)
+        {
+            wL = wL.stream().filter(item -> (item.getStatus().equals("4")) || item.getStatus().equals("0")).collect(Collectors.toList());
+            if(wL.size()>0)
+            {
+                throw new LogicalException(months+"月的费用已经通过审批，不允许再次生成。");
+            }
+        }
+        //add ccm to 2021-04
 
         List<Coststatistics> allCostList = getCostList(groupid,year,coststatistics, tokenModel);
-
+        Coststatistics cmy = new Coststatistics();
+        List<Coststatistics> cmyList = new ArrayList<>();
         for (Coststatistics c : allCostList) {
-
-            coststatistics.setBpname(c.getBpname());
-            coststatistics.setYears(String.valueOf(year).trim());
-            coststatistics.setGroupid(groupid);
-            coststatisticsMapper.delete(coststatistics);
+            switch (months)
+            {
+                case 4:
+                    cmy = new Coststatistics();
+                    cmy.setBpname(c.getBpname());
+                    cmy.setYears(c.getYears());
+                    cmy.setGroupid(c.getGroupid());
+                    cmyList = coststatisticsMapper.select(cmy);
+                    if(cmyList.size()>0)
+                    {
+                        cmyList.get(0).setManhour4(c.getManhour4());
+                        cmyList.get(0).setCost4(c.getCost4());
+                        cmyList.get(0).setPrice4(c.getPrice4());
+                        cmyList.get(0).setTotalmanhours6(String.valueOf(Double.valueOf(cmyList.get(0).getManhour4()) + Double.valueOf(cmyList.get(0).getManhour5())+Double.valueOf(cmyList.get(0).getManhour6())));
+                        cmyList.get(0).setTotalcost6(String.valueOf(Double.valueOf(cmyList.get(0).getCost4()) + Double.valueOf(cmyList.get(0).getCost5())+Double.valueOf(cmyList.get(0).getCost6())));
+                        cmyList.get(0).preUpdate(tokenModel);
+                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                    }
+                    else
+                        {
+                            c.preInsert();
+                            coststatisticsMapper.insert(c);
+                        }
+                        break;
+                case 5:
+                    cmy = new Coststatistics();
+                    cmy.setBpname(c.getBpname());
+                    cmy.setYears(c.getYears());
+                    cmy.setGroupid(c.getGroupid());
+                    cmyList = coststatisticsMapper.select(cmy);
+                    if(cmyList.size()>0)
+                    {
+                        cmyList.get(0).setManhour5(c.getManhour5());
+                        cmyList.get(0).setCost5(c.getCost5());
+                        cmyList.get(0).setPrice5(c.getPrice5());
+                        cmyList.get(0).setTotalmanhours6(String.valueOf(Double.valueOf(cmyList.get(0).getManhour4()) + Double.valueOf(cmyList.get(0).getManhour5())+Double.valueOf(cmyList.get(0).getManhour6())));
+                        cmyList.get(0).setTotalcost6(String.valueOf(Double.valueOf(cmyList.get(0).getCost4()) + Double.valueOf(cmyList.get(0).getCost5())+Double.valueOf(cmyList.get(0).getCost6())));
+                        cmyList.get(0).preUpdate(tokenModel);
+                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                    }
+                    else
+                    {
+                        c.preInsert();
+                        coststatisticsMapper.insert(c);
+                    }
+                    break;
+                case 6:
+                    cmy = new Coststatistics();
+                    cmy.setBpname(c.getBpname());
+                    cmy.setYears(c.getYears());
+                    cmy.setGroupid(c.getGroupid());
+                    cmyList = coststatisticsMapper.select(cmy);
+                    if(cmyList.size()>0)
+                    {
+                        cmyList.get(0).setManhour6(c.getManhour6());
+                        cmyList.get(0).setCost6(c.getCost6());
+                        cmyList.get(0).setPrice6(c.getPrice6());
+                        cmyList.get(0).setTotalmanhours6(String.valueOf(Double.valueOf(cmyList.get(0).getManhour4()) + Double.valueOf(cmyList.get(0).getManhour5())+Double.valueOf(cmyList.get(0).getManhour6())));
+                        cmyList.get(0).setTotalcost6(String.valueOf(Double.valueOf(cmyList.get(0).getCost4()) + Double.valueOf(cmyList.get(0).getCost5())+Double.valueOf(cmyList.get(0).getCost6())));
+                        cmyList.get(0).setExpense6(c.getExpense6());
+                        cmyList.get(0).setContract6(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost6()) + Double.valueOf(cmyList.get(0).getExpense6())));
+                        cmyList.get(0).preUpdate(tokenModel);
+                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                    }
+                    else
+                    {
+                        c.preInsert();
+                        coststatisticsMapper.insert(c);
+                    }
+                    break;
+                case 7:
+                    cmy = new Coststatistics();
+                    cmy.setBpname(c.getBpname());
+                    cmy.setYears(c.getYears());
+                    cmy.setGroupid(c.getGroupid());
+                    cmyList = coststatisticsMapper.select(cmy);
+                    if(cmyList.size()>0)
+                    {
+                        cmyList.get(0).setManhour7(c.getManhour7());
+                        cmyList.get(0).setCost7(c.getCost7());
+                        cmyList.get(0).setPrice7(c.getPrice7());
+                        cmyList.get(0).setTotalmanhours9(String.valueOf(Double.valueOf(cmyList.get(0).getManhour7()) + Double.valueOf(cmyList.get(0).getManhour8())+Double.valueOf(cmyList.get(0).getManhour9())));
+                        cmyList.get(0).setTotalcost9(String.valueOf(Double.valueOf(cmyList.get(0).getCost7()) + Double.valueOf(cmyList.get(0).getCost8())+Double.valueOf(cmyList.get(0).getCost9())));
+                        cmyList.get(0).preUpdate(tokenModel);
+                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                    }
+                    else
+                    {
+                        c.preInsert();
+                        coststatisticsMapper.insert(c);
+                    }
+                    break;
+                case 8:
+                    cmy = new Coststatistics();
+                    cmy.setBpname(c.getBpname());
+                    cmy.setYears(c.getYears());
+                    cmy.setGroupid(c.getGroupid());
+                    cmyList = coststatisticsMapper.select(cmy);
+                    if(cmyList.size()>0)
+                    {
+                        cmyList.get(0).setManhour8(c.getManhour8());
+                        cmyList.get(0).setCost8(c.getCost8());
+                        cmyList.get(0).setPrice8(c.getPrice8());
+                        cmyList.get(0).setTotalmanhours9(String.valueOf(Double.valueOf(cmyList.get(0).getManhour7()) + Double.valueOf(cmyList.get(0).getManhour8())+Double.valueOf(cmyList.get(0).getManhour9())));
+                        cmyList.get(0).setTotalcost9(String.valueOf(Double.valueOf(cmyList.get(0).getCost7()) + Double.valueOf(cmyList.get(0).getCost8())+Double.valueOf(cmyList.get(0).getCost9())));
+                        cmyList.get(0).preUpdate(tokenModel);
+                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                    }
+                    else
+                    {
+                        c.preInsert();
+                        coststatisticsMapper.insert(c);
+                    }
+                    break;
+                case 9:
+                    cmy = new Coststatistics();
+                    cmy.setBpname(c.getBpname());
+                    cmy.setYears(c.getYears());
+                    cmy.setGroupid(c.getGroupid());
+                    cmyList = coststatisticsMapper.select(cmy);
+                    if(cmyList.size()>0)
+                    {
+                        cmyList.get(0).setManhour9(c.getManhour9());
+                        cmyList.get(0).setCost9(c.getCost9());
+                        cmyList.get(0).setPrice9(c.getPrice9());
+                        cmyList.get(0).setTotalmanhours9(String.valueOf(Double.valueOf(cmyList.get(0).getManhour7()) + Double.valueOf(cmyList.get(0).getManhour8())+Double.valueOf(cmyList.get(0).getManhour9())));
+                        cmyList.get(0).setTotalcost9(String.valueOf(Double.valueOf(cmyList.get(0).getCost7()) + Double.valueOf(cmyList.get(0).getCost8())+Double.valueOf(cmyList.get(0).getCost9())));
+                        cmyList.get(0).setExpense9(c.getExpense9());
+                        cmyList.get(0).setContract9(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost9()) + Double.valueOf(cmyList.get(0).getExpense9())));
+                        cmyList.get(0).preUpdate(tokenModel);
+                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                    }
+                    else
+                    {
+                        c.preInsert();
+                        coststatisticsMapper.insert(c);
+                    }
+                    break;
+                case 10:
+                    cmy = new Coststatistics();
+                    cmy.setBpname(c.getBpname());
+                    cmy.setYears(c.getYears());
+                    cmy.setGroupid(c.getGroupid());
+                    cmyList = coststatisticsMapper.select(cmy);
+                    if(cmyList.size()>0)
+                    {
+                        cmyList.get(0).setManhour10(c.getManhour10());
+                        cmyList.get(0).setCost10(c.getCost10());
+                        cmyList.get(0).setPrice10(c.getPrice10());
+                        cmyList.get(0).setTotalmanhours12(String.valueOf(Double.valueOf(cmyList.get(0).getManhour10()) + Double.valueOf(cmyList.get(0).getManhour11())+Double.valueOf(cmyList.get(0).getManhour12())));
+                        cmyList.get(0).setTotalcost12(String.valueOf(Double.valueOf(cmyList.get(0).getCost10()) + Double.valueOf(cmyList.get(0).getCost11())+Double.valueOf(cmyList.get(0).getCost12())));
+                        cmyList.get(0).preUpdate(tokenModel);
+                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                    }
+                    else
+                    {
+                        c.preInsert();
+                        coststatisticsMapper.insert(c);
+                    }
+                    break;
+                case 11:
+                    cmy = new Coststatistics();
+                    cmy.setBpname(c.getBpname());
+                    cmy.setYears(c.getYears());
+                    cmy.setGroupid(c.getGroupid());
+                    cmyList = coststatisticsMapper.select(cmy);
+                    if(cmyList.size()>0)
+                    {
+                        cmyList.get(0).setManhour11(c.getManhour11());
+                        cmyList.get(0).setCost11(c.getCost11());
+                        cmyList.get(0).setPrice11(c.getPrice11());
+                        cmyList.get(0).setTotalmanhours12(String.valueOf(Double.valueOf(cmyList.get(0).getManhour10()) + Double.valueOf(cmyList.get(0).getManhour11())+Double.valueOf(cmyList.get(0).getManhour12())));
+                        cmyList.get(0).setTotalcost12(String.valueOf(Double.valueOf(cmyList.get(0).getCost10()) + Double.valueOf(cmyList.get(0).getCost11())+Double.valueOf(cmyList.get(0).getCost12())));
+                        cmyList.get(0).preUpdate(tokenModel);
+                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                    }
+                    else
+                    {
+                        c.preInsert();
+                        coststatisticsMapper.insert(c);
+                    }
+                    break;
+                case 12:
+                    cmy = new Coststatistics();
+                    cmy.setBpname(c.getBpname());
+                    cmy.setYears(c.getYears());
+                    cmy.setGroupid(c.getGroupid());
+                    cmyList = coststatisticsMapper.select(cmy);
+                    if(cmyList.size()>0)
+                    {
+                        cmyList.get(0).setManhour12(c.getManhour12());
+                        cmyList.get(0).setCost12(c.getCost12());
+                        cmyList.get(0).setPrice12(c.getPrice12());
+                        cmyList.get(0).setTotalmanhours12(String.valueOf(Double.valueOf(cmyList.get(0).getManhour10()) + Double.valueOf(cmyList.get(0).getManhour11())+Double.valueOf(cmyList.get(0).getManhour12())));
+                        cmyList.get(0).setTotalcost12(String.valueOf(Double.valueOf(cmyList.get(0).getCost10()) + Double.valueOf(cmyList.get(0).getCost11())+Double.valueOf(cmyList.get(0).getCost12())));
+                        cmyList.get(0).setExpense12(c.getExpense12());
+                        cmyList.get(0).setContract12(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost12()) + Double.valueOf(cmyList.get(0).getExpense12())));
+                        cmyList.get(0).preUpdate(tokenModel);
+                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                    }
+                    else
+                    {
+                        c.preInsert();
+                        coststatisticsMapper.insert(c);
+                    }
+                    break;
+                case 1:
+                    cmy = new Coststatistics();
+                    cmy.setBpname(c.getBpname());
+                    cmy.setYears(c.getYears());
+                    cmy.setGroupid(c.getGroupid());
+                    cmyList = coststatisticsMapper.select(cmy);
+                    if(cmyList.size()>0)
+                    {
+                        cmyList.get(0).setManhour1(c.getManhour1());
+                        cmyList.get(0).setCost1(c.getCost1());
+                        cmyList.get(0).setPrice1(c.getPrice1());
+                        cmyList.get(0).setTotalmanhours3(String.valueOf(Double.valueOf(cmyList.get(0).getManhour1()) + Double.valueOf(cmyList.get(0).getManhour2())+Double.valueOf(cmyList.get(0).getManhour3())));
+                        cmyList.get(0).setTotalcost3(String.valueOf(Double.valueOf(cmyList.get(0).getCost1()) + Double.valueOf(cmyList.get(0).getCost2())+Double.valueOf(cmyList.get(0).getCost3())));
+                        cmyList.get(0).preUpdate(tokenModel);
+                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                    }
+                    else
+                    {
+                        c.preInsert();
+                        coststatisticsMapper.insert(c);
+                    }
+                    break;
+                case 2:
+                    cmy = new Coststatistics();
+                    cmy.setBpname(c.getBpname());
+                    cmy.setYears(c.getYears());
+                    cmy.setGroupid(c.getGroupid());
+                    cmyList = coststatisticsMapper.select(cmy);
+                    if(cmyList.size()>0)
+                    {
+                        cmyList.get(0).setManhour2(c.getManhour2());
+                        cmyList.get(0).setCost2(c.getCost2());
+                        cmyList.get(0).setPrice2(c.getPrice2());
+                        cmyList.get(0).setTotalmanhours3(String.valueOf(Double.valueOf(cmyList.get(0).getManhour1()) + Double.valueOf(cmyList.get(0).getManhour2())+Double.valueOf(cmyList.get(0).getManhour3())));
+                        cmyList.get(0).setTotalcost3(String.valueOf(Double.valueOf(cmyList.get(0).getCost1()) + Double.valueOf(cmyList.get(0).getCost2())+Double.valueOf(cmyList.get(0).getCost3())));
+                        cmyList.get(0).preUpdate(tokenModel);
+                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                    }
+                    else
+                    {
+                        c.preInsert();
+                        coststatisticsMapper.insert(c);
+                    }
+                    break;
+                case 3:
+                    cmy = new Coststatistics();
+                    cmy.setBpname(c.getBpname());
+                    cmy.setYears(c.getYears());
+                    cmy.setGroupid(c.getGroupid());
+                    cmyList = coststatisticsMapper.select(cmy);
+                    if(cmyList.size()>0)
+                    {
+                        cmyList.get(0).setManhour3(c.getManhour3());
+                        cmyList.get(0).setCost3(c.getCost3());
+                        cmyList.get(0).setPrice3(c.getPrice3());
+                        cmyList.get(0).setTotalmanhours3(String.valueOf(Double.valueOf(cmyList.get(0).getManhour1()) + Double.valueOf(cmyList.get(0).getManhour2())+Double.valueOf(cmyList.get(0).getManhour3())));
+                        cmyList.get(0).setTotalcost3(String.valueOf(Double.valueOf(cmyList.get(0).getCost1()) + Double.valueOf(cmyList.get(0).getCost2())+Double.valueOf(cmyList.get(0).getCost3())));
+                        cmyList.get(0).setExpense3(c.getExpense3());
+                        cmyList.get(0).setContract3(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost3()) + Double.valueOf(cmyList.get(0).getExpense3())));
+                        cmyList.get(0).preUpdate(tokenModel);
+                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                    }
+                    else
+                    {
+                        c.preInsert();
+                        coststatisticsMapper.insert(c);
+                    }
+                    break;
+            }
         }
 
         int insertCount = 0;
-        if ( allCostList.size() > 0 ) {
-                insertCount = coststatisticsMapper.insertAll(allCostList);
-            }
         return insertCount;
     }
 
