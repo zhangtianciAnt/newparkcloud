@@ -188,6 +188,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setPrice4(c.getPrice4());
                         cmyList.get(0).setTotalmanhours6(String.valueOf(Double.valueOf(cmyList.get(0).getManhour4()) + Double.valueOf(cmyList.get(0).getManhour5())+Double.valueOf(cmyList.get(0).getManhour6())));
                         cmyList.get(0).setTotalcost6(String.valueOf(Double.valueOf(cmyList.get(0).getCost4()) + Double.valueOf(cmyList.get(0).getCost5())+Double.valueOf(cmyList.get(0).getCost6())));
+                        cmyList.get(0).setContract6(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost6()) + Double.valueOf(cmyList.get(0).getExpense6())));
                         cmyList.get(0).preUpdate(tokenModel);
                         coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
                     }
@@ -210,6 +211,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setPrice5(c.getPrice5());
                         cmyList.get(0).setTotalmanhours6(String.valueOf(Double.valueOf(cmyList.get(0).getManhour4()) + Double.valueOf(cmyList.get(0).getManhour5())+Double.valueOf(cmyList.get(0).getManhour6())));
                         cmyList.get(0).setTotalcost6(String.valueOf(Double.valueOf(cmyList.get(0).getCost4()) + Double.valueOf(cmyList.get(0).getCost5())+Double.valueOf(cmyList.get(0).getCost6())));
+                        cmyList.get(0).setContract6(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost6()) + Double.valueOf(cmyList.get(0).getExpense6())));
                         cmyList.get(0).preUpdate(tokenModel);
                         coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
                     }
@@ -256,6 +258,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setPrice7(c.getPrice7());
                         cmyList.get(0).setTotalmanhours9(String.valueOf(Double.valueOf(cmyList.get(0).getManhour7()) + Double.valueOf(cmyList.get(0).getManhour8())+Double.valueOf(cmyList.get(0).getManhour9())));
                         cmyList.get(0).setTotalcost9(String.valueOf(Double.valueOf(cmyList.get(0).getCost7()) + Double.valueOf(cmyList.get(0).getCost8())+Double.valueOf(cmyList.get(0).getCost9())));
+                        cmyList.get(0).setContract9(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost9()) + Double.valueOf(cmyList.get(0).getExpense9())));
                         cmyList.get(0).preUpdate(tokenModel);
                         coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
                     }
@@ -278,6 +281,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setPrice8(c.getPrice8());
                         cmyList.get(0).setTotalmanhours9(String.valueOf(Double.valueOf(cmyList.get(0).getManhour7()) + Double.valueOf(cmyList.get(0).getManhour8())+Double.valueOf(cmyList.get(0).getManhour9())));
                         cmyList.get(0).setTotalcost9(String.valueOf(Double.valueOf(cmyList.get(0).getCost7()) + Double.valueOf(cmyList.get(0).getCost8())+Double.valueOf(cmyList.get(0).getCost9())));
+                        cmyList.get(0).setContract9(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost9()) + Double.valueOf(cmyList.get(0).getExpense9())));
                         cmyList.get(0).preUpdate(tokenModel);
                         coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
                     }
@@ -324,6 +328,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setPrice10(c.getPrice10());
                         cmyList.get(0).setTotalmanhours12(String.valueOf(Double.valueOf(cmyList.get(0).getManhour10()) + Double.valueOf(cmyList.get(0).getManhour11())+Double.valueOf(cmyList.get(0).getManhour12())));
                         cmyList.get(0).setTotalcost12(String.valueOf(Double.valueOf(cmyList.get(0).getCost10()) + Double.valueOf(cmyList.get(0).getCost11())+Double.valueOf(cmyList.get(0).getCost12())));
+                        cmyList.get(0).setContract12(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost12()) + Double.valueOf(cmyList.get(0).getExpense12())));
                         cmyList.get(0).preUpdate(tokenModel);
                         coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
                     }
@@ -346,6 +351,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setPrice11(c.getPrice11());
                         cmyList.get(0).setTotalmanhours12(String.valueOf(Double.valueOf(cmyList.get(0).getManhour10()) + Double.valueOf(cmyList.get(0).getManhour11())+Double.valueOf(cmyList.get(0).getManhour12())));
                         cmyList.get(0).setTotalcost12(String.valueOf(Double.valueOf(cmyList.get(0).getCost10()) + Double.valueOf(cmyList.get(0).getCost11())+Double.valueOf(cmyList.get(0).getCost12())));
+                        cmyList.get(0).setContract12(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost12()) + Double.valueOf(cmyList.get(0).getExpense12())));
                         cmyList.get(0).preUpdate(tokenModel);
                         coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
                     }
@@ -392,6 +398,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setPrice1(c.getPrice1());
                         cmyList.get(0).setTotalmanhours3(String.valueOf(Double.valueOf(cmyList.get(0).getManhour1()) + Double.valueOf(cmyList.get(0).getManhour2())+Double.valueOf(cmyList.get(0).getManhour3())));
                         cmyList.get(0).setTotalcost3(String.valueOf(Double.valueOf(cmyList.get(0).getCost1()) + Double.valueOf(cmyList.get(0).getCost2())+Double.valueOf(cmyList.get(0).getCost3())));
+                        cmyList.get(0).setContract3(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost3()) + Double.valueOf(cmyList.get(0).getExpense3())));
                         cmyList.get(0).preUpdate(tokenModel);
                         coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
                     }
@@ -414,6 +421,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setPrice2(c.getPrice2());
                         cmyList.get(0).setTotalmanhours3(String.valueOf(Double.valueOf(cmyList.get(0).getManhour1()) + Double.valueOf(cmyList.get(0).getManhour2())+Double.valueOf(cmyList.get(0).getManhour3())));
                         cmyList.get(0).setTotalcost3(String.valueOf(Double.valueOf(cmyList.get(0).getCost1()) + Double.valueOf(cmyList.get(0).getCost2())+Double.valueOf(cmyList.get(0).getCost3())));
+                        cmyList.get(0).setContract3(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost3()) + Double.valueOf(cmyList.get(0).getExpense3())));
                         cmyList.get(0).preUpdate(tokenModel);
                         coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
                     }
