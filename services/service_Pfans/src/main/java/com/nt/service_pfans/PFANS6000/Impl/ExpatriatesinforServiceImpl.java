@@ -68,6 +68,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
 
     //系统服务——add_fjl_0717  退场的第二天，账号不可登录  start
+    //【每天凌晨1点】
     @Scheduled(cron = "0 0 1 * * ?")
     public void updExpatriatesinforStatus() throws Exception {
         //预计退场时间 ztc start

@@ -482,6 +482,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         }
     }
 
+    //【每天凌晨0点5分】
     //进行数据权限和审批权限交接
     @Scheduled(cron = "0 05 0 * * ?")
     public void getdataExittime() throws Exception {
