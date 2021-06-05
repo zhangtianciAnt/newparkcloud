@@ -301,6 +301,8 @@ public class GivingServiceImpl implements GivingService {
         Wages wages = new Wages();
         wages.setGiving_id(giving_id);
         wages.setActual("0");
+        System.out.println("工资开始查询");
+        long startTime =  System.currentTimeMillis();
         List<Wages> wagesList = wagesMapper.select(wages);
         if (wagesList.size() > 0) {
             givingVo.setWagesList(wagesList.stream().sorted(Comparator.comparing(Wages::getUser_id)).collect(Collectors.toList()));
@@ -326,6 +328,10 @@ public class GivingServiceImpl implements GivingService {
                 givingVo.setContrast(contrastList);
             }
         }
+        System.out.println("工资查询结束");
+        long endTime =  System.currentTimeMillis();
+        long usedTime = (endTime-startTime)/1000;
+        System.out.println("用时：" + usedTime + "秒");
         return givingVo;
         // zqu end
     }
@@ -892,7 +898,8 @@ public class GivingServiceImpl implements GivingService {
                     if (calEnterDay.getTime().getTime() > calLastOne.getTime().getTime()) {
                         tempStart = calEnterDay.getTime();
                     }
-                    calSuitDate.add(Calendar.DATE, -1);//转正日当天不算使用
+                    //                    add 试用员工当月转正的当月试用天数 fr
+                    //calSuitDate.add(Calendar.DATE, -1);//转正日当天不算使用
                     lastMonthSuitDays = getTrialWorkDaysExceptWeekend(tempStart, calLast.getTime());
                     thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), calSuitDate.getTime());
                 }
@@ -1262,6 +1269,7 @@ public class GivingServiceImpl implements GivingService {
     public String getSalary(CustomerInfo customerInfo, int addMouth) throws ParseException {
         //转正日
         if (StringUtils.isEmpty(customerInfo.getUserinfo().getEnddate())) {
+            System.out.println(customerInfo.getUserinfo().getCustomername());
             if (customerInfo.getUserinfo().getEnddate().indexOf("Z")  != -1) {
                 String enddate = customerInfo.getUserinfo().getEnddate().substring(0, 10).replace("-", "/");
                 Calendar cal1 = Calendar.getInstance();

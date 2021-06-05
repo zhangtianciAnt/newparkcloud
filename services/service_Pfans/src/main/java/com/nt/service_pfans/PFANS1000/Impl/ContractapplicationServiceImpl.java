@@ -117,10 +117,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         }
 
         //add ccm 1204 纳品回数可变的对应
-        //检索是否做成书类
+        //检索是否做成决裁书
         Award a =new Award();
         a.setContractnumber(contractapplication.getContractnumber());
-        a.setMaketype("4");
+//        a.setMaketype("4");
         List<Award> awardL = AwardMapper.select(a);
         //决裁书
         if(awardL!=null)
@@ -132,6 +132,27 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     for(Contractnumbercount c : numberList)
                     {
                         c.setBookStatus(true);
+                    }
+                }
+            }
+        }
+
+        //纳品书是否做成
+        Napalm napalm =new Napalm();
+        napalm.setContractnumber(contractapplication.getContractnumber());
+        List<Napalm> napalmL = napalmMapper.select(napalm);
+        if(napalmL!=null)
+        {
+            for(Napalm n :napalmL)
+            {
+                for(Contractnumbercount c : numberList)
+                {
+                    String numb = "";
+                    numb = contractapplication.getContractnumber() + "-" + c.getClaimtype().replace("第","").replace("回","");
+                    if(numb.equals(n.getClaimnumber()))
+                    {
+                        //临时存入TENANTID  "0"是存在纳品书，觉书后，回数不可编辑， null 为不存在觉书，可编辑。
+                        c.setTenantid("0");
                     }
                 }
             }
@@ -189,6 +210,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
             for (Contractapplication citation : cnList) {
+                //去掉多次觉书无用数据
+                if (citation.getContractnumber().indexOf("-") != -1 && citation.getState().equals("无效")) {
+                    continue;
+                }
                 for (Contractnumbercount contractRemarks : numberList) {
                     if (contractRemarks.getQingremarksqh() != null && !contractRemarks.getQingremarksqh().isEmpty()) {
                         strBuffer.append(contractRemarks.getQingremarksqh());
@@ -222,6 +247,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             for (Contractnumbercount number : numberList) {
                 rowindex = rowindex + 1;
                 number.setRowindex(rowindex);
+                number.setBookStatus(false);
                 if (!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())) {
                     number.preUpdate(tokenModel);
                     contractnumbercountMapper.updateByPrimaryKeySelective(number);
@@ -947,6 +973,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     }
 
     //系统服务--每月1号 给纳品担当和请求担当代办处理合同回款  fjl add start
+    //【每月1号凌晨0点10分】
     @Scheduled(cron = "0 10 0 1 * ?")
     public void updUseraccountStatus() throws Exception {
         TokenModel tokenModel = new TokenModel();
@@ -1178,6 +1205,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             for (Contractnumbercount number : numberList) {
                 rowindex = rowindex + 1;
                 number.setRowindex(rowindex);
+                number.setBookStatus(false);
                 if (!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())) {
                     number.preUpdate(tokenModel);
                     number.setContractnumber(cnList.get(0).getContractnumber());
