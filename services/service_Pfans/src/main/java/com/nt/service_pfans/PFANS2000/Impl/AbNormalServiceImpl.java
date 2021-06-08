@@ -16,6 +16,8 @@ import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
+import com.nt.utils.MessageUtil;
+import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -101,6 +103,18 @@ public class AbNormalServiceImpl implements AbNormalService {
         abNormalMapper.insert(abNormal);
     }
 
+    @Override
+    public void selectTime(AbNormal abNormal, TokenModel tokenModel) throws Exception {
+        if (abNormal.getStatus().equals("") || abNormal.getStatus().equals("0")){
+            List<Attendance> attendanceList = attendanceMapper.selTime(abNormal.getUser_id(),abNormal.getOccurrencedate(),abNormal.getFinisheddate());
+            for (Attendance attendance1: attendanceList) {
+                if (attendance1.getRecognitionstate().equals("1")) {
+                    throw new LogicalException("已经承认考勤的日期，不允许申请异常，请重新选择日期。");
+                }
+            }
+        }
+    }
+
     public int getYears(String startCal) throws Exception {
         int year = 0;
         startCal = startCal.substring(0,10);
@@ -145,6 +159,19 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Override
     public void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception {
         abNormal.preUpdate(tokenModel);
+        //页面传来的状态
+        if(abNormal.getStatus().equals("4")) {
+            AbNormal ab = abNormalMapper.selectByPrimaryKey(abNormal.getAbnormalid());
+            //数据库状态
+            if (ab.getStatus().equals("4")) {
+                List<Attendance> attendanceList2 = attendanceMapper.twoTime(abNormal.getUser_id(), abNormal.getReoccurrencedate(), abNormal.getRefinisheddate());
+                for (Attendance attendance3 : attendanceList2) {
+                    if (attendance3.getRecognitionstate().equals("1")) {
+                        throw new LogicalException("已经承认考勤的日期，不允许申请异常，请重新选择日期。");
+                    }
+                }
+            }
+        }
         abNormalMapper.updateByPrimaryKey(abNormal);
         //add ccm 2020708 异常实时反应
         if(abNormal.getStatus().equals("4"))
@@ -157,7 +184,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                 {
                     punchcardRecordService.methodAttendance_b(item,abNormal.getUser_id());
                 }
-        }
+                }
 
         if(abNormal.getStatus().equals("7"))
         {

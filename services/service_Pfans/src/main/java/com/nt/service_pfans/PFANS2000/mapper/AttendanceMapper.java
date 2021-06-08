@@ -7,6 +7,7 @@ import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -35,4 +36,11 @@ public interface AttendanceMapper extends MyMapper<Attendance> {
     @Select("select * from attendance where (years=#{strYear} or years=#{accYear}) and (MONTHS=#{strTemp} or MONTHS=#{accDate}) and user_id=#{userid}")
     List<Attendance> selectDataList( @Param("strTemp") String strTemp, @Param("strYear") String strYear, @Param("accDate") String accDate, @Param("accYear") String accYear,@Param("userid") String userid);
     //add-ws-1/5-根据当前月份和当前月的上个月获取数据
+
+    //查询请假时间段
+    @Select("select * from attendance where user_id = #{userid} and dates between  #{occurrence_date} and  #{finish_date}")
+    List<Attendance> selTime(@Param("userid") String userid, @Param("occurrence_date") Date occurrence_date, @Param("finish_date") Date finish_date);
+
+    @Select("select * from attendance where user_id = #{userid} and dates between  #{re_occurrence_date} and  #{re_finish_date}")
+    List<Attendance> twoTime(@Param("userid") String userid, @Param("re_occurrence_date") Date re_occurrence_date, @Param("re_finish_date") Date re_finish_date);
 }

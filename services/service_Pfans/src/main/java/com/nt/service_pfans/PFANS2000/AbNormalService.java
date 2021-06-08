@@ -12,6 +12,8 @@ public interface AbNormalService {
 
     void insert(AbNormal abNormal, TokenModel tokenModel) throws Exception;
 
+    void selectTime(AbNormal abNormal, TokenModel tokenModel) throws Exception;
+
     //获取异常申请列表信息
     List<AbNormal> list(AbNormal abNormal) throws Exception;
     //add-ws-6/8-禅道035
