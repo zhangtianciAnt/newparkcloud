@@ -139,24 +139,29 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
         //纳品书是否做成
         Napalm napalm =new Napalm();
-        napalm.setContractnumber(contractapplication.getContractnumber());
-        List<Napalm> napalmL = napalmMapper.select(napalm);
-        if(napalmL!=null)
+        if(contractapplication.getContractnumber()!=null)
         {
-            for(Napalm n :napalmL)
+            String [] cnumber  = contractapplication.getContractnumber().split("-");
+            napalm.setContractnumber(cnumber[0]);
+            List<Napalm> napalmL = napalmMapper.select(napalm);
+            if(napalmL!=null)
             {
-                for(Contractnumbercount c : numberList)
+                for(Napalm n :napalmL)
                 {
-                    String numb = "";
-                    numb = contractapplication.getContractnumber() + "-" + c.getClaimtype().replace("第","").replace("回","");
-                    if(numb.equals(n.getClaimnumber()))
+                    for(Contractnumbercount c : numberList)
                     {
-                        //临时存入TENANTID  "0"是存在纳品书，觉书后，回数不可编辑， null 为不存在觉书，可编辑。
-                        c.setTenantid("0");
+                        String numb = "";
+                        numb = cnumber[0] + "-" + c.getClaimtype().replace("第","").replace("回","").replace("書","");
+                        if(numb.equals(n.getClaimnumber()))
+                        {
+                            //临时存入TENANTID  "0"是存在纳品书，觉书后，回数不可编辑， null 为不存在觉书，可编辑。
+                            c.setTenantid("0");
+                        }
                     }
                 }
             }
         }
+
         //add ccm 1204 纳品回数可变的对应
         vo.setContractnumbercount(numberList);
         //契约番号回数
