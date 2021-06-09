@@ -319,6 +319,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 List<AnnualLeave> AnnualList = viewList.stream().filter(coi -> (coi.getUser_id().contains(thisyears.getUser_id()))).collect(Collectors.toList());
                 if(AnnualList.size() > 0 ){
                     thisyears.setRemaining_annual_leave_thisyear(AnnualList.get(0).getRemaining_annual_leave_thisyear().subtract(AnnualList.get(0).getAnnual_leave_shenqingzhong()));
+                    //暂存剩余年休到福利剩余年休
+                    thisyears.setRemaining_paid_leave_thisyear(AnnualList.get(0).getRemaining_annual_leave_thisyear().subtract(AnnualList.get(0).getAnnual_leave_shenqingzhong()));
                     thisyears.preUpdate(tokenModel);
                     annualLeaveMapper.updateByPrimaryKey(thisyears);
                 }
@@ -754,7 +756,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         }else {
             this_year = cal.get(Calendar.YEAR);
         }
-        String endCal = String.valueOf(this_year) + "-04-01";
+        String endCal = String.valueOf(this_year) + "-04-02";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date startDate = sdf.parse(Convert.toStr(sdf.format(Convert.toDate(startCal))));
         Date endDate = sdf.parse(endCal);
