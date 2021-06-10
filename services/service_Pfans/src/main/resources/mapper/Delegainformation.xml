@@ -73,9 +73,9 @@
                  when round(november/8/ #{november} ,4) >= 1.6 then 1.3
                  else round(november/8/ #{november} ,2) end november,
             case when round(december/8/ #{december} ,4) between 1 and 1.1999 then 1
-                 when round(november/8/ #{november} ,4) between 1.2 and 1.3999 then 1.1
-                 when round(november/8/ #{november} ,4) between 1.4 and 1.5999 then 1.15
-                 when round(november/8/ #{november} ,4) >= 1.6 then 1.3
+                 when round(december/8/ #{december} ,4) between 1.2 and 1.3999 then 1.1
+                 when round(december/8/ #{december} ,4) between 1.4 and 1.5999 then 1.15
+                 when round(december/8/ #{december} ,4) >= 1.6 then 1.3
                  else round(december/8/ #{december} ,2) end december,
             case when round(january/8/ #{january} ,4) between 1 and 1.1999 then 1
                  when round(january/8/ #{january} ,4) between 1.2 and 1.3999 then 1.1

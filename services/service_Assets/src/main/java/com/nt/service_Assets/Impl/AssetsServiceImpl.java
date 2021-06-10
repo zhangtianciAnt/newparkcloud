@@ -123,7 +123,8 @@ public class AssetsServiceImpl implements AssetsService {
     }
 
 
-    //定时任务
+    //【每天凌晨2点】
+    // 更新资产
     @Scheduled(cron = "0 0 2 * * ?")
     public void updateAssets() throws Exception{
         LocalDate localDate = LocalDate.now();

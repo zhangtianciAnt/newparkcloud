@@ -482,6 +482,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         }
     }
 
+    //【每天凌晨0点5分】
     //进行数据权限和审批权限交接
     @Scheduled(cron = "0 05 0 * * ?")
     public void getdataExittime() throws Exception {
@@ -1398,7 +1399,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         {
             //发提醒给离职者
             ToDoNotice toDoNotice = new ToDoNotice();
-            toDoNotice.setTitle("[系统消息:您的调书已经创建完成，请处理离职手续！】");
+            toDoNotice.setTitle("【您的调书已经创建完成，请选中待办跳转到调书页面处理离职手续！】");
             toDoNotice.setInitiator(staffexitprocedureVo.getStaffexitproce().getReporter());
             toDoNotice.setContent("您的调书已经创建完成，请处理离职手续！");
             toDoNotice.setDataid(staffexitprocedureVo.getStaffexitproce().getStaffexitproce_id());

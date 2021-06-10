@@ -688,7 +688,9 @@ public class GivingServiceImpl implements GivingService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
         //当月日期1号
         Calendar calNowOne = Calendar.getInstance();
-        calNowOne.add(Calendar.MONTH, 0);
+        //region  qhr_20210528 无作用代码注释
+        //calNowOne.add(Calendar.MONTH, 0);
+        //endregion qhr_20210528 无作用代码注释
         calNowOne.set(Calendar.DAY_OF_MONTH, 1);
         //当月日期月末
         Calendar calNowLast = Calendar.getInstance();
@@ -890,7 +892,8 @@ public class GivingServiceImpl implements GivingService {
                     if (calEnterDay.getTime().getTime() > calLastOne.getTime().getTime()) {
                         tempStart = calEnterDay.getTime();
                     }
-                    calSuitDate.add(Calendar.DATE, -1);//转正日当天不算使用
+//                    add 试用员工当月转正的当月试用天数 fr
+                    //calSuitDate.add(Calendar.DATE, -1);//转正日当天不算使用
                     lastMonthSuitDays = getTrialWorkDaysExceptWeekend(tempStart, calLast.getTime());
                     thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), calSuitDate.getTime());
                 }
@@ -1114,7 +1117,7 @@ public class GivingServiceImpl implements GivingService {
     }
 
 
-    //@Scheduled(cron = "0 0 1 10 * ?")//系统服务--每月10号凌晨1点开始自动计算当月工资【康san确认无用】
+
     protected void autoCreateGiving() throws Exception {
         insert("1", null);
     }
@@ -2342,11 +2345,23 @@ public class GivingServiceImpl implements GivingService {
                 // 试用期截止日不为空的情况
                 // 转正日小于当月的除外
                 Date endDate = new Date();
+                //region  add_qhr_20210528  更改转正日计算形式
+                Calendar rightNow = Calendar.getInstance();
                 if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getEnddate())){
-                    if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
-                        customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
+//                    if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
+//                        customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
+//                    }
+//                    endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
+                    String endddate = customerInfo.getUserinfo().getEnddate().substring(0, 10);
+                    rightNow.setTime(Convert.toDate(endddate));
+                    if (customerInfo.getUserinfo().getEnddate().length() >= 24) {
+                        rightNow.add(Calendar.DAY_OF_YEAR, 2);
+                    } else {
+                        rightNow.add(Calendar.DAY_OF_YEAR, 1);
                     }
-                    endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
+                    endddate = sfChina.format(rightNow.getTime());
+                    endDate = sfChina.parse(endddate);
+                //endregion  add_qhr_20210528  更改转正日计算形式
                     if (endDate.getTime() < mouthStart) {
                         continue;
                     }

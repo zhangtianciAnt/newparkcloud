@@ -294,6 +294,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         return tempannualLeaveList;
     }
 
+    //【每年3月31日23点30分】
     @Scheduled(cron="0 30 23 31 3 *")//事业年度开始之前3月31日晚11点半更新年度年休表
     public void updateAnnualLeaveBefore() throws Exception {
         updateAnBefore();
@@ -318,6 +319,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 List<AnnualLeave> AnnualList = viewList.stream().filter(coi -> (coi.getUser_id().contains(thisyears.getUser_id()))).collect(Collectors.toList());
                 if(AnnualList.size() > 0 ){
                     thisyears.setRemaining_annual_leave_thisyear(AnnualList.get(0).getRemaining_annual_leave_thisyear().subtract(AnnualList.get(0).getAnnual_leave_shenqingzhong()));
+                    //暂存剩余年休到福利剩余年休
+                    thisyears.setRemaining_paid_leave_thisyear(AnnualList.get(0).getRemaining_annual_leave_thisyear().subtract(AnnualList.get(0).getAnnual_leave_shenqingzhong()));
                     thisyears.preUpdate(tokenModel);
                     annualLeaveMapper.updateByPrimaryKey(thisyears);
                 }
@@ -325,6 +328,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         }
     }
 
+    //【每年4月1日0点0分】
     @Scheduled(cron="0 0 0 1 4 *")//正式时间每年4月1日零时执行--事业年度开始获取年休
     public void creatAnnualLeaveAn() throws Exception {
         insert();
@@ -752,7 +756,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         }else {
             this_year = cal.get(Calendar.YEAR);
         }
-        String endCal = String.valueOf(this_year) + "-04-01";
+        String endCal = String.valueOf(this_year) + "-04-02";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date startDate = sdf.parse(Convert.toStr(sdf.format(Convert.toDate(startCal))));
         Date endDate = sdf.parse(endCal);
@@ -852,16 +856,19 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         return map;
     }
 
+    //【每天凌晨0点30分】
     @Scheduled(cron="0 30 0 * * ?")//正式时间每天半夜12点半  GBB add -- 添加正式员工前一天的打卡记录
     public void insertattendanceTask()throws Exception {
         insertattendance(-1,"","");
     }
 
+    //【每天凌晨0点35分】
     @Scheduled(cron="0 35 0 * * ?")//正式时间每天半夜12点半  GBB add -- 添加外驻员工前一天的打卡记录
     public void insertattendancebpTask()throws Exception {
         insertattendancebp(-1,"","");
     }
 
+    //【每天凌晨0点45分】
     @Scheduled(cron="0 45 0 * * ?")//正式时间每天半夜12点半  GBB add -- 前一天的考勤数据处理
     public void insertpunchcardTask()throws Exception {
         //处理异常和加班数据
@@ -889,12 +896,14 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         }
     }
 
+    //【每天下午16点45分】
     //系统服务--取当天打卡记录//正式时间每天下午4点45分执行  GBB add
     @Scheduled(cron="0 45 16 * * ?") //每天下午4点45分执行  GBB add -- 取当正式员工天下午4点45分之前打卡记录
     public void selectattendanceTask()throws Exception {
         selectattendance();
     }
 
+    //【每天下午16点50分】
     //系统服务--取当天打卡记录BP//正式时间每天下午4点50分执行  GBB add
     @Scheduled(cron="0 50 16 * * ?") //每天下午4点50分执行  GBB add -- 取当外驻员工天下午4点50分之前打卡记录
     public void selectattendancebpTask()throws Exception {
@@ -3751,7 +3760,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
     //ccm 1019 计算一个月出勤多少小时
 
 
-
+    //【每月最后一天23点5分】
     //系统服务-每月最后一天计算实际工资  GBB add
     @Scheduled(cron="0 0 23 28-31 * ?") //每月最后一天晚23点计算实际工资  GBB add
     public void getrealwages()throws Exception {

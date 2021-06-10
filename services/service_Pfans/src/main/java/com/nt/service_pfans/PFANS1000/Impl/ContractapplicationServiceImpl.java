@@ -117,10 +117,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         }
 
         //add ccm 1204 纳品回数可变的对应
-        //检索是否做成书类
+        //检索是否做成决裁书
         Award a =new Award();
         a.setContractnumber(contractapplication.getContractnumber());
-        a.setMaketype("4");
+//        a.setMaketype("4");
         List<Award> awardL = AwardMapper.select(a);
         //决裁书
         if(awardL!=null)
@@ -136,6 +136,32 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
             }
         }
+
+        //纳品书是否做成
+        Napalm napalm =new Napalm();
+        if(contractapplication.getContractnumber()!=null)
+        {
+            String [] cnumber  = contractapplication.getContractnumber().split("-");
+            napalm.setContractnumber(cnumber[0]);
+            List<Napalm> napalmL = napalmMapper.select(napalm);
+            if(napalmL!=null)
+            {
+                for(Napalm n :napalmL)
+                {
+                    for(Contractnumbercount c : numberList)
+                    {
+                        String numb = "";
+                        numb = cnumber[0] + "-" + c.getClaimtype().replace("第","").replace("回","").replace("書","");
+                        if(numb.equals(n.getClaimnumber()))
+                        {
+                            //临时存入TENANTID  "0"是存在纳品书，觉书后，回数不可编辑， null 为不存在觉书，可编辑。
+                            c.setTenantid("0");
+                        }
+                    }
+                }
+            }
+        }
+
         //add ccm 1204 纳品回数可变的对应
         vo.setContractnumbercount(numberList);
         //契约番号回数
@@ -965,6 +991,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     }
 
     //系统服务--每月1号 给纳品担当和请求担当代办处理合同回款  fjl add start
+    //【每月1号凌晨0点10分】
     @Scheduled(cron = "0 10 0 1 * ?")
     public void updUseraccountStatus() throws Exception {
         TokenModel tokenModel = new TokenModel();

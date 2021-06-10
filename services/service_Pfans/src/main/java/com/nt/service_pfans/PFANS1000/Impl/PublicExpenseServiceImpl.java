@@ -753,7 +753,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
                 //发票说明
                 if (insertInfo.getRemark() != "" && insertInfo.getRemark() != null) {
-                    insertInfo.setRemark(userName + accountCodeMap.getOrDefault(insertInfo.getRemark(), ""));
+                    insertInfo.setRemark(userName + "经办" + accountCodeMap.getOrDefault(insertInfo.getRemark(), ""));
                 }
 
                 insertInfo.setInvoicenumber(invoiceNo);

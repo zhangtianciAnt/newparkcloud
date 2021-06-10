@@ -15,7 +15,7 @@ package com.nt.service_pfans.PFANS1000.mapper;
 
 public interface PersonnelplanMapper extends MyMapper<PersonnelPlan> {
   //  zy-7/7-禅道213任务
-  @Select("select supplierinfor_id,supchinese,supjapanese,supenglish,abbreviation from supplierinfor where status = '0' ")
+  @Select("select supplierinfor_id,supchinese,supjapanese,supenglish,abbreviation,liableperson,protelephone from supplierinfor where status = '0' ")
   List<Supplierinfor> getSupplierinfor();
 
   //@Select("select expatriatesinfor_id,expname as name,suppliername,supplierinfor_id as suppliernameid,rn as thisyear,jobclassification as entermouth from expatriatesinfor where status = '0' and group_id = #{groupid} ")
