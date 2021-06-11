@@ -17,6 +17,7 @@ import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -241,7 +242,7 @@ public class EvectionServiceImpl implements EvectionService {
             String currency = getProperty(detail, "currency");
             String accountcode = getProperty(detail, "accountcode");
             String mergeKey = "";
-            mergeKey = budgetcoding + " ... " + subjectnumber + " ... " + currency;
+            mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber + " ... " + currency;
             // 行合并
             float money = getPropertyFloat(detail, "rmb");
             float moneysum = getPropertyFloat(detail, "foreigncurrency");
@@ -507,7 +508,7 @@ public class EvectionServiceImpl implements EvectionService {
             String subjectnumber = getProperty(detail, "subjectnumber");
             String mergeKey;
 
-            mergeKey = budgetcoding + " ... " + subjectnumber + " ... " + currency;
+            mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber + " ... " + currency;
 
             // 行合并
             float money = getPropertyFloat(detail, "foreigncurrency");
@@ -612,7 +613,7 @@ public class EvectionServiceImpl implements EvectionService {
             String budgetcoding = getProperty(detail, "budgetcoding");
             String subjectnumber = getProperty(detail, "subjectnumber");
             String mergeKey;
-            mergeKey = budgetcoding + " ... " + subjectnumber;
+            mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber;
             // 行合并
             float money = getPropertyFloat(detail, "rmb");
             float moneysum = getPropertyFloat(detail, "subsidies");
@@ -645,59 +646,56 @@ public class EvectionServiceImpl implements EvectionService {
             String getRmb = getProperty(detail, "rmb");
             String gettaxes = getProperty(detail, "taxes");
             String redirictchheck = getProperty(detail, "redirict");
-            //PSDCD_PFANS_20210519_BUG_004 ztc fr
-            if(Float.parseFloat(gettaxes) > 0){
-                String lineCost = FNUM.format(new BigDecimal(getRmb).subtract(new BigDecimal(gettaxes)));
-                setProperty(detail, "rmb", lineCost);
-            }
             // 如果是专票，处理税
             //updfjl_0722  添加增值税明细数据  start
             if (specialMap.containsKey(keyNo) && Float.parseFloat(gettaxes) > 0) {
                 float taxes = 0f;
-//                float taxesSUM = 0f;
+                float taxesSUM = 0f;
                 if (invoicelist.size() > 0) {
                     for (Invoice inv : invoicelist) {
-                        taxes = Float.parseFloat(inv.getFacetax());
-                        List<TravelCost> taxList = (List<TravelCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
-                        resultMap.put(TAX_KEY, taxList);
-                        BigDecimal rate = specialMap.get(keyNo);
-                        TravelCost taxCost = new TravelCost();
-//                        taxesSUM += taxes;
-                        // 税拔
-//                        String lineCost = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(taxesSUM)));
-                        String lineCostNo = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(taxes)));
-                        // 税金
-                        String lineRate = FNUM.format(taxes);
-                        if (money > 0) {
-                            // 税
-                            //add-ws-4/22-税金不为0存2302-00-01A0
-                            if (!lineRate.equals("0")) {
-                                taxCost.setSubjectnumber("2302-00-01A0");
-                            } else {
-                                taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
-                            }
-                            //add-ws-4/22-税金不为0存2302-00-01A0
-                            taxCost.setLineamount(lineRate);
-                            taxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
-                            //发票说明
-                            taxCost.setRemarks(getProperty(inv, "invoicenumber"));
-                            taxCost.setCurrency("CNY");
-                            taxList.add(taxCost);
+                        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(inv.getInvoicenumber()) && inv.getInvoicenumber().equals(keyNo)) {
+//                            taxes = Float.parseFloat(inv.getFacetax());
+                            taxes = Float.parseFloat(getProperty(detail, "taxes"));
+                            List<TravelCost> taxList = (List<TravelCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
+                            resultMap.put(TAX_KEY, taxList);
+                            BigDecimal rate = specialMap.get(keyNo);
+                            TravelCost taxCost = new TravelCost();
+                            taxesSUM += taxes;
                             // 税拔
-                            //setProperty(detail, "rmb", lineCost);
-                            BigDecimal diff = new BigDecimal(String.valueOf(taxes)).add(new BigDecimal(lineCostNo)).subtract(new BigDecimal(String.valueOf(money)));
-                            //PSDCD_PFANS_20210519_BUG_004 ztc to
-                            if (diff.compareTo(new BigDecimal(0)) == 1) {
-                                TravelCost padding = new TravelCost();
-                                padding.setLineamount(diff + "");
-                                padding.setBudgetcoding(getProperty(detail, "budgetcoding"));
-                                padding.setSubjectnumber(getProperty(detail, "subjectnumber"));
+                            String lineCost = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(taxesSUM)));
+                            String lineCostNo = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(taxes)));
+                            // 税金
+                            String lineRate = FNUM.format(taxes);
+                            if (money > 0) {
+                                // 税
+                                //add-ws-4/22-税金不为0存2302-00-01A0
+                                if (!lineRate.equals("0")) {
+                                    taxCost.setSubjectnumber("2302-00-01A0");
+                                } else {
+                                    taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
+                                }
+                                //add-ws-4/22-税金不为0存2302-00-01A0
+                                taxCost.setLineamount(lineRate);
+                                taxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
                                 //发票说明
-                                padding.setRemarks(getProperty(detail, "accountcode"));
-                                padding.setCurrency("CNY");
-                                List<TravelCost> paddingList = (List<TravelCost>) resultMap.getOrDefault(PADDING_KEY, new ArrayList<>());
-                                paddingList.add(padding);
-                                resultMap.put(PADDING_KEY, paddingList);
+                                taxCost.setRemarks(getProperty(inv, "invoicenumber"));
+                                taxCost.setCurrency("CNY");
+                                taxList.add(taxCost);
+                                // 税拔
+                                setProperty(detail, "rmb", lineCost);
+                                BigDecimal diff = new BigDecimal(String.valueOf(taxes)).add(new BigDecimal(lineCostNo)).subtract(new BigDecimal(String.valueOf(money)));
+                                if (diff.compareTo(new BigDecimal(0)) == 1) {
+                                    TravelCost padding = new TravelCost();
+                                    padding.setLineamount(diff + "");
+                                    padding.setBudgetcoding(getProperty(detail, "budgetcoding"));
+                                    padding.setSubjectnumber(getProperty(detail, "subjectnumber"));
+                                    //发票说明
+                                    padding.setRemarks(getProperty(detail, "accountcode"));
+                                    padding.setCurrency("CNY");
+                                    List<TravelCost> paddingList = (List<TravelCost>) resultMap.getOrDefault(PADDING_KEY, new ArrayList<>());
+                                    paddingList.add(padding);
+                                    resultMap.put(PADDING_KEY, paddingList);
+                                }
                             }
                         }
                     }
