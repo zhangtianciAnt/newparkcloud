@@ -54,4 +54,7 @@ public interface CompanyProjectsService {
     List<CompanyProjectsVo3> getCompanyProject (String SyspName)throws Exception;
 
     void getPLLeader() throws Exception;
+// zy start 报表追加 2021/06/13
+    List<Object> report(String start, String end, List<String> ownerList, String userId) throws Exception;
+// zy end 报表追加 2021/06/13
 }

@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -393,5 +394,22 @@ public class Pfans5001Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(companyProjectsService.getList2(flag, tokenModel.getOwnerList(), tokenModel.getUserId()));
     }
-
+//zy start 报表追加 2021/06/13
+    /**
+     * @方法名：report
+     * @描述：导出每个月项目报表
+     * @创建日期：2021/06/11
+     * @作者：zy
+     * @参数：[]
+     * @返回值：List<CompanyProjectsReport>
+     */
+    @RequestMapping(value = "/report", method={RequestMethod.GET})
+    public ApiResult report(HttpServletRequest request, String start,String end) throws Exception {
+        if (StringUtils.isEmpty(start) || StringUtils.isEmpty(end)) {
+            return ApiResult.fail("开始时间，结束时间不能为空");
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(companyProjectsService.report(start, end, tokenModel.getOwnerList(), tokenModel.getUserId()));
+    }
+//zy end 报表追加 2021/06/13
 }
