@@ -525,8 +525,12 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             con.setDataid(io.getAward_id());
                             con.setFormid("/PFANS1030View");
                             con.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-                            if (workflowinstanceMapper.select(con).size() > 0) {
-                                throw new LogicalException("决裁书正在审批中，不可更新！");
+                            Workflowinstance con1 = new Workflowinstance();
+                            con1.setDataid(io.getAward_id());
+                            con1.setFormid("/PFANS1030View");
+                            con1.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                            if (workflowinstanceMapper.select(con).size() > 0 || workflowinstanceMapper.select(con1).size() > 0 ) {
+                                throw new LogicalException("决裁书正在审批中或审批结束，不可更新！");
                             }
                             io.preUpdate(tokenModel);
                             io.setContractnumber(contractnumber);
@@ -804,8 +808,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             con.setDataid(io.getAward_id());
                             con.setFormid("/PFANS1025View");
                             con.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-                            if (workflowinstanceMapper.select(con).size() > 0) {
-                                throw new LogicalException("决裁书正在审批中，不可更新！");
+                            Workflowinstance con1 = new Workflowinstance();
+                            con1.setDataid(io.getAward_id());
+                            con1.setFormid("/PFANS1025View");
+                            con1.setStatus(AuthConstants.APPROVED_FLAG_YES);//4
+                            if (workflowinstanceMapper.select(con).size() > 0 || workflowinstanceMapper.select(con1).size() > 0) {
+//                                throw new LogicalException("决裁书正在审批中，不可更新！");
+                                throw new LogicalException("决裁书正在审批中或审批结束，不可更新！");
                             }
                             io.preUpdate(tokenModel);
                             io.setContractnumber(contractnumber);
@@ -887,9 +896,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             Workflowinstance con = new Workflowinstance();
                             con.setDataid(io.getAward_id());
                             con.setFormid("/PFANS1047View");
-                            con.setStatus(AuthConstants.DEL_FLAG_NORMAL);
-                            if (workflowinstanceMapper.select(con).size() > 0) {
-                                throw new LogicalException("决裁书正在审批中，不可更新！");
+                            con.setStatus(AuthConstants.DEL_FLAG_NORMAL);//0
+                            Workflowinstance con1 = new Workflowinstance();
+                            con1.setDataid(io.getAward_id());
+                            con1.setFormid("/PFANS1047View");
+                            con1.setStatus(AuthConstants.APPROVED_FLAG_YES);//4
+                            if (workflowinstanceMapper.select(con).size() > 0 || workflowinstanceMapper.select(con1).size() > 0) {
+                                throw new LogicalException("决裁书正在审批中或审批结束，不可更新！");
                             }
                             io.preUpdate(tokenModel);
                             io.setContractnumber(contractnumber);

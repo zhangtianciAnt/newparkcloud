@@ -4,11 +4,13 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
+import com.nt.dao_Pfans.PFANS8000.MonthlyRate;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
+import com.nt.service_pfans.PFANS8000.mapper.MonthlyRateMapper;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
@@ -50,6 +52,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
     private BusinessMapper businessMapper;
     @Autowired
     private PurchaseService purchaseService;
+    @Autowired
+    private MonthlyRateMapper monthlyratemapper;
 
 
     @Override
@@ -431,7 +435,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         communicationMapper.updateByPrimaryKey(communicationList.get(0));
                     }
                 }
-            } else if (loanapplication.getJudgements_name().substring(0, 2).equals("JC"))//其他业务
+            }
+            else if (loanapplication.getJudgements_name().substring(0, 2).equals("JC"))//其他业务
             {
                 String[] pur = loanapplication.getJudgements_name().split(",");
                 for (String p : pur) {
@@ -461,7 +466,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         judgementMapper.updateByPrimaryKey(judgementList.get(0));
                     }
                 }
-            } else if (loanapplication.getJudgements_name().substring(0, 2).equals("WC"))//无偿设备
+            }
+            else if (loanapplication.getJudgements_name().substring(0, 2).equals("WC"))//无偿设备
             {
                 String[] pur = loanapplication.getJudgements_name().split(",");
                 for (String p : pur) {
@@ -491,7 +497,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         judgementMapper.updateByPrimaryKey(judgementList.get(0));
                     }
                 }
-            } else if (loanapplication.getJudgements_name().substring(0, 2).equals("QY"))//千元费用
+            }
+            else if (loanapplication.getJudgements_name().substring(0, 2).equals("QY"))//千元费用
             {
                 String[] pur = loanapplication.getJudgements_name().split(",");
                 for (String p : pur) {
@@ -522,7 +529,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     }
                 }
                 //ADD_FJL_0730  end
-            } else if (loanapplication.getJudgements_name().substring(0, 1).equals("C"))//境内外出差
+            }
+            else if (loanapplication.getJudgements_name().substring(0, 1).equals("C"))//境内外出差
             {
                 String[] pur = loanapplication.getJudgements_name().split(",");
                 for (String p : pur) {
@@ -543,7 +551,19 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         businessList.get(0).setLoanapplication_id(loanapplication.getLoanapplication_id());
                         businessList.get(0).setLoanapno(loanapplication.getLoanapno());
                         businessList.get(0).setLoanday(new Date());
-                        businessList.get(0).setLoanmoney(loanapplication.getMoneys());
+                        //add  借款金额（元）  from
+                        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM");
+                        MonthlyRate month = new MonthlyRate();
+                        month.setMonth(sf.format(businessList.get(0).getLoanday()));
+                        SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
+                        month.setYear(sf1.format(businessList.get(0).getLoanday()));
+                        month.setCurrency(businessList.get(0).getCurrency());
+                        List<MonthlyRate> monthList = monthlyratemapper.select(month);
+                        if(monthList.size() > 0){
+                            Double loanMoney = Double.valueOf(monthList.get(0).getExchangerate()) * Double.valueOf(businessList.get(0).getLoanmoney());
+                            businessList.get(0).setLoanmoney(String.valueOf(loanMoney));
+                        }
+                        //add  借款金额（元）  to
                         businessList.get(0).preUpdate(tokenModel);
                         businessMapper.updateByPrimaryKey(businessList.get(0));
                     }
