@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Auth.Role;
@@ -1372,10 +1373,23 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     }
 
     //zy start 报表追加 2021/06/13
-    private List<ProjectIncomeVo4> getOrgInfo() throws Exception {
+    private List<ProjectIncomeVo4> getOrgInfo(String start) throws Exception {
         List<ProjectIncomeVo4> projectincomevo4list = new ArrayList<>();
-        OrgTree orgs = orgTreeService.get(new OrgTree());
-        for (OrgTree org : orgs.getOrgs()) {
+        OrgTree org20s = new OrgTree();
+        OrgTree org21s = new OrgTree();
+        if(start.substring(0,4).equals("2020"))
+        {
+            org20s = orgTreeService.getTreeYears(start.substring(0,4),"0");
+            org21s = orgTreeService.getTreeYears(String.valueOf(Integer.valueOf(start.substring(0,4))+1),"0");
+        }
+        else
+        {
+            org21s = orgTreeService.getTreeYears(start.substring(0,4),"0");
+            org20s = orgTreeService.getTreeYears(String.valueOf(Integer.valueOf(start.substring(0,4))-1),"0");
+        }
+
+//        OrgTree orgs = orgTreeService.get(new OrgTree());
+        for (OrgTree org : org21s.getOrgs()) {
             for (OrgTree orgC : org.getOrgs()) {
                 if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(orgC.getEncoding()))
                 {
@@ -1404,12 +1418,27 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
             }
         }
+        for (OrgTree orgC : org20s.getOrgs()){
+            for (OrgTree orgG : orgC.getOrgs())
+            {
+                if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(orgG.getEncoding()))
+                {
+                    ProjectIncomeVo4 projectincomevo4 = new ProjectIncomeVo4();
+                    projectincomevo4.setGroupid(orgG.get_id());
+                    projectincomevo4.setGroupname(orgG.getCompanyname());
+                    projectincomevo4.setEncoding(orgG.getEncoding().substring(0, 2));
+                    projectincomevo4.setFlag("1");
+                    projectincomevo4list.add(projectincomevo4);
+                }
+            }
+        }
+
         return projectincomevo4list;
     }
 
     @Override
     public List<Object> report(String start, String end, List<String> ownerList, String userId) throws Exception{
-        List<ProjectIncomeVo4> projectincomevo4list = this.getOrgInfo();
+        List<ProjectIncomeVo4> projectincomevo4list = this.getOrgInfo(start);
         Map<String, String> params = new HashMap<>();
         params.put("start", start);
         params.put("end", end);
@@ -1420,7 +1449,6 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         for (CompanyProjectsReport baseData : baseList ) {
             result.addAll(extraBaseData(baseData, projectincomevo4list));
         }
-
         return result;
     }
 
@@ -1464,7 +1492,13 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             line.put("groupId", baseData.getGroup_id());
             line.put("centerId", baseData.getCenter_id());
             // 项目名
-            line.put("name", baseData.getProject_name());
+            String proname = "";
+            if(com.nt.utils.StringUtils.isBase64Encode(baseData.getProject_name())){
+                proname = Base64.decodeStr(baseData.getProject_name());
+            }else{
+                proname = baseData.getProject_name();
+            }
+            line.put("name", proname);
             // 合同号
             line.put("contract", baseData.getContract());
             // 分配金额
