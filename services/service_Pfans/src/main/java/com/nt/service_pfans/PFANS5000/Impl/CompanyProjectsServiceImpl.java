@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Auth.Role;
@@ -9,13 +10,12 @@ import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
+import com.nt.dao_Pfans.PFANS1000.Vo.ProjectIncomeVo4;
 import com.nt.dao_Pfans.PFANS5000.*;
-import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
-import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
-import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo3;
-import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
+import com.nt.dao_Pfans.PFANS5000.Vo.*;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
+import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
@@ -25,8 +25,10 @@ import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.mapper.*;
 import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
+import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -37,6 +39,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -85,7 +90,10 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     private ContractnumbercountMapper contractnumbercountMapper;
     @Autowired
     private RoleService roleService;
-
+    //zy start 报表追加 2021/06/13
+    @Autowired
+    private WorkingDayMapper workingDayMapper;
+    //zy end 报表追加 2021/06/13
 
     @Override
     public List<CompanyProjects> getCompanyProjectList(CompanyProjects companyprojects, HttpServletRequest request) throws Exception {
@@ -1184,6 +1192,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     }
 
     //到退场日，收回PL角色权限
+    //【每天凌晨0点5分】
     @Scheduled(cron = "0 05 0 * * ?")
     public void getPLExittime() throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -1277,6 +1286,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     }
 
     //给即将到退场日的PL的leader发代办
+    //【每天凌晨0点10分】
     @Scheduled(cron = "0 10 0 * * ?")
     public void getPLLeader() throws Exception {
         TokenModel tokenModel = new TokenModel();
@@ -1362,6 +1372,268 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         }
     }
 
+    //zy start 报表追加 2021/06/13
+    private List<ProjectIncomeVo4> getOrgInfo(String start) throws Exception {
+        List<ProjectIncomeVo4> projectincomevo4list = new ArrayList<>();
+        OrgTree org20s = new OrgTree();
+        OrgTree org21s = new OrgTree();
+        if(start.substring(0,4).equals("2020"))
+        {
+            org20s = orgTreeService.getTreeYears(start.substring(0,4),"0");
+            org21s = orgTreeService.getTreeYears(String.valueOf(Integer.valueOf(start.substring(0,4))+1),"0");
+        }
+        else
+        {
+            org21s = orgTreeService.getTreeYears(start.substring(0,4),"0");
+            org20s = orgTreeService.getTreeYears(String.valueOf(Integer.valueOf(start.substring(0,4))-1),"0");
+        }
+
+//        OrgTree orgs = orgTreeService.get(new OrgTree());
+        for (OrgTree org : org21s.getOrgs()) {
+            for (OrgTree orgC : org.getOrgs()) {
+                if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(orgC.getEncoding()))
+                {
+                    ProjectIncomeVo4 projectincomevo4 = new ProjectIncomeVo4();
+                    projectincomevo4.setGroupid(orgC.get_id());
+                    projectincomevo4.setGroupname(orgC.getCompanyname());
+                    projectincomevo4.setEncoding(orgC.getEncoding().substring(0, 2));
+                    projectincomevo4.setFlag("0");
+                    projectincomevo4list.add(projectincomevo4);
+                }
+                else
+                {
+                    for (OrgTree orgG : orgC.getOrgs())
+                    {
+                        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(orgG.getEncoding()))
+                        {
+                            ProjectIncomeVo4 projectincomevo4 = new ProjectIncomeVo4();
+                            projectincomevo4.setGroupid(orgG.get_id());
+                            projectincomevo4.setGroupname(orgG.getCompanyname());
+                            projectincomevo4.setEncoding(orgG.getEncoding().substring(0, 2));
+                            projectincomevo4.setFlag("1");
+                            projectincomevo4list.add(projectincomevo4);
+                        }
+                    }
+                }
+
+            }
+        }
+        for (OrgTree orgC : org20s.getOrgs()){
+            for (OrgTree orgG : orgC.getOrgs())
+            {
+                if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(orgG.getEncoding()))
+                {
+                    ProjectIncomeVo4 projectincomevo4 = new ProjectIncomeVo4();
+                    projectincomevo4.setGroupid(orgG.get_id());
+                    projectincomevo4.setGroupname(orgG.getCompanyname());
+                    projectincomevo4.setEncoding(orgG.getEncoding().substring(0, 2));
+                    projectincomevo4.setFlag("1");
+                    projectincomevo4list.add(projectincomevo4);
+                }
+            }
+        }
+
+        return projectincomevo4list;
+    }
+
+    @Override
+    public List<Object> report(String start, String end, List<String> ownerList, String userId) throws Exception{
+        List<ProjectIncomeVo4> projectincomevo4list = this.getOrgInfo(start);
+        Map<String, String> params = new HashMap<>();
+        params.put("start", start);
+        params.put("end", end);
+        List<CompanyProjectsReport> baseList = companyprojectsMapper.getRepotBaseData(params);
+
+        List<Object> result = new ArrayList<>();
+
+        for (CompanyProjectsReport baseData : baseList ) {
+            result.addAll(extraBaseData(baseData, projectincomevo4list));
+        }
+        return result;
+    }
+
+    private List<Object> extraBaseData(CompanyProjectsReport baseData, List<ProjectIncomeVo4> projectincomevo4list) {
+        Calendar pos = Calendar.getInstance();
+        pos.setTime(baseData.getStartdate());
+        pos.set(pos.get(Calendar.YEAR), pos.get(Calendar.MONTH), 1);
+        Date endDate = baseData.getEnddate();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+        SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+        Map<String, String> logMonthTimeMap = baseData.toLogMonthTimeMap();
+        List<Object> list = new ArrayList<>();
+        NumberFormat percent = NumberFormat.getPercentInstance();
+        percent.setMaximumFractionDigits(2);
+
+        // 经费初始化
+        List<Monthly> moneyList = companyprojectsMapper.getMoneysByProject(baseData.getCompanyprojects_id());
+        Map<String, String> moneyMap = new HashMap<>();
+        moneyMap = moneyList.stream().collect(Collectors.toMap(Monthly::getMonth, Monthly::getData));
+
+        // 部门名
+        String orgname = "";
+        for(ProjectIncomeVo4 pr4 : projectincomevo4list)
+        {
+            if(pr4.getGroupid().equals(baseData.getCenter_id()) && pr4.getEncoding() != null)
+            {
+                orgname = pr4.getGroupname();
+                break;
+            }else if(pr4.getGroupid().equals(baseData.getGroup_id())) {
+                orgname = pr4.getGroupname();
+                break;
+            }
+        }
+
+        Map<String, Integer> shouldWorkTimeMap = getShouldWorkTime(baseData);
+
+        while (!pos.getTime().after(endDate) ) {
+            Map<String, Object> line = new HashMap<>();
+            // 部门名
+            line.put("orgname", orgname);
+            line.put("groupId", baseData.getGroup_id());
+            line.put("centerId", baseData.getCenter_id());
+            // 项目名
+            String proname = "";
+            if(com.nt.utils.StringUtils.isBase64Encode(baseData.getProject_name())){
+                proname = Base64.decodeStr(baseData.getProject_name());
+            }else{
+                proname = baseData.getProject_name();
+            }
+            line.put("name", proname);
+            // 合同号
+            line.put("contract", baseData.getContract());
+            // 分配金额
+            line.put("contractamount", baseData.getContractamount());
+            // 处理月数据
+            String month = sdf.format(pos.getTime());
+            // 月份
+            line.put("month", month);
+            // 出勤开始时间
+            Date workStart = pos.after(baseData.getStartdate()) ? baseData.getStartdate() : pos.getTime();
+            // 出勤结束时间(月末时间或者是结束时间)
+            Date workEnd = getLastDateOfMonth(pos).before(baseData.getEnddate()) ? getLastDateOfMonth(pos) : baseData.getEnddate();
+            // 应出勤时间（员工）
+            String worktime = String.valueOf(shouldWorkTimeMap.getOrDefault(month + "_0", 0) * 8);
+            BigDecimal workTimesOfMonth = new BigDecimal(worktime);
+
+            // 实际出勤时间（员工）
+            BigDecimal realWorkTime = new BigDecimal(logMonthTimeMap.getOrDefault(month + "_0", "0"));
+            // 工数（员工）
+            if(workTimesOfMonth.compareTo(BigDecimal.ZERO)==0){
+                line.put("personType0", 0);
+            }else {
+
+                BigDecimal personType0 = realWorkTime.divide(workTimesOfMonth.multiply(BigDecimal.valueOf(100L)), 10, RoundingMode.HALF_UP);
+                line.put("personType0", percent.format(personType0.doubleValue()));
+            }
+
+            // 实际出勤时间（外驻）
+            BigDecimal realWorkTime2 = new BigDecimal(logMonthTimeMap.getOrDefault(month + "_1", "0"));
+            // 应出勤时间（外驻）
+            String worktime2 = String.valueOf(shouldWorkTimeMap.getOrDefault(month + "_1", 0) * 8);
+            BigDecimal workTimesOfMonth2 = new BigDecimal(worktime2);
+            if(StringUtils.isNotEmpty(worktime2)) {
+                workTimesOfMonth2 = new BigDecimal(worktime2);
+            }
+            // 工数（外驻）
+            if(workTimesOfMonth2.compareTo(BigDecimal.ZERO)==0){
+                line.put("personType1", 0);
+            }else {
+                BigDecimal personType1 = realWorkTime2.divide(workTimesOfMonth2.multiply(BigDecimal.valueOf(100L)), 10, RoundingMode.HALF_UP);
+                line.put("personType1", percent.format(personType1.doubleValue()));
+            }
+
+            // 经费
+            String moneys = moneyMap.getOrDefault(month, "0");
+            BigDecimal moneysOfMonth = new BigDecimal(0);
+            if(StringUtils.isNotEmpty(moneys)){
+                moneysOfMonth = new BigDecimal(moneys);
+            }
+
+            line.put("moneys", moneysOfMonth);
+            list.add(line);
+            pos.add(Calendar.MONTH, 1);
+        }
+        return list;
+    }
+
+    private Set<Long> getSumDaySet(CompanyProjectsReport baseData) {
+        Date startDate = baseData.getStartdate();
+        Date endDate = baseData.getEnddate();
+        SimpleDateFormat _sdf = new SimpleDateFormat("yyyy-MM-dd");
+        List<WorkingDay> workingDays = workingDayMapper.getWorkingday(_sdf.format(startDate), _sdf.format(endDate));
+        Map<Date, String> workingDayMap = workingDays.stream().collect(Collectors.toMap(WorkingDay::getWorkingdate, WorkingDay::getType));
+        Set<Long> sumDaySet = new HashSet<>();
+        Calendar startPos = Calendar.getInstance();
+        startPos.setTime(startDate);
+        while ( startPos.getTimeInMillis() <= endDate.getTime() ) {
+            int week = startPos.get(Calendar.DAY_OF_WEEK);
+            String type = workingDayMap.get(startPos.getTime());
+            if ( week == 0 || week == 6 ) {
+                if ( StringUtils.isNotEmpty(type) && !"4".equals(type) ) {
+                    sumDaySet.add(startPos.getTimeInMillis());
+                }
+            } else {
+                if ( "4".equals(type) ) {
+                    sumDaySet.add(startPos.getTimeInMillis());
+                }
+            }
+
+            startPos.add(Calendar.DAY_OF_MONTH, 1);
+        }
+        return sumDaySet;
+    }
+
+    private Map<String, Integer> getShouldWorkTime(CompanyProjectsReport baseData) {
+        Map<String, Integer> result = new HashMap<>();
+
+        Set<Long> sumDaySet = getSumDaySet(baseData);
+
+        String projectId = baseData.getCompanyprojects_id();
+        Projectsystem systemParam = new Projectsystem();
+        systemParam.setCompanyprojects_id(projectId);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+        List<Projectsystem> projectsystemList = projectsystemMapper.select(systemParam);
+        for (Projectsystem projectsystem : projectsystemList) {
+            Date sDate = projectsystem.getAdmissiontime();
+            Date eDate = projectsystem.getExittime();
+            String type = projectsystem.getType();
+            Calendar pos = Calendar.getInstance();
+            pos.setTime(sDate);
+            while (!pos.getTime().after(eDate)) {
+                String key = sdf.format(pos.getTime()) + "_" + type;
+                int oldDays = result.getOrDefault(key, 0);
+                Date lastMonthDate = getLastDateOfMonth(pos).after(eDate) ? eDate : getLastDateOfMonth(pos);
+
+                int workDays = 0;
+                Calendar posMonth = Calendar.getInstance();
+                posMonth.setTime(pos.getTime());
+                while (!posMonth.getTime().after(lastMonthDate)) {
+                    if ( !sumDaySet.contains(posMonth.getTimeInMillis()) ) {
+                        workDays++;
+                    }
+                    posMonth.add(Calendar.DAY_OF_MONTH, 1);
+                }
+
+                result.put(key, oldDays + workDays);
+                pos.add(Calendar.MONTH, 1);
+                pos.set(Calendar.DAY_OF_MONTH, 1);
+            }
+        }
+
+        return result;
+    }
+
+    private Date getLastDateOfMonth(Calendar pos) {
+        Calendar now = Calendar.getInstance();
+        now.setTime(pos.getTime());
+        now.set(Calendar.MONTH, now.get(Calendar.MONTH) + 1);
+        now.set(Calendar.DAY_OF_MONTH, 1);
+        now.add(Calendar.DAY_OF_MONTH, -1);
+        return now.getTime();
+    }
+//zy end 报表追加 2021/06/13
+
     //计算日期相差天数
     public static int daysBetween(String smdate, String bdate) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -1430,7 +1702,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         if (projectsystemList != null) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             //2019
-            //String thisYear_s = String.valueOf(Integer.parseInt(DateUtil.format(new Date(), "yyyy")) - 1);
+            //String thisYear_s = String.valueOf(Integer.parseInt(DateUtil.format(new Date(), "YYYY")) - 1);
             String thisYear_s = DateUtil.format(new Date(), "yyyy");
             //2020
 //            int thatYear_i = Integer.parseInt(thisYear_s) + 1;
