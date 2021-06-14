@@ -141,8 +141,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         Napalm napalm =new Napalm();
         if(contractapplication.getContractnumber()!=null)
         {
-            String [] cnumber  = contractapplication.getContractnumber().split("-");
-            napalm.setContractnumber(cnumber[0]);
+//            String [] cnumber  = contractapplication.getContractnumber().split("-");
+            napalm.setContractnumber(contractapplication.getContractnumber());
             List<Napalm> napalmL = napalmMapper.select(napalm);
             if(napalmL!=null)
             {
@@ -151,7 +151,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     for(Contractnumbercount c : numberList)
                     {
                         String numb = "";
-                        numb = cnumber[0] + "-" + c.getClaimtype().replace("第","").replace("回","").replace("書","");
+                        numb = contractapplication.getContractnumber() + "-" + c.getClaimtype().replace("第","").replace("回","");
                         if(numb.equals(n.getClaimnumber()))
                         {
                             //临时存入TENANTID  "0"是存在纳品书，觉书后，回数不可编辑， null 为不存在觉书，可编辑。
@@ -174,6 +174,19 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         vo.setContractcompound(compoundList);
         return vo;
     }
+
+    //add-ccm-0610-已经纳品的回数查询 str
+    @Override
+    public List<Contractnumbercount> getNaPpinAftercount(String contractnumber)
+    {
+        List<Contractnumbercount> countNumberList = new ArrayList<>();
+        Contractnumbercount number = new Contractnumbercount();
+        String []contractnumberarray = contractnumber.split("-");
+        number.setContractnumber(contractnumberarray[0]);
+        countNumberList = contractnumbercountMapper.select(number);
+        return countNumberList;
+    }
+    //add-ccm-0610-已经纳品的回数查询 end
 
     @Override
     public List<ContractapplicationVo> getList(List<Contractapplication> contractapplicationlist) {

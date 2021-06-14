@@ -115,6 +115,16 @@ public class Pfans1026Controller {
         return ApiResult.success(contractapplicationService.get(contractapplication));
     }
 
+    //add-ccm-0610-已经纳品的回数查询 str
+    @RequestMapping(value = "/getNaPpinAftercount", method = {RequestMethod.POST})
+    public ApiResult getNaPpinAftercount(String contractnumber, HttpServletRequest request) throws Exception {
+        if (contractnumber == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(contractapplicationService.getNaPpinAftercount(contractnumber));
+    }
+    //add-ccm-0610-已经纳品的回数查询 end
+
     @RequestMapping(value = "/get2", method = {RequestMethod.POST})
     public ApiResult selectById2(@RequestBody Contractapplication contractapplication, HttpServletRequest request) throws Exception {
         if (contractapplication == null) {

@@ -11,6 +11,11 @@ import java.util.Map;
 public interface ContractapplicationService {
 
     ContractapplicationVo get(Contractapplication contractapplication) throws Exception;
+
+    //add-ccm-0610-已经纳品的回数查询 str
+    List<Contractnumbercount> getNaPpinAftercount(String contractnumber) throws Exception;
+    //add-ccm-0610-已经纳品的回数查询 end
+
     //add-ws-7/22-禅道341任务
     List<Individual> getindividual(Individual individual ) throws Exception;
     //add-ws-7/22-禅道341任务
