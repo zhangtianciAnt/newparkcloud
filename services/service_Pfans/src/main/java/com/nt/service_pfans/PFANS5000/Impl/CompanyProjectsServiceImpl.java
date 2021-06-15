@@ -1,6 +1,5 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
-import cn.hutool.core.codec.Base64;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Auth.Role;
@@ -21,6 +20,7 @@ import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.UserService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
+import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.mapper.*;
 import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
@@ -63,6 +63,9 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
     @Autowired
     private ToDoNoticeService toDoNoticeService;
+
+    @Autowired
+    private AnnualLeaveService annualLeaveService;
 
     @Autowired
     private OrgTreeService orgTreeService;
@@ -1390,18 +1393,35 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
 //        OrgTree orgs = orgTreeService.get(new OrgTree());
         for (OrgTree org : org21s.getOrgs()) {
-            for (OrgTree orgC : org.getOrgs()) {
-                if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(orgC.getEncoding()))
-                {
-                    ProjectIncomeVo4 projectincomevo4 = new ProjectIncomeVo4();
-                    projectincomevo4.setGroupid(orgC.get_id());
-                    projectincomevo4.setGroupname(orgC.getCompanyname());
-                    projectincomevo4.setEncoding(orgC.getEncoding().substring(0, 2));
-                    projectincomevo4.setFlag("0");
-                    projectincomevo4list.add(projectincomevo4);
+                for (OrgTree orgC : org.getOrgs()) {
+                    if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(orgC.getEncoding()))
+                    {
+                        ProjectIncomeVo4 projectincomevo4 = new ProjectIncomeVo4();
+                        projectincomevo4.setGroupid(orgC.get_id());
+                        projectincomevo4.setGroupname(orgC.getCompanyname());
+                        projectincomevo4.setEncoding(orgC.getEncoding().substring(0, 2));
+                        projectincomevo4.setFlag("0");
+                        projectincomevo4list.add(projectincomevo4);
+                    }
+                    else
+                    {
+                        for (OrgTree orgG : orgC.getOrgs())
+                        {
+                            if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(orgG.getEncoding()))
+                            {
+                                ProjectIncomeVo4 projectincomevo4 = new ProjectIncomeVo4();
+                                projectincomevo4.setGroupid(orgG.get_id());
+                                projectincomevo4.setGroupname(orgG.getCompanyname());
+                                projectincomevo4.setEncoding(orgG.getEncoding().substring(0, 2));
+                                projectincomevo4.setFlag("1");
+                                projectincomevo4list.add(projectincomevo4);
+                            }
+                        }
+                    }
+
                 }
-                else
-                {
+            }
+        for (OrgTree orgC : org20s.getOrgs()){
                     for (OrgTree orgG : orgC.getOrgs())
                     {
                         if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(orgG.getEncoding()))
@@ -1415,23 +1435,6 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                         }
                     }
                 }
-
-            }
-        }
-        for (OrgTree orgC : org20s.getOrgs()){
-            for (OrgTree orgG : orgC.getOrgs())
-            {
-                if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(orgG.getEncoding()))
-                {
-                    ProjectIncomeVo4 projectincomevo4 = new ProjectIncomeVo4();
-                    projectincomevo4.setGroupid(orgG.get_id());
-                    projectincomevo4.setGroupname(orgG.getCompanyname());
-                    projectincomevo4.setEncoding(orgG.getEncoding().substring(0, 2));
-                    projectincomevo4.setFlag("1");
-                    projectincomevo4list.add(projectincomevo4);
-                }
-            }
-        }
 
         return projectincomevo4list;
     }
@@ -1449,10 +1452,11 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         for (CompanyProjectsReport baseData : baseList ) {
             result.addAll(extraBaseData(baseData, projectincomevo4list));
         }
+
         return result;
     }
 
-    private List<Object> extraBaseData(CompanyProjectsReport baseData, List<ProjectIncomeVo4> projectincomevo4list) {
+    private List<Object> extraBaseData(CompanyProjectsReport baseData, List<ProjectIncomeVo4> projectincomevo4list) throws Exception {
         Calendar pos = Calendar.getInstance();
         pos.setTime(baseData.getStartdate());
         pos.set(pos.get(Calendar.YEAR), pos.get(Calendar.MONTH), 1);
@@ -1461,8 +1465,8 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
         Map<String, String> logMonthTimeMap = baseData.toLogMonthTimeMap();
         List<Object> list = new ArrayList<>();
-        NumberFormat percent = NumberFormat.getPercentInstance();
-        percent.setMaximumFractionDigits(2);
+//        NumberFormat percent = NumberFormat.getPercentInstance();
+//        percent.setMaximumFractionDigits(2);
 
         // 经费初始化
         List<Monthly> moneyList = companyprojectsMapper.getMoneysByProject(baseData.getCompanyprojects_id());
@@ -1483,7 +1487,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             }
         }
 
-        Map<String, Integer> shouldWorkTimeMap = getShouldWorkTime(baseData);
+        Map<String, Double> shouldWorkTimeMap = getShouldWorkTime(baseData);
 
         while (!pos.getTime().after(endDate) ) {
             Map<String, Object> line = new HashMap<>();
@@ -1492,14 +1496,26 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             line.put("groupId", baseData.getGroup_id());
             line.put("centerId", baseData.getCenter_id());
             // 项目名
-            String proname = "";
-            if(com.nt.utils.StringUtils.isBase64Encode(baseData.getProject_name())){
-                proname = Base64.decodeStr(baseData.getProject_name());
-            }else{
-                proname = baseData.getProject_name();
-            }
-            line.put("name", proname);
+            line.put("name", baseData.getProject_name());
             // 合同号
+            if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(baseData.getContract()))
+            {
+                String []arr = baseData.getContract().split(",");
+                Set set = new HashSet();
+                for(int i=0;i < arr.length;i++ )
+                {
+                    set.add(arr[i]);
+                }
+                baseData.setContract("");
+                for(int i=0;i < set.toArray().length;i++ )
+                {
+                    baseData.setContract(baseData.getContract() + set.toArray()[i]+",");
+                }
+                if(!baseData.getContract().equals(""))
+                {
+                    baseData.setContract(baseData.getContract().substring(0,baseData.getContract().length()-1));
+                }
+            }
             line.put("contract", baseData.getContract());
             // 分配金额
             line.put("contractamount", baseData.getContractamount());
@@ -1511,36 +1527,73 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             Date workStart = pos.after(baseData.getStartdate()) ? baseData.getStartdate() : pos.getTime();
             // 出勤结束时间(月末时间或者是结束时间)
             Date workEnd = getLastDateOfMonth(pos).before(baseData.getEnddate()) ? getLastDateOfMonth(pos) : baseData.getEnddate();
-            // 应出勤时间（员工）
-            String worktime = String.valueOf(shouldWorkTimeMap.getOrDefault(month + "_0", 0) * 8);
-            BigDecimal workTimesOfMonth = new BigDecimal(worktime);
 
-            // 实际出勤时间（员工）
-            BigDecimal realWorkTime = new BigDecimal(logMonthTimeMap.getOrDefault(month + "_0", "0"));
-            // 工数（员工）
-            if(workTimesOfMonth.compareTo(BigDecimal.ZERO)==0){
-                line.put("personType0", 0);
-            }else {
+            //add ccm fr
+            String projectId = baseData.getCompanyprojects_id();
+            Projectsystem systemParam = new Projectsystem();
+            systemParam.setCompanyprojects_id(projectId);
 
-                BigDecimal personType0 = realWorkTime.divide(workTimesOfMonth.multiply(BigDecimal.valueOf(100L)), 10, RoundingMode.HALF_UP);
-                line.put("personType0", percent.format(personType0.doubleValue()));
-            }
+            List<Projectsystem> projectsystemList = projectsystemMapper.select(systemParam);
 
-            // 实际出勤时间（外驻）
-            BigDecimal realWorkTime2 = new BigDecimal(logMonthTimeMap.getOrDefault(month + "_1", "0"));
-            // 应出勤时间（外驻）
-            String worktime2 = String.valueOf(shouldWorkTimeMap.getOrDefault(month + "_1", 0) * 8);
-            BigDecimal workTimesOfMonth2 = new BigDecimal(worktime2);
-            if(StringUtils.isNotEmpty(worktime2)) {
-                workTimesOfMonth2 = new BigDecimal(worktime2);
+            for (Projectsystem projectsystem : projectsystemList)
+            {
+                if(projectsystem.getType().equals("0"))
+                {
+                    // 应出勤时间（员工）
+                    String worktime = String.valueOf(shouldWorkTimeMap.getOrDefault(month + "_0" + "_"+ projectsystem.getName(), 0d) * 8);
+                    BigDecimal workTimesOfMonth = new BigDecimal(worktime);
+
+                    // 实际出勤时间（员工）
+                    BigDecimal realWorkTime = new BigDecimal(logMonthTimeMap.getOrDefault(month + "_0" + "_"+ projectsystem.getName(), "0"));
+
+                    // 工数（员工）
+                    if(workTimesOfMonth.compareTo(BigDecimal.ZERO)==0){
+                        line.put("personType0", 0);
+                    }else {
+
+                        BigDecimal personType0 = realWorkTime.divide(workTimesOfMonth,2,4);
+
+                        if(line.containsKey("personType0"))
+                        {
+                            personType0 = personType0.add(new BigDecimal(String.valueOf(line.get("personType0"))));
+                            line.put("personType0", personType0);
+                        }
+                        else
+                        {
+                            line.put("personType0", personType0);
+                        }
+                    }
+                }
+                else
+                {
+                    // 实际出勤时间（外驻）
+                    BigDecimal realWorkTime2 = new BigDecimal(logMonthTimeMap.getOrDefault(month + "_1" + "_"+ projectsystem.getName(), "0"));
+                    // 应出勤时间（外驻）
+                    String worktime2 = String.valueOf(shouldWorkTimeMap.getOrDefault(month + "_1" + "_"+ projectsystem.getName(), 0d) * 8);
+                    BigDecimal workTimesOfMonth2 = new BigDecimal(worktime2);
+                    if(StringUtils.isNotEmpty(worktime2)) {
+                        workTimesOfMonth2 = new BigDecimal(worktime2);
+                    }
+                    // 工数（外驻）
+                    if(workTimesOfMonth2.compareTo(BigDecimal.ZERO)==0){
+                        line.put("personType1", 0);
+                    }else {
+                        BigDecimal personType1 = realWorkTime2.divide(workTimesOfMonth2, 2,4);
+                        if(line.containsKey("personType1"))
+                        {
+                            personType1 = personType1.add(new BigDecimal(String.valueOf(line.get("personType1"))));
+                            line.put("personType1", personType1);
+                        }
+                        else
+                        {
+                            line.put("personType1", personType1);
+                        }
+                    }
+                }
             }
-            // 工数（外驻）
-            if(workTimesOfMonth2.compareTo(BigDecimal.ZERO)==0){
-                line.put("personType1", 0);
-            }else {
-                BigDecimal personType1 = realWorkTime2.divide(workTimesOfMonth2.multiply(BigDecimal.valueOf(100L)), 10, RoundingMode.HALF_UP);
-                line.put("personType1", percent.format(personType1.doubleValue()));
-            }
+            //add ccm to
+
+
 
             // 经费
             String moneys = moneyMap.getOrDefault(month, "0");
@@ -1583,8 +1636,8 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         return sumDaySet;
     }
 
-    private Map<String, Integer> getShouldWorkTime(CompanyProjectsReport baseData) {
-        Map<String, Integer> result = new HashMap<>();
+    private Map<String, Double> getShouldWorkTime(CompanyProjectsReport baseData) throws Exception {
+        Map<String, Double> result = new HashMap<>();
 
         Set<Long> sumDaySet = getSumDaySet(baseData);
 
@@ -1601,21 +1654,32 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             Calendar pos = Calendar.getInstance();
             pos.setTime(sDate);
             while (!pos.getTime().after(eDate)) {
-                String key = sdf.format(pos.getTime()) + "_" + type;
-                int oldDays = result.getOrDefault(key, 0);
+                String key = sdf.format(pos.getTime()) + "_" + type + "_"+ projectsystem.getName();
+                Double oldDays = result.getOrDefault(key, 0d);
                 Date lastMonthDate = getLastDateOfMonth(pos).after(eDate) ? eDate : getLastDateOfMonth(pos);
-
-                int workDays = 0;
+//
+//                int workDays = 0;
                 Calendar posMonth = Calendar.getInstance();
                 posMonth.setTime(pos.getTime());
-                while (!posMonth.getTime().after(lastMonthDate)) {
-                    if ( !sumDaySet.contains(posMonth.getTimeInMillis()) ) {
-                        workDays++;
+//                while (!posMonth.getTime().after(lastMonthDate)) {
+//                    if ( !sumDaySet.contains(posMonth.getTimeInMillis()) ) {
+//                        workDays++;
+//                    }
+                    SimpleDateFormat fy = new SimpleDateFormat("yyyy");
+                    SimpleDateFormat fym = new SimpleDateFormat("yyyy-MM");
+                    SimpleDateFormat fm = new SimpleDateFormat("MM");
+                    SimpleDateFormat fymd = new SimpleDateFormat("yyyy-MM-dd");
+                    String year = fy.format(posMonth.getTime());
+                    if(Integer.valueOf(fm.format(posMonth.getTime())) < 4)
+                    {
+                        year = String.valueOf(Integer.valueOf(fy.format(posMonth.getTime())) - 1);
                     }
-                    posMonth.add(Calendar.DAY_OF_MONTH, 1);
-                }
+                    String days = "0";
+                    days = annualLeaveService.workDayBymonth(fymd.format(posMonth.getTime()),fymd.format(lastMonthDate),year);
+//                    posMonth.add(Calendar.DAY_OF_MONTH, 1);
+//                }
 
-                result.put(key, oldDays + workDays);
+                result.put(key, oldDays + Double.valueOf(days));
                 pos.add(Calendar.MONTH, 1);
                 pos.set(Calendar.DAY_OF_MONTH, 1);
             }
