@@ -122,10 +122,13 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
                     List<MembersVo> rolelist = roleService.getMembers("606bef4253b22307706e52e7");
                     if (rolelist.size() > 0) {
                         for (int t = 0; t < rolelist.size(); t++) {
-                            if (!("5f55c9f89729aa16f0014fa9").equals(rolelist.get(t).getUserid())) {
+                            //尹金顺，王颖不接受通知
+                            if (("5f55c9f89729aa16f0014fa9").equals(rolelist.get(t).getUserid())|| ("5e78b23e4e3b194874180fe5").equals(rolelist.get(t).getUserid())) {
+                                continue;
+                            }else {
                                 toDoNotice.setOwner(rolelist.get(t).getUserid());
                                 toDoNoticeService.save(toDoNotice);
-                            }else continue;
+                            }
                         }
                     }
                 }
