@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Auth.Role;
@@ -1496,7 +1497,13 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             line.put("groupId", baseData.getGroup_id());
             line.put("centerId", baseData.getCenter_id());
             // 项目名
-            line.put("name", baseData.getProject_name());
+            String proname = "";
+            if(com.nt.utils.StringUtils.isBase64Encode(baseData.getProject_name())){
+                proname = Base64.decodeStr(baseData.getProject_name());
+            }else{
+                proname = baseData.getProject_name();
+            }
+            line.put("name", proname);
             // 合同号
             if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(baseData.getContract()))
             {
