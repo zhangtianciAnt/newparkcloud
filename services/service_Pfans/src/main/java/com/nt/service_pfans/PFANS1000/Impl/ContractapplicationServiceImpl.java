@@ -180,11 +180,26 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     public List<Contractnumbercount> getNaPpinAftercount(String contractnumber)
     {
         List<Contractnumbercount> countNumberList = new ArrayList<>();
+        List<Contractnumbercount> countNumberListafter = new ArrayList<>();
         Contractnumbercount number = new Contractnumbercount();
         String []contractnumberarray = contractnumber.split("-");
         number.setContractnumber(contractnumberarray[0]);
         countNumberList = contractnumbercountMapper.select(number);
-        return countNumberList;
+        Napalm napalm =new Napalm();
+        if(countNumberList.size()>0)
+        {
+            for(Contractnumbercount c : countNumberList) {
+
+                napalm.setContractnumber(countNumberList.get(0).getContractnumber());
+                napalm.setClaimnumber(countNumberList.get(0).getContractnumber() + "-" + c.getClaimtype().replace("第","").replace("回",""));
+                List<Napalm> napalmL = napalmMapper.select(napalm);
+                if(napalmL.size()>0)
+                {
+                    countNumberListafter.add(c);
+                }
+            }
+        }
+        return countNumberListafter;
     }
     //add-ccm-0610-已经纳品的回数查询 end
 

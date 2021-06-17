@@ -116,7 +116,7 @@ public class Pfans1026Controller {
     }
 
     //add-ccm-0610-已经纳品的回数查询 str
-    @RequestMapping(value = "/getNaPpinAftercount", method = {RequestMethod.POST})
+    @RequestMapping(value = "/getNaPpinAftercount", method = {RequestMethod.GET})
     public ApiResult getNaPpinAftercount(String contractnumber, HttpServletRequest request) throws Exception {
         if (contractnumber == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
