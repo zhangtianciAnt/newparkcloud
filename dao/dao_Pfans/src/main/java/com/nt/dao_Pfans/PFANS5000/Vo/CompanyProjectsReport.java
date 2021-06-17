@@ -25,7 +25,7 @@ public class CompanyProjectsReport extends CompanyProjects {
 
     public Map<String, String> toLogMonthTimeMap() {
         if ( logMonthTime != null ) {
-            return logMonthTime.stream().collect(Collectors.toMap(t -> t.getLogMonth() + "_" + t.getType(), MonthTime::getTime));
+            return logMonthTime.stream().collect(Collectors.toMap(t -> t.getLogMonth() + "_" + t.getType() + "_" + t.getName() , MonthTime::getTime));
         }
         return new HashMap<>();
     }
@@ -36,5 +36,6 @@ public class CompanyProjectsReport extends CompanyProjects {
 class MonthTime {
     private String logMonth;
     private String time;
+    private String name;
     private String type;
 }

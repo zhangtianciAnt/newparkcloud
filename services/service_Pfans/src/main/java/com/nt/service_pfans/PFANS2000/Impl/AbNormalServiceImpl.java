@@ -103,6 +103,7 @@ public class AbNormalServiceImpl implements AbNormalService {
         abNormalMapper.insert(abNormal);
     }
 
+    //add   被承认过的日期不可申请考勤异常  from
     @Override
     public void selectTime(AbNormal abNormal, TokenModel tokenModel) throws Exception {
         if (abNormal.getStatus().equals("") || abNormal.getStatus().equals("0")){
@@ -114,6 +115,7 @@ public class AbNormalServiceImpl implements AbNormalService {
             }
         }
     }
+    //add   被承认过的日期不可申请考勤异常  to
 
     public int getYears(String startCal) throws Exception {
         int year = 0;
@@ -159,10 +161,9 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Override
     public void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception {
         abNormal.preUpdate(tokenModel);
-        //页面传来的状态
+        //add   被承认过的日期不可申请考勤异常  from
         if(abNormal.getStatus().equals("4")) {
             AbNormal ab = abNormalMapper.selectByPrimaryKey(abNormal.getAbnormalid());
-            //数据库状态
             if (ab.getStatus().equals("4")) {
                 List<Attendance> attendanceList2 = attendanceMapper.twoTime(abNormal.getUser_id(), abNormal.getReoccurrencedate(), abNormal.getRefinisheddate());
                 for (Attendance attendance3 : attendanceList2) {
@@ -172,6 +173,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                 }
             }
         }
+        //add   被承认过的日期不可申请考勤异常  to
         abNormalMapper.updateByPrimaryKey(abNormal);
         //add ccm 2020708 异常实时反应
         if(abNormal.getStatus().equals("4"))
