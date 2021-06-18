@@ -2,13 +2,11 @@ package com.nt.service_pfans.PFANS5000;
 
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS5000.*;
-import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
-import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
-import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo3;
-import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
+import com.nt.dao_Pfans.PFANS5000.Vo.*;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 import java.util.List;
 
 
@@ -57,4 +55,8 @@ public interface CompanyProjectsService {
 // zy start 报表追加 2021/06/13
     List<Object> report(String start, String end, List<String> ownerList, String userId) throws Exception;
 // zy end 报表追加 2021/06/13
+
+    // ztc start 项目整理追加 2021/06/18
+    List<CompanyProjectsReportCheckVo> reportCheck() throws Exception;
+    // ztc end 项目整理追加 2021/06/18
 }

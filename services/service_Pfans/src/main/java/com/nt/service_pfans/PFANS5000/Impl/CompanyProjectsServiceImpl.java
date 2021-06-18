@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Auth.Role;
@@ -10,6 +11,7 @@ import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.Vo.ProjectIncomeVo4;
+import com.nt.dao_Pfans.PFANS2000.Vo.PersonalCostExpVo;
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.*;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
@@ -41,6 +43,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -2776,5 +2779,87 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     @Override
     public List<CompanyProjectsVo3> getCompanyProject(String SyspName) throws Exception {
         return companyprojectsMapper.getCompanyProject(SyspName);
+    }
+
+
+    @Override
+    public List<CompanyProjectsReportCheckVo> reportCheck() throws Exception {
+        List<CompanyProjectsReportCheckVo> personalCostExpVoList = new ArrayList<>();
+        List<String> companypIdZ = companyprojectsMapper.getComprojectIdZ();
+        personalCostExpVoList.addAll(this.selectProInfo(companypIdZ));
+        List<String> companypIdO = companyprojectsMapper.getComprojectIdO();
+        personalCostExpVoList.addAll(this.selectProInfo(companypIdO));
+        return personalCostExpVoList;
+    }
+
+    public List<CompanyProjectsReportCheckVo> selectProInfo(List<String> companypId) throws Exception {
+
+        List<CompanyProjectsReportCheckVo> resultInfoList = new ArrayList<>();
+        if (companypId.size() > 0) {
+            for (String proId : companypId) {
+                CompanyProjectsReportCheckVo cprc = new CompanyProjectsReportCheckVo();
+                //项目
+                CompanyProjects comp = new CompanyProjects();
+                comp.setCompanyprojects_id(proId);
+                List<CompanyProjects> projectsList = companyprojectsMapper.select(comp);
+                if (projectsList.size() > 0) {
+                    cprc.setCompanyProjects(projectsList.get(0));
+                }
+                //开发计划
+                StageInformation steInfo = new StageInformation();
+                steInfo.setCompanyprojects_id(proId);
+                List<StageInformation> stageInformationList = stageinformationMapper.select(steInfo);
+                if(stageInformationList.size() > 0){
+                    for(StageInformation stag : stageInformationList){
+                        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(stag.getPhase())){
+                            String dicPhase = companyprojectsMapper.getDicInfo(stag.getPhase());
+                            if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(dicPhase)){
+                                stag.setPhase(dicPhase);
+                            }
+                        }
+                        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(stag.getStageproduct())){
+                            String dicStag = companyprojectsMapper.getDicInfo(stag.getStageproduct());
+                            if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(dicStag)){
+                                stag.setStageproduct(dicStag);
+                            }
+                        }
+                    }
+                    cprc.setStageInformationList(stageInformationList);
+                }
+                //体制
+                Projectsystem pjst = new Projectsystem();
+                pjst.setCompanyprojects_id(proId);
+                List<Projectsystem> projectsystemList = projectsystemMapper.select(pjst);
+                if (projectsystemList.size() > 0) {
+                    for(Projectsystem pros : projectsystemList){
+                        if(pros.getType().equals("0")){
+                            Query query = new Query();
+                            query.addCriteria(Criteria.where("userid").is(pros.getName()));
+                            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                            if(customerInfo != null){
+                                pros.setName(customerInfo.getUserinfo().getCustomername());
+                            }
+                        }else{
+                            Expatriatesinfor exinfo = new Expatriatesinfor();
+                            exinfo.setAccount(pros.getName());
+                            List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(exinfo);
+                            if(expatriatesinforList.size() > 0){
+                                pros.setName(expatriatesinforList.get(0).getExpname());
+                            }
+                        }
+                    }
+                    cprc.setProjectsystemList(projectsystemList);
+                }
+                //合同
+                ProjectContract pjct = new ProjectContract();
+                pjct.setCompanyprojects_id(proId);
+                List<ProjectContract> projectContractList = projectcontractMapper.select(pjct);
+                if (projectContractList.size() > 0) {
+                    cprc.setProjectContractList(projectContractList);
+                }
+                resultInfoList.add(cprc);
+            }
+        }
+        return resultInfoList;
     }
 }

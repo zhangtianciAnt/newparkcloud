@@ -1,9 +1,14 @@
 package com.nt.controller.Controller.PFANS;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
+import com.nt.dao_Pfans.PFANS2000.Vo.PersonalCostExpVo;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
 import com.nt.dao_Pfans.PFANS5000.StageInformation;
+import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsReportCheckVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.dao_Pfans.PFANS6000.Customerinfor;
@@ -35,8 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Array;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/companyprojects")
@@ -412,4 +416,108 @@ public class Pfans5001Controller {
         return ApiResult.success(companyProjectsService.report(start, end, tokenModel.getOwnerList(), tokenModel.getUserId()));
     }
 //zy end 报表追加 2021/06/13
+
+    /**
+     * @方法名：reportCheck
+     * @描述：导出项目相关信息
+     * @创建日期：2021/06/18
+     * @作者：ztc
+     * @参数：[
+     * flag：0 项目开始时间小于2021-04-01，
+     *       1 项目结束时间小于2021-04-01，且体制的结束时间大于2020-04-01；
+     * time：时间格式[YYYY-MM-DD];
+     * ]
+     * @返回值：List<CompanyProjectsReport>
+     */
+    @RequestMapping(value = "/reportCheck", method={RequestMethod.GET})
+    public ApiResult report() throws Exception {
+        List<CompanyProjectsReportCheckVo> cprcList = companyProjectsService.reportCheck();
+        ArrayList<Map<String, Object>> rowLists = CollUtil.newArrayList();
+
+        for (CompanyProjectsReportCheckVo item : cprcList
+        ) {
+            int compNum = 0;
+            int sysmNum = 0;
+            int contNum = 0;
+            int stagNum = 0;
+            if(item.getProjectsystemList() != null){
+                sysmNum = item.getProjectsystemList().size();
+            }
+            if(item.getStageInformationList() != null){
+                stagNum = item.getStageInformationList().size();
+            }
+            if(item.getProjectContractList() != null){
+                contNum = item.getProjectContractList().size();
+            }
+
+            int maxNum = ((maxNum=(sysmNum > stagNum) ? sysmNum : stagNum) > contNum ? maxNum : contNum);
+
+            for(int i = 0; i < maxNum; i++){
+                Map<String, Object> row = new LinkedHashMap<>();
+                if(compNum == 0){
+                    row.put("项目编号", item.getCompanyProjects().getNumbers());
+                    row.put("项目名称", item.getCompanyProjects().getProject_name());
+                    row.put("开始时间", item.getCompanyProjects().getStartdate());
+                    row.put("预计完成时间", item.getCompanyProjects().getEnddate());
+                    row.put("受託工数（人月）", item.getCompanyProjects().getManmonth());
+                    compNum ++;
+                }else{
+                    row.put("项目编号", "");
+                    row.put("项目名称", "");
+                    row.put("开始时间", "");
+                    row.put("预计完成时间", "");
+                    row.put("受託工数（人月）", "");
+                }
+                if(i < stagNum){
+                    row.put("工作阶段", item.getStageInformationList().get(i).getPhase());
+                    row.put("阶段成果物", item.getStageInformationList().get(i).getStageproduct());
+                    row.put("预计工数（人月）", item.getStageInformationList().get(i).getEstimatedwork());
+                    row.put("实际工数（人月）", item.getStageInformationList().get(i).getActualwork());
+                    row.put("预计开始时间", item.getStageInformationList().get(i).getEstimatedstarttime());
+                    row.put("预计结束时间", item.getStageInformationList().get(i).getEstimatedendtime());
+                    row.put("实际开始时间", item.getStageInformationList().get(i).getActualstarttime());
+                    row.put("实际结束时间", item.getStageInformationList().get(i).getActualendtime());
+                }else{
+                    row.put("工作阶段", "");
+                    row.put("阶段成果物", "");
+                    row.put("预计工数（人月）", "");
+                    row.put("实际工数（）", "");
+                    row.put("预计开始时间", "");
+                    row.put("预计结束时间", "");
+                    row.put("实际开始时间", "");
+                    row.put("实际结束时间", "");
+                }
+                if(i < sysmNum){
+                    row.put("社内/社外", (item.getProjectsystemList().get(i).getType().equals("0") ? "社内" : "社外"));
+                    row.put("姓名", item.getProjectsystemList().get(i).getName());
+                    row.put("入场时间", item.getProjectsystemList().get(i).getAdmissiontime());
+                    row.put("退出时间", item.getProjectsystemList().get(i).getExittime());
+                }else{
+                    row.put("社内/社外", "");
+                    row.put("姓名", "");
+                    row.put("入场时间", "");
+                    row.put("退出时间", "");
+                }
+                if(i < contNum){
+                    row.put("合同", item.getProjectContractList().get(i).getContract());
+                    row.put("请求方式", item.getProjectContractList().get(i).getClaimtype());
+                    row.put("请求期间", item.getProjectContractList().get(i).getWorkinghours());
+                    row.put("请求金额", item.getProjectContractList().get(i).getContractrequestamount());
+                    row.put("分配金额", item.getProjectContractList().get(i).getContractamount());
+                }else{
+                    row.put("合同", "");
+                    row.put("请求方式", "");
+                    row.put("请求期间", "");
+                    row.put("请求金额", "");
+                    row.put("分配金额", "");
+                }
+                rowLists.add(row);
+            }
+        }
+        String destFilePath = "D:/" + "项目相关信息.xlsx";
+        ExcelWriter writer = ExcelUtil.getWriter(destFilePath, "项目相关信息");
+        writer.write(rowLists);
+        writer.close();
+        return ApiResult.success();
+    }
 }
