@@ -100,6 +100,7 @@ public class Pfans2016Controller {
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
             }
             TokenModel tokenModel = tokenService.getToken(request);
+            //被承认过的日期不可申请考勤异常
             abNormalService.selectTime(abNormal, tokenModel);
             //未承认
             abNormal.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
@@ -116,6 +117,7 @@ public class Pfans2016Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        //被承认过的日期不可申请考勤异常
         abNormalService.selectTime(abNormal, tokenModel);
         abNormalService.upd(abNormal, tokenModel);
         return ApiResult.success();

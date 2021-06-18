@@ -12,6 +12,7 @@ public interface AbNormalService {
 
     void insert(AbNormal abNormal, TokenModel tokenModel) throws Exception;
 
+    //被承认过的日期不可申请考勤异常
     void selectTime(AbNormal abNormal, TokenModel tokenModel) throws Exception;
 
     //获取异常申请列表信息
