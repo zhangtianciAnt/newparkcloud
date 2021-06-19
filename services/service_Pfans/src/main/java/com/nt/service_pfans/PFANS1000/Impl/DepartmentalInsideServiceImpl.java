@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Pfans.PFANS1000.DepartmentalInside;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalInsideBaseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.StaffWorkMonthInfoVo;
@@ -13,9 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -79,8 +79,28 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
         }
 
         List<DepartmentalInsideBaseVo> departmentalInsideBaseVoList = departmentalInsideMapper.getBaseInfo(String.valueOf(year));
-        List<String> userList = departmentalInsideBaseVoList.stream().map(DepartmentalInsideBaseVo::getNAME).collect(Collectors.toList());
-        List<StaffWorkMonthInfoVo> staffWorkMonthInfoVoList = departmentalInsideMapper.getWorkInfo(String.valueOf(year)+ '-' + String.valueOf(month),userList);
+        List<String> userList = departmentalInsideBaseVoList.stream().map(DepartmentalInsideBaseVo::getNAME).distinct().collect(Collectors.toList());
+        List<String> projectList = departmentalInsideBaseVoList.stream().map(DepartmentalInsideBaseVo::getCOMPANYPROJECTS_ID).distinct().collect(Collectors.toList());
+        String monthStr = "";
+        if(month < 10){
+            monthStr = "0" + month;
+        }
+        String LOG_DATE = String.valueOf(year) + '-' + monthStr;
+        List<StaffWorkMonthInfoVo> staffWorkMonthInfoVoList = departmentalInsideMapper.getWorkInfo(LOG_DATE,userList,projectList);
+        Map<String,Map<String, List<StaffWorkMonthInfoVo>>> staffGroupMap =
+                staffWorkMonthInfoVoList.stream()
+                        .collect(Collectors.groupingBy(StaffWorkMonthInfoVo::getGroup_id,
+                                    Collectors.groupingBy(StaffWorkMonthInfoVo::getProject_id)));
+        staffGroupMap.forEach((key,list) -> {
+            DepartmentalInside departmentalInside = new DepartmentalInside();
+            departmentalInside.setDepartment(key);
+            list.forEach((item,value) -> {
+                departmentalInside.setDepartment(item);
+                String rankSum  = value.stream().map(i -> new BigDecimal(i.getTime_start())).reduce(BigDecimal.ZERO, BigDecimal::add).toString();
+
+                //                departmentalInside.set(key);
+            });
+        });
         TokenModel tokenModel = new TokenModel();
         if (departmentVoList.size() > 0) {
             for (DepartmentVo dv : departmentVoList) {

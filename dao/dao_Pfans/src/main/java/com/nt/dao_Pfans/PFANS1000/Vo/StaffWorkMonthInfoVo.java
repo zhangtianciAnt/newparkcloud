@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class StaffWorkMonthInfoVo {
+    private String rank;
+    private String userid;
     private String time_start;
     private String group_id;
-    private String userid;
-    private String ldate;
+    private String project_id;
 }

@@ -41,20 +41,38 @@
                 AND cs.`STATUS` >= 4
                 AND pm.type = '0'
     </select>
-    <select id="getWorkInfo" resultType="com.nt.dao_Pfans.PFANS1000.Vo.StaffWorkMonthInfoVo">
+    <select id="getWorkInfo" parameterType="list" resultType="com.nt.dao_Pfans.PFANS1000.Vo.StaffWorkMonthInfoVo">
         SELECT
-            `CREATEBY` AS userid,
-            ROUND( SUM( TIME_START ) / my_WorkingDays (DATE_FORMAT( LOG_DATE, '%Y%m' )), 2 ) TIME_START,
-            GROUP_ID,
-            DATE_FORMAT( LOG_DATE, '%m' ) LDATE
+            pm.RANK,
+            cd.userid,
+            cd.TIME_START,
+            cd.GROUP_ID,
+            cd.PROJECT_ID
         FROM
-            logmanagement lg
-        WHERE
-            date_format( lg.LOG_DATE, '%Y-%m' )  = #{LOG_DATE}
-          AND CREATEBY in
-        <foreach collection="userList" index="index" item="item" open="("
-                 separator="," close=")">
-            (#{item})
-        </foreach>
+        (
+            SELECT
+                `CREATEBY` AS userid,
+                ROUND( SUM( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 2 ) TIME_START,
+                GROUP_ID,
+                PROJECT_ID
+            FROM
+                logmanagement lg
+            WHERE
+                date_format( lg.LOG_DATE, '%Y-%m' ) = #{LOG_DATE}
+            AND PROJECT_ID != 'PP024001'
+            AND CREATEBY in
+                <foreach collection="userList" index="index" item="userid" open="("
+                         separator="," close=")">
+                    #{userid}
+                </foreach>
+            AND PROJECT_ID in
+                <foreach collection="projectList" index="index" item="projectid" open="("
+                         separator="," close=")">
+                    #{projectid}
+                </foreach>
+            GROUP BY CREATEBY,PROJECT_ID
+            ) cd
+        INNER JOIN projectsystem pm ON pm.`NAME` = cd.userid
+        AND pm.COMPANYPROJECTS_ID = cd.PROJECT_ID
     </select>
 </mapper>

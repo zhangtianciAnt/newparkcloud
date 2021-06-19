@@ -12,6 +12,6 @@ public interface DepartmentalInsideMapper extends MyMapper<DepartmentalInside> {
 
     List<DepartmentalInsideBaseVo> getBaseInfo(@Param("YEAR") String year);
 
-    List<StaffWorkMonthInfoVo> getWorkInfo(@Param("LOG_DATE") String log_date, List<String> userList);
+    List<StaffWorkMonthInfoVo> getWorkInfo(@Param("LOG_DATE") String log_date, @Param("userList") List<String> userList,@Param("projectList") List<String> projectList);
 
 }
