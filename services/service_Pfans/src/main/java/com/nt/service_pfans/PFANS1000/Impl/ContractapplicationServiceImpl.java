@@ -1509,6 +1509,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     }
                     startDate = format.parse(startime);
                     endDate = format.parse(endtime);
+                    if (cnt.getExtensiondate() != null){
+                        endDate = cnt.getExtensiondate();
+                    }
                     if(!startDate.after(endnewDate) && endDate.after(endnewDate)){
                         resultconList.add(cnt);
                     }
@@ -1532,9 +1535,76 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     resultInfoList.add(reportContractEnVo);
                 }
             }
-        }else if(conType.equals("1")){//受托
+        }else if(conType.equals("1")){
+            //受托
+            List<Contractapplication> resultconList = new ArrayList<>();
+            List<Contractapplication> conList = contractapplicationMapper.contractSt();
+            for(Contractapplication cnt : conList){
+                String startime = "";
+                String endtime = "";
+                Date startDate = null;
+                Date endDate = null;
+                if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(cnt.getClaimdatetime())){
+                    String[] contime = cnt.getClaimdatetime().split("~");
+                    if(contime.length > 0){
+                        startime = contime[0];
+                        endtime = contime[1];
+                    }
+                    startDate = format.parse(startime);
+                    endDate = format.parse(endtime);
+                    if (cnt.getExtensiondate() != null){
+                        endDate = cnt.getExtensiondate();
+                    }
+                    if(!startDate.after(endnewDate) && endDate.after(endnewDate)){
+                        resultconList.add(cnt);
+                    }
+                }else{
+                    resultconList.add(cnt);
+                }
+            }
+            if(resultconList.size() > 0){
+                for(Contractapplication catn : resultconList){
+                    ReportContractEnVo reportContractEnVo = new ReportContractEnVo();
+                    reportContractEnVo.setContractapplication(catn);
+                    Contractnumbercount count = new Contractnumbercount();
+                    count.setContractnumber(catn.getContractnumber());
+                    List<Contractnumbercount> cnntList = contractnumbercountMapper.select(count);
+                    reportContractEnVo.setContractnumbercountList(cnntList);
 
+                    Contractcompound ccpd = new Contractcompound();
+                    ccpd.setContractnumber(catn.getContractnumber());
+                    List<Contractcompound> ccndList = contractcompoundMapper.select(ccpd);
+                    reportContractEnVo.setContractcompound(ccndList);
 
+                    Award award = new Award();
+                    award.setContractnumber(catn.getContractnumber());
+                    award.setStatus("4");
+                    List<Award> awList = AwardMapper.select(award);
+                    reportContractEnVo.setAwardList(awList);
+
+                    Quotation quotation = new Quotation();
+                    quotation.setContractnumber(catn.getContractnumber());
+                    List<Quotation> quoList = quotationMapper.select(quotation);
+                    reportContractEnVo.setQuotationList(quoList);
+
+                    Contract contract = new Contract();
+                    contract.setContractnumber(catn.getContractnumber());
+                    List<Contract> corList = contractMapper.select(contract);
+                    reportContractEnVo.setContractList(corList);
+
+                    Napalm napalm = new Napalm();
+                    napalm.setContractnumber(catn.getContractnumber());
+                    List<Napalm> napList = napalmMapper.select(napalm);
+                    reportContractEnVo.setNapalmList(napList);
+
+                    Petition petition = new Petition();
+                    petition.setContractnumber(catn.getContractnumber());
+                    List<Petition> petList = PetitionMapper.select(petition);
+                    reportContractEnVo.setPetitionList(petList);
+
+                    resultInfoList.add(reportContractEnVo);
+                }
+            }
         }else if(conType.equals("2")){
             //其他
             List<Contractapplication> resultconList = new ArrayList<>();
@@ -1552,6 +1622,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     }
                     startDate = format.parse(startime);
                     endDate = format.parse(endtime);
+                    if (cnt.getExtensiondate() != null){
+                        endDate = cnt.getExtensiondate();
+                    }
                     if(!startDate.after(endnewDate) && endDate.after(endnewDate)){
                         resultconList.add(cnt);
                     }
