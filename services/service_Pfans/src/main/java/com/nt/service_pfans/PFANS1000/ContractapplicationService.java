@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS1000;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.ReportContractEnVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -42,4 +43,7 @@ public interface ContractapplicationService {
     Map<String, String> getworkfolwPurchaseData(Award award) throws Exception;
 
     boolean getNapinQinqiu(Contractnumbercount contractnumbercount) throws Exception;
+
+    List<ReportContractEnVo> reportContractEn(String conType) throws Exception;
+
 }

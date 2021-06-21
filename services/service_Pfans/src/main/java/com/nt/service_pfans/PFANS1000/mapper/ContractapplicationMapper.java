@@ -5,6 +5,7 @@ import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -25,4 +26,10 @@ public interface ContractapplicationMapper extends MyMapper<Contractapplication>
     //add ccm 0725  采购合同chongfucheck
 
     public List<String> selectPJ(@Param("contractnumber") String contractnumber);
+
+    @Select("SELECT * FROM contractapplication WHERE contracttype like '%HT014%' AND STATE = '有效' ")
+    public List<Contractapplication> contractEn();
+
+    @Select("SELECT * FROM contractapplication WHERE contracttype like '%HT015%' AND STATE = '有效' ")
+    public List<Contractapplication> contractOt();
 }

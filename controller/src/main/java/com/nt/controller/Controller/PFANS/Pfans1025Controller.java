@@ -1,10 +1,14 @@
 package com.nt.controller.Controller.PFANS;
 
+import cn.hutool.core.collection.CollUtil;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.ReportContractEnVo;
+import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsReportCheckVo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.AwardService;
+import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -57,6 +61,9 @@ public class Pfans1025Controller {
 
     @Autowired
     private NonJudgmentMapper nonJudgmentMapper;
+
+    @Autowired
+    private ContractapplicationService contractapplicationService;
 
 
     @RequestMapping(value = "/generateJxls", method = {RequestMethod.POST})
@@ -417,5 +424,20 @@ public class Pfans1025Controller {
         return ApiResult.success(awardService.get(award));
     }
 
+    /**
+     * @方法名：reportContractEn
+     * @描述：导出合同相关信息
+     * @创建日期：2021/06/21
+     * @作者：ztc
+     * @参数：[ conType:0-委托 1-受托 2-其他
+     * ]
+     * @返回值：List<CompanyProjectsReport>
+     */
+    @RequestMapping(value = "/reportContractEn", method = {RequestMethod.GET})
+    public ApiResult reportContractEn(String conType) throws Exception {
+        List<ReportContractEnVo> cprcList = contractapplicationService.reportContractEn(conType);
+        ArrayList<Map<String, Object>> rowLists = CollUtil.newArrayList();
 
+        return ApiResult.success();
+    }
 }

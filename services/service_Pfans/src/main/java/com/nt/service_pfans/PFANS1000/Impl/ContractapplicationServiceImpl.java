@@ -9,6 +9,7 @@ import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.ReportContractEnVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Pfans.PFANS4000.Seal;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
@@ -1483,5 +1484,98 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             result = true;
         }
         return result;
+    }
+
+
+    @Override
+    public List<ReportContractEnVo> reportContractEn(String conType) throws Exception {
+        List<ReportContractEnVo> resultInfoList = new ArrayList<>();
+        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd");
+        Date endnewDate = format.parse("2021-03-31");
+        if(conType.equals("0")){
+            //委托
+            List<Contractapplication> resultconList = new ArrayList<>();
+            List<Contractapplication> conList = contractapplicationMapper.contractEn();
+            for(Contractapplication cnt : conList){
+                String startime = "";
+                String endtime = "";
+                Date startDate = null;
+                Date endDate = null;
+                if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(cnt.getContractdate())){
+                    String[] contime = cnt.getContractdate().split("~");
+                    if(contime.length > 0){
+                        startime = contime[0];
+                        endtime = contime[1];
+                    }
+                    startDate = format.parse(startime);
+                    endDate = format.parse(endtime);
+                    if(!startDate.after(endnewDate) && endDate.after(endnewDate)){
+                        resultconList.add(cnt);
+                    }
+                }else{
+                    resultconList.add(cnt);
+                }
+            }
+            if(resultconList.size() > 0){
+                for(Contractapplication catn : resultconList){
+                    ReportContractEnVo reportContractEnVo = new ReportContractEnVo();
+                    reportContractEnVo.setContractapplication(catn);
+                    Contractnumbercount count = new Contractnumbercount();
+                    count.setContractnumber(catn.getContractnumber());
+                    List<Contractnumbercount> cnntList = contractnumbercountMapper.select(count);
+                    reportContractEnVo.setContractnumbercountList(cnntList);
+                    Award award = new Award();
+                    award.setContractnumber(catn.getContractnumber());
+                    award.setStatus("4");
+                    List<Award> awList = AwardMapper.select(award);
+                    reportContractEnVo.setAwardList(awList);
+                    resultInfoList.add(reportContractEnVo);
+                }
+            }
+        }else if(conType.equals("1")){//受托
+
+
+        }else if(conType.equals("2")){
+            //其他
+            List<Contractapplication> resultconList = new ArrayList<>();
+            List<Contractapplication> conList = contractapplicationMapper.contractOt();
+            for(Contractapplication cnt : conList){
+                String startime = "";
+                String endtime = "";
+                Date startDate = null;
+                Date endDate = null;
+                if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(cnt.getContractdate())){
+                    String[] contime = cnt.getContractdate().split("~");
+                    if(contime.length > 0){
+                        startime = contime[0];
+                        endtime = contime[1];
+                    }
+                    startDate = format.parse(startime);
+                    endDate = format.parse(endtime);
+                    if(!startDate.after(endnewDate) && endDate.after(endnewDate)){
+                        resultconList.add(cnt);
+                    }
+                }else{
+                    resultconList.add(cnt);
+                }
+            }
+            if(resultconList.size() > 0){
+                for(Contractapplication catn : resultconList){
+                    ReportContractEnVo reportContractEnVo = new ReportContractEnVo();
+                    reportContractEnVo.setContractapplication(catn);
+                    Contractnumbercount count = new Contractnumbercount();
+                    count.setContractnumber(catn.getContractnumber());
+                    List<Contractnumbercount> cnntList = contractnumbercountMapper.select(count);
+                    reportContractEnVo.setContractnumbercountList(cnntList);
+                    Award award = new Award();
+                    award.setContractnumber(catn.getContractnumber());
+                    award.setStatus("4");
+                    List<Award> awList = AwardMapper.select(award);
+                    reportContractEnVo.setAwardList(awList);
+                    resultInfoList.add(reportContractEnVo);
+                }
+            }
+        }
+        return resultInfoList;
     }
 }
