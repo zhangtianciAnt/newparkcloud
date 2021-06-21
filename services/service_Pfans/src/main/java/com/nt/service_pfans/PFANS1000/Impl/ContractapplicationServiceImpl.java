@@ -1574,7 +1574,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     Contractcompound ccpd = new Contractcompound();
                     ccpd.setContractnumber(catn.getContractnumber());
                     List<Contractcompound> ccndList = contractcompoundMapper.select(ccpd);
-                    reportContractEnVo.setContractcompound(ccndList);
+                    reportContractEnVo.setContractcompoundList(ccndList);
 
                     Award award = new Award();
                     award.setContractnumber(catn.getContractnumber());

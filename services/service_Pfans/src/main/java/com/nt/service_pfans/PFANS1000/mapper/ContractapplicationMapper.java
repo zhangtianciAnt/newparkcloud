@@ -32,4 +32,7 @@ public interface ContractapplicationMapper extends MyMapper<Contractapplication>
 
     @Select("SELECT * FROM contractapplication WHERE contracttype like '%HT015%' AND STATE = '有效' ")
     public List<Contractapplication> contractOt();
+
+    @Select("SELECT * FROM contractapplication WHERE contracttype like '%HT008%' AND STATE = '有效' ")
+    public List<Contractapplication> contractSt();
 }
