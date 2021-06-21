@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
@@ -42,6 +43,8 @@ import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +52,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.nt.utils.MongoObject.CustmizeQuery;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -94,6 +99,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private ToDoNoticeService toDoNoticeService;
     @Autowired
     private PurchaseService PurchaseService;
+    @Autowired
+    private MongoTemplate mongoTemplate;
     //add-ws-7/22-禅道341任务
     @Override
     public List<Individual> getindividual(Individual individual) throws Exception {
@@ -1492,6 +1499,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<ReportContractEnVo> resultInfoList = new ArrayList<>();
         SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd");
         Date endnewDate = format.parse("2021-03-31");
+        OrgTree org = new OrgTree();
+        org.setStatus("0");
+        Query query = CustmizeQuery(org);
+        org = mongoTemplate.findOne(query, OrgTree.class);
         if(conType.equals("0")){
             //委托
             List<Contractapplication> resultconList = new ArrayList<>();
@@ -1574,6 +1585,16 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     Contractcompound ccpd = new Contractcompound();
                     ccpd.setContractnumber(catn.getContractnumber());
                     List<Contractcompound> ccndList = contractcompoundMapper.select(ccpd);
+                    if(ccndList.size() > 0){
+                        for(Contractcompound cnt : ccndList){
+                            OrgTree orgTreeProcess = new OrgTree();
+                            orgTreeProcess = getCurrentOrg(org,cnt.getGroup_id());
+                            if(orgTreeProcess.getCompanyname() != null){
+                                cnt.setGroup_id(orgTreeProcess.getCompanyname());
+                            }
+
+                        }
+                    }
                     reportContractEnVo.setContractcompoundList(ccndList);
 
                     Award award = new Award();
@@ -1650,5 +1671,23 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             }
         }
         return resultInfoList;
+    }
+
+
+    private OrgTree getCurrentOrg(OrgTree org,String orgId) throws Exception {
+        if (org.get_id().equals(orgId)) {
+            return org;
+        } else {
+            if (org.getOrgs() != null) {
+                for (OrgTree item : org.getOrgs()) {
+                    OrgTree or = getCurrentOrg(item,orgId);
+                    if (or.get_id().equals(orgId)) {
+                        return or;
+                    }
+                }
+            }
+
+        }
+        return org;
     }
 }
