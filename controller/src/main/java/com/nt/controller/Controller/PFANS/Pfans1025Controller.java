@@ -467,12 +467,13 @@ public class Pfans1025Controller {
                     row.put("验收完了日", item.getContractnumbercountList().get(i).getCompletiondate());
                     row.put("请求日", item.getContractnumbercountList().get(i).getClaimdate());
                     row.put("请求金额", item.getContractnumbercountList().get(i).getClaimamount());
-                    if(contNum == 0){
-                        String[] cladatatime = item.getAwardList().get(i).getClaimdatetime().split("~");
+                    if(contNum == 0 && item.getAwardList().size() > 0){
+                        String[] cladatatime = item.getAwardList().get(0).getClaimdatetime().split("~");
                         row.put("开发开始日", cladatatime[0].trim());
                         row.put("开发完了日", cladatatime[1].trim());
-                        row.put("纳品预定日", item.getAwardList().get(i).getDeliverydate());
-                        row.put("请求金额", item.getAwardList().get(i).getClaimamount());
+                        row.put("纳品预定日", item.getAwardList().get(0).getDeliverydate());
+                        row.put("请求金额", item.getAwardList().get(0).getClaimamount());
+                        contNum ++;
                     }else{
                         row.put("开发开始日", "");
                         row.put("开发完了日", "");
@@ -525,7 +526,7 @@ public class Pfans1025Controller {
                     }
                     if(i < conNubNum){
                         row.put("合同请求方式", item.getContractnumbercountList().get(i).getClaimtype());
-                        row.put("合同请求期间", item.getContractnumbercountList().get(i).getClaimdate());
+                        row.put("合同请求期间", item.getContractnumbercountList().get(i).getClaimdatetimeqh());
                         row.put("合同纳品预定日", item.getContractnumbercountList().get(i).getDeliverydate());
                         row.put("合同验收完了日", item.getContractnumbercountList().get(i).getCompletiondate());
                         row.put("合同请求日", item.getContractnumbercountList().get(i).getClaimdate());
@@ -667,11 +668,11 @@ public class Pfans1025Controller {
                     row.put("请求日", item.getContractnumbercountList().get(i).getClaimdate());
                     row.put("请求金额", item.getContractnumbercountList().get(i).getClaimamount());
                     if(conaNum == 0 && item.getAwardList().size() > 0){
-                        String[] cladatatime = item.getAwardList().get(i).getClaimdatetime().split("~");
+                        String[] cladatatime = item.getAwardList().get(0).getClaimdatetime().split("~");
                         row.put("开发开始日", cladatatime[0].trim());
                         row.put("开发完了日", cladatatime[1].trim());
-                        row.put("纳品预定日", item.getAwardList().get(i).getDeliverydate());
-                        row.put("请求金额", item.getAwardList().get(i).getClaimamount());
+                        row.put("纳品预定日", item.getAwardList().get(0).getDeliverydate());
+                        row.put("请求金额", item.getAwardList().get(0).getClaimamount());
                         conaNum ++;
                     }else{
                         row.put("开发开始日", "");
