@@ -128,6 +128,7 @@ public class PolicyContractServiceImpl implements PolicyContractService {
         Date date = new Date();
         String year = sf1.format(date);
         int number = 0;
+        int num = 0;
         String Numbers = "";
         String no = "";
         if (policycontractlist.size() > 0) {
@@ -135,7 +136,11 @@ public class PolicyContractServiceImpl implements PolicyContractService {
                 if (policy.getPolicynumbers() != "" && policy.getPolicynumbers() != null) {
                     String checknumber = StringUtils.uncapitalize(StringUtils.substring(policy.getPolicynumbers(), 2, 10));
                     if (Integer.valueOf(year).equals(Integer.valueOf(checknumber))) {
-                        number = number + 1;
+                        num = Integer.valueOf(StringUtils.substring(policy.getPolicynumbers(), 11, 13));
+                        if(num > number)
+                        {
+                            number = num;
+                        }
                     }
                 }
 
