@@ -182,14 +182,14 @@ public class ExisttrainarchivesServicesImpl implements ExisttrainarchivesService
                     }
                     //批准日期
                     try {
-                        String approvaldate = value.get(6).toString().trim();
+                        String approvaldate = resetTimeFormat(value.get(6).toString().trim());
                         existtrainarchives.setApprovaldate(formatter.parse(approvaldate));
                     } catch (Exception e) {
                         existtrainarchives.setApprovaldate(null);
                     }
                     //有效日期
                     try {
-                        String effectivedate = value.get(7).toString().trim();
+                        String effectivedate = resetTimeFormat(value.get(7).toString().trim());
                         existtrainarchives.setEffectivedate(formatter.parse(effectivedate));
                     } catch (Exception e) {
                         existtrainarchives.setEffectivedate(null);
@@ -224,5 +224,21 @@ public class ExisttrainarchivesServicesImpl implements ExisttrainarchivesService
             }
         }
         return result;
+    }
+
+    /**
+     * @param dateTime
+     * @Method resetTimeFormat
+     * @Author MYT
+     * @Version 1.0
+     * @Description
+     * @Return 格式化后时间
+     * @Date 2021/06/24
+     */
+    private String resetTimeFormat (String dateTime) throws Exception {
+        if(dateTime.contains("-")){
+            dateTime = dateTime.replaceAll("-","/");
+        }
+        return dateTime;
     }
 }
