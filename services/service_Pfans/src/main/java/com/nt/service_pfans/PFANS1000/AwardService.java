@@ -20,4 +20,8 @@ public interface AwardService {
 
       //决裁书数据结转
       void dataCarryover(Award award, TokenModel tokenModel) throws Exception;
+
+      //region scc add 21/8/20 受托合同，详情，部门下拉框数据源 from
+      List<String> getCompanyen() throws Exception;
+      //region scc add 21/8/20 受托合同，详情，部门下拉框数据源 to
 }

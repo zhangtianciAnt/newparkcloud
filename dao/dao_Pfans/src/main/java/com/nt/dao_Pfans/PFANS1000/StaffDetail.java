@@ -93,6 +93,9 @@ public class StaffDetail extends BaseModel {
     @Column(name = "INWORK03")
     private String inwork03;
 
+    @Column(name = "REASON")
+    private String reason;
+
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 }
