@@ -137,7 +137,6 @@ public class departmentalServiceImpl implements DepartmentalService {
         departmental.setYears(years);
         departmental.setDepartment(group_id);
         departmentalList = departmentalMapper.select(departmental);
-        departmentalList = departmentalMapper.select(departmental);
         for(Departmental depart : departmentalList){
             depart.setContractnumber(depart.getEntrycondition().equals("HT004001") ? depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "-废弃" + "】" : depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "】");
             depart.setClaimamount(depart.getEntrycondition().equals("HT004001") ?  "-"  : depart.getClaimamount());
