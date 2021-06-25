@@ -111,7 +111,6 @@ public class AwardServiceImpl implements AwardService {
 
     @Override
     public void updateAwardVo(AwardVo awardVo, TokenModel tokenModel) throws Exception {
-
         Award award = new Award();
         BeanUtils.copyProperties(awardVo.getAward(), award);
         award.preUpdate(tokenModel);
@@ -140,8 +139,11 @@ public class AwardServiceImpl implements AwardService {
                 bd1 = bd1.setScale(scale, roundingMode);
                 BigDecimal bd2 = new BigDecimal(award.getClaimamount());
                 bd2 = bd2.setScale(scale, roundingMode);
+                BigDecimal bd3 = new BigDecimal(policy.getAvbleamount());
+                bd3 = bd3.setScale(scale, roundingMode);
                 policy.preUpdate(tokenModel);
                 policy.setModifiedamount(String.valueOf(bd.subtract(bd2)));
+                policy.setAvbleamount(String.valueOf(bd3.subtract(bd2)));
                 policy.setNewamountcase(String.valueOf(bd1.add(bd2)));
                 policycontractmapper.insertSelective(policy);
             }

@@ -9,13 +9,21 @@ import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS4000.Seal;
 import com.nt.dao_Pfans.PFANS4000.SealDetail;
+import com.nt.dao_Workflow.Workflowinstance;
+import com.nt.dao_Workflow.Workflownodeinstance;
+import com.nt.dao_Workflow.Workflowstep;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.mapper.TodoNoticeMapper;
+import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
+import com.nt.service_WorkFlow.mapper.WorkflownodeinstanceMapper;
+import com.nt.service_WorkFlow.mapper.WorkflowstepMapper;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS4000.SealService;
 import com.nt.service_pfans.PFANS4000.mapper.SealDetailMapper;
 import com.nt.service_pfans.PFANS4000.mapper.SealMapper;
+import com.nt.utils.AuthConstants;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +70,12 @@ public class SealServiceImpl implements SealService {
     private ContractapplicationMapper contractapplicationMapper;
     @Autowired
     private SealDetailMapper sealdetailmapper;
+    @Autowired
+    private WorkflowinstanceMapper workflowinstanceMapper;
+    @Autowired
+    private WorkflownodeinstanceMapper workflownodeinstanceMapper;
+    @Autowired
+    private WorkflowstepMapper workflowstepMapper;
 
 
     @Override
@@ -190,38 +204,59 @@ public class SealServiceImpl implements SealService {
     @Override
     public void upd(Seal seal, TokenModel tokenModel) throws Exception {
         seal.preUpdate(tokenModel);
-        if (seal.getStatus().equals("4")) {
-            seal.setAcceptor(tokenModel.getUserId());
-//            总经理代办
-            ToDoNotice toDoNotice = new ToDoNotice();
-            //!!DATAID不能加，特殊需求（张总【印章申请】待办不存在时再发待办，存在【印章申请】待办不需要再发）  ztc start
-            //update gbb 20210326 代办查询添加dataid条件 start
-            //toDoNotice.setDataid(seal.getSealid());
-            //update gbb 20210326 代办查询添加dataid条件 end
-            toDoNotice.setUrl("/PFANS4001View");
-            toDoNotice.setTitle("【印章申请】有需要您盖印承认的数据");
-            toDoNotice.setStatus("0");
-            List<ToDoNotice> todonoticelist = todoNoticeMapper.select(toDoNotice);
-            if (todonoticelist.size() == 0) {
-                List<MembersVo> rolelist = roleService.getMembers("5e785fd38f4316308435112d");
-                if (rolelist.size() > 0) {
-                    ToDoNotice toDoNotice3 = new ToDoNotice();
-                    toDoNotice3.setTitle("【印章申请】有需要您盖印承认的数据");
-                    toDoNotice3.setInitiator(seal.getUserid());
-                    toDoNotice3.setContent("【印章申请】有需要您盖印承认的数据");
-                    toDoNotice3.setDataid(seal.getSealid());
-                    toDoNotice3.setUrl("/PFANS4001View");
-                    toDoNotice3.setWorkflowurl("/PFANS4001View");
-                    toDoNotice3.preInsert(tokenModel);
-                    toDoNotice3.setOwner(rolelist.get(0).getUserid());
-                    toDoNoticeService.save(toDoNotice3);
-                }//!!DATAID不能加，特殊需求（张总待办总不存在时再发待办，存在待办不需要再发）  ztc edn
-            } else {
-                ToDoNotice todonotice = new ToDoNotice();
-                BeanUtils.copyProperties(todonoticelist.get(0), todonotice);
-                todonotice.setCreateon(new Date());
-                todonotice.setCreateby(seal.getUserid());
-                todoNoticeMapper.updateByPrimaryKey(todonotice);
+//        if (seal.getStatus().equals("4")) {
+//            seal.setAcceptor(tokenModel.getUserId());
+////            总经理代办
+//            ToDoNotice toDoNotice = new ToDoNotice();
+//            //!!DATAID不能加，特殊需求（张总【印章申请】待办不存在时再发待办，存在【印章申请】待办不需要再发）  ztc start
+//            //update gbb 20210326 代办查询添加dataid条件 start
+//            //toDoNotice.setDataid(seal.getSealid());
+//            //update gbb 20210326 代办查询添加dataid条件 end
+//            toDoNotice.setUrl("/PFANS4001View");
+//            toDoNotice.setTitle("【印章申请】有需要您盖印承认的数据");
+//            toDoNotice.setStatus("0");
+//            List<ToDoNotice> todonoticelist = todoNoticeMapper.select(toDoNotice);
+//            if (todonoticelist.size() == 0) {
+//                List<MembersVo> rolelist = roleService.getMembers("5e785fd38f4316308435112d");
+//                if (rolelist.size() > 0) {
+//                    ToDoNotice toDoNotice3 = new ToDoNotice();
+//                    toDoNotice3.setTitle("【印章申请】有需要您盖印承认的数据");
+//                    toDoNotice3.setInitiator(seal.getUserid());
+//                    toDoNotice3.setContent("【印章申请】有需要您盖印承认的数据");
+//                    toDoNotice3.setDataid(seal.getSealid());
+//                    toDoNotice3.setUrl("/PFANS4001View");
+//                    toDoNotice3.setWorkflowurl("/PFANS4001View");
+//                    toDoNotice3.preInsert(tokenModel);
+//                    toDoNotice3.setOwner(rolelist.get(0).getUserid());
+//                    toDoNoticeService.save(toDoNotice3);
+//                }//!!DATAID不能加，特殊需求（张总待办总不存在时再发待办，存在待办不需要再发）  ztc edn
+//            } else {
+//                ToDoNotice todonotice = new ToDoNotice();
+//                BeanUtils.copyProperties(todonoticelist.get(0), todonotice);
+//                todonotice.setCreateon(new Date());
+//                todonotice.setCreateby(seal.getUserid());
+//                todoNoticeMapper.updateByPrimaryKey(todonotice);
+//            }
+//        }
+        if (seal.getStatus().equals("2")) {
+            Workflowinstance wfince = new Workflowinstance();
+            wfince.setDataid(seal.getSealid());
+            wfince.setStatus("0");
+            List<Workflowinstance> wfinceList = workflowinstanceMapper.select(wfince);
+            if(wfinceList.size() > 0){
+                Workflownodeinstance workflownodeinstance = new Workflownodeinstance();
+                workflownodeinstance.setWorkflowinstanceid(wfinceList.get(0).getWorkflowinstanceid());
+                workflownodeinstance.setNodeord(1);
+                List<Workflownodeinstance> wfNodeinceList = workflownodeinstanceMapper.select(workflownodeinstance);
+                if(wfNodeinceList.size() > 0){
+                    Workflowstep workflowstep = new Workflowstep();
+                    workflowstep.setWorkflownodeinstanceid(wfNodeinceList.get(0).getWorkflownodeinstanceid());
+                    workflowstep.setResult("0");
+                    List<Workflowstep> wfspList = workflowstepMapper.select(workflowstep);
+                    if(wfspList.size() > 0){
+                        seal.setAcceptor(wfspList.get(0).getItemid());
+                    }
+                }
             }
         }
         sealMapper.updateByPrimaryKey(seal);
@@ -408,7 +443,7 @@ public class SealServiceImpl implements SealService {
                     if (seal != null) {
                         seal.setRegulator(sealdetaillist.get(0).getSealdetailname());
                         seal.setRegulatorstate("true");
-                        seal.setAcceptstate("true");
+                        //seal.setAcceptstate("true");
                         seal.preUpdate(tokenModel);
                         sealMapper.updateByPrimaryKey(seal);
                     }
@@ -416,35 +451,69 @@ public class SealServiceImpl implements SealService {
                     if (seal != null) {
                         seal.setAcceptstate("true");
                         seal.preUpdate(tokenModel);
+                        seal.setStatus("4");
                         sealMapper.updateByPrimaryKey(seal);
                     }
-                    ToDoNotice toDoNotice = new ToDoNotice();
-                    //update gbb 20210326 代办查询添加dataid条件 start
-                    toDoNotice.setDataid(seal.getSealid());
-                    //update gbb 20210326 代办查询添加dataid条件 end
-                    toDoNotice.setUrl("/PFANS4001View");
-                    toDoNotice.setTitle("总经理已承认【印章申请】，需要您监管盖印");
-                    toDoNotice.setOwner(sealdetaillist.get(0).getSealdetailname());
-                    toDoNotice.setStatus("0");
-                    List<ToDoNotice> todonoticelist = todoNoticeMapper.select(toDoNotice);
-                    if (todonoticelist.size() == 0) {
-                        ToDoNotice toDoNotice3 = new ToDoNotice();
-                        toDoNotice3.setTitle("总经理已承认【印章申请】，需要您监管盖印");
-                        toDoNotice3.setInitiator(tokenModel.getUserId());
-                        toDoNotice3.setContent("已被赋予盖印监管者权限！");
-                        toDoNotice3.setDataid(tokenModel.getUserId());
-                        toDoNotice3.setUrl("/PFANS4001View");
-                        toDoNotice3.setWorkflowurl("/PFANS4001View");
-                        toDoNotice3.preInsert(tokenModel);
-                        toDoNotice3.setOwner(sealdetaillist.get(0).getSealdetailname());
-                        toDoNoticeService.save(toDoNotice3);
-                    } else {
-                        ToDoNotice todonotice = new ToDoNotice();
-                        BeanUtils.copyProperties(todonoticelist.get(0), todonotice);
-                        todonotice.setCreateon(new Date());
-                        todonotice.setCreateby(seal.getUserid());
-                        todoNoticeMapper.updateByPrimaryKey(todonotice);
+                    String wfnodeid = "";
+                    Workflowinstance workflowinstance = new Workflowinstance();
+                    workflowinstance.setDataid(seal.getSealid());
+                    List<Workflowinstance> wfceList = workflowinstanceMapper.select(workflowinstance);
+                    if(wfceList.size() > 0){
+                        BeanUtils.copyProperties(wfceList.get(0), workflowinstance);
+                        workflowinstance.setModifyby(tokenModel.getUserId());
+                        workflowinstance.setModifyon(new Date());
+                        workflowinstance.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                        workflowinstanceMapper.updateByPrimaryKey(workflowinstance);
+
+                        Workflownodeinstance workflownodeinstance = new Workflownodeinstance();
+                        workflownodeinstance.setWorkflowinstanceid(workflowinstance.getWorkflowinstanceid());
+                        workflownodeinstance.setItemid(tokenModel.getUserId());
+                        List<Workflownodeinstance> wfnodeList = workflownodeinstanceMapper.select(workflownodeinstance);
+                        if(wfnodeList.size() > 0){
+                            wfnodeid = wfnodeList.get(0).getWorkflownodeinstanceid();
+                            Workflowstep workflowstep = new Workflowstep();
+                            workflowstep.setWorkflownodeinstanceid(wfnodeid);
+                            List<Workflowstep> wfspList = workflowstepMapper.select(workflowstep);
+                            if(wfspList.size() > 0){
+                                BeanUtils.copyProperties(wfspList.get(0), workflowstep);
+                                workflowstep.setResult("0");
+                                workflowstep.setModifyby(tokenModel.getUserId());
+                                workflowstep.setModifyon(new Date());
+                                workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
+                                workflowstepMapper.updateByPrimaryKey(workflowstep);
+                            }
+                        }
+                        ToDoNotice toDoNotice = new ToDoNotice();
+                        //update gbb 20210326 代办查询添加dataid条件 start
+                        //toDoNotice.setDataid(seal.getSealid());
+                        //update gbb 20210326 代办查询添加dataid条件 end
+                        toDoNotice.setUrl("/PFANS4001View");
+                        toDoNotice.setTitle("总经理已承认【印章申请】，需要您监管盖印");
+                        toDoNotice.setOwner(sealdetaillist.get(0).getSealdetailname());
+                        toDoNotice.setStatus("0");
+                        List<ToDoNotice> todonoticelist = todoNoticeMapper.select(toDoNotice);
+                        if (todonoticelist.size() == 0) {
+                            ToDoNotice toDoNotice3 = new ToDoNotice();
+                            toDoNotice3.setTitle("总经理已承认【印章申请】，需要您监管盖印");
+                            toDoNotice3.setInitiator(tokenModel.getUserId());
+                            toDoNotice3.setContent("已被赋予盖印监管者权限！");
+                            toDoNotice3.setDataid(tokenModel.getUserId());
+                            toDoNotice3.setUrl("/PFANS4001View");
+                            toDoNotice3.setWorkflowurl("/PFANS4001View");
+                            toDoNotice3.preInsert(tokenModel);
+                            toDoNotice3.setOwner(sealdetaillist.get(0).getSealdetailname());
+                            toDoNoticeService.save(toDoNotice3);
+                        } else {
+                            ToDoNotice todonotice = new ToDoNotice();
+                            BeanUtils.copyProperties(todonoticelist.get(0), todonotice);
+                            todonotice.setCreateon(new Date());
+                            todonotice.setCreateby(seal.getUserid());
+                            todoNoticeMapper.updateByPrimaryKey(todonotice);
+                        }
+                    }else{
+                        throw new LogicalException("流程不匹配，请通知管理员");
                     }
+
                 }
             }
         }

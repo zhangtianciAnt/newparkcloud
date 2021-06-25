@@ -4,14 +4,17 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
 import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Workflow.Vo.*;
 import com.nt.dao_Workflow.*;
+import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.UserService;
+import com.nt.service_Org.mapper.TodoNoticeMapper;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_WorkFlow.mapper.*;
 import com.nt.utils.AuthConstants;
@@ -52,6 +55,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
     private WorkflowstepMapper workflowstepMapper;
 
     @Autowired
+    private TodoNoticeMapper todoNoticeMapper;
+
+    @Autowired
     private ToDoNoticeService toDoNoticeService;
 
     @Autowired
@@ -59,6 +65,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     @Autowired
     private OrgTreeService orgTreeService;
+
+    @Autowired
+    private RoleService roleService;
 
     @Override
     public void insert(WorkflowVo workflowVo, TokenModel tokenModel) throws Exception {
@@ -751,26 +760,58 @@ public class WorkflowServicesImpl implements WorkflowServices {
                                 workflowstep.setStatus(AuthConstants.APPROVED_FLAG_YES);
                             }
                             workflowstepMapper.insert(workflowstep);
-
-
-                            // 创建代办
-                            ToDoNotice toDoNotice = new ToDoNotice();
-                            List<String> params = new ArrayList<String>();
-                            params.add(workflowname);
-                            if (!"3".equals(item.getNodetype()) || ("3".equals(item.getNodetype()) && StrUtil.isEmpty(item.getRemarks()))) {
-                                toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
-                            } else {
-                                toDoNotice.setTitle(item.getRemarks());
+                            if(workflowname.equals("印章申请") && workflowinstance.getUrl().indexOf("/PFANS4001FormView") != -1){
+                                List<MembersVo> rolelist = roleService.getMembers("5e785fd38f4316308435112d");
+                                String user_id = "";
+                                if (rolelist.size() > 0) {
+                                    user_id = rolelist.get(0).getUserid();
+                                }
+                                if(user_id.equals(user)){
+                                    ToDoNotice notito = new ToDoNotice();
+                                    notito.setUrl("/PFANS4001View");
+                                    notito.setTitle("【印章申请】有需要您盖印承认的数据");
+                                    notito.setStatus("0");
+                                    List<ToDoNotice> todonoticelist = todoNoticeMapper.select(notito);
+                                    if (todonoticelist.size() == 0) {
+                                        if (rolelist.size() > 0) {
+                                            ToDoNotice toDoNotice3 = new ToDoNotice();
+                                            toDoNotice3.setTitle("【印章申请】有需要您盖印承认的数据");
+                                            toDoNotice3.setInitiator(workflowinstance.getCreateby());
+                                            toDoNotice3.setContent("【印章申请】有需要您盖印承认的数据");
+                                            toDoNotice3.setDataid(dataId);
+                                            toDoNotice3.setUrl("/PFANS4001View");
+                                            toDoNotice3.setWorkflowurl("/PFANS4001View");
+                                            toDoNotice3.preInsert(tokenModel);
+                                            toDoNotice3.setOwner(user);
+                                            toDoNoticeService.save(toDoNotice3);
+                                        }
+                                    }else {
+                                        ToDoNotice todonotice = new ToDoNotice();
+                                        BeanUtils.copyProperties(todonoticelist.get(0), todonotice);
+                                        todonotice.setCreateon(new Date());
+                                        todonotice.setCreateby(user);
+                                        todoNoticeMapper.updateByPrimaryKey(todonotice);
+                                    }
+                                }
+                            }else{
+                                // 创建代办
+                                ToDoNotice toDoNotice = new ToDoNotice();
+                                List<String> params = new ArrayList<String>();
+                                params.add(workflowname);
+                                if (!"3".equals(item.getNodetype()) || ("3".equals(item.getNodetype()) && StrUtil.isEmpty(item.getRemarks()))) {
+                                    toDoNotice.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_10, params, tokenModel.getLocale()));
+                                } else {
+                                    toDoNotice.setTitle(item.getRemarks());
+                                }
+                                toDoNotice.setInitiator(workflowinstance.getOwner());
+                                toDoNotice.setContent(item.getNodename());
+                                toDoNotice.setDataid(dataId);
+                                toDoNotice.setUrl(url);
+                                toDoNotice.setWorkflowurl(workFlowurl);
+                                toDoNotice.preInsert(tokenModel);
+                                toDoNotice.setOwner(user);
+                                toDoNoticeService.save(toDoNotice);
                             }
-
-                            toDoNotice.setInitiator(workflowinstance.getOwner());
-                            toDoNotice.setContent(item.getNodename());
-                            toDoNotice.setDataid(dataId);
-                            toDoNotice.setUrl(url);
-                            toDoNotice.setWorkflowurl(workFlowurl);
-                            toDoNotice.preInsert(tokenModel);
-                            toDoNotice.setOwner(user);
-                            toDoNoticeService.save(toDoNotice);
                         }
                         if ("3".equals(item.getNodetype())) {
 

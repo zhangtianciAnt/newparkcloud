@@ -59,13 +59,23 @@ public class PolicyContractServiceImpl implements PolicyContractService {
     public void updatePolicyContract(PolicyContractVo policycontractvo, TokenModel tokenModel) throws Exception {
         PolicyContract policy = new PolicyContract();
         PolicyContract policy2 = new PolicyContract();
+        String upstatus = "";
         BeanUtils.copyProperties(policycontractvo.getPolicycontract(), policy);
         policy2.setPolicycontract_id(policy.getPolicycontract_id());
+        List<PolicyContract> pyctList = policycontractmapper.select(policy2);
+        if(pyctList.size() > 0){
+            upstatus = pyctList.get(0).getStatus();
+        }
         policycontractmapper.delete(policy2);
         String status = policy.getStatus();
         String policycontract_id = policy.getPolicycontract_id();
         String user_id = policy.getUser_id();
         if (status.equals("4")) {
+            if(policy.getType().equals("0") && upstatus.equals("2")){
+                policy.setAvbleamount(policy.getAmountcase());
+            }else if(policy.getType().equals("1") && upstatus.equals("2")){
+                policy.setAvbleamount(policy.getModifiedamount());
+            }
             policy.preInsert(tokenModel);
             policy.setType("1");
             policy.setStatus(status);
@@ -134,7 +144,6 @@ public class PolicyContractServiceImpl implements PolicyContractService {
         if (policycontractlist.size() > 0) {
             for (PolicyContract policy : policycontractlist) {
                 if (policy.getPolicynumbers() != "" && policy.getPolicynumbers() != null) {
-
                     String checknumber = StringUtils.uncapitalize(StringUtils.substring(policy.getPolicynumbers(), 2, 10));
                     if (Integer.valueOf(year).equals(Integer.valueOf(checknumber))) {
                         num = Integer.valueOf(StringUtils.substring(policy.getPolicynumbers(), 11, 13));
