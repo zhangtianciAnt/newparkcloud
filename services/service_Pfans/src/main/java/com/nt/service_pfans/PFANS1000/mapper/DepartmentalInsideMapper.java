@@ -13,7 +13,7 @@ public interface DepartmentalInsideMapper extends MyMapper<DepartmentalInside> {
 
     List<DepartmentalInsideBaseVo> getBaseInfo(@Param("YEAR") String year);
 
-    List<StaffWorkMonthInfoVo> getWorkInfo(@Param("LOG_DATE") String log_date, @Param("userList") List<String> userList,@Param("projectList") List<String> projectList);
+    List<StaffWorkMonthInfoVo> getWorkInfo(@Param("LOG_DATE") String log_date, @Param("departList") List<String> departList,@Param("projectList") List<String> projectList);
 
     //部门别表批量插入数据
     void insertDepInsAll(@Param("list") List<DepartmentalInside> departmentalInsideListInsert);

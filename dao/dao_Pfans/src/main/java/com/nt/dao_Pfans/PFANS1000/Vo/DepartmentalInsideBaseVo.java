@@ -16,6 +16,8 @@ public class DepartmentalInsideBaseVo {
     private String divide;
     /*theme委托元*/
     private String toolsorgs;
+    /*部门*/
+    private String group_id;
     /*合同号*/
     private String contractnumber;
     /*合同总金额*/

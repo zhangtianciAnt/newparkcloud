@@ -7,6 +7,7 @@
             cpt.THEMENAME,
             cpt.DIVIDE,
             cpt.TOOLSORGS,
+            cpt.GROUP_ID,
             cpt.CONTRACTNUMBER,
             cpt.CLAIMAMOUNT,
             cpt.ENTRYCONDITION,
@@ -22,6 +23,7 @@
                     tr.THEMENAME,
                     tr.DIVIDE,
                     tr.TOOLSORGS,
+                    cp.GROUP_ID,
                     cp.CONTRACTNUMBER,
                     cp.CLAIMAMOUNT,
                     cp.ENTRYCONDITION,
@@ -43,39 +45,99 @@
     </select>
     <select id="getWorkInfo" parameterType="list" resultType="com.nt.dao_Pfans.PFANS1000.Vo.StaffWorkMonthInfoVo">
         SELECT
-            pm.RANK,
-            cd.userid,
-            cd.TIME_START,
-            cd.GROUP_ID,
-            cd.PROJECT_ID,
-            cs.NUMBERS
+        a.rank,
+        a.group_id,
+        a.project_id,
+        sum( a.time_start ) time_start
         FROM
         (
-            SELECT
-                `CREATEBY` AS userid,
-                ROUND( SUM( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 2 ) TIME_START,
-                GROUP_ID,
-                PROJECT_ID
-            FROM
-                logmanagement lg
-            WHERE
-                date_format( lg.LOG_DATE, '%Y-%m' ) = #{LOG_DATE}
-            AND PROJECT_ID != 'PP024001'
-            AND CREATEBY in
-                <foreach collection="userList" index="index" item="userid" open="("
-                         separator="," close=")">
-                    #{userid}
-                </foreach>
-            AND PROJECT_ID in
-                <foreach collection="projectList" index="index" item="projectid" open="("
-                         separator="," close=")">
-                    #{projectid}
-                </foreach>
-            GROUP BY CREATEBY,PROJECT_ID
-            ) cd
+        SELECT
+        pm.RANK,
+        cd.TIME_START,
+        cd.GROUP_ID,
+        cd.PROJECT_ID
+        FROM
+        (
+        SELECT
+        `CREATEBY` AS userid,
+        ROUND( SUM( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 2 ) TIME_START,
+        GROUP_ID,
+        PROJECT_ID
+        FROM
+        logmanagement lg
+        WHERE
+        date_format( lg.LOG_DATE, '%Y-%m' ) = #{LOG_DATE}
+        AND PROJECT_ID != 'PP024001'
+        AND PROJECT_ID IN
+        <foreach collection="projectList" index="index" item="projectid" open="("
+                 separator="," close=")">
+            #{projectid}
+        </foreach>
+        GROUP BY
+        CREATEBY,
+        PROJECT_ID
+        ) cd
         INNER JOIN projectsystem pm ON pm.`NAME` = cd.userid
         AND pm.COMPANYPROJECTS_ID = cd.PROJECT_ID
-        INNER JOIN companyprojects cs ON cs.COMPANYPROJECTS_ID = cd.PROJECT_ID
+        AND pm.`TYPE` = '0'
+        INNER JOIN companyprojects cs ON cs.COMPANYPROJECTS_ID = cd.PROJECT_ID UNION ALL
+        SELECT
+        p.RANK,
+        0 TIME_START,
+        CASE
+
+        WHEN c.CENTER_ID IN
+        <foreach collection="departList" index="index" item="dep" open="("
+                 separator="," close=")">
+            #{dep}
+        </foreach> THEN
+        c.CENTER_ID ELSE c.GROUP_ID
+        END,
+        c.COMPANYPROJECTS_ID
+        FROM
+        projectsystem p
+        INNER JOIN companyprojects c ON p.COMPANYPROJECTS_ID = c.COMPANYPROJECTS_ID
+        AND p.type = '0'
+        AND p.COMPANYPROJECTS_ID IN
+        <foreach collection="projectList" index="index" item="projectid" open="("
+                 separator="," close=")">
+            #{projectid}
+        </foreach>
+        WHERE
+        c.CENTER_ID IN
+        <foreach collection="departList" index="index" item="dep" open="("
+                 separator="," close=")">
+            #{dep}
+        </foreach>
+        OR c.GROUP_ID IN
+        <foreach collection="departList" index="index" item="dep" open="("
+                 separator="," close=")">
+            #{dep}
+        </foreach> UNION ALL
+        SELECT
+        ade.ATTF,
+        0 TIME_START,
+        ade.INCONDEPARTMENT,
+        pc.COMPANYPROJECTS_ID
+        FROM
+        projectcontract pc
+        INNER JOIN award ad ON pc.contract = ad.CONTRACTNUMBER
+        AND pc.COMPANYPROJECTS_ID IN
+        <foreach collection="projectList" index="index" item="projectid" open="("
+                 separator="," close=")">
+            #{projectid}
+        </foreach>
+        INNER JOIN staffdetail ade ON ade.AWARD_ID = ad.AWARD_ID
+        AND ade.INCONDEPARTMENT IN
+        <foreach collection="departList" index="index" item="dep" open="("
+                 separator="," close=")">
+            #{dep}
+        </foreach>
+        ) a
+        GROUP BY
+        a.rank,
+        a.group_id,
+        a.project_id
     </select>
     <insert id="insertDepInsAll" parameterType="java.util.List">
         insert into DepartmentalInside
