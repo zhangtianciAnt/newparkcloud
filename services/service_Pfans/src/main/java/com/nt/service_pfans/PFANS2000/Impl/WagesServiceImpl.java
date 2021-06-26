@@ -354,7 +354,16 @@ public class WagesServiceImpl implements WagesService {
                     }
                 }
                 //update gbb 20210511 【当月实发工资】数据库加密 end
-                wage.setCreateonym(DateUtil.format(new Date(), "yyyy-MM"));
+                //region add_qhr_20210726 修改工资详细表中月份的存值方式
+                Giving giving = new Giving();
+                giving.setGiving_id(wages.get(0).getGiving_id());
+                List<Giving> givinglist = givingMapper.select(giving);
+                String strMonths = "";
+                if(givinglist.size() > 0){
+                    strMonths = givinglist.get(0).getMonths().substring(0, 4) + "-" + givinglist.get(0).getMonths().substring(4, 6);
+                }
+                wage.setCreateonym(strMonths);
+                //endregion add_qhr_20210726 修改工资详细表中月份的存值方式
                 wage.setActual(actual);
                 List<CustomerInfo> customerinfo = customerInfoList.stream().filter(coi -> (coi.getUserid().contains(wage.getUser_id()))).collect(Collectors.toList());
                 if(customerinfo.size() > 0){
