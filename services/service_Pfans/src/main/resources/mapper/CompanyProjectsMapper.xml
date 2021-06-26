@@ -622,4 +622,81 @@ GROUP BY
         ORDER BY pp.ADMISSIONTIME desc
     </select>
 
+    <!--zy start ???? 2021/06/13-->
+    <resultMap id="reportBaseData" type="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsReport">
+        <result property="companyprojects_id" column="COMPANYPROJECTS_ID"/>
+        <result property="project_name" column="PROJECT_NAME"/>
+        <result property="group_id" column="GROUP_ID"/>
+        <result property="center_id" column="CENTER_ID"/>
+        <result property="contract" column="CONTRACT"/>
+        <result property="contractamount" column="CONTRACTAMOUNT"/>
+        <result property="startdate" column="STARTDATE"/>
+        <result property="enddate" column="ENDDATE"/>
+        <collection property="logMonthTime" ofType="com.nt.dao_Pfans.PFANS5000.Vo.MonthTime">
+            <result property="logMonth" column="logMonth"/>
+            <result property="type" column="type"/>
+            <result property="name" column="name"/>
+            <result property="time" column="time"/>
+        </collection>
+    </resultMap>
+
+    <select id="getRepotBaseData" resultMap="reportBaseData">
+        select
+          cp.COMPANYPROJECTS_ID, cp.PROJECT_NAME, cp.GROUP_ID, cp.CENTER_ID, pc.CONTRACT, pc.CONTRACTAMOUNT,
+          case
+            when cp.STARTDATE > #{start} then cp.STARTDATE
+            else #{start}
+          end as STARTDATE,
+          case
+            <![CDATA[
+            when cp.ENDDATE < #{end} then cp.ENDDATE
+            else #{end}
+            ]]>
+          end as ENDDATE,
+          case
+            when a_time.log_month is null then SUBSTR(STARTDATE, 1 , 7)
+            else a_time.log_month
+          end as logMonth,
+           a_time.name as name,
+          case
+            when a_time.time is null then 0
+            else a_time.time
+          end as time, a_time.type
+        from companyprojects cp
+        left join (
+                  select COMPANYPROJECTS_ID, group_concat(CONTRACT) as CONTRACT,
+                         ROUND(sum(CONTRACTAMOUNT),2) as CONTRACTAMOUNT
+                  from projectcontract
+                  where `status` = 0
+                  group by COMPANYPROJECTS_ID
+            ) pc on cp.COMPANYPROJECTS_ID = pc.COMPANYPROJECTS_ID
+        left join(
+                 select COMPANYPROJECTS_ID, sum(TIME_START) as time, SUBSTR(LOG_DATE, 1 , 7) as log_month, ps.TYPE,ps.name
+                 from projectsystem ps
+                        left join logmanagement log
+                          on ps.NAME = log.CREATEBY
+                          AND log.PROJECT_ID = ps.COMPANYPROJECTS_ID
+                 where ps.name is not null
+                 group by COMPANYPROJECTS_ID, log_month, ps.name ,ps.TYPE
+        ) a_time
+            on a_time.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+        where
+        <![CDATA[
+            (cp.STARTDATE <= #{start} and cp.ENDDATE >= #{start})
+        or  (cp.STARTDATE <= #{end} and cp.ENDDATE >= #{end})
+        or  (cp.STARTDATE >= #{start} and cp.ENDDATE <= #{end})
+        ]]>
+        order by cp.COMPANYPROJECTS_ID
+    </select>
+
+    <select id="getMoneysByProject" resultType="com.nt.dao_Pfans.PFANS5000.Vo.Monthly">
+        select
+          sum(MONEYS) as data,
+          SUBSTR(REIMBURSEMENTDATE, 1, 7) as month
+        from
+          publicexpense
+        where PROJECT_ID = #{companyprojectsId}
+        group by  month
+    </select>
+    <!--zy end ???? 2021/06/13-->
 </mapper>

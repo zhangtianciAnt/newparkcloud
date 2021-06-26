@@ -13,4 +13,7 @@ public class ProjectIncomeVo4 {
     private String groupname;
 
     private String encoding;
+
+    //0:center   1:group
+    private String flag;
 }

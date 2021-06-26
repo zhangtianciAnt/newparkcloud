@@ -1034,6 +1034,34 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             }
         }
         publicExpense.setInvoiceno(invoiceNos);
+        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpenseVo.getPublicexpense().getLoan())){
+            List<String> loanTypeList = new ArrayList();
+            String pecode = "";
+            String[] loaList = publicExpenseVo.getPublicexpense().getLoan().split(",");
+            if (loaList.length > 0) {
+                for (String lo : loaList) {
+                    LoanApplication loan = new LoanApplication();
+                    loan.setLoanapplication_id(lo);
+                    List<LoanApplication> loanApplicationList = loanApplicationMapper.select(loan);
+                    if(loanApplicationList.size() > 0){
+                        loanTypeList.add(loanApplicationList.get(0).getPaymentmethod());
+                    }
+                }
+                LoanApplication loanCode = new LoanApplication();
+                loanCode.setLoanapplication_id(loaList[0]);
+                loanCode = loanApplicationMapper.selectByPrimaryKey(loanCode);
+                pecode = !com.mysql.jdbc.StringUtils.isNullOrEmpty(loanCode.getPayeecode()) ? loanCode.getPayeecode() : loanCode.getName();
+            }
+            if(loanTypeList.size() > 0){
+                if(loanTypeList.contains("PJ015002")){
+                    publicExpense.setLoantype("0" + "," + pecode);
+                }else if(loanTypeList.contains("PJ015001") || loanTypeList.contains("PJ015003")){
+                    publicExpense.setLoantype("1" + "," + pecode);
+                }else{
+                    publicExpense.setLoantype("");
+                }
+            }
+        }
         //upd-8/20-ws-禅道468任务
         publicExpenseMapper.updateByPrimaryKey(publicExpense);
 

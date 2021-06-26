@@ -66,19 +66,9 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-
     //系统服务——add_fjl_0717  退场的第二天，账号不可登录  start
     @Scheduled(cron = "0 0 1 * * ?")
     public void updExpatriatesinforStatus() throws Exception {
-        //预计退场时间 ztc start
-        List<Expatriatesinfor> expYjList = expatriatesinforMapper.getExpYjExitime();
-        TokenModel tokenModel = new TokenModel();
-        for(Expatriatesinfor exinfo : expYjList){
-            exinfo.setExits("0");
-            exinfo.setExitime(exinfo.getYjexitime());
-            updateexpatriatesinforApply(exinfo,tokenModel);
-        }
-        //预计退场时间 ztc end
         SimpleDateFormat st = new SimpleDateFormat("yyyyMMdd");
         int re = Integer.parseInt(st.format(new Date()));
         List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.getExpatriatesinforexit();

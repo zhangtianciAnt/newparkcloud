@@ -8,8 +8,6 @@ import java.util.List;
 
 public interface ExpatriatesinforService {
 
-    void updExpatriatesinforStatus() throws Exception;
-
     List<Expatriatesinfor> getexpatriatesinfor(Expatriatesinfor expatriatesinfor) throws Exception;
 
     public Expatriatesinfor getexpatriatesinforApplyOne(String expatriatesinfor_id) throws Exception;
