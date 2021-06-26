@@ -352,6 +352,7 @@ public class BusinessServiceImpl implements BusinessService {
         //endregion gbb 20201029 禅道601 审批通过时将出差期间工作日的考勤设为因公外出 end
     }
 
+    //【每天凌晨0点1分】
     @Scheduled(cron="0 1 0 * * ?")
     public void saveDaka()throws Exception {
         TokenModel tokenModel = new TokenModel();

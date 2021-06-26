@@ -962,6 +962,7 @@ public class UserServiceImpl implements UserService {
 //            throw new LogicalException(e.getMessage());
 //        }
 //    }
+    //【每天凌晨0点5分】
     //系统服务--每天00:05 更新离职人员的信息，已经离职人员不能登录系统  fjl add start
     @Scheduled(cron = "0 05 0 * * ?")
     public void updUseraccountStatus() throws Exception {

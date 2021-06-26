@@ -477,6 +477,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         if(value == null || value.length() == 0){
             return false;
         }
+        //gbb 20201205 字符串加密换行的处理
         value = value.replace("\n","");
         if(value.length() % 4 != 0){
             return false;

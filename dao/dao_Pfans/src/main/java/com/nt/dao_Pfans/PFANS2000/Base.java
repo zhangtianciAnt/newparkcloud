@@ -247,7 +247,7 @@ public class Base extends BaseModel {
     private String months;
 
     /**
-     * 新人区分（税金用）
+     * 新人区分(税金用)
      */
     @Column(name = "TAXES")
     private String taxes;

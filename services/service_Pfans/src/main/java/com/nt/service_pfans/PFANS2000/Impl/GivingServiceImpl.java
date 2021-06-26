@@ -6,6 +6,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.*;
+import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
@@ -242,6 +243,7 @@ public class GivingServiceImpl implements GivingService {
         Appreciation appreciation = new Appreciation();
         appreciation.setGiving_id(giving_id);
         List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
+        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
         // 月度赏与计算
         appreciationlist = appreciationCalc(baselist, appreciationlist);
         givingVo.setAppreciation(appreciationlist);
@@ -1268,7 +1270,7 @@ public class GivingServiceImpl implements GivingService {
 
     public String getSalary(CustomerInfo customerInfo, int addMouth) throws ParseException {
         //转正日
-        if (StringUtils.isEmpty(customerInfo.getUserinfo().getEnddate())) {
+        if (!StringUtils.isEmpty(customerInfo.getUserinfo().getEnddate())) {
             System.out.println(customerInfo.getUserinfo().getCustomername());
             if (customerInfo.getUserinfo().getEnddate().indexOf("Z")  != -1) {
                 String enddate = customerInfo.getUserinfo().getEnddate().substring(0, 10).replace("-", "/");

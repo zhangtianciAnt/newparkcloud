@@ -114,7 +114,7 @@
         p.COMPANYPROJECTS_ID
         ) pp
         on pp.COMPANYPROJECTS_ID = c.`COMPANYPROJECTS_ID`
-        where (c.`STATUS` = '4' or c.`STATUS` = '5' or c.`STATUS` = '6')
+        where (c.`STATUS` = '4' or c.`STATUS` = '5' or c.`STATUS` = '6' or c.`STATUS` = '8')
         <if test="owners != null and owners.size() > 0 ">
             and
             c.owner in
@@ -335,7 +335,7 @@ GROUP BY
            c
            .
            companyprojects_id
-        where (c.`STATUS` = '4' or c.`STATUS` = '5' or c.`STATUS` = '6')
+        where (c.`STATUS` = '4' or c.`STATUS` = '5' or c.`STATUS` = '6' or c.`STATUS` = '8')
 
     </select>
 
