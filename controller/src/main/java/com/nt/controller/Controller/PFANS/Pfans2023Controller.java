@@ -137,9 +137,9 @@ public class Pfans2023Controller {
 //            data.put("up", wfList2);
 //        }
 //        禅道613 印章删掉 ztc end
+
         //region add_qhr_20210528 目标管理导出年度修改
-        SimpleDateFormat sd = new SimpleDateFormat("YYYY");
-        data.put("now", DateUtil.year(sd.parse(gmt.getYears())));
+        data.put("now", gmt.getYears());
         //endregion add_qhr_20210528 目标管理导出年度修改
         ExcelOutPutUtil.OutPutPdf("目标管理", "mubiaoguanli.xlsx", data, response);
 

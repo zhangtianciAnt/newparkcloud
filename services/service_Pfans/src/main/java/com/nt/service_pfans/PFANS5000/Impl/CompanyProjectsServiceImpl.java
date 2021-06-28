@@ -1,6 +1,6 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
-import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Auth.Role;
@@ -11,7 +11,6 @@ import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.Vo.ProjectIncomeVo4;
-import com.nt.dao_Pfans.PFANS2000.Vo.PersonalCostExpVo;
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.*;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
@@ -43,7 +42,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -1499,7 +1497,13 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
             line.put("groupId", baseData.getGroup_id());
             line.put("centerId", baseData.getCenter_id());
             // 项目名
-            line.put("name", baseData.getProject_name());
+            String proname = "";
+            if(com.nt.utils.StringUtils.isBase64Encode(baseData.getProject_name())){
+                proname = Base64.decodeStr(baseData.getProject_name());
+            }else{
+                proname = baseData.getProject_name();
+            }
+            line.put("name", proname);
             // 合同号
             if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(baseData.getContract()))
             {

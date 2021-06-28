@@ -16,8 +16,6 @@ import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -186,7 +184,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                 {
                     punchcardRecordService.methodAttendance_b(item,abNormal.getUser_id());
                 }
-                }
+        }
 
         if(abNormal.getStatus().equals("7"))
         {
@@ -488,7 +486,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                         for (AbNormal a : list) {
                             if (a.getStatus().equals("2")) {
                                 shenqing = shenqing + Double.valueOf(a.getLengthtime());
-                            } else if (a.getStatus().equals("5") ) {
+                            } else if (a.getStatus().equals("5")) {
                                 shenqing = shenqing + Double.valueOf(a.getRelengthtime());
                             }
                         }
@@ -854,7 +852,7 @@ public class AbNormalServiceImpl implements AbNormalService {
     {
         Calendar calendar = Calendar.getInstance();
         int year = 0;
-        int month = calendar.get(Calendar.MONTH)+1;
+        int month = calendar.get(Calendar.MONTH) + 1;
         if(month >= 1 && month <= 3) {
             year = calendar.get(Calendar.YEAR) - 1;
         }else {

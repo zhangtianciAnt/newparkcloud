@@ -416,11 +416,12 @@ public class AssetsServiceImpl implements AssetsService {
                             assets.setInparams4(sf1.parse(sf1.format(date2)));
                             assets.setActivitiondate(sf1.parse(sf1.format(date2)));//111
                         }
-                    } else {
-                        error++;
-                        Result.add("模板第" + lineNo + "行的启用日期没有找到，导入失败");
-                        continue;
                     }
+//                    else {
+//                        error++;
+//                        Result.add("模板第" + lineNo + "行的启用日期没有找到，导入失败");
+//                        continue;
+//                    }
                     //                    upd-lyt-21/4/2-end
 //                    }
                 }

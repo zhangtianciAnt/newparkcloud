@@ -81,7 +81,7 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
                 }
                 for (MonthlyRate list : monthlyratelist11) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
-                    String data = String.valueOf(year) + "-" + monthr;
+                    String data = year + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
                     list.setYear(String.valueOf(years));
                     list.setMonth(data);
@@ -100,7 +100,7 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
                 }
                 for (MonthlyRate list : monthlyratelist10) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
-                    String data = String.valueOf(year) + "-" + monthr;
+                    String data = year + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
                     list.setYear(String.valueOf(years));
                     list.setMonth(data);
@@ -119,7 +119,7 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
                 }
                 for (MonthlyRate list : monthlyratelist9) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
-                    String data = String.valueOf(year) + "-" + monthr;
+                    String data = year + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
                     list.setYear(String.valueOf(years));
                     list.setMonth(data);
@@ -138,7 +138,7 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
                 }
                 for (MonthlyRate list : monthlyratelist8) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
-                    String data = String.valueOf(year) + "-" + monthr;
+                    String data = year + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
                     list.setYear(String.valueOf(years));
                     list.setMonth(data);
@@ -157,7 +157,7 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
                 }
                 for (MonthlyRate list : monthlyratelist7) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
-                    String data = String.valueOf(year) + "-" + monthr;
+                    String data = year + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
                     list.setYear(String.valueOf(years));
                     list.setMonth(data);
@@ -176,7 +176,7 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
                 }
                 for (MonthlyRate list : monthlyratelist6) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
-                    String data = String.valueOf(year) + "-" + monthr;
+                    String data = year + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
                     list.setYear(String.valueOf(years));
                     list.setMonth(data);
@@ -195,7 +195,7 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
                 }
                 for (MonthlyRate list : monthlyratelist5) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
-                    String data = String.valueOf(year) + "-" + monthr;
+                    String data = year + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
                     list.setYear(String.valueOf(years));
                     list.setMonth(data);
@@ -214,7 +214,7 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
                 }
                 for (MonthlyRate list : monthlyratelist4) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
-                    String data = String.valueOf(year) + "-" + monthr;
+                    String data = year + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
                     list.setYear(String.valueOf(years));
                     list.setMonth(data);
@@ -233,7 +233,7 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
                 }
                 for (MonthlyRate list : monthlyratelist3) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
-                    String data = String.valueOf(year) + "-" + monthr;
+                    String data = year + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
                     list.setYear(String.valueOf(years));
                     list.setMonth(data);
@@ -252,7 +252,7 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
                 }
                 for (MonthlyRate list : monthlyratelist2) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
-                    String data = String.valueOf(year) + "-" + monthr;
+                    String data = year + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
                     list.setYear(String.valueOf(years));
                     list.setMonth(data);
@@ -271,7 +271,7 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
                 }
                 for (MonthlyRate list : monthlyratelist1) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
-                    String data = String.valueOf(year) + "-" + monthr;
+                    String data = year + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
                     list.setYear(String.valueOf(years));
                     list.setMonth(data);
@@ -308,7 +308,7 @@ public class MonthlyRateServiceImpl implements MonthlyRateService {
                 }
                 for (MonthlyRate list : monthlyratelists) {
                     String monthr = i <= 9 ? "0" + i : String.valueOf(i);
-                    String data = String.valueOf(year) + "-" + monthr;
+                    String data = year + "-" + monthr;
                     list.setMonthlyrate_id(UUID.randomUUID().toString());
                     list.setYear(String.valueOf(years));
                     list.setMonth(data);

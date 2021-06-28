@@ -483,6 +483,17 @@ public class SealServiceImpl implements SealService {
                                 workflowstepMapper.updateByPrimaryKey(workflowstep);
                             }
                         }
+                        ToDoNotice toDoApply = new ToDoNotice();
+                        toDoApply.setTitle("您发起的【印章申请】审批已结束！注意查看！");
+                        toDoApply.setInitiator(seal.getUserid());
+                        toDoApply.setUrl("/PFANS4001FormView");
+                        toDoApply.setWorkflowurl("/PFANS4001FormView");
+                        toDoApply.setDataid(seal.getSealid());
+                        toDoApply.setStatus("0");
+                        toDoApply.setOwner(seal.getUserid());
+                        toDoApply.preInsert(tokenModel);
+                        toDoNoticeService.save(toDoApply);
+
                         ToDoNotice toDoNotice = new ToDoNotice();
                         //update gbb 20210326 代办查询添加dataid条件 start
                         //toDoNotice.setDataid(seal.getSealid());

@@ -71,15 +71,6 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
     //【每天凌晨1点】
     @Scheduled(cron = "0 0 1 * * ?")
     public void updExpatriatesinforStatus() throws Exception {
-        //预计退场时间 ztc start
-        List<Expatriatesinfor> expYjList = expatriatesinforMapper.getExpYjExitime();
-        TokenModel tokenModel = new TokenModel();
-        for(Expatriatesinfor exinfo : expYjList){
-            exinfo.setExits("0");
-            exinfo.setExitime(exinfo.getYjexitime());
-            updateexpatriatesinforApply(exinfo,tokenModel);
-        }
-        //预计退场时间 ztc end
         SimpleDateFormat st = new SimpleDateFormat("yyyyMMdd");
         int re = Integer.parseInt(st.format(new Date()));
         List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.getExpatriatesinforexit();

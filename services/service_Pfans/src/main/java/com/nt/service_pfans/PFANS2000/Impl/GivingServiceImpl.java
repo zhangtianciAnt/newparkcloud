@@ -6,6 +6,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.*;
+import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
@@ -209,7 +210,6 @@ public class GivingServiceImpl implements GivingService {
         Additional additional = new Additional();
         additional.setGiving_id(giving_id);
         List<Additional> additionallist = additionalMapper.select(additional);
-        additionallist = additionallist.stream().sorted(Comparator.comparing(Additional::getRowindex)).collect(Collectors.toList());
         givingVo.setAddiTional(additionallist);
         // endregion
 
@@ -303,6 +303,8 @@ public class GivingServiceImpl implements GivingService {
         Wages wages = new Wages();
         wages.setGiving_id(giving_id);
         wages.setActual("0");
+        System.out.println("工资开始查询");
+        long startTime =  System.currentTimeMillis();
         List<Wages> wagesList = wagesMapper.select(wages);
         if (wagesList.size() > 0) {
             givingVo.setWagesList(wagesList.stream().sorted(Comparator.comparing(Wages::getUser_id)).collect(Collectors.toList()));
@@ -328,6 +330,10 @@ public class GivingServiceImpl implements GivingService {
                 givingVo.setContrast(contrastList);
             }
         }
+        System.out.println("工资查询结束");
+        long endTime =  System.currentTimeMillis();
+        long usedTime = (endTime-startTime)/1000;
+        System.out.println("用时：" + usedTime + "秒");
         return givingVo;
         // zqu end
     }
@@ -894,7 +900,7 @@ public class GivingServiceImpl implements GivingService {
                     if (calEnterDay.getTime().getTime() > calLastOne.getTime().getTime()) {
                         tempStart = calEnterDay.getTime();
                     }
-//                    add 试用员工当月转正的当月试用天数 fr
+                    //                    add 试用员工当月转正的当月试用天数 fr
                     //calSuitDate.add(Calendar.DATE, -1);//转正日当天不算使用
                     lastMonthSuitDays = getTrialWorkDaysExceptWeekend(tempStart, calLast.getTime());
                     thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), calSuitDate.getTime());
@@ -1115,9 +1121,8 @@ public class GivingServiceImpl implements GivingService {
         long endTime =  System.currentTimeMillis();
         long usedTime = (endTime-startTime)/1000;
         System.out.println("生成当月工资结束");
-        System.out.println("用时：" + String.valueOf(usedTime) + "秒");
+        System.out.println("用时：" + usedTime + "秒");
     }
-
 
 
     protected void autoCreateGiving() throws Exception {
@@ -1264,7 +1269,8 @@ public class GivingServiceImpl implements GivingService {
 
     public String getSalary(CustomerInfo customerInfo, int addMouth) throws ParseException {
         //转正日
-        if (StringUtils.isEmpty(customerInfo.getUserinfo().getEnddate())) {
+        if (!StringUtils.isEmpty(customerInfo.getUserinfo().getEnddate())) {
+            System.out.println(customerInfo.getUserinfo().getCustomername());
             if (customerInfo.getUserinfo().getEnddate().indexOf("Z")  != -1) {
                 String enddate = customerInfo.getUserinfo().getEnddate().substring(0, 10).replace("-", "/");
                 Calendar cal1 = Calendar.getInstance();
@@ -2363,7 +2369,7 @@ public class GivingServiceImpl implements GivingService {
                     }
                     endddate = sfChina.format(rightNow.getTime());
                     endDate = sfChina.parse(endddate);
-                //endregion  add_qhr_20210528  更改转正日计算形式
+                    //endregion  add_qhr_20210528  更改转正日计算形式
                     if (endDate.getTime() < mouthStart) {
                         continue;
                     }
@@ -2511,7 +2517,7 @@ public class GivingServiceImpl implements GivingService {
                             && DateUtil.format(induction.getWorddate(), "dd").equals(lastday))){
                         // 今月試用社員出勤日数
                         thisMonthSuitDays = 0d;
-                        induction.setTrial(String.valueOf(""));
+                        induction.setTrial("");
                         induction.setGive(df.format(Double.parseDouble(thisMonthSalary)));
                     }
                     else{
@@ -2528,7 +2534,7 @@ public class GivingServiceImpl implements GivingService {
             if(!DateUtil.format(new Date(), "yyyyMM").equals(strEnterday)){//非当月入社的人员
                 // 今月試用社員出勤日数
                 thisMonthSuitDays = 0d;
-                induction.setTrial(String.valueOf(""));
+                induction.setTrial("");
             }
             if(intflg == 0){//上月未发工资的人
                 //上月工资 / 21.75 * 上月出勤天数 + 本月工资

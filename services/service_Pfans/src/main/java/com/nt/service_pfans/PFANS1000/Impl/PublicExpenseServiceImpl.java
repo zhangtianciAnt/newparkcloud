@@ -364,6 +364,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 //        String month1 = String.format("%2d", month).replace(" ", "0");
 //        String day1 = String.format("%2d", day).replace(" ", "0");
 //        invoiceNo = "DL4AP" + year + month1 + day1 + no;
+        //PSDCD_PFANS_20210519_BUG_006 修改供应商编码 供应商地点错误 fr
         //add-ws-9/25-禅道567
         if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpenseVo.getPublicexpense().getJudgement())) {
             Award award1 = new Award();
@@ -387,6 +388,35 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         String publicexpenseid = UUID.randomUUID().toString();
         PublicExpense publicExpense = new PublicExpense();
         BeanUtils.copyProperties(publicExpenseVo.getPublicexpense(), publicExpense);
+        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpenseVo.getPublicexpense().getLoan())){
+            List<String> loanTypeList = new ArrayList();
+            String pecode = "";
+            String[] loaList = publicExpenseVo.getPublicexpense().getLoan().split(",");
+            if (loaList.length > 0) {
+                for (String lo : loaList) {
+                    LoanApplication loan = new LoanApplication();
+                    loan.setLoanapplication_id(lo);
+                    List<LoanApplication> loanApplicationList = loanApplicationMapper.select(loan);
+                    if(loanApplicationList.size() > 0){
+                        loanTypeList.add(loanApplicationList.get(0).getPaymentmethod());
+                    }
+                }
+                LoanApplication loanCode = new LoanApplication();
+                loanCode.setLoanapplication_id(loaList[0]);
+                loanCode = loanApplicationMapper.selectByPrimaryKey(loanCode);
+                pecode = !com.mysql.jdbc.StringUtils.isNullOrEmpty(loanCode.getPayeecode()) ? loanCode.getPayeecode() : loanCode.getName();
+            }
+            if(loanTypeList.size() > 0){
+                if(loanTypeList.contains("PJ015002")){
+                    publicExpense.setLoantype("0" + "," + pecode);
+                }else if(loanTypeList.contains("PJ015001") || loanTypeList.contains("PJ015003")){
+                    publicExpense.setLoantype("1" + "," + pecode);
+                }else{
+                    publicExpense.setLoantype("");
+                }
+            }
+        }
+        //PSDCD_PFANS_20210519_BUG_006 修改供应商编码 供应商地点错误 to
         publicExpense.setInvoiceno(invoiceNo);
         publicExpense.preInsert(tokenModel);
         publicExpense.setPublicexpenseid(publicexpenseid);
@@ -445,7 +475,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         if (com.nt.utils.StringUtils.isNotBlank(communicationList.get(0).getPublicexpense_id())) {
                             communicationList.get(0).setPublicexpense_id(communicationList.get(0).getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
-                            communicationList.get(0).setInvoiceno(communicationList.get(0).getLoanapno() + "," + publicExpense.getInvoiceno());
+                            communicationList.get(0).setInvoiceno(communicationList.get(0).getInvoiceno() + "," + publicExpense.getInvoiceno());
                         } else {
                             communicationList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                             communicationList.get(0).setInvoiceno(publicExpense.getInvoiceno());
@@ -475,7 +505,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         if (com.nt.utils.StringUtils.isNotBlank(judgementList.get(0).getPublicexpense_id())) {
                             judgementList.get(0).setPublicexpense_id(judgementList.get(0).getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
-                            judgementList.get(0).setInvoiceno(judgementList.get(0).getLoanapno() + "," + publicExpense.getInvoiceno());
+                            judgementList.get(0).setInvoiceno(judgementList.get(0).getInvoiceno() + "," + publicExpense.getInvoiceno());
                         } else {
                             judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                             judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
@@ -504,7 +534,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         if (com.nt.utils.StringUtils.isNotBlank(judgementList.get(0).getPublicexpense_id())) {
                             judgementList.get(0).setPublicexpense_id(judgementList.get(0).getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
-                            judgementList.get(0).setInvoiceno(judgementList.get(0).getLoanapno() + "," + publicExpense.getInvoiceno());
+                            judgementList.get(0).setInvoiceno(judgementList.get(0).getInvoiceno() + "," + publicExpense.getInvoiceno());
                         } else {
                             judgementList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                             judgementList.get(0).setInvoiceno(publicExpense.getInvoiceno());
@@ -533,7 +563,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         //add ccm 0813 决裁到暂借款，精算  check去掉  决裁中的暂借款和精算存在多条的可能
                         if (com.nt.utils.StringUtils.isNotBlank(purchaseapplyList.get(0).getPublicexpense_id())) {
                             purchaseapplyList.get(0).setPublicexpense_id(purchaseapplyList.get(0).getPublicexpense_id() + "," + publicExpense.getPublicexpenseid());
-                            purchaseapplyList.get(0).setInvoiceno(purchaseapplyList.get(0).getLoanapno() + "," + publicExpense.getInvoiceno());
+                            purchaseapplyList.get(0).setInvoiceno(purchaseapplyList.get(0).getInvoiceno() + "," + publicExpense.getInvoiceno());
                         } else {
                             purchaseapplyList.get(0).setPublicexpense_id(publicExpense.getPublicexpenseid());
                             purchaseapplyList.get(0).setInvoiceno(publicExpense.getInvoiceno());
@@ -837,11 +867,13 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 TotalCost taxCost = new TotalCost();
                 int scale1 = 2;//设置位数
                 int roundingMode1 = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
+                //PSDCD_PFANS_20210519_BUG_007 前端画面实际会略微调整，后台不需要重新计算税额 fr
                 // 税拔
-                String lineCost = FNUM.format(new BigDecimal(money).divide(rate.add(new BigDecimal(1)), scale1, roundingMode1));
+                String lineCost = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(gettaxes)));
                 // 税金
                 String lineRate = FNUM.format(gettaxes);
-                String lineRateNo = FNUM.format(new BigDecimal(money).divide(rate.add(new BigDecimal(1)), scale1, roundingMode1).multiply(rate));
+                String lineRateNo = FNUM.format(new BigDecimal(gettaxes));
+                //PSDCD_PFANS_20210519_BUG_007 前端画面实际会略微调整，后台不需要重新计算税额 to
                 if (money > 0) {
                     // 税
                     //add-ws-4/22-税金不为0存2302-00-01A0
@@ -1002,6 +1034,34 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             }
         }
         publicExpense.setInvoiceno(invoiceNos);
+        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpenseVo.getPublicexpense().getLoan())){
+            List<String> loanTypeList = new ArrayList();
+            String pecode = "";
+            String[] loaList = publicExpenseVo.getPublicexpense().getLoan().split(",");
+            if (loaList.length > 0) {
+                for (String lo : loaList) {
+                    LoanApplication loan = new LoanApplication();
+                    loan.setLoanapplication_id(lo);
+                    List<LoanApplication> loanApplicationList = loanApplicationMapper.select(loan);
+                    if(loanApplicationList.size() > 0){
+                        loanTypeList.add(loanApplicationList.get(0).getPaymentmethod());
+                    }
+                }
+                LoanApplication loanCode = new LoanApplication();
+                loanCode.setLoanapplication_id(loaList[0]);
+                loanCode = loanApplicationMapper.selectByPrimaryKey(loanCode);
+                pecode = !com.mysql.jdbc.StringUtils.isNullOrEmpty(loanCode.getPayeecode()) ? loanCode.getPayeecode() : loanCode.getName();
+            }
+            if(loanTypeList.size() > 0){
+                if(loanTypeList.contains("PJ015002")){
+                    publicExpense.setLoantype("0" + "," + pecode);
+                }else if(loanTypeList.contains("PJ015001") || loanTypeList.contains("PJ015003")){
+                    publicExpense.setLoantype("1" + "," + pecode);
+                }else{
+                    publicExpense.setLoantype("");
+                }
+            }
+        }
         //upd-8/20-ws-禅道468任务
         publicExpenseMapper.updateByPrimaryKey(publicExpense);
 
@@ -1171,6 +1231,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                                         toDoNotice.setOwner(rolelist1.get(t).getUserid());
                                         List<ToDoNotice> existTnList_It = todoNoticeMapper.select(toDoNotice);
                                         if(existTnList_It.size() == 0){
+                                            toDoNotice.preInsert(tokenModel);
                                             toDoNoticeService.save(toDoNotice);
                                         }
                                     }
@@ -1183,6 +1244,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                                         toDoNotice.setOwner(rolelist.get(i).getUserid());
                                         List<ToDoNotice> existTnList_Fe = todoNoticeMapper.select(toDoNotice);
                                         if(existTnList_Fe.size() == 0){
+                                            toDoNotice.preInsert(tokenModel);
                                             toDoNoticeService.save(toDoNotice);
                                         }
                                     }
