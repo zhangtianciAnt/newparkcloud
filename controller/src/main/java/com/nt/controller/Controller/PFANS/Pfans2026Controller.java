@@ -124,12 +124,14 @@ public class Pfans2026Controller {
                 wfList4 = sign.startGraphics2D(wfList4);
             }
 
-            Query query4 = new Query();
-            query4.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
-            CustomerInfo customerInfo4 = mongoTemplate.findOne(query4, CustomerInfo.class);
-            if (customerInfo4 != null) {
-                wfList3 = customerInfo4.getUserinfo().getCustomername();
-                wfList3 = sign.startGraphics2D(wfList3);
+            if(wfList.size() > 2){
+                Query query4 = new Query();
+                query4.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+                CustomerInfo customerInfo4 = mongoTemplate.findOne(query4, CustomerInfo.class);
+                if (customerInfo4 != null) {
+                    wfList3 = customerInfo4.getUserinfo().getCustomername();
+                    wfList3 = sign.startGraphics2D(wfList3);
+                }
             }
         }
         data.put("sta", StaList.getStaffexitprocedure());
