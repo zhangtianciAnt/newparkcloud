@@ -61,7 +61,6 @@ public class Pfans2036Controller {
         return ApiResult.success(personalCostService.getChangeRanks());
     }
 
-
     @RequestMapping(value = "/gettableBm", method = {RequestMethod.GET})
     public ApiResult gettableBm(String yearsantid, HttpServletRequest request) throws Exception {
         if (yearsantid == null ) {
@@ -89,13 +88,6 @@ public class Pfans2036Controller {
         return ApiResult.success(personalCostService.gettableRb(yearsantid));
     }
 
-
-
-
-
-
-
-
     @RequestMapping(value = "/getYears", method = {RequestMethod.GET})
     public ApiResult getYears(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
@@ -103,15 +95,6 @@ public class Pfans2036Controller {
         personalCostYears.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(personalCostService.getPerCostYarList(personalCostYears));
     }
-
-    @RequestMapping(value = "/insertPenalcost", method = {RequestMethod.GET})
-    public ApiResult insertPenalcost(String year , HttpServletRequest request) throws Exception {
-        TokenModel tokenModel = tokenService.getToken(request);
-        PersonalCost personalCost = new PersonalCost();
-        return ApiResult.success(personalCostService.insertPenalcost(year,tokenModel));
-    }
-
-
 
     @RequestMapping(value = "/upPersonalCost", method = {RequestMethod.POST})
     public ApiResult upPersonalCost(@RequestBody List<PersonalCost> personalCostList, HttpServletRequest request) throws Exception {
@@ -129,11 +112,9 @@ public class Pfans2036Controller {
         return ApiResult.success(personalCostService.getFuzzyQuery(yearsantid,username,allotmentAnt,group_id,rnAnt));
     }
 
-
     @RequestMapping(value = "/exportinfo", method = {RequestMethod.GET})
     public ApiResult exportinfo(String yearsantid, HttpServletRequest request, HttpServletResponse response) throws Exception {
         List<PersonalCostExpVo> personalCostExpVoList = personalCostService.exportinfo(yearsantid);
-        List<PersonalCostExpVo> rows = new ArrayList<PersonalCostExpVo>();
         ArrayList<Map<String, Object>> rowLists = CollUtil.newArrayList();
         for (PersonalCostExpVo item :personalCostExpVoList
         ) {
@@ -193,8 +174,6 @@ public class Pfans2036Controller {
         writer.close();
         return ApiResult.success();
     }
-
-
 
     @RequestMapping(value = "/importPersInfo", method = {RequestMethod.POST})
     public ApiResult importPersInfo( HttpServletRequest request) throws Exception {
