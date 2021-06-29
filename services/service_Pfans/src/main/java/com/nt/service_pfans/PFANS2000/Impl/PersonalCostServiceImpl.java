@@ -6,11 +6,13 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.PersonalCostExpVo;
+import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS2000.PersonalCostService;
@@ -67,6 +69,9 @@ public class PersonalCostServiceImpl implements PersonalCostService {
     @Autowired
     private OrgTreeService orgTreeService;
 
+    @Autowired
+    private RoleService roleService;
+
     //系统定时任务每月1号自动保存单价
     @Scheduled(cron = "1 45 16 19 5 ?")
     public void savePersonalCost() throws Exception {
@@ -83,6 +88,11 @@ public class PersonalCostServiceImpl implements PersonalCostService {
         Query query = new Query();
         List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
         customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+        List<MembersVo> rolelist = roleService.getMembers("5e785fd38f4316308435112d");
+        String user_id = "";
+        if (rolelist.size() > 0) {
+            user_id = rolelist.get(0).getUserid();
+        }
 
         //配付与否（根据部门设定）
         //配付List
@@ -196,7 +206,8 @@ public class PersonalCostServiceImpl implements PersonalCostService {
             //清除去年离职 张建波 番正聪志
             if (StringUtils.isNullOrEmpty(custInfoAnt.getUserinfo().getResignation_date())
                     && !custInfoAnt.getUserid().equals("5e78b2574e3b194874181099")
-                    && !custInfoAnt.getUserid().equals("5e78fefff1560b363cdd6db7")
+//                    && !custInfoAnt.getUserid().equals("5e78fefff1560b363cdd6db7")
+                    && !custInfoAnt.getUserid().equals(user_id)
                     && !custInfoAnt.getUserid().equals("18fe6bc5-a854-47e9-aeac-f71553fbaad2")
                     && !custInfoAnt.getUserid().equals("05fc4249-9237-4abb-8d1a-dd6b00831566")
             ) {
