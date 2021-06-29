@@ -21,6 +21,9 @@ public interface StaffexitprocedureService {
     //编辑
     void update(StaffexitprocedureVo StaffexitprocedureVo, TokenModel tokenModel) throws Exception;
 
+    //数据转结
+    void change(Staffexitprocedure Staffexitprocedure, TokenModel tokenModel) throws Exception;
+
     //按id查询
     StaffexitprocedureVo selectById(String staffexitprocedureid) throws Exception;
     //add-ws-6/16-禅道106

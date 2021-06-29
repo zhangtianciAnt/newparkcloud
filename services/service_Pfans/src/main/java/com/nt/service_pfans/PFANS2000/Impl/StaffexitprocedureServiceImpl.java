@@ -339,6 +339,17 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         return staffVo;
     }
 
+    //数据转结
+    @Override
+    public void change(Staffexitprocedure staffexitprocedure, TokenModel tokenModel) throws Exception {
+        Staffexitprocedure staff = staffexitprocedureMapper.selectByPrimaryKey(staffexitprocedure.getStaffexitprocedure_id());
+        staff.setCenter_id(staffexitprocedure.getCenter_id());
+        staff.setGroup_id(staffexitprocedure.getGroup_id());
+        staff.setTeam_id(staffexitprocedure.getTeam_id());
+        staff.preUpdate(tokenModel);
+        staffexitprocedureMapper.updateByPrimaryKey(staff);
+    }
+
     //更新
     @Override
     public void update(StaffexitprocedureVo staffexitprocedureVo, TokenModel tokenModel) throws Exception {
