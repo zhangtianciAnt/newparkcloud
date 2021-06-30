@@ -7,10 +7,12 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Role;
+import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.*;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.Vo.UserAccountVo;
 import com.nt.dao_Org.Vo.UserVo;
+import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.UserService;
@@ -78,6 +80,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
 
     /**
      * @方法名：getUserAccount
@@ -507,7 +512,13 @@ public class UserServiceImpl implements UserService {
 //        }
         //根据登录用户id查看人员信息
         List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
-        if (!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId()) && !"5e78b2284e3b194874180f47".equals(tokenModel.getUserId())
+        //5e785fd38f4316308435112d
+        List<MembersVo> rolelist = roleService.getMembers("5e785fd38f4316308435112d");
+        String user_id = "";
+        if (rolelist.size() > 0) {
+            user_id = rolelist.get(0).getUserid();
+        }
+        if (!user_id.equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId()) && !"5e78b2284e3b194874180f47".equals(tokenModel.getUserId())
                 && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId()) && !"5e78b17ef3c8d71e98a2aa30".equals(tokenModel.getUserId())) {
             query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
             List<CustomerInfo> CustomerInfolist = mongoTemplate.find(query, CustomerInfo.class);
@@ -962,6 +973,7 @@ public class UserServiceImpl implements UserService {
 //            throw new LogicalException(e.getMessage());
 //        }
 //    }
+    //【每天凌晨0点5分】
     //系统服务--每天00:05 更新离职人员的信息，已经离职人员不能登录系统  fjl add start
     @Scheduled(cron = "0 05 0 * * ?")
     public void updUseraccountStatus() throws Exception {

@@ -60,6 +60,7 @@ public class Pfans1006Controller {
         LoanApplication loanapplication = new LoanApplication();
         loanapplication.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(loanapplicationService.getLoanApplication(loanapplication));
+
     }
 
     @RequestMapping(value = "/one", method = {RequestMethod.POST})

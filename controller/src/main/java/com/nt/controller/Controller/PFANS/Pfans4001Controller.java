@@ -1,10 +1,12 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Pfans.PFANS4000.Seal;
 import com.nt.dao_Pfans.PFANS4000.SealDetail;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.dao_Workflow.Workflownodeinstance;
 import com.nt.dao_Workflow.Workflowstep;
+import com.nt.service_Auth.RoleService;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_WorkFlow.mapper.WorkflownodeinstanceMapper;
 import com.nt.service_WorkFlow.mapper.WorkflowstepMapper;
@@ -51,11 +53,19 @@ public class Pfans4001Controller {
     @Autowired
     private WorkflowstepMapper workflowstepMapper;
 
+    @Autowired
+    private RoleService roleService;
+
     @RequestMapping(value = "changeSealWorkFlowInfo", method = {RequestMethod.GET})
     public ApiResult SealWorkFlowInfo(HttpServletRequest request) throws Exception {
         Seal seal = new Seal();
         seal.setStatus("4");
         List<Seal> sealList = sealMapper.select(seal);
+        List<MembersVo> rolelist = roleService.getMembers("5e785fd38f4316308435112d");
+        String user_id = "";
+        if (rolelist.size() > 0) {
+            user_id = rolelist.get(0).getUserid();
+        }
         int count = 0;
         if(sealList.size() > 0){
             for(Seal se : sealList){
@@ -77,7 +87,8 @@ public class Pfans4001Controller {
                         nodeInsert.setNodeord(2);
                         nodeInsert.setNodetype("2");
                         nodeInsert.setNodeusertype("1");
-                        nodeInsert.setItemid("5e78fefff1560b363cdd6db7");
+//                        nodeInsert.setItemid("5e78fefff1560b363cdd6db7");
+                        nodeInsert.setItemid(user_id);
                         nodeInsert.setCreateby(wfnodeList.get(0).getCreateby());
                         nodeInsert.setCreateon(wfnodeList.get(0).getCreateon());
                         nodeInsert.setOwner(wfnodeList.get(0).getOwner());
@@ -93,11 +104,13 @@ public class Pfans4001Controller {
                             workflowstep.setWorkflownodeinstanceid(nodeInsert.getWorkflownodeinstanceid());
                             workflowstep.setResult("0");
                             workflowstep.setName("总经理");
-                            workflowstep.setItemid("5e78fefff1560b363cdd6db7");
+//                            workflowstep.setItemid("5e78fefff1560b363cdd6db7");
+                            workflowstep.setItemid(user_id);
                             agreeGm = getStepList.get(0).getItemid();
                             workflowstep.setCreateby(getStepList.get(0).getItemid());
                             workflowstep.setCreateon(getStepList.get(0).getModifyon());
-                            workflowstep.setModifyby("5e78fefff1560b363cdd6db7");
+//                            workflowstep.setModifyby("5e78fefff1560b363cdd6db7");
+                            workflowstep.setModifyby(user_id);
                             int randsec;
                             randsec = (int)(Math.random() * 7200);
                             Date newDateStr = addDateMinut(String.valueOf(getStepList.get(0).getModifyon()),randsec);
@@ -125,7 +138,8 @@ public class Pfans4001Controller {
                 }
                 if(com.mysql.jdbc.StringUtils.isNullOrEmpty(se.getRegulator())){
                     flag ++;
-                    se.setRegulator("5e78fefff1560b363cdd6db7");
+//                    se.setRegulator("5e78fefff1560b363cdd6db7");
+                    se.setRegulator(user_id);
                 }
                 if(com.mysql.jdbc.StringUtils.isNullOrEmpty(se.getRegulatorstate())){
                     flag ++;
