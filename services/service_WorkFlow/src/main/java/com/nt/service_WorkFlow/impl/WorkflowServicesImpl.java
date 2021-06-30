@@ -330,8 +330,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 endnode.setTitle(MessageUtil.getMessage(MsgConstants.WORKFLOW_02, locale));
 
                 workflowLogDetailVo.setUserId(workflowinstancelist.get(0).getOwner());
-                //修正流程结束节点开始时间显示 scc
-                workflowLogDetailVo.setSdata(workflowinstancelist.get(0).getCreateon());
+                workflowLogDetailVo.setSdata(workflowinstancelist.get(0).getModifyon());
                 workflowLogDetailVo.setEdata(workflowinstancelist.get(0).getModifyon());
                 endnode.setDetail(new ArrayList<WorkflowLogDetailVo>());
                 endnode.getDetail().add(workflowLogDetailVo);

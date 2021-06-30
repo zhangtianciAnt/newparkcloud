@@ -408,7 +408,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
 
             //发起人创建代办
             ToDoNotice toDoNotice = new ToDoNotice();
-            toDoNotice.setTitle("【您的离职申请已审批通过，系统中如有进行中的流程，请及时处理。您现可以提前进行离职日前的考勤承认】");
+            toDoNotice.setTitle("【您的离职申请已审批通过，系统中如有进行中的流程，请及时处理。您可以提前进行离职日前的考勤承认】");
             toDoNotice.setInitiator(Userid);
             toDoNotice.setContent("您的离职申请已审批通过！");
             toDoNotice.setDataid(staffexitprocedureVo.getStaffexitprocedure().getStaffexitprocedure_id());
@@ -498,7 +498,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         List<Staffexitproce> Staffexitprocelist = staffexitproceMapper.select(Staffexitproce);
         Staffexitprocelist = Staffexitprocelist.stream().filter(item -> (item.getStatus().equals("4"))).collect(Collectors.toList());
         for (Staffexitproce list : Staffexitprocelist) {
-            if (Integer.valueOf(month1) <= Integer.valueOf(sd.format(list.getResignation_date())) && Integer.valueOf(sd.format(list.getResignation_date())) <= Integer.valueOf(month2)) {
+            if (Integer.valueOf(month1) <= Integer.valueOf(sd.format(list.getResignation_date())) && Integer.valueOf(sd.format(list.getResignation_date())) < Integer.valueOf(month2)) {
                 //审批权限交接 gbb 20210326 此处不需要dataid,应将离职人员的所有代办转给数据权限交接担当
                 ToDoNotice condition = new ToDoNotice();
                 condition.setOwner(list.getUser_id());
