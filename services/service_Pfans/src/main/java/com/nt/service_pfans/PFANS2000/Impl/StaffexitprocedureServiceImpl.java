@@ -495,7 +495,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
 
     //【每天凌晨0点5分】
     //进行数据权限和审批权限交接
-    @Scheduled(cron = "0 05 0 * * ?")
+    @Scheduled(cron = "0 41 17 * * ?")
     public void getdataExittime() throws Exception {
         SimpleDateFormat sd = new SimpleDateFormat("yyyyMMdd");
         String month2 = sd.format(new Date());
@@ -509,7 +509,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         List<Staffexitproce> Staffexitprocelist = staffexitproceMapper.select(Staffexitproce);
         Staffexitprocelist = Staffexitprocelist.stream().filter(item -> (item.getStatus().equals("4"))).collect(Collectors.toList());
         for (Staffexitproce list : Staffexitprocelist) {
-            if (Integer.valueOf(month1) <= Integer.valueOf(sd.format(list.getResignation_date())) && Integer.valueOf(sd.format(list.getResignation_date())) <= Integer.valueOf(month2)) {
+            if (Integer.valueOf(month1) <= Integer.valueOf(sd.format(list.getResignation_date())) && Integer.valueOf(sd.format(list.getResignation_date())) < Integer.valueOf(month2)) {
                 //审批权限交接 gbb 20210326 此处不需要dataid,应将离职人员的所有代办转给数据权限交接担当
                 ToDoNotice condition = new ToDoNotice();
                 condition.setOwner(list.getUser_id());
