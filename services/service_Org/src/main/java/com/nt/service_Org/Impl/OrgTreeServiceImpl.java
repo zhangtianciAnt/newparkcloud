@@ -2,6 +2,7 @@ package com.nt.service_Org.Impl;
 
 import cn.hutool.core.util.ImageUtil;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Pfans.PFANS1000.Vo.OrgTreeVo;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.utils.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -181,5 +182,59 @@ public class OrgTreeServiceImpl implements OrgTreeService {
 
         }
         return new OrgTree();
+    }
+
+    //根据部门id获取部门组织信息
+    @Override
+    public OrgTreeVo getDepartmentinfo(String departid) throws Exception {
+        OrgTree orgs = get(new OrgTree());
+        List<OrgTreeVo> OrgTreeVolist = new ArrayList<>();
+        OrgTreeVo orgtreevo = new OrgTreeVo();
+        for (OrgTree org : orgs.getOrgs()) {//第一层循环
+            orgtreevo = new OrgTreeVo();
+            orgtreevo.set_id(org.get_id());//第一层_id
+            orgtreevo.setMoney1(org.getCompanyname());//第一层名字
+            orgtreevo.setMoney2("");//第二层_id
+            orgtreevo.setMoney3("");//第二层名字
+            orgtreevo.setMoney4("");//第三层_id
+            orgtreevo.setMoney5("");//第三层名字
+            orgtreevo.setMoney6(org.getUser());//负责人
+            orgtreevo.setMoney7("1");//代表第一层
+            orgtreevo.setMoney8(org.get_id());//本部门id
+            OrgTreeVolist.add(orgtreevo);
+            if(org.getOrgs() != null){
+                for (OrgTree org1 : org.getOrgs()) {//第二层循环
+                    orgtreevo = new OrgTreeVo();
+                    orgtreevo.set_id(org.get_id());//第一层_id
+                    orgtreevo.setMoney1(org.getCompanyname());//第一层名字
+                    orgtreevo.setMoney2(org1.get_id());//第二层_id
+                    orgtreevo.setMoney3(org1.getCompanyname());//第二层名字
+                    orgtreevo.setMoney4("");//第三层_id
+                    orgtreevo.setMoney5("");//第三层名字
+                    orgtreevo.setMoney6(org1.getUser());//负责人
+                    orgtreevo.setMoney7("2");//代表第二层
+                    orgtreevo.setMoney8(org1.get_id());//本部门id
+                    OrgTreeVolist.add(orgtreevo);
+                    if(org1.getOrgs() != null){
+                        for (OrgTree org2 : org1.getOrgs()) {//第三层循环
+                            orgtreevo = new OrgTreeVo();
+                            orgtreevo.set_id(org.get_id());//第一层_id
+                            orgtreevo.setMoney1(org.getCompanyname());//第一层名字
+                            orgtreevo.setMoney2(org1.get_id());//第二层_id
+                            orgtreevo.setMoney3(org1.getCompanyname());//第二层名字
+                            orgtreevo.setMoney4(org2.get_id());//第三层_id
+                            orgtreevo.setMoney5(org2.getCompanyname());//第三层名字
+                            orgtreevo.setMoney6(org2.getUser());//负责人
+                            orgtreevo.setMoney7("3");//代表第三层
+                            orgtreevo.setMoney8(org2.get_id());//本部门id
+                            OrgTreeVolist.add(orgtreevo);
+                        }
+                    }
+                }
+            }
+        }
+        OrgTreeVolist = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney8().equals(departid))).collect(Collectors.toList());
+        OrgTreeVo orgTreeVoOne = OrgTreeVolist.get(0);
+        return orgTreeVoOne;
     }
 }
