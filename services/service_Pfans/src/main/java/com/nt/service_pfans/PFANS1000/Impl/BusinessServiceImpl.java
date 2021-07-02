@@ -604,7 +604,7 @@ public class BusinessServiceImpl implements BusinessService {
         }else if(flag.equals("10")){
             //交际费事前决裁
             Communication communication = new Communication();
-            communication.setLoanapplication_id(change_id);
+            communication.setCommunication_id(change_id);
             communication = communicationMapper.selectByPrimaryKey(communication);
             communication.setCenter_id(center_id);
             communication.setGroup_id(group_id);

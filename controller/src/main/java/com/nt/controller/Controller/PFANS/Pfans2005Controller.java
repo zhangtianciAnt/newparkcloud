@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/giving")
+@CrossOrigin
 public class Pfans2005Controller {
 
     @Autowired
