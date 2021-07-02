@@ -171,7 +171,7 @@ public class GivingServiceImpl implements GivingService {
      * FJL
      */
     @Override
-    public GivingVo givinglist(String giving_id) throws Exception {
+    public GivingVo givinglist(String giving_id, String generationdate) throws Exception {  //add_qhr_20210702 添加往后台传入所选数据日期
         GivingVo givingVo = new GivingVo();
         Giving giving = new Giving();
         giving.setGiving_id(giving_id);
@@ -281,15 +281,24 @@ public class GivingServiceImpl implements GivingService {
         List<Induction> inductionList = inductionMapper.select(induction);
         inductionList = inductionList.stream().sorted(Comparator.comparing(Induction::getRowindex)).collect(Collectors.toList());
         givingVo.setEntryVo(inductionList);
-        Calendar nowDate = Calendar.getInstance();
-        Calendar lastDate = Calendar.getInstance();
-        lastDate.add(Calendar.MONTH, -1);
+//        Calendar nowDate = Calendar.getInstance();
+//        Calendar lastDate = Calendar.getInstance();
+//        lastDate.add(Calendar.MONTH, -1);
+//        // 设置上个月的年份和月份
+//        givingVo.setYearOfLastMonth(String.valueOf(lastDate.get(Calendar.YEAR)));
+//        givingVo.setMonthOfLastMonth(String.valueOf(lastDate.get(Calendar.MONTH) + 1));
+//        // 设置当月的年份和月份
+//        givingVo.setYearOfThisMonth(String.valueOf(nowDate.get(Calendar.YEAR)));
+//        givingVo.setMonthOfThisMonth(String.valueOf(nowDate.get(Calendar.MONTH) + 1));
+
+        //region add_qhr_20210702 修改入职tab显示月份
         // 设置上个月的年份和月份
-        givingVo.setYearOfLastMonth(String.valueOf(lastDate.get(Calendar.YEAR)));
-        givingVo.setMonthOfLastMonth(String.valueOf(lastDate.get(Calendar.MONTH) + 1));
+        givingVo.setYearOfLastMonth(generationdate.substring(0, 4));
+        givingVo.setMonthOfLastMonth(String.valueOf(Integer.valueOf(generationdate.substring(5, 7)) - 1));
         // 设置当月的年份和月份
-        givingVo.setYearOfThisMonth(String.valueOf(nowDate.get(Calendar.YEAR)));
-        givingVo.setMonthOfThisMonth(String.valueOf(nowDate.get(Calendar.MONTH) + 1));
+        givingVo.setYearOfThisMonth(generationdate.substring(0, 4));
+        givingVo.setMonthOfThisMonth(String.valueOf(Integer.valueOf(generationdate.substring(5, 7))));
+        //endregion add_qhr_20210702 修改入职tab显示月份
 
         // 查询离职信息表
         Retire retire = new Retire();
