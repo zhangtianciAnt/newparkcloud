@@ -17,4 +17,6 @@ public interface AwardService {
       void updateAwardVo(AwardVo awardVo,TokenModel tokenModel) throws Exception;
 //      void generateJxls(String awarded, HttpServletResponse response) throws Exception ;
 
+      //决裁书数据结转
+      void dataCarryover(Award award, TokenModel tokenModel) throws Exception;
 }

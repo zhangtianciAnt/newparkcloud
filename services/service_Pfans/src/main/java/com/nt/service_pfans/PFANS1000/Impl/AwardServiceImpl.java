@@ -225,5 +225,10 @@ public class AwardServiceImpl implements AwardService {
 
     }
 
+    @Override
+    public void dataCarryover(Award award,TokenModel tokenModel) throws Exception {
+        award.preUpdate(tokenModel);
+        awardMapper.updateByPrimaryKeySelective(award);
+    }
 
 }
