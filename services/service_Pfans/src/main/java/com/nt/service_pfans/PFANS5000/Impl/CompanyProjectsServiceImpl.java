@@ -104,6 +104,13 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         return companyprojectsMapper.select(companyprojects);
     }
 
+    //pj起案数据结转
+    @Override
+    public void update1(CompanyProjects companyprojects, TokenModel tokenModel) throws Exception {
+         companyprojects.preUpdate(tokenModel);
+         companyprojectsMapper.updateByPrimaryKeySelective(companyprojects);
+    }
+
     @Override
     public List<CompanyProjects> list(CompanyProjects companyProjects) throws Exception {
         return companyprojectsMapper.select(companyProjects);

@@ -27,6 +27,18 @@ import com.nt.utils.MsgConstants;
 import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
+import jxl.Sheet;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
@@ -39,7 +51,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.*;
 import java.sql.Array;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -203,6 +217,20 @@ public class Pfans5001Controller {
         }
         TokenModel tokenModel=tokenService.getToken(request);
         companyProjectsService.update(companyProjectsVo,tokenModel);
+        return ApiResult.success();
+    }
+
+    /**
+     *
+     * PJ起案数据结转
+     */
+    @RequestMapping(value = "/update1", method = {RequestMethod.POST})
+    public ApiResult update1(@RequestBody CompanyProjects companyprojects, HttpServletRequest request) throws Exception {
+        if(companyprojects==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel=tokenService.getToken(request);
+        companyProjectsService.update1(companyprojects,tokenModel);
         return ApiResult.success();
     }
 
@@ -429,95 +457,128 @@ public class Pfans5001Controller {
      * ]
      * @返回值：List<CompanyProjectsReport>
      */
-    @RequestMapping(value = "/reportCheck", method={RequestMethod.GET})
-    public ApiResult report() throws Exception {
-        List<CompanyProjectsReportCheckVo> cprcList = companyProjectsService.reportCheck();
-        ArrayList<Map<String, Object>> rowLists = CollUtil.newArrayList();
-
-        for (CompanyProjectsReportCheckVo item : cprcList
-        ) {
-            int compNum = 0;
-            int sysmNum = 0;
-            int contNum = 0;
-            int stagNum = 0;
-            if(item.getProjectsystemList() != null){
-                sysmNum = item.getProjectsystemList().size();
-            }
-            if(item.getStageInformationList() != null){
-                stagNum = item.getStageInformationList().size();
-            }
-            if(item.getProjectContractList() != null){
-                contNum = item.getProjectContractList().size();
-            }
-
-            int maxNum = ((maxNum=(sysmNum > stagNum) ? sysmNum : stagNum) > contNum ? maxNum : contNum);
-
-            for(int i = 0; i < maxNum; i++){
-                Map<String, Object> row = new LinkedHashMap<>();
-                if(compNum == 0){
-                    row.put("项目编号", item.getCompanyProjects().getNumbers());
-                    row.put("项目名称", item.getCompanyProjects().getProject_name());
-                    row.put("开始时间", item.getCompanyProjects().getStartdate());
-                    row.put("预计完成时间", item.getCompanyProjects().getEnddate());
-                    row.put("受託工数（人月）", item.getCompanyProjects().getManmonth());
-                    compNum ++;
-                }else{
-                    row.put("项目编号", "");
-                    row.put("项目名称", "");
-                    row.put("开始时间", "");
-                    row.put("预计完成时间", "");
-                    row.put("受託工数（人月）", "");
-                }
-                if(i < stagNum){
-                    row.put("工作阶段", item.getStageInformationList().get(i).getPhase());
-                    row.put("阶段成果物", item.getStageInformationList().get(i).getStageproduct());
-                    row.put("预计工数（人月）", item.getStageInformationList().get(i).getEstimatedwork());
-                    row.put("实际工数（人月）", item.getStageInformationList().get(i).getActualwork());
-                    row.put("预计开始时间", item.getStageInformationList().get(i).getEstimatedstarttime());
-                    row.put("预计结束时间", item.getStageInformationList().get(i).getEstimatedendtime());
-                    row.put("实际开始时间", item.getStageInformationList().get(i).getActualstarttime());
-                    row.put("实际结束时间", item.getStageInformationList().get(i).getActualendtime());
-                }else{
-                    row.put("工作阶段", "");
-                    row.put("阶段成果物", "");
-                    row.put("预计工数（人月）", "");
-                    row.put("实际工数（）", "");
-                    row.put("预计开始时间", "");
-                    row.put("预计结束时间", "");
-                    row.put("实际开始时间", "");
-                    row.put("实际结束时间", "");
-                }
-                if(i < sysmNum){
-                    row.put("社内/社外", (item.getProjectsystemList().get(i).getType().equals("0") ? "社内" : "社外"));
-                    row.put("姓名", item.getProjectsystemList().get(i).getName());
-                    row.put("入场时间", item.getProjectsystemList().get(i).getAdmissiontime());
-                    row.put("退出时间", item.getProjectsystemList().get(i).getExittime());
-                }else{
-                    row.put("社内/社外", "");
-                    row.put("姓名", "");
-                    row.put("入场时间", "");
-                    row.put("退出时间", "");
-                }
-                if(i < contNum){
-                    row.put("合同", item.getProjectContractList().get(i).getContract());
-                    row.put("请求方式", item.getProjectContractList().get(i).getClaimtype());
-                    row.put("请求期间", item.getProjectContractList().get(i).getWorkinghours());
-                    row.put("请求金额", item.getProjectContractList().get(i).getContractrequestamount());
-                    row.put("分配金额", item.getProjectContractList().get(i).getContractamount());
-                }else{
-                    row.put("合同", "");
-                    row.put("请求方式", "");
-                    row.put("请求期间", "");
-                    row.put("请求金额", "");
-                    row.put("分配金额", "");
-                }
-                rowLists.add(row);
-            }
-        }
-        String destFilePath = "D:/" + "项目相关信息.xlsx";
-        ExcelWriter writer = ExcelUtil.getWriter(destFilePath, "项目相关信息");
-        writer.write(rowLists);
-        writer.close();
-        return ApiResult.success();
-    }
+//    @RequestMapping(value = "/reportCheck", method={RequestMethod.GET})
+//    public ApiResult report() throws Exception {
+//        List<CompanyProjectsReportCheckVo> cprcList = companyProjectsService.reportCheck();
+//        ArrayList<Map<String, Object>> rowLists = CollUtil.newArrayList();
+//        int temMax = 1;
+//        int cow = 0;
+//        int temp = 0;
+//        SimpleDateFormat format0 = new SimpleDateFormat("yyyy/MM/dd");
+//        SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
+//        SXSSFSheet sheet = sxssfWorkbook.createSheet("项目相关信息");
+//        SXSSFRow headTitle = sheet.createRow(0);
+//        headTitle.createCell(0).setCellValue("重点工程项目计划表");
+//        SXSSFRow headRow = (SXSSFRow) sheet.createRow(0);
+//        headRow.createCell(0).setCellValue("项目编号");
+//        headRow.createCell(1).setCellValue("项目名称");
+//        headRow.createCell(2).setCellValue("开始时间");
+//        headRow.createCell(3).setCellValue("预计完成时间");
+//        headRow.createCell(4).setCellValue("受託工数（人月）");
+//        headRow.createCell(5).setCellValue("工作阶段");
+//        headRow.createCell(6).setCellValue("阶段成果物");
+//        headRow.createCell(7).setCellValue("预计工数（人月）");
+//        headRow.createCell(8).setCellValue("实际工数（人月）");
+//        headRow.createCell(9).setCellValue("预计开始时间");
+//        headRow.createCell(10).setCellValue("预计结束时间");
+//        headRow.createCell(11).setCellValue("实际开始时间");
+//        headRow.createCell(12).setCellValue("实际结束时间");
+//        headRow.createCell(13).setCellValue("社内/社外");
+//        headRow.createCell(14).setCellValue("姓名");
+//        headRow.createCell(15).setCellValue("入场时间");
+//        headRow.createCell(16).setCellValue("退出时间");
+//        headRow.createCell(17).setCellValue("合同");
+//        headRow.createCell(18).setCellValue("请求方式");
+//        headRow.createCell(19).setCellValue("请求期间");
+//        headRow.createCell(20).setCellValue("请求金额");
+//        headRow.createCell(21).setCellValue("分配金额");
+//        FileOutputStream stream = new FileOutputStream("C:/aa/student.xlsx",true);
+//
+//        for (CompanyProjectsReportCheckVo item : cprcList
+//        ) {
+//            int compNum = 0;
+//            int sysmNum = 0;
+//            int contNum = 0;
+//            int stagNum = 0;
+//            if(item.getProjectsystemList() != null){
+//                sysmNum = item.getProjectsystemList().size();
+//            }
+//            if(item.getStageInformationList() != null){
+//                stagNum = item.getStageInformationList().size();
+//            }
+//            if(item.getProjectContractList() != null){
+//                contNum = item.getProjectContractList().size();
+//            }
+//
+//            int maxNum = ((maxNum=(sysmNum > stagNum) ? sysmNum : stagNum) > contNum ? maxNum : contNum);
+//
+//            temp = maxNum;
+//
+//            maxNum =cow + maxNum;
+//            for(int i = 0; i < 5; i++){
+//                CellRangeAddress firstRegion = null;
+//                SXSSFRow dataRow = (SXSSFRow) sheet.createRow(sheet.getLastRowNum() + 1);
+//
+//                for(int j = 0; j < temp; j++) {
+//
+//                    if(compNum == 0){
+//                        dataRow.createCell(0).setCellValue(item.getCompanyProjects().getNumbers());
+//                        dataRow.createCell(1).setCellValue(item.getCompanyProjects().getProject_name() );
+////                    dataRow.createCell(2).setCellValue(item.getCompanyProjects().getStartdate() != null ? format0.format(item.getCompanyProjects().getStartdate()) : "");
+//                        dataRow.createCell(2).setCellValue(item.getCompanyProjects().getStartdate());
+////                    dataRow.createCell(3).setCellValue(item.getCompanyProjects().getEnddate() != null ? format0.format(item.getCompanyProjects().getEnddate()) : "");
+//                        dataRow.createCell(3).setCellValue(item.getCompanyProjects().getEnddate());
+//                        dataRow.createCell(4).setCellValue( item.getCompanyProjects().getManmonth());
+//                    }
+//                    if (j < stagNum) {
+//                        dataRow.createCell(5).setCellValue(item.getStageInformationList().get(j).getPhase());
+//                        dataRow.createCell(6).setCellValue(item.getStageInformationList().get(j).getStageproduct());
+//                        dataRow.createCell(7).setCellValue(item.getStageInformationList().get(j).getEstimatedwork());
+//                        dataRow.createCell(8).setCellValue(item.getStageInformationList().get(j).getActualwork());
+////                    dataRow.createCell(9).setCellValue(item.getStageInformationList().get(i).getEstimatedstarttime() != null ? format0.format(item.getStageInformationList().get(i).getEstimatedstarttime()) : "");
+//                        dataRow.createCell(9).setCellValue(item.getStageInformationList().get(j).getEstimatedstarttime());
+////                    dataRow.createCell(10).setCellValue(item.getStageInformationList().get(i).getEstimatedendtime() != null ? format0.format(item.getStageInformationList().get(i).getEstimatedendtime()) : "");
+//                        dataRow.createCell(10).setCellValue(item.getStageInformationList().get(j).getEstimatedendtime());
+//                        dataRow.createCell(11).setCellValue(item.getStageInformationList().get(j).getActualstarttime());
+//                        dataRow.createCell(12).setCellValue(item.getStageInformationList().get(j).getActualendtime());
+//                    }
+//                    if (j < sysmNum) {
+//                        dataRow.createCell(13).setCellValue(item.getProjectsystemList().get(j).getType().equals("0") ? "社内" : "社外");
+//                        dataRow.createCell(14).setCellValue(item.getProjectsystemList().get(j).getName());
+////                    dataRow.createCell(15).setCellValue(item.getProjectsystemList().get(i).getAdmissiontime() != null ? format0.format(item.getProjectsystemList().get(i).getAdmissiontime()) : "");
+//                        dataRow.createCell(15).setCellValue(item.getProjectsystemList().get(j).getAdmissiontime());
+////                    dataRow.createCell(16).setCellValue(item.getProjectsystemList().get(i).getExittime() != null ? format0.format(item.getProjectsystemList().get(i).getExittime()) : "");
+//                        dataRow.createCell(16).setCellValue(item.getProjectsystemList().get(j).getExittime());
+//                    }
+////                if(i < contNum){
+//                    if (j < contNum) {
+//                        dataRow.createCell(17).setCellValue(item.getProjectContractList().get(j).getContract());
+//                        dataRow.createCell(18).setCellValue(item.getProjectContractList().get(j).getClaimtype());
+//                        dataRow.createCell(19).setCellValue(item.getProjectContractList().get(j).getWorkinghours());
+//                        dataRow.createCell(20).setCellValue(item.getProjectContractList().get(j).getContractrequestamount());
+//                        dataRow.createCell(21).setCellValue(item.getProjectContractList().get(j).getContractamount());
+//                    }
+//
+//
+//
+//                    if(i >= 0) {
+//                        firstRegion = new CellRangeAddress(temMax, maxNum, i, i);
+//                        sheet.addMergedRegion(firstRegion);
+//                    }
+//            }}
+//            temMax = maxNum + 1;
+//            cow = maxNum;
+//        }
+//
+//
+//        sxssfWorkbook.write(stream);
+////        InputStream is = new FileInputStream("C:/aa/student.xls");
+////        //文件系统
+////        POIFSFileSystem fs = new POIFSFileSystem(is);
+////        //定义工作簿
+////        XSSFWorkbook wb = new XSSFWorkbook(is);
+////        HSSFWorkbook wb = new HSSFWorkbook(fs);
+//
+//        return ApiResult.success();
+//    }
 }

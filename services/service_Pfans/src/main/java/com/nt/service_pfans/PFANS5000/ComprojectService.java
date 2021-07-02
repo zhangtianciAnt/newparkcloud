@@ -52,4 +52,6 @@ public interface ComprojectService {
     //add-ws-阚总日志问题修正
     List<Comproject> getComproject2(Comproject comproject) throws Exception;
     //add-ws-阚总日志问题修正
+    //公共部署起案数据结转
+    void dataCarryover(Comproject comproject, TokenModel tokenModel) throws Exception;
 }

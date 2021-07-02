@@ -59,4 +59,7 @@ public interface CompanyProjectsService {
     // ztc start 项目整理追加 2021/06/18
     List<CompanyProjectsReportCheckVo> reportCheck() throws Exception;
     // ztc end 项目整理追加 2021/06/18
+
+    //pj起案数据结转
+    void update1(CompanyProjects companyprojects, TokenModel tokenModel) throws Exception;
 }
