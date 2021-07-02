@@ -1673,6 +1673,12 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         return resultInfoList;
     }
 
+    //合同号申请页面中不同契约数据结转
+    @Override
+    public void dataCarryover(Contractapplication contractapplication,TokenModel tokenModel) throws Exception{
+        contractapplication.preUpdate(tokenModel);
+        contractapplicationMapper.updateByPrimaryKeySelective(contractapplication);
+    }
 
     private OrgTree getCurrentOrg(OrgTree org,String orgId) throws Exception {
         if (org.get_id().equals(orgId)) {

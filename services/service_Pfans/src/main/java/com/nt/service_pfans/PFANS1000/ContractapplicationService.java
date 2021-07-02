@@ -46,4 +46,7 @@ public interface ContractapplicationService {
 
     List<ReportContractEnVo> reportContractEn(String conType) throws Exception;
 
+    //合同号申请页面中不同契约数据结转
+    void dataCarryover(Contractapplication contractapplication,TokenModel tokenModel) throws Exception;
+
 }
