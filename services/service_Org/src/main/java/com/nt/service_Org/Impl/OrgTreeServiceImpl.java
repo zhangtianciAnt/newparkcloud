@@ -182,4 +182,25 @@ public class OrgTreeServiceImpl implements OrgTreeService {
         }
         return new OrgTree();
     }
+    //根据部门id获取部门组织信息
+    @Override
+    public OrgTree getOrgInfo(OrgTree org, String compn) throws Exception {
+        OrgTree returnorg = new OrgTree();
+        if (org.get_id().equals(compn)) {
+            return org;
+        } else {
+            if (org.getOrgs() != null) {
+                for (OrgTree item : org.getOrgs()) {
+                    returnorg = getOrgInfo(item, compn);
+                    if(returnorg.get_id() != null){
+                        if (returnorg.get_id().equals(compn)) {
+                            return returnorg;
+                        }
+                    }
+                }
+            }
+
+        }
+        return new OrgTree();
+    }
 }

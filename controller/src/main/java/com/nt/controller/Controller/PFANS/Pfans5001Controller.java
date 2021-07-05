@@ -204,6 +204,20 @@ public class Pfans5001Controller {
 
     /**
      *
+     * PJ起案数据结转
+     */
+    @RequestMapping(value = "/update1", method = {RequestMethod.POST})
+    public ApiResult update1(@RequestBody CompanyProjects companyprojects, HttpServletRequest request) throws Exception {
+        if(companyprojects==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel=tokenService.getToken(request);
+        companyProjectsService.update1(companyprojects,tokenModel);
+        return ApiResult.success();
+    }
+
+    /**
+     *
      * 修改
      */
 //    合同号+请求回数

@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS3000;
 
+import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.utils.dao.TokenModel;
 
@@ -21,4 +22,6 @@ public interface PurchaseService {
     //采购业务数据流程查看详情
     public Map<String, String> getworkfolwPurchaseData(Purchase purchase) throws Exception;
     //采购业务数据流程查看详情
+
+    void change(Purchase purchase, TokenModel tokenModel) throws Exception;
 }

@@ -11,6 +11,7 @@ import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessVo;
 import com.nt.dao_Pfans.PFANS2000.PunchcardRecord;
 import com.nt.dao_Pfans.PFANS2000.PunchcardRecordDetail;
+import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
 import com.nt.dao_Pfans.PFANS3000.Tickets;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
@@ -88,6 +89,14 @@ public class BusinessServiceImpl implements BusinessService {
     private PunchcardRecordDetailMapper punmapper;
     @Autowired
     private PunchcardRecordMapper punchcardrecordMapper;
+    @Autowired
+    private JudgementMapper judgementMapper;
+    @Autowired
+    private PurchaseApplyMapper purchaseApplyMapper;
+    @Autowired
+    private LoanApplicationMapper loanApplicationMapper;
+    @Autowired
+    private CommunicationMapper communicationMapper;
     @Override
     public List<Business> get(Business business) throws Exception {
         return businessMapper.select(business);
@@ -544,4 +553,65 @@ public class BusinessServiceImpl implements BusinessService {
         //endregion
     }
 
+    //数据转结
+    @Override
+    public void change(String center_id,String group_id,String team_id,String budgetunit,String change_id,String flag,
+                       TokenModel tokenModel) throws Exception {
+        if(flag.equals("1") || flag.equals("2")){
+            //境内外出差申请
+            Business business = new Business();
+            business.setBusiness_id(change_id);
+            business = businessMapper.selectByPrimaryKey(business);
+            business.setCenter_id(center_id);
+            business.setGroup_id(group_id);
+            business.setTeam_id(team_id);
+            business.setBudgetunit(budgetunit);
+            business.preUpdate(tokenModel);
+            businessMapper.updateByPrimaryKey(business);
+        }else if(flag.equals("3") || flag.equals("4")){
+            //其他业务决裁决裁、无偿设备
+            Judgement judgement = new Judgement();
+            judgement.setJudgementid(change_id);
+            judgement = judgementMapper.selectByPrimaryKey(judgement);
+            judgement.setCenter_id(center_id);
+            judgement.setGroup_id(group_id);
+            judgement.setTeam_id(team_id);
+            judgement.setThisproject(budgetunit);
+            judgement.preUpdate(tokenModel);
+            judgementMapper.updateByPrimaryKey(judgement);
+        }else if(flag.equals("5")){
+            //千元以下费用申请
+            PurchaseApply purchaseApply = new PurchaseApply();
+            purchaseApply.setPurchaseapply_id(change_id);
+            purchaseApply = purchaseApplyMapper.selectByPrimaryKey(purchaseApply);
+            purchaseApply.setCenter_id(center_id);
+            purchaseApply.setGroup_id(group_id);
+            purchaseApply.setTeam_id(team_id);
+            purchaseApply.setBudgetunit(budgetunit);
+            purchaseApply.preUpdate(tokenModel);
+            purchaseApplyMapper.updateByPrimaryKey(purchaseApply);
+        }else if(flag.equals("6")){
+            //暂借款申请
+            LoanApplication loanApplication = new LoanApplication();
+            loanApplication.setLoanapplication_id(change_id);
+            loanApplication = loanApplicationMapper.selectByPrimaryKey(loanApplication);
+            loanApplication.setCenter_id(center_id);
+            loanApplication.setGroup_id(group_id);
+            loanApplication.setTeam_id(team_id);
+            loanApplication.setBudgetunit(budgetunit);
+            loanApplication.preUpdate(tokenModel);
+            loanApplicationMapper.updateByPrimaryKey(loanApplication);
+        }else if(flag.equals("10")){
+            //交际费事前决裁
+            Communication communication = new Communication();
+            communication.setCommunication_id(change_id);
+            communication = communicationMapper.selectByPrimaryKey(communication);
+            communication.setCenter_id(center_id);
+            communication.setGroup_id(group_id);
+            communication.setTeam_id(team_id);
+            communication.setBudgetunit(budgetunit);
+            communication.preUpdate(tokenModel);
+            communicationMapper.updateByPrimaryKey(communication);
+        }
+    }
 }

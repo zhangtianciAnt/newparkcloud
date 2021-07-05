@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
@@ -1437,5 +1438,28 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             result = true;
         }
         return result;
+    }
+    //合同号申请页面中不同契约数据结转
+    @Override
+    public void dataCarryover(Contractapplication contractapplication,TokenModel tokenModel) throws Exception{
+        contractapplication.preUpdate(tokenModel);
+        contractapplicationMapper.updateByPrimaryKeySelective(contractapplication);
+    }
+
+    private OrgTree getCurrentOrg(OrgTree org, String orgId) throws Exception {
+        if (org.get_id().equals(orgId)) {
+            return org;
+        } else {
+            if (org.getOrgs() != null) {
+                for (OrgTree item : org.getOrgs()) {
+                    OrgTree or = getCurrentOrg(item,orgId);
+                    if (or.get_id().equals(orgId)) {
+                        return or;
+                    }
+                }
+            }
+
+        }
+        return org;
     }
 }

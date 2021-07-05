@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS2000.Impl;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.GoalManagement;
+import com.nt.dao_Pfans.PFANS2000.TalentPlan;
 import com.nt.service_Org.UserService;
 import com.nt.service_pfans.PFANS2000.GoalManagementService;
 import com.nt.service_pfans.PFANS2000.mapper.GoalManagementMapper;
@@ -71,5 +72,11 @@ public class GoalManagementServiceImpl implements GoalManagementService {
         goalmanagement.preInsert(tokenModel);
         goalmanagement.setGoalmanagement_id(UUID.randomUUID().toString());
         goalmanagementMapper.insert(goalmanagement);
+    }
+    //人才育成页面数据结转
+    @Override
+    public void change(GoalManagement goalmanagement, TokenModel tokenModel) throws Exception{
+        goalmanagement.preInsert(tokenModel);
+        goalmanagementMapper.updateByPrimaryKeySelective(goalmanagement);
     }
 }

@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Pfans.PFANS3000.Vo.PurchaseVo;
 import com.nt.dao_Pfans.PFANS6000.CoststatisticsVo;
@@ -113,4 +114,13 @@ public class Pfans3005Controller {
     }
     //采购业务数据流程查看详情
 
+    @RequestMapping(value = "/change", method = {RequestMethod.POST})
+    public ApiResult change(@RequestBody Purchase purchase, HttpServletRequest request) throws Exception {
+        if (purchase == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        purchaseService.change(purchase, tokenModel);
+        return ApiResult.success();
+    }
 }

@@ -8,6 +8,7 @@ import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.LoanApplication;
 import com.nt.dao_Pfans.PFANS1000.PublicExpense;
+import com.nt.dao_Pfans.PFANS2000.Staffexitproce;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
@@ -363,4 +364,15 @@ public class PurchaseServiceImpl implements PurchaseService {
         }
         return getpurchaseMap;
     }
+
+    @Override
+    public void change(Purchase purchase, TokenModel tokenModel) throws Exception {
+        Purchase pur = purchaseMapper.selectByPrimaryKey(purchase.getPurchase_id());
+        pur.setCenter_id(purchase.getCenter_id());
+        pur.setGroup_id(purchase.getGroup_id());
+        pur.setTeam_id(purchase.getTeam_id());
+        pur.preUpdate(tokenModel);
+        purchaseMapper.updateByPrimaryKey(pur);
+    }
+
 }
