@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS2000;
 
 import com.nt.dao_Pfans.PFANS2000.GoalManagement;
+import com.nt.dao_Pfans.PFANS2000.TalentPlan;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,4 +14,6 @@ public interface GoalManagementService {
     GoalManagement One(String goalmanagement_id) throws Exception;
 
     List<GoalManagement> yearsCheck(GoalManagement goalmanagement) throws Exception;
+
+    void change(GoalManagement goalmanagement, TokenModel tokenModel) throws Exception;
 }

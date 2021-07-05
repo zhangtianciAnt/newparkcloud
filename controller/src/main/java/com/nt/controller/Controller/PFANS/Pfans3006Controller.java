@@ -79,4 +79,14 @@ public class Pfans3006Controller {
         Map<String, Object> data = new HashMap<>();
         ExcelOutPutUtil.OutPut("接机牌","jiejipai.xlsx",data,response);
     }
+
+    @RequestMapping(value = "/change", method = {RequestMethod.POST})
+    public ApiResult change(@RequestBody AppointmentCar appointmentcar, HttpServletRequest request) throws Exception {
+        if (appointmentcar == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        appointmentcarService.change(appointmentcar, tokenModel);
+        return ApiResult.success();
+    }
 }

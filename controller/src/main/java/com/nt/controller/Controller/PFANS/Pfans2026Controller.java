@@ -26,10 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -55,6 +52,7 @@ public class Pfans2026Controller {
 
     @Autowired
     private StaffexitprocedureService staffexitprocedureService;
+
     @Autowired
     private TokenService tokenService;
     @Autowired
@@ -210,6 +208,32 @@ public class Pfans2026Controller {
         staffexitprocedureService.update(staffexitprocedureVo, tokenModel);
         return ApiResult.success();
 
+    }
+
+    /**
+     * 离职申请数据转结
+     */
+    @RequestMapping(value = "/change", method = {RequestMethod.POST})
+    public ApiResult change(@RequestBody Staffexitprocedure staffexitprocedure, HttpServletRequest request) throws Exception {
+        if (staffexitprocedure == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        staffexitprocedureService.change(staffexitprocedure, tokenModel);
+        return ApiResult.success();
+    }
+
+    /**
+     * 退职者调书&离职手续数据转结
+     */
+    @RequestMapping(value = "/change2", method = {RequestMethod.POST})
+    public ApiResult change2(@RequestBody Staffexitproce staffexitproce, HttpServletRequest request) throws Exception {
+        if (staffexitproce == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        staffexitprocedureService.change2(staffexitproce, tokenModel);
+        return ApiResult.success();
     }
 
     /**

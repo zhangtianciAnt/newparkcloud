@@ -2,6 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.Business;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessVo;
+import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
 import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS1000.OffshoreService;
 import com.nt.service_pfans.PFANS3000.TicketsService;
@@ -13,10 +14,7 @@ import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -103,6 +101,22 @@ public class Pfans1002Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         businessService.updateBusinessVo(businessVo, tokenModel);
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/change", method = {RequestMethod.POST})
+    public ApiResult change(@RequestParam String center_id,
+                            @RequestParam String group_id,
+                            @RequestParam String team_id,
+                            @RequestParam String budgetunit,
+                            @RequestParam String change_id,
+                            @RequestParam String flag,
+                            HttpServletRequest request) throws Exception {
+        if (center_id == null || budgetunit == null || change_id == null || flag == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        businessService.change(center_id, group_id, team_id, budgetunit, change_id, flag, tokenModel);
         return ApiResult.success();
     }
 

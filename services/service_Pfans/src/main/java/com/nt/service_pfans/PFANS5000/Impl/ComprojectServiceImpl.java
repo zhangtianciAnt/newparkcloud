@@ -216,6 +216,13 @@ public class ComprojectServiceImpl implements ComprojectService {
 //        }
     }
 
+    //公共部署起案数据结转
+    @Override
+    public void dataCarryover(Comproject comproject, TokenModel tokenModel) throws Exception {
+        comproject.preUpdate(tokenModel);
+        comProjectMapper.updateByPrimaryKeySelective(comproject);
+    }
+
     //新建
     @Override
     public void insert(CompanyProjectsVo companyProjectsVo, TokenModel tokenModel) throws Exception {

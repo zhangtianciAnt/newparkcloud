@@ -1,10 +1,13 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.AwardService;
+import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -57,6 +60,12 @@ public class Pfans1025Controller {
 
     @Autowired
     private NonJudgmentMapper nonJudgmentMapper;
+
+    @Autowired
+    private ContractapplicationService contractapplicationService;
+
+    @Autowired
+    private OrgTreeService orgtreeservice;
 
 
     @RequestMapping(value = "/generateJxls", method = {RequestMethod.POST})
@@ -417,5 +426,26 @@ public class Pfans1025Controller {
         return ApiResult.success(awardService.get(award));
     }
 
+    /**
+     *
+     * 决裁书数据结转
+     */
+    @RequestMapping(value = "/dataCarryover", method = {RequestMethod.POST})
+    public ApiResult dataCarryover(@RequestBody Award award, HttpServletRequest request) throws Exception {
+        OrgTree newOrgInfo = orgtreeservice.get(new OrgTree());
+        Award award1 = new Award();
+        award1.setAward_id(award.getAward_id());
+        if(award.getMaketype() != "9") {//其他决裁书中group ID为空，不更新
+            award1.setGroup_id(award.getGroup_id());
+        }
+        if (award == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        OrgTree orginfo = orgtreeservice.getOrgInfo(newOrgInfo, award.getGroup_id());
+        award1.setDeployment(orginfo.getCompanyname());
+        awardService.dataCarryover(award1, tokenModel);
+        return ApiResult.success();
 
+    }
 }

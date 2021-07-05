@@ -36,4 +36,6 @@ public interface OrgTreeService {
     List<OrgTree> getOrgAll() throws Exception;
     // 根据ID获取组织机构树形结构
     OrgTree getCurrentOrg(OrgTree orgTree, String orgId) throws Exception;
+
+    OrgTree getOrgInfo(OrgTree org, String compn) throws  Exception;
 }

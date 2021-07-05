@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
@@ -10,6 +11,7 @@ import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.IndividualMapper;
 import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
@@ -44,6 +46,8 @@ public class Pfans1026Controller {
     private CoststatisticsdetailMapper coststatisticsdetailMapper;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private OrgTreeService orgtreeservice;
     //add-ws-7/22-禅道341任务
     @RequestMapping(value = "/getindividual", method = {RequestMethod.POST})
     public ApiResult getindividual(HttpServletRequest request) throws Exception {
@@ -213,4 +217,23 @@ public class Pfans1026Controller {
         return ApiResult.success(contractapplicationService.getNapinQinqiu(contractnumbercount));
     }
 
+    /**
+     *
+     * 合同号申请页面中不同契约数据结转
+     */
+    @RequestMapping(value = "/dataCarryover", method = {RequestMethod.POST})
+    public ApiResult dataCarryover(@RequestBody Contractapplication contractapplication, HttpServletRequest request) throws Exception {
+        OrgTree newOrgInfo = orgtreeservice.get(new OrgTree());
+        Contractapplication contractapplication1 = new Contractapplication();
+        contractapplication1.setContractapplication_id(contractapplication.getContractapplication_id());
+        contractapplication1.setGroup_id(contractapplication.getGroup_id());
+        if (contractapplication == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+            OrgTree orginfo = orgtreeservice.getOrgInfo(newOrgInfo, contractapplication.getGroup_id());
+        contractapplication1.setDeployment(orginfo.getCompanyname());
+        contractapplicationService.dataCarryover(contractapplication1,tokenModel);
+        return ApiResult.success();
+    }
 }

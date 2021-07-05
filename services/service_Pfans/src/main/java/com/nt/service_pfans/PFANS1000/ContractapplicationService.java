@@ -37,4 +37,8 @@ public interface ContractapplicationService {
     Map<String, String> getworkfolwPurchaseData(Award award) throws Exception;
 
     boolean getNapinQinqiu(Contractnumbercount contractnumbercount) throws Exception;
+
+    //合同号申请页面中不同契约数据结转
+    void dataCarryover(Contractapplication contractapplication,TokenModel tokenModel) throws Exception;
+
 }

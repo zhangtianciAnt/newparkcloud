@@ -103,7 +103,7 @@ public class Pfans5008Controller {
     }
 
     @RequestMapping(value = "/getProjectList", method = {RequestMethod.POST})
-    public ApiResult getProjectList(@RequestBody PersonalProjects personalprojects, HttpServletRequest request) throws Exception {
+    public ApiResult getProjectList(@RequestBody PersonalProjects personalprojects,  HttpServletRequest request) throws Exception {
         if (personalprojects == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
@@ -117,12 +117,12 @@ public class Pfans5008Controller {
         Map<String, Object> data = new HashMap<>();
         String templateName = null;
         String fileName = null;
-        if ("0".equals(type)) {
+        if ( "0".equals(type) ) {
             templateName = "rizhiguanli.xlsx";
             fileName = "日志管理";
         }
-        if (templateName != null) {
-            ExcelOutPutUtil.OutPut(fileName, templateName, data, response);
+        if (templateName != null ) {
+            ExcelOutPutUtil.OutPut(fileName,templateName,data,response);
         }
     }
 
@@ -157,29 +157,37 @@ public class Pfans5008Controller {
     }
 
     @RequestMapping(value = "/getLogDataList", method = {RequestMethod.GET})
-    public ApiResult getLogDataList(String startDate, String endDate, HttpServletRequest request) throws Exception {
+    public ApiResult getLogDataList(String startDate ,String endDate , HttpServletRequest request) throws Exception {
         LogManagement logmanagement = new LogManagement();
         SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");
         TokenModel tokenModel = tokenService.getToken(request);
         logmanagement.setOwners(tokenModel.getOwnerList());
-        List<LogManagement> list = logmanagementService.getLogDataList(logmanagement, startDate, endDate);
+        List<LogManagement> list = logmanagementService.getLogDataList(logmanagement,startDate,endDate);
         List<LogManagement> list1 = logmanagementService.getDataListPL(tokenModel);
         for (LogManagement item : list1) {
-            if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
-                if (sf1ymd.parse(DateUtil.format(item.getLog_date(), "yyyy-MM-dd")).getTime() >= sf1ymd.parse(startDate).getTime()
-                        && sf1ymd.parse(DateUtil.format(item.getLog_date(), "yyyy-MM-dd")).getTime() <= sf1ymd.parse(endDate).getTime()) {
+            if(StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate))
+            {
+                if(sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()>=sf1ymd.parse(startDate).getTime()
+                    && sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()<=sf1ymd.parse(endDate).getTime())
+                {
                     if (list.stream().filter(item2 -> item2.getLogmanagement_id().equals(item.getLogmanagement_id())).count() == 0) {
                         list.add(item);
                     }
                 }
-            } else if (StringUtils.isNotBlank(startDate)) {
-                if (sf1ymd.parse(DateUtil.format(item.getLog_date(), "yyyy-MM-dd")).getTime() >= sf1ymd.parse(startDate).getTime()) {
+            }
+            else if(StringUtils.isNotBlank(startDate))
+            {
+                if(sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()>=sf1ymd.parse(startDate).getTime())
+                {
                     if (list.stream().filter(item2 -> item2.getLogmanagement_id().equals(item.getLogmanagement_id())).count() == 0) {
                         list.add(item);
                     }
                 }
-            } else if (StringUtils.isNotBlank(endDate)) {
-                if (sf1ymd.parse(DateUtil.format(item.getLog_date(), "yyyy-MM-dd")).getTime() <= sf1ymd.parse(endDate).getTime()) {
+            }
+            else if(StringUtils.isNotBlank(endDate))
+            {
+                if(sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()<=sf1ymd.parse(endDate).getTime())
+                {
                     if (list.stream().filter(item2 -> item2.getLogmanagement_id().equals(item.getLogmanagement_id())).count() == 0) {
                         list.add(item);
                     }
@@ -290,7 +298,6 @@ public class Pfans5008Controller {
 //        list = list.stream().filter(item -> item.getCreateby().equals(conditon.getCreateby())).collect(Collectors.toList());
         return ApiResult.success(list);
     }
-
     // add-ws-5/26-No.68
     @RequestMapping(value = "/getCheckList", method = {RequestMethod.POST})
     public ApiResult getCheckList(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
@@ -307,7 +314,7 @@ public class Pfans5008Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(logmanagementService.CheckList(projectsystem, tokenModel));
+        return ApiResult.success(logmanagementService.CheckList(projectsystem,tokenModel));
     }
 
 
@@ -342,7 +349,6 @@ public class Pfans5008Controller {
             return ApiResult.fail("操作失败！");
         }
     }
-
     //add-ws-01/05-优化接口
     @RequestMapping(value = "/sumlogdate", method = {RequestMethod.POST})
     public ApiResult sumlogdate(@RequestBody LogManagement conditon, HttpServletRequest request) throws Exception {
