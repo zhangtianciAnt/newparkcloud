@@ -19,6 +19,9 @@ public class ThemePlan extends BaseModel {
     @Id
     @Column(name = "THEMEPLAN_ID")
     private String themeplan_id;
+    //add_qhr_20210707  增加themeinfor_id字段
+    @Column(name = "THEMEINFOR_ID")
+    private String themeinfor_id;
 
     @Column(name = "CENTER_ID")
     private String center_id;

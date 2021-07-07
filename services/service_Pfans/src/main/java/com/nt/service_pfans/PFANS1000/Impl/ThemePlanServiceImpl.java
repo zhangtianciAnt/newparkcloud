@@ -249,6 +249,8 @@ public class ThemePlanServiceImpl implements ThemePlanService {
             }
             //region theme计划
             ThemePlan ct = new ThemePlan();
+            //add_qhr_20210707  增加themeinfor_id字段
+            ct.setThemeinfor_id(themePlanDetailVo.get(0).getThemeinfor_id());
             ct.setCenter_id(themePlanDetailVo.get(0).getCenter_id());
             ct.setGroup_id(themePlanDetailVo.get(0).getGroup_id());
             ct.setYear(themePlanDetailVo.get(0).getYear());
@@ -277,6 +279,8 @@ public class ThemePlanServiceImpl implements ThemePlanService {
                 ctDetail.setThemeplandetail_id(vo.getThemeplandetail_id());
 
                 ctDetail.setThemeplan_id(vo.getThemeplan_id());
+                //add_qhr_20210707  增加themeinfor_id字段
+                ctDetail.setThemeinfor_id(vo.getThemeinfor_id());
 
                 ctDetail.setPthemeplandetail_id(vo.getPthemeplandetail_id());
 
