@@ -339,6 +339,18 @@ public class LogManagementServiceImpl implements LogManagementService {
         String Confirmstatus = logmanagement.getConfirmstatus();
         logmanagement.setConfirmstatus(AuthConstants.DEL_FLAG_NORMAL);
         logmanagement.preUpdate(tokenModel);
+        //ADD ccm 210705 更新日志组织id获取项目有效组织信息 fr
+        if(!logmanagement.getProject_id().equals("PP024001") && !logmanagement.getProject_id().isEmpty())
+        {
+            CompanyProjects cp = new CompanyProjects();
+            cp = companyprojectsMapper.selectByPrimaryKey(logmanagement.getProject_id());
+            if(cp!=null && StringUtils.isNullOrEmpty(logmanagement.getGroup_id()))
+            {
+                logmanagement.setGroup_id(cp.getCenter_id());
+            }
+        }
+        logmanagement.setGroup_id(selectEcodeById(logmanagement.getGroup_id()));
+        //ADD ccm 210705 更新日志组织id获取项目有效组织信息 to
         logmanagementmapper.updateByPrimaryKeySelective(logmanagement);
     }
 
