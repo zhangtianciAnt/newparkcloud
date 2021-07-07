@@ -24,7 +24,7 @@
             AND (TYPE IS NULL OR TYPE = '')
         </if>
         <if test="pcode != null and pcode != ''" >
-            AND pcode = #{pcode,jdbcType=VARCHAR}
+            or pcode = #{pcode,jdbcType=VARCHAR}/*变更，实现前台数据字典页面的具体类别查询*/
         </if>
     </select>
     <select id="selectOrder" parameterType="com.nt.dao_Org.Dictionary" resultType="com.nt.dao_Org.Dictionary">
