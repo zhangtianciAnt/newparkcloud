@@ -85,7 +85,7 @@ public class Pfans2023Controller {
         return ApiResult.success();
     }
 
-    //人才育成页面数据结转
+    //目标管理数据结转
     @RequestMapping(value = "/change",method={RequestMethod.POST})
     public ApiResult change(@RequestBody GoalManagement goalManagement, HttpServletRequest request) throws Exception{
         if (goalManagement == null) {
