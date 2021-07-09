@@ -380,10 +380,10 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         if (staffexitprocedure.getCenter_id() != null && !staffexitprocedure.getCenter_id().equals("")) {
             orgTree = orgTreeService.getOrgInfo(newOrgInfo, staffexitprocedure.getCenter_id());
         }
-        if (staffexitprocedure.getCenter_id() != null && !staffexitprocedure.getGroup_id().equals("")) {
+        if (staffexitprocedure.getGroup_id() != null && !staffexitprocedure.getGroup_id().equals("")) {
             orgTree1 = orgTreeService.getOrgInfo(newOrgInfo, staffexitprocedure.getGroup_id());
         }
-        if (staffexitprocedure.getCenter_id() != null && !staffexitprocedure.getTeam_id().equals("")) {
+        if (staffexitprocedure.getTeam_id() != null && !staffexitprocedure.getTeam_id().equals("")) {
             orgTree2 = orgTreeService.getOrgInfo(newOrgInfo, staffexitprocedure.getTeam_id());
         }
         if (attendanceList.size() > 0) {
@@ -484,7 +484,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
 
             //发起人创建代办
             ToDoNotice toDoNotice = new ToDoNotice();
-            toDoNotice.setTitle("【您的离职申请已审批通过，系统中如有进行中的流程，请及时处理。您现可以提前进行离职日前的考勤承认】");
+            toDoNotice.setTitle("【您的离职申请已审批通过，系统中如有进行中的流程，请及时处理。您可以提前进行离职日前的考勤承认】");
             toDoNotice.setInitiator(Userid);
             toDoNotice.setContent("您的离职申请已审批通过！");
             toDoNotice.setDataid(staffexitprocedureVo.getStaffexitprocedure().getStaffexitprocedure_id());

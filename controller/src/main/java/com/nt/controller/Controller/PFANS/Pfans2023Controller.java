@@ -5,6 +5,7 @@ import cn.hutool.core.io.FileUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.GoalManagement;
+import com.nt.dao_Pfans.PFANS2000.TalentPlan;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
 import com.nt.service_Org.DictionaryService;
@@ -81,6 +82,17 @@ public class Pfans2023Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         goalmanagementService.upd(goalManagement,tokenModel);
+        return ApiResult.success();
+    }
+
+    //目标管理数据结转
+    @RequestMapping(value = "/change",method={RequestMethod.POST})
+    public ApiResult change(@RequestBody GoalManagement goalManagement, HttpServletRequest request) throws Exception{
+        if (goalManagement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        goalmanagementService.change(goalManagement,tokenModel);
         return ApiResult.success();
     }
 

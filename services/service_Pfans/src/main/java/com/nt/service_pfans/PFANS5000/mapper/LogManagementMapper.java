@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS5000.mapper;
 
+import com.nt.dao_Pfans.PFANS1000.Vo.DepartLogalVo;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementConfirmVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2;
@@ -50,5 +51,7 @@ public interface LogManagementMapper extends MyMapper<LogManagement> {
     @Select("select time_start from logmanagement where  DATE_FORMAT(LOG_DATE, '%Y-%m') = #{logdate} and createby=#{createby}")
     List<LogManagement> selectsum(@Param("createby") String createby, @Param("logdate") String logdate);
 
+    @Select("select cast(sum(TIME_START)/my_WorkingDays(DATE_FORMAT(LOG_DATE, '%Y%m')) AS decimal(6,2)) workrate, CREATEBY as USERID from logmanagement where DATE_FORMAT( LOG_DATE, '%Y-%m' ) = #{logdate} and project_id = #{project_id} GROUP BY CREATEBY")
+    List<DepartLogalVo> getLogInfo(@Param("project_id") String project_id, @Param("logdate") String nowDate);
 
 }

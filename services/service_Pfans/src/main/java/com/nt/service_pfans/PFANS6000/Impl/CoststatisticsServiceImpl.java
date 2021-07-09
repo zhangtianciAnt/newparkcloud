@@ -232,6 +232,10 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setManhour6(c.getManhour6());
                         cmyList.get(0).setCost6(c.getCost6());
                         cmyList.get(0).setPrice6(c.getPrice6());
+                        System.out.println(cmyList.get(0).getBpname());
+                        if(cmyList.get(0).getBpname().equals("4b887475-580f-42ce-a1b1-eac3c740a12b")){
+                            System.out.println(cmyList.get(0));
+                        }
                         cmyList.get(0).setTotalmanhours6(String.valueOf(Double.valueOf(cmyList.get(0).getManhour4()) + Double.valueOf(cmyList.get(0).getManhour5())+Double.valueOf(cmyList.get(0).getManhour6())));
                         cmyList.get(0).setTotalcost6(String.valueOf(Double.valueOf(cmyList.get(0).getCost4()) + Double.valueOf(cmyList.get(0).getCost5())+Double.valueOf(cmyList.get(0).getCost6())));
                         cmyList.get(0).setExpense6(c.getExpense6());
