@@ -73,10 +73,10 @@ public class GoalManagementServiceImpl implements GoalManagementService {
         goalmanagement.setGoalmanagement_id(UUID.randomUUID().toString());
         goalmanagementMapper.insert(goalmanagement);
     }
-    //人才育成页面数据结转
+    //目标管理数据结转
     @Override
     public void change(GoalManagement goalmanagement, TokenModel tokenModel) throws Exception{
-        goalmanagement.preInsert(tokenModel);
+        goalmanagement.preUpdate(tokenModel);
         goalmanagementMapper.updateByPrimaryKeySelective(goalmanagement);
     }
 }

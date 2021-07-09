@@ -371,6 +371,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         pur.setCenter_id(purchase.getCenter_id());
         pur.setGroup_id(purchase.getGroup_id());
         pur.setTeam_id(purchase.getTeam_id());
+        pur.setBudgetnumber(purchase.getBudgetnumber());
         pur.preUpdate(tokenModel);
         purchaseMapper.updateByPrimaryKey(pur);
     }

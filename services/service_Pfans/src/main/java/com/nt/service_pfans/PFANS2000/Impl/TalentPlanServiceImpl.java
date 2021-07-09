@@ -492,7 +492,7 @@ public class TalentPlanServiceImpl implements TalentPlanService {
     //人才育成页面数据结转
     @Override
     public void dataCarryover(TalentPlan talentPlan, TokenModel tokenModel) throws Exception{
-        talentPlan.preInsert(tokenModel);
+        talentPlan.preUpdate(tokenModel);
         talentPlanMapper.updateByPrimaryKeySelective(talentPlan);
     }
 }

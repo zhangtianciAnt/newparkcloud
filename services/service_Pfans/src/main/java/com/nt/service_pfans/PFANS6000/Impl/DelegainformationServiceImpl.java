@@ -297,7 +297,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
 
     //add ccm 1027 定时任务  每月工数统计截止日第二天自动保存工数
     //【每天凌晨3点】
-    @Scheduled(cron="0 0 3 * * ?")
+    //@Scheduled(cron="0 0 3 * * ?")
     public void saveDelegaTask()throws Exception {
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         List<Dictionary> dictionaryL = dictionaryService.getForSelect("BP027");

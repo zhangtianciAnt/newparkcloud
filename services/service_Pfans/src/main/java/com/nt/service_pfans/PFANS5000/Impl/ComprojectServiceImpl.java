@@ -219,8 +219,12 @@ public class ComprojectServiceImpl implements ComprojectService {
     //公共部署起案数据结转
     @Override
     public void dataCarryover(Comproject comproject, TokenModel tokenModel) throws Exception {
-        comproject.preUpdate(tokenModel);
-        comProjectMapper.updateByPrimaryKeySelective(comproject);
+        Comproject comp = comProjectMapper.selectByPrimaryKey(comproject);
+        comp.setCenter_id(comproject.getCenter_id());
+        comp.setGroup_id(comproject.getGroup_id());
+        comp.setTeam_id(comproject.getTeam_id());
+        comp.preUpdate(tokenModel);
+        comProjectMapper.updateByPrimaryKey(comp);
     }
 
     //新建

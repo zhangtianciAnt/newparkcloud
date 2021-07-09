@@ -362,7 +362,7 @@ public class BusinessServiceImpl implements BusinessService {
     }
 
     //【每天凌晨0点1分】
-    @Scheduled(cron="0 1 0 * * ?")
+    //@Scheduled(cron="0 1 0 * * ?")
     public void saveDaka()throws Exception {
         TokenModel tokenModel = new TokenModel();
         List<Business> businessList = businessMapper.getBusList();
