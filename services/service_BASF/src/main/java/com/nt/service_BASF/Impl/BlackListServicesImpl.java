@@ -71,6 +71,7 @@ public class BlackListServicesImpl implements BlackListServices {
     public boolean checkblack(String driverIdNo) throws Exception {
         BlackList blackList = new BlackList();
         blackList.setDriveridnumber(driverIdNo);
+        blackList.setStatus("0");
         return blackListMapper.select(blackList).size() != 0;
     }
 
