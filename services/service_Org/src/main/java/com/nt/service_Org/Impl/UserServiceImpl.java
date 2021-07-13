@@ -987,13 +987,27 @@ public class UserServiceImpl implements UserService {
 //            customerInfos = customerInfos.stream().filter(item -> item.getUserinfo().getResignation_date() != null).collect(Collectors.toList());
             for (CustomerInfo c : customerInfos) {
                 if (!StringUtils.isNullOrEmpty(c.getUserinfo().getResignation_date())) {
-                    Date temp = st.parse(c.getUserinfo().getResignation_date());
-                    Calendar cld = Calendar.getInstance();
-                    cld.setTime(temp);
-                    cld.add(Calendar.DATE, 1);
-                    temp = cld.getTime();
-                    //获得下一天日期字符串
-                    String regndate = st.format(temp);
+                    //upd ccm 20210712 定时任务更新时间为离职日后俩一天，离职日格式转换修改 fr
+//                    Date temp = st.parse(c.getUserinfo().getResignation_date());
+//                    Calendar cld = Calendar.getInstance();
+//                    cld.setTime(temp);
+//                    cld.add(Calendar.DATE, 1);
+//                    temp = cld.getTime();
+//                    //获得下一天日期字符串
+//                    String regndate = st.format(temp);
+
+                    String resignationdate = c.getUserinfo().getResignation_date().substring(0, 10);
+                    Calendar rightNow = Calendar.getInstance();
+                    rightNow.setTime(Convert.toDate(resignationdate));
+                    rightNow.add(Calendar.DAY_OF_YEAR, 1);
+
+                    if (c.getUserinfo().getResignation_date().length() >= 24) {
+                        rightNow.setTime(Convert.toDate(resignationdate));
+                        rightNow.add(Calendar.DAY_OF_YEAR, 2);
+                    }
+                    String regndate = st.format(rightNow.getTime());
+                    //upd ccm 20210712 定时任务更新时间为离职日后俩一天，离职日格式转换修改 to
+
 //                    String regndate = st.format(st.parse(c.getUserinfo().getResignation_date()));
                     int ret = Integer.parseInt(regndate.replace("-", ""));
                     if (re > ret) {
