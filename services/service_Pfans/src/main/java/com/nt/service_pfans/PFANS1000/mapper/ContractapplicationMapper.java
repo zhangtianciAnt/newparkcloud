@@ -35,4 +35,7 @@ public interface ContractapplicationMapper extends MyMapper<Contractapplication>
 
     @Select("SELECT * FROM contractapplication WHERE contracttype like '%HT008%' AND STATE = '有效' ")
     public List<Contractapplication> contractSt();
+
+    //做觉书时，不满足条件的回数设置status = 1，Projectcontract表
+    public void updateProjectcontractById(@Param("PtList") List<String> PtList);
 }
