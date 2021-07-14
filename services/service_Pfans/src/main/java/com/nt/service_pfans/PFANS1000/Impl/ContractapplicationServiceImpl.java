@@ -211,6 +211,29 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     }
     //add-ccm-0610-已经纳品的回数查询 end
 
+    //add  ml  20210706   契约番号废弃check   from
+    @Override
+    public boolean getProject(String contractnumber) {
+        boolean result = false;
+        Contractnumbercount contractnumbercount = new Contractnumbercount();
+        contractnumbercount.setContractnumber(contractnumber);
+        List<Contractnumbercount> contractnumbercountList = contractnumbercountMapper.select(contractnumbercount);
+        for (Contractnumbercount c : contractnumbercountList) {
+            ProjectContract projectContract = new ProjectContract();
+            projectContract.setContractnumbercount_id(c.getContractnumbercount_id());
+            List<ProjectContract> projectList = projectContractMapper.select(projectContract);
+            if (projectList.size() > 0) {
+                result = true;
+                break;
+            } else {
+                result = false;
+                continue;
+            }
+        }
+        return result;
+    }
+    //add  ml  20210706   契约番号废弃check   to
+
     @Override
     public List<ContractapplicationVo> getList(List<Contractapplication> contractapplicationlist) {
         List<ContractapplicationVo> listvo = new ArrayList<ContractapplicationVo>();
