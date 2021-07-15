@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.DepartmentalMapper">
+    <select id="getProConInfo" resultType="com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalVo">
+        SELECT
+            lastresult.department,
+            lastresult.CONTRACTNUMBER,
+            lastresult.CLAIMAMOUNT,
+            lastresult.CLAIMTYPE,
+            lastresult.ENTRYCONDITION,
+            lastresult.CONTRACATAMOUNTDETAIL,
+            lastresult.THEMENAME,
+            lastresult.DIVIDE,
+            lastresult.TOOLSORGS,
+            lastresult.CONTRACTAMOUNT,
+            lastresult.NUMBERS,
+            sum( lastresult.WORKRATE )  AS outstaffnum,
+            sum( lastresult.monthcast ) AS monthcast,
+            lastresult.outcompany,
+            lastresult.COMPANYPROJECTS_ID
+        FROM
+            (
+        select
+            themelog.department,
+            themelog.CONTRACTNUMBER,
+            themelog.CLAIMAMOUNT,
+            themelog.CLAIMTYPE,
+            themelog.ENTRYCONDITION,
+            themelog.CONTRACATAMOUNTDETAIL,
+            themelog.THEMENAME,
+            themelog.DIVIDE,
+            themelog.TOOLSORGS,
+            themelog.CONTRACTAMOUNT AS CONTRACTAMOUNT,
+            themelog.NUMBERS AS NUMBERS,
+            themelog.WORKRATE,
+            ROUND( themelog.WORKRATE * prset.totalunit, 2 ) monthcast,
+            themelog.outcompany,
+            themelog.COMPANYPROJECTS_ID AS COMPANYPROJECTS_ID
+        from
+        (SELECT
+        CASE
+        WHEN
+        ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) BETWEEN 1
+        AND 1.1999 THEN
+        1
+        WHEN ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) BETWEEN 1.2
+        AND 1.3999 THEN
+        1.1
+        WHEN ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) BETWEEN 1.4
+        AND 1.5999 THEN
+        1.15
+        WHEN ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) >= 1.6 THEN
+        1.3 ELSE ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 2 )
+        END WORKRATE,
+        logment.CREATEBY AS USERID,
+        themexpor.THEMENAME,
+        themexpor.DIVIDE,
+        themexpor.TOOLSORGS,
+        themexpor.CONTRACTNUMBER,
+        themexpor.ENTRYCONDITION,
+        themexpor.CLAIMAMOUNT,
+        themexpor.CONTRACATAMOUNTDETAIL AS CONTRACATAMOUNTDETAIL,
+        themexpor.CLAIMTYPE AS CLAIMTYPE,
+        themexpor.CONTRACTAMOUNT AS CONTRACTAMOUNT,
+        themexpor.NUMBERS AS NUMBERS,
+        themexpor.SUPPLIERNAME AS outcompany,
+        themexpor.COMPANYPROJECTS_ID AS COMPANYPROJECTS_ID,
+        themexpor.EXPATRIATESINFOR_ID AS EXPATRIATESINFOR_ID,
+        logment.GROUP_ID AS department
+        FROM
+        (
+        SELECT
+        themprosys.THEMEINFOR_ID,
+        themprosys.THEMENAME,
+        themprosys.DIVIDE,
+        themprosys.TOOLSORGS,
+        themprosys.CONTRACTNUMBER,
+        themprosys.ENTRYCONDITION,
+        themprosys.CLAIMAMOUNT,
+        themprosys.CONTRACTNUMBERCOUNT_ID AS CONTRACTNUMBERCOUNT_ID,
+        themprosys.CONTRACATAMOUNTDETAIL AS CONTRACATAMOUNTDETAIL,
+        themprosys.CLAIMTYPE AS CLAIMTYPE,
+        themprosys.COMPANYPROJECTS_ID AS COMPANYPROJECTS_ID,
+        themprosys.CONTRACTAMOUNT AS CONTRACTAMOUNT,
+        themprosys.NUMBERS AS NUMBERS,
+        themprosys.`NAME` AS NAME,
+        exinfor.SUPPLIERNAME,
+        exinfor.EXPATRIATESINFOR_ID
+        FROM
+        (
+        SELECT
+        themcompro.THEMEINFOR_ID,
+        themcompro.THEMENAME,
+        themcompro.DIVIDE,
+        themcompro.TOOLSORGS,
+        themcompro.CONTRACTNUMBER,
+        themcompro.ENTRYCONDITION,
+        themcompro.CLAIMAMOUNT,
+        themcompro.CONTRACTNUMBERCOUNT_ID AS CONTRACTNUMBERCOUNT_ID,
+        themcompro.CONTRACATAMOUNTDETAIL AS CONTRACATAMOUNTDETAIL,
+        themcompro.CLAIMTYPE AS CLAIMTYPE,
+        themcompro.COMPANYPROJECTS_ID AS COMPANYPROJECTS_ID,
+        themcompro.CONTRACTAMOUNT AS CONTRACTAMOUNT,
+        themcompro.NUMBERS AS NUMBERS,
+        prosys.`NAME` AS NAME
+        FROM
+        (
+        SELECT
+        themprocont.THEMEINFOR_ID,
+        themprocont.THEMENAME,
+        themprocont.DIVIDE,
+        themprocont.TOOLSORGS,
+        themprocont.CONTRACTNUMBER,
+        themprocont.ENTRYCONDITION,
+        themprocont.CLAIMAMOUNT,
+        themprocont.CONTRACTNUMBERCOUNT_ID AS CONTRACTNUMBERCOUNT_ID,
+        themprocont.CONTRACATAMOUNTDETAIL AS CONTRACATAMOUNTDETAIL,
+        themprocont.CLAIMTYPE AS CLAIMTYPE,
+        themprocont.COMPANYPROJECTS_ID AS COMPANYPROJECTS_ID,
+        themprocont.CONTRACTAMOUNT AS CONTRACTAMOUNT,
+        COMP.NUMBERS AS NUMBERS
+        FROM
+        (
+        SELECT
+        thenumb.THEMEINFOR_ID,
+        thenumb.THEMENAME,
+        thenumb.DIVIDE,
+        thenumb.TOOLSORGS,
+        thenumb.CONTRACTNUMBER,
+        thenumb.ENTRYCONDITION,
+        thenumb.CLAIMAMOUNT,
+        thenumb.CONTRACTNUMBERCOUNT_ID AS CONTRACTNUMBERCOUNT_ID,
+        thenumb.CONTRACATAMOUNTDETAIL AS CONTRACATAMOUNTDETAIL,
+        thenumb.CLAIMTYPE AS CLAIMTYPE,
+        PROT.COMPANYPROJECTS_ID AS COMPANYPROJECTS_ID,
+        PROT.CONTRACTAMOUNT AS CONTRACTAMOUNT
+        FROM
+        (
+        SELECT
+        themcont.THEMEINFOR_ID,
+        themcont.THEMENAME,
+        themcont.DIVIDE,
+        themcont.TOOLSORGS,
+        themcont.CONTRACTNUMBER,
+        themcont.ENTRYCONDITION,
+        themcont.CLAIMAMOUNT,
+        CNUM.CONTRACTNUMBERCOUNT_ID AS CONTRACTNUMBERCOUNT_ID,
+        CNUM.CLAIMAMOUNT AS CONTRACATAMOUNTDETAIL,
+        CNUM.CLAIMTYPE AS CLAIMTYPE
+        FROM
+        (
+        SELECT
+        them.THEMEINFOR_ID AS THEMEINFOR_ID,
+        them.THEMENAME AS THEMENAME,
+        them.DIVIDE AS DIVIDE,
+        them.TOOLSORGS AS TOOLSORGS,
+        CAP.CONTRACTNUMBER AS CONTRACTNUMBER,
+        CAP.ENTRYCONDITION AS ENTRYCONDITION,
+        CAP.CLAIMAMOUNT AS CLAIMAMOUNT
+        FROM
+        themeinfor them
+        INNER JOIN contractapplication cap ON cap.THEMEINFOR_ID = them.THEMEINFOR_ID
+        WHERE
+        YEAR = left(#{logdate},4)
+        ) themcont
+        INNER JOIN CONTRACTNUMBERCOUNT CNUM ON themcont.CONTRACTNUMBER LIKE CNUM.CONTRACTNUMBER
+        WHERE
+        CNUM.`STATUS` != '1'
+        ) thenumb
+        INNER JOIN projectcontract PROT ON thenumb.CONTRACTNUMBERCOUNT_ID = PROT.CONTRACTNUMBERCOUNT_ID
+        ) themprocont
+        INNER JOIN companyprojects COMP ON themprocont.COMPANYPROJECTS_ID = COMP.COMPANYPROJECTS_ID
+        ) themcompro
+        INNER JOIN projectsystem prosys ON themcompro.COMPANYPROJECTS_ID = prosys.COMPANYPROJECTS_ID
+        WHERE
+        prosys.type = '1'
+        GROUP BY
+        prosys.`NAME`
+        ) themprosys
+        INNER JOIN expatriatesinfor exinfor ON themprosys.`NAME` = exinfor.ACCOUNT
+        ) themexpor
+        INNER JOIN logmanagement logment ON logment.CREATEBY = themexpor.`NAME`
+        WHERE
+        DATE_FORMAT( logment.LOG_DATE, '%Y-%m' ) = #{logdate}
+        GROUP BY
+        CREATEBY) themelog left join priceset prset on themelog.EXPATRIATESINFOR_ID = prset.USER_ID and themelog.department = prset.GROUP_ID and prset.PRICESETGROUP_ID in (select PRICESETGROUP_ID from pricesetgroup where PD_DATE = left(#{logdate},7) )
+        ) lastresult
+        GROUP BY
+            outcompany,
+            CLAIMAMOUNT,
+            CLAIMTYPE,
+            NUMBERS
+        ORDER BY
+            contractnumber,
+            CLAIMTYPE,
+            outcompany
+    </select>
+    <select id="getStaffInfo" resultType="String">
+            SELECT
+            sum(WORKRATE) as staffnum
+            FROM(
+            SELECT
+            prosys.NAME as USER_ID,
+            CASE
+            WHEN ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) BETWEEN 1
+            AND 1.1999 THEN
+            1
+            WHEN ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) BETWEEN 1.2
+            AND 1.3999 THEN
+            1.1
+            WHEN ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) BETWEEN 1.4
+            AND 1.5999 THEN
+            1.15
+            WHEN ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) >= 1.6 THEN
+            1.3 ELSE ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 2 )
+            END WORKRATE
+            FROM
+            ( SELECT NAME FROM projectsystem WHERE COMPANYPROJECTS_ID = #{departGroupFilter} AND TYPE = '0' ) prosys
+            INNER JOIN logmanagement logment on logment.CREATEBY = prosys.name
+            WHERE
+            logment.CREATEBY = prosys.NAME
+            AND DATE_FORMAT( logment.LOG_DATE, '%Y-%m' ) = #{logdate}
+            GROUP BY USER_ID) as staffwork
+    </select>
+
+    <insert id="saveStaffList" parameterType="java.util.List" >
+        insert into Departmental
+        (departmental_id, years, department,
+        themename, divide, toolsorgs,
+        contractnumber, claimamount, contracatamountdetail,claimtype,
+        numbers, staffnum, outstaffnum,
+        outcompany, staffcust04, staffcust05,
+        staffcust06, staffcust07, staffcust08,
+        staffcust09, staffcust10, staffcust11,
+        staffcust12, staffcust01, staffcust02,
+        staffcust03)
+        VALUES
+        <foreach collection="departmentalList" item="item" separator=",">
+            (#{item.departmental_id},#{item.years}, #{item.department},
+             #{item.themename}, #{item.divide}, #{item.toolsorgs},
+             #{item.contractnumber},#{item.claimamount},#{item.contracatamountdetail},#{item.claimtype},
+             #{item.numbers}, #{item.staffnum}, #{item.outstaffnum},
+             #{item.outcompany},#{item.staffcust04}, #{item.staffcust05},
+             #{item.staffcust06}, #{item.staffcust07},#{item.staffcust08},
+             #{item.staffcust09}, #{item.staffcust10}, #{item.staffcust11},
+             #{item.staffcust12}, #{item.staffcust01},#{item.staffcust02},
+             #{item.staffcust03})
+        </foreach>
+        on duplicate key
+        update
+        <if test = 'ordernum== "04"'>
+        staffcust04=values(staffcust04),
+        </if>
+        <if test = 'ordernum== "05"'>
+        staffcust05=values(staffcust05),
+        </if>
+        <if test = 'ordernum== "06"'>
+        staffcust06=values(staffcust06),
+        </if>
+        <if test = 'ordernum== "07"'>
+        staffcust07=values(staffcust07),
+        </if>
+        <if test = 'ordernum== "08"'>
+        staffcust08=values(staffcust08),
+        </if>
+        <if test = 'ordernum== "09"'>
+        staffcust09=values(staffcust09),
+        </if>
+        <if test = 'ordernum== "10"'>
+        staffcust10=values(staffcust10),
+        </if>
+        <if test = 'ordernum== "11"'>
+        staffcust11=values(staffcust11),
+        </if>
+        <if test = 'ordernum== "12"'>
+        staffcust12=values(staffcust12),
+        </if>
+        <if test = 'ordernum== "01"'>
+        staffcust01=values(staffcust01),
+        </if>
+        <if test = 'ordernum== "02"'>
+        staffcust02=values(staffcust02),
+        </if>
+        staffcust03=values(staffcust03)
+    </insert>
+</mapper>
