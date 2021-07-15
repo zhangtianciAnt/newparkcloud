@@ -215,20 +215,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     @Override
     public boolean getProject(String contractnumber) {
         boolean result = false;
-        Contractnumbercount contractnumbercount = new Contractnumbercount();
-        contractnumbercount.setContractnumber(contractnumber);
-        List<Contractnumbercount> contractnumbercountList = contractnumbercountMapper.select(contractnumbercount);
-        for (Contractnumbercount c : contractnumbercountList) {
-            ProjectContract projectContract = new ProjectContract();
-            projectContract.setContractnumbercount_id(c.getContractnumbercount_id());
-            List<ProjectContract> projectList = projectContractMapper.select(projectContract);
-            if (projectList.size() > 0) {
-                result = true;
-                break;
-            } else {
-                result = false;
-                continue;
-            }
+        ProjectContract projectContract = new ProjectContract();
+        projectContract.setContract(contractnumber);
+        List<ProjectContract> projectList = projectContractMapper.select(projectContract);
+        if (projectList.size() > 0) {
+            result = true;
+        } else {
+            result = false;
         }
         return result;
     }
@@ -273,6 +266,17 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<Contractapplication> cnList = contractapplication.getContractapplication();
         StringBuffer strBuffer = new StringBuffer();
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
+        //
+        if (cnList != null) {
+            for (Contractapplication citation : cnList) {
+               if (citation.getStatus().equals('4')) {
+                   Contractapplication contract = new Contractapplication();
+                   contract.setState("无效");
+                   contract.setVarto("HT004001");
+                   contractapplicationMapper.updateByPrimaryKey(contract);
+               }
+            }
+        }
         if (cnList != null) {
             for (Contractapplication citation : cnList) {
                 //标记点，被copy的原始合同也可能是"NF210250102402-覚3"这种形式，用来判断是否是被copy的原始合同
