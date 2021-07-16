@@ -50,7 +50,7 @@ public class GlobalAop {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
         //资产盘点不加密
-        if(request.getRequestURL().toString().indexOf("assets/scanList") < 0){
+        if(request.getRequestURL().toString().indexOf("/pjExternalInjection/getTableinfo") < 0 ){
 //        encoder
             AES aes = new AES();
             if(ret != null){

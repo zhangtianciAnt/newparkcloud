@@ -32,4 +32,10 @@ public class Pfans6011Controller {
     public ApiResult getTableinfo(String year, String group_id, HttpServletRequest request) throws Exception {
         return ApiResult.success(pjExternalInjectionService.getTableinfo(year, group_id));
     }
+
+    //查看
+    @RequestMapping(value = "/getTableinfoReport", method = {RequestMethod.GET})
+    public ApiResult getTableinfoReport(String year, String group_id, HttpServletRequest request) throws Exception {
+        return ApiResult.success("getTableinfoReport",pjExternalInjectionService.getTableinfo(year, group_id));
+    }
 }
