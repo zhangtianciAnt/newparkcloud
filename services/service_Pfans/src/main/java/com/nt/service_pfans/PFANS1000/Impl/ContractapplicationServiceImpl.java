@@ -266,17 +266,19 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<Contractapplication> cnList = contractapplication.getContractapplication();
         StringBuffer strBuffer = new StringBuffer();
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
-        //
+        //add  ml 20210716  审批后更新状态、推进状况   from
         if (cnList != null) {
-            for (Contractapplication citation : cnList) {
-               if (citation.getStatus().equals('4')) {
-                   Contractapplication contract = new Contractapplication();
-                   contract.setState("无效");
-                   contract.setVarto("HT004001");
-                   contractapplicationMapper.updateByPrimaryKey(contract);
-               }
+            for (Contractapplication contract : cnList) {
+                contract.preUpdate(tokenModel);
+                contractapplicationMapper.updateByPrimaryKey(contract);
+                if (contract.getStatus().equals("4")) {
+                    contract.setState("无效");
+                    contract.setEntrycondition("HT004001");
+                    contractapplicationMapper.updateByPrimaryKey(contract);
+                }
             }
         }
+        //add  ml 20210716  审批后更新状态、推进状况   to
         if (cnList != null) {
             for (Contractapplication citation : cnList) {
                 //标记点，被copy的原始合同也可能是"NF210250102402-覚3"这种形式，用来判断是否是被copy的原始合同
