@@ -57,9 +57,9 @@ public class Pfans2005Controller {
     }
 
     @RequestMapping(value = "/givinglist", method = {RequestMethod.GET})
-    public ApiResult get(String giving_id, String generationdate, HttpServletRequest request) throws Exception {  //region add_qhr_20210702 添加往后台传入所选数据日期
+    public ApiResult get(String giving_id,HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(givingService.givinglist(giving_id, generationdate));                              //endregion add_qhr_20210702 添加往后台传入所选数据日期
+        return ApiResult.success(givingService.givinglist(giving_id));
     }
 
 
