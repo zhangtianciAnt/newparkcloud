@@ -1,8 +1,10 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Departmental;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalVo;
 import com.nt.dao_Pfans.PFANS6000.PjExternalInjection;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.DepartmentalService;
 import com.nt.service_pfans.PFANS1000.mapper.DepartmentalMapper;
@@ -11,6 +13,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +40,9 @@ public class departmentalServiceImpl implements DepartmentalService {
     @Autowired
     private DepartmentalMapper departmentalMapper;
 
+    @Autowired
+    private DictionaryService dictionaryService;
+
 
     /**
      * @方法名：getExpatureList
@@ -46,28 +52,30 @@ public class departmentalServiceImpl implements DepartmentalService {
      * @参数：[]
      * @返回值：[]
      */
-    @Override
-    public void getExpatureList(String nowDate) throws Exception {
+    @Scheduled(cron = "0 0 2 * * ?")
+    public void getExpatureList() throws Exception {
+        List<Dictionary> dictionaryL = dictionaryService.getForSelect("BP027");
         TokenModel tokenModel = new TokenModel();
-        BigDecimal bigDecimal = new BigDecimal("0.0");
-        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM");
-        Calendar calender = Calendar.getInstance();
-        Date date = new Date();
-        calender.setTime(date);
-//        String nowDate = ft.format(calender.getTime());
-//        String nowDate = "2021-07 ";
-        String monthOnt = nowDate.substring(5,7);
-        List<DepartmentalVo> departmentalVoList = departmentalMapper.getProConInfo(nowDate);
+        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+        String nowDate = ft.format(new Date());
+        String nowYear = nowDate.substring(0, 4);
+        String nowMonth = nowDate.substring(5,7);
+        String nowY_Month = nowDate.substring(0,7);
+        String nowDay = nowDate.substring(8,10);
+        if(Integer.parseInt(nowDay) == Integer.parseInt(dictionaryL.get(0).getValue1()) + 1) return;
+        String setYears = (Integer.parseInt(nowMonth) < 4 ? String.valueOf(Integer.parseInt(nowYear) - 1) : nowYear);
+        List<DepartmentalVo> departmentalVoList = departmentalMapper.getProConInfo(nowY_Month);
         List<String> departGroupFilter = new ArrayList<>();
         departGroupFilter = departmentalVoList.stream().map(DepartmentalVo::getCompanyprojects_id).collect(Collectors.toList());
         departGroupFilter = departGroupFilter.stream().distinct().collect(Collectors.toList());
-        Map<String,String> staffWorkSumMap = getStaffWorkSum(departGroupFilter,nowDate);
+        Map<String,String> staffWorkSumMap = getStaffWorkSum(departGroupFilter,nowY_Month);
         List<Departmental> departmentalList = new ArrayList<>();
         for (DepartmentalVo item : departmentalVoList) {
             Departmental departmental = new Departmental();
             BeanUtils.copyProperties(item, departmental);
-            departmental.setYears(nowDate.substring(0, 4));
-            PropertyUtils.setProperty(departmental, "staffcust" + monthOnt, item.getMonthcast());
+            departmental.setYears(setYears);
+            departmental.setYears(nowYear);
+            PropertyUtils.setProperty(departmental, "staffcust" + nowMonth, item.getMonthcast());
             departmental.preInsert(tokenModel);
             String keyAnt = departmental.getYears() + departmental.getThemeinfor_id() + departmental.getContractnumber() + departmental.getClaimtype() + departmental.getNumbers() + departmental.getOutcompany();
             departmental.setDepartmental_id(keyAnt);
@@ -87,7 +95,7 @@ public class departmentalServiceImpl implements DepartmentalService {
             }
             departmentalList.add(departmental);
         }
-        departmentalMapper.saveStaffList(departmentalList,monthOnt);
+        departmentalMapper.saveStaffList(departmentalList,nowMonth);
     }
 
     /**

@@ -24,8 +24,8 @@ public class Pfans1050Controller {
     private DepartmentalService departmentalService;
 
     @PostMapping("/getexpatureList")
-    public ApiResult getExpatureList(String nowDate) throws Exception {
-        departmentalService.getExpatureList(nowDate);
+    public ApiResult getExpatureList() throws Exception {
+        departmentalService.getExpatureList();
         return ApiResult.success();
     }
     @PostMapping("/getDepartmental")

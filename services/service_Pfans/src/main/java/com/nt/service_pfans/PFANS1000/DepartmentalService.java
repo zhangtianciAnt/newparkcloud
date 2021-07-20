@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface DepartmentalService {
 
-      void getExpatureList(String nowDate) throws Exception;
+      void getExpatureList() throws Exception;
 
       List<Departmental> getDepartmental(String years, String group_id) throws Exception;
 
