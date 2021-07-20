@@ -3,6 +3,7 @@ package com.nt.controller.Controller.PFANS;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS2000.Vo.PersonalCostExpVo;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
@@ -14,6 +15,7 @@ import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.dao_Pfans.PFANS6000.Customerinfor;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
+import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
@@ -81,6 +83,8 @@ public class Pfans5001Controller {
     @Autowired
     private ProjectContractMapper projectcontractMapper;
 
+    @Autowired
+    private ContractapplicationService contractapplicationService;
 
     /**
      * 查看
@@ -443,6 +447,17 @@ public class Pfans5001Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(companyProjectsService.report(start, end, tokenModel.getOwnerList(), tokenModel.getUserId()));
     }
+
+    //根据合同号查合同区间 scc
+    @RequestMapping(value = "/getcontra", method={RequestMethod.GET})
+    public ApiResult getContranumber(HttpServletRequest request, String contra) throws Exception {
+        if (StringUtils.isEmpty(contra)) {
+            return ApiResult.fail("当前未找到合同");
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(contractapplicationService.getContranumber(contra,tokenModel));
+    }
+    //根据合同号查合同区间 scc
 //zy end 报表追加 2021/06/13
 
     /**
