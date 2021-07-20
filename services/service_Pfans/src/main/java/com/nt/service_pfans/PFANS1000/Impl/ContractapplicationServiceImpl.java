@@ -171,6 +171,22 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         return vo;
     }
 
+    //add  ml  20210706   契约番号废弃check   from
+    @Override
+    public boolean getProject(String contractnumber) {
+        boolean result = false;
+        ProjectContract projectContract = new ProjectContract();
+        projectContract.setContract(contractnumber);
+        List<ProjectContract> projectList = projectContractMapper.select(projectContract);
+        if (projectList.size() > 0) {
+            result = true;
+        } else {
+            result = false;
+        }
+        return result;
+    }
+    //add  ml  20210706   契约番号废弃check   to
+
     @Override
     public List<ContractapplicationVo> getList(List<Contractapplication> contractapplicationlist) {
         List<ContractapplicationVo> listvo = new ArrayList<ContractapplicationVo>();

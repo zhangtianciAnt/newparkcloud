@@ -11,6 +11,11 @@ import java.util.Map;
 public interface ContractapplicationService {
 
     ContractapplicationVo get(Contractapplication contractapplication) throws Exception;
+
+    //add  ml  20210706   契约番号废弃check   from
+    boolean getProject(String contractnumber) throws Exception;
+    //add  ml  20210706   契约番号废弃check   from
+
     //add-ws-7/22-禅道341任务
     List<Individual> getindividual(Individual individual ) throws Exception;
     //add-ws-7/22-禅道341任务
