@@ -30,6 +30,10 @@ public class Departmental extends BaseModel {
     @Column(name = "DEPARTMENT")
     private String department;
 
+    /*THEMEINFOR_ID*/
+    @Column(name = "THEMEINFOR_ID")
+    private String themeinfor_id;
+
     /*THEMENAME*/
     @Column(name = "THEMENAME")
     private String themename;
@@ -38,7 +42,7 @@ public class Departmental extends BaseModel {
     @Column(name = "DIVIDE")
     private String divide;
 
-    /*委托元名称*/
+    /*委托元公司*/
     @Column(name = "TOOLSORGS")
     private String toolsorgs;
 

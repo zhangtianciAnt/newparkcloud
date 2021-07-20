@@ -213,36 +213,6 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
                 injection.setProject_name(Base64.decodeStr(injection.getProject_name()));
             }
         }
-      /*  TreeMap<String,List<PjExternalInjection>> injectionList =  pjExternalInjectionList.stream().collect(Collectors.groupingBy(PjExternalInjection :: getCompanyprojects_id,TreeMap::new,Collectors.toList()));
-        List<PjExternalInjectionVo> returnlist = new ArrayList<>();
-        for (List<PjExternalInjection> value : injectionList.values()) {
-            PjExternalInjectionVo pjExternalVo = new PjExternalInjectionVo();
-            pjExternalVo.setThemename(value.get(0).getThemename());
-            pjExternalVo.setDivide(value.get(0).getDivide());
-            pjExternalVo.setToolsorgs(value.get(0).getToolsorgs());
-            pjExternalVo.setCompanyprojects_id(value.get(0).getCompanyprojects_id());
-            pjExternalVo.setProject_name(value.get(0).getProject_name());
-            pjExternalVo.setCompany("-");
-            pjExternalVo.setApril("-");
-            pjExternalVo.setMay("-");
-            pjExternalVo.setJune("-");
-            pjExternalVo.setJuly("-");
-            pjExternalVo.setAugust("-");
-            pjExternalVo.setSeptember("-");
-            pjExternalVo.setOctober("-");
-            pjExternalVo.setNovember("-");
-            pjExternalVo.setDecember("-");
-            pjExternalVo.setJanuary("-");
-            pjExternalVo.setFebruary("-");
-            pjExternalVo.setMarch("-");
-            pjExternalVo.setTotal("-");
-            pjExternalVo.setPjExternalInjectionList(value);
-            returnlist.add(pjExternalVo);
-        }*/
-//        String sAnt = JSONObject.toJSONString(pjExternalInjectionList);
-//        jsonObject.put("data",sAnt);
-//        array.add(sAnt);
-
         Object oAnt = JSONObject.toJSON(pjExternalInjectionList) ;
         return oAnt;
     }

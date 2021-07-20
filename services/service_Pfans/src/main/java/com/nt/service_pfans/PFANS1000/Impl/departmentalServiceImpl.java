@@ -1,8 +1,8 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
-import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Pfans.PFANS1000.Departmental;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalVo;
+import com.nt.dao_Pfans.PFANS6000.PjExternalInjection;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.DepartmentalService;
 import com.nt.service_pfans.PFANS1000.mapper.DepartmentalMapper;
@@ -18,6 +18,8 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
 
 
 @Service
@@ -35,6 +37,15 @@ public class departmentalServiceImpl implements DepartmentalService {
     @Autowired
     private DepartmentalMapper departmentalMapper;
 
+
+    /**
+     * @方法名：getExpatureList
+     * @描述：获取社内外员工关联theme的合同的项目的工数(定时任务）
+     * @创建日期：2021/07/14
+     * @作者：ztc
+     * @参数：[]
+     * @返回值：[]
+     */
     @Override
     public void getExpatureList(String nowDate) throws Exception {
         TokenModel tokenModel = new TokenModel();
@@ -58,16 +69,21 @@ public class departmentalServiceImpl implements DepartmentalService {
             departmental.setYears(nowDate.substring(0, 4));
             PropertyUtils.setProperty(departmental, "staffcust" + monthOnt, item.getMonthcast());
             departmental.preInsert(tokenModel);
-            String keyAnt = departmental.getYears() + departmental.getContractnumber() + departmental.getClaimtype() + departmental.getNumbers() + departmental.getOutcompany();
+            String keyAnt = departmental.getYears() + departmental.getThemeinfor_id() + departmental.getContractnumber() + departmental.getClaimtype() + departmental.getNumbers() + departmental.getOutcompany();
             departmental.setDepartmental_id(keyAnt);
             Departmental getDepartmental = departmentalMapper.selectByPrimaryKey(keyAnt);
             if(getDepartmental != null){
-                BigDecimal old_staffAntDecimal = new BigDecimal(!com.mysql.jdbc.StringUtils.isNullOrEmpty(departmentalMapper.selectByPrimaryKey(keyAnt).getStaffnum()) ? departmentalMapper.selectByPrimaryKey(keyAnt).getStaffnum() : "0");
-                BigDecimal new_staffAntDecimal = new BigDecimal(staffWorkSumMap.get(item.getCompanyprojects_id()));
+                BigDecimal old_staffAntDecimal = new BigDecimal(!com.mysql.jdbc.StringUtils.isNullOrEmpty(
+                        departmentalMapper.selectByPrimaryKey(keyAnt).getStaffnum()) ? departmentalMapper.selectByPrimaryKey(keyAnt).getStaffnum() : "0");
+                BigDecimal new_staffAntDecimal = new BigDecimal(!com.mysql.jdbc.StringUtils.isNullOrEmpty(
+                        staffWorkSumMap.get(item.getCompanyprojects_id())) ? staffWorkSumMap.get(item.getCompanyprojects_id()) : "0");
                 departmental.setStaffnum(new_staffAntDecimal.add(old_staffAntDecimal).toString());
-                BigDecimal old_outStaffNumDecimal = new BigDecimal(!com.mysql.jdbc.StringUtils.isNullOrEmpty(departmentalMapper.selectByPrimaryKey(keyAnt).getOutstaffnum()) ? departmentalMapper.selectByPrimaryKey(keyAnt).getOutstaffnum() : "0");
+                BigDecimal old_outStaffNumDecimal = new BigDecimal(!com.mysql.jdbc.StringUtils.isNullOrEmpty(
+                        departmentalMapper.selectByPrimaryKey(keyAnt).getOutstaffnum()) ? departmentalMapper.selectByPrimaryKey(keyAnt).getOutstaffnum() : "0");
                 BigDecimal new_outStaffNumDecimal = new BigDecimal(item.getOutstaffnum());
                 departmental.setOutstaffnum(old_outStaffNumDecimal.add(new_outStaffNumDecimal).toString());
+            }else{
+                departmental.setStaffnum(staffWorkSumMap.get(item.getCompanyprojects_id()));
             }
             departmentalList.add(departmental);
         }
@@ -89,5 +105,24 @@ public class departmentalServiceImpl implements DepartmentalService {
             staffSumMap.put(item,staff);
         });
         return staffSumMap;
+    }
+
+    /**
+     * @方法名：getStaffWorkSum
+     * @描述：根据组织年度查询外驻别部门支出
+     * @创建日期：2021/07/14
+     * @作者：ztc
+     * @参数：[years,group_id]
+     * @返回值：List<Departmental>
+     */
+    @Override
+    public List<Departmental> getDepartmental(String years, String group_id) throws Exception{
+        Departmental departmental = new Departmental();
+        List<Departmental> departmentalList = new ArrayList<>();
+        departmental.setYears(years);
+        departmental.setDepartment(group_id);
+        departmentalList = departmentalMapper.select(departmental);
+        departmentalList = departmentalList.stream().sorted(Comparator.comparing(Departmental::getDepartmental_id)).collect(Collectors.toList());
+        return departmentalList;
     }
 }

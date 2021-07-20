@@ -28,4 +28,8 @@ public class Pfans1050Controller {
         departmentalService.getExpatureList(nowDate);
         return ApiResult.success();
     }
+    @PostMapping("/getDepartmental")
+    public ApiResult getDepartmental(String years, String group_id) throws Exception {
+        return ApiResult.success(departmentalService.getDepartmental(years,group_id));
+    }
 }
