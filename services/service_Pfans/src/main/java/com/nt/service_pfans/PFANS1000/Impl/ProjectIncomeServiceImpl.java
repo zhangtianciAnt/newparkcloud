@@ -11,14 +11,12 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS1000.Contractapplication;
+import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.ProjectIncome;
 import com.nt.dao_Pfans.PFANS1000.Vo.*;
 import com.nt.dao_Pfans.PFANS2000.PersonalCost;
 import com.nt.dao_Pfans.PFANS2000.PersonalCostYears;
-import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
-import com.nt.dao_Pfans.PFANS5000.LogManagement;
-import com.nt.dao_Pfans.PFANS5000.PersonalProjects;
-import com.nt.dao_Pfans.PFANS5000.ProjectContract;
+import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS6000.Coststatistics;
 import com.nt.dao_Pfans.PFANS6000.CoststatisticsVo;
 import com.nt.dao_Pfans.PFANS6000.Priceset;
@@ -26,10 +24,7 @@ import com.nt.dao_Pfans.PFANS6000.PricesetGroup;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.ProjectIncomeService;
-import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
-import com.nt.service_pfans.PFANS1000.mapper.EvectionMapper;
-import com.nt.service_pfans.PFANS1000.mapper.ProjectIncomeMapper;
-import com.nt.service_pfans.PFANS1000.mapper.PublicExpenseMapper;
+import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS2000.mapper.PersonalCostMapper;
 import com.nt.service_pfans.PFANS2000.mapper.PersonalCostYearsMapper;
 import com.nt.service_pfans.PFANS5000.mapper.ComProjectMapper;
@@ -50,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.support.SimpleTriggerContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -100,6 +96,8 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
     private ComProjectMapper comProjectMapper;
     @Autowired
     private PricesetGroupMapper pricesetGroupMapper;
+    @Autowired
+    private ContractnumbercountMapper contractnumbercountMapper;
 
 
     @Override
@@ -249,7 +247,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception {
+    public List<String> importUser(HttpServletRequest request, TokenModel tokenModel,String yearmonth) throws Exception {
         try {
             List<String> Result = new ArrayList<String>();
             MultipartFile file = ((MultipartHttpServletRequest) request).getFile("file");
@@ -298,6 +296,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                 if (value.size() > 1) {
                     ProjectIncome projectincome = new ProjectIncome();
                     projectincome.setEncoding(value.get(0).toString().substring(0, 2));
+                    projectincome.setMonth(yearmonth);
                     List<ProjectIncome> projectincomelist = projectincomemapper.select(projectincome);
                     if (projectincomelist.size() == 0) {
                         error = error + 1;
@@ -330,6 +329,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                 if (value.size() > 1) {
                     ProjectIncome projectincome = new ProjectIncome();
                     projectincome.setEncoding(value.get(0).toString().substring(0, 2));
+                    projectincome.setMonth(yearmonth);
                     List<ProjectIncome> projectincomelist = projectincomemapper.select(projectincome);
                     if (projectincomelist.size() > 0) {
                         String name = "";
@@ -450,25 +450,25 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
     @Override
     public List<ProjectIncome> get(ProjectIncome projectincome) throws Exception {
         List<ProjectIncome> projectincomelist = projectincomemapper.select(projectincome);
-        List<ProjectIncome> projectlist = new ArrayList<>();
-        List<ProjectIncomeVo4> projectincomevo4list = new ArrayList<>();
-        List<ProjectIncomeVo4> projectincomevo5list = new ArrayList<>();
-        OrgTree orgs = orgTreeService.get(new OrgTree());
-        for (OrgTree org : orgs.getOrgs()) {
-            for (OrgTree org1 : org.getOrgs()) {
-                ProjectIncomeVo4 projectincomevo4 = new ProjectIncomeVo4();
-                projectincomevo4.setGroupid(org1.get_id());
-                projectincomevo4.setGroupname(org1.getCompanyname());
-                projectincomevo4list.add(projectincomevo4);
-                projectincomevo5list.add(projectincomevo4);
-            }
-        }
-        for (ProjectIncome Project : projectincomelist) {
-            projectincomevo4list = projectincomevo5list.stream().filter(item -> (item.getGroupid().equals(Project.getGroup_id()))).collect(Collectors.toList());
-            Project.setGroup_id(projectincomevo4list.get(0).getGroupname());
-            projectlist.add(Project);
-        }
-        return projectlist;
+//        List<ProjectIncome> projectlist = new ArrayList<>();
+//        List<ProjectIncomeVo4> projectincomevo4list = new ArrayList<>();
+//        List<ProjectIncomeVo4> projectincomevo5list = new ArrayList<>();
+//        OrgTree orgs = orgTreeService.get(new OrgTree());
+//        for (OrgTree org : orgs.getOrgs()) {
+//            for (OrgTree org1 : org.getOrgs()) {
+//                ProjectIncomeVo4 projectincomevo4 = new ProjectIncomeVo4();
+//                projectincomevo4.setGroupid(org1.get_id());
+//                projectincomevo4.setGroupname(org1.getCompanyname());
+//                projectincomevo4list.add(projectincomevo4);
+//                projectincomevo5list.add(projectincomevo4);
+//            }
+//        }
+//        for (ProjectIncome Project : projectincomelist) {
+//            projectincomevo4list = projectincomevo5list.stream().filter(item -> (item.getGroupid().equals(Project.getGroup_id()))).collect(Collectors.toList());
+//            Project.setGroup_id(projectincomevo4list.get(0).getGroupname());
+//            projectlist.add(Project);
+//        }
+        return projectincomelist;
     }
 
     @Override
@@ -481,7 +481,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
             project.setGroup_id(projectincome.getGroup_id());
             List<ProjectIncome> projectincomelist = projectincomemapper.select(project);
             if (projectincomelist.size() > 0) {
-                throw new LogicalException("本部门该年度项目结转表已经创建，请到列表页中查找编辑。");
+                throw new LogicalException("本部门该年度该月份项目结转表已经创建，请到列表页中查找编辑。");
             }
             projectincome.setProjectincomeid(UUID.randomUUID().toString());
             projectincome.preInsert(tokenModel);
@@ -494,7 +494,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
             List<ProjectIncome> projectincomelist = projectincomemapper.select(project);
             projectincomelist = projectincomelist.stream().filter(item -> (!item.getProjectincomeid().equals(projectincomeid))).collect(Collectors.toList());
             if (projectincomelist.size() > 0) {
-                throw new LogicalException("本部门该年度事业计划已经创建，请到列表页中查找编辑。");
+                throw new LogicalException("本部门该年度该月份项目结转表已经创建，请到列表页中查找编辑。");
             }
 //            ProjectIncome project1 = new ProjectIncome();
 //            project1.setProjectincomeid(projectincomeid);
@@ -518,20 +518,40 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
         List<Map<String, String>> lists = new ArrayList<>();
         OrgTree orgs = orgTreeService.get(new OrgTree());
         for (OrgTree org : orgs.getOrgs()) {
-            for (OrgTree org1 : org.getOrgs()) {
-                ProjectIncomeVo4 projectincomevo4 = new ProjectIncomeVo4();
-                projectincomevo4.setGroupid(org1.get_id());
-                projectincomevo4.setGroupname(org1.getCompanyname());
-                projectincomevo4.setEncoding(org1.getEncoding().substring(0, 2));
-                projectincomevo4list.add(projectincomevo4);
+            for (OrgTree orgC : org.getOrgs()) {
+                if(!StringUtils.isNullOrEmpty(orgC.getEncoding()))
+                {
+                    ProjectIncomeVo4 projectincomevo4 = new ProjectIncomeVo4();
+                    projectincomevo4.setGroupid(orgC.get_id());
+                    projectincomevo4.setGroupname(orgC.getCompanyname());
+                    projectincomevo4.setEncoding(orgC.getEncoding().substring(0, 2));
+                    projectincomevo4.setFlag("0");
+                    projectincomevo4list.add(projectincomevo4);
+                }
+                else
+                {
+                    for (OrgTree orgG : orgC.getOrgs())
+                    {
+                        if(!StringUtils.isNullOrEmpty(orgG.getEncoding()))
+                        {
+                            ProjectIncomeVo4 projectincomevo4 = new ProjectIncomeVo4();
+                            projectincomevo4.setGroupid(orgG.get_id());
+                            projectincomevo4.setGroupname(orgG.getCompanyname());
+                            projectincomevo4.setEncoding(orgG.getEncoding().substring(0, 2));
+                            projectincomevo4.setFlag("1");
+                            projectincomevo4list.add(projectincomevo4);
+                        }
+                    }
+                }
+
             }
         }
-        if (groupid.equals("")) {
-            groupid = projectincomevo4list.get(0).getGroupid();
-        }
+//        if (groupid.equals("") && projectincomevo4list.size()>0) {
+//            groupid = projectincomevo4list.get(0).getGroupid();
+//        }
 
         //PJ起案相应项目获取
-        String check = month;
+        String check = month.replace("-","");
         //年度  year
         //自然年 naturalYear
         //月份 month
@@ -542,12 +562,42 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
             month = month.substring(5,7);
         }
 
+        String grou = "";
+        String flag = "";
+        for(ProjectIncomeVo4 pr4 : projectincomevo4list)
+        {
+            if(pr4.getGroupid().equals(groupid))
+            {
+                grou = pr4.getGroupid();
+                flag = pr4.getFlag();
+                break;
+            }
+        }
+//        if(projectincomevo4list.size()>0)
+//        {
+//            grou = projectincomevo4list.get(0).getGroupid();
+//            flag = projectincomevo4list.get(0).getFlag();
+//        }
 
         CompanyProjects companyprojects = new CompanyProjects();
-        companyprojects.setGroup_id(groupid);
+
+        if(flag.equals("0"))
+        {
+            companyprojects.setCenter_id(grou);
+        }
+        else if(flag.equals("1"))
+        {
+            companyprojects.setGroup_id(grou);
+        }
+        else
+        {
+            companyprojects.setCenter_id(grou);
+        }
+
         companyprojects.setStatus("4");
         List<CompanyProjects> companyProjectsList = companyprojectsMapper.select(companyprojects);
         if (companyProjectsList.size() > 0) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             for (CompanyProjects companyprojectslist : companyProjectsList) {
                 String id = companyprojectslist.getCompanyprojects_id();
                 List<ProjectContract> projectcontractlist = projectincomemapper.getprojectcontract(id, naturalYear, month);
@@ -567,7 +617,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                                     i++;
                                 }
                             } else {
-                                String extensiondate = coList.get(0).getExtensiondate().toString().replace("-", "");
+                                String extensiondate = sdf.format(coList.get(0).getExtensiondate()).toString().replace("-", "");
                                 if (extensiondate.contains(check)) {
                                     i++;
                                 }
@@ -576,7 +626,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                         BigDecimal contractamounts = new BigDecimal(projectcontract.getContractamount());
                         contractamount = contractamount.add(contractamounts);
                         BigDecimal contractrequestamounts = new BigDecimal(projectcontract.getContractrequestamount());
-                        contractrequestamount = contractrequestamounts.add(contractrequestamounts);
+                        contractrequestamount = contractrequestamount.add(contractrequestamounts);
                     }
                     ProjectIncomeVo1 projectincomevo1 = new ProjectIncomeVo1();
 
@@ -598,9 +648,58 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                     projectincomevo1.setTheme(projectcontractlist.get(0).getTheme());
                     projectincomevo1list.add(projectincomevo1);
                 }
-
+                else
+                {
+                    Contractnumbercount c = new Contractnumbercount();
+                    c.setCompanyprojectsid(id);
+                    List<Contractnumbercount> Contractnumbercountlist = contractnumbercountMapper.select(c);
+                    if(Contractnumbercountlist.size()>0)
+                    {
+                        int i = 0;
+                        int a = 0;
+                        BigDecimal contractamount = new BigDecimal("0");
+                        for (Contractnumbercount contractnumbercount : Contractnumbercountlist)
+                        {
+                            String deliverydate = sdf.format(contractnumbercount.getDeliverydate()).toString().replace("-", "");
+                            if (deliverydate.contains(check)) {
+                                i++;
+                                BigDecimal contractrequestamount = new BigDecimal(contractnumbercount.getClaimamount());
+                                contractamount = contractamount.add(contractrequestamount);
+                            }
+                        }
+                        //降序排列
+                        Contractnumbercountlist = Contractnumbercountlist.stream().sorted(Comparator.comparing(Contractnumbercount::getDeliverydate).reversed()).collect(Collectors.toList());
+                        if(sdf.format(Contractnumbercountlist.get(0).getDeliverydate()).toString().replace("-", "").contains(check))
+                        {
+                            a= 1;
+                        }
+                        if(i !=0)
+                        {
+                            ProjectIncomeVo1 projectincomevo1 = new ProjectIncomeVo1();
+                            projectincomevo1.setContractamount(String.valueOf(contractamount));
+                            projectincomevo1.setCompanyproject(String.valueOf(companyprojectslist.getProject_name()));
+                            if(a!=0)
+                            {
+                                projectincomevo1.setType("0");
+                            }
+                            else
+                            {
+                                projectincomevo1.setType("1");
+                            }
+                            projectincomevo1.setTheme("");
+                            projectincomevo1.setCompanyprojectid(companyprojectslist.getCompanyprojects_id());
+                            StringBuilder ab = new StringBuilder();
+                            ab.append(companyprojectslist.getProject_name()).append("_自主投资");
+                            if (companyprojectslist.getProjecttype().equals("PP001006")) {
+                                projectincomevo1.setCompanyproject(String.valueOf(ab));
+                            }
+                            projectincomevo1list.add(projectincomevo1);
+                        }
+                    }
+                }
             }
         }
+
         //共同部署相应项目获取
 //        Comproject comproject = new Comproject();
 //        comproject.setGroup_id(groupid);
@@ -627,15 +726,32 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
         projectincomevo1.setContractamount("0.00");
         projectincomevo1list.add(projectincomevo1);
         //经费
-        String name1 = "PJ111";
+        String name1 = "PJ074";
         List<com.nt.dao_Org.Dictionary> curListA = dictionaryService.getForSelect(name1);
         for (Dictionary iteA : curListA) {
-            ProjectIncomeVo2 projectincomevo2 = new ProjectIncomeVo2();
-            projectincomevo2.setNameid(iteA.getCode());
-            projectincomevo2.setName(iteA.getValue1());
-            projectincomevo2.setType("2");
-            projectincomevo2list.add(projectincomevo2);
+            if(iteA.getValue1().equals("減価償却費（設備）") || iteA.getValue1().equals("減価償却費（ソフト）"))
+            {
+                ProjectIncomeVo2 projectincomevo2 = new ProjectIncomeVo2();
+                projectincomevo2.setNameid(iteA.getCode());
+                projectincomevo2.setName(iteA.getValue1());
+                projectincomevo2.setType("2");
+                projectincomevo2list.add(projectincomevo2);
+            }
         }
+        name1 = "PJ111";
+        curListA = dictionaryService.getForSelect(name1);
+        for (Dictionary iteA : curListA) {
+            if(!iteA.getValue1().equals("研究材料費"))
+            {
+                ProjectIncomeVo2 projectincomevo2 = new ProjectIncomeVo2();
+                projectincomevo2.setNameid(iteA.getCode());
+                projectincomevo2.setName(iteA.getValue1());
+                projectincomevo2.setType("2");
+                projectincomevo2list.add(projectincomevo2);
+            }
+        }
+
+
         //人件费
         PersonalCostYears personalcostyears = new PersonalCostYears();
         personalcostyears.setYears(year);
@@ -643,7 +759,19 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
         if (personalcostyearslist.size() > 0) {
             PersonalCost personalcost = new PersonalCost();
             personalcost.setYearsantid(personalcostyearslist.get(0).getYearsantid());
-            personalcost.setGroupid(groupid);
+            if(flag.equals("0"))
+            {
+                personalcost.setCenterid(grou);
+            }
+            else if(flag.equals("1"))
+            {
+                personalcost.setGroupid(grou);
+            }
+            else
+            {
+                personalcost.setCenterid(grou);
+            }
+
             List<PersonalCost> personalcostlist = personalcostmapper.select(personalcost);
             for (PersonalCost personallist : personalcostlist) {
                 ProjectIncomeVo2 projectincomevo2 = new ProjectIncomeVo2();
@@ -684,12 +812,12 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                 }
                 projectincomevo2list.add(projectincomevo2);
             }
-            ProjectIncomeVo2 projectincomevo2 = new ProjectIncomeVo2();
-            projectincomevo2.setNameid("111111");
-            projectincomevo2.setName("调整项目");
-            projectincomevo2.setMoney("0");
-            projectincomevo2.setType("1");
-            projectincomevo2list.add(projectincomevo2);
+            ProjectIncomeVo2 pro = new ProjectIncomeVo2();
+            pro.setNameid("111111");
+            pro.setName("调整项目");
+            pro.setMoney("0");
+            pro.setType("1");
+            projectincomevo2list.add(pro);
         }
         //外注费
         String yearmonth = naturalYear + "-" + month;
@@ -723,6 +851,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
         List<ProjectIncomeVo2> type0 = projectincomevo2list.stream().filter(item -> (item.getType().equals("2"))).collect(Collectors.toList());
         List<ProjectIncomeVo2> type1 = projectincomevo2list.stream().filter(item -> (item.getType().equals("1"))).collect(Collectors.toList());
         List<ProjectIncomeVo2> type2 = projectincomevo2list.stream().filter(item -> (item.getType().equals("0"))).collect(Collectors.toList());
+        //经费
         for (ProjectIncomeVo2 list0 : type0) {
             Map<String, String> map = new HashMap<>();
             map.put("name", list0.getName());
@@ -735,7 +864,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                 String key1 = "works" + i;
                 String key2 = "cost" + i;
                 String key3 = "radio" + i;
-                map.put(key1, "----------");
+                map.put(key1, "-");
                 map.put(key2, "0.00");
                 map.put(key3, "0.00%");
             }
@@ -768,6 +897,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
 //            }
 //        }
 
+        //人件费
         for (ProjectIncomeVo2 list1 : type1) {
             BigDecimal ratio = new BigDecimal("0");
             BigDecimal ratio1s = new BigDecimal("0");
@@ -808,7 +938,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                     } else {
                         map.put(key2, "0.00");
                     }
-                    map.put(key1, String.valueOf(work));
+                    map.put(key1, String.valueOf(work.setScale(scale, roundingMode)));
                     map.put(key3, ratiosend);
                 } else {
                     map.put(key1, "0.00");
@@ -818,6 +948,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
             }
             lists.add(map);
         }
+        //外注
         for (ProjectIncomeVo2 list2 : type2) {
             BigDecimal ratio3 = new BigDecimal("0");
             BigDecimal ratio3s = new BigDecimal("0");
@@ -858,7 +989,7 @@ public class ProjectIncomeServiceImpl implements ProjectIncomeService {
                     } else {
                         map.put(key2, "0.00");
                     }
-                    map.put(key1, String.valueOf(work));
+                    map.put(key1, String.valueOf(work.setScale(scale, roundingMode)));
                     map.put(key3, ratiosend);
                 } else {
                     map.put(key1, "0.00");

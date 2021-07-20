@@ -44,10 +44,10 @@ public class Pfans1048Controller {
     }
 
     @PostMapping("/importUser")
-    public ApiResult importUser(HttpServletRequest request, String flag) {
+    public ApiResult importUser(HttpServletRequest request, String yearmonth) {
         try {
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(projectincomeservice.importUser(request, tokenModel));
+            return ApiResult.success(projectincomeservice.importUser(request, tokenModel,yearmonth));
         } catch (LogicalException e) {
             return ApiResult.fail(e.getMessage());
         } catch (Exception e) {
@@ -66,6 +66,8 @@ public class Pfans1048Controller {
     @GetMapping("/get")
     public ApiResult get(HttpServletRequest request) throws Exception {
         ProjectIncome projectincome = new ProjectIncome();
+        TokenModel tokenModel = tokenService.getToken(request);
+        projectincome.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(projectincomeservice.get(projectincome));
     }
 
