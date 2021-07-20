@@ -207,9 +207,6 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
 
     @Override
     public Object getTableinfoReport(String year, String group_id) throws Exception {
-//        HashMap<String, Object> map= new HashMap<>();
-        JSONObject object = new JSONObject();
-        JSONArray array = new JSONArray();
         PjExternalInjection pjExternalInjection = new PjExternalInjection();
         pjExternalInjection.setYears(year);
         pjExternalInjection.setGroup_id(group_id);
@@ -221,8 +218,7 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
                 }
             }
         }
-        Object oAnt = JSONObject.toJSON(pjExternalInjectionList) ;
-        return oAnt;
+        return JSONObject.toJSON(pjExternalInjectionList);
     }
 }
 
