@@ -46,4 +46,6 @@ public interface ContractapplicationService {
     //合同号申请页面中不同契约数据结转
     void dataCarryover(Contractapplication contractapplication,TokenModel tokenModel) throws Exception;
 
+    //根据合同号查合同区间 scc
+    List<String> getContranumber(String contra , TokenModel tokenModel) throws Exception;
 }

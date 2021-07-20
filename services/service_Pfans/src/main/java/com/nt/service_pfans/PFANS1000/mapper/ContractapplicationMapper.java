@@ -25,4 +25,8 @@ public interface ContractapplicationMapper extends MyMapper<Contractapplication>
     //add ccm 0725  采购合同chongfucheck
 
     public List<String> selectPJ(@Param("contractnumber") String contractnumber);
+
+    //做觉书时，不满足条件的回数设置status = 1，Projectcontract表
+    public void updateProjectcontractById(@Param("PtList") List<String> PtList);
+
 }
