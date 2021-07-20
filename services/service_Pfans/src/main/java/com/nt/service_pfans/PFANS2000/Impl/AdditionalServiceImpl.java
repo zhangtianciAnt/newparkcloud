@@ -5,8 +5,10 @@ import cn.hutool.poi.excel.ExcelUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.Additional;
+import com.nt.dao_Pfans.PFANS2000.Wages;
 import com.nt.service_pfans.PFANS2000.AdditionalService;
 import com.nt.service_pfans.PFANS2000.mapper.AdditionalMapper;
+import com.nt.service_pfans.PFANS2000.mapper.WagesMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,8 @@ public class AdditionalServiceImpl implements AdditionalService {
     @Autowired
     private AdditionalMapper additionalMapper;
 
+    @Autowired
+    private WagesMapper wagesMapper;
 
     @Override
     public void deleteadditional(Additional additional, TokenModel tokenModel) throws Exception {
@@ -81,6 +85,7 @@ public class AdditionalServiceImpl implements AdditionalService {
             int error = 0;
             for (int i = 1; i < list.size() - 1; i++) {
                 additional = new Additional();
+                Wages wages = new Wages();  //add_qhr_20210702  工资计算累加控除导入时向工资表中导入数据
                 List<Object> value = list.get(k);
                 k++;
                 if (value != null && !value.isEmpty()) {
@@ -184,6 +189,16 @@ public class AdditionalServiceImpl implements AdditionalService {
                 additional.preInsert(tokenModel);
                 additional.setAdditional_id(UUID.randomUUID().toString());
                 additionalMapper.insert(additional);
+                //region add_qhr_20210702  工资计算累加控除导入时向工资表中导入数据
+                wages.setUser_id(additional.getUser_id());
+                wages.setGiving_id(additional.getGiving_id());
+                List<Wages> wagesList = wagesMapper.select(wages);
+                if (wagesList.size() > 0) {
+                    wages = wagesList.get(0);
+                    wages.setThismonthadditional(additional.getTotal());
+                    wagesMapper.updateByPrimaryKey(wages);
+                }
+                //endregion add_qhr_20210702  工资计算累加控除导入时向工资表中导入数据
                 listVo.add(additional);
                 accesscount = accesscount + 1;
             }
