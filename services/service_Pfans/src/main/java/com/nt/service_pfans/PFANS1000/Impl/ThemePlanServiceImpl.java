@@ -92,8 +92,10 @@ public class ThemePlanServiceImpl implements ThemePlanService {
         ThemePlanDetail theme = new ThemePlanDetail();
         theme.setYear(year);
         List<ThemePlanDetail> themePlanDetailList = themePlanDetailMapper.select(theme);
-//        根据 themeinfor_id 去重
-        themePlanDetailList = themePlanDetailList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getThemeinfor_id()))), ArrayList::new));
+//        根据 themeinfor_id
+        if (themePlanDetailList.size() > 0) {
+            themePlanDetailList = themePlanDetailList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getThemeinfor_id()))), ArrayList::new));
+        }
         return themePlanDetailList;
     }
 
