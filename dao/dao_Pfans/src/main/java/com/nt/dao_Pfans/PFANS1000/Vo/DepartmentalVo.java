@@ -30,6 +30,9 @@ public class DepartmentalVo {
     /*合同明细金额*/
     private String contracatamountdetail;
 
+    /*THEMEINFOR_ID*/
+    private String themeinfor_id;
+
     /*theme名称*/
     private String themename;
 

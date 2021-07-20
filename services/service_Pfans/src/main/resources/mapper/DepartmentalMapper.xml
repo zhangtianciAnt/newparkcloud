@@ -9,6 +9,7 @@
             lastresult.CLAIMTYPE,
             lastresult.ENTRYCONDITION,
             lastresult.CONTRACATAMOUNTDETAIL,
+            lastresult.THEMEINFOR_ID,
             lastresult.THEMENAME,
             lastresult.DIVIDE,
             lastresult.TOOLSORGS,
@@ -27,6 +28,7 @@
             themelog.CLAIMTYPE,
             themelog.ENTRYCONDITION,
             themelog.CONTRACATAMOUNTDETAIL,
+            themelog.THEMEINFOR_ID,
             themelog.THEMENAME,
             themelog.DIVIDE,
             themelog.TOOLSORGS,
@@ -53,6 +55,7 @@
         1.3 ELSE ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 2 )
         END WORKRATE,
         logment.CREATEBY AS USERID,
+        themexpor.THEMEINFOR_ID,
         themexpor.THEMENAME,
         themexpor.DIVIDE,
         themexpor.TOOLSORGS,
@@ -130,7 +133,7 @@
         thenumb.ENTRYCONDITION,
         thenumb.CLAIMAMOUNT,
         thenumb.CONTRACTNUMBERCOUNT_ID AS CONTRACTNUMBERCOUNT_ID,
-        thenumb.CONTRACATAMOUNTDETAIL AS CONTRACATAMOUNTDETAIL,
+        PROT.CONTRACTAMOUNT AS CONTRACATAMOUNTDETAIL,
         thenumb.CLAIMTYPE AS CLAIMTYPE,
         PROT.COMPANYPROJECTS_ID AS COMPANYPROJECTS_ID,
         PROT.CONTRACTAMOUNT AS CONTRACTAMOUNT
@@ -145,7 +148,6 @@
         themcont.ENTRYCONDITION,
         themcont.CLAIMAMOUNT,
         CNUM.CONTRACTNUMBERCOUNT_ID AS CONTRACTNUMBERCOUNT_ID,
-        CNUM.CLAIMAMOUNT AS CONTRACATAMOUNTDETAIL,
         CNUM.CLAIMTYPE AS CLAIMTYPE
         FROM
         (
@@ -225,7 +227,7 @@
 
     <insert id="saveStaffList" parameterType="java.util.List" >
         insert into Departmental
-        (departmental_id, years, department,
+        (departmental_id, years, department,themeinfor_id,
         themename, divide, toolsorgs,
         contractnumber, claimamount, contracatamountdetail,claimtype,
         numbers, staffnum, outstaffnum,
@@ -236,7 +238,7 @@
         staffcust03)
         VALUES
         <foreach collection="departmentalList" item="item" separator=",">
-            (#{item.departmental_id},#{item.years}, #{item.department},
+            (#{item.departmental_id},#{item.years}, #{item.department}, #{item.themeinfor_id},
              #{item.themename}, #{item.divide}, #{item.toolsorgs},
              #{item.contractnumber},#{item.claimamount},#{item.contracatamountdetail},#{item.claimtype},
              #{item.numbers}, #{item.staffnum}, #{item.outstaffnum},
@@ -281,6 +283,10 @@
         <if test = 'ordernum== "02"'>
         staffcust02=values(staffcust02),
         </if>
-        staffcust03=values(staffcust03)
+        <if test = 'ordernum== "02"'>
+        staffcust03=values(staffcust03),
+        </if>
+        staffnum=values(staffnum),
+        outstaffnum=values(outstaffnum)
     </insert>
 </mapper>
