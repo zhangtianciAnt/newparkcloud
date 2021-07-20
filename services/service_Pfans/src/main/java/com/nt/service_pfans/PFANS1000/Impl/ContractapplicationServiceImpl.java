@@ -266,21 +266,11 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<Contractapplication> cnList = contractapplication.getContractapplication();
         StringBuffer strBuffer = new StringBuffer();
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
-        //
         if (cnList != null) {
+            //标记点，被copy的原始合同也可能是"NF210250102402-覚3"这种形式，用来判断是否是被copy的原始合同 scc to
+            int flag = 0;
+            // scc to
             for (Contractapplication citation : cnList) {
-               if (citation.getStatus().equals('4')) {
-                   Contractapplication contract = new Contractapplication();
-                   contract.setState("无效");
-                   contract.setVarto("HT004001");
-                   contractapplicationMapper.updateByPrimaryKey(contract);
-               }
-            }
-        }
-        if (cnList != null) {
-            for (Contractapplication citation : cnList) {
-                //标记点，被copy的原始合同也可能是"NF210250102402-覚3"这种形式，用来判断是否是被copy的原始合同
-                int flag = 0;
                 //去掉多次觉书无用数据
                 if (citation.getContractnumber().indexOf("-") != -1 && citation.getState().equals("无效") && flag > 0) {
                     continue;
@@ -298,133 +288,150 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 citation.setClaimtype(String.valueOf(numberList.size()));
                 //存放纳品预定日失效的回数集合对应的合同号id
                 ArrayList<String> time1 = new ArrayList<>();
-                if (!StringUtils.isNullOrEmpty(citation.getContractapplication_id()) && citation.getState().equals("无效")) {
-                    //当前合同日期
-                    String contractdate = citation.getContractdate();
-                    //受托合同的Contractdate都为空，时间取的是cliamdatetime;修改cliamdatetime的值
-                    if (StringUtils.isNullOrEmpty(contractdate)) {
-                        //原始合同请求时间cliamdatetime
-                        String cliamdatetime = citation.getClaimdatetime();
-                        //获取受托合同对应的回数记录
-                        Contractnumbercount contractnumbercount = new Contractnumbercount();
-                        contractnumbercount.setContractnumber(citation.getContractnumber());
-                        List<Contractnumbercount> count = contractnumbercountMapper.select(contractnumbercount);
-                        //存放纳品预定日的时间集合(时间小于当前系统时间)
-                        ArrayList<Date> time = new ArrayList<>();
-                        if (count.size() > 0) {
-                            for (int i = 0; i < count.size(); i++) {
-                                //如果有一次为空，那么剩下的也为空，直接更新记录
-                                if (count.get(i).getDeliverydate() == null) {
-                                    citation.preUpdate(tokenModel);
-                                    contractapplicationMapper.updateByPrimaryKeySelective(citation);
-                                    break;
-                                } else if (count.get(i).getDeliverydate().before(nowdate)) {
-                                    time.add(count.get(i).getDeliverydate());
-                                } else {
-                                    time1.add(count.get(i).getContractnumbercount_id());
-                                }
-                            }
-                            //比较最大纳品预定日时间(冒泡)
-                            for (int j = 0; j < time.size(); j++) {
-                                for (int k = 0; k < time.size() - j - 1; k++) {
-                                    if (time.get(k).after(time.get(k + 1))) {
-                                        Date date = time.get(k);
-                                        time.set(k, time.get(k + 1));
-                                        time.set(k + 1, date);
+                //合同做觉书，更新原数据和插入新数据
+                if (!StringUtils.isNullOrEmpty(citation.getContractapplication_id())) {
+                    if(citation.getState().equals("无效") && !("HT004001").equals(citation.getEntrycondition())){
+                        //当前合同日期
+                        String contractdate = citation.getContractdate();
+                        //受托合同的Contractdate都为空，时间取的是cliamdatetime;修改cliamdatetime的值
+                        if (StringUtils.isNullOrEmpty(contractdate)) {
+                            //原始合同请求时间cliamdatetime
+                            String cliamdatetime = citation.getClaimdatetime();
+                            //获取受托合同对应的回数记录
+                            Contractnumbercount contractnumbercount = new Contractnumbercount();
+                            contractnumbercount.setContractnumber(citation.getContractnumber());
+                            List<Contractnumbercount> count = contractnumbercountMapper.select(contractnumbercount);
+                            //存放纳品预定日的时间集合(时间小于当前系统时间)
+                            ArrayList<Date> time = new ArrayList<>();
+                            if (count.size() > 0) {
+                                for (int i = 0; i < count.size(); i++) {
+                                    //如果有一次为空，那么剩下的也为空，直接更新记录
+                                    if (count.get(i).getDeliverydate() == null) {
+                                        citation.preUpdate(tokenModel);
+                                        contractapplicationMapper.updateByPrimaryKeySelective(citation);
+                                        break;
+                                    } else if (count.get(i).getDeliverydate().before(nowdate)) {
+                                        time.add(count.get(i).getDeliverydate());
+                                    } else {
+                                        time1.add(count.get(i).getContractnumbercount_id());
                                     }
                                 }
+                                //比较最大纳品预定日时间(冒泡)
+                                for (int j = 0; j < time.size(); j++) {
+                                    for (int k = 0; k < time.size() - j - 1; k++) {
+                                        if (time.get(k).after(time.get(k + 1))) {
+                                            Date date = time.get(k);
+                                            time.set(k, time.get(k + 1));
+                                            time.set(k + 1, date);
+                                        }
+                                    }
+                                }
+                                //当纳品预定日的时间都大于当前系统时间
+                                if(time.size() == 0){
+                                    citation.preUpdate(tokenModel);
+                                    contractapplicationMapper.updateByPrimaryKeySelective(citation);
+                                    //time1中合同id对应回数状态改为1
+                                    contractapplicationMapper.updateProjectcontractById(time1);
+                                    continue;
+                                }else {
+                                    //获取新的记录
+                                    Contractapplication citation1 = contractapplicationMapper.selectByPrimaryKey(citation);
+                                    //延止日期清空
+                                    citation1.setExtensiondate(null);
+                                    //改变请求期间
+                                    String cliamdatetime1 = cliamdatetime.split("~")[0] + "~" + stf.format(time.get(time.size() - 1));
+                                    citation1.setClaimdatetime(cliamdatetime1);
+                                    citation1.setState("无效");
+                                    citation1.preUpdate(tokenModel);
+                                    contractapplicationMapper.updateByPrimaryKeySelective(citation1);
+                                }
                             }
-                            //当纳品预定日的时间都大于当前系统时间
-                            if(time.size() == 0){
+                            else {
                                 citation.preUpdate(tokenModel);
                                 contractapplicationMapper.updateByPrimaryKeySelective(citation);
-                                //time1中合同id对应回数状态改为1
-                                contractapplicationMapper.updateProjectcontractById(time1);
-                                continue;
-                            }else {
-                                //获取新的记录
-                                Contractapplication citation1 = contractapplicationMapper.selectByPrimaryKey(citation);
-                                //延止日期清空
-                                citation1.setExtensiondate(null);
-                                //改变请求期间
-                                String cliamdatetime1 = cliamdatetime.split("~")[0] + "~" + stf.format(time.get(time.size() - 1));
-                                citation1.setClaimdatetime(cliamdatetime1);
-                                citation1.setState("无效");
-                                citation1.preUpdate(tokenModel);
-                                contractapplicationMapper.updateByPrimaryKeySelective(citation1);
                             }
                         }
-                        else if (!StringUtils.isNullOrEmpty(citation.getContractapplication_id()) && !citation.getState().equals("无效")) {
-                            citation.preUpdate(tokenModel);
-                            contractapplicationMapper.updateByPrimaryKeySelective(citation);
+                        //当contractdate存在时 scc to
+                        else{
+                            //获取合同号对应纳品预定日的日期
+                            Contractnumbercount contractnumbercount = new Contractnumbercount();
+                            contractnumbercount.setContractnumber(citation.getContractnumber());
+                            List<Contractnumbercount> count = contractnumbercountMapper.select(contractnumbercount);
+                            //存放纳品预定日的时间集合(时间小于当前系统时间)
+                            ArrayList<Date> time = new ArrayList<>();
+                            if (count.size() > 0) {
+                                for (int i = 0; i < count.size(); i++) {
+                                    //如果有一次为空，那么剩下的也为空，直接更新记录
+                                    if (count.get(i).getDeliverydate() == null) {
+                                        citation.preUpdate(tokenModel);
+                                        contractapplicationMapper.updateByPrimaryKeySelective(citation);
+                                        break;
+                                    } else if (count.get(i).getDeliverydate().before(nowdate)) {
+                                        time.add(count.get(i).getDeliverydate());
+                                    } else {
+                                        time1.add(count.get(i).getContractnumbercount_id());
+                                    }
+                                }
+                                //比较最大纳品预定日时间(冒泡)
+                                for (int j = 0; j < time.size(); j++) {
+                                    for (int k = 0; k < time.size() - j - 1; k++) {
+                                        if (time.get(k).after(time.get(k + 1))) {
+                                            Date date = time.get(k);
+                                            time.set(k, time.get(k + 1));
+                                            time.set(k + 1, date);
+                                        }
+                                    }
+                                }
+                                //当纳品预定日的时间都大于当前系统时间
+                                if (time.size() == 0) {
+                                    citation.preUpdate(tokenModel);
+                                    contractapplicationMapper.updateByPrimaryKeySelective(citation);
+                                    //time1中合同id对应回数状态改为1
+                                    contractapplicationMapper.updateProjectcontractById(time1);
+                                    continue;
+                                } else {
+                                    //获取新的记录
+                                    Contractapplication citation1 = contractapplicationMapper.selectByPrimaryKey(citation);
+                                    //延止日期清空
+                                    citation1.setExtensiondate(null);
+                                    //改变合同日期
+                                    String contractdate1 = contractdate.split("~")[0] + "~" + stf.format(time.get(time.size() - 1));
+                                    citation1.setContractdate(contractdate1);
+                                    citation1.setState("无效");
+                                    citation1.preUpdate(tokenModel);
+                                    contractapplicationMapper.updateByPrimaryKeySelective(citation1);
+                                }
+                            }
+                            else {
+                                citation.preUpdate(tokenModel);
+                                contractapplicationMapper.updateByPrimaryKeySelective(citation);
+                            }
                         }
+                        //当contractdate存在时 scc to
                     }
-                    //当contractdate存在时
                     else{
-                        //获取合同号对应纳品预定日的日期
-                        Contractnumbercount contractnumbercount = new Contractnumbercount();
-                        contractnumbercount.setContractnumber(citation.getContractnumber());
-                        List<Contractnumbercount> count = contractnumbercountMapper.select(contractnumbercount);
-                        //存放纳品预定日的时间集合(时间小于当前系统时间)
-                        ArrayList<Date> time = new ArrayList<>();
-                        if (count.size() > 0) {
-                            for (int i = 0; i < count.size(); i++) {
-                                //如果有一次为空，那么剩下的也为空，直接更新记录
-                                if (count.get(i).getDeliverydate() == null) {
-                                    citation.preUpdate(tokenModel);
-                                    contractapplicationMapper.updateByPrimaryKeySelective(citation);
-                                    break;
-                                } else if (count.get(i).getDeliverydate().before(nowdate)) {
-                                    time.add(count.get(i).getDeliverydate());
-                                } else {
-                                    time1.add(count.get(i).getContractnumbercount_id());
-                                }
-                            }
-                            //比较最大纳品预定日时间(冒泡)
-                            for (int j = 0; j < time.size(); j++) {
-                                for (int k = 0; k < time.size() - j - 1; k++) {
-                                    if (time.get(k).after(time.get(k + 1))) {
-                                        Date date = time.get(k);
-                                        time.set(k, time.get(k + 1));
-                                        time.set(k + 1, date);
-                                    }
-                                }
-                            }
-                            //当纳品预定日的时间都大于当前系统时间
-                            if (time.size() == 0) {
-                                citation.preUpdate(tokenModel);
-                                contractapplicationMapper.updateByPrimaryKeySelective(citation);
-                                //time1中合同id对应回数状态改为1
-                                contractapplicationMapper.updateProjectcontractById(time1);
-                                continue;
-                            } else {
-                                //获取新的记录
-                                Contractapplication citation1 = contractapplicationMapper.selectByPrimaryKey(citation);
-                                //延止日期清空
-                                citation1.setExtensiondate(null);
-                                //改变合同日期
-                                String contractdate1 = contractdate.split("~")[0] + "~" + stf.format(time.get(time.size() - 1));
-                                citation1.setContractdate(contractdate1);
-                                citation1.setState("无效");
-                                citation1.preUpdate(tokenModel);
-                                contractapplicationMapper.updateByPrimaryKeySelective(citation1);
-                            }
-                        }
-                        else if (!StringUtils.isNullOrEmpty(citation.getContractapplication_id()) && !citation.getState().equals("无效")) {
-                            citation.preUpdate(tokenModel);
-                            contractapplicationMapper.updateByPrimaryKeySelective(citation);
+                        citation.preUpdate(tokenModel);
+                        contractapplicationMapper.updateByPrimaryKeySelective(citation);
+                        //ml
+                        if (citation.getStatus().equals("4")) {
+                            citation.setState("无效");
+                            citation.setEntrycondition("HT004001");
+                            contractapplicationMapper.updateByPrimaryKey(citation);
                         }
                     }
-                } else if(StringUtils.isNullOrEmpty(citation.getContractapplication_id())){
+                }
+                else {
                     citation.preInsert(tokenModel);
                     citation.setContractapplication_id(UUID.randomUUID().toString());
                     contractapplicationMapper.insert(citation);
                 }
+                //合同做觉书，更新原数据和插入新数据
+                //time1中合同id对应回数状态改为1 scc to
                 if(time1.size() > 0) {
-                    //time1中合同id对应回数状态改为1
                     contractapplicationMapper.updateProjectcontractById(time1);
                 }
                 flag ++;
+                //time1中合同id对应回数状态改为1 scc to
             }
         }
         //契约番号回数
