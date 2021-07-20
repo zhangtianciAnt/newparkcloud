@@ -1838,6 +1838,29 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         contractapplicationMapper.updateByPrimaryKeySelective(contractapplication);
     }
 
+    //根据合同号查合同区间 scc
+    @Override
+    public List<String> getContranumber(String contra , TokenModel tokenModel) throws Exception{
+        ArrayList<String> time = new ArrayList<>();
+        String[] contras = contra.split(",");
+        if(contras.length > 0){
+            for(String con : contras){
+                Contractapplication contractapplication = new Contractapplication();
+                contractapplication.setContractnumber(con);
+                List<Contractapplication> contraList = contractapplicationMapper.select(contractapplication);
+                if(contraList != null){
+                    if(!StringUtils.isNullOrEmpty(contraList.get(0).getContractdate())){
+                        time.add(contraList.get(0).getContractdate());
+                    }else{
+                        time.add(contraList.get(0).getClaimdatetime());
+                    }
+                }
+            }
+        }
+        return time;
+    }
+    //根据合同号查合同区间 scc
+
     private OrgTree getCurrentOrg(OrgTree org,String orgId) throws Exception {
         if (org.get_id().equals(orgId)) {
             return org;
