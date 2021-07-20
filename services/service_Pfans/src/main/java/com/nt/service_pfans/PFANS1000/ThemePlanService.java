@@ -22,12 +22,13 @@ public interface ThemePlanService {
 
     List<ThemePlanDetail> getthemename(String themename) throws Exception;
     //add-ws-01/06-禅道任务710
-    List<ThemePlanDetail> themenametype(String type) throws Exception;
+//    add_qhr_20210707 修改接口传参
+    List<ThemePlanDetail> themenametype(String year) throws Exception;
     //add-ws-01/06-禅道任务710
     //更新
-    public void update(ThemePlanVo themePlan, TokenModel tokenModel) throws LogicalException;
+    void update(ThemePlanVo themePlan, TokenModel tokenModel) throws LogicalException;
 
     //新建
-    public void inserttheme(List<ThemePlanDetailVo> themePlanDetailVo, TokenModel tokenModel) throws LogicalException;
+    void inserttheme(List<ThemePlanDetailVo> themePlanDetailVo, TokenModel tokenModel) throws LogicalException;
 
 }
