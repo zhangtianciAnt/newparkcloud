@@ -51,9 +51,7 @@
         (
          SELECT
            cp.NUMBERS AS NUMBERS
-          ,cp.CENTER_ID AS CENTER_ID
-          ,cp.GROUP_ID AS GROUP_ID
-          ,cp.TEAM_ID AS TEAM_ID
+          ,#{department_id} AS DEPARTMENT_ID
           ,cp.PROJECT_NAME AS PROJECT_NAME
           ,pc.COMPANYPROJECTS_ID AS COMPANYPROJECTS_ID
           ,pc.CONTRACTNUMBERCOUNT_ID AS CONTRACTNUMBERCOUNT_ID
@@ -66,6 +64,9 @@
          ON pc.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
          AND cp.`STATUS` >= 4
          WHERE  pc.`STATUS`!='1'
+				 AND (cp.CENTER_ID = #{department_id} OR
+				 cp.GROUP_ID = #{department_id} OR
+				 cp.TEAM_ID = #{department_id})
         ) AS pr
         ON pr.CONTRACTNUMBERCOUNT_ID = cn.CONTRACTNUMBERCOUNT_ID
         INNER JOIN projectsystem ps
