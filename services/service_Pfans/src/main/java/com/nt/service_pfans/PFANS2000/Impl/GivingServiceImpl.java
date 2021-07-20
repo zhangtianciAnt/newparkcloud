@@ -171,7 +171,7 @@ public class GivingServiceImpl implements GivingService {
      * FJL
      */
     @Override
-    public GivingVo givinglist(String giving_id, String generationdate) throws Exception {  //add_qhr_20210702 添加往后台传入所选数据日期
+    public GivingVo givinglist(String giving_id) throws Exception {
         GivingVo givingVo = new GivingVo();
         Giving giving = new Giving();
         giving.setGiving_id(giving_id);
@@ -293,11 +293,16 @@ public class GivingServiceImpl implements GivingService {
 
         //region add_qhr_20210702 修改入职tab显示月份
         // 设置上个月的年份和月份
-        givingVo.setYearOfLastMonth(generationdate.substring(0, 4));
-        givingVo.setMonthOfLastMonth(String.valueOf(Integer.valueOf(generationdate.substring(5, 7)) - 1));
+        givingVo.setMonthOfLastMonth(String.valueOf(Integer.valueOf(givinglist.get(0).getMonths().substring(4, 6)) - 1));
+        if (givingVo.getMonthOfLastMonth().equals("01")) {
+            givingVo.setMonthOfLastMonth("12");
+            givingVo.setYearOfLastMonth(String.valueOf(Integer.valueOf(givinglist.get(0).getMonths().substring(0, 4)) - 1));
+        } else {
+            givingVo.setYearOfLastMonth(givinglist.get(0).getMonths().substring(0, 4));
+        }
         // 设置当月的年份和月份
-        givingVo.setYearOfThisMonth(generationdate.substring(0, 4));
-        givingVo.setMonthOfThisMonth(String.valueOf(Integer.valueOf(generationdate.substring(5, 7))));
+        givingVo.setYearOfThisMonth(givinglist.get(0).getMonths().substring(0, 4));
+        givingVo.setMonthOfThisMonth(String.valueOf(Integer.valueOf(givinglist.get(0).getMonths().substring(4, 6))));
         //endregion add_qhr_20210702 修改入职tab显示月份
 
         // 查询离职信息表

@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface GivingService {
 
-    GivingVo givinglist(String giving_id, String generationdate) throws Exception; // add_qhr_20210702 添加往后台传入所选数据日期
+    GivingVo givinglist(String giving_id) throws Exception;
 
     void initial()throws Exception;
 
