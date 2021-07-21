@@ -1,6 +1,10 @@
 package com.nt.service_pfans.PFANS4000.Impl;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Assets.Inventoryplan;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.ToDoNotice;
@@ -530,4 +534,24 @@ public class SealServiceImpl implements SealService {
         }
     }
     //add-ws-12/21-印章盖印
+
+    @Override
+    public int selectEffective(SealDetail sealDetail) throws Exception {
+        SealDetail getSealDetail = new SealDetail();
+        getSealDetail.setStatus(AuthConstants.DEL_FLAG_NORMAL);
+        List<SealDetail> selectAll = sealdetailmapper.selectAll();
+        Date st = DateUtil.parse(sealDetail.getSealdetaildate().split("~")[0]);
+        Date ed = DateUtil.parse(sealDetail.getSealdetaildate().split("~")[1]);
+        for(SealDetail item : selectAll){
+            String[] ts = item.getSealdetaildate().split("~");
+            if(ts.length == 2){
+                Date st1 = DateUtil.parse(ts[0]);
+                Date ed1 = DateUtil.parse(ts[1]);
+                if(DateUtil.between(st, ed1, DateUnit.DAY,false) >= 0 && DateUtil.between(ed, st1, DateUnit.DAY,false) <= 0){
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
 }

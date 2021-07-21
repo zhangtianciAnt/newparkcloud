@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Assets.Inventoryplan;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Pfans.PFANS4000.Seal;
 import com.nt.dao_Pfans.PFANS4000.SealDetail;
@@ -267,4 +268,12 @@ public class Pfans4001Controller {
         return ApiResult.success();
     }
     //add-ws-12/21-印章盖印
+
+    @RequestMapping(value = "/selectEffective", method = {RequestMethod.POST})
+    public ApiResult check(@RequestBody SealDetail sealDetail, HttpServletRequest request) throws Exception {
+        if (sealDetail == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(sealService.selectEffective(sealDetail));
+    }
 }

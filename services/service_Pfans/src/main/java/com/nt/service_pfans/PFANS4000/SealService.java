@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS4000;
 
+import com.nt.dao_Assets.Inventoryplan;
 import com.nt.dao_Pfans.PFANS4000.Seal;
 import com.nt.dao_Pfans.PFANS4000.SealDetail;
 import com.nt.dao_Pfans.PFANS4000.Vo.SealVo;
@@ -26,4 +27,6 @@ public interface SealService {
     //add-ws-12/21-印章盖印
     //根据id获取数据
     Seal One(String sealid) throws Exception;
+
+    int selectEffective(SealDetail sealDetail) throws Exception;
 }
