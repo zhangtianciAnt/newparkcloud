@@ -363,6 +363,17 @@ public class Pfans1025Controller {
         return ApiResult.success(awardService.selectById(award_id));
     }
 
+    //region  add_qhr_20210616 委托决裁书-情报2表格带入信息
+    @RequestMapping(value = "/selectsupplier", method = {RequestMethod.GET})
+    public ApiResult selectsupplier(String supplierinfor_id, String dates, HttpServletRequest request) throws Exception {
+        if (supplierinfor_id == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(awardService.selectsupplier(supplierinfor_id, dates));
+    }
+    //endregion  add_qhr_20210616 委托决裁书-情报2表格带入信息
+
     // 禅道任务152
     @RequestMapping(value = "/selectById2", method = {RequestMethod.POST})
     public ApiResult one(@RequestBody Award award, HttpServletRequest request) throws Exception {
