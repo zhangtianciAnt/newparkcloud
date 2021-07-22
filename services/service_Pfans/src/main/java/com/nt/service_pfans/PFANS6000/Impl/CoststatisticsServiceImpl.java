@@ -1070,6 +1070,10 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         String strGroupid = "";
         //审批部门名称
         String strGroupname = "";
+        //region  add_qhr_20210616 月度总览存入工数字段
+        //工数
+        String manhour = "";
+        //endregion  add_qhr_20210616 月度总览存入工数字段
         List<Map<String, String>> strDatanew = strData.get(0);
         if(strDatanew.size() > 0){
             for(int i=0;i<strDatanew.size();i++ ){
@@ -1090,7 +1094,11 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 detail.setCost(String.valueOf(strDatanew.get(i).get("bpcostcount")));
                 //主键
                 detail.setCoststatisticsdetail_id(UUID.randomUUID().toString());
-
+                //region  add_qhr_20210616 月度总览存入工数字段
+                //工数
+                manhour = String.valueOf(strDatanew.get(i).get("manhour"));
+                detail.setManhour(manhour);
+                //endregion  add_qhr_20210616 月度总览存入工数字段
                 detail.preInsert(tokenModel);
 
                 coststatisticsdetailMapper.insert(detail);
