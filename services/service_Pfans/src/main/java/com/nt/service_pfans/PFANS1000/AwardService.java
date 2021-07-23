@@ -12,9 +12,6 @@ public interface AwardService {
 
       List<Award> get(Award award) throws Exception;
       AwardVo selectById(String award_id) throws Exception;
-      //region  add_qhr_20210616 委托决裁书-情报2表格带入信息
-      List<Coststatisticsdetail> selectsupplier(String supplierinfor_id, String dates) throws Exception;
-      //endregion  add_qhr_20210616 委托决裁书-情报2表格带入信息  上面引用
       // 禅道任务152
       List<Award> One(Award award) throws Exception;
       // 禅道任务152

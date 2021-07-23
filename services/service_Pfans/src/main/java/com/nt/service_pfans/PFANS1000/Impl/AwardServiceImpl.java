@@ -50,11 +50,6 @@ public class AwardServiceImpl implements AwardService {
     @Autowired
     CompanyProjectsMapper companyProjectsMapper;
 
-    //region  add_qhr_20210616 委托决裁书-情报2表格带入信息
-    @Autowired
-    CoststatisticsdetailMapper coststatisticsdetailMapper;
-    //endregion  add_qhr_20210616 委托决裁书-情报2表格带入信息  别忘了上面的引用
-
     @Override
     public List<Award> get(Award award) throws Exception {
         List<Award> awardlist = awardMapper.select(award);
@@ -115,17 +110,6 @@ public class AwardServiceImpl implements AwardService {
         }
         return awavo;
     }
-
-    //region  add_qhr_20210616 委托决裁书-情报2表格带入信息
-    @Override
-    public List<Coststatisticsdetail> selectsupplier(String supplierinfor_id, String dates) throws Exception {
-        Coststatisticsdetail coststatisticsdetail = new Coststatisticsdetail();
-        coststatisticsdetail.setSupplierinforid(supplierinfor_id);
-        coststatisticsdetail.setDates(dates);
-        List<Coststatisticsdetail> costList = coststatisticsdetailMapper.select(coststatisticsdetail);
-        return costList;
-    }
-    //endregion  add_qhr_20210616 委托决裁书-情报2表格带入信息
 
     @Override
     public void updateAwardVo(AwardVo awardVo, TokenModel tokenModel) throws Exception {
