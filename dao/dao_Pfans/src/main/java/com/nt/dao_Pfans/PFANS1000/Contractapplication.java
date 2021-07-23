@@ -222,6 +222,10 @@ public class Contractapplication extends BaseModel {
     @Column(name = "TEMAID")
     private String temaid;
 
+    //add_qhr_20210707 添加themeinfor_id字段
+    @Column(name = "THEMEINFOR_ID")
+    private String themeinfor_id;
+
     @Column(name = "QINGREMARKS")
     private String qingremarks;
 

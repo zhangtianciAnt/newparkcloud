@@ -185,6 +185,26 @@ public class AttendanceServiceImpl implements AttendanceService {
         //变成未承认
         attendance.preUpdate(tokenModel);
         attendanceMapper.updStatus1(attendance.getUser_id(), attendance.getYears(), attendance.getMonths());
+
+        //add ccm 20210721 离职考勤一键驳回预计考勤按照实际打卡重新计算 fr
+        //离职月初日
+        SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
+        String regdate = attendance.getYears()+"-"+attendance.getMonths()+"-01";
+        Calendar calstart = Calendar.getInstance();
+        calstart.setTime(sfymd.parse(regdate));
+        //离职月末日
+        Calendar calend = Calendar.getInstance();
+        calend.clear();
+        calend.setTime(sfymd.parse(regdate));
+        int maxCurrentMonthDay = calend.getActualMaximum(Calendar.DAY_OF_MONTH);
+        calend.set(Calendar.DAY_OF_MONTH, maxCurrentMonthDay);
+
+        for(Calendar item = calstart;item.compareTo(calend) <= 0;item.add(Calendar.DAY_OF_MONTH,1))
+        {
+            punchcardRecordService.methodAttendance_b(item,attendance.getUser_id());
+        }
+        //add ccm 20210721 离职考勤一键驳回预计考勤按照实际打卡重新计算 to
+
     }
 
 

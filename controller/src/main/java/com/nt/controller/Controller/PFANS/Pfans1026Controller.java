@@ -119,6 +119,16 @@ public class Pfans1026Controller {
         return ApiResult.success(contractapplicationService.get(contractapplication));
     }
 
+    //add  ml  20210706   契约番号废弃check   from
+    @RequestMapping(value = "/getProject", method = {RequestMethod.GET})
+    public ApiResult getProject(String contractnumber, HttpServletRequest request) throws Exception {
+        if (contractnumber == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(contractapplicationService.getProject(contractnumber));
+    }
+    //add  ml  20210706   契约番号废弃check   to
+
     @RequestMapping(value = "/get2", method = {RequestMethod.POST})
     public ApiResult selectById2(@RequestBody Contractapplication contractapplication, HttpServletRequest request) throws Exception {
         if (contractapplication == null) {

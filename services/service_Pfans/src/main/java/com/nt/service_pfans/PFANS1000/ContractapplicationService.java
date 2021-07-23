@@ -11,6 +11,11 @@ import java.util.Map;
 public interface ContractapplicationService {
 
     ContractapplicationVo get(Contractapplication contractapplication) throws Exception;
+
+    //add  ml  20210706   契约番号废弃check   from
+    boolean getProject(String contractnumber) throws Exception;
+    //add  ml  20210706   契约番号废弃check   from
+
     //add-ws-7/22-禅道341任务
     List<Individual> getindividual(Individual individual ) throws Exception;
     //add-ws-7/22-禅道341任务
@@ -41,4 +46,6 @@ public interface ContractapplicationService {
     //合同号申请页面中不同契约数据结转
     void dataCarryover(Contractapplication contractapplication,TokenModel tokenModel) throws Exception;
 
+    //根据合同号查合同区间 scc
+    List<String> getContranumber(String contra , TokenModel tokenModel) throws Exception;
 }

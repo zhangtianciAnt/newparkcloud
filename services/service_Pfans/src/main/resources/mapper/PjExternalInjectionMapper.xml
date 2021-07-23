@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS6000.mapper.PjExternalInjectionMapper">
+
+    <select id="getThemeCompany" resultType="com.nt.dao_Pfans.PFANS6000.Vo.PjExternalInjectionVo">
+        SELECT THEMEINFOR_ID, THEMENAME, DIVIDE, TOOLSORGS, GROUP_ID, LEFT(LOG_DATE, 4) YEARS, COMPANYPROJECTS_ID, PROJECT_NAME, COMPANY,SUM(MONEY) MONEY
+        FROM
+        (SELECT unitmoney.ACCOUNT ACCOUNT,
+        workrate.GROUP_ID GROUP_ID,
+        workrate.PROJECT_ID,
+        workrate.LOG_DATE,
+        ROUND(workrate.WORKRATE*unitmoney.TOTALUNIT, 2) MONEY
+        FROM (SELECT `CREATEBY` USER_ID,
+        CASE WHEN ROUND(TIME_START/my_WorkingDays(#{year}), 4) between 1 and 1.1999 then 1
+        WHEN ROUND(TIME_START/my_WorkingDays(#{year}), 4) between 1.2 and 1.3999 then 1.1
+        WHEN ROUND(TIME_START/my_WorkingDays(#{year}), 4) between 1.4 and 1.5999 then 1.15
+        WHEN ROUND(TIME_START/my_WorkingDays(#{year}), 4) >= 1.6 then 1.3
+        ELSE ROUND(TIME_START/my_WorkingDays(#{year}), 2) END WORKRATE,
+        GROUP_ID GROUP_ID,
+        DATE_FORMAT(LOG_DATE,'%Y-%m') LOG_DATE,
+        PROJECT_ID PROJECT_ID
+                FROM
+                (SELECT `CREATEBY`, SUM(TIME_START) TIME_START, PROJECT_ID, GROUP_ID, LOG_DATE
+                FROM logmanagement
+                WHERE   DATE_FORMAT(LOG_DATE,'%Y%m') = #{year}
+                GROUP BY `CREATEBY`,PROJECT_ID) log
+        ) workrate
+        INNER JOIN (SELECT unit.USER_ID USER_ID, ex.ACCOUNT ACCOUNT, unit.TOTALUNIT TOTALUNIT, unit.GROUP_ID GROUP_ID, unit.PD_DATE PD_DATE
+        FROM
+        (SELECT pr.USER_ID,pr.TOTALUNIT,pr.GROUP_ID,pg.PD_DATE
+        FROM priceset pr
+        INNER JOIN pricesetgroup pg
+        ON pr.PRICESETGROUP_ID = pg.PRICESETGROUP_ID
+        GROUP BY GROUP_ID, pr.USER_ID) unit
+        INNER JOIN expatriatesinfor ex
+        ON unit.USER_ID = ex.EXPATRIATESINFOR_ID
+        GROUP BY ex.ACCOUNT,GROUP_ID) unitmoney
+        ON workrate.USER_ID = unitmoney.ACCOUNT
+        AND workrate.GROUP_ID = unitmoney.GROUP_ID
+        AND workrate.LOG_DATE = unitmoney.PD_DATE
+        GROUP BY ACCOUNT, PROJECT_ID, GROUP_ID) money
+        INNER JOIN
+        (SELECT
+         thr.THEMEINFOR_ID,thr.THEMENAME,thr.DIVIDE,thr.TOOLSORGS,pr.COMPANYPROJECTS_ID,pr.PROJECT_NAME,pr.NUMBERS,ps.`NAME`,ps.COMPANY
+        FROM themeinfor thr
+        INNER JOIN contractapplication ct
+        ON ct.THEMEINFOR_ID = thr.THEMEINFOR_ID
+        INNER JOIN contractnumbercount cn
+        ON ct.CONTRACTNUMBER = cn.CONTRACTNUMBER
+        INNER JOIN
+        (
+         SELECT
+           cp.NUMBERS AS NUMBERS
+          ,#{department_id} AS DEPARTMENT_ID
+          ,cp.PROJECT_NAME AS PROJECT_NAME
+          ,pc.COMPANYPROJECTS_ID AS COMPANYPROJECTS_ID
+          ,pc.CONTRACTNUMBERCOUNT_ID AS CONTRACTNUMBERCOUNT_ID
+          ,pc.CONTRACT AS contract
+          ,pc.THEMEINFOR_ID AS THEMEINFOR_ID
+          ,pc.THEME AS THEMENAME
+          ,pc.CONTRACTAMOUNT AS CONTRACTAMOUNT
+         FROM projectcontract pc
+         INNER JOIN companyprojects cp
+         ON pc.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+         AND cp.`STATUS` >= 4
+         WHERE  pc.`STATUS`!='1'
+				 AND (cp.CENTER_ID = #{department_id} OR
+				 cp.GROUP_ID = #{department_id} OR
+				 cp.TEAM_ID = #{department_id})
+        ) AS pr
+        ON pr.CONTRACTNUMBERCOUNT_ID = cn.CONTRACTNUMBERCOUNT_ID
+        INNER JOIN projectsystem ps
+        ON pr.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+        AND ps.`TYPE` = '1'
+        WHERE thr.`YEAR` = LEFT(#{year}, 4)
+        GROUP BY thr.THEMENAME,pr.COMPANYPROJECTS_ID,pr.NUMBERS,ps.`NAME`) project
+        ON project.COMPANYPROJECTS_ID = money.PROJECT_ID
+        AND project.`NAME` = money.ACCOUNT
+        GROUP BY project.COMPANYPROJECTS_ID, project.COMPANY
+	</select>
+
+    <insert id="insertpj" parameterType="java.util.List">
+        INSERT INTO pjexternalinjection(PJEXTERNALINJECTION_ID, YEARS, GROUP_ID, THEMEINFOR_ID, THEMENAME, DIVIDE, TOOLSORGS, COMPANYPROJECTS_ID, PROJECT_NAME, COMPANY, APRIL, MAY, JUNE, JULY, AUGUST, SEPTEMBER, OCTOBER, NOVEMBER, DECEMBER, JANUARY, FEBRUARY, MARCH, TOTAL, CREATEBY, CREATEON, MODIFYBY, MODIFYON, OWNER, STATUS, TENANTID)
+        values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.pjexternalinjection_id}, #{item.years}, #{item.group_id}, #{item.themeinfor_id}, #{item.themename}, #{item.divide}, #{item.toolsorgs}, #{item.companyprojects_id}, #{item.project_name}, #{item.company}, #{item.april}, #{item.may}, #{item.june}, #{item.july}, #{item.august}, #{item.september}, #{item.october}, #{item.november}, #{item.december}, #{item.january}, #{item.february}, #{item.march}, #{item.total}, #{item.createby}, #{item.createon}, #{item.modifyby}, #{item.modifyon}, #{item.owner}, #{item.status}, #{item.tenantid})
+        </foreach>
+    </insert>
+
+    <update id="updatepj" parameterType="java.util.List">
+        <foreach item="item" collection="list" index="index">
+            UPDATE pjexternalinjection
+            SET
+            APRIL = #{item.april}, MAY = #{item.may}, JUNE = #{item.june},
+            JULY = #{item.july}, AUGUST = #{item.august}, SEPTEMBER = #{item.september},
+            OCTOBER = #{item.october}, NOVEMBER = #{item.november}, DECEMBER = #{item.december},
+            JANUARY = #{item.january}, FEBRUARY = #{item.february}, MARCH = #{item.march},
+            TOTAL = #{item.total},
+            MODIFYBY = #{item.modifyby}, MODIFYON = #{item.modifyon}, TENANTID = #{item.tenantid}
+            WHERE PJEXTERNALINJECTION_ID = #{item.pjexternalinjection_id};
+        </foreach>
+    </update>
+</mapper>

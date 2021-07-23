@@ -43,8 +43,9 @@ public class Pfans1040Controller {
     }
     //add-ws-01/06-禅道任务710
     @RequestMapping(value = "/themenametype", method = {RequestMethod.GET})
-    public ApiResult themenametype(String type, HttpServletRequest request) throws Exception {
-        return ApiResult.success(themePlanService.themenametype(type));
+    //add_qhr_20210707 修改编辑合同，查询theme时接口的传参
+    public ApiResult themenametype(String year, HttpServletRequest request) throws Exception {
+        return ApiResult.success(themePlanService.themenametype(year));
     }
     //add-ws-01/06-禅道任务710
     @RequestMapping(value = "/getList", method = {RequestMethod.POST})
