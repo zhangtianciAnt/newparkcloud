@@ -949,13 +949,13 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                                 for (Map<String, String> m : databuList){
                                     if(m.get("bpcompany").equals(dataList.get(j).get("bpcompany"))){
                                         //预计工数
-                                        dataList.get(j).put("ex3manhour" + String.valueOf(i), m.get("ex3manhour"));
+                                        dataList.get(j).put("ex3manhour" + i, m.get("ex3manhour"));
                                         //预计费用
                                         if(m.get("ex3cost").equals("0") ||m.get("ex3cost").equals("0.0")){
-                                            dataList.get(j).put("ex3cost" + String.valueOf(i), "");
+                                            dataList.get(j).put("ex3cost" + i, "");
                                         }
                                         else{
-                                            dataList.get(j).put("ex3cost" + String.valueOf(i), m.get("ex3cost"));
+                                            dataList.get(j).put("ex3cost" + i, m.get("ex3cost"));
                                         }
                                         //预计费用合计
                                         BigDecimal ex3costcountList = BigDecimal.valueOf(Double.valueOf(String.valueOf(dataList.get(j).get("ex3costcount"))));
@@ -972,19 +972,19 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         for(int j=0;j<dataList.size();j++ ){
                             if(dataList.get(j).get("bpcompany").equals(data.get(j).get("bpcompany"))){//会社名
                                 //委任工数
-                                dataList.get(j).put("ex1manhour" + String.valueOf(i), String.valueOf(data.get(j).get("ex1manhour0")));
+                                dataList.get(j).put("ex1manhour" + i, String.valueOf(data.get(j).get("ex1manhour0")));
                                 //委任费用
-                                dataList.get(j).put("ex1cost" + String.valueOf(i), String.valueOf(data.get(j).get("ex1cost0")));
+                                dataList.get(j).put("ex1cost" + i, String.valueOf(data.get(j).get("ex1cost0")));
                                 //委任人数
-                                dataList.get(j).put("ex1usercount" + String.valueOf(i), String.valueOf(data.get(j).get("ex1usercount0")));
+                                dataList.get(j).put("ex1usercount" + i, String.valueOf(data.get(j).get("ex1usercount0")));
                                 //請負工数
-                                dataList.get(j).put("ex2manhour" + String.valueOf(i), String.valueOf(data.get(j).get("ex2manhour0")));
+                                dataList.get(j).put("ex2manhour" + i, String.valueOf(data.get(j).get("ex2manhour0")));
                                 //請負费用
-                                dataList.get(j).put("ex2cost" + String.valueOf(i), String.valueOf(data.get(j).get("ex2cost0")));
+                                dataList.get(j).put("ex2cost" + i, String.valueOf(data.get(j).get("ex2cost0")));
                                 //請負人数
-                                dataList.get(j).put("ex2usercount" + String.valueOf(i), String.valueOf(data.get(j).get("ex2usercount0")));
+                                dataList.get(j).put("ex2usercount" + i, String.valueOf(data.get(j).get("ex2usercount0")));
                                 //請負人数
-                                dataList.get(j).put("costcount" + String.valueOf(i), String.valueOf(data.get(j).get("costcount0")));
+                                dataList.get(j).put("costcount" + i, String.valueOf(data.get(j).get("costcount0")));
 
                                 //会社总工数
                                 BigDecimal dataListmanhourcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(dataList.get(j).get("bpmanhourcount"))));
@@ -1004,13 +1004,13 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                                 for (Map<String, String> m : databuList){
                                     if(m.get("bpcompany").equals(dataList.get(j).get("bpcompany"))){
                                         //预计工数
-                                        dataList.get(j).put("ex3manhour" + String.valueOf(i), m.get("ex3manhour"));
+                                        dataList.get(j).put("ex3manhour" + i, m.get("ex3manhour"));
                                         //预计费用
                                         if(m.get("ex3cost").equals("0") ||m.get("ex3cost").equals("0.0")){
-                                            dataList.get(j).put("ex3cost" + String.valueOf(i), "");
+                                            dataList.get(j).put("ex3cost" + i, "");
                                         }
                                         else{
-                                            dataList.get(j).put("ex3cost" + String.valueOf(i), m.get("ex3cost"));
+                                            dataList.get(j).put("ex3cost" + i, m.get("ex3cost"));
                                         }
                                         //预计费用合计
                                         BigDecimal ex3costcountList = BigDecimal.valueOf(Double.valueOf(String.valueOf(dataList.get(j).get("ex3costcount"))));
@@ -1066,6 +1066,10 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         String strGroupid = "";
         //审批部门名称
         String strGroupname = "";
+        //region  add_qhr_20210616 月度总览存入工数字段
+        //工数
+        String manhour = "";
+        //endregion  add_qhr_20210616 月度总览存入工数字段
         List<Map<String, String>> strDatanew = strData.get(0);
         if(strDatanew.size() > 0){
             for(int i=0;i<strDatanew.size();i++ ){
@@ -1086,13 +1090,17 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 detail.setCost(String.valueOf(strDatanew.get(i).get("bpcostcount")));
                 //主键
                 detail.setCoststatisticsdetail_id(UUID.randomUUID().toString());
-
+                //region  add_qhr_20210616 月度总览存入工数字段
+                //工数
+                manhour = String.valueOf(strDatanew.get(i).get("manhour"));
+                detail.setManhour(manhour);
+                //endregion  add_qhr_20210616 月度总览存入工数字段
                 detail.preInsert(tokenModel);
 
                 coststatisticsdetailMapper.insert(detail);
             }
         }
-        String pp[] = strDates.split("-");
+        String[] pp = strDates.split("-");
 
         List<String> groupIdList = new ArrayList<String>();
 //        Query query = CustmizeQuery(new OrgTree());
