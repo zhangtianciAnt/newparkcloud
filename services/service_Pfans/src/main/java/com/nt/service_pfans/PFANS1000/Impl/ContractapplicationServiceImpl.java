@@ -14,6 +14,7 @@ import com.nt.dao_Pfans.PFANS1000.Vo.ReportContractEnVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Pfans.PFANS4000.Seal;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
+import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_Auth.RoleService;
@@ -23,20 +24,12 @@ import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.PurchaseApplyService;
-import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
-import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
-import com.nt.service_pfans.PFANS1000.mapper.IndividualMapper;
-import com.nt.service_pfans.PFANS1000.mapper.ContractcompoundMapper;
-import com.nt.service_pfans.PFANS1000.mapper.QuotationMapper;
-import com.nt.service_pfans.PFANS1000.mapper.ContractMapper;
-import com.nt.service_pfans.PFANS1000.mapper.NonJudgmentMapper;
-import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
-import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
-import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
+import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
 import com.nt.service_pfans.PFANS4000.mapper.SealMapper;
 import com.nt.service_pfans.PFANS5000.mapper.ProjectContractMapper;
+import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
 import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
@@ -101,6 +94,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private PurchaseService PurchaseService;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private CoststatisticsdetailMapper coststatisticsdetailMapper;
+    @Autowired
+    private AwardDetailMapper awardDetailMapper;
     //add-ws-7/22-禅道341任务
     @Override
     public List<Individual> getindividual(Individual individual) throws Exception {
@@ -1050,6 +1047,25 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         award.setMaketype(rowindex);
                         award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
                         AwardMapper.insert(award);
+                        //region  add_qhr_20210723 委托决裁书-情报2表格带入信息
+                        Coststatisticsdetail coststatisticsdetail = new Coststatisticsdetail();
+                        coststatisticsdetail.setSupplierinforid(contractapp.getSupplierinfor_id());
+                        coststatisticsdetail.setDates(contractapp.getDates());
+                        List<Coststatisticsdetail> costlist =  coststatisticsdetailMapper.select(coststatisticsdetail);
+                        int n = 1;
+                        for (Coststatisticsdetail coslist : costlist) {
+                            AwardDetail awardDetail = new AwardDetail();
+                            awardDetail.preInsert(tokenModel);
+                            awardDetail.setAwarddetail_id(UUID.randomUUID().toString());
+                            awardDetail.setAward_id(award.getAward_id());
+                            awardDetail.setDepart(coslist.getGroupid());
+                            awardDetail.setWorknumber(coslist.getManhour());
+                            awardDetail.setAwardmoney(coslist.getCost());
+                            awardDetail.setRowindex(n);
+                            n++;
+                            awardDetailMapper.insert(awardDetail);
+                        }
+                        //endregion  add_qhr_20210723 委托决裁书-情报2表格带入信息
                     }
 //                    upd_fjl_05/26   --课题票No.176 生成决裁时ID不变（不能删除旧的数据，走更新处理）
                 }
