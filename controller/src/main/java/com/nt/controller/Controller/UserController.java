@@ -49,7 +49,7 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-     private AnnualLeaveService annualLeaveService;
+    private AnnualLeaveService annualLeaveService;
 
     @Autowired
     private TokenService tokenService;
@@ -104,9 +104,13 @@ public class UserController {
     public ApiResult login(@RequestBody UserAccount userAccount, HttpServletRequest request) throws Exception {
         try {
             if (userAccount == null) {
-                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+                return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
             }
-            JsTokenModel tokenModel = userService.login(userAccount,RequestUtils.CurrentLocale(request));
+
+            //域登录
+            //userService.activeDirectory(userAccount,RequestUtils.CurrentLocale(request),"0");
+
+            JsTokenModel tokenModel = userService.login(userAccount, RequestUtils.CurrentLocale(request));
 
             var log = new Log();
             log.setType(AuthConstants.LOG_TYPE_LOGIN);
@@ -124,7 +128,6 @@ public class UserController {
         } catch (LogicalException ex) {
             return ApiResult.fail(ex.getMessage());
         }
-
     }
 
     //获取当前用户信息
@@ -190,18 +193,18 @@ public class UserController {
         CustomerInfo info = new CustomerInfo();
         if (StrUtil.isNotBlank(userVo.getUserAccount().get_id())) {
             userVo.getUserAccount().preUpdate(tokenModel);
+            userVo.getCustomerInfo().preUpdate(tokenModel);
             info = userService.addAccountCustomer(userVo);
             id = info.getUserid();
             annualLeaveService.insertannualLeave(info);
         } else {
             userVo.getUserAccount().preInsert(tokenModel);
             userVo.getUserAccount().setPassword(userVo.getCustomerInfo().getUserinfo().getAdfield());
+            userVo.getCustomerInfo().preInsert(tokenModel);
             info = userService.addAccountCustomer(userVo);
             annualLeaveService.insertannualLeave(info);
             id = info.getUserid();
         }
-
-
         return ApiResult.success(id);
     }
 
@@ -387,16 +390,6 @@ public class UserController {
         } else {
             return ApiResult.success("0");
         }
-    }
-
-    //重置密码
-    @RequestMapping(value = "/resetPassword", method = {RequestMethod.POST})
-    public ApiResult upCurrentUserInfo(@RequestBody List<String> userList, HttpServletRequest request) throws Exception {
-        if (userList == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
-        }
-
-        return ApiResult.success(userService.resetPassword(userList));
     }
 }
 

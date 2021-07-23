@@ -1,0 +1,23 @@
+package com.nt.service_pfans.PFANS8000;
+
+import com.nt.dao_Pfans.PFANS8000.MonthlyRate;
+import com.nt.utils.dao.TokenModel;
+
+import java.util.List;
+
+
+public interface MonthlyRateService {
+
+    List<MonthlyRate> getdatalist() throws Exception;
+
+    void CreateData(List<MonthlyRate> monthlyrate, TokenModel tokenModel) throws Exception;
+
+    void UpdateData(List<MonthlyRate> monthlyrate, TokenModel tokenModel) throws Exception;
+
+    List<MonthlyRate> slectlist(MonthlyRate monthlyrate) throws Exception;
+
+    List<MonthlyRate> slectlist2() throws Exception;
+
+    void getExchangeRateY() throws Exception;
+
+}

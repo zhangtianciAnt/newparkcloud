@@ -39,7 +39,7 @@ public class ToDoNoticeController {
     @RequestMapping(value = "/getList", method = {RequestMethod.GET})
     public ApiResult getList(String status, String createon, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        List<ToDoNotice> rst = toDoNoticeService.getDataList(status,createon,tokenModel.getUserId());
+        List<ToDoNotice> rst = toDoNoticeService.getDataList(status, tokenModel.getUserId());
 //        if (rst != null) {
 //            rst = rst.stream().filter(item -> (item.getOwner().equals(tokenModel.getUserId()))).collect(Collectors.toList());
 //        }

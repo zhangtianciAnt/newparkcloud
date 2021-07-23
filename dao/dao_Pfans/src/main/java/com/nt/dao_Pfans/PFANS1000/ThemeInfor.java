@@ -29,4 +29,14 @@ public class ThemeInfor extends BaseModel {
     @Column(name = "THEMENAME")
     private String themename;
 
+    @Column(name = "GROUPID")
+    private String groupid;
+
+
+    @Column(name = "YEAR")
+    private String year;
+
+    @Column(name = "CONTRACT")
+    private String contract;
+
 }
