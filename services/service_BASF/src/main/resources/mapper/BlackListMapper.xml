@@ -43,6 +43,7 @@
             AND a.driveridnumber <![CDATA[ <> ]]> ''
             AND a.`STATUS` = 0
             AND b.`STATUS` = 0
+            AND ( CASE WHEN a.violationtype = 1 THEN b.errorgps IS NOT NULL ELSE b.errorgps IS NULL END )
             AND (
             CASE
             WHEN b.outtime IS NULL THEN
