@@ -1,6 +1,10 @@
 package com.nt.service_pfans.PFANS4000.Impl;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.StrUtil;
 import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Assets.Inventoryplan;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.ToDoNotice;
@@ -35,10 +39,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.nt.dao_Pfans.PFANS4000.Vo.SealVo;
@@ -414,12 +415,6 @@ public class SealServiceImpl implements SealService {
     //add-ws-12/21-印章盖印
     @Override
     public void insertnamedialog(String sealdetailname, String sealdetaildate, TokenModel tokenModel) throws Exception {
-        List<SealDetail> sealdetaillist = sealdetailmapper.selectAll();
-        if (sealdetaillist.size() > 0) {
-            SealDetail seal = new SealDetail();
-            seal.setSealdetailid(sealdetaillist.get(0).getSealdetailid());
-            sealdetailmapper.delete(seal);
-        }
         SealDetail sealdetail = new SealDetail();
         sealdetail.preInsert(tokenModel);
         sealdetail.setSealdetaildate(sealdetaildate);
@@ -430,7 +425,9 @@ public class SealServiceImpl implements SealService {
 
     @Override
     public List<SealDetail> selectcognition() throws Exception {
-        return sealdetailmapper.selectAll();
+        // 盖印监管者增加履历 ztc 0723 fr
+        return sealdetailmapper.selectAll().stream().sorted(Comparator.comparing(SealDetail::getSealdetaildate).reversed()).collect(Collectors.toList());
+        // 盖印监管者增加履历 ztc 0723 to
     }
     @Override
     public void insertrecognition(String sealid, TokenModel tokenModel) throws Exception {
@@ -530,4 +527,50 @@ public class SealServiceImpl implements SealService {
         }
     }
     //add-ws-12/21-印章盖印
+
+    @Override
+    public int selectEffective(SealDetail sealDetail) throws Exception {
+        List<SealDetail> selectAll = sealdetailmapper.selectAll();
+        Date st = DateUtil.parse(sealDetail.getSealdetaildate().split("~")[0]);
+        Date ed = DateUtil.parse(sealDetail.getSealdetaildate().split("~")[1]);
+        for(SealDetail item : selectAll){
+            // 盖印监管者增加履历 ztc 0723 fr
+            String[] sealts = item.getSealdetaildate().split("~");
+            if(sealts.length == 2){
+                Date st1 = DateUtil.parse(sealts[0]);
+                Date ed1 = DateUtil.parse(sealts[1]);
+                // 盖印监管者增加履历 ztc 0723 to
+                if(DateUtil.between(st, ed1, DateUnit.DAY,false) >= 0 && DateUtil.between(ed, st1, DateUnit.DAY,false) <= 0){
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+    // 盖印监管者增加履历 ztc 0723 fr
+    @Override
+    public SealDetail getEffSeal(String newDateStr) throws Exception{
+        SimpleDateFormat formatter  = new SimpleDateFormat("yyyy-MM-dd");
+        List<SealDetail> sealDetailList = sealdetailmapper.selectAll();
+        for(SealDetail sealDetail : sealDetailList){
+            if (newDateStr.trim().equals(sealDetail.getSealdetaildate().split("~")[0].trim())
+                    || newDateStr.trim().equals(sealDetail.getSealdetaildate().split("~")[1].trim())) {
+                return sealDetail;
+            }
+            Calendar date = Calendar.getInstance();
+            date.setTime(formatter.parse(newDateStr));
+
+            Calendar begin = Calendar.getInstance();
+            begin.setTime(formatter.parse(sealDetail.getSealdetaildate().split("~")[0]));
+
+            Calendar end = Calendar.getInstance();
+            end.setTime(formatter.parse(sealDetail.getSealdetaildate().split("~")[1]));
+
+            if (date.after(begin) && date.before(end)) {
+                return sealDetail;
+            }
+        }
+        return null;
+    }
+    // 盖印监管者增加履历 ztc 0723 to
 }

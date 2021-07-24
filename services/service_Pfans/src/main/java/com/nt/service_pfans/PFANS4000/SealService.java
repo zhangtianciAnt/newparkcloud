@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS4000;
 
+import com.nt.dao_Assets.Inventoryplan;
 import com.nt.dao_Pfans.PFANS4000.Seal;
 import com.nt.dao_Pfans.PFANS4000.SealDetail;
 import com.nt.dao_Pfans.PFANS4000.Vo.SealVo;
@@ -19,11 +20,17 @@ public interface SealService {
     void upd(Seal seal, TokenModel tokenModel) throws Exception;
     //add-ws-12/21-印章盖印
     void insertnamedialog(String sealdetailname, String sealdetaildate, TokenModel tokenModel) throws Exception;
-
-    List<SealDetail>selectcognition() throws Exception;
+    // 盖印监管者增加履历 ztc 0723 fr
+    List<SealDetail> selectcognition() throws Exception;
+    // 盖印监管者增加履历 ztc 0723 to
 
     void insertrecognition(String sealid,TokenModel tokenModel) throws Exception;
     //add-ws-12/21-印章盖印
     //根据id获取数据
     Seal One(String sealid) throws Exception;
+
+    int selectEffective(SealDetail sealDetail) throws Exception;
+    // 盖印监管者增加履历 ztc 0723 fr
+    SealDetail getEffSeal(String newDateStr) throws Exception;
+    // 盖印监管者增加履历 ztc 0723 to
 }
