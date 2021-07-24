@@ -135,13 +135,15 @@ public class AwardServiceImpl implements AwardService {
                 BeanUtils.copyProperties(policycontractlist, policy);
                 policy2.setPolicycontract_id(policy.getPolicycontract_id());
                 policycontractmapper.delete(policy2);
-                BigDecimal bd = new BigDecimal(policy.getModifiedamount());
+                //region add_qhr_20210724 加入非空判断
+                BigDecimal bd = new BigDecimal(com.mysql.jdbc.StringUtils.isNullOrEmpty(policy.getModifiedamount())? "0" : policy.getModifiedamount());
                 bd = bd.setScale(scale, roundingMode);
-                BigDecimal bd1 = new BigDecimal(policy.getNewamountcase());
+                BigDecimal bd1 = new BigDecimal(com.mysql.jdbc.StringUtils.isNullOrEmpty(policy.getNewamountcase())? "0" : policy.getNewamountcase());
                 bd1 = bd1.setScale(scale, roundingMode);
-                BigDecimal bd2 = new BigDecimal(award.getClaimamount());
+                BigDecimal bd2 = new BigDecimal(com.mysql.jdbc.StringUtils.isNullOrEmpty(award.getClaimamount())? "0" : award.getClaimamount());
                 bd2 = bd2.setScale(scale, roundingMode);
-                BigDecimal bd3 = new BigDecimal(policy.getAvbleamount());
+                BigDecimal bd3 = new BigDecimal(com.mysql.jdbc.StringUtils.isNullOrEmpty(policy.getAvbleamount())? "0" : policy.getAvbleamount());
+                //endregion add_qhr_20210724 加入非空判断
                 bd3 = bd3.setScale(scale, roundingMode);
                 policy.preUpdate(tokenModel);
                 policy.setModifiedamount(String.valueOf(bd.subtract(bd2)));
