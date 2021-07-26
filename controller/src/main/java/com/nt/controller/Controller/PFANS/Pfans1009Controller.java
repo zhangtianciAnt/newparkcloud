@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/fixedassets")
@@ -125,28 +126,41 @@ public class Pfans1009Controller {
         StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
         startWorkflowVo.setDataId(fxs.getFixedassets_id());
         List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
-        if (wfList.size() > 0) {
+        if (wfList.size() > 1) {
             query = new Query();
-            query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+            query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
             customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
             if (customerInfo != null) {
                 wfList1 = customerInfo.getUserinfo().getCustomername();
                 wfList1 = sign.startGraphics2D(wfList1);
             }
-            query = new Query();
-            query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
-            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            if (customerInfo != null) {
-                wfList2 = customerInfo.getUserinfo().getCustomername();
-                wfList2 = sign.startGraphics2D(wfList2);
+
+            List<WorkflowLogDetailVo> yici = wfList.stream().filter(item -> (item.getNodename().equals("一次上司"))).collect(Collectors.toList());
+            if(yici.size()>0)
+            {
+                query = new Query();
+                query.addCriteria(Criteria.where("userid").is(yici.get(0).getUserId()));
+                customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    wfList2 = customerInfo.getUserinfo().getCustomername();
+                    wfList2 = sign.startGraphics2D(wfList2);
+                }
             }
-            query = new Query();
-            query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
-            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-            if (customerInfo != null) {
-                wfList3 = customerInfo.getUserinfo().getCustomername();
-                wfList3 = sign.startGraphics2D(wfList3);
-            }
+
+//            query = new Query();
+//            query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+//            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//            if (customerInfo != null) {
+//                wfList2 = customerInfo.getUserinfo().getCustomername();
+//                wfList2 = sign.startGraphics2D(wfList2);
+//            }
+//            query = new Query();
+//            query.addCriteria(Criteria.where("userid").is(wfList.get(2).getUserId()));
+//            customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//            if (customerInfo != null) {
+//                wfList3 = customerInfo.getUserinfo().getCustomername();
+//                wfList3 = sign.startGraphics2D(wfList3);
+//            }
         }
         Map<String, Object> data = new HashMap<>();
         data.put("fxs", fxs);

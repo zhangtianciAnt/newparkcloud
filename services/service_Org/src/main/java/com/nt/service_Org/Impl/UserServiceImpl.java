@@ -7,10 +7,12 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Role;
+import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.*;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.Vo.UserAccountVo;
 import com.nt.dao_Org.Vo.UserVo;
+import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.UserService;
@@ -78,6 +80,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
 
     /**
      * @方法名：getUserAccount
@@ -328,7 +333,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void upCustomerInfo(CustomerInfo customerInfo) throws Exception {
-        mongoTemplate.save(customerInfo);
+        mongoTemplate.save(customerInfo);//没有用到
     }
 
     /**
@@ -460,10 +465,12 @@ public class UserServiceImpl implements UserService {
                         cupList = cupList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                     }
                     userInfo.setGridData(cupList);
-                    if (userInfo.getGridData().size() > 0) {
-                        userInfo.setBasic(userInfo.getGridData().get(0).getBasic());
-                        userInfo.setDuty(userInfo.getGridData().get(0).getDuty());
-                    }
+//del ccm  工资数据不能反向覆盖 不可以用履历盖原值 fr
+//                    if (userInfo.getGridData().size() > 0) {
+//                        userInfo.setBasic(userInfo.getGridData().get(0).getBasic());
+//                        userInfo.setDuty(userInfo.getGridData().get(0).getDuty());
+//                    }
+//del ccm  工资数据不能反向覆盖 不可以用履历盖原值 to
                 }
 //                ADD_FJL_05/21   --添加降序
                 customerInfo.setUserinfo(userInfo);
@@ -505,7 +512,13 @@ public class UserServiceImpl implements UserService {
 //        }
         //根据登录用户id查看人员信息
         List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
-        if (!"5e78fefff1560b363cdd6db7".equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId()) && !"5e78b2284e3b194874180f47".equals(tokenModel.getUserId())
+        //5e785fd38f4316308435112d
+        List<MembersVo> rolelist = roleService.getMembers("5e785fd38f4316308435112d");
+        String user_id = "";
+        if (rolelist.size() > 0) {
+            user_id = rolelist.get(0).getUserid();
+        }
+        if (!user_id.equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId()) && !"5e78b2284e3b194874180f47".equals(tokenModel.getUserId())
                 && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId()) && !"5e78b17ef3c8d71e98a2aa30".equals(tokenModel.getUserId())) {
             query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
             List<CustomerInfo> CustomerInfolist = mongoTemplate.find(query, CustomerInfo.class);
@@ -549,11 +562,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype, TokenModel tokenModel) throws Exception {
+    public List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype, String virtual, TokenModel tokenModel) throws Exception {
         Query query = new Query();
         if (StrUtil.isNotBlank(orgid)) {
-            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
-                    Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
+            //update gbb 20210330 选择树根节点时显示总经理和副总经理 start
+            if (orgtype.equals("1") && !virtual.equals("")) {
+                //职务为总经理或副总经理+虚拟组织
+                query.addCriteria(Criteria.where("userinfo.post").in("PG021013", "PG021017"));
+            } else {
+                //职务不为总经理或副总经理的数据
+                query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
+                        Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid))
+                        .andOperator(Criteria.where("userinfo.post").nin("PG021013", "PG021017")));
+            }
+            //update gbb 20210330 选择树根节点时显示总经理和副总经理 end
         }
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         for (CustomerInfo item : customerInfos) {
@@ -950,6 +972,7 @@ public class UserServiceImpl implements UserService {
 //            throw new LogicalException(e.getMessage());
 //        }
 //    }
+    //【每天凌晨0点5分】
     //系统服务--每天00:05 更新离职人员的信息，已经离职人员不能登录系统  fjl add start
     //@scheduled(cron = "0 05 0 * * ?")
     public void updUseraccountStatus() throws Exception {
@@ -963,13 +986,27 @@ public class UserServiceImpl implements UserService {
 //            customerInfos = customerInfos.stream().filter(item -> item.getUserinfo().getResignation_date() != null).collect(Collectors.toList());
             for (CustomerInfo c : customerInfos) {
                 if (!StringUtils.isNullOrEmpty(c.getUserinfo().getResignation_date())) {
-                    Date temp = st.parse(c.getUserinfo().getResignation_date());
-                    Calendar cld = Calendar.getInstance();
-                    cld.setTime(temp);
-                    cld.add(Calendar.DATE, 1);
-                    temp = cld.getTime();
-                    //获得下一天日期字符串
-                    String regndate = st.format(temp);
+                    //upd ccm 20210712 定时任务更新时间为离职日后俩一天，离职日格式转换修改 fr
+//                    Date temp = st.parse(c.getUserinfo().getResignation_date());
+//                    Calendar cld = Calendar.getInstance();
+//                    cld.setTime(temp);
+//                    cld.add(Calendar.DATE, 1);
+//                    temp = cld.getTime();
+//                    //获得下一天日期字符串
+//                    String regndate = st.format(temp);
+
+                    String resignationdate = c.getUserinfo().getResignation_date().substring(0, 10);
+                    Calendar rightNow = Calendar.getInstance();
+                    rightNow.setTime(Convert.toDate(resignationdate));
+                    rightNow.add(Calendar.DAY_OF_YEAR, 1);
+
+                    if (c.getUserinfo().getResignation_date().length() >= 24) {
+                        rightNow.setTime(Convert.toDate(resignationdate));
+                        rightNow.add(Calendar.DAY_OF_YEAR, 2);
+                    }
+                    String regndate = st.format(rightNow.getTime());
+                    //upd ccm 20210712 定时任务更新时间为离职日后俩一天，离职日格式转换修改 to
+
 //                    String regndate = st.format(st.parse(c.getUserinfo().getResignation_date()));
                     int ret = Integer.parseInt(regndate.replace("-", ""));
                     if (re > ret) {
@@ -1074,6 +1111,31 @@ public class UserServiceImpl implements UserService {
         OrgTree orgTree = mongoTemplate.findOne(queryorg, OrgTree.class);
         List<OrgTree> orgTreeList = new ArrayList<>();
         orgTreeList.add(orgTree);
+        //region update gbb 20210330 2021组织架构变更-人员导入组织架构变更 start
+        //center
+        List<OrgTree> orgTreeCenterList = new ArrayList<>();
+        //group
+        List<OrgTree> orgTreeGroupList = new ArrayList<>();
+        if (orgTreeList.size() > 0) {
+            if (orgTreeList.get(0).getOrgs().size() > 0) {
+                //副总经理
+                for (int z = 0; z < orgTreeList.get(0).getOrgs().size(); z++) {
+                    if (orgTreeList.get(0).getOrgs().get(z).getOrgs().size() > 0) {
+                        //center
+                        for (int c = 0; c < orgTreeList.get(0).getOrgs().get(z).getOrgs().size(); c++) {
+                            orgTreeCenterList.add(orgTreeList.get(0).getOrgs().get(z).getOrgs().get(c));
+                            if (orgTreeList.get(0).getOrgs().get(z).getOrgs().get(c).getOrgs().size() > 0) {
+                                //group
+                                for (int g = 0; g < orgTreeList.get(0).getOrgs().get(z).getOrgs().get(c).getOrgs().size(); g++) {
+                                    orgTreeGroupList.add(orgTreeList.get(0).getOrgs().get(z).getOrgs().get(c).getOrgs().get(g));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        //endregion update gbb 20210330 2021组织架构变更-人员导入组织架构变更 end
         // update gbb 20210325 查询组织架构添加【有效】条件 end
         List<String> useradd = new ArrayList<String>();
         if (resultInsUpd) {
@@ -1151,36 +1213,54 @@ public class UserServiceImpl implements UserService {
                 //center
                 if (item.get("center") != null) {
                     String cen = item.get("center").toString();
-                    if(cen.equals("废弃")){
+                    if (cen.equals("废弃")) {
                         userinfo.setCentername("废弃");
                         userinfo.setCenterid("废弃");
                         userinfo.setGroupname("废弃");
                         userinfo.setGroupid("废弃");
                         userinfo.setTeamname("废弃");
                         userinfo.setTeamid("废弃");
-                    }
-                    else{
+                    } else {
                         // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
                         //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
                         // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
-                        int cf = 0;
-                        if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
-                            for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
-                                    cf++;
-                                    userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
-                                    userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
-                                    userinfo.setGroupname(null);
-                                    userinfo.setGroupid(null);
-                                    userinfo.setTeamname(null);
-                                    userinfo.setTeamid(null);
-                                    break;
-                                }
-                            }
-                            if (cf == 0) {
-                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
-                            }
+                        // update gbb 20210330 2021组织架构变更-人员导入组织架构变更 start
+                        //region 2021人员信息变更-组织架构导入
+//                        int cf = 0;
+//                        if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
+//                            for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
+//                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
+//                                    cf++;
+//                                    userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
+//                                    userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+//                                    userinfo.setGroupname(null);
+//                                    userinfo.setGroupid(null);
+//                                    userinfo.setTeamname(null);
+//                                    userinfo.setTeamid(null);
+//                                    break;
+//                                }
+//                            }
+//                            if (cf == 0) {
+//                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
+//                            }
+//                        }
+                        //endregion
+
+                        //region 2021人员信息变更-组织架构导入
+                        List<OrgTree> orgTreeCenter = orgTreeCenterList.stream().filter(center -> (center.getTitle().equals(cen.trim()))
+                                || (center.getCompanyname().equals(cen.trim())) || (center.getCompanyshortname().equals(cen.trim()))).collect(Collectors.toList());
+                        if (orgTreeCenter.size() > 0) {
+                            userinfo.setCentername(orgTreeCenter.get(0).getCompanyname());
+                            userinfo.setCenterid(orgTreeCenter.get(0).get_id());
+                            userinfo.setGroupname(null);
+                            userinfo.setGroupid(null);
+                            userinfo.setTeamname(null);
+                            userinfo.setTeamid(null);
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
                         }
+                        //endregion
+                        // update gbb 20210330 2021组织架构变更-人员导入组织架构变更 end
 
 //                    Query query = new Query();
 //                    query.addCriteria(Criteria.where("userinfo.centername").is(cen.trim()));
@@ -1202,42 +1282,67 @@ public class UserServiceImpl implements UserService {
                     String grp = item.get("group").toString();
                     int cf = 0;
                     int gf = 0;
-                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
-                    //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
-                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 ene
-                    if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
-                        for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                            if (gf == 0) {
-
+                    // update gbb 20210330 2021组织架构变更-人员导入组织架构变更 start
+                    //region 2020人员信息变更-组织架构导入
+//                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
+//                    //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+//                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 ene
+//                    if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
+//                        for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
+//                            if (gf == 0) {
+//
+////                                }
+//                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
+//                                    cf++;
+//                                    userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
+//                                    userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
 //                                }
-                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
-                                    cf++;
-                                    userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
-                                    userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
-                                }
-                                if (cf > 0 && item.get("group") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
-                                    for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
-                                        if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname().equals(grp.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
-                                            gf++;
-                                            userinfo.setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname());
-                                            userinfo.setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
-                                            userinfo.setTeamname(null);
-                                            userinfo.setTeamid(null);
-                                            break;
-                                        }
-                                    }
-                                    if (gf == 0) {
-                                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或不属于本组织！");
-                                    }
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-                        if (cf == 0) {
-                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
-                        }
+//                                if (cf > 0 && item.get("group") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
+//                                    for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
+//                                        if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname().equals(grp.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+//                                            gf++;
+//                                            userinfo.setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname());
+//                                            userinfo.setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
+//                                            userinfo.setTeamname(null);
+//                                            userinfo.setTeamid(null);
+//                                            break;
+//                                        }
+//                                    }
+//                                    if (gf == 0) {
+//                                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或不属于本组织！");
+//                                    }
+//                                }
+//                            } else {
+//                                break;
+//                            }
+//                        }
+//                        if (cf == 0) {
+//                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
+//                        }
+//                    }
+                    //endregion
+
+                    //region 2021人员信息变更-组织架构导入
+                    List<OrgTree> orgTreeCenter = orgTreeCenterList.stream().filter(center -> (center.getTitle().equals(cen.trim()))
+                            || (center.getCompanyname().equals(cen.trim())) || (center.getCompanyshortname().equals(cen.trim()))).collect(Collectors.toList());
+                    if (orgTreeCenter.size() > 0) {
+                        userinfo.setCentername(orgTreeCenter.get(0).getCompanyname());
+                        userinfo.setCenterid(orgTreeCenter.get(0).get_id());
+                    } else {
+                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
                     }
+                    List<OrgTree> orgTreeGroup = orgTreeGroupList.stream().filter(center -> (center.getTitle().equals(grp.trim()))
+                            || (center.getDepartmentname().equals(grp.trim()))).collect(Collectors.toList());
+                    if (orgTreeGroup.size() > 0) {
+                        userinfo.setGroupname(orgTreeGroup.get(0).getDepartmentname());
+                        userinfo.setGroupid(orgTreeGroup.get(0).get_id());
+                        userinfo.setTeamname(null);
+                        userinfo.setTeamid(null);
+                    } else {
+                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或不属于本组织！");
+                    }
+                    //endregion
+                    // update gbb 20210330 2021组织架构变更-人员导入组织架构变更 end
 //                    String grp = item.get("group").toString();
 //                    Query query = new Query();
 //                    query.addCriteria(Criteria.where("userinfo.groupname").is(grp.trim()));
@@ -1250,82 +1355,84 @@ public class UserServiceImpl implements UserService {
 //                    }
                 }
                 //team
-                if (item.get("team") != null) {
-                    if (item.get("group") == null) {
-                        throw new LogicalException("请输入与" + item.get("team").toString() + "同一组织的 group");
-                    }
-                    if (item.get("center") == null) {
-                        throw new LogicalException("请输入与" + item.get("group").toString() + "同一组织的 center");
-                    }
-                    String cen = item.get("center").toString();
-                    String grp = item.get("group").toString();
-                    String tem = item.get("team").toString();
-                    int cf = 0;
-                    int gf = 0;
-                    int tf = 0;
-                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
-                    //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
-                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
-                    if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
-                        for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                            if (tf == 0 && gf == 0) {
-
-//                                }
-                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
-                                    cf++;
-                                    userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
-                                    userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
-                                }
-                                if (cf > 0 && item.get("group") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
-                                    for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
-                                        if (tf == 0) {
-
-//                                        }
-                                            if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname().equals(grp.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
-                                                gf++;
-                                                userinfo.setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname());
-                                                userinfo.setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
-                                            }
-                                            if (gf > 0 && item.get("team") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size() > 0) {
-                                                for (int t = 0; t < orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size(); t++) {
-                                                    if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getCompanyname().equals(tem.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle().equals(tem.trim())) {
-                                                        tf++;
-                                                        userinfo.setTeamname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getCompanyname());
-                                                        userinfo.setTeamid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).get_id());
-                                                        break;
-                                                    }
-                                                }
-                                                if (tf == 0) {
-                                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team").toString() + ")不存在，或不属于本组织！");
-                                                }
-                                            }
-                                        } else {
-                                            break;
-                                        }
-                                    }
-                                    if (gf == 0) {
-                                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或不属于本组织！");
-                                    }
-                                }
-                            } else {
-                                break;
-                            }
-                        }
-                        if (cf == 0) {
-                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
-                        }
-                    }
-//                    String tem = item.get("team").toString();
-//                    Query query = new Query();
-//                    query.addCriteria(Criteria.where("userinfo.teamname").is(tem.trim()));
-//                    CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
-//                    if (cuinfo != null) {
-//                        userinfo.setTeamname(cuinfo.getUserinfo().getTeamname());
-//                        userinfo.setTeamid(cuinfo.getUserinfo().getTeamid());
-//                    } else {
-//                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team").toString() + ")不存在，或者有空格！");
+                //region update gbb 20210330 2021组织架构变更-取消team start
+//                if (item.get("team") != null) {
+//                    if (item.get("group") == null) {
+//                        throw new LogicalException("请输入与" + item.get("team").toString() + "同一组织的 group");
 //                    }
-                }
+//                    if (item.get("center") == null) {
+//                        throw new LogicalException("请输入与" + item.get("group").toString() + "同一组织的 center");
+//                    }
+//                    String cen = item.get("center").toString();
+//                    String grp = item.get("group").toString();
+//                    String tem = item.get("team").toString();
+//                    int cf = 0;
+//                    int gf = 0;
+//                    int tf = 0;
+//                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
+//                    //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+//                    // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
+//                    if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
+//                        for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
+//                            if (tf == 0 && gf == 0) {
+//
+////                                }
+//                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
+//                                    cf++;
+//                                    userinfo.setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
+//                                    userinfo.setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+//                                }
+//                                if (cf > 0 && item.get("group") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
+//                                    for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
+//                                        if (tf == 0) {
+//
+////                                        }
+//                                            if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname().equals(grp.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+//                                                gf++;
+//                                                userinfo.setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname());
+//                                                userinfo.setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
+//                                            }
+//                                            if (gf > 0 && item.get("team") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size() > 0) {
+//                                                for (int t = 0; t < orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size(); t++) {
+//                                                    if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getCompanyname().equals(tem.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle().equals(tem.trim())) {
+//                                                        tf++;
+//                                                        userinfo.setTeamname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getCompanyname());
+//                                                        userinfo.setTeamid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).get_id());
+//                                                        break;
+//                                                    }
+//                                                }
+//                                                if (tf == 0) {
+//                                                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team").toString() + ")不存在，或不属于本组织！");
+//                                                }
+//                                            }
+//                                        } else {
+//                                            break;
+//                                        }
+//                                    }
+//                                    if (gf == 0) {
+//                                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或不属于本组织！");
+//                                    }
+//                                }
+//                            } else {
+//                                break;
+//                            }
+//                        }
+//                        if (cf == 0) {
+//                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
+//                        }
+//                    }
+////                    String tem = item.get("team").toString();
+////                    Query query = new Query();
+////                    query.addCriteria(Criteria.where("userinfo.teamname").is(tem.trim()));
+////                    CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+////                    if (cuinfo != null) {
+////                        userinfo.setTeamname(cuinfo.getUserinfo().getTeamname());
+////                        userinfo.setTeamid(cuinfo.getUserinfo().getTeamid());
+////                    } else {
+////                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team").toString() + ")不存在，或者有空格！");
+////                    }
+//                }
+                //endregion update gbb 20210330 2021组织架构变更-取消team end
 
                 //入社时间
                 if (item.get("入社时间") != null && item.get("入社时间").toString().length() >= 10) {
@@ -1370,6 +1477,21 @@ public class UserServiceImpl implements UserService {
                             } else {
                                 throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的Rank（" + item.get("Rank").toString() + "）在字典中不存在！");
                             }
+                        }
+                    }
+                }
+                //职级类型
+                if (item.get("职级类型") != null) {
+                    String occupationtype = item.get("职级类型").toString();
+                    if (occupationtype != null) {
+                        Dictionary dictionary = new Dictionary();
+                        dictionary.setValue1(occupationtype.trim());
+                        dictionary.setPcode("PR055");
+                        List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                        if (dictionaryList.size() > 0) {
+                            userinfo.setOccupationtype(dictionaryList.get(0).getCode());
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的职级类型（" + item.get("职级类型").toString() + "）在字典中不存在！");
                         }
                     }
                 }
@@ -1790,6 +1912,7 @@ public class UserServiceImpl implements UserService {
                 else{
                     customerInfo.setUserid(UUID.randomUUID().toString());//111
                 }
+                customerInfo.preInsert(tokenModel);
                 mongoTemplate.save(customerInfo);
                 accesscount = accesscount + 1;
                 //成功人员
@@ -1862,24 +1985,44 @@ public class UserServiceImpl implements UserService {
                         // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
                         //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
                         // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
-                        int cf = 0;
-                        if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
-                            for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
-                                    cf++;
-                                    customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
-                                    customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
-                                    customerInfoList.get(0).getUserinfo().setGroupname(null);
-                                    customerInfoList.get(0).getUserinfo().setGroupid(null);
-                                    customerInfoList.get(0).getUserinfo().setTeamname(null);
-                                    customerInfoList.get(0).getUserinfo().setTeamid(null);
-                                    break;
-                                }
-                            }
-                            if (cf == 0) {
-                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center●").toString() + ")不存在！");
-                            }
+
+                        // update gbb 20210330 2021组织架构变更-人员导入组织架构变更 start
+                        //region 2020人员信息变更-组织架构导入
+                        //                        int cf = 0;
+//                        if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
+//                            for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
+//                                if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
+//                                    cf++;
+//                                    customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
+//                                    customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+//                                    customerInfoList.get(0).getUserinfo().setGroupname(null);
+//                                    customerInfoList.get(0).getUserinfo().setGroupid(null);
+//                                    customerInfoList.get(0).getUserinfo().setTeamname(null);
+//                                    customerInfoList.get(0).getUserinfo().setTeamid(null);
+//                                    break;
+//                                }
+//                            }
+//                            if (cf == 0) {
+//                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center●").toString() + ")不存在！");
+//                            }
+//                        }
+                        //endregion
+
+                        //region 2021人员信息变更-组织架构导入
+                        List<OrgTree> orgTreeCenter = orgTreeCenterList.stream().filter(center -> (center.getTitle().equals(cen.trim()))
+                                || (center.getCompanyname().equals(cen.trim())) || (center.getCompanyshortname().equals(cen.trim()))).collect(Collectors.toList());
+                        if (orgTreeCenter.size() > 0) {
+                            customerInfoList.get(0).getUserinfo().setCentername(orgTreeCenter.get(0).getCompanyname());
+                            customerInfoList.get(0).getUserinfo().setCenterid(orgTreeCenter.get(0).get_id());
+                            customerInfoList.get(0).getUserinfo().setGroupname(null);
+                            customerInfoList.get(0).getUserinfo().setGroupid(null);
+                            customerInfoList.get(0).getUserinfo().setTeamname(null);
+                            customerInfoList.get(0).getUserinfo().setTeamid(null);
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center●").toString() + ")不存在！");
                         }
+                        //endregion
+                        // update gbb 20210330 2021组织架构变更-人员导入组织架构变更 end
 
 //                    Query query = new Query();
 //                    query.addCriteria(Criteria.where("userinfo.centername").is(cen.trim()));
@@ -1903,39 +2046,65 @@ public class UserServiceImpl implements UserService {
                         // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
                         //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
                         // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
-                        if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
-                            for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                                if (gf == 0) {
-
+                        // update gbb 20210330 2021组织架构变更-人员导入组织架构变更 start
+                        //region 2020人员信息变更-组织架构导入
+//                        if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
+//                            for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
+//                                if (gf == 0) {
+//
+////                                }
+//                                    if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
+//                                        cf++;
+//                                        customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
+//                                        customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+//                                    }
+//                                    if (cf > 0 && item.get("group●") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
+//                                        for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
+//                                            if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname().equals(grp.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+//                                                gf++;
+//                                                customerInfoList.get(0).getUserinfo().setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname());
+//                                                customerInfoList.get(0).getUserinfo().setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
+//                                                customerInfoList.get(0).getUserinfo().setTeamname(null);
+//                                                customerInfoList.get(0).getUserinfo().setTeamid(null);
+//                                                break;
+//                                            }
+//                                        }
+//                                        if (gf == 0) {
+//                                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group●").toString() + ")不存在，或不属于本组织！");
+//                                        }
+//                                    }
+//                                } else {
+//                                    break;
 //                                }
-                                    if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
-                                        cf++;
-                                        customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
-                                        customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
-                                    }
-                                    if (cf > 0 && item.get("group●") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
-                                        for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
-                                            if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname().equals(grp.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
-                                                gf++;
-                                                customerInfoList.get(0).getUserinfo().setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname());
-                                                customerInfoList.get(0).getUserinfo().setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
-                                                customerInfoList.get(0).getUserinfo().setTeamname(null);
-                                                customerInfoList.get(0).getUserinfo().setTeamid(null);
-                                                break;
-                                            }
-                                        }
-                                        if (gf == 0) {
-                                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group●").toString() + ")不存在，或不属于本组织！");
-                                        }
-                                    }
-                                } else {
-                                    break;
-                                }
-                            }
-                            if (cf == 0) {
-                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center●").toString() + ")不存在！");
-                            }
+//                            }
+//                            if (cf == 0) {
+//                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center●").toString() + ")不存在！");
+//                            }
+//                        }
+                        //endregion
+
+                        //region 2021人员信息变更-组织架构导入
+                        List<OrgTree> orgTreeCenter = orgTreeCenterList.stream().filter(center -> (center.getTitle().equals(cen.trim()))
+                                || (center.getCompanyname().equals(cen.trim())) || (center.getCompanyshortname().equals(cen.trim()))).collect(Collectors.toList());
+                        if (orgTreeCenter.size() > 0) {
+                            customerInfoList.get(0).getUserinfo().setCentername(orgTreeCenter.get(0).getCompanyname());
+                            customerInfoList.get(0).getUserinfo().setCenterid(orgTreeCenter.get(0).get_id());
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center●").toString() + ")不存在！");
                         }
+
+                        List<OrgTree> orgTreeGroup = orgTreeGroupList.stream().filter(center -> (center.getTitle().equals(grp.trim()))
+                                || (center.getDepartmentname().equals(grp.trim()))).collect(Collectors.toList());
+                        if (orgTreeGroup.size() > 0) {
+                            customerInfoList.get(0).getUserinfo().setGroupname(orgTreeGroup.get(0).getDepartmentname());
+                            customerInfoList.get(0).getUserinfo().setGroupid(orgTreeGroup.get(0).get_id());
+                            customerInfoList.get(0).getUserinfo().setTeamname(null);
+                            customerInfoList.get(0).getUserinfo().setTeamid(null);
+                        } else {
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group●").toString() + ")不存在，或不属于本组织！");
+                        }
+                        //endregion
+                        // update gbb 20210330 2021组织架构变更-人员导入组织架构变更 end
 //                    String grp = item.get("group").toString();
 //                    Query query = new Query();
 //                    query.addCriteria(Criteria.where("userinfo.groupname").is(grp.trim()));
@@ -1948,82 +2117,84 @@ public class UserServiceImpl implements UserService {
 //                    }
                     }
                     //team
-                    if (item.get("team●") != null) {
-                        if (item.get("group●") == null) {
-                            throw new LogicalException("请输入与" + item.get("team●").toString() + "同一组织的 group");
-                        }
-                        if (item.get("center●") == null) {
-                            throw new LogicalException("请输入与" + item.get("group●").toString() + "同一组织的 center");
-                        }
-                        String cen = item.get("center●").toString();
-                        String grp = item.get("group●").toString();
-                        String tem = item.get("team●").toString();
-                        int cf = 0;
-                        int gf = 0;
-                        int tf = 0;
-                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
-                        //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
-                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
-                        if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
-                            for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
-                                if (tf == 0 && gf == 0) {
-
-//                                }
-                                    if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
-                                        cf++;
-                                        customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
-                                        customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
-                                    }
-                                    if (cf > 0 && item.get("group●") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
-                                        for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
-                                            if (tf == 0) {
-
+                    //region update gbb 20210330 2021组织架构变更-取消team start
+//                    if (item.get("team●") != null) {
+//                        if (item.get("group●") == null) {
+//                            throw new LogicalException("请输入与" + item.get("team●").toString() + "同一组织的 group");
+//                        }
+//                        if (item.get("center●") == null) {
+//                            throw new LogicalException("请输入与" + item.get("group●").toString() + "同一组织的 center");
+//                        }
+//                        String cen = item.get("center●").toString();
+//                        String grp = item.get("group●").toString();
+//                        String tem = item.get("team●").toString();
+//                        int cf = 0;
+//                        int gf = 0;
+//                        int tf = 0;
+//                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
+//                        //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
+//                        // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
+//                        if (orgTreeList.size() > 0 && orgTreeList.get(0).getOrgs().size() > 0) {
+//                            for (int c = 0; c < orgTreeList.get(0).getOrgs().size(); c++) {
+//                                if (tf == 0 && gf == 0) {
+//
+////                                }
+//                                    if (orgTreeList.get(0).getOrgs().get(c).getCompanyname().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getTitle().equals(cen.trim()) || orgTreeList.get(0).getOrgs().get(c).getCompanyshortname().equals(cen.trim())) {
+//                                        cf++;
+//                                        customerInfoList.get(0).getUserinfo().setCentername(orgTreeList.get(0).getOrgs().get(c).getCompanyname());
+//                                        customerInfoList.get(0).getUserinfo().setCenterid(orgTreeList.get(0).getOrgs().get(c).get_id());
+//                                    }
+//                                    if (cf > 0 && item.get("group●") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().size() > 0) {
+//                                        for (int g = 0; g < orgTreeList.get(0).getOrgs().get(c).getOrgs().size(); g++) {
+//                                            if (tf == 0) {
+//
+////                                        }
+//                                                if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname().equals(grp.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
+//                                                    gf++;
+//                                                    customerInfoList.get(0).getUserinfo().setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname());
+//                                                    customerInfoList.get(0).getUserinfo().setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
+//                                                }
+//                                                if (gf > 0 && item.get("team●") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size() > 0) {
+//                                                    for (int t = 0; t < orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size(); t++) {
+//                                                        if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getCompanyname().equals(tem.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle().equals(tem.trim())) {
+//                                                            tf++;
+//                                                            customerInfoList.get(0).getUserinfo().setTeamname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getCompanyname());
+//                                                            customerInfoList.get(0).getUserinfo().setTeamid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).get_id());
+//                                                            break;
+//                                                        }
+//                                                    }
+//                                                    if (tf == 0) {
+//                                                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team●").toString() + ")不存在，或不属于本组织！");
+//                                                    }
+//                                                }
+//                                            } else {
+//                                                break;
+//                                            }
 //                                        }
-                                                if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname().equals(grp.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getTitle().equals(grp.trim())) {
-                                                    gf++;
-                                                    customerInfoList.get(0).getUserinfo().setGroupname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getCompanyname());
-                                                    customerInfoList.get(0).getUserinfo().setGroupid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).get_id());
-                                                }
-                                                if (gf > 0 && item.get("team●") != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs() != null && orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size() > 0) {
-                                                    for (int t = 0; t < orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().size(); t++) {
-                                                        if (orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getCompanyname().equals(tem.trim()) || orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getTitle().equals(tem.trim())) {
-                                                            tf++;
-                                                            customerInfoList.get(0).getUserinfo().setTeamname(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).getCompanyname());
-                                                            customerInfoList.get(0).getUserinfo().setTeamid(orgTreeList.get(0).getOrgs().get(c).getOrgs().get(g).getOrgs().get(t).get_id());
-                                                            break;
-                                                        }
-                                                    }
-                                                    if (tf == 0) {
-                                                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team●").toString() + ")不存在，或不属于本组织！");
-                                                    }
-                                                }
-                                            } else {
-                                                break;
-                                            }
-                                        }
-                                        if (gf == 0) {
-                                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group●").toString() + ")不存在，或不属于本组织！");
-                                        }
-                                    }
-                                } else {
-                                    break;
-                                }
-                            }
-                            if (cf == 0) {
-                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center●").toString() + ")不存在！");
-                            }
-                        }
-//                    String tem = item.get("team●").toString();
-//                    Query query = new Query();
-//                    query.addCriteria(Criteria.where("userinfo.teamname").is(tem.trim()));
-//                    CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
-//                    if (cuinfo != null) {
-//                        customerInfoList.get(0).getUserinfo().setTeamname(cuinfo.getUserinfo().getTeamname());
-//                        customerInfoList.get(0).getUserinfo().setTeamid(cuinfo.getUserinfo().getTeamid());
-//                    } else {
-//                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team●").toString() + ")不存在，或者有空格！");
+//                                        if (gf == 0) {
+//                                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group●").toString() + ")不存在，或不属于本组织！");
+//                                        }
+//                                    }
+//                                } else {
+//                                    break;
+//                                }
+//                            }
+//                            if (cf == 0) {
+//                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center●").toString() + ")不存在！");
+//                            }
+//                        }
+////                    String tem = item.get("team●").toString();
+////                    Query query = new Query();
+////                    query.addCriteria(Criteria.where("userinfo.teamname").is(tem.trim()));
+////                    CustomerInfo cuinfo = mongoTemplate.findOne(query, CustomerInfo.class);
+////                    if (cuinfo != null) {
+////                        customerInfoList.get(0).getUserinfo().setTeamname(cuinfo.getUserinfo().getTeamname());
+////                        customerInfoList.get(0).getUserinfo().setTeamid(cuinfo.getUserinfo().getTeamid());
+////                    } else {
+////                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 team(" + item.get("team●").toString() + ")不存在，或者有空格！");
+////                    }
 //                    }
-                    }
+                    //endregion update gbb 20210330 2021组织架构变更-取消team end
                     if (item.get("入社时间●") != null && item.get("入社时间●").toString().length() >= 10) {
                         String enterday = item.get("入社时间●").toString().substring(0, 10).replace("-", "/");
                         customerInfoList.get(0).getUserinfo().setEnterday(enterday);
@@ -2142,6 +2313,20 @@ public class UserServiceImpl implements UserService {
                                 customerInfoList.get(0).getUserinfo().setSex(dictionaryList.get(0).getCode());
                             } else {
                                 throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的性别（" + item.get("性别●").toString() + "）在字典中不存在！");
+                            }
+                        }
+                    }
+                    if (item.get("职级类型●") != null) {
+                        String occupationtype = item.get("职级类型●").toString();
+                        if (occupationtype != null) {
+                            Dictionary dictionary = new Dictionary();
+                            dictionary.setValue1(occupationtype.trim());
+                            dictionary.setPcode("PR055");
+                            List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dictionary);
+                            if (dictionaryList.size() > 0) {
+                                customerInfoList.get(0).getUserinfo().setOccupationtype(dictionaryList.get(0).getCode());
+                            } else {
+                                throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的职级类型（" + item.get("职级类型●").toString() + "）在字典中不存在！");
                             }
                         }
                     }
@@ -2303,10 +2488,9 @@ public class UserServiceImpl implements UserService {
                         }
                         //add gbb 0724 等级联动职责工资 end
                     }
-                    if (item.get("給料変更日●") != null && item.get("給料変更日●").toString().length() >= 10) {
-//                            personal.setDate(item.get("給料変更日●").toString());
-                        String dateSubs = item.get("給料変更日●").toString().substring(0, 10);
-                        personal.setDate(dateSubs);
+                    if (item.get("給料変更日●") != null) {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        personal.setDate(DateUtil.format(sdf.parse(item.get("給料変更日●").toString()), "yyyy-MM-dd"));
                     }
                     if (item.get("养老保险基数●") != null) {
                         customerInfoList.get(0).getUserinfo().setYanglaoinsurance(item.get("养老保险基数●").toString());
@@ -2371,8 +2555,8 @@ public class UserServiceImpl implements UserService {
                                 if (pp.getDate().length() >= 10) {
                                     pp.setDate(pp.getDate().substring(0, 10));
                                 }
-                                int aa = Integer.valueOf(personal.getDate().replace("-", ""));
-                                int bb = Integer.valueOf(pp.getDate().replace("-", ""));
+                                int aa = Integer.valueOf(personal.getDate().replace("-", "").replace("/", ""));
+                                int bb = Integer.valueOf(pp.getDate().replace("-", "").replace("/", ""));
                                 if (aa >= bb) {
                                     if (item.get("现职责工资●") != null) {
                                         customerInfoList.get(0).getUserinfo().setDuty(item.get("现职责工资●").toString());
@@ -2625,6 +2809,7 @@ public class UserServiceImpl implements UserService {
                     cupList8 = cupList8.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                     customerInfoList.get(0).getUserinfo().setHouseData(cupList8);
                 }
+                customerInfoList.get(0).preUpdate(tokenModel);
                 mongoTemplate.save(customerInfoList.get(0));
                 //如果更新登录账户,登录名和密码默认设置成登录账户
                 if (userAccount.getPassword() != null && userAccount.getAccount() != null) {
@@ -2744,6 +2929,7 @@ public class UserServiceImpl implements UserService {
         }
         return customerInfoList;
     }
+
     //add-21/2/3-PSDCD_PFANS_20201124_XQ_033
     @Override
     public void checkpassword(UserAccountVo userAccountVo) throws Exception {

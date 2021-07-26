@@ -1,7 +1,6 @@
 package com.nt.dao_Pfans.PFANS8000;
 
 import com.nt.utils.dao.BaseModel;
-import com.nt.utils.dao.TokenModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "monthlyrate")
-public class MonthlyRate  extends BaseModel {
+public class MonthlyRate extends BaseModel {
 
     private static final long serialVersionUID = 1L;
 

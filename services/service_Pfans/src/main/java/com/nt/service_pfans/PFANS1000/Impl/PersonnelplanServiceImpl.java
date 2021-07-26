@@ -83,7 +83,7 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
     public void insert(PersonnelPlan personnelPlan, TokenModel tokenModel) throws LogicalException{
         PersonnelPlan personnel = new PersonnelPlan();
         personnel.setYears(personnelPlan.getYears());
-        personnel.setGroupid(personnelPlan.getGroupid());
+        personnel.setCenterid(personnelPlan.getGroupid());
         personnel.setType(personnelPlan.getType());
         List<PersonnelPlan>  personnelPlanList = personnelplanMapper.select(personnel);
         if(personnelPlanList.size()>0){
@@ -96,9 +96,17 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
         int perNum = 0;
         for(Moneyavg mavg : moneyavgList){
             perNum ++;
-            BigDecimal summerMoney = new BigDecimal(mavg.getSummerplanpc());
-            BigDecimal winterMoney = new BigDecimal(mavg.getWinterplanpc());
-            moneyavgSum = moneyavgSum.add(summerMoney.add(winterMoney));
+            //update gbb 20210415 事业计划-外驻计划-新建时统计值用【Unitprice】 start
+            if(mavg.getSummerplanpc() != null){
+                BigDecimal summerMoney = new BigDecimal(mavg.getSummerplanpc());
+                BigDecimal winterMoney = new BigDecimal(mavg.getWinterplanpc());
+                moneyavgSum = moneyavgSum.add(summerMoney.add(winterMoney));
+            }
+            else{
+                BigDecimal unitprice = new BigDecimal(mavg.getUnitprice());
+                moneyavgSum = moneyavgSum.add(unitprice);
+            }
+            //update gbb 20210415 事业计划-外驻计划-新建时统计值用【Unitprice】 end
         }
 
         List<Moneyavg> newmoneyavgList = JSON.parseArray(personnelPlan.getNewentry(), Moneyavg.class);

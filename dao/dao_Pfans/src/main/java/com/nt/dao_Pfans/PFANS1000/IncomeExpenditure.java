@@ -36,7 +36,7 @@ public class IncomeExpenditure extends BaseModel {
     @Column(name = "BRANCH")
     private String branch;
 
-      @Column(name = "KIND")
+    @Column(name = "KIND")
     private String kind;
 
     @Column(name = "CURRENCYTYPE")

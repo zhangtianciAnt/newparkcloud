@@ -71,7 +71,6 @@ public class OrgTree extends BaseModel {
     private List<Bankinfo> bankinfo;
     private String upcompany;
     private String redirict;
-    private String years;
     /**
      * 组织单元	ORGS
      */

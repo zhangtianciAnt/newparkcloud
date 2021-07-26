@@ -1,9 +1,7 @@
 package com.nt.service_pfans.PFANS1000.mapper;
 
 
-import com.nt.dao_Pfans.PFANS1000.Evection;
 import com.nt.dao_Pfans.PFANS1000.ProjectIncome;
-import com.nt.dao_Pfans.PFANS1000.PublicExpense;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
 import com.nt.utils.MyMapper;

@@ -119,9 +119,9 @@ public class Pfans1008Controller {
             }
         }
 
-        if (wfList.size() > 0) {
+        if (wfList.size() > 1) {
             query = new Query();
-            query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+            query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
             customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
             if (customerInfo != null) {
                 wfList1 = customerInfo.getUserinfo().getCustomername();

@@ -22,4 +22,6 @@ public interface AnnualLeaveMapper extends MyMapper<AnnualLeave> {
     List<restViewVo> getrest2(@Param("userid") String userid);
 
    void updateAnnualYear(@Param("annualLeaves") List<AnnualLeave> annualLeaves);
+
+   void updateremaining_annual_leave_lastyear(@Param("years") String years);
 }

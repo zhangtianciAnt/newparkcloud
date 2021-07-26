@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -16,11 +15,11 @@ import java.util.Date;
 @Table(name = "personalcostyears")
 public class PersonalCostYears extends BaseModel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
-	 * 人件费年度主键
-	 */
+     * 人件费年度主键
+     */
     @Id
     @Column(name = "YEARSANTID")
     private String yearsantid;
@@ -30,7 +29,6 @@ public class PersonalCostYears extends BaseModel {
      */
     @Column(name = "YEARS")
     private String years;
-
 
 
 }

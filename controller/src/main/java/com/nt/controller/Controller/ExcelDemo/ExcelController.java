@@ -36,7 +36,7 @@ public class ExcelController {
     @RequestMapping(value = "/excel1", method = {RequestMethod.POST})
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public void save1(HttpServletResponse response, HttpServletRequest request) throws Exception {
-        ExcelReader reader = ExcelUtil.getReader("c:/testqindai.xlsx");
+        ExcelReader reader = ExcelUtil.getReader("e:/testqindai.xlsx");
         ArrayList<Map<String, Object>> rows = new ArrayList<Map<String, Object>>();
         List<Map<String, Object>> readAll = reader.readAll();
         for (Map<String, Object> item : readAll) {
@@ -64,7 +64,7 @@ public class ExcelController {
             row1.put("妇女节", item.get("妇女节"));
             rows.add(row1);
         }
-        ExcelWriter writer = ExcelUtil.getWriter("c:/testqindai.xlsx");
+        ExcelWriter writer = ExcelUtil.getWriter("e:/testqindai.xlsx");
         writer.write(rows, true);
         writer.close();
     }
