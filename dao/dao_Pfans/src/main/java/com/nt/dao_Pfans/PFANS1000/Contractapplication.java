@@ -247,4 +247,8 @@ public class Contractapplication extends BaseModel {
     @Column(name = "REGINDIFF")
     private String regindiff;
     //add_fjl_0813   客户信息的地域区分
+    //region  add_qhr_20210616 委托决裁书-情报2表格带入信息
+    @Column(name = "SUPPLIERINFOR_ID")
+    private String supplierinfor_id;
+    //endregion  add_qhr_20210616 委托决裁书-情报2表格带入信息
 }

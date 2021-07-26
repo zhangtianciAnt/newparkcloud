@@ -13,6 +13,7 @@ import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Pfans.PFANS4000.Seal;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
+import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_Auth.RoleService;
@@ -22,26 +23,20 @@ import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.PurchaseApplyService;
-import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
-import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
-import com.nt.service_pfans.PFANS1000.mapper.IndividualMapper;
-import com.nt.service_pfans.PFANS1000.mapper.ContractcompoundMapper;
-import com.nt.service_pfans.PFANS1000.mapper.QuotationMapper;
-import com.nt.service_pfans.PFANS1000.mapper.ContractMapper;
-import com.nt.service_pfans.PFANS1000.mapper.NonJudgmentMapper;
-import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
-import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
-import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
+import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
 import com.nt.service_pfans.PFANS4000.mapper.SealMapper;
 import com.nt.service_pfans.PFANS5000.mapper.ProjectContractMapper;
+import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
 import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +44,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.nt.utils.MongoObject.CustmizeQuery;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -94,6 +91,12 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private ToDoNoticeService toDoNoticeService;
     @Autowired
     private PurchaseService PurchaseService;
+    @Autowired
+    private MongoTemplate mongoTemplate;
+    @Autowired
+    private CoststatisticsdetailMapper coststatisticsdetailMapper;
+    @Autowired
+    private AwardDetailMapper awardDetailMapper;
     //add-ws-7/22-禅道341任务
     @Override
     public List<Individual> getindividual(Individual individual) throws Exception {
@@ -178,11 +181,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         ProjectContract projectContract = new ProjectContract();
         projectContract.setContract(contractnumber);
         List<ProjectContract> projectList = projectContractMapper.select(projectContract);
-        if (projectList.size() > 0) {
-            result = true;
-        } else {
-            result = false;
-        }
+        result = projectList.size() > 0;
         return result;
     }
     //add  ml  20210706   契约番号废弃check   to
@@ -733,8 +732,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //納品書作成
                 else if (rowindex.equals("5")) {
-                    List<String> numcountList = Arrays.asList(countNumber.split(","));
-                    String numcount[] = countNumber.split(",");
+                    String[] numcountList = countNumber.split(",");
+                    String[] numcount = countNumber.split(",");
                     int flg = 0;
                     for (String count : numcountList) {
                         Napalm napalmAnt = new Napalm();
@@ -831,7 +830,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //請求書作成
                 else if (rowindex.equals("6")) {
-                    List<String> numcountList = Arrays.asList(countNumber.split(","));
+                    String[] numcountList = countNumber.split(",");
                     int flg = 0;
                     for (String count : numcountList) {
                         Petition petitionAnt = new Petition();
@@ -849,7 +848,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         throw new LogicalException("请求书正在印章中，不可更新！");
                     }
                     // add_fjl_0604 --添加请求书和纳品书的选择生成 start
-                    String numcount[] = countNumber.split(",");
+                    String[] numcount = countNumber.split(",");
                     if (numcount.length > 0) {
                         for (int i = 0; i < numcount.length; i++) {
                             Petition pet = new Petition();
@@ -1001,6 +1000,25 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         award.setMaketype(rowindex);
                         award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
                         AwardMapper.insert(award);
+                        //region  add_qhr_20210723 委托决裁书-情报2表格带入信息
+                        Coststatisticsdetail coststatisticsdetail = new Coststatisticsdetail();
+                        coststatisticsdetail.setSupplierinforid(contractapp.getSupplierinfor_id());
+                        coststatisticsdetail.setDates(contractapp.getDates());
+                        List<Coststatisticsdetail> costlist =  coststatisticsdetailMapper.select(coststatisticsdetail);
+                        int n = 1;
+                        for (Coststatisticsdetail coslist : costlist) {
+                            AwardDetail awardDetail = new AwardDetail();
+                            awardDetail.preInsert(tokenModel);
+                            awardDetail.setAwarddetail_id(UUID.randomUUID().toString());
+                            awardDetail.setAward_id(award.getAward_id());
+                            awardDetail.setDepart(coslist.getGroupid());
+                            awardDetail.setWorknumber(coslist.getManhour());
+                            awardDetail.setAwardmoney(coslist.getCost());
+                            awardDetail.setRowindex(n);
+                            n++;
+                            awardDetailMapper.insert(awardDetail);
+                        }
+                        //endregion  add_qhr_20210723 委托决裁书-情报2表格带入信息
                     }
 //                    upd_fjl_05/26   --课题票No.176 生成决裁时ID不变（不能删除旧的数据，走更新处理）
                 }
@@ -1288,7 +1306,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 List<String> coString = new ArrayList<String>();
                                 for (int i = 0; i < coList.size(); i++) {
                                     String strcon = coList.get(i).getContractnumber();
-                                    coListcount = String.valueOf(strcon.substring(strcon.length() - 2, strcon.length()));
+                                    coListcount = strcon.substring(strcon.length() - 2);
                                     coString.add(coListcount);
                                 }
                                 Collections.sort(coString);
@@ -1310,7 +1328,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 List<String> coString = new ArrayList<String>();
                                 for (int i = 0; i < coList.size(); i++) {
                                     String strcon = coList.get(i).getContractnumber();
-                                    coListcount = String.valueOf(strcon.substring(strcon.length() - 4, strcon.length()));
+                                    coListcount = strcon.substring(strcon.length() - 4);
                                     coString.add(coListcount);
                                 }
                                 Collections.sort(coString);
@@ -1335,7 +1353,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 List<String> coString = new ArrayList<String>();
                                 for (int i = 0; i < coList.size(); i++) {
                                     String strcon = coList.get(i).getContractnumber();
-                                    coListcount = String.valueOf(strcon.substring(strcon.length() - 2, strcon.length()));
+                                    coListcount = strcon.substring(strcon.length() - 2);
                                     coString.add(coListcount);
                                 }
                                 Collections.sort(coString);

@@ -19,8 +19,6 @@ import com.nt.utils.MsgConstants;
 import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
-import org.bytedeco.javacpp.presets.opencv_core;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -267,4 +265,21 @@ public class Pfans4001Controller {
         return ApiResult.success();
     }
     //add-ws-12/21-印章盖印
+
+    @RequestMapping(value = "/selectEffective", method = {RequestMethod.POST})
+    public ApiResult check(@RequestBody SealDetail sealDetail, HttpServletRequest request) throws Exception {
+        if (sealDetail == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(sealService.selectEffective(sealDetail));
+    }
+    // 盖印监管者增加履历 ztc 0723 fr
+    @RequestMapping(value = "/getEffSeal", method = {RequestMethod.POST})
+    public ApiResult getEffSeal(@RequestParam String sealdetaildate, HttpServletRequest request) throws Exception {
+        if (sealdetaildate == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(sealService.getEffSeal(sealdetaildate));
+    }
+    // 盖印监管者增加履历 ztc 0723 to
 }
