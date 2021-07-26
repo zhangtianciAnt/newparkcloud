@@ -946,7 +946,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     }
 
     //系统服务--每月1号 给纳品担当和请求担当代办处理合同回款  fjl add start
-    @Scheduled(cron = "0 10 0 1 * ?")
+    //@scheduled(cron = "0 10 0 1 * ?")
     public void updUseraccountStatus() throws Exception {
         TokenModel tokenModel = new TokenModel();
         SimpleDateFormat st = new SimpleDateFormat("yyyyMM");

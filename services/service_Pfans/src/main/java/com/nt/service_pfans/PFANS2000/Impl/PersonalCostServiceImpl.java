@@ -52,7 +52,7 @@ public class PersonalCostServiceImpl implements PersonalCostService {
     private OrgTreeService orgTreeService;
 
     //系统定时任务每月1号自动保存单价
-    @Scheduled(cron = "1 18 13 23 3 ?")
+    //@scheduled(cron = "1 18 13 23 3 ?")
     public void savePersonalCost() throws Exception {
         LocalDate nowDate = LocalDate.now();
         String onYearStr = String.valueOf(nowDate.getYear());

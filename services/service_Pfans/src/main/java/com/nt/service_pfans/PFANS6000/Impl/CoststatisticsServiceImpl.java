@@ -100,15 +100,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 
     @Override
     public List<Coststatistics> getCostListBygroupid(String groupid,String year) throws Exception {
-        Calendar calendar = Calendar.getInstance();
-//        int year = 0;
-//        int month = calendar.get(Calendar.MONTH)+1;
-//        if(month >= 1 && month <= 3) {
-//            year = calendar.get(Calendar.YEAR) - 1;
-//        }else {
-//            year = calendar.get(Calendar.YEAR);
-//        }
-        return coststatisticsMapper.selectBygroupid(groupid,String.valueOf(year));
+        return coststatisticsMapper.selectBygroupid(groupid, "2020");
     }
 
     @Override
@@ -145,6 +137,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         Variousfunds variousfunds = new Variousfunds();
 //        variousfunds.setOwner(tokenModel.getUserId());
         Calendar calendar = Calendar.getInstance();
+        year = "2020";
 //        int year = 0;
 //        int month = calendar.get(Calendar.MONTH)+1;
 //        if(month >= 1 && month <= 3) {
@@ -263,20 +256,21 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     public Map<String, Double> getUserPriceMap() throws Exception {
         // 获取所有人的单价设定
         Calendar now = Calendar.getInstance();
-        int year = 0;
-        int month = now.get(Calendar.MONTH)+1;
-        if(month >= 1 && month <= 3) {
-            year = now.get(Calendar.YEAR) - 1;
-        }else {
-            year = now.get(Calendar.YEAR);
-        }
+//        int year = 0;
+//        int month = now.get(Calendar.MONTH)+1;
+//        if(month >= 1 && month <= 3) {
+//            year = now.get(Calendar.YEAR) - 1;
+//        }else {
+//            year = now.get(Calendar.YEAR);
+//        }
+        String year = "2020";
 
         List<Priceset> allPriceset = pricesetMapper.selectByYear(String.valueOf(year).trim());
         Map<String, Double> pricesetMap = new HashMap<String, Double>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         //DateFormat df = DateFormat.getDateInstance();
         //Date startDate = sdf.parse(startTime);
-        for ( Priceset priceset : allPriceset ) {
+        for (Priceset priceset : allPriceset) {
             //Date pointDate = sdf.parse(priceset.getAssesstime().substring(0, 10));
 
             //int startM = Integer.parseInt(priceset.getAssesstime().substring(5, 7));
@@ -336,7 +330,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
 //        }else {
 //            year = now.get(Calendar.YEAR);
 //        }
-
+        years = "2020";
         List<Priceset> allPriceset = pricesetMapper.selectBygroupid(Integer.valueOf(years),groupid);
 
         Map<String, Double> pricesetMap = new HashMap<String, Double>();

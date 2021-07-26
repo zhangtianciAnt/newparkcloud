@@ -1184,7 +1184,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     }
 
     //到退场日，收回PL角色权限
-    @Scheduled(cron = "0 05 0 * * ?")
+    //@scheduled(cron = "0 05 0 * * ?")
     public void getPLExittime() throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         List<Projectsystem> projeclist = projectsystemMapper.getProsysList();
@@ -1259,7 +1259,7 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     }
 
     //给即将到退场日的PL的leader发代办
-    @Scheduled(cron = "0 10 0 * * ?")
+    //@scheduled(cron = "0 10 0 * * ?")
     public void getPLLeader() throws Exception {
         TokenModel tokenModel = new TokenModel();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

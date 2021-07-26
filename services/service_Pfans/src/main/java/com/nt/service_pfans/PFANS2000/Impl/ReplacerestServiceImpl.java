@@ -25,7 +25,7 @@ public class ReplacerestServiceImpl implements ReplacerestService {
     }
 
     //系统服务（4月1日）
-    @Scheduled(cron="5 * * * * ?")
+    //@scheduled(cron="5 * * * * ?")
     public void changestatus() throws Exception {
         SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat sdfxx = new SimpleDateFormat("EEE MMM dd 00:00:00 zzz yyyy", Locale.US);

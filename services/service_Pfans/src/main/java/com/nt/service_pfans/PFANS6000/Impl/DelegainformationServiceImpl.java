@@ -67,6 +67,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
     //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 start
     //public List<DelegainformationVo> getYears(String year,String group_id,List<String> owners) throws Exception {
     public DelegainformationtaxVo getYears(String year, String group_id, List<String> owners) throws Exception {
+        year = "2020";
     //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
         Calendar now = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
@@ -292,7 +293,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
     }
 
     //add ccm 1027 定时任务  每月工数统计截止日第二天自动保存工数
-    @Scheduled(cron="0 0 3 * * ?")
+    //@scheduled(cron="0 0 3 * * ?")
     public void saveDelegaTask()throws Exception {
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
         List<Dictionary> dictionaryL = dictionaryService.getForSelect("BP027");
