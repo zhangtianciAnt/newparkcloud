@@ -354,7 +354,16 @@ public class WagesServiceImpl implements WagesService {
                     }
                 }
                 //update gbb 20210511 【当月实发工资】数据库加密 end
-                wage.setCreateonym(DateUtil.format(new Date(), "yyyy-MM"));
+                //region add_qhr_20210726 修改工资详细表中月份的存值方式
+                Giving giving = new Giving();
+                giving.setGiving_id(wages.get(0).getGiving_id());
+                List<Giving> givinglist = givingMapper.select(giving);
+                String strMonths = "";
+                if(givinglist.size() > 0){
+                    strMonths = givinglist.get(0).getMonths().substring(0, 4) + "-" + givinglist.get(0).getMonths().substring(4, 6);
+                }
+                wage.setCreateonym(strMonths);
+                //endregion add_qhr_20210726 修改工资详细表中月份的存值方式
                 wage.setActual(actual);
                 List<CustomerInfo> customerinfo = customerInfoList.stream().filter(coi -> (coi.getUserid().contains(wage.getUser_id()))).collect(Collectors.toList());
                 if(customerinfo.size() > 0){
@@ -506,7 +515,7 @@ public class WagesServiceImpl implements WagesService {
         long endTime =  System.currentTimeMillis();
         long usedTime = (endTime-startTime)/1000;
         System.out.println("离职工资结束");
-        System.out.println("用时：" + String.valueOf(usedTime) + "秒");
+        System.out.println("用时：" + usedTime + "秒");
         return wagesList;
     }
 
@@ -2561,7 +2570,7 @@ public class WagesServiceImpl implements WagesService {
                             && DateUtil.format(induction.getWorddate(), "dd").equals(lastday))){
                         // 今月試用社員出勤日数
                         thisMonthSuitDays = 0d;
-                        induction.setTrial(String.valueOf(""));
+                        induction.setTrial("");
                         induction.setGive(df.format(Double.parseDouble(thisMonthSalary)));
                     }
                     else{
@@ -2578,7 +2587,7 @@ public class WagesServiceImpl implements WagesService {
             if(!DateUtil.format(new Date(), "yyyyMM").equals(strEnterday)){//非当月入社的人员
                 // 今月試用社員出勤日数
                 thisMonthSuitDays = 0d;
-                induction.setTrial(String.valueOf(""));
+                induction.setTrial("");
             }
             if(intflg == 0){//上月未发工资的人
                 //上月工资 / 21.75 * 上月出勤天数 + 本月工资
