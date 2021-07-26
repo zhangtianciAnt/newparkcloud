@@ -62,9 +62,11 @@ public class Pfans2026Controller {
 
 
     @RequestMapping(value = "/generatesta", method = {RequestMethod.POST})
-    public void generateJxls(@RequestBody StaffexitprocedureVo staffexitprocedureVo, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    //ztc 0726 离职者报告调整位置 fr
+    public void generateJxls(String staffexitprocedure_id, HttpServletRequest request, HttpServletResponse response) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        StaffexitprocedureVo StaList = staffexitprocedureService.selectById(staffexitprocedureVo.getStaffexitprocedure().getStaffexitprocedure_id());
+        StaffexitprocedureVo StaList = staffexitprocedureService.selectById(staffexitprocedure_id);
+        //ztc 0726 离职者报告调整位置 to
         Map<String, Object> data = new HashMap<>();
         Query query = new Query();
         String userid = StaList.getStaffexitprocedure().getUser_id();
