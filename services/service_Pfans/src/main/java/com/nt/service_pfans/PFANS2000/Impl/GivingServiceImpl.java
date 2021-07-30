@@ -293,11 +293,12 @@ public class GivingServiceImpl implements GivingService {
 
         //region add_qhr_20210702 修改入职tab显示月份
         // 设置上个月的年份和月份
-        givingVo.setMonthOfLastMonth(String.valueOf(Integer.valueOf(givinglist.get(0).getMonths().substring(4, 6)) - 1));
+        givingVo.setMonthOfLastMonth(givinglist.get(0).getMonths().substring(4, 6));
         if (givingVo.getMonthOfLastMonth().equals("01")) {
             givingVo.setMonthOfLastMonth("12");
             givingVo.setYearOfLastMonth(String.valueOf(Integer.valueOf(givinglist.get(0).getMonths().substring(0, 4)) - 1));
         } else {
+            givingVo.setMonthOfLastMonth(String.valueOf(Integer.valueOf(givinglist.get(0).getMonths().substring(4, 6)) - 1));
             givingVo.setYearOfLastMonth(givinglist.get(0).getMonths().substring(0, 4));
         }
         // 设置当月的年份和月份
