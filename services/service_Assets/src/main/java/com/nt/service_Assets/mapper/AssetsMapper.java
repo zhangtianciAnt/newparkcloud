@@ -13,4 +13,8 @@ public interface AssetsMapper extends MyMapper<Assets> {
     List<Assets> selectList4Show(Assets assets);
 
     List<String> getDepartment();
+
+    //region add scc 21/8/2 人员部门变更时，名下资产也要进行变更 from
+    void updateByOwner(@Param("owner") String owner,@Param("usedepartment") String usedepartment);
+    //endregion add scc 21/8/2 人员部门变更时，名下资产也要进行变更 from
 }

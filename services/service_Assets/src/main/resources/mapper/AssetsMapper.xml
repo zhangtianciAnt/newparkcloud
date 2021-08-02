@@ -64,4 +64,11 @@
                 　　</foreach>
         </if>
     </select>
+
+    <!-- add scc 21/8/2 人员部门变更时，名下资产也要进行变更 from-->
+    <update id="updateByOwner" parameterType="com.nt.dao_Assets.Assets" >
+        update assets set USEDEPARTMENT = #{usedepartment}
+        WHERE OWNER = #{owner}
+    </update>
+     <!--add scc 21/8/2 人员部门变更时，名下资产也要进行变更 to-->
 </mapper>
