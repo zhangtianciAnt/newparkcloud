@@ -16,42 +16,33 @@
         <result column="TENANTID" property="tenantid" jdbcType="VARCHAR"/>
     </resultMap>
     <select id="getBlackList" resultType="com.nt.dao_BASF.VO.BlackListVo">
-        SELECT
-            CONCAT(
-            a.blacklistid,
-            ',',
-            b.vehicleinformationid
-            ) AS combinationid,
-            a.drivername,
-            a.driveridnumber,
-            a.violationtype,
-            a.violationstime,
-            b.vehicleinformationid,
-            b.vehiclenumber,
-            b.linkdepartment,
-            b.vehicletype,
-            b.supplier,
-            b.transtype,
-            b.destination,
-            b.intime,
-            b.outtime
-        FROM
-            blacklist a,
-            vehicleinformation b
-        WHERE
-            a.driveridnumber = b.driverid
-            AND a.driveridnumber <![CDATA[ <> ]]> ''
-            AND a.`STATUS` = 0
-            AND b.`STATUS` = 0
-            AND ( CASE WHEN a.violationtype = 1 THEN b.errorgps IS NOT NULL ELSE b.errorgps IS NULL END )
-            AND (
-            CASE
-            WHEN b.outtime IS NULL THEN
-            TO_DAYS(a.violationstime) &gt;= TO_DAYS(b.intime)
-            ELSE
-            TO_DAYS(a.violationstime) &gt;= TO_DAYS(b.intime)
-            AND TO_DAYS(a.violationstime) &lt;= TO_DAYS(b.outtime)
-            END
-            )
+        SELECT CONCAT(
+                       a.blacklistid,
+                       ',',
+                       b.vehicleinformationid
+                   ) AS combinationid,
+               a.drivername,
+               a.driveridnumber,
+               a.violationtype,
+               a.violationstime,
+               b.vehicleinformationid,
+               b.vehiclenumber,
+               b.linkdepartment,
+               b.vehicletype,
+               b.supplier,
+               b.transtype,
+               b.destination,
+               b.intime,
+               b.outtime
+        FROM blacklist a,
+             vehicleinformation b
+                 INNER JOIN (
+                 SELECT MAX(intime) intime
+                 from vehicleinformation
+                 group by driverid
+             ) c on b.intime = c.intime
+        WHERE IFNULL(a.driveridnumber, '') = IFNULL(b.driverid, '')
+          AND a.`STATUS` = 0
+          AND b.`STATUS` = 0
     </select>
 </mapper>
