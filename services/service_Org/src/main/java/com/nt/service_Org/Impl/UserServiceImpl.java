@@ -1210,10 +1210,14 @@ public class UserServiceImpl implements UserService {
                             throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登录账户时会重复，请确认。");
                         }
                     }
+                }else{
+                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的登录账户不能为空，请确认。");
                 }
                 //center
-                if (item.get("center") != null) {
-                    String cen = item.get("center").toString();
+                //ztc 修改用户导入BUG 20210804 fr
+                if (item.get("センター") != null) {
+                    String cen = item.get("センター").toString();
+                    //ztc 修改用户导入BUG 20210804 to
                     if(cen.equals("废弃")){
                         userinfo.setCentername("废弃");
                         userinfo.setCenterid("废弃");
@@ -1260,7 +1264,9 @@ public class UserServiceImpl implements UserService {
                             userinfo.setTeamid(null);
                         }
                         else{
-                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
+                            //ztc 修改用户导入BUG 20210804 fr
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 センター(" + item.get("センター").toString() + ")不存在！");
+                            //ztc 修改用户导入BUG 20210804 to
                         }
                         //endregion
                         // update gbb 20210330 2021组织架构变更-人员导入组织架构变更 end
@@ -1277,12 +1283,14 @@ public class UserServiceImpl implements UserService {
                     }
                 }
                 //group
-                if (item.get("group") != null) {
-                    if (item.get("center") == null) {
-                        throw new LogicalException("请输入与" + item.get("group").toString() + "同一组织的 center");
+                //ztc 修改用户导入BUG 20210804 fr
+                if (item.get("グループ") != null) {
+                    if (item.get("センター") == null) {
+                        throw new LogicalException("请输入与" + item.get("グループ").toString() + "同一组织的 センター");
                     }
-                    String cen = item.get("center").toString();
-                    String grp = item.get("group").toString();
+                    String cen = item.get("センター").toString();
+                    String grp = item.get("グループ").toString();
+                    //ztc 修改用户导入BUG 20210804 to
                     int cf = 0;
                     int gf = 0;
                     // update gbb 20210330 2021组织架构变更-人员导入组织架构变更 start
@@ -1332,9 +1340,11 @@ public class UserServiceImpl implements UserService {
                         userinfo.setCentername(orgTreeCenter.get(0).getCompanyname());
                         userinfo.setCenterid(orgTreeCenter.get(0).get_id());
                     }
+                    //ztc 修改用户导入BUG 20210804 fr
                     else{
-                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center").toString() + ")不存在！");
+                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 センター(" + item.get("センター").toString() + ")不存在！");
                     }
+                    //ztc 修改用户导入BUG 20210804 to
                     List<OrgTree> orgTreeGroup = orgTreeGroupList.stream().filter(center -> (center.getTitle().equals(grp.trim()))
                             || (center.getDepartmentname().equals(grp.trim()))).collect(Collectors.toList());
                     if(orgTreeGroup.size() > 0){
@@ -1343,9 +1353,11 @@ public class UserServiceImpl implements UserService {
                         userinfo.setTeamname(null);
                         userinfo.setTeamid(null);
                     }
+                    //ztc 修改用户导入BUG 20210804 fr
                     else{
-                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group").toString() + ")不存在，或不属于本组织！");
+                        throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 グループ(" + item.get("グループ").toString() + ")不存在，或不属于本组织！");
                     }
+                    //ztc 修改用户导入BUG 20210804 to
                     //endregion
                     // update gbb 20210330 2021组织架构变更-人员导入组织架构变更 end
 //                    String grp = item.get("group").toString();
@@ -1617,10 +1629,12 @@ public class UserServiceImpl implements UserService {
                 if (item.get("仕事开始年月日") != null) {
                     userinfo.setWorkday(item.get("仕事开始年月日").toString());
                 }
-                //转正日
+                //ztc 修改用户导入BUG 20210804 fr
+                //转正日(存入的是试用期截止日 试用期截止日 = 转正日 - 1）
                 if (item.get("转正日") != null) {
-                    userinfo.setEnddate(item.get("转正日").toString());
+                    userinfo.setEnddate(formatStringDateadd(item.get("转正日").toString()));
                 }
+                //ztc 修改用户导入BUG 20210804 to
 
                 //        ws-6/28-禅道141任务
                 //离职理由分类
@@ -1985,8 +1999,10 @@ public class UserServiceImpl implements UserService {
                         }
                     }
                     //center
-                    if (item.get("center●") != null) {
-                        String cen = item.get("center●").toString();
+                    //ztc 修改用户导入BUG 20210804 fr
+                    if (item.get("センター●") != null) {
+                        String cen = item.get("センター●").toString();
+                        //ztc 修改用户导入BUG 20210804 to
                         // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
                         //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
                         // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
@@ -2025,7 +2041,7 @@ public class UserServiceImpl implements UserService {
                             customerInfoList.get(0).getUserinfo().setTeamid(null);
                         }
                         else{
-                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center●").toString() + ")不存在！");
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 センター(" + item.get("センター●").toString() + ")不存在！");
                         }
                         //endregion
                         // update gbb 20210330 2021组织架构变更-人员导入组织架构变更 end
@@ -2041,14 +2057,16 @@ public class UserServiceImpl implements UserService {
 //                    }
                     }
                     //group
-                    if (item.get("group●") != null) {
-                        if (item.get("center●") == null) {
-                            throw new LogicalException("请输入与" + item.get("group●").toString() + "同一组织的 center");
+                    //ztc 修改用户导入BUG 20210804 fr
+                    if (item.get("グループ●") != null) {
+                        if (item.get("センター●") == null) {
+                            throw new LogicalException("请输入与" + item.get("グループ●").toString() + "同一组织的 センター");
                         }
-                        String cen = item.get("center●").toString();
-                        String grp = item.get("group●").toString();
+                        String cen = item.get("センター●").toString();
+                        String grp = item.get("グループ●").toString();
                         int cf = 0;
                         int gf = 0;
+                        //ztc 修改用户导入BUG 20210804 to
                         // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
                         //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
                         // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
@@ -2097,7 +2115,9 @@ public class UserServiceImpl implements UserService {
                             customerInfoList.get(0).getUserinfo().setCenterid(orgTreeCenter.get(0).get_id());
                         }
                         else{
-                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 center(" + item.get("center●").toString() + ")不存在！");
+                            //ztc 修改用户导入BUG 20210804 fr
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 センター(" + item.get("センター●").toString() + ")不存在！");
+                            //ztc 修改用户导入BUG 20210804 to
                         }
 
                         List<OrgTree> orgTreeGroup = orgTreeGroupList.stream().filter(center -> (center.getTitle().equals(grp.trim()))
@@ -2109,7 +2129,9 @@ public class UserServiceImpl implements UserService {
                             customerInfoList.get(0).getUserinfo().setTeamid(null);
                         }
                         else{
-                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 group(" + item.get("group●").toString() + ")不存在，或不属于本组织！");
+                            //ztc 修改用户导入BUG 20210804 fr
+                            throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 グループ(" + item.get("グループ●").toString() + ")不存在，或不属于本组织！");
+                            //ztc 修改用户导入BUG 20210804 to
                         }
                         //endregion
                         // update gbb 20210330 2021组织架构变更-人员导入组织架构变更 end
