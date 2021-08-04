@@ -2,16 +2,12 @@ package com.nt.controller.Controller;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
-import com.nt.dao_Assets.Assets;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Log;
-import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserAccountVo;
 import com.nt.dao_Org.Vo.UserVo;
-import com.nt.service_Assets.mapper.AssetsMapper;
 import com.nt.service_Org.LogService;
-import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.UserService;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.utils.*;
@@ -66,12 +62,6 @@ public class UserController {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
-
-    @Autowired
-    private AssetsMapper assetsmapper;
-
-    @Autowired
-    private OrgTreeService orgTreeService;
 
     @RequestMapping(value = "/download", method = {RequestMethod.GET})
     public void download(String type, HttpServletResponse response) throws Exception {
@@ -206,12 +196,6 @@ public class UserController {
             userVo.getCustomerInfo().preUpdate(tokenModel);
             info = userService.addAccountCustomer(userVo);
             id = info.getUserid();
-            //region add scc 21/8/2 人员在进行部门变更时，名下所有资产的部门也进行变更 from
-            OrgTree newOrgInfo = orgTreeService.get(new OrgTree());
-            OrgTree orgInfo = orgTreeService.getOrgInfo(newOrgInfo, info.getUserinfo().getCenterid());
-            Assets assets = new Assets();
-            assetsmapper.updateByOwner(id,orgInfo.getCompanyen());
-            //endregion add scc 21/8/2 离职人员在进行部门变更时，名下所有部门也进行变更 to
             annualLeaveService.insertannualLeave(info);
         } else {
             userVo.getUserAccount().preInsert(tokenModel);
