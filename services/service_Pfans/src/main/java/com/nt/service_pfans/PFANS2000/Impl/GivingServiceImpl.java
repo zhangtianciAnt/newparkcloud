@@ -1153,6 +1153,9 @@ public class GivingServiceImpl implements GivingService {
                 GivingListnew.add(gi);
             }
         }
+        //工资列表根据年月降序排列 ztc fr
+        GivingListnew = GivingListnew.stream().sorted(Comparator.comparing(Giving::getMonths).reversed()).collect(Collectors.toList());
+        //工资列表根据年月降序排列 ztc to
         return GivingListnew;
     }
 
