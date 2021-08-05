@@ -144,7 +144,6 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         trafficdetails.setCurrency(iteA.getValue1());
                     }
                 }
-                ;
                 List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
                 for (Dictionary ite : curListT) {
                     if (ite.getCode().equals(budgetcoding)) {
@@ -787,7 +786,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
                 //发票说明
                 if (insertInfo.getRemark() != "" && insertInfo.getRemark() != null) {
+                    //region update qhr  导出csv时加入经办
                     insertInfo.setRemark(userName + "经办" + accountCodeMap.getOrDefault(insertInfo.getRemark(), ""));
+                    //endregion update qhr  导出csv时加入经办
                 }
 
                 insertInfo.setInvoicenumber(invoiceNo);
