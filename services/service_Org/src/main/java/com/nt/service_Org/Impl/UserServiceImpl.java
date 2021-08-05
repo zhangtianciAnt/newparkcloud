@@ -1163,8 +1163,9 @@ public class UserServiceImpl implements UserService {
                 UserAccount ust = new UserAccount();
                 CustomerInfo.UserInfo userinfo = new CustomerInfo.UserInfo();
                 k++;
-                //卡号
-                if (item.get("卡号") != null) {
+                //卡号  region upd scc 8/5 判空，原因：错误导入后，之后导入一直失败，对象接受到“”?，条件失效 from
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("卡号"))) {
+                    //endregion upd scc 8/5 to
                     userinfo.setJobnumber(Convert.toStr(item.get("卡号")));
                     Query query = new Query();
                     query.addCriteria(Criteria.where("userinfo.jobnumber").is(userinfo.getJobnumber()));
@@ -1177,7 +1178,7 @@ public class UserServiceImpl implements UserService {
                     throw new LogicalException("第" + k + "行 卡号 不能为空，请确认。");
                 }
                 //姓名
-                if (item.get("姓名") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("姓名"))) {
                     userinfo.setCustomername(Convert.toStr(item.get("姓名")));
                     Query query = new Query();
                     query.addCriteria(Criteria.where("userinfo.customername").is(userinfo.getCustomername()));
@@ -1188,7 +1189,7 @@ public class UserServiceImpl implements UserService {
                     }
                 }
                 //登录账户
-                if (item.get("登录账户") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("登录账户"))) {
                     userinfo.setAdfield(item.get("登录账户").toString());
                     Query query = new Query();
                     query.addCriteria(Criteria.where("userinfo.adfield").is(userinfo.getAdfield()));
@@ -1215,7 +1216,7 @@ public class UserServiceImpl implements UserService {
                 }
                 //center
                 //ztc 修改用户导入BUG 20210804 fr
-                if (item.get("センター") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("センター"))) {
                     String cen = item.get("センター").toString();
                     //ztc 修改用户导入BUG 20210804 to
                     if(cen.equals("废弃")){
@@ -1284,8 +1285,8 @@ public class UserServiceImpl implements UserService {
                 }
                 //group
                 //ztc 修改用户导入BUG 20210804 fr
-                if (item.get("グループ") != null) {
-                    if (item.get("センター") == null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("グループ"))) {
+                    if (org.springframework.util.StringUtils.isEmpty(item.get("センター"))) {
                         throw new LogicalException("请输入与" + item.get("グループ").toString() + "同一组织的 センター");
                     }
                     String cen = item.get("センター").toString();
@@ -1452,12 +1453,12 @@ public class UserServiceImpl implements UserService {
                 //endregion update gbb 20210330 2021组织架构变更-取消team end
 
                 //入社时间
-                if (item.get("入社时间") != null && item.get("入社时间").toString().length() >= 10) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("入社时间")) && item.get("入社时间").toString().length() >= 10) {
                     String enterday = item.get("入社时间").toString().substring(0, 10).replace("-", "/");
                     userinfo.setEnterday(enterday);
                 }
                 //职务
-                if (item.get("职务") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("职务"))) {
                     String post = item.get("职务").toString();
                     if (post != null) {
                         Dictionary dictionary = new Dictionary();
@@ -1474,7 +1475,7 @@ public class UserServiceImpl implements UserService {
                     }
                 }
                 //RANK
-                if (item.get("Rank") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("Rank"))) {
                     //1:出向者;2：正式社员
                     if (item.get("Rank").toString().trim().equals("その他")) {
                         userinfo.setType("1");
@@ -1498,7 +1499,7 @@ public class UserServiceImpl implements UserService {
                     }
                 }
                 //职级类型
-                if (item.get("职级类型") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("职级类型"))) {
                     String occupationtype = item.get("职级类型").toString();
                     if (occupationtype != null) {
                         Dictionary dictionary = new Dictionary();
@@ -1513,7 +1514,7 @@ public class UserServiceImpl implements UserService {
                     }
                 }
                 //性别
-                if (item.get("性别") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("性别"))) {
                     String sex = item.get("性别").toString();
                     if (sex != null) {
                         Dictionary dictionary = new Dictionary();
@@ -1528,7 +1529,7 @@ public class UserServiceImpl implements UserService {
                     }
                 }
                 //预算编码
-                if (item.get("预算编码") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("预算编码"))) {
                     //upd_fjl  --修改预算编码值
                     userinfo.setBudgetunit(item.get("预算编码").toString());
 //                        String budgetunit = value.get(9).toString();
@@ -1544,35 +1545,35 @@ public class UserServiceImpl implements UserService {
                     //upd_fjl  --修改预算编码值
                 }
                 //生年月日
-                if (item.get("生年月日") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("生年月日"))) {
                     userinfo.setBirthday(item.get("生年月日").toString());
                 }
                 //国籍
-                if (item.get("国籍") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("国籍"))) {
                     userinfo.setNationality(item.get("国籍").toString());
                 }
                 //民族
-                if (item.get("民族") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("民族"))) {
                     userinfo.setNation(item.get("民族").toString());
                 }
                 //户籍
-                if (item.get("户籍") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("户籍"))) {
                     userinfo.setRegister(item.get("户籍").toString());
                 }
                 //住所
-                if (item.get("住所") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("住所"))) {
                     userinfo.setAddress(item.get("住所").toString());
                 }
                 //最终毕业学校
-                if (item.get("最终毕业学校") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("最终毕业学校"))) {
                     userinfo.setGraduation(item.get("最终毕业学校").toString());
                 }
                 //专业
-                if (item.get("专业") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("专业"))) {
                     userinfo.setSpecialty(item.get("专业").toString());
                 }
                 //是否有工作经验
-                if (item.get("是否有工作经验") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("是否有工作经验"))) {
                     String experience = item.get("是否有工作经验").toString();
                     if (experience != null) {
                         if (experience.equals("是")) {
@@ -1583,20 +1584,20 @@ public class UserServiceImpl implements UserService {
                     }
                 }
                 //身份证号码
-                if (item.get("身份证号码") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("身份证号码"))) {
                     userinfo.setIdnumber(item.get("身份证号码").toString());
                 }
                 //毕业年月日
-                if (item.get("毕业年月日") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("毕业年月日"))) {
                     userinfo.setGraduationday(item.get("毕业年月日").toString());
                 }
-                if (item.get("婚姻状况") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("婚姻状况"))) {
                     String children = item.get("婚姻状况").toString();
                     if (children != null) {
                         userinfo.setMarital(children);
                     }
                 }
-                if (item.get("最终学历") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("最终学历"))) {
                     String degree = item.get("最终学历").toString();
                     if (degree != null) {
                         Dictionary dictionary = new Dictionary();
@@ -1611,7 +1612,7 @@ public class UserServiceImpl implements UserService {
                     }
                 }
                 //最终学位
-                if (item.get("最终学位") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("最终学位"))) {
                     String degree = item.get("最终学位").toString();
                     if (degree != null) {
                         Dictionary dictionary = new Dictionary();
@@ -1626,19 +1627,19 @@ public class UserServiceImpl implements UserService {
                     }
                 }
                 //仕事开始年月日
-                if (item.get("仕事开始年月日") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("仕事开始年月日"))) {
                     userinfo.setWorkday(item.get("仕事开始年月日").toString());
                 }
                 //ztc 修改用户导入BUG 20210804 fr
                 //转正日(存入的是试用期截止日 试用期截止日 = 转正日 - 1）
-                if (item.get("转正日") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("转正日"))) {
                     userinfo.setEnddate(formatStringDateadd(item.get("转正日").toString()));
                 }
                 //ztc 修改用户导入BUG 20210804 to
 
                 //        ws-6/28-禅道141任务
                 //离职理由分类
-                if (item.get("离职理由分类") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("离职理由分类"))) {
                     String classification = item.get("离职理由分类").toString();
                     if (classification != null) {
                         Dictionary dictionary = new Dictionary();
@@ -1653,7 +1654,7 @@ public class UserServiceImpl implements UserService {
                     }
                 }
                 //离职去向
-                if (item.get("离职去向") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("离职去向"))) {
                     String wheretoleave = item.get("离职去向").toString();
                     if (wheretoleave != null) {
                         Dictionary dictionary = new Dictionary();
@@ -1668,16 +1669,16 @@ public class UserServiceImpl implements UserService {
                     }
                 }
                 //离职去向（手动）
-                if (item.get("离职去向（手动）") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("离职去向（手动）"))) {
                     userinfo.setWheretoleave2(item.get("离职去向（手动）").toString());
                 }
                 //转职公司
-                if (item.get("转职公司") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("转职公司"))) {
                     userinfo.setTransfercompany(item.get("转职公司").toString());
                 }
                 //        zy-7/6-禅道207/231任务 start
                 //退职日
-                if (item.get("退职日") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("退职日"))) {
                     //upd_fjl_0916 修改退职日的保存格式 start
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                     String regindate = item.get("退职日").toString();
@@ -1692,22 +1693,22 @@ public class UserServiceImpl implements UserService {
                 }
                 //        zy-7/6-禅道207/231任务 end
                 //退职理由
-                if (item.get("退职理由") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("退职理由"))) {
                     userinfo.setReason2(item.get("退职理由").toString());
                 }
                 //其他
-                if (item.get("其他") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("其他"))) {
                     userinfo.setOther(item.get("其他").toString());
                 }
 
 
                 //        ws-6/28-禅道141任务
                 //员工ID
-                if (item.get("员工ID") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("员工ID"))) {
                     userinfo.setPersonalcode(item.get("员工ID").toString());
                 }
                 //劳动合同类型
-                if (item.get("劳动合同类型") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("劳动合同类型"))) {
                     String laborcontracttype = item.get("劳动合同类型").toString();
                     if (laborcontracttype != null) {
                         if (laborcontracttype.equals("固定时限")) {
@@ -1718,11 +1719,11 @@ public class UserServiceImpl implements UserService {
                     }
                 }
                 //年龄
-                if (item.get("年龄") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("年龄"))) {
                     userinfo.setAge(item.get("年龄").toString());
                 }
                 //是否独生子女
-                if (item.get("是否独生子女") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("是否独生子女"))) {
                     String children = item.get("是否独生子女").toString();
                     if (children != null) {
                         if (children.equals("否")) {
@@ -1733,7 +1734,7 @@ public class UserServiceImpl implements UserService {
                     }
                 }
                 //是否大连户籍
-                if (item.get("是否大连户籍") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("是否大连户籍"))) {
                     String dlnation = item.get("是否大连户籍").toString();
                     if (dlnation != null) {
                         if (dlnation.equals("否")) {
@@ -1744,7 +1745,7 @@ public class UserServiceImpl implements UserService {
                     }
                 }
                 //奖金记上区分
-                if (item.get("奖金记上区分") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("奖金记上区分"))) {
                     String dlnation = item.get("奖金记上区分").toString();
                     if (dlnation != null) {
                         if (dlnation.equals("老员工")) {
@@ -1759,27 +1760,27 @@ public class UserServiceImpl implements UserService {
 //                            userinfo.annualyearto(value.get(27).toString());
 //                        }
                 //社会保险号码
-                if (item.get("社会保险号码") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("社会保险号码"))) {
                     userinfo.setSecurity(item.get("社会保险号码").toString());
                 }
                 //住房公积金号码
-                if (item.get("住房公积金号码") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("住房公积金号码"))) {
                     userinfo.setHousefund(item.get("住房公积金号码").toString());
                 }
                 //今年年休数
-                if (item.get("今年年休数") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("今年年休数"))) {
                     userinfo.setAnnualyear(item.get("今年年休数").toString());
                 }
                 //升格升号年月日
-                if (item.get("升格升号年月日") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("升格升号年月日"))) {
                     userinfo.setUpgraded(item.get("升格升号年月日").toString());
                 }
                 //银行账号
-                if (item.get("银行账号") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("银行账号"))) {
                     userinfo.setSeatnumber(item.get("银行账号").toString());
                 }
                 //固定期限締切日
-                if (item.get("固定期限締切日") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("固定期限締切日"))) {
                     userinfo.setFixedate(item.get("固定期限締切日").toString());
                 }
                 //変更前基本工资
@@ -1791,13 +1792,13 @@ public class UserServiceImpl implements UserService {
 //                        personal.setBefore(item.get("変更前职责工资").toString());
 //                    }
                 //现基本工资
-                if (item.get("现基本工资") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("现基本工资"))) {
                     personal.setBasic(item.get("现基本工资").toString());
                     userinfo.setBasic(item.get("现基本工资").toString());
                     personal.setDuty("0");
                 }
                 //现职责工资
-                if (item.get("现职责工资") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("现职责工资"))) {
                     if (StringUtils.isNullOrEmpty(personal.getBasic())) {
                         personal.setBasic("0");
                     }
@@ -1805,7 +1806,7 @@ public class UserServiceImpl implements UserService {
                     userinfo.setDuty(item.get("现职责工资").toString());
                 } else {
                     //add gbb 0724 等级联动职责工资 start
-                    if (item.get("Rank") != null) {
+                    if (!org.springframework.util.StringUtils.isEmpty(item.get("Rank"))) {
                         String rank = item.get("Rank").toString();
                         if (rank != null) {
                             Dictionary dictionary = new Dictionary();
@@ -1826,43 +1827,43 @@ public class UserServiceImpl implements UserService {
                     //add gbb 0724 等级联动职责工资 end
                 }
                 //給料変更日
-                if (item.get("給料変更日") != null && item.get("給料変更日").toString().length() >= 10) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("給料変更日")) && item.get("給料変更日").toString().length() >= 10) {
 //                        personal.setDate(item.get("給料変更日").toString());
                     String dateSubs = item.get("給料変更日").toString().substring(0, 10);
                     personal.setDate(dateSubs);
                 }
                 //养老保险基数
-                if (item.get("养老保险基数") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("养老保险基数"))) {
                     userinfo.setYanglaoinsurance(item.get("养老保险基数").toString());
                     personal3.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                     personal3.setBasic(item.get("养老保险基数").toString());
                 }
                 //医疗保险基数
-                if (item.get("医疗保险基数") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("医疗保险基数"))) {
                     userinfo.setYiliaoinsurance(item.get("医疗保险基数").toString());
                     personal4.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                     personal4.setBasic(item.get("医疗保险基数").toString());
                 }
                 //失业保险基数
-                if (item.get("失业保险基数") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("失业保险基数"))) {
                     userinfo.setShiyeinsurance(item.get("失业保险基数").toString());
                     personal5.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                     personal5.setBasic(item.get("失业保险基数").toString());
                 }
                 //工伤保险基数
-                if (item.get("工伤保险基数") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("工伤保险基数"))) {
                     userinfo.setGongshanginsurance(item.get("工伤保险基数").toString());
                     personal6.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                     personal6.setBasic(item.get("工伤保险基数").toString());
                 }
                 //生育保险基数
-                if (item.get("生育保险基数") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("生育保险基数"))) {
                     userinfo.setShengyuinsurance(item.get("生育保险基数").toString());
                     personal7.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                     personal7.setBasic(item.get("生育保险基数").toString());
                 }
                 //住房公积金缴纳基数
-                if (item.get("住房公积金缴纳基数") != null) {
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("住房公积金缴纳基数"))) {
                     userinfo.setHouseinsurance(item.get("住房公积金缴纳基数").toString());
                     personal8.setDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
                     personal8.setBasic(item.get("住房公积金缴纳基数").toString());
@@ -1871,7 +1872,7 @@ public class UserServiceImpl implements UserService {
                 //如果有工资履历变更，給料変更日不能为空
                 if ((!StringUtils.isNullOrEmpty(personal.getBasic()) || !StringUtils.isNullOrEmpty(personal.getDuty())) &&
                         StringUtils.isNullOrEmpty(personal.getDate())) {
-                    throw new LogicalException("卡号（" + Convert.toStr(item.get(0)) + "）" + "的 給料変更日 未填写");
+                    throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的 給料変更日 未填写");
                 }
                 //如果有給料変更日，工资履历不能为空
                 if (!StringUtils.isNullOrEmpty(personal.getDate())) {
