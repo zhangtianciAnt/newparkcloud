@@ -7,6 +7,7 @@ import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.*;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
+import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
@@ -1152,6 +1153,9 @@ public class GivingServiceImpl implements GivingService {
                 GivingListnew.add(gi);
             }
         }
+        //工资列表根据年月降序排列 ztc fr
+        GivingListnew = GivingListnew.stream().sorted(Comparator.comparing(Giving::getMonths).reversed()).collect(Collectors.toList());
+        //工资列表根据年月降序排列 ztc to
         return GivingListnew;
     }
 
