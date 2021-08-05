@@ -21,7 +21,7 @@ public interface PersonalCostService {
 
     public List<PersonalCostGsSum> gettableGs(String yearsantid) throws Exception;
 
-    public List<PersonalCostRb> gettableRb(String yearsantid) throws Exception;
+//    public List<PersonalCostRb> gettableRb(String yearsantid) throws Exception;
 
     public List<PersonalCostExpVo> exportinfo(String yearsantid) throws Exception;
 

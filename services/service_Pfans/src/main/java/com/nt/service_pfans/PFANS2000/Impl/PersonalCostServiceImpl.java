@@ -6,6 +6,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS2000.*;
+import com.nt.dao_Pfans.PFANS2000.Vo.PersonalCostExpVo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS2000.PersonalCostService;
@@ -21,6 +22,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -496,28 +498,23 @@ public class PersonalCostServiceImpl implements PersonalCostService {
         return personalCostGsSumList;
     }
 
+//    @Override
+//    public List<PersonalCostRb> gettableRb(String yearsantid) throws Exception {
+//        PersonalCostRb personalCost = new PersonalCostRb();
+//        personalCost.setYearsantid(yearsantid);
+//        List<PersonalCostRb> personalCostList = personalCostMapper.select(personalCost);
+//        return personalCostList;
+//    }
+
     @Override
-    public List<PersonalCost> gettableRb(String yearsantid) throws Exception {
-        PersonalCost personalCost = new PersonalCost();
-        personalCost.setYearsantid(yearsantid);
-        List<PersonalCost> personalCostList = personalCostMapper.select(personalCost);
-        return personalCostList;
+    public List<PersonalCostExpVo> exportinfo(String yearsantid) throws Exception {
+        return null;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Override
+    public List<String> importPersInfo(HttpServletRequest request, TokenModel tokenModel) throws Exception {
+        return null;
+    }
 
 
     @Override
@@ -525,233 +522,233 @@ public class PersonalCostServiceImpl implements PersonalCostService {
         return personalCostYearsMapper.select(personalCostYears);
     }
 
-    @Override
-    public PersonalCost insertPenalcost(String year, TokenModel tokenModel) throws Exception {
-//        year = "2020";
-//        //Rank给予标准
-//        List<Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
-//        Map<String, String> rankMap = new HashMap<>();
-//        //工资涨幅百分比
-//        Map<String, String> ranktageMap = new HashMap<>();
-//        for (Dictionary dic : dictionaryRank) {
-//            rankMap.put(dic.getCode(), dic.getValue2());
-//            ranktageMap.put(dic.getCode(), dic.getValue4());
-//        }
-//        Query query = new Query();
-//        String workday = null;
-//        SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
-//        List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
-//        customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
-//        //年度
-//        PersonalCostYears personalCostYears = new PersonalCostYears();
-//        personalCostYears.preInsert(tokenModel);
-//        String personalCostYerasid = UUID.randomUUID().toString();
-//        //暂时处理
-//        personalCostYears.setYears(year);
-//        personalCostYears.setYearsantid(personalCostYerasid);
-//        personalCostYearsMapper.insert(personalCostYears);
-//        //取去年【产休人员】名单
-//        List<String> birthuseridList = personalCostMapper.selectBirthUserid("2020");
-//        int flag = 0;
-//        for (Iterator<CustomerInfo> custList = customerInfos.iterator(); custList.hasNext(); ) {
-//            CustomerInfo customerInfoAnt = custList.next();
-//            //清除去年离职
-//            if (StringUtils.isNullOrEmpty(customerInfoAnt.getUserinfo().getResignation_date())
-//                    && !customerInfoAnt.getUserid().equals("5e78b2574e3b194874181099")
-//                    && !customerInfoAnt.getUserid().equals("5e78fefff1560b363cdd6db7")) {
-//                for (String birthuserid : birthuseridList) {
-//                    if (birthuserid.equals(customerInfoAnt.getUserid()))
-//                    {
-//                        flag ++;
-//                    }
-//                }
-//                    if (flag == 0) //排除产休
-//                    {
-//                        PersonalCost personalCost = new PersonalCost();
-//                        //token
-//                        personalCost.preInsert(tokenModel);
-//                        personalCost.setPersonalcostid(UUID.randomUUID().toString());
-//                        //年度
-//                        personalCost.setYearsantid(personalCostYerasid);
-//                        personalCost.setCenterid(customerInfoAnt.getUserinfo().getCenterid());
-//                        personalCost.setGroupid(customerInfoAnt.getUserinfo().getGroupid());
-//                        //userid
-//                        personalCost.setUserid(customerInfoAnt.getUserid());
-//                        //7~3月人件费 1月1日自动生成
-//                        Double lastAnt = 0.00;
-//                        if (StrUtil.isNotBlank(customerInfoAnt.getUserinfo().getBasic()) && StrUtil.isNotBlank(customerInfoAnt.getUserinfo().getDuty())) {
-//                            BigDecimal Basic = BigDecimal.valueOf(Double.valueOf(customerInfoAnt.getUserinfo().getBasic()));
-//                            BigDecimal duty = BigDecimal.valueOf(Double.valueOf(customerInfoAnt.getUserinfo().getDuty()));
-//                            lastAnt = Basic.add(duty).doubleValue();
-//                        }
-//                        BigDecimal jutomacost = new BigDecimal(lastAnt).setScale(2, ROUND_HALF_UP);
-//                        //入职日
-//                        if (StrUtil.isNotBlank(customerInfoAnt.getUserinfo().getWorkday())) {
-//                            workday = customerInfoAnt.getUserinfo().getWorkday().substring(0, 10);
-//                            Calendar cal = Calendar.getInstance();
-//                            cal.setTime(Convert.toDate(workday));
-//                            if (customerInfoAnt.getUserinfo().getWorkday().length() >= 24) {
-//                                cal.add(Calendar.DAY_OF_YEAR, 1);
-//                            }
-//                            workday = s.format(cal.getTime());
-//                        }
-//                        personalCost.setWorkday(workday);
-//                        personalCost.setJutomacost(jutomacost.toString());
-//                        //rank
-//                        personalCost.setPrank(customerInfoAnt.getUserinfo().getRank());
-//                        //计算基数
-//                        List<String> comtotalwagesList = wagesMapper.getComtotalwages(customerInfoAnt.getUserid(), "2020");
-//                        String comtotalwagesSum = "";
-//                        BigDecimal comtotalwages = new BigDecimal(0.0000);
-//                        for (String com : comtotalwagesList) {
-//                            if (StrUtil.isNotBlank(com)) {
-//                                BigDecimal comAnt = BigDecimal.valueOf(Double.valueOf(com));
-//                                comtotalwages = comtotalwages.add(comAnt);
-//                            }
-//                        }
-//                        //计算小计
-//                        List<String> totalList = wagesMapper.getTotal(customerInfoAnt.getUserid(), "2020");
-//                        String totalsum = "";
-//                        BigDecimal total = new BigDecimal(0.0000);
-//                        for (String tota : totalList) {
-//                            if (StrUtil.isNotBlank(tota)) {
-//                                BigDecimal comAnt = BigDecimal.valueOf(Double.valueOf(tota));
-//                                total = total.add(comAnt);
-//                            }
-//                        }
-//                        LocalDate today = LocalDate.now();
-//                        LocalDate yesteryear = today.plusYears(-1);
-//                        //去年
-//                        String lastYear = String.valueOf(yesteryear.getYear());
-//                        List<Dictionary> dictionaryL = dictionaryService.getForSelect("PR067");
-//                        //新年度自动跑
-//                        if (!workday.substring(0, 4).equals(lastYear)) //一整年
-//                        {
-//                            BigDecimal allYear = new BigDecimal("12");
-//                            BigDecimal ctAnt = comtotalwages.subtract(total);
-//                            Bonussend bonussend = new Bonussend();
-//                            bonussend.setUser_id(customerInfoAnt.getUserid());
-//                            List<Bonussend> bonussendList =  bonussendMapper.select(bonussend);
-//                            String bonussendMoney = "";
-//                            if(bonussendList.size() != 0){
-//                                bonussendMoney  = bonussendList.get(0).getTotalbonus1();
-//                                BigDecimal bonMoney = new BigDecimal(bonussendMoney);
-//                            }
-//                            BigDecimal btAnt = ctAnt.add(ctAnt);
-//                            Double baseresultAnt = btAnt.divide(allYear, 2, BigDecimal.ROUND_HALF_UP).doubleValue();
-//                            //养老
-//                            if (Double.valueOf(dictionaryL.get(0).getValue2()) > baseresultAnt)//比最低金额小
-//                            {
-//                                personalCost.setYangbaseresult(dictionaryL.get(0).getValue2());
-//                            } else if (Double.valueOf(dictionaryL.get(0).getValue3()) < baseresultAnt)//比最高金额大
-//                            {
-//                                personalCost.setYangbaseresult(dictionaryL.get(0).getValue3());
-//                            } else {
-//                                personalCost.setYangbaseresult(baseresultAnt.toString());
-//                            }
-//                            //医疗
-//                            if (Double.valueOf(dictionaryL.get(1).getValue2()) > baseresultAnt)//比最低金额小
-//                            {
-//                                personalCost.setYibaseresult(dictionaryL.get(1).getValue2());
-//                            } else if (Double.valueOf(dictionaryL.get(1).getValue3()) < baseresultAnt)//比最高金额大
-//                            {
-//                                personalCost.setYibaseresult(dictionaryL.get(1).getValue3());
-//                            } else {
-//                                personalCost.setYibaseresult(baseresultAnt.toString());
-//                            }
-//                            //公积金
-//                            if (Double.valueOf(dictionaryL.get(2).getValue2()) > baseresultAnt)//比最低金额小
-//                            {
-//                                personalCost.setZhubaseresult(dictionaryL.get(2).getValue2());
-//                                ;
-//                            } else if (Double.valueOf(dictionaryL.get(2).getValue3()) < baseresultAnt)//比最高金额大
-//                            {
-//                                personalCost.setZhubaseresult(dictionaryL.get(2).getValue3());
-//                            } else {
-//                                personalCost.setZhubaseresult(baseresultAnt.toString());
-//                            }
-//
-//                        } else {
-//                            String mounthStr = workday.substring(5, 7);
-//                            //整月 workMount
-//                            String workMount = String.valueOf(Integer.valueOf("12") - Integer.valueOf(mounthStr));
-//                            BigDecimal workMountB = new BigDecimal(workMount);
-//
-//                            LocalDate workDay = LocalDate.parse(workday);
-//                            int lenghtDay = workDay.getDayOfMonth();
-//                            BigDecimal lenghtDayB = new BigDecimal(String.valueOf(lenghtDay));
-//                            String joinDay = workday.substring(7);
-//                            //入职月工作多少天
-//                            String workDayOnWork = String.valueOf(lenghtDay - Integer.valueOf(joinDay) + 1);
-//                            BigDecimal workDayOnWorkB = new BigDecimal(workDayOnWork);
-//                            //出勤系数
-//                            BigDecimal workDayResult = (workDayOnWorkB.divide(lenghtDayB, 2, BigDecimal.ROUND_HALF_UP)).add(workMountB);
-//                            Double baseresultAnt = ((comtotalwages.subtract(total)).divide(workDayResult, 2, BigDecimal.ROUND_HALF_UP)).doubleValue();
-//                            //养老
-//                            if (Double.valueOf(dictionaryL.get(0).getValue2()) > baseresultAnt)//比最低金额小
-//                            {
-//                                personalCost.setYangbaseresult(dictionaryL.get(0).getValue2());
-//                            } else if (Double.valueOf(dictionaryL.get(0).getValue3()) < baseresultAnt)//比最高金额大
-//                            {
-//                                personalCost.setYangbaseresult(dictionaryL.get(0).getValue3());
-//                            } else {
-//                                personalCost.setYangbaseresult(baseresultAnt.toString());
-//                            }
-//                            //医疗
-//                            if (Double.valueOf(dictionaryL.get(1).getValue2()) > baseresultAnt)//比最低金额小
-//                            {
-//                                personalCost.setYibaseresult(dictionaryL.get(1).getValue2());
-//                            } else if (Double.valueOf(dictionaryL.get(1).getValue3()) < baseresultAnt)//比最高金额大
-//                            {
-//                                personalCost.setYibaseresult(dictionaryL.get(1).getValue3());
-//                            } else {
-//                                personalCost.setYibaseresult(baseresultAnt.toString());
-//                            }
-//                            //公积金
-//                            if (Double.valueOf(dictionaryL.get(2).getValue2()) > baseresultAnt)//比最低金额小
-//                            {
-//                                personalCost.setZhubaseresult(dictionaryL.get(2).getValue2());
-//                                ;
-//                            } else if (Double.valueOf(dictionaryL.get(2).getValue3()) < baseresultAnt)//比最高金额大
-//                            {
-//                                personalCost.setZhubaseresult(dictionaryL.get(2).getValue3());
-//                            } else {
-//                                personalCost.setZhubaseresult(baseresultAnt.toString());
-//                            }
-//                        }
-//
-//
-//                        //给予标准
-//                        String monthCost = rankMap.get(customerInfoAnt.getUserinfo().getRank());
-//                        BigDecimal monthCostBal = new BigDecimal(monthCost);
-//                        String tageAnt = ranktageMap.get(customerInfoAnt.getUserinfo().getRank());
-//                        tageAnt = tageAnt.substring(0,tageAnt.length() - 1);
-//                        BigDecimal tageAntBal = new BigDecimal(tageAnt);
-//                        BigDecimal bdal = new BigDecimal("100");
-//                        Double newWorkCost = ((monthCostBal.multiply(tageAntBal)).divide(bdal,2, BigDecimal.ROUND_HALF_UP).add(monthCostBal)).doubleValue();
-//                        personalCost.setAprilcosty(newWorkCost.toString());
-//                        personalCost.setMarchcosty(newWorkCost.toString());
-//                        personalCost.setJunecosty(newWorkCost.toString());
-//                        personalCost.setJulycosty(newWorkCost.toString());
-//                        personalCost.setAugustcosty(newWorkCost.toString());
-//                        personalCost.setSeptembercosty(newWorkCost.toString());
-//                        personalCost.setOctobercosty(newWorkCost.toString());
-//                        personalCost.setNovembercosty(newWorkCost.toString());
-//                        personalCost.setDecembercosty(newWorkCost.toString());
-//                        personalCost.setJanuarycosty(newWorkCost.toString());
-//                        personalCost.setJanuarycosty(newWorkCost.toString());
-//                        personalCost.setFebruarycosty(newWorkCost.toString());
-//                        personalCost.setMarchcosty(newWorkCost.toString());
-//                        personalCostMapper.insert(personalCost);
-//                    }
-//                    else{ //产休人员
-//                        flag = 0;
-//                    }
-//                }
-//            custList.remove();
-//            }
-        return null;
-    }
+//    @Override
+//    public PersonalCost insertPenalcost(String year, TokenModel tokenModel) throws Exception {
+////        year = "2020";
+////        //Rank给予标准
+////        List<Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
+////        Map<String, String> rankMap = new HashMap<>();
+////        //工资涨幅百分比
+////        Map<String, String> ranktageMap = new HashMap<>();
+////        for (Dictionary dic : dictionaryRank) {
+////            rankMap.put(dic.getCode(), dic.getValue2());
+////            ranktageMap.put(dic.getCode(), dic.getValue4());
+////        }
+////        Query query = new Query();
+////        String workday = null;
+////        SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+////        List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
+////        customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+////        //年度
+////        PersonalCostYears personalCostYears = new PersonalCostYears();
+////        personalCostYears.preInsert(tokenModel);
+////        String personalCostYerasid = UUID.randomUUID().toString();
+////        //暂时处理
+////        personalCostYears.setYears(year);
+////        personalCostYears.setYearsantid(personalCostYerasid);
+////        personalCostYearsMapper.insert(personalCostYears);
+////        //取去年【产休人员】名单
+////        List<String> birthuseridList = personalCostMapper.selectBirthUserid("2020");
+////        int flag = 0;
+////        for (Iterator<CustomerInfo> custList = customerInfos.iterator(); custList.hasNext(); ) {
+////            CustomerInfo customerInfoAnt = custList.next();
+////            //清除去年离职
+////            if (StringUtils.isNullOrEmpty(customerInfoAnt.getUserinfo().getResignation_date())
+////                    && !customerInfoAnt.getUserid().equals("5e78b2574e3b194874181099")
+////                    && !customerInfoAnt.getUserid().equals("5e78fefff1560b363cdd6db7")) {
+////                for (String birthuserid : birthuseridList) {
+////                    if (birthuserid.equals(customerInfoAnt.getUserid()))
+////                    {
+////                        flag ++;
+////                    }
+////                }
+////                    if (flag == 0) //排除产休
+////                    {
+////                        PersonalCost personalCost = new PersonalCost();
+////                        //token
+////                        personalCost.preInsert(tokenModel);
+////                        personalCost.setPersonalcostid(UUID.randomUUID().toString());
+////                        //年度
+////                        personalCost.setYearsantid(personalCostYerasid);
+////                        personalCost.setCenterid(customerInfoAnt.getUserinfo().getCenterid());
+////                        personalCost.setGroupid(customerInfoAnt.getUserinfo().getGroupid());
+////                        //userid
+////                        personalCost.setUserid(customerInfoAnt.getUserid());
+////                        //7~3月人件费 1月1日自动生成
+////                        Double lastAnt = 0.00;
+////                        if (StrUtil.isNotBlank(customerInfoAnt.getUserinfo().getBasic()) && StrUtil.isNotBlank(customerInfoAnt.getUserinfo().getDuty())) {
+////                            BigDecimal Basic = BigDecimal.valueOf(Double.valueOf(customerInfoAnt.getUserinfo().getBasic()));
+////                            BigDecimal duty = BigDecimal.valueOf(Double.valueOf(customerInfoAnt.getUserinfo().getDuty()));
+////                            lastAnt = Basic.add(duty).doubleValue();
+////                        }
+////                        BigDecimal jutomacost = new BigDecimal(lastAnt).setScale(2, ROUND_HALF_UP);
+////                        //入职日
+////                        if (StrUtil.isNotBlank(customerInfoAnt.getUserinfo().getWorkday())) {
+////                            workday = customerInfoAnt.getUserinfo().getWorkday().substring(0, 10);
+////                            Calendar cal = Calendar.getInstance();
+////                            cal.setTime(Convert.toDate(workday));
+////                            if (customerInfoAnt.getUserinfo().getWorkday().length() >= 24) {
+////                                cal.add(Calendar.DAY_OF_YEAR, 1);
+////                            }
+////                            workday = s.format(cal.getTime());
+////                        }
+////                        personalCost.setWorkday(workday);
+////                        personalCost.setJutomacost(jutomacost.toString());
+////                        //rank
+////                        personalCost.setPrank(customerInfoAnt.getUserinfo().getRank());
+////                        //计算基数
+////                        List<String> comtotalwagesList = wagesMapper.getComtotalwages(customerInfoAnt.getUserid(), "2020");
+////                        String comtotalwagesSum = "";
+////                        BigDecimal comtotalwages = new BigDecimal(0.0000);
+////                        for (String com : comtotalwagesList) {
+////                            if (StrUtil.isNotBlank(com)) {
+////                                BigDecimal comAnt = BigDecimal.valueOf(Double.valueOf(com));
+////                                comtotalwages = comtotalwages.add(comAnt);
+////                            }
+////                        }
+////                        //计算小计
+////                        List<String> totalList = wagesMapper.getTotal(customerInfoAnt.getUserid(), "2020");
+////                        String totalsum = "";
+////                        BigDecimal total = new BigDecimal(0.0000);
+////                        for (String tota : totalList) {
+////                            if (StrUtil.isNotBlank(tota)) {
+////                                BigDecimal comAnt = BigDecimal.valueOf(Double.valueOf(tota));
+////                                total = total.add(comAnt);
+////                            }
+////                        }
+////                        LocalDate today = LocalDate.now();
+////                        LocalDate yesteryear = today.plusYears(-1);
+////                        //去年
+////                        String lastYear = String.valueOf(yesteryear.getYear());
+////                        List<Dictionary> dictionaryL = dictionaryService.getForSelect("PR067");
+////                        //新年度自动跑
+////                        if (!workday.substring(0, 4).equals(lastYear)) //一整年
+////                        {
+////                            BigDecimal allYear = new BigDecimal("12");
+////                            BigDecimal ctAnt = comtotalwages.subtract(total);
+////                            Bonussend bonussend = new Bonussend();
+////                            bonussend.setUser_id(customerInfoAnt.getUserid());
+////                            List<Bonussend> bonussendList =  bonussendMapper.select(bonussend);
+////                            String bonussendMoney = "";
+////                            if(bonussendList.size() != 0){
+////                                bonussendMoney  = bonussendList.get(0).getTotalbonus1();
+////                                BigDecimal bonMoney = new BigDecimal(bonussendMoney);
+////                            }
+////                            BigDecimal btAnt = ctAnt.add(ctAnt);
+////                            Double baseresultAnt = btAnt.divide(allYear, 2, BigDecimal.ROUND_HALF_UP).doubleValue();
+////                            //养老
+////                            if (Double.valueOf(dictionaryL.get(0).getValue2()) > baseresultAnt)//比最低金额小
+////                            {
+////                                personalCost.setYangbaseresult(dictionaryL.get(0).getValue2());
+////                            } else if (Double.valueOf(dictionaryL.get(0).getValue3()) < baseresultAnt)//比最高金额大
+////                            {
+////                                personalCost.setYangbaseresult(dictionaryL.get(0).getValue3());
+////                            } else {
+////                                personalCost.setYangbaseresult(baseresultAnt.toString());
+////                            }
+////                            //医疗
+////                            if (Double.valueOf(dictionaryL.get(1).getValue2()) > baseresultAnt)//比最低金额小
+////                            {
+////                                personalCost.setYibaseresult(dictionaryL.get(1).getValue2());
+////                            } else if (Double.valueOf(dictionaryL.get(1).getValue3()) < baseresultAnt)//比最高金额大
+////                            {
+////                                personalCost.setYibaseresult(dictionaryL.get(1).getValue3());
+////                            } else {
+////                                personalCost.setYibaseresult(baseresultAnt.toString());
+////                            }
+////                            //公积金
+////                            if (Double.valueOf(dictionaryL.get(2).getValue2()) > baseresultAnt)//比最低金额小
+////                            {
+////                                personalCost.setZhubaseresult(dictionaryL.get(2).getValue2());
+////                                ;
+////                            } else if (Double.valueOf(dictionaryL.get(2).getValue3()) < baseresultAnt)//比最高金额大
+////                            {
+////                                personalCost.setZhubaseresult(dictionaryL.get(2).getValue3());
+////                            } else {
+////                                personalCost.setZhubaseresult(baseresultAnt.toString());
+////                            }
+////
+////                        } else {
+////                            String mounthStr = workday.substring(5, 7);
+////                            //整月 workMount
+////                            String workMount = String.valueOf(Integer.valueOf("12") - Integer.valueOf(mounthStr));
+////                            BigDecimal workMountB = new BigDecimal(workMount);
+////
+////                            LocalDate workDay = LocalDate.parse(workday);
+////                            int lenghtDay = workDay.getDayOfMonth();
+////                            BigDecimal lenghtDayB = new BigDecimal(String.valueOf(lenghtDay));
+////                            String joinDay = workday.substring(7);
+////                            //入职月工作多少天
+////                            String workDayOnWork = String.valueOf(lenghtDay - Integer.valueOf(joinDay) + 1);
+////                            BigDecimal workDayOnWorkB = new BigDecimal(workDayOnWork);
+////                            //出勤系数
+////                            BigDecimal workDayResult = (workDayOnWorkB.divide(lenghtDayB, 2, BigDecimal.ROUND_HALF_UP)).add(workMountB);
+////                            Double baseresultAnt = ((comtotalwages.subtract(total)).divide(workDayResult, 2, BigDecimal.ROUND_HALF_UP)).doubleValue();
+////                            //养老
+////                            if (Double.valueOf(dictionaryL.get(0).getValue2()) > baseresultAnt)//比最低金额小
+////                            {
+////                                personalCost.setYangbaseresult(dictionaryL.get(0).getValue2());
+////                            } else if (Double.valueOf(dictionaryL.get(0).getValue3()) < baseresultAnt)//比最高金额大
+////                            {
+////                                personalCost.setYangbaseresult(dictionaryL.get(0).getValue3());
+////                            } else {
+////                                personalCost.setYangbaseresult(baseresultAnt.toString());
+////                            }
+////                            //医疗
+////                            if (Double.valueOf(dictionaryL.get(1).getValue2()) > baseresultAnt)//比最低金额小
+////                            {
+////                                personalCost.setYibaseresult(dictionaryL.get(1).getValue2());
+////                            } else if (Double.valueOf(dictionaryL.get(1).getValue3()) < baseresultAnt)//比最高金额大
+////                            {
+////                                personalCost.setYibaseresult(dictionaryL.get(1).getValue3());
+////                            } else {
+////                                personalCost.setYibaseresult(baseresultAnt.toString());
+////                            }
+////                            //公积金
+////                            if (Double.valueOf(dictionaryL.get(2).getValue2()) > baseresultAnt)//比最低金额小
+////                            {
+////                                personalCost.setZhubaseresult(dictionaryL.get(2).getValue2());
+////                                ;
+////                            } else if (Double.valueOf(dictionaryL.get(2).getValue3()) < baseresultAnt)//比最高金额大
+////                            {
+////                                personalCost.setZhubaseresult(dictionaryL.get(2).getValue3());
+////                            } else {
+////                                personalCost.setZhubaseresult(baseresultAnt.toString());
+////                            }
+////                        }
+////
+////
+////                        //给予标准
+////                        String monthCost = rankMap.get(customerInfoAnt.getUserinfo().getRank());
+////                        BigDecimal monthCostBal = new BigDecimal(monthCost);
+////                        String tageAnt = ranktageMap.get(customerInfoAnt.getUserinfo().getRank());
+////                        tageAnt = tageAnt.substring(0,tageAnt.length() - 1);
+////                        BigDecimal tageAntBal = new BigDecimal(tageAnt);
+////                        BigDecimal bdal = new BigDecimal("100");
+////                        Double newWorkCost = ((monthCostBal.multiply(tageAntBal)).divide(bdal,2, BigDecimal.ROUND_HALF_UP).add(monthCostBal)).doubleValue();
+////                        personalCost.setAprilcosty(newWorkCost.toString());
+////                        personalCost.setMarchcosty(newWorkCost.toString());
+////                        personalCost.setJunecosty(newWorkCost.toString());
+////                        personalCost.setJulycosty(newWorkCost.toString());
+////                        personalCost.setAugustcosty(newWorkCost.toString());
+////                        personalCost.setSeptembercosty(newWorkCost.toString());
+////                        personalCost.setOctobercosty(newWorkCost.toString());
+////                        personalCost.setNovembercosty(newWorkCost.toString());
+////                        personalCost.setDecembercosty(newWorkCost.toString());
+////                        personalCost.setJanuarycosty(newWorkCost.toString());
+////                        personalCost.setJanuarycosty(newWorkCost.toString());
+////                        personalCost.setFebruarycosty(newWorkCost.toString());
+////                        personalCost.setMarchcosty(newWorkCost.toString());
+////                        personalCostMapper.insert(personalCost);
+////                    }
+////                    else{ //产休人员
+////                        flag = 0;
+////                    }
+////                }
+////            custList.remove();
+////            }
+//        return null;
+//    }
 
 
 //    @Override
