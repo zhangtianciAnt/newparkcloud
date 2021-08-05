@@ -7,7 +7,6 @@ import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.*;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
-import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
@@ -294,11 +293,12 @@ public class GivingServiceImpl implements GivingService {
 
         //region add_qhr_20210702 修改入职tab显示月份
         // 设置上个月的年份和月份
-        givingVo.setMonthOfLastMonth(String.valueOf(Integer.valueOf(givinglist.get(0).getMonths().substring(4, 6)) - 1));
+        givingVo.setMonthOfLastMonth(givinglist.get(0).getMonths().substring(4, 6));
         if (givingVo.getMonthOfLastMonth().equals("01")) {
             givingVo.setMonthOfLastMonth("12");
             givingVo.setYearOfLastMonth(String.valueOf(Integer.valueOf(givinglist.get(0).getMonths().substring(0, 4)) - 1));
         } else {
+            givingVo.setMonthOfLastMonth(String.valueOf(Integer.valueOf(givinglist.get(0).getMonths().substring(4, 6)) - 1));
             givingVo.setYearOfLastMonth(givinglist.get(0).getMonths().substring(0, 4));
         }
         // 设置当月的年份和月份
@@ -804,7 +804,7 @@ public class GivingServiceImpl implements GivingService {
                 userinfo.setEnddate(formatStringDate(userinfo.getEnddate()));
             }
             calSuitDate.setTime(sf.parse(userinfo.getEnddate().replace("Z", " UTC")));
-            //calSuitDate.add(Calendar.DATE, -1);
+            calSuitDate.add(Calendar.DATE, -1);
             //试用截止日
             Calendar calOfficialDate = Calendar.getInstance();
             if (userinfo.getEnddate().indexOf("Z") < 0) {
