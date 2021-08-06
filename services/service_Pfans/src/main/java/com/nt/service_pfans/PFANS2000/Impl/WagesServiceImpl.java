@@ -515,7 +515,7 @@ public class WagesServiceImpl implements WagesService {
         long endTime =  System.currentTimeMillis();
         long usedTime = (endTime-startTime)/1000;
         System.out.println("离职工资结束");
-        System.out.println("用时：" + usedTime + "秒");
+        System.out.println("用时：" + String.valueOf(usedTime) + "秒");
         return wagesList;
     }
 
@@ -2570,7 +2570,7 @@ public class WagesServiceImpl implements WagesService {
                             && DateUtil.format(induction.getWorddate(), "dd").equals(lastday))){
                         // 今月試用社員出勤日数
                         thisMonthSuitDays = 0d;
-                        induction.setTrial("");
+                        induction.setTrial(String.valueOf(""));
                         induction.setGive(df.format(Double.parseDouble(thisMonthSalary)));
                     }
                     else{
@@ -2587,7 +2587,7 @@ public class WagesServiceImpl implements WagesService {
             if(!DateUtil.format(new Date(), "yyyyMM").equals(strEnterday)){//非当月入社的人员
                 // 今月試用社員出勤日数
                 thisMonthSuitDays = 0d;
-                induction.setTrial("");
+                induction.setTrial(String.valueOf(""));
             }
             if(intflg == 0){//上月未发工资的人
                 //上月工资 / 21.75 * 上月出勤天数 + 本月工资
@@ -2741,7 +2741,7 @@ public class WagesServiceImpl implements WagesService {
                 String remaning = "0";
                 //离职剩余年休天数
                 remaning = annualLeaveService.remainingAnnual(customerInfo.getUserid(),String.valueOf(year));
-                BigDecimal b1 = new BigDecimal(Double.parseDouble(thisMonthSalary) / dateBase * 2 * Double.parseDouble(remaning));
+                BigDecimal b1 = new BigDecimal(Double.parseDouble(thisMonthSalary) / dateBase * 2 * Double.parseDouble(remaning)).setScale(2, RoundingMode.HALF_UP);
                 BigDecimal b2 = new BigDecimal(retire.getGive());
                 double strannualleavegive = b1.add(b2).doubleValue();
                 //4月份计算工资此处无需计算，工资详情中的最终工资会集中体现

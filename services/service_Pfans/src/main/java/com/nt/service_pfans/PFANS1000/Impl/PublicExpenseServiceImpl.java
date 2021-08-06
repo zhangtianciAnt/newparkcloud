@@ -133,7 +133,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             bd = bd.setScale(scale, roundingMode);
             BigDecimal bd1 = new BigDecimal(foreigncurrency);
             bd1 = bd1.setScale(scale, roundingMode);
-            if (accountcode.equals("PJ119004") || accountcode.equals("PJ132004")) {
+            //resign  upd scc   2021/7/23  公共费用精算书在打印时采购费明细中交通费不显示 from
+            if (purlist.size() == 0  && (accountcode.equals("PJ119004") || accountcode.equals("PJ132004"))) {
+                //end resign  upd scc  2021/7/23 公共费用精算书在打印时采购费明细中交通费不显示  编号 to
                 TrafficDetails trafficdetails = new TrafficDetails();
                 resultMap.put("交通费", traffic);
                 List<Dictionary> curListAc = dictionaryService.getForSelect("PG019");
@@ -142,7 +144,6 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         trafficdetails.setCurrency(iteA.getValue1());
                     }
                 }
-                ;
                 List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
                 for (Dictionary ite : curListT) {
                     if (ite.getCode().equals(budgetcoding)) {
@@ -162,7 +163,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 trafficdetails.setForeigncurrency(String.valueOf(bd1));
                 trafficdetails.setRmb(String.valueOf(bd));
                 traffic.add(trafficdetails);
-            } else if (plsummary.equals("PJ111010")) {
+                //resign  upd scc   2021/7/23  公共费用精算书在打印时采购费明细中交通费不显示 from
+            } else if (plsummary.equals("PJ111010") || plsummary.equals("PJ111008")) {
+                //end resign  upd scc  2021/7/23 公共费用精算书在打印时采购费明细中交通费不显示  编号 to
                 PurchaseDetails purchasedetails = new PurchaseDetails();
                 resultMap.put("采购费", pudetails);
                 List<Dictionary> curListAc = dictionaryService.getForSelect("PG019");
@@ -783,7 +786,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
                 //发票说明
                 if (insertInfo.getRemark() != "" && insertInfo.getRemark() != null) {
-                    insertInfo.setRemark(userName + accountCodeMap.getOrDefault(insertInfo.getRemark(), ""));
+                    //region update qhr  导出csv时加入经办
+                    insertInfo.setRemark(userName + "经办" + accountCodeMap.getOrDefault(insertInfo.getRemark(), ""));
+                    //endregion update qhr  导出csv时加入经办
                 }
 
                 insertInfo.setInvoicenumber(invoiceNo);

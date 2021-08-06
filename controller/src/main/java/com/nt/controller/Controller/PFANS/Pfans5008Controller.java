@@ -162,32 +162,24 @@ public class Pfans5008Controller {
         SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");
         TokenModel tokenModel = tokenService.getToken(request);
         logmanagement.setOwners(tokenModel.getOwnerList());
-        List<LogManagement> list = logmanagementService.getLogDataList(logmanagement,startDate,endDate);
+        List<LogManagement> list = logmanagementService.getLogDataList(logmanagement, startDate, endDate);
         List<LogManagement> list1 = logmanagementService.getDataListPL(tokenModel);
         for (LogManagement item : list1) {
-            if(StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate))
-            {
-                if(sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()>=sf1ymd.parse(startDate).getTime()
-                    && sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()<=sf1ymd.parse(endDate).getTime())
-                {
+            if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
+                if (sf1ymd.parse(DateUtil.format(item.getLog_date(), "yyyy-MM-dd")).getTime() >= sf1ymd.parse(startDate).getTime()
+                        && sf1ymd.parse(DateUtil.format(item.getLog_date(), "yyyy-MM-dd")).getTime() <= sf1ymd.parse(endDate).getTime()) {
                     if (list.stream().filter(item2 -> item2.getLogmanagement_id().equals(item.getLogmanagement_id())).count() == 0) {
                         list.add(item);
                     }
                 }
-            }
-            else if(StringUtils.isNotBlank(startDate))
-            {
-                if(sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()>=sf1ymd.parse(startDate).getTime())
-                {
+            } else if (StringUtils.isNotBlank(startDate)) {
+                if (sf1ymd.parse(DateUtil.format(item.getLog_date(), "yyyy-MM-dd")).getTime() >= sf1ymd.parse(startDate).getTime()) {
                     if (list.stream().filter(item2 -> item2.getLogmanagement_id().equals(item.getLogmanagement_id())).count() == 0) {
                         list.add(item);
                     }
                 }
-            }
-            else if(StringUtils.isNotBlank(endDate))
-            {
-                if(sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()<=sf1ymd.parse(endDate).getTime())
-                {
+            } else if (StringUtils.isNotBlank(endDate)) {
+                if (sf1ymd.parse(DateUtil.format(item.getLog_date(), "yyyy-MM-dd")).getTime() <= sf1ymd.parse(endDate).getTime()) {
                     if (list.stream().filter(item2 -> item2.getLogmanagement_id().equals(item.getLogmanagement_id())).count() == 0) {
                         list.add(item);
                     }
@@ -314,7 +306,7 @@ public class Pfans5008Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(logmanagementService.CheckList(projectsystem,tokenModel));
+        return ApiResult.success(logmanagementService.CheckList(projectsystem, tokenModel));
     }
 
 

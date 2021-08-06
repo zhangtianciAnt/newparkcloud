@@ -369,13 +369,25 @@ public class EvectionServiceImpl implements EvectionService {
             placeAnt = evectionVo.getEvection().getPlace();
         }
         SimpleDateFormat formatterAnt = new SimpleDateFormat("yyyy-MM-dd");
-
-        String startStr = formatterAnt.format(evectionVo.getEvection().getStartdate());
+        //region  add_qhr_20210609  添加实际出差替换计划出差的开始/结束日
+        String startStr = "";
+        if (evectionVo.getEvection().getRealstartdate() != null) {
+            startStr = formatterAnt.format(evectionVo.getEvection().getRealstartdate());
+        } else {
+            startStr = formatterAnt.format(evectionVo.getEvection().getStartdate());
+        }
+        //endregion  add_qhr_20210609  添加实际出差替换计划出差的开始/结束日
         LocalDate DateLocalStar = LocalDate.parse(startStr);
         String monthSStr = String.valueOf(DateLocalStar.getMonthValue());
         String daySStr = String.valueOf(DateLocalStar.getDayOfMonth());
-
-        String endStr = formatterAnt.format(evectionVo.getEvection().getEnddate());
+        //region  add_qhr_20210609  添加实际出差替换计划出差的开始/结束日
+        String endStr = "";
+        if (evectionVo.getEvection().getRealenddate() != null) {
+            endStr = formatterAnt.format(evectionVo.getEvection().getRealenddate());
+        } else {
+            endStr = formatterAnt.format(evectionVo.getEvection().getEnddate());
+        }
+        //region  add_qhr_20210609  添加实际出差替换计划出差的开始/结束日
         LocalDate DateLocalEnd = LocalDate.parse(endStr);
         String monthSEnd = String.valueOf(DateLocalEnd.getMonthValue());
         String daySEnd = String.valueOf(DateLocalEnd.getDayOfMonth());
