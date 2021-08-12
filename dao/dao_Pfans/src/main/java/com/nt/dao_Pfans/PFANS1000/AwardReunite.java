@@ -25,12 +25,6 @@ public class AwardReunite extends BaseModel {
     private String awardreunite_id;
 
     /**
-     * 决裁书主键
-     */
-    @Column(name = "AWARD_ID")
-    private String award_id;
-
-    /**
      * 合同号
      */
     @Column(name = "CONTRACTNUMBER")
