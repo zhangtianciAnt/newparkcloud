@@ -37,6 +37,8 @@ public class AwardServiceImpl implements AwardService {
     private ToDoNoticeService toDoNoticeService;
     @Autowired
     private AwardMapper awardMapper;
+    @Autowired
+    private AwardReuniteMapper awardReuniteMapper;
 
     @Autowired
     private AwardDetailMapper awardDetailMapper;
@@ -108,6 +110,17 @@ public class AwardServiceImpl implements AwardService {
             }
             awavo.setNumbercounts(contractList);
         }
+        //    PSDCD_PFANS_20210525_XQ_054 复合合同决裁书分配金额可修改 ztc fr
+        if (awa != null) {
+            AwardReunite awardReunite = new AwardReunite();
+            awardReunite.setContractnumber(awa.getContractnumber());
+            List<AwardReunite> awardReuniteList = awardReuniteMapper.select(awardReunite);
+            if (awardReuniteList != null && awardReuniteList.size() > 1) {
+                awardReuniteList = awardReuniteList.stream().sorted(Comparator.comparing(AwardReunite::getRowindex)).collect(Collectors.toList());
+            }
+            awavo.setAwardReunites(awardReuniteList);
+        }
+        //    PSDCD_PFANS_20210525_XQ_054 复合合同决裁书分配金额可修改 ztc to
         return awavo;
     }
 
@@ -224,6 +237,13 @@ public class AwardServiceImpl implements AwardService {
                 staffDetail.setAward_id(awardid);
                 staffDetail.setRowindex(rowindex);
                 staffDetailMapper.insertSelective(staffDetail);
+            }
+        }
+
+        if(awardVo.getAwardReunites() != null){
+            for(AwardReunite awardReunite : awardVo.getAwardReunites()){
+                awardReunite.preUpdate(tokenModel);
+                awardReuniteMapper.updateByPrimaryKey(awardReunite);
             }
         }
 
