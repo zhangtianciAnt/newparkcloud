@@ -7,6 +7,11 @@
         ,entrydivision
         ,interviewtime
         ,unemployedreason
+        /*  region  add  ml  20210726  添加预计入职时间、实际入职时间、Rn  from  */
+        ,expectedtime
+        ,entrytime
+        ,level
+		/*  endregion  add  ml  20210726  添加预计入职时间、实际入职时间、Rn  to  */
         from recruitjudgement
 		where 1=1
 		<if test="owners != null and owners.size() > 0">

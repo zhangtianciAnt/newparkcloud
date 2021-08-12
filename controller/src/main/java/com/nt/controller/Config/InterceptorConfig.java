@@ -25,6 +25,8 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
                 .excludePathPatterns("/userTools/**")
                 .excludePathPatterns("/report/**")
                 .excludePathPatterns("/incomeexpenditure/getradio")
+                .excludePathPatterns("/companyprojects/report")
+                .excludePathPatterns("/seal/changeSealWorkFlowInfo")
         ;
     }
 

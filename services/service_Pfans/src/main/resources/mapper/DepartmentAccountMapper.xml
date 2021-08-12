@@ -1,0 +1,622 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.DepartmentAccountMapper">
+	<select id="selectALL" resultType="com.nt.dao_Pfans.PFANS1000.DepartmentAccount">
+		SELECT *
+FROM (
+select
+			 themename
+			,contract
+			,toolsorgs
+			,amount
+			,'0' indextype
+			,moneyplan4
+			,moneyactual4
+			,moneyplan5
+			,moneyactual5
+			,moneyplan6
+			,moneyactual6
+			,totalactual1q
+			,moneyplan7
+			,moneyactual7
+			,moneyplan8
+			,moneyactual8
+			,moneyplan9
+			,moneyactual9
+			,totalactual2q
+			,moneyplan10
+			,moneyactual10
+			,moneyplan11
+			,moneyactual11
+			,moneyplan12
+			,moneyactual12
+			,totalactual3q
+			,moneyplan1
+			,moneyactual1
+			,moneyplan2
+			,moneyactual2
+			,moneyplan3
+			,moneyactual3
+			,totalactual4q
+			,totalactual
+		from DepartmentAccount d
+		where d.department = 'AB58CD3323329599E8C86EB3343844CE1E05'
+		AND d.YEARS = '2021'
+		UNION all
+		SELECT
+			 thr.themename
+			,thr.contract
+			,thr.toolsorgs
+			,dt.amount
+			,dt.indextype
+			,'' moneyplan4
+			,dt.moneyactual4
+			,'' moneyplan5
+			,dt.moneyactual5
+			,'' moneyplan6
+			,dt.moneyactual6
+			,dt.totalactual1q
+			,'' moneyplan7
+			,dt.moneyactual7
+			,'' moneyplan8
+			,dt.moneyactual8
+			,'' moneyplan9
+			,dt.moneyactual9
+			,dt.totalactual2q
+			,'' moneyplan10
+			,dt.moneyactual10
+			,'' moneyplan11
+			,dt.moneyactual11
+			,'' moneyplan12
+			,dt.moneyactual12
+			,dt.totalactual3q
+			,'' moneyplan1
+			,dt.moneyactual1
+			,'' moneyplan2
+			,dt.moneyactual2
+			,'' moneyplan3
+			,dt.moneyactual3
+			,dt.totalactual4q
+			,dt.totalactual
+		FROM departmentaccounttotal dt
+		LEFT JOIN themeinfor thr
+		ON dt.THEME_ID = thr.THEMEINFOR_ID
+		where dt.department = 'AB58CD3323329599E8C86EB3343844CE1E05'
+		AND dt.YEARS = '2021') a
+		ORDER BY a.indextype,a.amount
+	</select>
+	<select id="selectByYearAndDep" parameterType="com.nt.dao_Pfans.PFANS1000.DepartmentAccount"
+		resultType="com.nt.dao_Pfans.PFANS1000.Vo.DepartmentAccountVo">
+
+		SELECT
+	temp. themeid as theme_id
+	,temp.  themename as themename
+	,temp. contract as contract
+	,temp. toolsorgs as toolsorgs
+	,temp. contractapplication_id as contractapplication_id
+	,temp. contractnumber as contractnumber
+	,temp. claimamounttotal as claimamounttotal
+	,temp. entrycondition as entrycondition
+	,temp. state as state
+	,temp. companyprojects_id as companyprojects_id
+	,temp. numbers as numbers
+	,temp. year as years
+
+	,CASE WHEN temp.STATE = '无效' and temp.ENTRYCONDITION = 'HT004001' THEN CONCAT(temp.CONTRACTNUMBER ,' -' ,'【',SUM(temp.claimamountSum),'-','废弃】')
+		ELSE CONCAT(temp.CONTRACTNUMBER ,' -' ,'【',SUM(temp.claimamountSum),'】') END AS claimamountSum
+	,CASE WHEN temp.STATE = '无效' and temp.ENTRYCONDITION = 'HT004001' THEN CONCAT(temp.CONTRACTNUMBER ,' -' ,'【',SUM(temp.contractamountSum),'-','废弃】')
+		ELSE CONCAT(temp.CONTRACTNUMBER ,' -' ,'【',SUM(temp.contractamountSum),'】') END AS contractamountSum
+
+	,SUM(temp.claimamountSum4) as claimamountSum4
+	,SUM(temp.claimamountSum5) as claimamountSum5
+	,SUM(temp.claimamountSum6) as claimamountSum6
+	,SUM(temp.claimamountSum7) as claimamountSum7
+	,SUM(temp.claimamountSum8) as claimamountSum8
+	,SUM(temp.claimamountSum9) as claimamountSum9
+	,SUM(temp.claimamountSum10) as claimamountSum10
+	,SUM(temp.claimamountSum11) as claimamountSum11
+	,SUM(temp.claimamountSum12) as claimamountSum12
+	,SUM(temp.claimamountSum1) as claimamountSum1
+	,SUM(temp.claimamountSum2) as claimamountSum2
+	,SUM(temp.claimamountSum3) as claimamountSum3
+
+	,SUM(temp.contractamountSum4) as contractamountSum4
+	,SUM(temp.contractamountSum5) as contractamountSum5
+	,SUM(temp.contractamountSum6) as contractamountSum6
+	,SUM(temp.contractamountSum7) as contractamountSum7
+	,SUM(temp.contractamountSum8) as contractamountSum8
+	,SUM(temp.contractamountSum9) as contractamountSum9
+	,SUM(temp.contractamountSum10) as contractamountSum10
+	,SUM(temp.contractamountSum11) as contractamountSum11
+	,SUM(temp.contractamountSum12) as contractamountSum12
+	,SUM(temp.contractamountSum1) as contractamountSum1
+	,SUM(temp.contractamountSum2) as contractamountSum2
+	,SUM(temp.contractamountSum3) as contractamountSum3
+	,temp.AMOUNT4 AS moneyplan4
+	,temp.AMOUNT5 AS moneyplan5
+	,temp.AMOUNT6 AS moneyplan6
+	,temp.AMOUNT7 AS moneyplan7
+	,temp.AMOUNT8 AS moneyplan8
+	,temp.AMOUNT9 AS moneyplan9
+	,temp.AMOUNT10 AS moneyplan10
+	,temp.AMOUNT11 AS moneyplan11
+	,temp.AMOUNT12 AS moneyplan12
+	,temp.AMOUNT1 AS moneyplan1
+	,temp.AMOUNT2 AS moneyplan2
+	,temp.AMOUNT3 AS moneyplan3
+FROM (
+SELECT
+	 thr.THEMEINFOR_ID AS themeid
+	,thr.THEMENAME AS themename
+	,thr.CONTRACT AS contract
+	,thr.TOOLSORGS AS toolsorgs
+	,ct.CONTRACTAPPLICATION_ID AS contractapplication_id
+	,ct.CONTRACTNUMBER AS contractnumber
+	,ct.CLAIMAMOUNT AS claimamounttotal
+	,ct.entrycondition AS entrycondition
+	,ct.state AS state
+	,pr.COMPANYPROJECTS_ID AS companyprojects_id
+	,pr.NUMBERS AS numbers
+	,thr.YEAR AS year
+	,DATE_FORMAT(cn.DELIVERYDATE, '%m') DELIVERYDATE
+	,SUM(cn.CLAIMAMOUNT) AS claimamountSum
+	,SUM(pr.CONTRACTAMOUNT)  AS contractamountSum
+
+
+	,CASE WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '04' THEN cn.CLAIMAMOUNT ELSE 0 END AS claimamountSum4
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '05' THEN cn.CLAIMAMOUNT ELSE 0 END AS claimamountSum5
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '06' THEN cn.CLAIMAMOUNT ELSE 0 END AS claimamountSum6
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '07' THEN cn.CLAIMAMOUNT ELSE 0 END AS claimamountSum7
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '08' THEN cn.CLAIMAMOUNT ELSE 0 END AS claimamountSum8
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '09' THEN cn.CLAIMAMOUNT ELSE 0 END AS claimamountSum9
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '10' THEN cn.CLAIMAMOUNT ELSE 0 END AS claimamountSum10
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '11' THEN cn.CLAIMAMOUNT ELSE 0 END AS claimamountSum11
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '12' THEN cn.CLAIMAMOUNT ELSE 0 END AS claimamountSum12
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '01' THEN cn.CLAIMAMOUNT ELSE 0 END AS claimamountSum1
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '02' THEN cn.CLAIMAMOUNT ELSE 0 END AS claimamountSum2
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '03' THEN cn.CLAIMAMOUNT ELSE 0 END AS claimamountSum3
+
+	,CASE WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '04' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum4
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '05' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum5
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '06' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum6
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '07' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum7
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '08' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum8
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '09' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum9
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '10' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum10
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '11' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum11
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '12' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum12
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '01' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum1
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '02' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum2
+	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
+		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '03' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum3
+	,thr.AMOUNT4 AS amount4
+	,thr.AMOUNT5 AS amount5
+	,thr.AMOUNT6 AS amount6
+	,thr.AMOUNT7 AS amount7
+	,thr.AMOUNT8 AS amount8
+	,thr.AMOUNT9 AS amount9
+	,thr.AMOUNT10 AS amount10
+	,thr.AMOUNT11 AS amount11
+	,thr.AMOUNT12 AS amount12
+	,thr.AMOUNT1 AS amount1
+	,thr.AMOUNT2 AS amount2
+	,thr.AMOUNT3 AS amount3
+FROM
+(
+	SELECT
+	 thr.THEMEINFOR_ID
+	,thr.THEMENAME
+	,thr.CONTRACT
+	,thr.TOOLSORGS
+	,thr.YEAR
+	,SUM(AMOUNT4) AS AMOUNT4
+	,SUM(AMOUNT5) AS AMOUNT5
+	,SUM(AMOUNT6) AS AMOUNT6
+	,SUM(AMOUNT7) AS AMOUNT7
+	,SUM(AMOUNT8) AS AMOUNT8
+	,SUM(AMOUNT9) AS AMOUNT9
+	,SUM(AMOUNT10) AS AMOUNT10
+	,SUM(AMOUNT11) AS AMOUNT11
+	,SUM(AMOUNT12) AS AMOUNT12
+	,SUM(AMOUNT1) AS AMOUNT1
+	,SUM(AMOUNT2) AS AMOUNT2
+	,SUM(AMOUNT3) AS AMOUNT3
+	FROM themeinfor thr
+	INNER JOIN themeplandetail td
+	ON td.THEMEINFOR_ID = thr.THEMEINFOR_ID
+	AND td.`TYPE` = '0'
+	WHERE td.CENTER_ID = #{department} OR td.GROUP_ID = #{department} AND thr.YEAR = #{years}
+
+	GROUP BY thr.THEMEINFOR_ID
+) thr
+INNER  JOIN contractapplication ct
+ON ct.THEMEINFOR_ID = thr.THEMEINFOR_ID
+INNER JOIN contractnumbercount cn
+ON ct.CONTRACTNUMBER = cn.CONTRACTNUMBER
+INNER JOIN
+(
+	SELECT
+		 cp.NUMBERS AS NUMBERS
+		,pc.COMPANYPROJECTS_ID AS COMPANYPROJECTS_ID
+		,pc.CONTRACTNUMBERCOUNT_ID AS CONTRACTNUMBERCOUNT_ID
+		,pc.CONTRACT AS contract
+		,pc.THEMEINFOR_ID AS THEMEINFOR_ID
+		,pc.THEME AS THEMENAME
+		,pc.CONTRACTAMOUNT AS CONTRACTAMOUNT
+	FROM projectcontract pc
+	INNER JOIN companyprojects cp
+	ON pc.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+	AND cp.`STATUS` >= 4
+	WHERE  pc.`STATUS`!='1'
+	AND cp.CENTER_ID =  #{department} OR cp.GROUP_ID =  #{department}
+) AS pr
+ON pr.CONTRACTNUMBERCOUNT_ID = cn.CONTRACTNUMBERCOUNT_ID
+GROUP BY themeid,contractapplication_id,companyprojects_id,DATE_FORMAT(cn.DELIVERYDATE, '%m')
+) temp
+GROUP BY temp.themeid,temp.contractapplication_id,temp.companyprojects_id
+	</select>
+	<insert id="insertDepAll" parameterType="java.util.List">
+		insert into DepartmentAccount
+		(
+			 DEPARTMENTACCOUNT_ID
+			,THEME_ID
+			,THEMENAME
+			,CONTRACT
+			,TOOLSORGS
+			,CONTRACTAPPLICATION_ID
+			,CONTRACTNUMBER
+			,CLAIMAMOUNTTOTAL
+			,AMOUNT
+			,ENTRYCONDITION
+			,STATE
+			,COMPANYPROJECTS_ID
+			,NUMBERS
+			,YEARS
+			,DEPARTMENT
+			,MONEYPLAN4
+			,MONEYACTUAL4
+			,MONEYPLAN5
+			,MONEYACTUAL5
+			,MONEYPLAN6
+			,MONEYACTUAL6
+			,TOTALACTUAL1Q
+			,MONEYPLAN7
+			,MONEYACTUAL7
+			,MONEYPLAN8
+			,MONEYACTUAL8
+			,MONEYPLAN9
+			,MONEYACTUAL9
+			,TOTALACTUAL2Q
+			,MONEYPLAN10
+			,MONEYACTUAL10
+			,MONEYPLAN11
+			,MONEYACTUAL11
+			,MONEYPLAN12
+			,MONEYACTUAL12
+			,TOTALACTUAL3Q
+			,MONEYPLAN1
+			,MONEYACTUAL1
+			,MONEYPLAN2
+			,MONEYACTUAL2
+			,MONEYPLAN3
+			,MONEYACTUAL3
+			,TOTALACTUAL4Q
+			,TOTALACTUAL
+			,CREATEBY
+			,CREATEON
+			,MODIFYBY
+			,MODIFYON
+			,OWNER
+			,STATUS
+			,TENANTID
+		)
+		values
+		<foreach item="item" collection="list" separator=",">
+			(
+				#{item.departmentaccountid},
+				#{item.theme_id},
+				#{item.themename},
+				#{item.contract},
+				#{item.toolsorgs},
+				#{item.contractapplication_id},
+				#{item.contractnumber},
+				#{item.claimamounttotal},
+				#{item.amount},
+				#{item.entrycondition},
+				#{item.state},
+				#{item.companyprojects_id},
+				#{item.numbers},
+				#{item.years},
+				#{item.department},
+				#{item.moneyplan4},
+				#{item.moneyactual4},
+				#{item.moneyplan5},
+				#{item.moneyactual5},
+				#{item.moneyplan6},
+				#{item.moneyactual6},
+				#{item.totalactual1q},
+				#{item.moneyplan7},
+				#{item.moneyactual7},
+				#{item.moneyplan8},
+				#{item.moneyactual8},
+				#{item.moneyplan9},
+				#{item.moneyactual9},
+				#{item.totalactual2q},
+				#{item.moneyplan10},
+				#{item.moneyactual10},
+				#{item.moneyplan11},
+				#{item.moneyactual11},
+				#{item.moneyplan12},
+				#{item.moneyactual12},
+				#{item.totalactual3q},
+				#{item.moneyplan1},
+				#{item.moneyactual1},
+				#{item.moneyplan2},
+				#{item.moneyactual2},
+				#{item.moneyplan3},
+				#{item.moneyactual3},
+				#{item.totalactual4q},
+				#{item.totalactual},
+				#{item.createby},
+				#{item.createon},
+				#{item.modifyby},
+				#{item.modifyon},
+				#{item.owner},
+				#{item.status},
+				#{item.tenantid}
+			)
+		</foreach>
+	</insert>
+	<update id="updateDepAll" parameterType="java.util.List">
+		<foreach item="item" collection="list" index="index">
+			UPDATE DepartmentAccount
+			SET
+			MONEYPLAN4       	= #{item.moneyplan4},
+			MONEYACTUAL4     	= #{item.moneyactual4},
+			MONEYPLAN5       	= #{item.moneyplan5},
+			MONEYACTUAL5     	= #{item.moneyactual5},
+			MONEYPLAN6       	= #{item.moneyplan6},
+			MONEYACTUAL6     	= #{item.moneyactual6},
+			TOTALACTUAL1Q    	= #{item.totalactual1q},
+			MONEYPLAN7       	= #{item.moneyplan7},
+			MONEYACTUAL7     	= #{item.moneyactual7},
+			MONEYPLAN8       	= #{item.moneyplan8},
+			MONEYACTUAL8     	= #{item.moneyactual8},
+			MONEYPLAN9       	= #{item.moneyplan9},
+			MONEYACTUAL9     	= #{item.moneyactual9},
+			TOTALACTUAL2Q    	= #{item.totalactual2q},
+			MONEYPLAN10      	= #{item.moneyplan10},
+			MONEYACTUAL10    	= #{item.moneyactual10},
+			MONEYPLAN11      	= #{item.moneyplan11},
+			MONEYACTUAL11    	= #{item.moneyactual11},
+			MONEYPLAN12      	= #{item.moneyplan12},
+			MONEYACTUAL12    	= #{item.moneyactual12},
+			TOTALACTUAL3Q    	= #{item.totalactual3q},
+			MONEYPLAN1       	= #{item.moneyplan1},
+			MONEYACTUAL1     	= #{item.moneyactual1},
+			MONEYPLAN2       	= #{item.moneyplan2},
+			MONEYACTUAL2     	= #{item.moneyactual2},
+			MONEYPLAN3       	= #{item.moneyplan3},
+			MONEYACTUAL3     	= #{item.moneyactual3},
+			TOTALACTUAL4Q    	= #{item.totalactual4q},
+			TOTALACTUAL      	= #{item.totalactual},
+			CREATEBY            = #{item.createby},
+			CREATEON            = #{item.createon},
+			MODIFYBY            = #{item.modifyby},
+			MODIFYON            = #{item.modifyon},
+			OWNER               = #{item.owner},
+			STATUS              = #{item.status},
+			TENANTID            = #{item.tenantid}
+			WHERE DEPARTMENTACCOUNT_ID = #{item.departmentaccountid};
+		</foreach>
+	</update>
+	<select id="selectTotal" resultType="com.nt.dao_Pfans.PFANS1000.DepartmentAccountTotal">
+		SELECT
+	 		dat.*
+		FROM departmentaccounttotal dat
+		WHERE dat.THEME_ID = #{themeid}
+		AND dat.YEARS = #{years}
+		AND dat.DEPARTMENT = #{department}
+		order by dat.INDEXTYPE
+	</select>
+	<select id="selectTotalBytheme" resultType="com.nt.dao_Pfans.PFANS1000.Vo.DepartmentTotalVo">
+		SELECT
+			a.userid as USERID,
+			CASE WHEN ROUND(a.TIME_START/my_WorkingDays(a.LOG_DATE), 4) between 1 and 1.1999 then 1
+        		 WHEN ROUND(a.TIME_START/my_WorkingDays(a.LOG_DATE), 4) between 1.2 and 1.3999 then 1.1
+        		 WHEN ROUND(a.TIME_START/my_WorkingDays(a.LOG_DATE), 4) between 1.4 and 1.5999 then 1.15
+        		 WHEN ROUND(a.TIME_START/my_WorkingDays(a.LOG_DATE), 4) >= 1.6 then 1.3
+        		 ELSE ROUND(a.TIME_START/my_WorkingDays(a.LOG_DATE), 2) END MOUNT,
+            a.GROUP_ID DEPARTMENT,
+            a.LOG_DATE LOGDATE,
+        	a.PROJECT_ID COMPANYPROJECTS_ID,
+        	a.type  TYPE
+        FROM
+        (
+        	SELECT `CREATEBY` AS userid, SUM(TIME_START) TIME_START, PROJECT_ID, GROUP_ID, DATE_FORMAT(LOG_DATE,'%Y%m') LOG_DATE,pjtemp.type
+			FROM logmanagement lg
+			INNER JOIN
+			(
+				SELECT pj.NUMBERS,ps.NAME,ps.`TYPE`,pj.COMPANYPROJECTS_ID
+				FROM contractapplication ca
+				INNER JOIN
+				(
+					SELECT
+						 cp.NUMBERS AS NUMBERS
+						,cp.CENTER_ID AS CENTER_ID
+						,cp.GROUP_ID AS GROUP_ID
+						,cp.TEAM_ID AS TEAM_ID
+
+						,pc.COMPANYPROJECTS_ID AS COMPANYPROJECTS_ID
+						,pc.CONTRACTNUMBERCOUNT_ID AS CONTRACTNUMBERCOUNT_ID
+						,pc.CONTRACT AS contract
+						,pc.THEMEINFOR_ID AS THEMEINFOR_ID
+						,pc.THEME AS THEMENAME
+						,pc.CONTRACTAMOUNT AS CONTRACTAMOUNT
+					FROM projectcontract pc
+					INNER JOIN companyprojects cp
+					ON pc.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+					AND cp.`STATUS` >= 4
+					WHERE  pc.`STATUS`!='1'
+					AND cp.CENTER_ID =  #{department} OR cp.GROUP_ID =  #{department}
+				) pj
+				ON pj.contract = ca.CONTRACTNUMBER
+				INNER JOIN projectsystem ps
+				ON pj.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
+				WHERE ca.THEMEINFOR_ID = #{themeid}
+				GROUP BY pj.NUMBERS,ps.NAME,ps.`TYPE`
+			)   pjtemp
+            ON pjtemp.COMPANYPROJECTS_ID = lg.PROJECT_ID
+            AND pjtemp.name = lg.CREATEBY
+            WHERE date_format(lg.LOG_DATE,'%Y-%m') BETWEEN date_format( concat( #{years}, '-04-01' ) ,'%Y-%m')
+                                				   AND  date_format( concat(  CONVERT(#{years}, SIGNED) + 1 , '-03-31' ),'%Y-%m')
+            GROUP BY userid,PROJECT_ID, DATE_FORMAT(LOG_DATE,'%Y%m')
+        ) a
+	</select>
+	<select id="selectPJMount" resultType="com.nt.dao_Pfans.PFANS1000.DepartmentAccountTotal">
+		  SELECT
+		   SUM(pji.APRIL) AS moneyactual4
+		  ,SUM(pji.MAY) AS moneyactual5
+		  ,SUM(pji.JUNE) AS moneyactual6
+		  ,SUM(pji.JULY) AS moneyactual7
+		  ,SUM(pji.AUGUST) AS moneyactual8
+		  ,SUM(pji.SEPTEMBER) AS moneyactual9
+		  ,SUM(pji.OCTOBER) AS moneyactual10
+		  ,SUM(pji.NOVEMBER) AS moneyactual11
+		  ,SUM(pji.DECEMBER) AS moneyactual12
+		  ,SUM(pji.JANUARY) AS moneyactual1
+		  ,SUM(pji.FEBRUARY) AS moneyactual2
+		  ,SUM(pji.MARCH) AS moneyactual3
+		  FROM pjexternalinjection pji
+		  WHERE pji.YEARS = #{years}
+		  AND pji.GROUP_ID = #{department}
+		  AND pji.THEMEINFOR_ID = #{themeid}
+		  GROUP BY pji.YEARS,pji.GROUP_ID,pji.THEMEINFOR_ID
+
+	</select>
+	<insert id="insertDepTotalAll" parameterType="java.util.List">
+		insert into DepartmentAccountTotal
+		(
+		DEPARTMENTACCOUNTTOTAL_ID
+		,THEME_ID
+		,YEARS
+		,DEPARTMENT
+		,INDEXTYPE
+		,AMOUNT
+		,MONEYACTUAL4
+		,MONEYACTUAL5
+		,MONEYACTUAL6
+		,TOTALACTUAL1Q
+		,MONEYACTUAL7
+		,MONEYACTUAL8
+		,MONEYACTUAL9
+		,TOTALACTUAL2Q
+		,MONEYACTUAL10
+		,MONEYACTUAL11
+		,MONEYACTUAL12
+		,TOTALACTUAL3Q
+		,MONEYACTUAL1
+		,MONEYACTUAL2
+		,MONEYACTUAL3
+		,TOTALACTUAL4Q
+		,TOTALACTUAL
+		,CREATEBY
+		,CREATEON
+		,MODIFYBY
+		,MODIFYON
+		,OWNER
+		,STATUS
+		,TENANTID
+		)
+		values
+		<foreach item="item" collection="list" separator=",">
+			(
+			#{item.departmentaccounttotalid},
+			#{item.theme_id},
+			#{item.years},
+			#{item.department},
+			#{item.indextype},
+			#{item.amount},
+			#{item.moneyactual4},
+			#{item.moneyactual5},
+			#{item.moneyactual6},
+			#{item.totalactual1q},
+			#{item.moneyactual7},
+			#{item.moneyactual8},
+			#{item.moneyactual9},
+			#{item.totalactual2q},
+			#{item.moneyactual10},
+			#{item.moneyactual11},
+			#{item.moneyactual12},
+			#{item.totalactual3q},
+			#{item.moneyactual1},
+			#{item.moneyactual2},
+			#{item.moneyactual3},
+			#{item.totalactual4q},
+			#{item.totalactual},
+			#{item.createby},
+			#{item.createon},
+			#{item.modifyby},
+			#{item.modifyon},
+			#{item.owner},
+			#{item.status},
+			#{item.tenantid}
+			)
+		</foreach>
+	</insert>
+	<update id="updateDepTotalAll" parameterType="java.util.List">
+		<foreach item="item" collection="list" index="index">
+			UPDATE DepartmentAccountTotal
+			SET
+			MONEYACTUAL4     	= #{item.moneyactual4},
+			MONEYACTUAL5     	= #{item.moneyactual5},
+			MONEYACTUAL6     	= #{item.moneyactual6},
+			TOTALACTUAL1Q    	= #{item.totalactual1q},
+			MONEYACTUAL7     	= #{item.moneyactual7},
+			MONEYACTUAL8     	= #{item.moneyactual8},
+			MONEYACTUAL9     	= #{item.moneyactual9},
+			TOTALACTUAL2Q    	= #{item.totalactual2q},
+			MONEYACTUAL10    	= #{item.moneyactual10},
+			MONEYACTUAL11    	= #{item.moneyactual11},
+			MONEYACTUAL12    	= #{item.moneyactual12},
+			TOTALACTUAL3Q    	= #{item.totalactual3q},
+			MONEYACTUAL1     	= #{item.moneyactual1},
+			MONEYACTUAL2     	= #{item.moneyactual2},
+			MONEYACTUAL3     	= #{item.moneyactual3},
+			TOTALACTUAL4Q    	= #{item.totalactual4q},
+			TOTALACTUAL      	= #{item.totalactual},
+			CREATEBY            = #{item.createby},
+			CREATEON            = #{item.createon},
+			MODIFYBY            = #{item.modifyby},
+			MODIFYON            = #{item.modifyon},
+			OWNER               = #{item.owner},
+			STATUS              = #{item.status},
+			TENANTID            = #{item.tenantid}
+			WHERE DEPARTMENTACCOUNTTOTAL_ID = #{item.departmentaccounttotalid};
+		</foreach>
+	</update>
+</mapper>
+

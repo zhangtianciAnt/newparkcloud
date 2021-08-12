@@ -275,4 +275,17 @@ public class Pfans5013Controller {
         return ApiResult.success(comprojectService.getList2(flag,tokenModel));
     }
 
+    /**
+     *
+     * 公共部署起案数据结转
+     */
+    @RequestMapping(value = "/dataCarryover", method = {RequestMethod.POST})
+    public ApiResult dataCarryover(@RequestBody Comproject comproject, HttpServletRequest request) throws Exception {
+        if(comproject==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel=tokenService.getToken(request);
+        comprojectService.dataCarryover(comproject,tokenModel);
+        return ApiResult.success();
+    }
 }

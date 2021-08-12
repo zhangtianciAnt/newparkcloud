@@ -56,6 +56,12 @@ public class PersonalCost extends BaseModel {
     private String username;
 
     /**
+     * 卡号
+     */
+    @Column(name = "JOBNUMBER")
+    private String jobnumber;
+
+    /**
      * 部门简称
      */
     @Column(name = "DEPARTSHORT")

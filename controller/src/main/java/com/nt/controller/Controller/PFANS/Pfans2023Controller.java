@@ -5,6 +5,7 @@ import cn.hutool.core.io.FileUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.GoalManagement;
+import com.nt.dao_Pfans.PFANS2000.TalentPlan;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
 import com.nt.service_Org.DictionaryService;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -83,6 +85,17 @@ public class Pfans2023Controller {
         return ApiResult.success();
     }
 
+    //目标管理数据结转
+    @RequestMapping(value = "/change",method={RequestMethod.POST})
+    public ApiResult change(@RequestBody GoalManagement goalManagement, HttpServletRequest request) throws Exception{
+        if (goalManagement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        goalmanagementService.change(goalManagement,tokenModel);
+        return ApiResult.success();
+    }
+
 
     @RequestMapping(value = "/createNewUser",method={RequestMethod.POST})
     public ApiResult create(@RequestBody GoalManagement goalmanagement, HttpServletRequest request) throws Exception {
@@ -137,7 +150,9 @@ public class Pfans2023Controller {
 //        }
 //        禅道613 印章删掉 ztc end
 
-        data.put("now", DateUtil.year(new Date()));
+        //region add_qhr_20210528 目标管理导出年度修改
+        data.put("now", gmt.getYears());
+        //endregion add_qhr_20210528 目标管理导出年度修改
         ExcelOutPutUtil.OutPutPdf("目标管理", "mubiaoguanli.xlsx", data, response);
 
 

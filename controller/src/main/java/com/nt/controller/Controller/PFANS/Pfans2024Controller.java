@@ -108,4 +108,15 @@ public class Pfans2024Controller {
         talentplanService.insertByOrg(TalentPlanVo,tokenModel);
         return ApiResult.success();
     }
+
+    //人才育成页面数据结转
+    @RequestMapping(value = "/dataCarryover",method={RequestMethod.POST})
+    public ApiResult dataCarryover(@RequestBody TalentPlan talentPlan, HttpServletRequest request) throws Exception{
+        if (talentPlan == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        talentplanService.dataCarryover(talentPlan,tokenModel);
+        return ApiResult.success();
+    }
 }

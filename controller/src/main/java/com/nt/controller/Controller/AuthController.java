@@ -3,13 +3,16 @@ package com.nt.controller.Controller;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Auth.AppPermission;
 import com.nt.dao_Auth.Role;
+import com.nt.dao_Pfans.PFANS1000.DepartmentAccount;
 import com.nt.dao_Pfans.PFANS2000.Punchcard;
 import com.nt.service_Auth.AuthService;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_pfans.PFANS1000.BusinessService;
+import com.nt.service_pfans.PFANS1000.DepartmentAccountService;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS6000.DeleginformationService;
+import com.nt.service_pfans.PFANS6000.PjExternalInjectionService;
 import com.nt.service_pfans.PFANS6000.PricesetService;
 import com.nt.service_pfans.PFANS8000.MonthlyRateService;
 import com.nt.utils.*;
@@ -63,6 +66,12 @@ public class AuthController {
 
     @Autowired
     private CompanyProjectsService companyProjectsService;
+
+    @Autowired
+    private PjExternalInjectionService pjExternalInjectionService;
+
+    @Autowired
+    private DepartmentAccountService departmentAccountService;
 
     /**
      * @方法名：getActionsAuth
@@ -215,6 +224,19 @@ public class AuthController {
     @RequestMapping(value = "/getPLLeader",method={RequestMethod.GET})
     public ApiResult getPLLeader(HttpServletRequest request) throws Exception {
         companyProjectsService.getPLLeader();
+        return ApiResult.success();
+    }
+
+    //每月统计pj别外注费用
+    @RequestMapping(value = "/saveTableinfo",method={RequestMethod.GET})
+    public ApiResult saveTableinfo(HttpServletRequest request) throws Exception {
+        pjExternalInjectionService.saveTableinfo();
+        return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/insertwww",method={RequestMethod.GET})
+    public ApiResult insertwww(HttpServletRequest request) throws Exception {
+        departmentAccountService.insert();
         return ApiResult.success();
     }
 }

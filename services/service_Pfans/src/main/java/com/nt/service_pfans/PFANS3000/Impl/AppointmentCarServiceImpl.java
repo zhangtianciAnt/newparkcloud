@@ -51,4 +51,14 @@ public class AppointmentCarServiceImpl implements AppointmentCarService {
             appointmentcarMapper.updateByPrimaryKey(appointmentcar);
         }
     }
+
+    @Override
+    public void change(AppointmentCar appointmentcar, TokenModel tokenModel) throws Exception {
+        AppointmentCar acr = appointmentcarMapper.selectByPrimaryKey(appointmentcar.getAppointmentcarid());
+        acr.setCenterid(appointmentcar.getCenterid());
+        acr.setGroupid(appointmentcar.getGroupid());
+        acr.setTeamid(appointmentcar.getTeamid());
+        acr.preUpdate(tokenModel);
+        appointmentcarMapper.updateByPrimaryKey(acr);
+    }
 }

@@ -16,4 +16,7 @@ public interface TalentPlanService {
     //add-ws-6/4-禅道031-人才育成修改各人员查看数据范围修改
     public List<TalentPlan> getDataList(TalentPlan talentPlan) throws Exception;
     //add-ws-6/4-禅道031-人才育成修改各人员查看数据范围修改
+
+    //人才育成页面数据结转
+    void dataCarryover(TalentPlan talentPlan, TokenModel tokenModel) throws Exception;
 }

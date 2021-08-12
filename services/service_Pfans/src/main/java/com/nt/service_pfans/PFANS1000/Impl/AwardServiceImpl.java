@@ -5,11 +5,13 @@ import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS1000.AwardService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
+import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
 import com.nt.utils.ExcelOutPutUtil;
 import com.nt.utils.dao.TokenModel;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -111,7 +113,6 @@ public class AwardServiceImpl implements AwardService {
 
     @Override
     public void updateAwardVo(AwardVo awardVo, TokenModel tokenModel) throws Exception {
-
         Award award = new Award();
         BeanUtils.copyProperties(awardVo.getAward(), award);
         award.preUpdate(tokenModel);
@@ -134,14 +135,19 @@ public class AwardServiceImpl implements AwardService {
                 BeanUtils.copyProperties(policycontractlist, policy);
                 policy2.setPolicycontract_id(policy.getPolicycontract_id());
                 policycontractmapper.delete(policy2);
-                BigDecimal bd = new BigDecimal(policy.getModifiedamount());
+                //region add_qhr_20210724 加入非空判断
+                BigDecimal bd = new BigDecimal(com.mysql.jdbc.StringUtils.isNullOrEmpty(policy.getModifiedamount())? "0" : policy.getModifiedamount());
                 bd = bd.setScale(scale, roundingMode);
-                BigDecimal bd1 = new BigDecimal(policy.getNewamountcase());
+                BigDecimal bd1 = new BigDecimal(com.mysql.jdbc.StringUtils.isNullOrEmpty(policy.getNewamountcase())? "0" : policy.getNewamountcase());
                 bd1 = bd1.setScale(scale, roundingMode);
-                BigDecimal bd2 = new BigDecimal(award.getClaimamount());
+                BigDecimal bd2 = new BigDecimal(com.mysql.jdbc.StringUtils.isNullOrEmpty(award.getClaimamount())? "0" : award.getClaimamount());
                 bd2 = bd2.setScale(scale, roundingMode);
+                BigDecimal bd3 = new BigDecimal(com.mysql.jdbc.StringUtils.isNullOrEmpty(policy.getAvbleamount())? "0" : policy.getAvbleamount());
+                //endregion add_qhr_20210724 加入非空判断
+                bd3 = bd3.setScale(scale, roundingMode);
                 policy.preUpdate(tokenModel);
                 policy.setModifiedamount(String.valueOf(bd.subtract(bd2)));
+                policy.setAvbleamount(String.valueOf(bd3.subtract(bd2)));
                 policy.setNewamountcase(String.valueOf(bd1.add(bd2)));
                 policycontractmapper.insertSelective(policy);
             }
@@ -223,5 +229,10 @@ public class AwardServiceImpl implements AwardService {
 
     }
 
+    @Override
+    public void dataCarryover(Award award,TokenModel tokenModel) throws Exception {
+        award.preUpdate(tokenModel);
+        awardMapper.updateByPrimaryKeySelective(award);
+    }
 
 }

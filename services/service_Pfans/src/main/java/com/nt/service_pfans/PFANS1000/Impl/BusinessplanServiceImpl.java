@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
@@ -11,12 +12,14 @@ import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS1000.*;
 //import com.nt.dao_Pfans.PFANS1000.Businessplandet;
 import com.nt.dao_Pfans.PFANS1000.Vo.*;
+import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 //import com.nt.service_pfans.PFANS1000.mapper.BusinessplandetMapper;
+import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
@@ -64,6 +67,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     private PersonnelplanMapper personnelplanMapper;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private ExpatriatesinforMapper expatriatesinforMapper;
 
     DecimalFormat df = new DecimalFormat("#0.00");
     //@Autowired
@@ -560,56 +565,56 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         }
 //        if (conditionKeys.size() > 0) {
 //            for (String str : conditionKeys) {
-        if(getgroup.size()==0)
-        {
-            PersonnelPlan personnelplan = new PersonnelPlan();
-            BusinessGroupA2Vo businessgroupa2 = new BusinessGroupA2Vo();
-            personnelplan.setCenterid(groupid);
-            personnelplan.setYears(year);
-            if (type.equals("2") || type.equals("3")) {
-                personnelplan.setType(1);
-            } else if (type.equals("1") || type.equals("4")) {
-                personnelplan.setType(0);
-            }
-            List<PersonnelPlan> personnelplanlist = personnelplanMapper.select(personnelplan);
-            if (personnelplanlist.size() > 0) {
-                businessgroupa2.setCommission(personnelplanlist.get(0).getMoneyavg());
-            } else {
-                businessgroupa2.setCommission("0");
-            }
-            businessgroupa2.setMoney1("0");
-            businessgroupa2.setMoney2("0");
-            businessgroupa2.setMoney3("0");
-            businessgroupa2.setMoney4("0");
-            businessgroupa2.setMoney5("0");
-            businessgroupa2.setMoney6("0");
-            businessgroupa2.setMoney7("0");
-            businessgroupa2.setMoney8("0");
-            businessgroupa2.setMoney9("0");
-            businessgroupa2.setMoney10("0");
-            businessgroupa2.setMoney11("0");
-            businessgroupa2.setMoney12("0");
-            businessgroupa2.setMoneyfirst("0");
-            businessgroupa2.setMoneysecond("0");
-            businessgroupa2.setMoneytotal("0");
-            businessgroupa2.setNumber1("0");
-            businessgroupa2.setNumber2("0");
-            businessgroupa2.setNumber3("0");
-            businessgroupa2.setNumber4("0");
-            businessgroupa2.setNumber5("0");
-            businessgroupa2.setNumber6("0");
-            businessgroupa2.setNumber7("0");
-            businessgroupa2.setNumber8("0");
-            businessgroupa2.setNumber9("0");
-            businessgroupa2.setNumber10("0");
-            businessgroupa2.setNumber11("0");
-            businessgroupa2.setNumber12("0");
-            businessgroupa2.setNumberfirst("0");
-            businessgroupa2.setNumbersecond("0");
-            businessgroupa2.setNumbertotal("0");
-            businessgroupa2.setGroupname(groupid);
-            VoList.add(businessgroupa2);
-        }
+//        if(getgroup.size()==0)
+//        {
+//            PersonnelPlan personnelplan = new PersonnelPlan();
+//            BusinessGroupA2Vo businessgroupa2 = new BusinessGroupA2Vo();
+//            personnelplan.setCenterid(groupid);
+//            personnelplan.setYears(year);
+//            if (type.equals("2") || type.equals("3")) {
+//                personnelplan.setType(1);
+//            } else if (type.equals("1") || type.equals("4")) {
+//                personnelplan.setType(0);
+//            }
+//            List<PersonnelPlan> personnelplanlist = personnelplanMapper.select(personnelplan);
+//            if (personnelplanlist.size() > 0) {
+//                businessgroupa2.setCommission(personnelplanlist.get(0).getMoneyavg());
+//            } else {
+//                businessgroupa2.setCommission("0");
+//            }
+//            businessgroupa2.setMoney1("0");
+//            businessgroupa2.setMoney2("0");
+//            businessgroupa2.setMoney3("0");
+//            businessgroupa2.setMoney4("0");
+//            businessgroupa2.setMoney5("0");
+//            businessgroupa2.setMoney6("0");
+//            businessgroupa2.setMoney7("0");
+//            businessgroupa2.setMoney8("0");
+//            businessgroupa2.setMoney9("0");
+//            businessgroupa2.setMoney10("0");
+//            businessgroupa2.setMoney11("0");
+//            businessgroupa2.setMoney12("0");
+//            businessgroupa2.setMoneyfirst("0");
+//            businessgroupa2.setMoneysecond("0");
+//            businessgroupa2.setMoneytotal("0");
+//            businessgroupa2.setNumber1("0");
+//            businessgroupa2.setNumber2("0");
+//            businessgroupa2.setNumber3("0");
+//            businessgroupa2.setNumber4("0");
+//            businessgroupa2.setNumber5("0");
+//            businessgroupa2.setNumber6("0");
+//            businessgroupa2.setNumber7("0");
+//            businessgroupa2.setNumber8("0");
+//            businessgroupa2.setNumber9("0");
+//            businessgroupa2.setNumber10("0");
+//            businessgroupa2.setNumber11("0");
+//            businessgroupa2.setNumber12("0");
+//            businessgroupa2.setNumberfirst("0");
+//            businessgroupa2.setNumbersecond("0");
+//            businessgroupa2.setNumbertotal("0");
+//            businessgroupa2.setGroupname(groupid);
+//            VoList.add(businessgroupa2);
+//        }
 
 //            }
 //        }
@@ -1039,7 +1044,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
 
     @Override
     public String[] getPersonPlan(String year, String groupid) throws Exception {
-        String[] personTable = new String[4];
+        String[] personTable = new String[7];
         List<ActualPL> actualPl = businessplanMapper.getAcutal(groupid, year + "-04-01", (Integer.parseInt(year) + 1) + "-03-31");
         for (ActualPL pl : actualPl) {
             Convert(pl, "code");
@@ -1146,6 +1151,47 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 personTable[1] = "";
                 personTable[2] = "";
                 personTable[3] = JSON.toJSONString(actualPl);
+            }
+            //region add_qhr_20210603 查找外注人员
+            PersonnelPlan personnelwai = new PersonnelPlan();
+            personnelwai.setCenterid(groupid);
+            personnelwai.setYears(year);
+            personnelwai.setType(1);
+            List<PersonnelPlan> personwai = personnelplanMapper.select(personnelwai);  //查找所有外注人员
+            JSONArray waizhuList = new JSONArray();
+            if (personwai.size() > 0) {
+                waizhuList = JSONArray.parseArray(personwai.get(0).getEmployed()); //已经在计划中的人
+
+                List<String> wainameList = new ArrayList<>();
+                List<String> newwainameList = new ArrayList<>();
+                String wainame = "", newwainame = "";
+                int gounei = 0, gouwai = 0, newgounei = 0, newgouwai = 0;
+                for (Object object : waizhuList) {       //根据人员姓名去人员表匹配,拿到已经在计划中的人名字
+                    String name = getProperty(object, "name");
+                    if (!com.nt.utils.StringUtils.isBase64Encode(name)) {
+                        wainame = Base64.encode(name);
+                    }
+                    wainameList.add(wainame);
+                }
+
+                Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+                for (int i = 0; i < wainameList.size(); i++) {
+                    expatriatesinfor.setExpname(wainameList.get(i));
+                    List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+                    if (expatriatesinforList.size() > 0) {
+                        if (expatriatesinforList.get(0).getOperationform().equals("BP024001")) {
+                            gounei++;
+                        } else if (expatriatesinforList.get(0).getOperationform().equals("BP024002")) {
+                            gouwai++;
+                        }
+                    }
+                }
+                personTable[4] = String.valueOf(gounei);
+                personTable[5] = String.valueOf(gouwai);
+                personTable[6] = personwai.get(0).getNewentry();
+            } else {
+                personTable[4] = String.valueOf(0);
+                personTable[5] = String.valueOf(0);
             }
             return personTable;
         }

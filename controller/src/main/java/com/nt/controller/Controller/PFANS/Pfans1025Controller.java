@@ -1,10 +1,18 @@
 package com.nt.controller.Controller.PFANS;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.ReportContractEnVo;
+import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsReportCheckVo;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.AwardService;
+import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -57,6 +65,12 @@ public class Pfans1025Controller {
 
     @Autowired
     private NonJudgmentMapper nonJudgmentMapper;
+
+    @Autowired
+    private ContractapplicationService contractapplicationService;
+
+    @Autowired
+    private OrgTreeService orgtreeservice;
 
 
     @RequestMapping(value = "/generateJxls", method = {RequestMethod.POST})
@@ -417,5 +431,296 @@ public class Pfans1025Controller {
         return ApiResult.success(awardService.get(award));
     }
 
+    /**
+     * @方法名：reportContractEn
+     * @描述：导出合同相关信息
+     * @创建日期：2021/06/21
+     * @作者：ztc
+     * @参数：[ conType:0-委托 1-受托 2-其他
+     * ]
+     * @返回值：List<CompanyProjectsReport>
+     */
+    @RequestMapping(value = "/reportContractEn", method = {RequestMethod.GET})
+    public ApiResult reportContractEn(String conType) throws Exception {
+        List<ReportContractEnVo> cprcList = contractapplicationService.reportContractEn(conType);
+        ArrayList<Map<String, Object>> rowLists = CollUtil.newArrayList();
+        String destFilePath = "";
+        if (conType.equals("0")) {
+            for (ReportContractEnVo item : cprcList) {
+                int contNum = 0;
+                int conNubNum = 0;
+                if (item.getContractnumbercountList() != null) {
+                    conNubNum = item.getContractnumbercountList().size();
+                }
+                int maxNum = conNubNum;
 
+                for (int i = 0; i < maxNum; i++) {
+                    Map<String, Object> row = new LinkedHashMap<>();
+                    if(contNum == 0){
+                        row.put("契约书番号", item.getContractapplication().getContractnumber());
+                        row.put("契约期间", item.getContractapplication().getContractdate());
+                        row.put("延期截止日", item.getContractapplication().getExtensiondate());
+                        row.put("金额", item.getContractapplication().getClaimamount());
+                    }else{
+                        row.put("契约书番号", "");
+                        row.put("契约期间", "");
+                        row.put("延期截止日", "");
+                        row.put("金额", "");
+                    }
+                    row.put("请求方式", item.getContractnumbercountList().get(i).getClaimtype());
+                    row.put("纳品预定日", item.getContractnumbercountList().get(i).getDeliverydate());
+                    row.put("验收完了日", item.getContractnumbercountList().get(i).getCompletiondate());
+                    row.put("请求日", item.getContractnumbercountList().get(i).getClaimdate());
+                    row.put("请求金额", item.getContractnumbercountList().get(i).getClaimamount());
+                    if(contNum == 0 && item.getAwardList().size() > 0){
+                        String[] cladatatime = item.getAwardList().get(0).getClaimdatetime().split("~");
+                        row.put("开发开始日", cladatatime[0].trim());
+                        row.put("开发完了日", cladatatime[1].trim());
+                        row.put("纳品预定日", item.getAwardList().get(0).getDeliverydate());
+                        row.put("请求金额", item.getAwardList().get(0).getClaimamount());
+                        contNum ++;
+                    }else{
+                        row.put("开发开始日", "");
+                        row.put("开发完了日", "");
+                        row.put("纳品预定日", "");
+                        row.put("请求金额", "");
+                    }
+                    row.put("纳品回数", item.getContractnumbercountList().get(i).getClaimtype());
+                    row.put("纳品预定日", item.getContractnumbercountList().get(i).getDeliverydate());
+                    row.put("验收完了日", item.getContractnumbercountList().get(i).getCompletiondate());
+                    row.put("请求日", item.getContractnumbercountList().get(i).getClaimdate());
+                    row.put("请求金额", item.getContractnumbercountList().get(i).getClaimamount());
+                    rowLists.add(row);
+                }
+            }
+            destFilePath = "D:/" + "委托合同.xlsx";
+        }else if(conType.equals("1")){
+            for (ReportContractEnVo item : cprcList) {
+                int conaNum = 0;
+
+                int conNubNum = 0;
+                int compNum = 0;
+                int napNum = 0;
+                int petNum = 0;
+                if (item.getContractnumbercountList() != null) {
+                    conNubNum = item.getContractnumbercountList().size();
+                }
+                if (item.getContractcompoundList() != null) {
+                    compNum = item.getContractcompoundList().size();
+                }
+                if (item.getNapalmList() != null) {
+                    napNum = item.getNapalmList().size();
+                }
+                if (item.getPetitionList() != null) {
+                    petNum = item.getPetitionList().size();
+                }
+                int maxNumOne = ((maxNumOne =(conNubNum > compNum) ? conNubNum : compNum) > napNum ? maxNumOne : napNum);
+                int maxNum = maxNumOne > petNum ? maxNumOne : petNum;
+                for (int i = 0; i < maxNum; i++) {
+                    Map<String, Object> row = new LinkedHashMap<>();
+                    if(conaNum == 0){
+                        row.put("契约书番号", item.getContractapplication().getContractnumber());
+                        row.put("契约期间", item.getContractapplication().getClaimdatetime());
+                        row.put("延期截止日", item.getContractapplication().getExtensiondate());
+                        row.put("金额", item.getContractapplication().getClaimamount());
+                    }else{
+                        row.put("契约书番号", "");
+                        row.put("契约期间", "");
+                        row.put("延期截止日", "");
+                        row.put("金额", "");
+                    }
+                    if(i < conNubNum){
+                        row.put("合同请求方式", item.getContractnumbercountList().get(i).getClaimtype());
+                        row.put("合同请求期间", item.getContractnumbercountList().get(i).getClaimdatetimeqh());
+                        row.put("合同纳品预定日", item.getContractnumbercountList().get(i).getDeliverydate());
+                        row.put("合同验收完了日", item.getContractnumbercountList().get(i).getCompletiondate());
+                        row.put("合同请求日", item.getContractnumbercountList().get(i).getClaimdate());
+                        row.put("合同请求金额", item.getContractnumbercountList().get(i).getClaimamount());
+                    }else {
+                        row.put("合同请求方式", "");
+                        row.put("合同请求期间", "");
+                        row.put("合同纳品预定日", "");
+                        row.put("合同验收完了日", "");
+                        row.put("合同请求日", "");
+                        row.put("合同请求金额", "");
+                    }
+
+                    if(i < compNum){
+                        row.put("复合合同请求方式", item.getContractcompoundList().get(i).getClaimtype());
+                        row.put("复合合同部门", item.getContractcompoundList().get(i).getGroup_id());
+                        row.put("复合合同请求金额", item.getContractcompoundList().get(i).getClaimamount());
+                        row.put("复合合同分配金额", item.getContractcompoundList().get(i).getContractrequestamount());
+                    }else {
+                        row.put("复合合同请求方式", "");
+                        row.put("复合合同部门", "");
+                        row.put("复合合同请求金额", "");
+                        row.put("复合合同分配金额", "");
+                    }
+
+                    if(conaNum == 0 && item.getQuotationList().size() > 0){
+                        row.put("报价单开发开始日", item.getQuotationList().get(0).getStartdate());
+                        row.put("报价单开发完了日", item.getQuotationList().get(0).getEnddate());
+                        row.put("报价单请求金额", item.getAwardList().get(0).getClaimamount());
+                    }else{
+                        row.put("报价单开发开始日", "");
+                        row.put("报价单开发完了日", "");
+                        row.put("报价单请求金额", "");
+                    }
+
+                    if(conaNum == 0 && item.getContractList().size() > 0){
+                        row.put("契约书开发开始日", item.getContractList().get(0).getOpeningdate());
+                        row.put("契约书开发完了日", item.getContractList().get(0).getEnddate());
+                        row.put("契约书请求金额", item.getContractList().get(0).getClaimamount());
+                    }else{
+                        row.put("契约书开发开始日", "");
+                        row.put("契约书开发完了日", "");
+                        row.put("契约书请求金额", "");
+                    }
+
+                    if(conaNum == 0 && item.getAwardList().size() > 0){
+                        String[] cladatatime = item.getAwardList().get(0).getClaimdatetime().split("~");
+                        row.put("决裁书开发开始日", cladatatime[0].trim());
+                        row.put("决裁书开发完了日", cladatatime[1].trim());
+                        row.put("决裁书纳品预定日", item.getAwardList().get(0).getDeliverydate());
+                        row.put("决裁书请求金额", item.getAwardList().get(0).getClaimamount());
+                        conaNum ++;
+                    }else{
+                        row.put("决裁书开发开始日", "");
+                        row.put("决裁书开发完了日", "");
+                        row.put("决裁书纳品预定日", "");
+                        row.put("决裁书请求金额", "");
+                    }
+
+                    if(i < conNubNum){
+                        row.put("决裁书纳品回数", item.getContractnumbercountList().get(i).getClaimtype());
+                        row.put("决裁书纳品预定日", item.getContractnumbercountList().get(i).getDeliverydate());
+                        row.put("决裁书验收完了日", item.getContractnumbercountList().get(i).getCompletiondate());
+                        row.put("决裁书请求日", item.getContractnumbercountList().get(i).getClaimdate());
+                        row.put("决裁书请求金额", item.getContractnumbercountList().get(i).getClaimamount());
+                    }else{
+                        row.put("决裁书纳品回数", "");
+                        row.put("决裁书纳品预定日", "");
+                        row.put("决裁书验收完了日", "");
+                        row.put("决裁书请求日", "");
+                        row.put("决裁书请求金额", "");
+                    }
+
+
+                    if(i < napNum){
+                        row.put("纳品书开发开始日", item.getNapalmList().get(i).getOpeningdate());
+                        row.put("纳品书开发完了日", item.getNapalmList().get(i).getEnddate());
+                        row.put("纳品书请求番号", item.getNapalmList().get(i).getClaimnumber());
+                        row.put("纳品书请求日", item.getNapalmList().get(i).getClaimamount());
+                        row.put("纳品书请求契约种类", item.getNapalmList().get(i).getClaimtype());
+                        row.put("纳品书纳品作成日", item.getNapalmList().get(i).getDeliveryfinshdate());
+                        row.put("纳品书纳品预定日", item.getNapalmList().get(i).getDeliverydate());
+                        row.put("纳品书验收完了日", item.getNapalmList().get(i).getCompletiondate());
+                        row.put("纳品书请求金额", item.getNapalmList().get(i).getClaimamount());
+                    }else {
+                        row.put("纳品书开发开始日", "");
+                        row.put("纳品书开发完了日", "");
+                        row.put("纳品书请求番号", "");
+                        row.put("纳品书请求日", "");
+                        row.put("纳品书请求契约种类", "");
+                        row.put("纳品书纳品作成日", "");
+                        row.put("纳品书纳品预定日", "");
+                        row.put("纳品书验收完了日", "");
+                        row.put("纳品书请求金额", "");
+                    }
+
+                    if(i < petNum){
+                        String[] cladatatime = item.getPetitionList().get(i).getClaimdatetime().split("~");
+                        row.put("请求书开发开始日", cladatatime[0].trim());
+                        row.put("请求书开发完了日", cladatatime[1].trim());
+                        row.put("请求书请求番号", item.getPetitionList().get(i).getClaimnumber());
+                        row.put("请求书请求日", item.getPetitionList().get(i).getClaimdate());
+                        row.put("请求书请求金额", item.getPetitionList().get(i).getClaimamount());
+                    }else {
+                        row.put("请求书开发开始日", "");
+                        row.put("请求书开发完了日", "");
+                        row.put("请求书请求番号", "");
+                        row.put("请求书请求日", "");
+                        row.put("请求书请求金额", "");
+                    }
+                    rowLists.add(row);
+                }
+            }
+            destFilePath = "D:/" + "受托合同.xlsx";
+        }else if (conType.equals("2")) {
+            for (ReportContractEnVo item : cprcList) {
+                int conaNum = 0;
+                int conNubNum = 0;
+                if (item.getContractnumbercountList() != null) {
+                    conNubNum = item.getContractnumbercountList().size();
+                }
+                int maxNum = conNubNum;
+                for (int i = 0; i < maxNum; i++) {
+                    Map<String, Object> row = new LinkedHashMap<>();
+                    if(conaNum == 0){
+                        row.put("契约书番号", item.getContractapplication().getContractnumber());
+                        row.put("契约期间", item.getContractapplication().getContractdate());
+                        row.put("延期截止日", item.getContractapplication().getExtensiondate());
+                        row.put("金额", item.getContractapplication().getClaimamount());
+                    }else{
+                        row.put("契约书番号", "");
+                        row.put("契约期间", "");
+                        row.put("延期截止日", "");
+                        row.put("金额", "");
+                    }
+                    row.put("请求方式", item.getContractnumbercountList().get(i).getClaimtype());
+                    row.put("纳品预定日", item.getContractnumbercountList().get(i).getDeliverydate());
+                    row.put("验收完了日", item.getContractnumbercountList().get(i).getCompletiondate());
+                    row.put("请求日", item.getContractnumbercountList().get(i).getClaimdate());
+                    row.put("请求金额", item.getContractnumbercountList().get(i).getClaimamount());
+                    if(conaNum == 0 && item.getAwardList().size() > 0){
+                        String[] cladatatime = item.getAwardList().get(0).getClaimdatetime().split("~");
+                        row.put("开发开始日", cladatatime[0].trim());
+                        row.put("开发完了日", cladatatime[1].trim());
+                        row.put("纳品预定日", item.getAwardList().get(0).getDeliverydate());
+                        row.put("请求金额", item.getAwardList().get(0).getClaimamount());
+                        conaNum ++;
+                    }else{
+                        row.put("开发开始日", "");
+                        row.put("开发完了日", "");
+                        row.put("纳品预定日", "");
+                        row.put("请求金额", "");
+                    }
+                    row.put("纳品回数", item.getContractnumbercountList().get(i).getClaimtype());
+                    row.put("纳品预定日", item.getContractnumbercountList().get(i).getDeliverydate());
+                    row.put("验收完了日", item.getContractnumbercountList().get(i).getCompletiondate());
+                    row.put("请求日", item.getContractnumbercountList().get(i).getClaimdate());
+                    row.put("请求金额", item.getContractnumbercountList().get(i).getClaimamount());
+                    rowLists.add(row);
+                }
+            }
+            destFilePath = "D:/" + "其他合同.xlsx";
+        }
+            ExcelWriter writer = ExcelUtil.getWriter(destFilePath, "相关信息");
+            writer.write(rowLists);
+            writer.close();
+            return ApiResult.success();
+        }
+
+    /**
+     *
+     * 决裁书数据结转
+     */
+    @RequestMapping(value = "/dataCarryover", method = {RequestMethod.POST})
+    public ApiResult dataCarryover(@RequestBody Award award, HttpServletRequest request) throws Exception {
+        OrgTree newOrgInfo = orgtreeservice.get(new OrgTree());
+        Award award1 = new Award();
+        award1.setAward_id(award.getAward_id());
+        if(award.getMaketype() != "9") {//其他决裁书中group ID为空，不更新
+            award1.setGroup_id(award.getGroup_id());
+        }
+        if (award == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        OrgTree orginfo = orgtreeservice.getOrgInfo(newOrgInfo, award.getGroup_id());
+        award1.setDeployment(orginfo.getCompanyname());
+        awardService.dataCarryover(award1, tokenModel);
+        return ApiResult.success();
+
+    }
 }

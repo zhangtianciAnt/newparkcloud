@@ -185,8 +185,8 @@ public class LogManagementServiceImpl implements LogManagementService {
     //add ccm 1118 日志优化
     @Override
     public List<LogManagement> getDataListByLog_date(LogManagement logmanagement) throws Exception {
-        String log_date = DateUtil.format(logmanagement.getLog_date(), "yyyy-MM");
-        return logmanagementmapper.getDataListByLog_date(logmanagement.getOwners(), log_date);
+        String log_date = DateUtil.format(logmanagement.getLog_date(),"yyyy-MM");
+        return logmanagementmapper.getDataListByLog_date(logmanagement.getOwners(),log_date);
     }
     //add ccm 1118 日志优化
 
@@ -212,7 +212,7 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
-    public List<Projectsystem> CheckList(Projectsystem projectsystem, TokenModel tokenModel) throws Exception {
+    public List<Projectsystem> CheckList(Projectsystem projectsystem,TokenModel tokenModel) throws Exception {
         projectsystem.setName(tokenModel.getUserId());
         List<Projectsystem> projectsystemlist = projectsystemMapper.select(projectsystem);
         return projectsystemlist;
@@ -332,6 +332,18 @@ public class LogManagementServiceImpl implements LogManagementService {
         String Confirmstatus = logmanagement.getConfirmstatus();
         logmanagement.setConfirmstatus(AuthConstants.DEL_FLAG_NORMAL);
         logmanagement.preUpdate(tokenModel);
+        //ADD ccm 210705 更新日志组织id获取项目有效组织信息 fr
+        if(!logmanagement.getProject_id().equals("PP024001") && !logmanagement.getProject_id().isEmpty())
+        {
+            CompanyProjects cp = new CompanyProjects();
+            cp = companyprojectsMapper.selectByPrimaryKey(logmanagement.getProject_id());
+            if(cp!=null && StringUtils.isNullOrEmpty(logmanagement.getGroup_id()))
+            {
+                logmanagement.setGroup_id(cp.getCenter_id());
+            }
+        }
+        logmanagement.setGroup_id(selectEcodeById(logmanagement.getGroup_id()));
+        //ADD ccm 210705 更新日志组织id获取项目有效组织信息 to
         logmanagementmapper.updateByPrimaryKeySelective(logmanagement);
     }
 

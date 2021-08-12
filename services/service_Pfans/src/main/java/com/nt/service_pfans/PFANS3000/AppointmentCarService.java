@@ -16,4 +16,6 @@ public interface AppointmentCarService {
     public void insertAppointmentCar(AppointmentCar appointmentcar, TokenModel tokenModel)throws Exception;
 
     public void updateAppointmentCar(AppointmentCar appointmentcar, TokenModel tokenModel)throws Exception;
+
+    public void change(AppointmentCar appointmentcar, TokenModel tokenModel)throws Exception;
 }

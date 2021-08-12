@@ -104,7 +104,7 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
                 moneyavgSum = moneyavgSum.add(summerMoney.add(winterMoney));
             }
             else{
-                BigDecimal unitprice = new BigDecimal(mavg.getUnitprice());
+                BigDecimal unitprice = new BigDecimal(mavg.getUnitprice() == null ? "0":mavg.getUnitprice());
                 moneyavgSum = moneyavgSum.add(unitprice);
             }
             //update gbb 20210415 事业计划-外驻计划-新建时统计值用【Unitprice】 end
@@ -123,10 +123,10 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
                 else
                 {
                     //add gbb 20210507 人员计划报错出错 start
-                    if(newmavg.getUnitprice() != null){
-                        BigDecimal unitprice = new BigDecimal(newmavg.getUnitprice());
+//                    if(newmavg.getUnitprice() != null){
+                        BigDecimal unitprice = new BigDecimal(newmavg.getUnitprice() == null ? "0":newmavg.getUnitprice());
                         moneyavgSum = moneyavgSum.add(unitprice);
-                    }
+//                    }
                     //add gbb 20210507 人员计划报错出错 end
                 }
 

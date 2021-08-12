@@ -16,6 +16,9 @@ import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS1000.EvectionService;
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
+import com.nt.service_pfans.PFANS1000.mapper.BusinessMapper;
+import com.nt.service_pfans.PFANS1000.mapper.EvectionMapper;
+import com.nt.service_pfans.PFANS1000.mapper.PublicExpenseMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -55,7 +58,32 @@ public class Pfans1013Controller {
     @Autowired
     private LoanApplicationService loanapplicationService;
 
+    @Autowired
+    private EvectionMapper evectionMapper;
+    @Autowired
+    private BusinessMapper businessMapper;
+
     private static final String TAX_KEY = "__TAX_KEY__";
+
+
+    //ztc  临时接口  处理出差 精算
+    @RequestMapping(value = "/antInfo", method = {RequestMethod.GET})
+    public void antInfo(HttpServletRequest request) throws Exception {
+        List<Evection> evectionList = evectionMapper.selectAll();
+        for(Evection evt : evectionList){
+            Business business = new Business();
+            business.setBusiness_id(evt.getBusiness_id());
+            List<Business> businessList = businessMapper.select(business);
+            if(businessList.size() > 0){
+                businessList.get(0).setPublicexpense_id(evt.getEvectionid());
+                businessList.get(0).setInvoiceno(evt.getInvoiceno());
+            }
+            System.out.println(businessList.get(0));
+            businessMapper.updateByPrimaryKey(businessList.get(0));
+        }
+    }
+
+
 
     @RequestMapping(value = "/exportjs", method = {RequestMethod.GET})
     public void exportjs(String evectionid, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -675,5 +703,24 @@ public class Pfans1013Controller {
     @RequestMapping(value = "/getLoanApplication", method = {RequestMethod.GET})
     public ApiResult getLoanApplication(HttpServletRequest request) throws Exception {
         return ApiResult.success(loanapplicationService.getLoapp());
+    }
+
+    @RequestMapping(value = "/one2", method = {RequestMethod.POST})
+    public ApiResult one2(@RequestBody Business business, HttpServletRequest request) throws Exception {
+        if (business == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        List<Evection> evectionList = new ArrayList<>();
+//        if(com.nt.utils.StringUtils.isNotBlank(business.getPublicexpense_id() != )
+        String pubid[] = business.getPublicexpense_id().split(",");
+        if (pubid.length > 0) {
+            for (int i = 0; i < pubid.length; i++) {
+                Evection evection = new Evection();
+                evection.setEvectionid(pubid[i]);
+                List<Evection> eveList = evectionMapper.select(evection);
+                evectionList.addAll(0, eveList);
+            }
+        }
+        return ApiResult.success(evectionList);
     }
 }

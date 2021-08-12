@@ -128,14 +128,23 @@ public class AppreciationServiceImpl implements AppreciationService {
                             Dictionary commentaryDic = new Dictionary();
                             commentaryDic.setValue1(value.get(2).toString());
                             commentaryDic.setPcode("PR056");
-                            commentaryDic = dictionaryMapper.select(commentaryDic).get(0);
-                            if(commentaryDic != null){
-                                commentaryDic.setValue2(commentaryDic.getValue2().replace("%", ""));
-                                // 奖金计算
-                                // 月赏与
-                                double monthAppreciation = Double.parseDouble(dictionary.getValue2()) * 1.8d / 12d;
-                                appreciation.setAmount(BigDecimal.valueOf(monthAppreciation
-                                        * Double.parseDouble(commentaryDic.getValue2()) / 100).setScale(-1, RoundingMode.HALF_UP).toPlainString());
+                            //region add_qhr_20210630 添加月度赏与导入提示
+                            List<Dictionary> commentaryDicList = dictionaryMapper.select(commentaryDic);
+                            if (commentaryDicList.size() > 0) {
+                                commentaryDic = commentaryDicList.get(0);
+                                if(commentaryDic != null){
+                                    commentaryDic.setValue2(commentaryDic.getValue2().replace("%", ""));
+                                    // 奖金计算
+                                    // 月赏与
+                                    double monthAppreciation = Double.parseDouble(dictionary.getValue2()) * 1.8d / 12d;
+                                    appreciation.setAmount(BigDecimal.valueOf(monthAppreciation
+                                            * Double.parseDouble(commentaryDic.getValue2()) / 100).setScale(-1, RoundingMode.HALF_UP).toPlainString());
+                                }
+                            } else {
+                                error = error + 1;
+                                Result.add("模板第" + (k - 1) + "行的評価没有找到，请输入正确的評価，导入失败");
+                                continue;
+                                //endregion add_qhr_20210630 添加月度赏与导入提示
                             }
                         }
                     }

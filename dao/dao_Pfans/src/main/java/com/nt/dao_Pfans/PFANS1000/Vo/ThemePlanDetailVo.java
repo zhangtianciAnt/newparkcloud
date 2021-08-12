@@ -22,6 +22,8 @@ public class ThemePlanDetailVo {
     private String themeplan_id;
 
     private String pthemeplandetail_id;
+    //add_qhr_20210707  增加themeinfor_id字段
+    private String themeinfor_id;
 
     private String center_id;
 
