@@ -2035,7 +2035,9 @@ public class UserServiceImpl implements UserService {
                             throw new LogicalException("登录账户（" + item.get("登录账户●").toString() + "）" + "在人员表中已存在，请勿重复填写。");
                         } else {
                             userAccount.setAccount(customerInfoList.get(0).getUserinfo().getAdfield());
-                            userAccount.setPassword(customerInfoList.get(0).getUserinfo().getAdfield());
+                            // region scc upd 21/8/13 导入修改登录账户，不修改账户密码 from
+//                            userAccount.setPassword(customerInfoList.get(0).getUserinfo().getAdfield());
+                            // endregion scc upd 21/8/13 导入修改登录账户，不修改账户密码 to
                             userAccount.setUsertype("0");
                             query = new Query();
                             query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
