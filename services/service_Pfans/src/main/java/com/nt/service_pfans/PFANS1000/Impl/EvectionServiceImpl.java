@@ -229,6 +229,7 @@ public class EvectionServiceImpl implements EvectionService {
         return resultMap;
     }
 
+    //打印功能调用
     private Map<String, Object> oldmergeDetailList(List<Object> detailList) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         Map<String, Float> specialMap = new HashMap<>();
@@ -242,7 +243,7 @@ public class EvectionServiceImpl implements EvectionService {
             String currency = getProperty(detail, "currency");
             String accountcode = getProperty(detail, "accountcode");
             String mergeKey = "";
-            mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber + " ... " + currency;
+            mergeKey = budgetcoding + " ... " + subjectnumber + " ... " + currency;
             // 行合并
             float money = getPropertyFloat(detail, "rmb");
             float moneysum = getPropertyFloat(detail, "foreigncurrency");
@@ -520,7 +521,7 @@ public class EvectionServiceImpl implements EvectionService {
             String subjectnumber = getProperty(detail, "subjectnumber");
             String mergeKey;
 
-            mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber + " ... " + currency;
+            mergeKey = budgetcoding + " ... " + subjectnumber + " ... " + currency;
 
             // 行合并
             float money = getPropertyFloat(detail, "foreigncurrency");
@@ -625,7 +626,7 @@ public class EvectionServiceImpl implements EvectionService {
             String budgetcoding = getProperty(detail, "budgetcoding");
             String subjectnumber = getProperty(detail, "subjectnumber");
             String mergeKey;
-            mergeKey = keyNo + " ... " + budgetcoding + " ... " + subjectnumber;
+            mergeKey = budgetcoding + " ... " + subjectnumber;
             // 行合并
             float money = getPropertyFloat(detail, "rmb");
             float moneysum = getPropertyFloat(detail, "subsidies");
