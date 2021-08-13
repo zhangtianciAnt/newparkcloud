@@ -18,6 +18,7 @@ import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_Auth.RoleService;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.dao_Org.Dictionary;
 import com.nt.service_Org.mapper.DictionaryMapper;
@@ -65,6 +66,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     @Autowired
     private ContractcompoundMapper contractcompoundMapper;
     @Autowired
+    private AwardReuniteMapper awardReuniteMapper;
+    @Autowired
     private ProjectContractMapper projectContractMapper;
     @Autowired
     private QuotationMapper quotationMapper;
@@ -98,6 +101,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private CoststatisticsdetailMapper coststatisticsdetailMapper;
     @Autowired
     private AwardDetailMapper awardDetailMapper;
+    @Autowired
+    private OrgTreeService orgtreeService;
     //add-ws-7/22-禅道341任务
     @Override
     public List<Individual> getindividual(Individual individual) throws Exception {
@@ -1512,7 +1517,36 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
             }
         }
-        result.put("contractnumbercount", numberList);
+        //    PSDCD_PFANS_20210525_XQ_054 复合合同决裁书分配金额可修改 ztc fr
+        if (cnList != null && compoundList != null && numberList != null) {
+            OrgTree newOrgInfo = orgtreeService.get(new OrgTree());
+            List<AwardReunite> awardReunites = new ArrayList<>();
+            AwardReunite arte = new AwardReunite();
+            arte.setContractnumber(cnList.get(0).getContractnumber());
+            awardReuniteMapper.delete(arte);
+            int rowindex = 0;
+            for(Contractnumbercount count : numberList) {
+                arte.setDeliverydate(count.getDeliverydate());
+                arte.setCompletiondate(count.getCompletiondate());
+                arte.setClaimdate(count.getClaimdate());
+                arte.setSupportdate(count.getSupportdate());
+                arte.setClaimamount(count.getClaimamount());
+                List<Contractcompound> comListAnt = compoundList.stream().filter(item -> item.getClaimtype().equals(count.getClaimtype())).collect(Collectors.toList());
+                for (Contractcompound compound : comListAnt) {
+                    rowindex = rowindex + 1;
+                    arte.setRowindex(rowindex);
+                    arte.preInsert(tokenModel);
+                    arte.setAwardreunite_id(UUID.randomUUID().toString());
+                    arte.setClaimtype(compound.getClaimtype());
+                    OrgTree orginfo = orgtreeService.getOrgInfo(newOrgInfo, compound.getGroup_id());
+                    arte.setDepartment(orginfo.getCompanyname());
+                    arte.setDistriamount(compound.getContractrequestamount());
+                    awardReuniteMapper.insert(arte);
+                }
+            }
+        }
+        //    PSDCD_PFANS_20210525_XQ_054 复合合同决裁书分配金额可修改 ztc to
+         result.put("contractnumbercount", numberList);
         return result;
     }
 
