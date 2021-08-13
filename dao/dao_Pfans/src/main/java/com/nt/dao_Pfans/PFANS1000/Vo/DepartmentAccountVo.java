@@ -247,4 +247,6 @@ public class DepartmentAccountVo {
     //分配金额3月
     private String contractamountSum3;
 
+    private List<DepartmentAccount> departmentAccountList;
+
 }

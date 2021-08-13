@@ -13,6 +13,8 @@ import com.nt.dao_Pfans.PFANS6000.Variousfunds;
 import com.nt.dao_Pfans.PFANS6000.Vo.PjExternalInjectionVo;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_Org.OrgTreeService;
+import com.nt.service_pfans.PFANS1000.DepartmentAccountService;
+import com.nt.service_pfans.PFANS1000.DepartmentalService;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.service_pfans.PFANS6000.PjExternalInjectionService;
 import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsMapper;
@@ -54,6 +56,13 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
     @Autowired
     private ExpatriatesinforMapper expatriatesinforMapper;
 
+    @Autowired
+    private DepartmentalService departmentalService;
+
+    @Autowired
+    private DepartmentAccountService departmentAccountService;
+
+
     //pj别外注费统计定时任务
     //每日凌晨0点15分
     @Scheduled(cron = "0 15 0 * * ?")
@@ -80,6 +89,7 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
         //查询所有审批通过的部门
         List<Workflowinstance> workflow = coststatisticsMapper.getworkflowinstance(groupIdList);
         if(workflow.size() == groupIdList.size()) {
+            //region pj别外注统计定时任务
             //获取当前系统中有效的部门，按照预算编码统计
             OrgTree orgs = orgTreeService.get(new OrgTree());
             DepartmentVo departmentVo = new DepartmentVo();
@@ -301,6 +311,13 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
                     pjExternalInjectionMapper.insertpj(insertpjExternal);
                 }
             }
+            //endregion pj别外注统计定时任务
+
+            //调取外注别部门支出任务
+            departmentalService.getExpatureList();
+
+            //调取部门别收支表任务
+            departmentAccountService.insert();
         }
     //endregion add_修改定时任务时间、并对下面流程做判断
     }
@@ -486,7 +503,7 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
                     }
                 }
                 pjExternalInjectionVoT.setCompanyprojects_id(value.get(0).getCompanyprojects_id());
-                pjExternalInjectionVoT.setThemename("合计");
+                pjExternalInjectionVoT.setThemename("小计");
                 pjExternalInjectionVoT.setApril(String.valueOf(AprilT));
                 pjExternalInjectionVoT.setMay(String.valueOf(MayT));
                 pjExternalInjectionVoT.setJune(String.valueOf(JuneT));
@@ -508,7 +525,7 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
         }
 
         if (returnlist1.size() > 0) {
-            pjExternalInjectionVoZ.setThemename("总计");
+            pjExternalInjectionVoZ.setThemename("合计");
             pjExternalInjectionVoZ.setApril(String.valueOf(AprilZ));
             pjExternalInjectionVoZ.setMay(String.valueOf(MayZ));
             pjExternalInjectionVoZ.setJune(String.valueOf(JuneZ));

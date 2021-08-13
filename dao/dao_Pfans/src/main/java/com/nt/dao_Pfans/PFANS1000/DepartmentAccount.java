@@ -4,6 +4,7 @@ import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Transient;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -244,4 +245,7 @@ public class DepartmentAccount  extends BaseModel {
      */
     @Column(name = "TOTALACTUAL")
     private Double totalactual;
+
+    @Transient
+    private String indextype;
 }

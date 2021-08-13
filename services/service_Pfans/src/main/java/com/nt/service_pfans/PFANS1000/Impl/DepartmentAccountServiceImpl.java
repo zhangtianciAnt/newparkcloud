@@ -49,12 +49,26 @@ public class DepartmentAccountServiceImpl implements DepartmentAccountService {
     @Autowired
     private DictionaryMapper dictionaryMapper;
 
-
+//update_qhr_20210813 后台返回数据类型变化
     @Override
-    public List<DepartmentAccount> selectBygroupid(String year, String department) throws Exception {
+    public List<DepartmentAccountVo> selectBygroupid(String year, String department) throws Exception {
         List<DepartmentAccount> departmentAccountList = new ArrayList<>();
         departmentAccountList = departmentAccountMapper.selectALL(year,department);
-        return departmentAccountList;
+        List<DepartmentAccountVo> departmentAccountVoList = new ArrayList<>();
+        //按照theme分组
+        TreeMap<String,List<DepartmentAccount>> departList =  departmentAccountList.stream().collect(Collectors.groupingBy(DepartmentAccount :: getTheme_id,TreeMap::new,Collectors.toList()));
+        if (departList.size() > 0) {
+            for (List<DepartmentAccount> value : departList.values()) {
+                value.stream().sorted(Comparator.comparing(DepartmentAccount::getIndextype).thenComparing(DepartmentAccount::getAmount));
+                DepartmentAccountVo departmentAccountVo = new DepartmentAccountVo();
+                departmentAccountVo.setThemename(value.get(0).getThemename());
+                departmentAccountVo.setContract(value.get(0).getContract());
+                departmentAccountVo.setToolsorgs(value.get(0).getToolsorgs());
+                departmentAccountVo.setDepartmentAccountList(value);
+                departmentAccountVoList.add(departmentAccountVo);
+            }
+        }
+        return departmentAccountVoList;
     }
 
     @Override
