@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS2000;
 
+import com.nt.dao_Pfans.PFANS2000.Base;
 import com.nt.dao_Pfans.PFANS2000.Giving;
 import com.nt.dao_Pfans.PFANS2000.Lackattendance;
 import com.nt.dao_Pfans.PFANS2000.Residual;
@@ -26,9 +27,9 @@ public interface GivingService {
 
     void insertOtherTwo(String  givingid,TokenModel tokenModel)throws Exception;
 
-    void insertLackattendance(String  givingid,TokenModel tokenModel)throws Exception;
+    void insertLackattendance(String  givingid, TokenModel tokenModel, Base base)throws Exception;
 
-    void insertResidual(String  givingid,TokenModel tokenModel)throws Exception;
+    void insertResidual(String  givingid,TokenModel tokenModel, Base base)throws Exception;
 
     void insertContrast(String  givingid,TokenModel tokenModel)throws Exception;
 
