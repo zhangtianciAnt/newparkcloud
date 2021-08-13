@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,7 +14,7 @@ public class DepartmentTotalVo {
     private String DEPARTMENT;
     private String LOGDATE;
     private String COMPANYPROJECTS_ID;
-    private Double MOUNT;
+    private BigDecimal MOUNT;
     private String TYPE;
 
 }

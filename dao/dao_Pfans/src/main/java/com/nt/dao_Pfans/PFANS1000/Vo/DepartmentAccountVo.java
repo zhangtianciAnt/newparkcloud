@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -72,102 +73,102 @@ public class DepartmentAccountVo {
     /**
      * 4月实际
      */
-    private Double moneyactual4;
+    private BigDecimal moneyactual4;
     /**
      * 5月实际
      */
-    private Double moneyactual5;
+    private BigDecimal moneyactual5;
     /**
      * 6月实际
      */
-    private Double moneyactual6;
+    private BigDecimal moneyactual6;
 
     /**
      * 7月实际
      */
-    private Double moneyactual7;
+    private BigDecimal moneyactual7;
     /**
      * 8月实际
      */
-    private Double moneyactual8;
+    private BigDecimal moneyactual8;
     /**
      * 9月实际
      */
-    private Double moneyactual9;
+    private BigDecimal moneyactual9;
     /**
      * 10月实际
      */
-    private Double moneyactual10;
+    private BigDecimal moneyactual10;
     /**
      * 11月实际
      */
-    private Double moneyactual11;
+    private BigDecimal moneyactual11;
     /**
      * 12月实际
      */
-    private Double moneyactual12;
+    private BigDecimal moneyactual12;
     /**
      * 1月实际
      */
-    private Double moneyactual1;
+    private BigDecimal moneyactual1;
     /**
      * 2月实际
      */
-    private Double moneyactual2;
+    private BigDecimal moneyactual2;
     /**
      * 3月实际
      */
-    private Double moneyactual3;
+    private BigDecimal moneyactual3;
 
     /**
      * 4月计划
      */
-    private Double moneyplan4;
+    private BigDecimal moneyplan4;
     /**
      * 5月计划
      */
-    private Double moneyplan5;
+    private BigDecimal moneyplan5;
     /**
      * 6月计划
      */
-    private Double moneyplan6;
+    private BigDecimal moneyplan6;
 
     /**
      * 7月计划
      */
-    private Double moneyplan7;
+    private BigDecimal moneyplan7;
     /**
      * 8月计划
      */
-    private Double moneyplan8;
+    private BigDecimal moneyplan8;
     /**
      * 9月计划
      */
-    private Double moneyplan9;
+    private BigDecimal moneyplan9;
     /**
      * 10月计划
      */
-    private Double moneyplan10;
+    private BigDecimal moneyplan10;
     /**
      * 11月计划
      */
-    private Double moneyplan11;
+    private BigDecimal moneyplan11;
     /**
      * 12月计划
      */
-    private Double moneyplan12;
+    private BigDecimal moneyplan12;
     /**
      * 1月计划
      */
-    private Double moneyplan1;
+    private BigDecimal moneyplan1;
     /**
      * 2月计划
      */
-    private Double moneyplan2;
+    private BigDecimal moneyplan2;
     /**
      * 3月计划
      */
-    private Double moneyplan3;
+    private BigDecimal moneyplan3;
 
     //请求金额合计
     private String claimamountSum;
