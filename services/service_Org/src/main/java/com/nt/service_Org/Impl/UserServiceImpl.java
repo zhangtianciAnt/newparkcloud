@@ -482,7 +482,7 @@ public class UserServiceImpl implements UserService {
 
                 // region scc  add 21/8/13  住房公积金基数履历降序 from
                 List<CustomerInfo.Personal> housingList = customerInfo.getUserinfo().getHouseData();
-                if(housingList != null && medicalList.size() > 0){
+                if(housingList != null && housingList.size() > 0){
                     housingList = housingList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                 }
                 userInfo.setHouseData(housingList);
@@ -490,7 +490,7 @@ public class UserServiceImpl implements UserService {
 
                 // region scc  add 21/8/13  养老保险基数履历降序 from
                 List<CustomerInfo.Personal> provideForAgedList = customerInfo.getUserinfo().getOldageData();
-                if(provideForAgedList != null && medicalList.size() > 0){
+                if(provideForAgedList != null && provideForAgedList.size() > 0){
                     provideForAgedList = provideForAgedList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                 }
                 userInfo.setOldageData(provideForAgedList);
@@ -498,7 +498,7 @@ public class UserServiceImpl implements UserService {
 
                 // region scc  add 21/8/13  工伤保险基数履历降序 from
                 List<CustomerInfo.Personal> InjuryList = customerInfo.getUserinfo().getGsData();
-                if(InjuryList != null && medicalList.size() > 0){
+                if(InjuryList != null && InjuryList.size() > 0){
                     InjuryList = InjuryList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                 }
                 userInfo.setGsData(InjuryList);
@@ -506,19 +506,35 @@ public class UserServiceImpl implements UserService {
 
                 // region scc  add 21/8/13  失业保险基数履历降序 from
                 List<CustomerInfo.Personal> unemploymentList = customerInfo.getUserinfo().getSyeData();
-                if(unemploymentList != null && medicalList.size() > 0){
+                if(unemploymentList != null && unemploymentList.size() > 0){
                     unemploymentList = unemploymentList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                 }
                 userInfo.setSyeData(unemploymentList);
-                // region scc  add 21/8/13  失业保险基数履历降序 to
+                // endregion scc  add 21/8/13  失业保险基数履历降序 to
 
                 // region scc  add 21/8/13  生育保险基数履历降序 from
                 List<CustomerInfo.Personal> fertilityList = customerInfo.getUserinfo().getSyuData();
-                if(fertilityList != null && medicalList.size() > 0){
+                if(fertilityList != null && fertilityList.size() > 0){
                     fertilityList = fertilityList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                 }
                 userInfo.setSyuData(fertilityList);
-                // region scc  add 21/8/13  生育保险基数履历降序 to
+                // endregion scc  add 21/8/13  生育保险基数履历降序 to
+
+                // region scc  add 21/8/16  Rank履历降序 from
+                List<CustomerInfo.Personal> RankList = customerInfo.getUserinfo().getRankData();
+                if(RankList != null && RankList.size() > 0){
+                    RankList = RankList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setRankData(RankList);
+                // endregion scc  add 21/8/16  Rank履历降序 to
+
+                // region scc  add 21/8/16  职务履历降序 from
+                List<CustomerInfo.Personal> positionList = customerInfo.getUserinfo().getPostData();
+                if(positionList != null && positionList.size() > 0){
+                    positionList = positionList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setPostData(positionList);
+                // endregion scc  add 21/8/16  职务履历降序 to
 
 //                ADD_FJL_05/21   --添加降序
                 customerInfo.setUserinfo(userInfo);
