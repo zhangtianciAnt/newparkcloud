@@ -36,7 +36,7 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
 
     //pj别外注费统计定时任务
     //每月日凌晨点
-    //@Scheduled(cron = "0 10 0 10 * ?")
+    @Scheduled(cron = "0 10 0 10 * ?")
     public void saveTableinfo() throws Exception {
 
         //获取当前系统中有效的部门，按照预算编码统计

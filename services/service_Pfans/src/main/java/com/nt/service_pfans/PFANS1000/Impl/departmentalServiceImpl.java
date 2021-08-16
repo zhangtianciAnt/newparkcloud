@@ -52,7 +52,7 @@ public class departmentalServiceImpl implements DepartmentalService {
      * @参数：[]
      * @返回值：[]
      */
-    //@Scheduled(cron = "0 0 2 * * ?")
+    @Scheduled(cron = "0 0 2 * * ?")
     public void getExpatureList() throws Exception {
         List<Dictionary> dictionaryL = dictionaryService.getForSelect("BP027");
         TokenModel tokenModel = new TokenModel();

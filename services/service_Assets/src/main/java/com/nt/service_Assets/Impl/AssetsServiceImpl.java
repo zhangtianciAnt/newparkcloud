@@ -125,7 +125,7 @@ public class AssetsServiceImpl implements AssetsService {
 
     //【每天凌晨2点】
     // 更新资产
-    //@Scheduled(cron = "0 0 2 * * ?")
+    @Scheduled(cron = "0 0 2 * * ?")
     public void updateAssets() throws Exception{
         LocalDate localDate = LocalDate.now();
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -689,7 +689,6 @@ public class AssetsServiceImpl implements AssetsService {
 //                    }
                     // end by zy
                 }
-
                 if (StrUtil.isNotBlank(assets.getAssets_id())) {
                     assets.preUpdate(tokenModel);
                     assetsMapper.updateByPrimaryKey(assets);

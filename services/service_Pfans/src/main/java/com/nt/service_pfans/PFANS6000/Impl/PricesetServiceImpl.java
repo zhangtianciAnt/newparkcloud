@@ -130,7 +130,7 @@ public class PricesetServiceImpl implements PricesetService {
     //add ccm 20201212
     //系统定时任务每月1号自动保存单价
     //【每月1号凌晨4点】
-    //@Scheduled(cron = "0 0 4 1 * ?")
+    @Scheduled(cron = "0 0 4 1 * ?")
     public void savePriceset() throws Exception{
         //当月和上月的单价
         List<Priceset> pricesetListOLd = new ArrayList<>();
