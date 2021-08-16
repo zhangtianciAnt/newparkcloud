@@ -1771,8 +1771,9 @@ public class UserServiceImpl implements UserService {
                     userinfo.setAge(item.get("年龄").toString());
                 }
                 //是否独生子女
-                if (!org.springframework.util.StringUtils.isEmpty(item.get("是否独生子女"))) {
-                    String children = item.get("是否独生子女").toString();
+                // region scc upd 21/8/16 模板独生子女列正常导入 from
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("是否有独生子女"))) {
+                    String children = item.get("是否有独生子女").toString();
                     if (children != null) {
                         if (children.equals("否")) {
                             userinfo.setChildren("0");
@@ -1781,6 +1782,7 @@ public class UserServiceImpl implements UserService {
                         }
                     }
                 }
+                // endregion scc upd 21/8/16 模板独生子女列正常导入 to
                 //是否大连户籍
                 if (!org.springframework.util.StringUtils.isEmpty(item.get("是否大连户籍"))) {
                     String dlnation = item.get("是否大连户籍").toString();
@@ -2488,8 +2490,9 @@ public class UserServiceImpl implements UserService {
                     if (item.get("年龄●") != null) {
                         customerInfoList.get(0).getUserinfo().setAge(item.get("年龄●").toString());
                     }
-                    if (item.get("是否独生子女●") != null) {
-                        String children = item.get("是否独生子女●").toString();
+                    // region scc upd 21/8/16 模板修改独生子女列正常修改 from
+                    if ((item.get("是否有独生子女●") != null)) {
+                        String children = item.get("是否有独生子女●").toString();
                         if (children != null) {
                             if (children.equals("否")) {
                                 customerInfoList.get(0).getUserinfo().setChildren("0");
@@ -2498,6 +2501,7 @@ public class UserServiceImpl implements UserService {
                             }
                         }
                     }
+                    // endregion scc upd 21/8/16 模板修改独生子女列正常修改 to
                     if (item.get("是否大连户籍●") != null) {
                         String dlnation = item.get("是否大连户籍●").toString();
                         if (dlnation != null) {
