@@ -14,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ import static java.util.stream.Collectors.groupingBy;
 
 
 @Service
+@Component
 @Transactional(rollbackFor = Exception.class)
 public class departmentalServiceImpl implements DepartmentalService {
 
@@ -135,6 +137,11 @@ public class departmentalServiceImpl implements DepartmentalService {
         departmental.setYears(years);
         departmental.setDepartment(group_id);
         departmentalList = departmentalMapper.select(departmental);
+        departmentalList = departmentalMapper.select(departmental);
+        for(Departmental depart : departmentalList){
+            depart.setContractnumber(depart.getEntrycondition().equals("HT004001") ? depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "-废弃" + "】" : depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "】");
+            depart.setClaimamount(depart.getEntrycondition().equals("HT004001") ?  "-"  : depart.getClaimamount());
+        }
         //按照theme分组
         TreeMap<String,List<Departmental>> departList =  departmentalList.stream().collect(Collectors.groupingBy(Departmental :: getThemeinfor_id,TreeMap::new,Collectors.toList()));
         Departmental departHJ = new Departmental();
