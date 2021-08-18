@@ -412,18 +412,18 @@ public class DepartmentAccountServiceImpl implements DepartmentAccountService {
                             if(depTotal.size()==0)
                             {
                                 DepartmentAccountTotal d = new DepartmentAccountTotal();
-                                d.setMoneyactual4(new BigDecimal(0));
-                                d.setMoneyactual5(new BigDecimal(0));
-                                d.setMoneyactual6(new BigDecimal(0));
-                                d.setMoneyactual7(new BigDecimal(0));
-                                d.setMoneyactual8(new BigDecimal(0));
-                                d.setMoneyactual9(new BigDecimal(0));
-                                d.setMoneyactual10(new BigDecimal(0));
-                                d.setMoneyactual11(new BigDecimal(0));
-                                d.setMoneyactual12(new BigDecimal(0));
-                                d.setMoneyactual1(new BigDecimal(0));
-                                d.setMoneyactual2(new BigDecimal(0));
-                                d.setMoneyactual3(new BigDecimal(0));
+                                d.setMoneyactual4(BigDecimal.ZERO);
+                                d.setMoneyactual5(BigDecimal.ZERO);
+                                d.setMoneyactual6(BigDecimal.ZERO);
+                                d.setMoneyactual7(BigDecimal.ZERO);
+                                d.setMoneyactual8(BigDecimal.ZERO);
+                                d.setMoneyactual9(BigDecimal.ZERO);
+                                d.setMoneyactual10(BigDecimal.ZERO);
+                                d.setMoneyactual11(BigDecimal.ZERO);
+                                d.setMoneyactual12(BigDecimal.ZERO);
+                                d.setMoneyactual1(BigDecimal.ZERO);
+                                d.setMoneyactual2(BigDecimal.ZERO);
+                                d.setMoneyactual3(BigDecimal.ZERO);
                                 depTotal.add(d);
                             }
                            //ADD CCM 20210810 下方合计增加经费和差旅费 fr

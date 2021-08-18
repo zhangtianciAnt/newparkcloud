@@ -47,7 +47,8 @@ select
 		SELECT
 			 theme_id
 			,ifnull(thr.themename,'部门共通')
-			,thr.contract
+			,case when cr.THECOMPANY IS NOT NULL then cr.THECOMPANY
+				ELSE '社内' END contract
 			,thr.toolsorgs
 			,dt.amount
 			,dt.indextype
@@ -83,6 +84,8 @@ select
 		FROM departmentaccounttotal dt
 		LEFT JOIN themeinfor thr
 		ON dt.THEME_ID = thr.THEMEINFOR_ID
+		LEFT JOIN customerinfor cr
+		ON cr.CUSTOMERINFOR_ID = thr.CUSTOMERINFOR_ID
 		where dt.department = #{department}
 		AND dt.YEARS = #{years}) a
 		ORDER BY a.themename,a.indextype,a.amount
@@ -231,7 +234,8 @@ FROM
 	SELECT
 	 thr.THEMEINFOR_ID
 	,thr.THEMENAME
-	,thr.CONTRACT
+	,case when cr.THECOMPANY IS NOT NULL then cr.THECOMPANY
+		ELSE '社内' END CONTRACT
 	,thr.TOOLSORGS
 	,thr.YEAR
 	,SUM(AMOUNT4) AS AMOUNT4
@@ -250,6 +254,8 @@ FROM
 	INNER JOIN themeplandetail td
 	ON td.THEMEINFOR_ID = thr.THEMEINFOR_ID
 	AND td.`TYPE` = '0'
+	LEFT JOIN customerinfor cr
+	ON cr.CUSTOMERINFOR_ID = thr.CUSTOMERINFOR_ID
 	WHERE td.CENTER_ID = #{department} OR td.GROUP_ID = #{department} AND thr.YEAR = #{years}
 
 	GROUP BY thr.THEMEINFOR_ID
@@ -584,149 +590,91 @@ GROUP BY temp.themeid,temp.contractapplication_id,temp.companyprojects_id
 	<select id="selectFundingBytheme" resultType="com.nt.dao_Pfans.PFANS1000.DepartmentAccountTotal">
 
 		SELECT
-		   CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '04'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.PDRMB+pub.PDTORMB) ELSE 0 END  AS moneyactual4
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '05'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.PDRMB+pub.PDTORMB) ELSE 0 END AS moneyactual5
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '06'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.PDRMB+pub.PDTORMB) ELSE 0 END AS moneyactual6
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '07'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.PDRMB+pub.PDTORMB) ELSE 0 END AS moneyactual7
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '08'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.PDRMB+pub.PDTORMB) ELSE 0 END AS moneyactual8
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '09'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.PDRMB+pub.PDTORMB) ELSE 0 END AS moneyactual9
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '10'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.PDRMB+pub.PDTORMB) ELSE 0 END AS moneyactual10
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '11'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.PDRMB+pub.PDTORMB) ELSE 0 END AS moneyactual11
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '12'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.PDRMB+pub.PDTORMB) ELSE 0 END AS moneyactual12
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '01'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.PDRMB+pub.PDTORMB) ELSE 0 END AS moneyactual1
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '02'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.PDRMB+pub.PDTORMB) ELSE 0 END AS moneyactual2
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '03'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.PDRMB+pub.PDTORMB) ELSE 0 END AS moneyactual3
+		   IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '04'
+		  		 THEN pub.PDRMB+pub.PDTORMB ELSE 0 END),0)  AS moneyactual4
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '05'
+		  		 THEN pub.PDRMB+pub.PDTORMB ELSE 0 END),0) AS moneyactual5
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '06'
+		  		 THEN pub.PDRMB+pub.PDTORMB ELSE 0 END),0) AS moneyactual6
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '07'
+		  		 THEN pub.PDRMB+pub.PDTORMB ELSE 0 END),0) AS moneyactual7
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '08'
+		  		 THEN pub.PDRMB+pub.PDTORMB ELSE 0 END),0) AS moneyactual8
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '09'
+		  		 THEN pub.PDRMB+pub.PDTORMB ELSE 0 END),0) AS moneyactual9
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '10'
+		  		 THEN pub.PDRMB+pub.PDTORMB ELSE 0 END),0) AS moneyactual10
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '11'
+		  		 THEN pub.PDRMB+pub.PDTORMB ELSE 0 END),0) AS moneyactual11
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '12'
+		  		 THEN pub.PDRMB+pub.PDTORMB ELSE 0 END),0) AS moneyactual12
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '01'
+		  		 THEN pub.PDRMB+pub.PDTORMB ELSE 0 END),0) AS moneyactual1
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '02'
+		  		 THEN pub.PDRMB+pub.PDTORMB ELSE 0 END),0) AS moneyactual2
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '03'
+		  		 THEN pub.PDRMB+pub.PDTORMB ELSE 0 END),0) AS moneyactual3
 
 		FROM (
 			SELECT
-		  		 pubd.REIMBURSEMENTDATE AS REIMBURSEMENTDATE
-		  		,pubd.MONEYS AS MONEYSDE
-		  		,pubd.PUBLICEXPENSE_ID AS PUBLICEXPENSE_ID
-		  		,pubd.PROJECT_ID AS PROJECT_ID
-				,sum(IFNULL(pubd.ODRMB,0)) AS ODRMB
-				,sum(IFNULL(pubd.ODTORMB,0)) AS ODTORMB
-				,sum(IFNULL(pubd.TDRMB,0)) AS TDRMB
-				,sum(IFNULL(pubd.TDTORMB,0)) AS TDTORMB
-				,sum(IFNULL(pubd.PDRMB,0)) AS PDRMB
-				,sum(IFNULL(pubd.PDTORMB,0)) AS PDTORMB
-			FROM
-			(
-				SELECT
-				 e.REIMBURSEMENTDATE AS REIMBURSEMENTDATE
+		  		 e.REIMBURSEMENTDATE AS REIMBURSEMENTDATE
 		  		,e.MONEYS AS MONEYS
 		  		,e.PUBLICEXPENSE_ID AS PUBLICEXPENSE_ID
 		  		,e.PROJECT_ID AS PROJECT_ID
-		  		,e.STATUS AS STATUS
-		  		,e.GROUP_ID AS GROUP_ID
-		  		,e.CENTER_ID AS CENTER_ID
-				,IFNULL(od.RMB,0) AS ODRMB
-		  		,IFNULL(od.TORMB,0) AS ODTORMB
-		  		,0 AS TDRMB
-		  		,0 AS TDTORMB
-		  		,0 AS PDRMB
-		  		,0 AS PDTORMB
-				FROM publicexpense e
-				INNER JOIN otherdetails od
-				ON od.PUBLICEXPENSE_ID = e.PUBLICEXPENSE_ID
+				,sum(IFNULL(ad.RMB,0)) AS PDRMB
+				,sum(IFNULL(ad.TORMB,0)) AS PDTORMB
 
-				UNION ALL
-
-				SELECT
-				 e.REIMBURSEMENTDATE AS REIMBURSEMENTDATE
-		  		,e.MONEYS AS MONEYS
-		  		,e.PUBLICEXPENSE_ID AS PUBLICEXPENSE_ID
-		  		,e.PROJECT_ID AS PROJECT_ID
-		  		,e.STATUS AS STATUS
-		  		,e.GROUP_ID AS GROUP_ID
-		  		,e.CENTER_ID AS CENTER_ID
-				,0 AS ODRMB
-		  		,0 AS ODTORMB
-		  		,IFNULL(td.RMB,0) AS TDRMB
-		  		,IFNULL(td.TORMB,0) AS TDTORMB
-		  		,0 AS PDRMB
-		  		,0 AS PDTORMB
-				FROM publicexpense e
-				INNER JOIN trafficdetails td
-				ON td.PUBLICEXPENSE_ID = e.PUBLICEXPENSE_ID
-
-				UNION ALL
-
-				SELECT
-				 e.REIMBURSEMENTDATE AS REIMBURSEMENTDATE
-		  		,e.MONEYS AS MONEYS
-		  		,e.PUBLICEXPENSE_ID AS PUBLICEXPENSE_ID
-		  		,e.PROJECT_ID AS PROJECT_ID
-		  		,e.STATUS AS STATUS
-		  		,e.GROUP_ID AS GROUP_ID
-		  		,e.CENTER_ID AS CENTER_ID
-				,0 AS ODRMB
-		  		,0 AS ODTORMB
-		  		,0 AS TDRMB
-		  		,0 AS TDTORMB
-		  		,IFNULL(ad.RMB,0) AS PDRMB
-		  		,IFNULL(ad.TORMB,0) AS PDTORMB
-				FROM publicexpense e
+			FROM publicexpense e
 				INNER JOIN purchasedetails ad
 				ON ad.PUBLICEXPENSE_ID = e.PUBLICEXPENSE_ID
-			) pubd
+				AND ad.PLSUMMARY = 'PJ111010'
+				INNER JOIN
+				(
+					SELECT cp.COMPANYPROJECTS_ID
+					FROM companyprojects cp
+					INNER  JOIN projectcontract pc
+					ON pc.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+					AND pc.THEMEINFOR_ID = #{themeid}
+					WHERE cp.`STATUS` >= 4
+					GROUP BY cp.COMPANYPROJECTS_ID
+				) cpp
+				ON cpp.COMPANYPROJECTS_ID = e.PROJECT_ID
 
 			WHERE
-		   	  pubd.REIMBURSEMENTDATE  BETWEEN date_format( concat( #{years}, '-04-01' ) ,'%Y-%m')
-		        									AND  date_format( concat(  CONVERT(#{years}, SIGNED) + 1 , '-03-31' ),'%Y-%m')
-			AND pubd.`STATUS` = '4'
-			AND (pubd.GROUP_ID = #{department} or pubd.CENTER_ID = #{department})
+		   	  e.REIMBURSEMENTDATE  BETWEEN date_format( CONCAT( #{years}, '-04-01' ) ,'%Y-%m-%d')
+		        									AND  date_format( concat(  CONVERT(#{years}, SIGNED) + 1 , '-03-31' ),'%Y-%m-%d')
+			AND e.`STATUS` = '4'
+			AND (e.GROUP_ID = #{department} or e.CENTER_ID = #{department})
 
-			GROUP BY pubd.PUBLICEXPENSE_ID
-
-		) pub
-		INNER JOIN companyprojects cp
-		ON cp.COMPANYPROJECTS_ID = pub.PROJECT_ID
-		AND cp.`STATUS` >= 4
-		INNER JOIN projectcontract pc
-		ON pc.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
-
-		AND pc.THEMEINFOR_ID = #{themeid}
-
+			GROUP BY e.PUBLICEXPENSE_ID) pub
 	</select>
 	<select id="selectTravelMountBytheme" resultType="com.nt.dao_Pfans.PFANS1000.DepartmentAccountTotal">
 
 		SELECT
-		   CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '04'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB) ELSE 0 END  AS moneyactual4
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '05'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB) ELSE 0 END AS moneyactual5
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '06'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB) ELSE 0 END AS moneyactual6
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '07'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB) ELSE 0 END AS moneyactual7
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '08'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB) ELSE 0 END AS moneyactual8
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '09'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB) ELSE 0 END AS moneyactual9
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '10'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB) ELSE 0 END AS moneyactual10
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '11'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB) ELSE 0 END AS moneyactual11
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '12'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB) ELSE 0 END AS moneyactual12
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '01'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB) ELSE 0 END AS moneyactual1
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '02'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB) ELSE 0 END AS moneyactual2
-		  ,CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '03'
-		  		 THEN SUM(pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB) ELSE 0 END AS moneyactual3
+		   IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '04'
+		  		 THEN pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB ELSE 0 END),0)  AS moneyactual4
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '05'
+		  		 THEN pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB ELSE 0 END),0) AS moneyactual5
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '06'
+		  		 THEN pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB ELSE 0 END),0) AS moneyactual6
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '07'
+		  		 THEN pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB ELSE 0 END),0) AS moneyactual7
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '08'
+		  		 THEN pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB ELSE 0 END),0) AS moneyactual8
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '09'
+		  		 THEN pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB ELSE 0 END),0) AS moneyactual9
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '10'
+		  		 THEN pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB ELSE 0 END),0) AS moneyactual10
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '11'
+		  		 THEN pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB ELSE 0 END),0) AS moneyactual11
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '12'
+		  		 THEN pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB ELSE 0 END),0) AS moneyactual12
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '01'
+		  		 THEN pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB ELSE 0 END),0) AS moneyactual1
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '02'
+		  		 THEN pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB ELSE 0 END),0) AS moneyactual2
+		  ,IFNULL(SUM(CASE WHEN DATE_FORMAT(pub.REIMBURSEMENTDATE, '%m') = '03'
+		  		 THEN pub.ODRMB+pub.ODTORMB+pub.TDRMB+pub.TDTORMB+pub.ADRMB+pub.ADTORMB ELSE 0 END),0) AS moneyactual3
 
 		FROM (
 			SELECT
@@ -802,23 +750,26 @@ GROUP BY temp.themeid,temp.contractapplication_id,temp.companyprojects_id
 
 			) pubd
 
+			INNER JOIN
+			(
+					SELECT cp.COMPANYPROJECTS_ID
+					FROM companyprojects cp
+					INNER  JOIN projectcontract pc
+					ON pc.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
+					AND pc.THEMEINFOR_ID = #{themeid}
+					WHERE cp.`STATUS` >= 4
+					GROUP BY cp.COMPANYPROJECTS_ID
+			) cpp
+			ON cpp.COMPANYPROJECTS_ID = pubd.PROJECT_ID
+
 			WHERE
-		   	  pubd.REIMBURSEMENTDATE  BETWEEN date_format( concat( #{years}, '-04-01' ) ,'%Y-%m')
-		        									AND  date_format( concat(  CONVERT(#{years}, SIGNED) + 1 , '-03-31' ),'%Y-%m')
+		   	  pubd.REIMBURSEMENTDATE  BETWEEN date_format( CONCAT( #{years}, '-04-01' ) ,'%Y-%m-%d')
+		        									AND  date_format( concat(  CONVERT(#{years}, SIGNED) + 1 , '-03-31' ),'%Y-%m-%d')
 			AND pubd.`STATUS` = '4'
 			AND (pubd.GROUP_ID = #{department} or pubd.CENTER_ID = #{department})
 
 			GROUP BY pubd.EVECTION_ID
-
-		) pub
-		INNER JOIN companyprojects cp
-		ON cp.COMPANYPROJECTS_ID = pub.PROJECT_ID
-		AND cp.`STATUS` >= 4
-		INNER JOIN projectcontract pc
-		ON pc.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
-
-		AND pc.THEMEINFOR_ID = #{themeid}
-
+			) pub
 	</select>
 	<insert id="insertDepTotalAll" parameterType="java.util.List">
 		insert into DepartmentAccountTotal
