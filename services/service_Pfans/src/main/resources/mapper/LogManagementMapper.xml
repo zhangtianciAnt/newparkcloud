@@ -16,7 +16,9 @@
     </select>
 
     <select id="getListPLlogman" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
-        SELECT * FROM logmanagement WHERE PROJECT_ID IN (
+        SELECT *
+        FROM logmanagement
+        WHERE PROJECT_ID IN (
         select companyprojects.COMPANYPROJECTS_ID from companyprojects
                 where COMPANYPROJECTS_ID in (
                 select projectsystem.COMPANYPROJECTS_ID from projectsystem
@@ -25,6 +27,20 @@
                 and name = #{owner}
                 and REPLACE(EXITTIME,'-','')  >= DATE_FORMAT(SYSDATE(),'%Y%m%d')
                 GROUP BY projectsystem.COMPANYPROJECTS_ID))
+        OR CREATEBY IN (
+        SELECT e.ACCOUNT
+        FROM expatriatesinfor e
+        WHERE 1=1
+        <if test="departmentcen != null and departmentcen !=''">
+            AND (e.GROUP_ID = #{departmentcen}
+            <if test="departmentgro != null and departmentgro !=''">
+                OR e.GROUP_ID = #{departmentgro})
+            </if>
+            <if test="departmentgro == null or departmentgro ==''">
+                )
+            </if>
+        </if>
+        )
     </select>
 
 <!--    add ccm 1118 日志优化-->
