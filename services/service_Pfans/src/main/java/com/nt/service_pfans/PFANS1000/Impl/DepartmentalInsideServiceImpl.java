@@ -3,7 +3,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS1000.DepartmentalInside;
-import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentVo;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalInsideBaseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.StaffWorkMonthInfoVo;
 import com.nt.service_Org.OrgTreeService;
@@ -48,35 +48,7 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
         Calendar calnew = Calendar.getInstance();
         int yearnow = calnew.get(Calendar.YEAR);
         List<DepartmentVo> departmentVoList = new ArrayList<>();
-        DepartmentVo departmentVo = new DepartmentVo();
-        OrgTree orgs = orgTreeService.get(new OrgTree());
-        for (OrgTree orgfu : orgs.getOrgs()) {
-            for (OrgTree orgCenter : orgfu.getOrgs()) {
-                if (!StringUtils.isNullOrEmpty(orgCenter.getEncoding())) {
-                    departmentVo = new DepartmentVo();
-                    departmentVo.setDepartmentId(orgCenter.get_id());
-                    departmentVo.setDepartmentname(orgCenter.getCompanyname());
-                    departmentVo.setDepartmentshortname(orgCenter.getCompanyshortname());
-                    departmentVo.setDepartmentEncoding(orgCenter.getEncoding());
-                    departmentVo.setDepartmentEn(orgCenter.getCompanyen());
-                    departmentVo.setDepartmentType(orgCenter.getType());
-                    departmentVo.setDepartmentUserid(orgCenter.getUser());
-                    departmentVoList.add(departmentVo);
-                } else {
-                    for (OrgTree orgGroup : orgCenter.getOrgs()) {
-                        departmentVo = new DepartmentVo();
-                        departmentVo.setDepartmentId(orgGroup.get_id());
-                        departmentVo.setDepartmentname(orgGroup.getCompanyname());
-                        departmentVo.setDepartmentshortname(orgGroup.getCompanyshortname());
-                        departmentVo.setDepartmentEncoding(orgGroup.getEncoding());
-                        departmentVo.setDepartmentEn(orgGroup.getCompanyen());
-                        departmentVo.setDepartmentType(orgGroup.getType());
-                        departmentVo.setDepartmentUserid(orgGroup.getUser());
-                        departmentVoList.add(departmentVo);
-                    }
-                }
-            }
-        }
+        departmentVoList = orgTreeService.getAllDepartment();
 
         List<DepartmentalInsideBaseVo> departmentalInsideBaseVoList = departmentalInsideMapper.getBaseInfo(String.valueOf(year));
         List<String> userList = departmentalInsideBaseVoList.stream().map(DepartmentalInsideBaseVo::getNAME).distinct().collect(Collectors.toList());
