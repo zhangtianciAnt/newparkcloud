@@ -3,12 +3,12 @@ package com.nt.service_pfans.PFANS1000.Impl;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.DepartmentAccount;
 import com.nt.dao_Pfans.PFANS1000.DepartmentAccountTotal;
 import com.nt.dao_Pfans.PFANS1000.ThemeInfor;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentAccountVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentTotalVo;
-import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.service_Org.OrgTreeService;
@@ -102,42 +102,8 @@ public class DepartmentAccountServiceImpl implements DepartmentAccountService {
         int yearnow = calnew.get(Calendar.YEAR);
 
         List<DepartmentVo> departmentVoList = new ArrayList<>();
-        DepartmentVo departmentVo = new DepartmentVo();
         //获取当前系统中有效的部门，按照预算编码统计
-        OrgTree orgs = orgTreeService.get(new OrgTree());
-        //副总
-        for (OrgTree orgfu : orgs.getOrgs()) {
-            //Center
-            for (OrgTree orgCenter : orgfu.getOrgs()) {
-                if(!StringUtils.isNullOrEmpty(orgCenter.getEncoding()))
-                {
-                    departmentVo = new DepartmentVo();
-                    departmentVo.setDepartmentId(orgCenter.get_id());
-                    departmentVo.setDepartmentname(orgCenter.getCompanyname());
-                    departmentVo.setDepartmentshortname(orgCenter.getCompanyshortname());
-                    departmentVo.setDepartmentEncoding(orgCenter.getEncoding());
-                    departmentVo.setDepartmentEn(orgCenter.getCompanyen());
-                    departmentVo.setDepartmentType(orgCenter.getType());
-                    departmentVo.setDepartmentUserid(orgCenter.getUser());
-                    departmentVoList.add(departmentVo);
-                }
-                else
-                {
-                    for(OrgTree orgGroup : orgCenter.getOrgs())
-                    {
-                        departmentVo = new DepartmentVo();
-                        departmentVo.setDepartmentId(orgGroup.get_id());
-                        departmentVo.setDepartmentname(orgGroup.getCompanyname());
-                        departmentVo.setDepartmentshortname(orgGroup.getCompanyshortname());
-                        departmentVo.setDepartmentEncoding(orgGroup.getEncoding());
-                        departmentVo.setDepartmentEn(orgGroup.getCompanyen());
-                        departmentVo.setDepartmentType(orgGroup.getType());
-                        departmentVo.setDepartmentUserid(orgGroup.getUser());
-                        departmentVoList.add(departmentVo);
-                    }
-                }
-            }
-        }
+        departmentVoList = orgTreeService.getAllDepartment();
 
         //检索当前年度和组织查询所有的 和合同关联的theme列表，合同列表
         TokenModel tokenModel = new TokenModel();

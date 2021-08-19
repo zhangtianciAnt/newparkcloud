@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.OrgTree;
-import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentVo;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.PjExternalInjection;
@@ -91,39 +91,8 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
         if(workflow.size() == groupIdList.size()) {
             //region pj别外注统计定时任务
             //获取当前系统中有效的部门，按照预算编码统计
-            OrgTree orgs = orgTreeService.get(new OrgTree());
-            DepartmentVo departmentVo = new DepartmentVo();
             List<DepartmentVo> departmentVoList = new ArrayList<>();
-//副总
-            for (OrgTree orgfu : orgs.getOrgs()) {
-                //Center
-                for (OrgTree orgCenter : orgfu.getOrgs()) {
-                    if (!StringUtils.isNullOrEmpty(orgCenter.getEncoding())) {
-                        departmentVo = new DepartmentVo();
-                        departmentVo.setDepartmentId(orgCenter.get_id());
-                        departmentVo.setDepartmentname(orgCenter.getCompanyname());
-                        departmentVo.setDepartmentshortname(orgCenter.getCompanyshortname());
-                        departmentVo.setDepartmentEncoding(orgCenter.getEncoding());
-                        departmentVo.setDepartmentEn(orgCenter.getCompanyen());
-                        departmentVo.setDepartmentType(orgCenter.getType());
-                        departmentVo.setDepartmentUserid(orgCenter.getUser());
-                        departmentVoList.add(departmentVo);
-                    } else {
-                        for (OrgTree orgGroup : orgCenter.getOrgs()) {
-                            departmentVo = new DepartmentVo();
-                            departmentVo.setDepartmentId(orgGroup.get_id());
-                            departmentVo.setDepartmentname(orgGroup.getCompanyname());
-                            departmentVo.setDepartmentshortname(orgGroup.getCompanyshortname());
-                            departmentVo.setDepartmentEncoding(orgGroup.getEncoding());
-                            departmentVo.setDepartmentEn(orgGroup.getCompanyen());
-                            departmentVo.setDepartmentType(orgGroup.getType());
-                            departmentVo.setDepartmentUserid(orgGroup.getUser());
-                            departmentVoList.add(departmentVo);
-                        }
-                    }
-                }
-            }
-
+            departmentVoList = orgTreeService.getAllDepartment();
 
             TokenModel tokenModel = new TokenModel();
 //            SimpleDateFormat sfYM = new SimpleDateFormat("yyyyMM");
