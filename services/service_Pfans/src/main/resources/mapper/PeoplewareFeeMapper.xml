@@ -3,11 +3,12 @@
 <mapper namespace="com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper">
     <insert id="insertList" parameterType="com.nt.dao_Pfans.PFANS4000.PeoplewareFee">
         insert into peoplewarefee (PEOPLEWARE_ID,GROUP_ID,YEAR,RANKS,MONTH1,MONTH2,MONTH3,MONTH4,MONTH5,MONTH6,MONTH7,MONTH8,MONTH9,MONTH10,
-                                   MONTH11,MONTH12) values
+                                   MONTH11,MONTH12,STATUS,CREATEBY,CREATEON,MODIFYBY,MODIFYON,OWNER,TENANTID) values
         <foreach collection="fees" index="index" item="item" separator=",">
             (#{item.peoplewareid},#{item.groupid},#{item.year},#{item.ranks},#{item.month1},#{item.month2},#{item.month3},
             #{item.month4},#{item.month5},#{item.month6},#{item.month7},#{item.month8},#{item.month9},#{item.month10},
-            #{item.month11},#{item.month12})
+            #{item.month11},#{item.month12},#{item.status},#{item.createby},#{item.createon},#{item.modifyby},#{item.modifyon},
+            #{item.owner},#{item.tenantid})
         </foreach>
     </insert>
 
@@ -16,7 +17,9 @@
             UPDATE peoplewarefee
             SET MONTH4 = #{item.month4,jdbcType=VARCHAR},MONTH5 = #{item.month5,jdbcType=VARCHAR},MONTH6 = #{item.month6,jdbcType=VARCHAR},MONTH7 = #{item.month7,jdbcType=VARCHAR},
             MONTH8 = #{item.month8,jdbcType=VARCHAR},MONTH9 = #{item.month9,jdbcType=VARCHAR},MONTH10 = #{item.month10,jdbcType=VARCHAR},MONTH11 = #{item.month11,jdbcType=VARCHAR},
-            MONTH12 = #{item.month12,jdbcType=VARCHAR},MONTH1 = #{item.month1,jdbcType=VARCHAR},MONTH2 = #{item.month2,jdbcType=VARCHAR},MONTH3 = #{item.month3,jdbcType=VARCHAR}
+            MONTH12 = #{item.month12,jdbcType=VARCHAR},MONTH1 = #{item.month1,jdbcType=VARCHAR},MONTH2 = #{item.month2,jdbcType=VARCHAR},MONTH3 = #{item.month3,jdbcType=VARCHAR},
+            STATUS = #{item.status},CREATEBY = #{item.createby},CREATEON = #{item.createon},MODIFYBY = #{item.modifyby},MODIFYON = #{item.modifyon},
+            OWNER = #{item.owner},TENANTID = #{item.tenantid}
             WHERE GROUP_ID = #{item.groupid,jdbcType=VARCHAR} and YEAR = #{item.year,jdbcType=VARCHAR} and RANKS = #{item.ranks,jdbcType=VARCHAR};
         </foreach>
     </update>

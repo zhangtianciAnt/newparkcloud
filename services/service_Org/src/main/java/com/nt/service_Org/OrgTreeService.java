@@ -48,11 +48,4 @@ public interface OrgTreeService {
     List<DepartmentVo> getAllDepartment() throws  Exception;
     //add ccm 20210819 获取所有有效部门的信息 fr
 
-    // region scc add 21/8/18 根据部门简称查询id from
-    String queryIdBycom(String Company) throws  Exception;
-    // endregion scc add 21/8/18 根据部门简称查询id from
-
-    //region scc 21/8/17 获取所有有效部门简称 from
-    List<String> queryAllComp() throws Exception;
-    //endregion scc 21/8/17 获取所有有效部门简称 from
 }

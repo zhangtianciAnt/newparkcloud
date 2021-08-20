@@ -70,7 +70,13 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
         message.delete(0,message.length());
 
         List<Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
-        List<String> companyens = orgTreeService.queryAllComp();
+        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+        HashMap<String,String> companyid = new HashMap<>();
+        List<String> companyens = new ArrayList<>();
+        for(DepartmentVo vo : allDepartment){
+            companyens.add(vo.getDepartmentEn());
+            companyid.put(vo.getDepartmentEn(),vo.getDepartmentId());
+        }
         List<PeoplewareFee> useradd = new ArrayList<>();
         PeoplewareFee peoplewareFee = new PeoplewareFee();
         message.append("对应年度的");
@@ -82,7 +88,7 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
                 peoplewareFee.setPeoplewareid(uuid);
                 PeoplewareFee peoplewareFee1 = new PeoplewareFee();
                 if(item.get("部门(简称)") != null && item.get("年度") != null) {
-                    peoplewareFee1.setGroupid(orgTreeService.queryIdBycom(Convert.toStr(item.get("部门(简称)"))));
+                    peoplewareFee1.setGroupid(companyid.get(item.get("部门(简称)")));
                     peoplewareFee1.setYear(Convert.toStr(item.get("年度")));
                 }
                 List<PeoplewareFee> contans = peoplewarefeeMapper.select(peoplewareFee1);
@@ -100,7 +106,7 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
                 if (!org.springframework.util.StringUtils.isEmpty(item.get("部门(简称)"))) {
                     List<String> companyens1 = companyens.stream().distinct().filter(items -> (items.equals(item.get("部门(简称)")))).collect(Collectors.toList());
                     if(companyens1.size() > 0) {
-                        peoplewareFee.setGroupid(orgTreeService.queryIdBycom(Convert.toStr(item.get("部门(简称)"))));
+                        peoplewareFee.setGroupid(companyid.get(item.get("部门(简称)")));
                     }else {
                         throw new LogicalException("第" + k + "行 请输入正确的部门(简称)，请确认。");
                     }
@@ -223,6 +229,7 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
                         for (Dictionary dic : collects) {
                             String uuid = UUID.randomUUID().toString();
                             peomore = new PeoplewareFee(uuid, keys, String.valueOf(Calendar.getInstance().get(Calendar.YEAR)), dic.getValue1(), "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+                            peomore.preInsert(tokenModel);
                             all.add(peomore);
                         }
                     });
@@ -237,7 +244,7 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
                 && !org.springframework.util.StringUtils.isEmpty(item.get("部门(简称)"))) {
                     peoplewareFee.setRanks(Convert.toStr(item.get("员工RANK")));
                     peoplewareFee.setYear(Convert.toStr(item.get("年度")));
-                    peoplewareFee.setGroupid(orgTreeService.queryIdBycom(Convert.toStr(item.get("部门(简称)"))));
+                    peoplewareFee.setGroupid(companyid.get(item.get("部门(简称)")));
                 }else{
                     throw new LogicalException("第" + k + "行 请对应年度、部门、员工RANK进行修改，请确认。");
                 }
@@ -281,6 +288,7 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
                         feeList.get(0).setMonth12(Convert.toStr(item.get("12月●")));
                     }
                 }
+                feeList.get(0).preInsert(tokenModel);
                 accesscount = accesscount + 1;
                 useradd.add(feeList.get(0));
             }
