@@ -47,4 +47,12 @@ public interface OrgTreeService {
     //获取所有有效部门，从center查找预算编码，存在则作为部门，不存在则获取center下group作为部门
     List<DepartmentVo> getAllDepartment() throws  Exception;
     //add ccm 20210819 获取所有有效部门的信息 fr
+
+    // region scc add 21/8/18 根据部门简称查询id from
+    String queryIdBycom(String Company) throws  Exception;
+    // endregion scc add 21/8/18 根据部门简称查询id from
+
+    //region scc 21/8/17 获取所有有效部门简称 from
+    List<String> queryAllComp() throws Exception;
+    //endregion scc 21/8/17 获取所有有效部门简称 from
 }
