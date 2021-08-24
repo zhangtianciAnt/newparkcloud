@@ -6,10 +6,7 @@ import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,5 +25,10 @@ public class Pfans1052Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         departmentalInsideService.insert();
         return ApiResult.success();
+    }
+
+    @GetMapping("/insert")
+    public ApiResult getTableinfo(@RequestParam String year,@RequestParam String group_id, HttpServletRequest request) throws Exception {
+        return ApiResult.success(departmentalInsideService.getTableinfo(year, group_id));
     }
 }

@@ -9,25 +9,25 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DepartmentalInsideBaseVo {
     /*themeid*/
-    private String THEMEINFOR_ID;
+    private String themeinfor_id;
     /*theme名称*/
-    private String THEMENAME;
+    private String themename;
     /*theme分类*/
-    private String DIVIDE;
+    private String divide;
     /*theme委托元*/
-    private String TOOLSORGS;
+    private String toolsorgs;
     /*合同号*/
-    private String CONTRACTNUMBER;
+    private String contractnumber;
     /*合同总金额*/
-    private String CLAIMAMOUNT;
+    private String claimamount;
     /*合同转台*/
-    private String ENTRYCONDITION;
+    private String entrycondition;
     /*合同明细金额*/
-    private String CONTRACATAMOUNTDETAIL;
+    private String contracatamountdetail;
     /*项目主键*/
-    private String COMPANYPROJECTS_ID;
+    private String companyprojects_id;
     /*项目人员id*/
-    private String NAME;
+    private String name;
     /*项目人员rank*/
-    private String RANK;
+    private String rank;
 }

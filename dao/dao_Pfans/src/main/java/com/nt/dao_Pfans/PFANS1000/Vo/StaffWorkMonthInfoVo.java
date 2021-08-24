@@ -13,4 +13,5 @@ public class StaffWorkMonthInfoVo {
     private String time_start;
     private String group_id;
     private String project_id;
+    private String numbers;
 }

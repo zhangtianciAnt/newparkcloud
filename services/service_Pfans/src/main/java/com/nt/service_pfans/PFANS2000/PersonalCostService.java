@@ -3,10 +3,12 @@ package com.nt.service_pfans.PFANS2000;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.PersonalCostExpVo;
+import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 public interface PersonalCostService {
 
@@ -34,4 +36,6 @@ public interface PersonalCostService {
     //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-start
     List<PersonalCost> getFuzzyQuery (String yearsantid,String username,String allotmentAnt,String group_id,String rnAnt) throws Exception;
     //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-end
+
+    Map<String,PeoplewareFee> getBmRanksInfo(String years, String department) throws Exception;
 }
