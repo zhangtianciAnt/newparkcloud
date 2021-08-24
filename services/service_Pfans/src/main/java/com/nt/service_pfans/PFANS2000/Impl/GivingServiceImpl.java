@@ -804,7 +804,11 @@ public class GivingServiceImpl implements GivingService {
                 userinfo.setEnddate(formatStringDate(userinfo.getEnddate()));
             }
             calSuitDate.setTime(sf.parse(userinfo.getEnddate().replace("Z", " UTC")));
-            calSuitDate.add(Calendar.DATE, -1);
+            // region scc upd 21/8/11 判断时间是xxxx-xx-xxT16:00:00.000Z格式，还是T00:00:00.000Z，16格式转UTC多一天 from
+            if(userinfo.getEnddate().indexOf("16",10) > 0){
+                calSuitDate.add(Calendar.DATE, -1);
+            }
+            // endregion scc upd 21/8/11 判断时间是T16:00:00.000Z格式，还是T00:00:00.000Z，16格式转UTC多一天 to
             //试用截止日
             Calendar calOfficialDate = Calendar.getInstance();
             if (userinfo.getEnddate().indexOf("Z") < 0) {
@@ -888,7 +892,12 @@ public class GivingServiceImpl implements GivingService {
                 }
                 lastMonthSuitDays = getTrialWorkDaysExceptWeekend(tempStart, calSuitDate.getTime());
                 //上月正式天数
-                lastMonthDays = getTrialWorkDaysExceptWeekend(calOfficialDate.getTime(), calLast.getTime());
+                //region add scc 21/8/11 试用期截止日为上月，修正计算上月正式天数 from
+                Calendar tempDays = calOfficialDate;
+                tempDays.add(Calendar.DATE,1);
+                lastMonthDays = getTrialWorkDaysExceptWeekend(tempDays.getTime(), calLast.getTime());
+//                lastMonthDays = getTrialWorkDaysExceptWeekend(calOfficialDate.getTime(), calLast.getTime());
+                //endregion add scc 21/8/11 试用期截止日为上月，修正计算上月正式天数 to
                 //本月试用天数
                 thisMonthSuitDays = 0;
                 //本月正式天数
@@ -918,7 +927,12 @@ public class GivingServiceImpl implements GivingService {
                     //                    add 试用员工当月转正的当月试用天数 fr
                     //calSuitDate.add(Calendar.DATE, -1);//转正日当天不算使用
                     lastMonthSuitDays = getTrialWorkDaysExceptWeekend(tempStart, calLast.getTime());
-                    thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), calSuitDate.getTime());
+                    //region add scc 21/8/11 试用期截止日为当月，修正计算本月试用天数 from
+                    Calendar tempDays = calNowOne;
+                    tempDays.add(Calendar.DATE,1);
+                    thisMonthSuitDays = getTrialWorkDaysExceptWeekend(tempDays.getTime(), calSuitDate.getTime());
+//                    thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), calSuitDate.getTime());
+                    //endregion add scc 21/8/11 试用期截止日为当月，修正计算本月试用天数 to
                 }
 
                 //上月正式天数
