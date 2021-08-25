@@ -1,6 +1,8 @@
 package com.nt.service_Org;
 
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.Vo.DepartmentVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.OrgTreeVo;
 
 import java.util.List;
 
@@ -38,4 +40,10 @@ public interface OrgTreeService {
     OrgTree getCurrentOrg(OrgTree orgTree, String orgId) throws Exception;
 
     OrgTree getOrgInfo(OrgTree org, String compn) throws  Exception;
+
+    //add ccm 20210819 获取所有有效部门的信息 fr
+    //获取所有有效部门，从center查找预算编码，存在则作为部门，不存在则获取center下group作为部门
+    List<DepartmentVo> getAllDepartment() throws  Exception;
+    //add ccm 20210819 获取所有有效部门的信息 fr
+
 }
