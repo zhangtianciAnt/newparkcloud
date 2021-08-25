@@ -16,7 +16,9 @@
     </select>
 
     <select id="getListPLlogman" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
-        SELECT * FROM logmanagement WHERE PROJECT_ID IN (
+        SELECT *
+        FROM logmanagement
+        WHERE PROJECT_ID IN (
         select companyprojects.COMPANYPROJECTS_ID from companyprojects
                 where COMPANYPROJECTS_ID in (
                 select projectsystem.COMPANYPROJECTS_ID from projectsystem
@@ -25,6 +27,20 @@
                 and name = #{owner}
                 and REPLACE(EXITTIME,'-','')  >= DATE_FORMAT(SYSDATE(),'%Y%m%d')
                 GROUP BY projectsystem.COMPANYPROJECTS_ID))
+        OR CREATEBY IN (
+        SELECT e.ACCOUNT
+        FROM expatriatesinfor e
+        WHERE 1=1
+        <if test="departmentcen != null and departmentcen !=''">
+            AND (e.GROUP_ID = #{departmentcen}
+            <if test="departmentgro != null and departmentgro !=''">
+                OR e.GROUP_ID = #{departmentgro})
+            </if>
+            <if test="departmentgro == null or departmentgro ==''">
+                )
+            </if>
+        </if>
+        )
     </select>
 
 <!--    add ccm 1118 日志优化-->
@@ -292,6 +308,24 @@ union
            or a.status = '5'
            or a.status = '6'
         group by p.COMPANYPROJECTS_ID
+
+        UNION ALL
+
+        SELECT cp.COMPANYPROJECTS_ID
+        FROM companyprojects cp
+        WHERE
+           ( cp.status = '4'
+           or cp.status = '5'
+           or cp.status = '6' ) AND cp.TOOLSTYPE = '1'
+
+        UNION ALL
+
+        SELECT c.comproject_id AS COMPANYPROJECTS_ID
+        FROM comproject c
+        WHERE
+            c.status = '4'
+           OR c.status = '5'
+           OR c.status = '6'
     </select>
 
     <select id="getcheckList2" resultType="com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2">
@@ -356,7 +390,7 @@ union
             ppp.extensiondate,
             ppp.CLAIMDATETIME
         from companyprojects c
-                 left join (
+                 inner join (
                 select
                     p.COMPANYPROJECTS_ID,
                     a.CLAIMDATETIME,
@@ -376,8 +410,29 @@ union
                   and p.status = '0'
                 group by p.COMPANYPROJECTS_ID,a.extensiondate,a.CLAIMDATETIME
             ) ppp
-                           on
-                               c.COMPANYPROJECTS_ID = ppp.COMPANYPROJECTS_ID
+        on c.COMPANYPROJECTS_ID = ppp.COMPANYPROJECTS_ID
         GROUP BY c.COMPANYPROJECTS_ID,ppp.extensiondate,ppp.CLAIMDATETIME
+
+        UNION ALL
+
+        SELECT
+             cpj.COMPANYPROJECTS_ID AS COMPANYPROJECTS_ID
+            ,null as extensiondate
+            ,cpj.ENDDATE AS CLAIMDATETIME
+        FROM  companyprojects cpj
+        WHERE (cpj.status = '4'
+            OR cpj.status = '5'
+            OR cpj.status = '6') AND cpj.TOOLSTYPE = '1'
+
+        UNION ALL
+
+        SELECT
+             cj.COMPROJECT_ID AS COMPANYPROJECTS_ID
+            ,null as extensiondate
+            ,cj.ENDDATE AS CLAIMDATETIME
+        FROM  comproject cj
+        WHERE cj.status = '4'
+            OR cj.status = '5'
+            OR cj.status = '6'
     </select>
 </mapper>

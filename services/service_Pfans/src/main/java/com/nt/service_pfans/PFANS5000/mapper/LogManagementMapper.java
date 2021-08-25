@@ -16,7 +16,10 @@ public interface LogManagementMapper extends MyMapper<LogManagement> {
     List<LogManagement> gettlist();
 
     //add_fjl_0716_添加PL权限的人查看日志一览  start
-    List<LogManagement> getListPLlogman(@Param("owner") String owner);
+    //upd ccm 20210819 所属center可看外注 fr
+    //List<LogManagement> getListPLlogman(@Param("owner") String owner);
+    List<LogManagement> getListPLlogman(@Param("owner") String owner,@Param("departmentcen") String departmentcen,@Param("departmentgro") String departmentgro);
+    //upd ccm 20210819 所属center可看外注 to
     //add_fjl_0716_添加PL权限的人查看日志一览  end
 
     //add ccm 1118 日志优化
