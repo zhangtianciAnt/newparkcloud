@@ -8,6 +8,8 @@ import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TotalCostVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS5000.Comproject;
 import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
@@ -17,6 +19,8 @@ import com.nt.service_pfans.PFANS1000.PublicExpenseService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
+import com.nt.service_pfans.PFANS5000.mapper.ComProjectMapper;
+import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import lombok.extern.slf4j.Slf4j;
@@ -98,6 +102,12 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     @Autowired
     private PurchaseService purchaseService;
 
+    @Autowired
+    private CompanyProjectsMapper companyProjectsMapper;
+
+    @Autowired
+    private ComProjectMapper comprojectMapper;
+
     //add-ws-7/9-禅道任务248
     @Override
     public Map<String, Object> exportjs(String publicexpenseid, HttpServletRequest request) throws Exception {
@@ -144,6 +154,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         trafficdetails.setCurrency(iteA.getValue1());
                     }
                 }
+                ;
                 List<Dictionary> curListT = dictionaryService.getForSelect("JY002");
                 for (Dictionary ite : curListT) {
                     if (ite.getCode().equals(budgetcoding)) {
@@ -260,7 +271,28 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     //列表查询
     @Override
     public List<PublicExpense> get(PublicExpense publicExpense) throws Exception {
-        return publicExpenseMapper.select(publicExpense);
+        //region add_qhr_20210810 添加项目名称
+        List<PublicExpense> publicExpenseList = publicExpenseMapper.select(publicExpense);
+        List<PublicExpense> publicList = new ArrayList<>();
+        for (PublicExpense expense : publicExpenseList) {
+            if (expense.getProject_id().equals("PP024001")) {
+                expense.setProjectname("共通项目（会议研修等）");
+            }
+            CompanyProjects companyProject = companyProjectsMapper.selectByPrimaryKey(expense.getProject_id());
+            Comproject comproject = comprojectMapper.selectByPrimaryKey(expense.getProject_id());
+            if (companyProject != null) {
+                if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(companyProject.getProject_name())) {
+                    expense.setProjectname(companyProject.getProject_name());
+                }
+            } else if (comproject != null) {
+                if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(comproject.getProject_name())) {
+                    expense.setProjectname(comproject.getProject_name());
+                }
+            }
+            publicList.add(expense);
+        }
+        return publicList;
+        //endregion  add_qhr_20210810 添加项目名称
     }
 
     @Override
@@ -786,9 +818,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 insertInfo.setInvoiceamount(specialMap.get(TOTAL_TAX).toString());//总金额
                 //发票说明
                 if (insertInfo.getRemark() != "" && insertInfo.getRemark() != null) {
-                    //region update qhr  导出csv时加入经办
                     insertInfo.setRemark(userName + "经办" + accountCodeMap.getOrDefault(insertInfo.getRemark(), ""));
-                    //endregion update qhr  导出csv时加入经办
                 }
 
                 insertInfo.setInvoicenumber(invoiceNo);
