@@ -56,7 +56,12 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
         file.transferTo(f);
         ExcelReader reader = ExcelUtil.getReader(f);
         List<Map<String, Object>> readAll = reader.readAll();
+        //去重，防止录入两个相同数据
+        readAll = readAll.stream().distinct().collect(Collectors.toList());
         boolean resultInsUpd = true;
+        if(readAll.size() == 0){
+            throw new LogicalException("表格是否填写数据？请确认。");
+        }
         Map<String, Object> key = readAll.get(0);
 
         if (key.keySet().toString().trim().contains("●")) {
@@ -68,7 +73,8 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
         int accesscount = 0;
         StringBuilder message = new StringBuilder();
         message.delete(0,message.length());
-
+        StringBuilder upd = new StringBuilder();
+        upd.delete(0,message.length());
         List<Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
         List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
         HashMap<String,String> companyid = new HashMap<>();
@@ -79,7 +85,6 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
         }
         List<PeoplewareFee> useradd = new ArrayList<>();
         PeoplewareFee peoplewareFee = new PeoplewareFee();
-        message.append("对应年度的");
         if (resultInsUpd) {
             for (Map<String, Object> item : readAll) {
                 k++;
@@ -90,6 +95,14 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
                 if(item.get("部门(简称)") != null && item.get("年度") != null) {
                     peoplewareFee1.setGroupid(companyid.get(item.get("部门(简称)")));
                     peoplewareFee1.setYear(Convert.toStr(item.get("年度")));
+                }else if(item.get("部门(简称)") == null){
+                    throw new LogicalException("第" + k + "行 请输入部门(简称)，请确认。");
+                }else if(item.get("年度") == null){
+                    throw new LogicalException("第" + k + "行 请输入年度，请确认。");
+                }
+                //判断填写的部门合法性，为空则为查不出来，赋给groupid
+                if(org.springframework.util.StringUtils.isEmpty(peoplewareFee1.getGroupid())){
+                    throw new LogicalException("第" + k + "行 请输入正确的部门(简称)，请确认。");
                 }
                 List<PeoplewareFee> contans = peoplewarefeeMapper.select(peoplewareFee1);
                 if(contans.size() == 0){
@@ -111,7 +124,7 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
                         throw new LogicalException("第" + k + "行 请输入正确的部门(简称)，请确认。");
                     }
                 }else {
-                    throw new LogicalException("第" + k + "行 员工RANK 不能为空，请确认。");
+                    throw new LogicalException("第" + k + "行 部门(简称) 不能为空，请确认。");
                 }
                 if (!org.springframework.util.StringUtils.isEmpty(item.get("年度"))) {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -145,7 +158,11 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
                     throw new LogicalException("第" + k + "行 年度 不能为空，请确认。");
                 }
                 }else{
-                    message.append("," + Convert.toStr(item.get("部门(简称)")));
+                    if(message.toString().contains(Convert.toStr(item.get("年度")))) {
+                        message.insert(message.lastIndexOf(Convert.toStr(item.get("年度"))) + 6,Convert.toStr(item.get("部门(简称)"))  + ",");
+                    }else{
+                        message.append(Convert.toStr(item.get("年度")) + "年度" + Convert.toStr(item.get("部门(简称)"))  + ",");
+                    }
                     continue;
                 }
                 if (!org.springframework.util.StringUtils.isEmpty(item.get("1月"))) {
@@ -213,24 +230,28 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
                 if(!StringUtils.isNullOrEmpty(peoplewareFee.getGroupid())){
                     useradd.add(peoplewareFee);
                 }
-
             }
-            message.append("部门已存在，已自动跳过!");
+            message.append("部门的人件费已存在，已自动跳过!");
                 if(useradd.size() > 0) {
                     List<PeoplewareFee> all = new ArrayList<>(useradd);
                     Map<String, List<PeoplewareFee>> collect = useradd.stream().collect(Collectors.groupingBy(PeoplewareFee::getGroupid));
                     collect.forEach((keys, value) -> {
                         List<String> ranks = new ArrayList<>();
+                        List<String> yearscount = new ArrayList<>();
                         for (PeoplewareFee peo : value) {
                             ranks.add(peo.getRanks());
+                            yearscount.add(peo.getYear());
                         }
                         List<Dictionary> collects = dictionaryRank.stream().filter(items -> (!ranks.contains(items.getValue1()))).collect(Collectors.toList());
                         PeoplewareFee peomore = null;
-                        for (Dictionary dic : collects) {
-                            String uuid = UUID.randomUUID().toString();
-                            peomore = new PeoplewareFee(uuid, keys, String.valueOf(Calendar.getInstance().get(Calendar.YEAR)), dic.getValue1(), "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0");
-                            peomore.preInsert(tokenModel);
-                            all.add(peomore);
+                        for(String years : yearscount) {
+                            for (Dictionary dic : collects) {
+                                String uuid = UUID.randomUUID().toString();
+//                              peomore = new PeoplewareFee(uuid, keys, String.valueOf(Calendar.getInstance().get(Calendar.YEAR)), dic.getValue1(), "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+                                peomore = new PeoplewareFee(uuid, keys, years, dic.getValue1(), "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+                                peomore.preInsert(tokenModel);
+                                all.add(peomore);
+                            }
                         }
                     });
                     peoplewarefeeMapper.insertList(all);
@@ -245,12 +266,15 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
                     peoplewareFee.setRanks(Convert.toStr(item.get("员工RANK")));
                     peoplewareFee.setYear(Convert.toStr(item.get("年度")));
                     peoplewareFee.setGroupid(companyid.get(item.get("部门(简称)")));
+                    //判断填写的部门合法性，为空则为查不出来，赋给groupid
+                    if(org.springframework.util.StringUtils.isEmpty(peoplewareFee.getGroupid())){
+                        throw new LogicalException("第" + k + "行 请输入正确的部门(简称)，请确认。");
+                    }
                 }else{
-                    throw new LogicalException("第" + k + "行 请对应年度、部门、员工RANK进行修改，请确认。");
+                    throw new LogicalException("第" + k + "行 请输入部门，员工rank和年度，请确认。");
                 }
                 List<PeoplewareFee> feeList = peoplewarefeeMapper.select(peoplewareFee);
                 if(feeList.size() > 0){
-
                     if (!org.springframework.util.StringUtils.isEmpty(item.get("1月●"))) {
                         feeList.get(0).setMonth1(Convert.toStr(item.get("1月●")));
                     }
@@ -287,15 +311,30 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
                     if (!org.springframework.util.StringUtils.isEmpty(item.get("12月●"))) {
                         feeList.get(0).setMonth12(Convert.toStr(item.get("12月●")));
                     }
+                    feeList.get(0).preInsert(tokenModel);
+                    accesscount = accesscount + 1;
+                    useradd.add(feeList.get(0));
+                }else{
+                    if(upd.toString().contains(Convert.toStr(item.get("年度")))) {
+                        upd.insert(upd.lastIndexOf(Convert.toStr(item.get("年度"))) + 6,Convert.toStr(item.get("部门(简称)"))  + ",");
+                    }else{
+                        upd.append(Convert.toStr(item.get("年度")) + "年度" + Convert.toStr(item.get("部门(简称)"))  + ",");
+                    }
+                    continue;
                 }
-                feeList.get(0).preInsert(tokenModel);
-                accesscount = accesscount + 1;
-                useradd.add(feeList.get(0));
             }
-            peoplewarefeeMapper.updateFeeList(useradd);
+            upd.append("部门数据不存在，需要导入，不可更新，请确认。");
+            if(useradd.size() > 0) {
+                peoplewarefeeMapper.updateFeeList(useradd);
+            }else{
+                throw new LogicalException("页面数据为新数据，需要导入，不可更新，请确认。");
+            }
         }
-        if(message.toString().length() > 18) {
+        if(message.toString().length() > 16) {
             Result.add("提示：" + message);
+        }
+        if(upd.toString().length() > 22) {
+            Result.add("提示：" + upd);
         }
         Result.add("成功数：" + accesscount);
 //        Result.add("成功数人数id" + useradd);
