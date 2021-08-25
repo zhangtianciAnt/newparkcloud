@@ -2,11 +2,13 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.ToDoNotice;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
 import com.nt.service_Auth.RoleService;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS1000.AwardService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
@@ -52,6 +54,9 @@ public class AwardServiceImpl implements AwardService {
     @Autowired
     CompanyProjectsMapper companyProjectsMapper;
 
+    @Autowired
+    private OrgTreeService orgTreeService;
+
     @Override
     public List<Award> get(Award award) throws Exception {
         List<Award> awardlist = awardMapper.select(award);
@@ -70,6 +75,13 @@ public class AwardServiceImpl implements AwardService {
     // 禅道任务152
     @Override
     public AwardVo selectById(String award_id) throws Exception {
+        //region scc add 8/24 根据部门id取部门称存 from
+        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+        HashMap<String,String> companyid = new HashMap<>();
+        for(DepartmentVo vo : allDepartment){
+            companyid.put(vo.getDepartmentId(),vo.getDepartmentEn());
+        }
+        //endregion scc add 8/24 根据部门id取部门称存 to
         AwardVo awavo = new AwardVo();
         AwardDetail awadetail = new AwardDetail();
         awadetail.setAward_id(award_id);
@@ -77,6 +89,11 @@ public class AwardServiceImpl implements AwardService {
         staffdetail.setAward_id(award_id);
         List<AwardDetail> awalist = awardDetailMapper.select(awadetail);
         List<StaffDetail> stafflist = staffDetailMapper.select(staffdetail);
+        //region scc add 8/24 根据部门id取部门称存 from
+        for(StaffDetail sta : stafflist){
+            sta.setIncondepartment(companyid.get(sta.getIncondepartment()));
+        }
+        //endregion scc add 8/24 根据部门id取部门称存 to
         awalist = awalist.stream().sorted(Comparator.comparing(AwardDetail::getRowindex)).collect(Collectors.toList());
         stafflist = stafflist.stream().sorted(Comparator.comparing(StaffDetail::getRowindex)).collect(Collectors.toList());
         Award awa = awardMapper.selectByPrimaryKey(award_id);
@@ -230,11 +247,21 @@ public class AwardServiceImpl implements AwardService {
 
         if (stalist != null) {
             int rowindex = 0;
+            //region scc add 8/24 根据部门简称存部门id from
+            List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+            HashMap<String,String> companyid = new HashMap<>();
+            for(DepartmentVo vo : allDepartment){
+                companyid.put(vo.getDepartmentEn(),vo.getDepartmentId());
+            }
+            //endregion scc add 8/24 根据部门简称存部门id to
             for (StaffDetail staffDetail : stalist) {
                 rowindex = rowindex + 1;
                 staffDetail.preInsert(tokenModel);
                 staffDetail.setStaffdetail_id(UUID.randomUUID().toString());
                 staffDetail.setAward_id(awardid);
+                //region scc 存部门id from
+                staffDetail.setIncondepartment(companyid.get(staffDetail.getIncondepartment()));
+                //endregion scc 存部门id to
                 staffDetail.setRowindex(rowindex);
                 staffDetailMapper.insertSelective(staffDetail);
             }
@@ -255,4 +282,14 @@ public class AwardServiceImpl implements AwardService {
         awardMapper.updateByPrimaryKeySelective(award);
     }
 
+    //region scc add 21/8/20 受托合同，详情，部门下拉框数据源 from
+    public List<String> getCompanyen() throws Exception{
+        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+        List<String> companyens = new ArrayList<>();
+        for(DepartmentVo vo : allDepartment){
+            companyens.add(vo.getDepartmentEn());
+        }
+        return companyens;
+    }
+    //endregion scc add 21/8/20 受托合同，详情，部门下拉框数据源 to
 }

@@ -1,33 +1,37 @@
 package com.nt.controller.Controller.PFANS;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.convert.Convert;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ReportContractEnVo;
+import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsReportCheckVo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.AwardService;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.service_pfans.PFANS2000.PersonalCostService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -72,6 +76,11 @@ public class Pfans1025Controller {
     @Autowired
     private OrgTreeService orgtreeservice;
 
+    @Autowired
+    private PersonalCostService personalCostService;
+
+    @Autowired
+    private OrgTreeService orgTreeService;
 
     @RequestMapping(value = "/generateJxls", method = {RequestMethod.POST})
     public void generateJxls(@RequestBody AwardVo av, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -721,6 +730,82 @@ public class Pfans1025Controller {
         award1.setDeployment(orginfo.getCompanyname());
         awardService.dataCarryover(award1, tokenModel);
         return ApiResult.success();
+
+    }
+
+    /**
+     * 受托合同，详情，部门下拉框数据源
+     * */
+    //region scc add 21/8/20 from
+    @GetMapping(value = "/getcompanyen")
+    public ApiResult getCompanyen(HttpServletRequest request) throws Exception {
+        return ApiResult.success(awardService.getCompanyen());
+    }
+    //endregion scc add 21/8/20 to
+
+    /**
+     * 受托合同，详情，RANK下拉框数据源
+     * */
+    @GetMapping(value = "/getRanks")
+    public ApiResult getRanks(HttpServletRequest request) throws Exception{
+        List<Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
+        List<Dictionary> collect = dictionaryRank.stream().filter(item -> (!item.getValue1().equals("R11A") && !item.getValue1().equals("R11B"))).collect(Collectors.toList());
+        List<String> ranks = new ArrayList<>();
+        for(Dictionary ran : collect){
+            ranks.add(ran.getValue1());
+        }
+        return ApiResult.success(ranks);
+    }
+
+    /**
+     * 获取成本
+     * */
+    @RequestMapping(value = "/getPersonalBm", method = {RequestMethod.GET})
+    public ApiResult getPersonalBm(@RequestParam String years,@RequestParam String companyen, HttpServletRequest request) throws Exception {
+        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+        HashMap<String,String> companyid = new HashMap<>();
+        for(DepartmentVo vo : allDepartment){
+            companyid.put(vo.getDepartmentEn(),vo.getDepartmentId());
+        }
+        List<Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
+        HashMap<String, String> dicList = new HashMap<>();
+        for(Dictionary dic : dictionaryRank){
+            dicList.put(dic.getCode(),dic.getValue1());
+        }
+        HashMap<String, String> HashMap = null;
+        if(!StringUtils.isNullOrEmpty(years) && !StringUtils.isNullOrEmpty(companyen)){
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = sdf.parse(years);
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(date);
+            int now_year = 0;
+            int month = calendar.get(Calendar.MONTH)+1;
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            if(month >= 1 && month <= 4) {
+                //时间大于4月10日的，属于新年度，小于10日，属于旧年度
+                if(day >=10)
+                {
+                    now_year = calendar.get(Calendar.YEAR);
+                }
+                else
+                {
+                    now_year = calendar.get(Calendar.YEAR) - 1;
+                }
+            }
+            else
+            {
+                now_year = calendar.get(Calendar.YEAR);
+            }
+            String yearss = String.valueOf(now_year);
+            Map<String, PeoplewareFee> bmRanksInfo = personalCostService.getBmRanksInfo(yearss, companyid.get(companyen));
+            HashMap = new HashMap<>();
+            //前台数组重复标识
+            HashMap.put(companyen,companyen);
+            for(String key : bmRanksInfo.keySet()){
+                HashMap.put(dicList.get(key),bmRanksInfo.get(key).getMonth4() + "~" + bmRanksInfo.get(key).getMonth7());
+            }
+        }
+        return ApiResult.success(HashMap);
 
     }
 }
