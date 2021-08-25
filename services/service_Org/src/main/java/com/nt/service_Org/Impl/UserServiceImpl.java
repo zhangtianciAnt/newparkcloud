@@ -472,6 +472,70 @@ public class UserServiceImpl implements UserService {
 //                    }
 //del ccm  工资数据不能反向覆盖 不可以用履历盖原值 to
                 }
+                // region scc  add 21/8/13  医疗保险基数履历降序 from
+                List<CustomerInfo.Personal> medicalList = customerInfo.getUserinfo().getMedicalData();
+                if(medicalList != null && medicalList.size() > 0){
+                    medicalList = medicalList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setMedicalData(medicalList);
+                // endregion scc  add 21/8/13  医疗保险基数履历降序 to
+
+                // region scc  add 21/8/13  住房公积金基数履历降序 from
+                List<CustomerInfo.Personal> housingList = customerInfo.getUserinfo().getHouseData();
+                if(housingList != null && housingList.size() > 0){
+                    housingList = housingList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setHouseData(housingList);
+                // endregion scc  add 21/8/13  住房公积金基数履历降序 to
+
+                // region scc  add 21/8/13  养老保险基数履历降序 from
+                List<CustomerInfo.Personal> provideForAgedList = customerInfo.getUserinfo().getOldageData();
+                if(provideForAgedList != null && provideForAgedList.size() > 0){
+                    provideForAgedList = provideForAgedList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setOldageData(provideForAgedList);
+                // endregion scc  add 21/8/13  养老保险基数履历降序 to
+
+                // region scc  add 21/8/13  工伤保险基数履历降序 from
+                List<CustomerInfo.Personal> InjuryList = customerInfo.getUserinfo().getGsData();
+                if(InjuryList != null && InjuryList.size() > 0){
+                    InjuryList = InjuryList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setGsData(InjuryList);
+                // endregion scc  add 21/8/13  工伤保险基数履历降序 to
+
+                // region scc  add 21/8/13  失业保险基数履历降序 from
+                List<CustomerInfo.Personal> unemploymentList = customerInfo.getUserinfo().getSyeData();
+                if(unemploymentList != null && unemploymentList.size() > 0){
+                    unemploymentList = unemploymentList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setSyeData(unemploymentList);
+                // endregion scc  add 21/8/13  失业保险基数履历降序 to
+
+                // region scc  add 21/8/13  生育保险基数履历降序 from
+                List<CustomerInfo.Personal> fertilityList = customerInfo.getUserinfo().getSyuData();
+                if(fertilityList != null && fertilityList.size() > 0){
+                    fertilityList = fertilityList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setSyuData(fertilityList);
+                // endregion scc  add 21/8/13  生育保险基数履历降序 to
+
+                // region scc  add 21/8/16  Rank履历降序 from
+                List<CustomerInfo.Personal> RankList = customerInfo.getUserinfo().getRankData();
+                if(RankList != null && RankList.size() > 0){
+                    RankList = RankList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setRankData(RankList);
+                // endregion scc  add 21/8/16  Rank履历降序 to
+
+                // region scc  add 21/8/16  职务履历降序 from
+                List<CustomerInfo.Personal> positionList = customerInfo.getUserinfo().getPostData();
+                if(positionList != null && positionList.size() > 0){
+                    positionList = positionList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setPostData(positionList);
+                // endregion scc  add 21/8/16  职务履历降序 to
+
 //                ADD_FJL_05/21   --添加降序
                 customerInfo.setUserinfo(userInfo);
                 mongoTemplate.save(customerInfo);
@@ -1723,8 +1787,9 @@ public class UserServiceImpl implements UserService {
                     userinfo.setAge(item.get("年龄").toString());
                 }
                 //是否独生子女
-                if (!org.springframework.util.StringUtils.isEmpty(item.get("是否独生子女"))) {
-                    String children = item.get("是否独生子女").toString();
+                // region scc upd 21/8/16 模板独生子女列正常导入 from
+                if (!org.springframework.util.StringUtils.isEmpty(item.get("是否有独生子女"))) {
+                    String children = item.get("是否有独生子女").toString();
                     if (children != null) {
                         if (children.equals("否")) {
                             userinfo.setChildren("0");
@@ -1733,6 +1798,7 @@ public class UserServiceImpl implements UserService {
                         }
                     }
                 }
+                // endregion scc upd 21/8/16 模板独生子女列正常导入 to
                 //是否大连户籍
                 if (!org.springframework.util.StringUtils.isEmpty(item.get("是否大连户籍"))) {
                     String dlnation = item.get("是否大连户籍").toString();
@@ -1987,7 +2053,9 @@ public class UserServiceImpl implements UserService {
                             throw new LogicalException("登录账户（" + item.get("登录账户●").toString() + "）" + "在人员表中已存在，请勿重复填写。");
                         } else {
                             userAccount.setAccount(customerInfoList.get(0).getUserinfo().getAdfield());
-                            userAccount.setPassword(customerInfoList.get(0).getUserinfo().getAdfield());
+                            // region scc upd 21/8/13 导入修改登录账户，不修改账户密码 from
+//                            userAccount.setPassword(customerInfoList.get(0).getUserinfo().getAdfield());
+                            // endregion scc upd 21/8/13 导入修改登录账户，不修改账户密码 to
                             userAccount.setUsertype("0");
                             query = new Query();
                             query.addCriteria(Criteria.where("account").is(userAccount.getAccount()));
@@ -2438,8 +2506,9 @@ public class UserServiceImpl implements UserService {
                     if (item.get("年龄●") != null) {
                         customerInfoList.get(0).getUserinfo().setAge(item.get("年龄●").toString());
                     }
-                    if (item.get("是否独生子女●") != null) {
-                        String children = item.get("是否独生子女●").toString();
+                    // region scc upd 21/8/16 模板修改独生子女列正常修改 from
+                    if ((item.get("是否有独生子女●") != null)) {
+                        String children = item.get("是否有独生子女●").toString();
                         if (children != null) {
                             if (children.equals("否")) {
                                 customerInfoList.get(0).getUserinfo().setChildren("0");
@@ -2448,6 +2517,7 @@ public class UserServiceImpl implements UserService {
                             }
                         }
                     }
+                    // endregion scc upd 21/8/16 模板修改独生子女列正常修改 to
                     if (item.get("是否大连户籍●") != null) {
                         String dlnation = item.get("是否大连户籍●").toString();
                         if (dlnation != null) {
