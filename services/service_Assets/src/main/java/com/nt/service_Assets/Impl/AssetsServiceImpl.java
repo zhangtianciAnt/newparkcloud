@@ -689,6 +689,7 @@ public class AssetsServiceImpl implements AssetsService {
 //                    }
                     // end by zy
                 }
+
                 if (StrUtil.isNotBlank(assets.getAssets_id())) {
                     assets.preUpdate(tokenModel);
                     assetsMapper.updateByPrimaryKey(assets);
