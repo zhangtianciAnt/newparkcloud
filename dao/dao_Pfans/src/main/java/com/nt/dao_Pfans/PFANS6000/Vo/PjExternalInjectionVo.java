@@ -67,4 +67,6 @@ public class PjExternalInjectionVo {
     private String total;
 
     private List<PjExternalInjection> pjExternalInjectionList;
+
+    private List<PjExternalInjectionVo> pjExternalInjectionListVo;
 }
