@@ -1,7 +1,9 @@
 package com.nt.service_Org.Impl;
 
 import cn.hutool.core.util.ImageUtil;
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.OrgTreeVo;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.utils.ApiResult;
@@ -259,4 +261,51 @@ public class OrgTreeServiceImpl implements OrgTreeService {
         }
         return new OrgTree();
     }
+
+    //add ccm 20210819 获取所有有效部门的信息 fr
+    //获取所有有效部门，从center查找预算编码，存在则作为部门，不存在则获取center下group作为部门
+    @Override
+    public List<DepartmentVo> getAllDepartment() throws Exception {
+        List<DepartmentVo> departmentVoList = new ArrayList<>();
+        DepartmentVo departmentVo = new DepartmentVo();
+        //获取当前系统中有效的部门，按照预算编码统计
+        OrgTree orgs = get(new OrgTree());
+        //副总
+        for (OrgTree orgfu : orgs.getOrgs()) {
+            //Center
+            for (OrgTree orgCenter : orgfu.getOrgs()) {
+                if(!StringUtils.isNullOrEmpty(orgCenter.getEncoding()))
+                {
+                    departmentVo = new DepartmentVo();
+                    departmentVo.setDepartmentId(orgCenter.get_id());
+                    departmentVo.setDepartmentname(orgCenter.getCompanyname());
+                    departmentVo.setDepartmentshortname(orgCenter.getCompanyshortname());
+                    departmentVo.setDepartmentEncoding(orgCenter.getEncoding());
+                    departmentVo.setDepartmentEn(orgCenter.getCompanyen());
+                    departmentVo.setDepartmentType(orgCenter.getType());
+                    departmentVo.setDepartmentUserid(orgCenter.getUser());
+                    departmentVoList.add(departmentVo);
+                }
+                else
+                {
+                    for(OrgTree orgGroup : orgCenter.getOrgs())
+                    {
+                        departmentVo = new DepartmentVo();
+                        departmentVo.setDepartmentId(orgGroup.get_id());
+                        departmentVo.setDepartmentname(orgGroup.getCompanyname());
+                        departmentVo.setDepartmentshortname(orgGroup.getCompanyshortname());
+                        departmentVo.setDepartmentEncoding(orgGroup.getEncoding());
+                        departmentVo.setDepartmentEn(orgGroup.getCompanyen());
+                        departmentVo.setDepartmentType(orgGroup.getType());
+                        departmentVo.setDepartmentUserid(orgGroup.getUser());
+                        departmentVoList.add(departmentVo);
+                    }
+                }
+            }
+        }
+
+        return departmentVoList;
+    }
+    //add ccm 20210819 获取所有有效部门的信息 to
+
 }

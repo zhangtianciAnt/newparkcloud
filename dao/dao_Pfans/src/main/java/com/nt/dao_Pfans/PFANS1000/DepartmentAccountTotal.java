@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -52,90 +53,150 @@ public class DepartmentAccountTotal extends BaseModel {
     @Column(name = "AMOUNT")
     private String amount;
     /**
+     * 4月计划
+     */
+    @Column(name = "MONEYPLAN4")
+    private BigDecimal moneyplan4;
+    /**
      * 4月实际
      */
     @Column(name = "MONEYACTUAL4")
-    private Double moneyactual4;
+    private BigDecimal moneyactual4;
+    /**
+     * 5月计划
+     */
+    @Column(name = "MONEYPLAN5")
+    private BigDecimal moneyplan5;
     /**
      * 5月实际
      */
     @Column(name = "MONEYACTUAL5")
-    private Double moneyactual5;
+    private BigDecimal moneyactual5;
+    /**
+     * 6月计划
+     */
+    @Column(name = "MONEYPLAN6")
+    private BigDecimal moneyplan6;
     /**
      * 6月实际
      */
     @Column(name = "MONEYACTUAL6")
-    private Double moneyactual6;
+    private BigDecimal moneyactual6;
     /**
      * 第一季度
      */
     @Column(name = "TOTALACTUAL1Q")
-    private Double totalactual1q;
+    private BigDecimal totalactual1q;
+    /**
+     * 7月计划
+     */
+    @Column(name = "MONEYPLAN7")
+    private BigDecimal moneyplan7;
     /**
      * 7月实际
      */
     @Column(name = "MONEYACTUAL7")
-    private Double moneyactual7;
+    private BigDecimal moneyactual7;
+    /**
+     * 8月计划
+     */
+    @Column(name = "MONEYPLAN8")
+    private BigDecimal moneyplan8;
     /**
      * 8月实际
      */
     @Column(name = "MONEYACTUAL8")
-    private Double moneyactual8;
+    private BigDecimal moneyactual8;
+    /**
+     * 9月计划
+     */
+    @Column(name = "MONEYPLAN9")
+    private BigDecimal moneyplan9;
     /**
      * 9月实际
      */
     @Column(name = "MONEYACTUAL9")
-    private Double moneyactual9;
+    private BigDecimal moneyactual9;
     /**
      * 第二季度
      */
     @Column(name = "TOTALACTUAL2Q")
-    private Double totalactual2q;
+    private BigDecimal totalactual2q;
+    /**
+     * 10月计划
+     */
+    @Column(name = "MONEYPLAN10")
+    private BigDecimal moneyplan10;
 
     /**
      * 10月实际
      */
     @Column(name = "MONEYACTUAL10")
-    private Double moneyactual10;
+    private BigDecimal moneyactual10;
+    /**
+     * 11月计划
+     */
+    @Column(name = "MONEYPLAN11")
+    private BigDecimal moneyplan11;
     /**
      * 11月实际
      */
     @Column(name = "MONEYACTUAL11")
-    private Double moneyactual11;
+    private BigDecimal moneyactual11;
+    /**
+     * 12月计划
+     */
+    @Column(name = "MONEYPLAN12")
+    private BigDecimal moneyplan12;
     /**
      * 12月实际
      */
     @Column(name = "MONEYACTUAL12")
-    private Double moneyactual12;
+    private BigDecimal moneyactual12;
     /**
      * 第三季度
      */
     @Column(name = "TOTALACTUAL3Q")
-    private Double totalactual3q;
+    private BigDecimal totalactual3q;
+    /**
+     * 1月计划
+     */
+    @Column(name = "MONEYPLAN1")
+    private BigDecimal moneyplan1;
     /**
      * 1月实际
      */
     @Column(name = "MONEYACTUAL1")
-    private Double moneyactual1;
+    private BigDecimal moneyactual1;
+    /**
+     * 2月计划
+     */
+    @Column(name = "MONEYPLAN2")
+    private BigDecimal moneyplan2;
     /**
      * 2月实际
      */
     @Column(name = "MONEYACTUAL2")
-    private Double moneyactual2;
+    private BigDecimal moneyactual2;
+    /**
+     * 3月计划
+     */
+    @Column(name = "MONEYPLAN3")
+    private BigDecimal moneyplan3;
     /**
      * 3月实际
      */
     @Column(name = "MONEYACTUAL3")
-    private Double moneyactual3;
+    private BigDecimal moneyactual3;
 
     /**
      * 第四季度
      */
     @Column(name = "TOTALACTUAL4Q")
-    private Double totalactual4q;
+    private BigDecimal totalactual4q;
     /**
      * 全年实际合计
      */
     @Column(name = "TOTALACTUAL")
-    private Double totalactual;
+    private BigDecimal totalactual;
 }

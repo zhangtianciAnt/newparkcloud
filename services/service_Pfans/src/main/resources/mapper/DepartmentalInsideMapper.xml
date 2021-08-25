@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.DepartmentalInsideMapper">
+    <select id="getBaseInfo" resultType="com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalInsideBaseVo">
+        SELECT
+            cpt.THEMEINFOR_ID,
+            cpt.THEMENAME,
+            cpt.DIVIDE,
+            cpt.TOOLSORGS,
+            cpt.CONTRACTNUMBER,
+            cpt.CLAIMAMOUNT,
+            cpt.ENTRYCONDITION,
+            cpt.CONTRACATAMOUNTDETAIL,
+            cs.COMPANYPROJECTS_ID,
+            cs.NUMBERS,
+            pm.`NAME`,
+            pm.RANK
+        FROM
+            (
+                SELECT
+                    tr.THEMEINFOR_ID,
+                    tr.THEMENAME,
+                    tr.DIVIDE,
+                    tr.TOOLSORGS,
+                    cp.CONTRACTNUMBER,
+                    cp.CLAIMAMOUNT,
+                    cp.ENTRYCONDITION,
+                    ct.CONTRACTNUMBERCOUNT_ID,
+                    ct.CLAIMAMOUNT AS CONTRACATAMOUNTDETAIL
+                FROM
+                    themeinfor tr
+                        INNER JOIN contractapplication cp ON tr.THEMEINFOR_ID = cp.THEMEINFOR_ID
+                        INNER JOIN contractnumbercount ct ON cp.CONTRACTNUMBER = ct.CONTRACTNUMBER
+                WHERE
+                    cp.`STATUS` != '1'
+	            AND tr.YEAR = #{YEAR}
+            ) cpt
+                INNER JOIN projectcontract pt ON pt.CONTRACTNUMBERCOUNT_ID = cpt.CONTRACTNUMBERCOUNT_ID
+                INNER JOIN projectsystem pm ON pm.COMPANYPROJECTS_ID = pt.COMPANYPROJECTS_ID
+                INNER JOIN companyprojects cs ON cs.COMPANYPROJECTS_ID = pm.COMPANYPROJECTS_ID
+                AND cs.`STATUS` >= 4
+                AND pm.type = '0'
+    </select>
+    <select id="getWorkInfo" parameterType="list" resultType="com.nt.dao_Pfans.PFANS1000.Vo.StaffWorkMonthInfoVo">
+        SELECT
+            pm.RANK,
+            cd.userid,
+            cd.TIME_START,
+            cd.GROUP_ID,
+            cd.PROJECT_ID,
+            cs.NUMBERS
+        FROM
+        (
+            SELECT
+                `CREATEBY` AS userid,
+                ROUND( SUM( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 2 ) TIME_START,
+                GROUP_ID,
+                PROJECT_ID
+            FROM
+                logmanagement lg
+            WHERE
+                date_format( lg.LOG_DATE, '%Y-%m' ) = #{LOG_DATE}
+            AND PROJECT_ID != 'PP024001'
+            AND CREATEBY in
+                <foreach collection="userList" index="index" item="userid" open="("
+                         separator="," close=")">
+                    #{userid}
+                </foreach>
+            AND PROJECT_ID in
+                <foreach collection="projectList" index="index" item="projectid" open="("
+                         separator="," close=")">
+                    #{projectid}
+                </foreach>
+            GROUP BY CREATEBY,PROJECT_ID
+            ) cd
+        INNER JOIN projectsystem pm ON pm.`NAME` = cd.userid
+        AND pm.COMPANYPROJECTS_ID = cd.PROJECT_ID
+        INNER JOIN companyprojects cs ON cs.COMPANYPROJECTS_ID = cd.PROJECT_ID
+    </select>
+    <insert id="insertDepInsAll" parameterType="java.util.List">
+        insert into DepartmentalInside
+        (
+        DEPARTMENTALINSIDE_ID
+        ,YEARS
+        ,DEPARTMENT
+        ,THEMEINFOR_ID
+        ,THEMENAME
+        ,DIVIDE
+        ,TOOLSORGS
+        ,CONTRACTNUMBER
+        ,CLAIMAMOUNT
+        ,CONTRACATAMOUNTDETAIL
+        ,CLAIMTYPE
+        ,ENTRYCONDITION
+        ,PROJECT_ID
+        ,NUMBERS
+        ,STAFFRANK
+        ,STAFFCUSTPLAN04
+        ,STAFFCUSTACTUAL04
+        ,STAFFCUSTPLAN05
+        ,STAFFCUSTACTUAL05
+        ,STAFFCUSTPLAN06
+        ,STAFFCUSTACTUAL06
+        ,WORKDIFFERENTFIRST
+        ,RANKDIFFERENTFIRST
+        ,STAFFCUSTPLAN07
+        ,STAFFCUSTACTUAL07
+        ,STAFFCUSTPLAN08
+        ,STAFFCUSTACTUAL08
+        ,STAFFCUSTPLAN09
+        ,STAFFCUSTACTUAL09
+        ,WORKDIFFERENTSECOND
+        ,RANKDIFFERENTSECOND
+        ,STAFFCUSTPLAN10
+        ,STAFFCUSTACTUAL10
+        ,STAFFCUSTPLAN11
+        ,STAFFCUSTACTUAL11
+        ,STAFFCUSTPLAN12
+        ,STAFFCUSTACTUAL12
+        ,WORKDIFFERENTTHIRD
+        ,RANKDIFFERENTTHIRD
+        ,STAFFCUSTPLAN01
+        ,STAFFCUSTACTUAL01
+        ,STAFFCUSTPLAN02
+        ,STAFFCUSTACTUAL02
+        ,STAFFCUSTPLAN03
+        ,STAFFCUSTACTUAL03
+        ,WORKDIFFERENTFOURTH
+        ,RANKDIFFERENTFOURTH
+        ,CREATEBY
+        ,CREATEON
+        ,MODIFYBY
+        ,MODIFYON
+        ,OWNER
+        ,STATUS
+        ,TENANTID
+        )
+        values
+        <foreach item="item" collection="list" separator=",">
+            (
+            #{item.departmentalinside_id},
+            #{item.years},
+            #{item.department},
+            #{item.themeinfor_id},
+            #{item.themename},
+            #{item.divide},
+            #{item.toolsorgs},
+            #{item.contractnumber},
+            #{item.claimamount},
+            #{item.contracatamountdetail},
+            #{item.claimtype},
+            #{item.entrycondition},
+            #{item.project_id},
+            #{item.numbers},
+            #{item.staffrank},
+            #{item.staffcustplan04},
+            #{item.staffcustactual04},
+            #{item.staffcustplan05},
+            #{item.staffcustactual05},
+            #{item.staffcustplan06},
+            #{item.staffcustactual06},
+            #{item.workdifferentfirst},
+            #{item.rankdifferentfirst},
+            #{item.staffcustplan07},
+            #{item.staffcustactual07},
+            #{item.staffcustplan08},
+            #{item.staffcustactual08},
+            #{item.staffcustplan09},
+            #{item.staffcustactual09},
+            #{item.workdifferentsecond},
+            #{item.rankdifferentsecond},
+            #{item.staffcustplan10},
+            #{item.staffcustactual10},
+            #{item.staffcustplan11},
+            #{item.staffcustactual11},
+            #{item.staffcustplan12},
+            #{item.staffcustactual12},
+            #{item.workdifferentthird},
+            #{item.rankdifferentthird},
+            #{item.staffcustplan01},
+            #{item.staffcustactual01},
+            #{item.staffcustplan02},
+            #{item.staffcustactual02},
+            #{item.staffcustplan03},
+            #{item.staffcustactual03},
+            #{item.workdifferentfourth},
+            #{item.rankdifferentfourth},
+            #{item.createby},
+            #{item.createon},
+            #{item.modifyby},
+            #{item.modifyon},
+            #{item.owner},
+            #{item.status},
+            #{item.tenantid}
+            )
+        </foreach>
+    </insert>
+    <update id="updateDepInsAll" parameterType="java.util.List">
+        <foreach item="item" collection="list" index="index">
+            UPDATE DepartmentalInside
+            SET
+            STAFFCUSTPLAN04       	= #{item.staffcustplan04},
+            STAFFCUSTACTUAL04     	= #{item.staffcustactual04},
+            STAFFCUSTPLAN05       	= #{item.staffcustplan05},
+            STAFFCUSTACTUAL05     	= #{item.staffcustactual05},
+            STAFFCUSTPLAN06       	= #{item.staffcustplan06},
+            STAFFCUSTACTUAL06     	= #{item.staffcustactual06},
+            WORKDIFFERENTFIRST    	= #{item.workdifferentfirst},
+            RANKDIFFERENTFIRST      = #{item.rankdifferentfirst},
+            STAFFCUSTPLAN07       	= #{item.staffcustplan07},
+            STAFFCUSTACTUAL07     	= #{item.staffcustactual07},
+            STAFFCUSTPLAN08       	= #{item.staffcustplan08},
+            STAFFCUSTACTUAL08     	= #{item.staffcustactual08},
+            STAFFCUSTPLAN09       	= #{item.staffcustplan09},
+            STAFFCUSTACTUAL09     	= #{item.staffcustactual09},
+            WORKDIFFERENTSECOND    	= #{item.workdifferentsecond},
+            RANKDIFFERENTSECOND     = #{item.rankdifferentsecond},
+            STAFFCUSTPLAN10       	= #{item.staffcustplan10},
+            STAFFCUSTACTUAL10     	= #{item.staffcustactual10},
+            STAFFCUSTPLAN11       	= #{item.staffcustplan11},
+            STAFFCUSTACTUAL11     	= #{item.staffcustactual11},
+            STAFFCUSTPLAN12       	= #{item.staffcustplan12},
+            STAFFCUSTACTUAL12     	= #{item.staffcustactual12},
+            WORKDIFFERENTTHIRD    	= #{item.workdifferentthird},
+            RANKDIFFERENTTHIRD      = #{item.rankdifferentthird},
+            STAFFCUSTPLAN01       	= #{item.staffcustplan01},
+            STAFFCUSTACTUAL01     	= #{item.staffcustactual01},
+            STAFFCUSTPLAN02       	= #{item.staffcustplan02},
+            STAFFCUSTACTUAL02     	= #{item.staffcustactual02},
+            STAFFCUSTPLAN03       	= #{item.staffcustplan03},
+            STAFFCUSTACTUAL03     	= #{item.staffcustactual03},
+            WORKDIFFERENTFOURTH    	= #{item.workdifferentfourth},
+            RANKDIFFERENTFOURTH     = #{item.rankdifferentfourth},
+            CREATEBY            = #{item.createby},
+            CREATEON            = #{item.createon},
+            MODIFYBY            = #{item.modifyby},
+            MODIFYON            = #{item.modifyon},
+            OWNER               = #{item.owner},
+            STATUS              = #{item.status},
+            TENANTID            = #{item.tenantid}
+            WHERE DEPARTMENTALINSIDE_ID = #{item.departmentalinside_id};
+        </foreach>
+    </update>
+</mapper>

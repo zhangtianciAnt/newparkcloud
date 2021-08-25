@@ -118,6 +118,12 @@ public class Overtime extends BaseModel {
      */
     @Column(name = "USEDLENGTH")
     private String usedlength;
+
+    /**
+     * 区分 1：休日出勤申请  2：加班申请
+     */
+    @Column(name = "OVERTIMETYPECOME")
+    private String overtimetypecome;
 }
 
 

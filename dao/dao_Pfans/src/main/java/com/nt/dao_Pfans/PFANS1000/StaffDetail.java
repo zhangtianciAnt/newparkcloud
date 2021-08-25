@@ -24,6 +24,7 @@ public class StaffDetail extends BaseModel {
     @Column(name = "AWARD_ID")
     private String award_id;
 
+    //rank
     @Column(name = "ATTF")
     private String attf;
 
@@ -35,6 +36,65 @@ public class StaffDetail extends BaseModel {
 
     @Column(name = "DEPART")
     private String depart;
+
+    //合同号
+    @Column(name = "CONTRACTNUMBER")
+    private String contractnumber;
+
+    //部门
+    @Column(name = "INCONDEPARTMENT")
+    private String incondepartment;
+
+    //4
+    @Column(name = "INWORK04")
+    private String inwork04;
+
+    //5
+    @Column(name = "INWORK05")
+    private String inwork05;
+
+    //6
+    @Column(name = "INWORK06")
+    private String inwork06;
+
+    //7
+    @Column(name = "INWORK07")
+    private String inwork07;
+
+    //8
+    @Column(name = "INWORK08")
+    private String inwork08;
+
+    //9
+    @Column(name = "INWORK09")
+    private String inwork09;
+
+    //10
+    @Column(name = "INWORK10")
+    private String inwork10;
+
+    //11
+    @Column(name = "INWORK11")
+    private String inwork11;
+
+    //12
+    @Column(name = "INWORK12")
+    private String inwork12;
+
+    //1
+    @Column(name = "INWORK01")
+    private String inwork01;
+
+    //2
+    @Column(name = "INWORK02")
+    private String inwork02;
+
+    //3
+    @Column(name = "INWORK03")
+    private String inwork03;
+
+    @Column(name = "REASON")
+    private String reason;
 
     @Column(name = "ROWINDEX")
     private Integer rowindex;
