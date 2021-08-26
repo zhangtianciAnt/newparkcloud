@@ -15,7 +15,4 @@ public interface ExpatriatesinforMapper extends MyMapper<Expatriatesinfor> {
     @Select(" SELECT EXPATRIATESINFOR_ID, WHETHERENTRY FROM expatriatesinfor WHERE Whetherentry = 'BP006001'")
     List<String> getPeolple1();
 
-    @Select("select * from expatriatesinfor where YJEXITIME = date_add(curdate(), interval -1 day)")
-    List<Expatriatesinfor> getExpYjExitime();
-
 }

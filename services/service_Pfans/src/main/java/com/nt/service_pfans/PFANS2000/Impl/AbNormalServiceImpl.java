@@ -101,6 +101,20 @@ public class AbNormalServiceImpl implements AbNormalService {
         abNormalMapper.insert(abNormal);
     }
 
+    //add   被承认过的日期不可申请考勤异常  from
+    @Override
+    public void selectTime(AbNormal abNormal, TokenModel tokenModel) throws Exception {
+        if (abNormal.getStatus().equals("") || abNormal.getStatus().equals("0")){
+            List<Attendance> attendanceList = attendanceMapper.selTime(abNormal.getUser_id(),abNormal.getOccurrencedate(),abNormal.getFinisheddate());
+            for (Attendance attendance1: attendanceList) {
+                if (attendance1.getRecognitionstate().equals("1")) {
+                    throw new LogicalException("已经承认考勤的日期，不允许申请异常，请重新选择日期。");
+                }
+            }
+        }
+    }
+    //add   被承认过的日期不可申请考勤异常  to
+
     public int getYears(String startCal) throws Exception {
         int year = 0;
         startCal = startCal.substring(0,10);
@@ -145,6 +159,19 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Override
     public void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception {
         abNormal.preUpdate(tokenModel);
+        //add   被承认过的日期不可申请考勤异常  from
+        if(abNormal.getStatus().equals("4")) {
+            AbNormal ab = abNormalMapper.selectByPrimaryKey(abNormal.getAbnormalid());
+            if (ab.getStatus().equals("4")) {
+                List<Attendance> attendanceList2 = attendanceMapper.twoTime(abNormal.getUser_id(), abNormal.getReoccurrencedate(), abNormal.getRefinisheddate());
+                for (Attendance attendance3 : attendanceList2) {
+                    if (attendance3.getRecognitionstate().equals("1")) {
+                        throw new LogicalException("已经承认考勤的日期，不允许申请异常，请重新选择日期。");
+                    }
+                }
+            }
+        }
+        //add   被承认过的日期不可申请考勤异常  to
         abNormalMapper.updateByPrimaryKey(abNormal);
         //add ccm 2020708 异常实时反应
         if(abNormal.getStatus().equals("4"))
@@ -459,7 +486,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                         for (AbNormal a : list) {
                             if (a.getStatus().equals("2")) {
                                 shenqing = shenqing + Double.valueOf(a.getLengthtime());
-                            } else if (a.getStatus().equals("5") ) {
+                            } else if (a.getStatus().equals("5")) {
                                 shenqing = shenqing + Double.valueOf(a.getRelengthtime());
                             }
                         }
@@ -825,7 +852,7 @@ public class AbNormalServiceImpl implements AbNormalService {
     {
         Calendar calendar = Calendar.getInstance();
         int year = 0;
-        int month = calendar.get(Calendar.MONTH)+1;
+        int month = calendar.get(Calendar.MONTH) + 1;
         if(month >= 1 && month <= 3) {
             year = calendar.get(Calendar.YEAR) - 1;
         }else {

@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS2000.mapper;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
+import com.nt.dao_Pfans.PFANS2000.Vo.PersonalCostExpVo;
 import com.nt.utils.MyMapper;
 import com.nt.utils.dao.TokenModel;
 import org.apache.ibatis.annotations.Param;
@@ -18,7 +19,7 @@ public interface PersonalCostMapper extends MyMapper<PersonalCost>{
     @Select("select CENTERID from personalcost where CENTERID is not null and yearsantid = #{yearsantid} group by CENTERID")
     List<String> getGroupId(@Param("yearsantid") String yearsantid);
 
-    @Select("select DEPARTSHORT AS departshortBmSum,count(userid) AS peopleBmSum,sum(round(MONTHLYSALARY,2)) AS monthBmSum,sum(round(BASICALLYANT,2)) AS basicBmSum,sum(round(RESPONSIBILITYANT,2)) AS balityBmSum,sum(round(TOTALSUBSIDIES,2)) AS totalsubsidiesBmSum,sum(round(MONTHLYBONUS,2)) AS monthlybonusBmSum,sum(round(ANNUALBONUS,2)) AS annualbonusBmSum,sum(round(TOTALWAGES,2)) AS totalwagesBmSum,sum(round(TRADEUNIONFUNDS,2)) AS tradeunionfundsBmSum,sum(round(SBGSAJ,2)) AS sbgsajBmSum,sum(round(GJJGSFDAJ,2)) AS gjjgsfdajBmSum,sum(round(APTOJU,2)) AS aptojuBmSum,sum(round(SBGSJM,2)) AS sbgsjmBmSum,sum(round(GJJGSFDJM,2)) AS gjjgsfdjmBmSum,sum(round(JUTOMA,2)) AS jutomaBmSum,sum(round(OVERTIMEPAY,2)) AS overtimepayBmSum from personalcost where CENTERID = #{groupid} and yearsantid = #{yearsantid}")
+        @Select("select DEPARTSHORT AS departshortBmSum,count(userid) AS peopleBmSum,sum(round(MONTHLYSALARY,2)) AS monthBmSum,sum(round(BASICALLYANT,2)) AS basicBmSum,sum(round(RESPONSIBILITYANT,2)) AS balityBmSum,sum(round(TOTALSUBSIDIES,2)) AS totalsubsidiesBmSum,sum(round(MONTHLYBONUS,2)) AS monthlybonusBmSum,sum(round(ANNUALBONUS,2)) AS annualbonusBmSum,sum(round(TOTALWAGES,2)) AS totalwagesBmSum,sum(round(TRADEUNIONFUNDS,2)) AS tradeunionfundsBmSum,sum(round(SBGSAJ,2)) AS sbgsajBmSum,sum(round(GJJGSFDAJ,2)) AS gjjgsfdajBmSum,sum(round(APTOJU,2)) AS aptojuBmSum,sum(round(SBGSJM,2)) AS sbgsjmBmSum,sum(round(GJJGSFDJM,2)) AS gjjgsfdjmBmSum,sum(round(JUTOMA,2)) AS jutomaBmSum,sum(round(OVERTIMEPAY,2)) AS overtimepayBmSum from personalcost where CENTERID = #{groupid} and yearsantid = #{yearsantid}")
     PersonalCostBmSum getPersonalCostBmSum(@Param("groupid") String groupid,@Param("yearsantid") String yearsantid);
 
     @Select("select DEPARTSHORT AS departshortBmSum,count(userid) AS peopleBmSum,sum(round(MONTHLYSALARY,2)) AS monthBmSum,sum(round(BASICALLYANT,2)) AS basicBmSum,sum(round(RESPONSIBILITYANT,2)) AS balityBmSum,sum(round(TOTALSUBSIDIES,2)) AS totalsubsidiesBmSum,sum(round(MONTHLYBONUS,2)) AS monthlybonusBmSum,sum(round(ANNUALBONUS,2)) AS annualbonusBmSum,sum(round(TOTALWAGES,2)) AS totalwagesBmSum,sum(round(TRADEUNIONFUNDS,2)) AS tradeunionfundsBmSum,sum(round(SBGSAJ,2)) AS sbgsajBmSum,sum(round(GJJGSFDAJ,2)) AS gjjgsfdajBmSum,sum(round(APTOJU,2)) AS aptojuBmSum,sum(round(SBGSJM,2)) AS sbgsjmBmSum,sum(round(GJJGSFDJM,2)) AS gjjgsfdjmBmSum,sum(round(JUTOMA,2)) AS jutomaBmSum,sum(round(OVERTIMEPAY,2)) AS overtimepayBmSum from personalcost where GROUPID = #{groupid} and yearsantid = #{yearsantid}")
@@ -50,6 +51,9 @@ public interface PersonalCostMapper extends MyMapper<PersonalCost>{
     @Select("select APTOJU,JUTOMA FROM personalcost where userid = #{userid} and yearsantid = #{yearsantid}")
     PersonalCost getPersonalCostDetail(@Param("yearsantid") String yearsantid, @Param("userid") String userid);
 
+    @Select("select username as useridRb, departshort as departshortRb, ltrank as ltrankRb, totalwages as totalwagesRb,oldylbxjaj as oldylbxjajRb, lossybxjaj as lossybxjajRb, gsbxjaj as gsbxjajRb, ylbxjaj as ylbxjajRb, sybxjaj as sybxjajRb, gjjjsaj as gjjjsajRb, oldylbxjjm as oldylbxjjmRb, lossybxjjm as lossybxjjmRb, gsbxjjm as gsbxjjmRb, ylbxjjm as ylbxjjmRb,sybxjjm as sybxjjmRb, gjjjsjm as gjjjsjmRb,aprilTrue,mayTrue,juneTrue,julyTrue,augTrue,sepTrue,octTrue,noveTrue,deceTrue,janTrue,febTrue,marTrue from personalcost where yearsantid = #{yearsantid}")
+    List<PersonalCostRb> getPersonalCostRb(@Param("yearsantid") String yearsantid);
+
 
 
 
@@ -66,6 +70,17 @@ public interface PersonalCostMapper extends MyMapper<PersonalCost>{
     //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-end
 
     // add-lyt-21/1/29-禅道任务648-start
+
     List<PersonalCost> getPersonalCost(@Param("groupid") String groupid,@Param("years") String years );
+    // add-lyt-21/1/29-禅道任务648-end
+
+    // add-lyt-21/1/29-禅道任务648-start
+    @Select("select * from personalcost where yearsantid = #{yearsantid}")
+    List<PersonalCostExpVo> percostVo(@Param("yearsantid") String yearsantid);
+    // add-lyt-21/1/29-禅道任务648-end
+
+    // add-lyt-21/1/29-禅道任务648-start
+    @Select("select count(username) from personalcost where username LIKE '%新人%'")
+    Integer seleNew();
     // add-lyt-21/1/29-禅道任务648-end
 }

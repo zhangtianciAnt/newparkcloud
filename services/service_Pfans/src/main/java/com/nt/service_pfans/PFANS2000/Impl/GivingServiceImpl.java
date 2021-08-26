@@ -6,6 +6,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.*;
+import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
@@ -242,6 +243,7 @@ public class GivingServiceImpl implements GivingService {
         Appreciation appreciation = new Appreciation();
         appreciation.setGiving_id(giving_id);
         List<Appreciation> appreciationlist = appreciationMapper.select(appreciation);
+        appreciationlist = appreciationlist.stream().sorted(Comparator.comparing(Appreciation::getRowindex)).collect(Collectors.toList());
         // 月度赏与计算
         appreciationlist = appreciationCalc(baselist, appreciationlist);
         givingVo.setAppreciation(appreciationlist);
@@ -279,15 +281,30 @@ public class GivingServiceImpl implements GivingService {
         List<Induction> inductionList = inductionMapper.select(induction);
         inductionList = inductionList.stream().sorted(Comparator.comparing(Induction::getRowindex)).collect(Collectors.toList());
         givingVo.setEntryVo(inductionList);
-        Calendar nowDate = Calendar.getInstance();
-        Calendar lastDate = Calendar.getInstance();
-        lastDate.add(Calendar.MONTH, -1);
+//        Calendar nowDate = Calendar.getInstance();
+//        Calendar lastDate = Calendar.getInstance();
+//        lastDate.add(Calendar.MONTH, -1);
+//        // 设置上个月的年份和月份
+//        givingVo.setYearOfLastMonth(String.valueOf(lastDate.get(Calendar.YEAR)));
+//        givingVo.setMonthOfLastMonth(String.valueOf(lastDate.get(Calendar.MONTH) + 1));
+//        // 设置当月的年份和月份
+//        givingVo.setYearOfThisMonth(String.valueOf(nowDate.get(Calendar.YEAR)));
+//        givingVo.setMonthOfThisMonth(String.valueOf(nowDate.get(Calendar.MONTH) + 1));
+
+        //region add_qhr_20210702 修改入职tab显示月份
         // 设置上个月的年份和月份
-        givingVo.setYearOfLastMonth(String.valueOf(lastDate.get(Calendar.YEAR)));
-        givingVo.setMonthOfLastMonth(String.valueOf(lastDate.get(Calendar.MONTH) + 1));
+        givingVo.setMonthOfLastMonth(givinglist.get(0).getMonths().substring(4, 6));
+        if (givingVo.getMonthOfLastMonth().equals("01")) {
+            givingVo.setMonthOfLastMonth("12");
+            givingVo.setYearOfLastMonth(String.valueOf(Integer.valueOf(givinglist.get(0).getMonths().substring(0, 4)) - 1));
+        } else {
+            givingVo.setMonthOfLastMonth(String.valueOf(Integer.valueOf(givinglist.get(0).getMonths().substring(4, 6)) - 1));
+            givingVo.setYearOfLastMonth(givinglist.get(0).getMonths().substring(0, 4));
+        }
         // 设置当月的年份和月份
-        givingVo.setYearOfThisMonth(String.valueOf(nowDate.get(Calendar.YEAR)));
-        givingVo.setMonthOfThisMonth(String.valueOf(nowDate.get(Calendar.MONTH) + 1));
+        givingVo.setYearOfThisMonth(givinglist.get(0).getMonths().substring(0, 4));
+        givingVo.setMonthOfThisMonth(String.valueOf(Integer.valueOf(givinglist.get(0).getMonths().substring(4, 6))));
+        //endregion add_qhr_20210702 修改入职tab显示月份
 
         // 查询离职信息表
         Retire retire = new Retire();
@@ -301,6 +318,8 @@ public class GivingServiceImpl implements GivingService {
         Wages wages = new Wages();
         wages.setGiving_id(giving_id);
         wages.setActual("0");
+        System.out.println("工资开始查询");
+        long startTime =  System.currentTimeMillis();
         List<Wages> wagesList = wagesMapper.select(wages);
         if (wagesList.size() > 0) {
             givingVo.setWagesList(wagesList.stream().sorted(Comparator.comparing(Wages::getUser_id)).collect(Collectors.toList()));
@@ -326,6 +345,10 @@ public class GivingServiceImpl implements GivingService {
                 givingVo.setContrast(contrastList);
             }
         }
+        System.out.println("工资查询结束");
+        long endTime =  System.currentTimeMillis();
+        long usedTime = (endTime-startTime)/1000;
+        System.out.println("用时：" + usedTime + "秒");
         return givingVo;
         // zqu end
     }
@@ -688,7 +711,9 @@ public class GivingServiceImpl implements GivingService {
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSSZ");
         //当月日期1号
         Calendar calNowOne = Calendar.getInstance();
-        calNowOne.add(Calendar.MONTH, 0);
+        //region  qhr_20210528 无作用代码注释
+        //calNowOne.add(Calendar.MONTH, 0);
+        //endregion qhr_20210528 无作用代码注释
         calNowOne.set(Calendar.DAY_OF_MONTH, 1);
         //当月日期月末
         Calendar calNowLast = Calendar.getInstance();
@@ -779,7 +804,11 @@ public class GivingServiceImpl implements GivingService {
                 userinfo.setEnddate(formatStringDate(userinfo.getEnddate()));
             }
             calSuitDate.setTime(sf.parse(userinfo.getEnddate().replace("Z", " UTC")));
-            //calSuitDate.add(Calendar.DATE, -1);
+            // region scc upd 21/8/11 判断时间是xxxx-xx-xxT16:00:00.000Z格式，还是T00:00:00.000Z，16格式转UTC多一天 from
+            if(userinfo.getEnddate().indexOf("16",10) > 0){
+                calSuitDate.add(Calendar.DATE, -1);
+            }
+            // endregion scc upd 21/8/11 判断时间是T16:00:00.000Z格式，还是T00:00:00.000Z，16格式转UTC多一天 to
             //试用截止日
             Calendar calOfficialDate = Calendar.getInstance();
             if (userinfo.getEnddate().indexOf("Z") < 0) {
@@ -863,7 +892,12 @@ public class GivingServiceImpl implements GivingService {
                 }
                 lastMonthSuitDays = getTrialWorkDaysExceptWeekend(tempStart, calSuitDate.getTime());
                 //上月正式天数
-                lastMonthDays = getTrialWorkDaysExceptWeekend(calOfficialDate.getTime(), calLast.getTime());
+                //region add scc 21/8/11 试用期截止日为上月，修正计算上月正式天数 from
+                Calendar tempDays = calOfficialDate;
+                tempDays.add(Calendar.DATE,1);
+                lastMonthDays = getTrialWorkDaysExceptWeekend(tempDays.getTime(), calLast.getTime());
+//                lastMonthDays = getTrialWorkDaysExceptWeekend(calOfficialDate.getTime(), calLast.getTime());
+                //endregion add scc 21/8/11 试用期截止日为上月，修正计算上月正式天数 to
                 //本月试用天数
                 thisMonthSuitDays = 0;
                 //本月正式天数
@@ -890,9 +924,15 @@ public class GivingServiceImpl implements GivingService {
                     if (calEnterDay.getTime().getTime() > calLastOne.getTime().getTime()) {
                         tempStart = calEnterDay.getTime();
                     }
-                    calSuitDate.add(Calendar.DATE, -1);//转正日当天不算使用
+                    //                    add 试用员工当月转正的当月试用天数 fr
+                    //calSuitDate.add(Calendar.DATE, -1);//转正日当天不算使用
                     lastMonthSuitDays = getTrialWorkDaysExceptWeekend(tempStart, calLast.getTime());
-                    thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), calSuitDate.getTime());
+                    //region add scc 21/8/11 试用期截止日为当月，修正计算本月试用天数 from
+                    Calendar tempDays = calNowOne;
+                    tempDays.add(Calendar.DATE,1);
+                    thisMonthSuitDays = getTrialWorkDaysExceptWeekend(tempDays.getTime(), calSuitDate.getTime());
+//                    thisMonthSuitDays = getTrialWorkDaysExceptWeekend(calNowOne.getTime(), calSuitDate.getTime());
+                    //endregion add scc 21/8/11 试用期截止日为当月，修正计算本月试用天数 to
                 }
 
                 //上月正式天数
@@ -1110,11 +1150,10 @@ public class GivingServiceImpl implements GivingService {
         long endTime =  System.currentTimeMillis();
         long usedTime = (endTime-startTime)/1000;
         System.out.println("生成当月工资结束");
-        System.out.println("用时：" + String.valueOf(usedTime) + "秒");
+        System.out.println("用时：" + usedTime + "秒");
     }
 
 
-    //@Scheduled(cron = "0 0 1 10 * ?")//系统服务--每月10号凌晨1点开始自动计算当月工资【康san确认无用】
     protected void autoCreateGiving() throws Exception {
         insert("1", null);
     }
@@ -1128,6 +1167,9 @@ public class GivingServiceImpl implements GivingService {
                 GivingListnew.add(gi);
             }
         }
+        //工资列表根据年月降序排列 ztc fr
+        GivingListnew = GivingListnew.stream().sorted(Comparator.comparing(Giving::getMonths).reversed()).collect(Collectors.toList());
+        //工资列表根据年月降序排列 ztc to
         return GivingListnew;
     }
 
@@ -1259,7 +1301,8 @@ public class GivingServiceImpl implements GivingService {
 
     public String getSalary(CustomerInfo customerInfo, int addMouth) throws ParseException {
         //转正日
-        if (StringUtils.isEmpty(customerInfo.getUserinfo().getEnddate())) {
+        if (!StringUtils.isEmpty(customerInfo.getUserinfo().getEnddate())) {
+            System.out.println(customerInfo.getUserinfo().getCustomername());
             if (customerInfo.getUserinfo().getEnddate().indexOf("Z")  != -1) {
                 String enddate = customerInfo.getUserinfo().getEnddate().substring(0, 10).replace("-", "/");
                 Calendar cal1 = Calendar.getInstance();
@@ -2342,11 +2385,23 @@ public class GivingServiceImpl implements GivingService {
                 // 试用期截止日不为空的情况
                 // 转正日小于当月的除外
                 Date endDate = new Date();
+                //region  add_qhr_20210528  更改转正日计算形式
+                Calendar rightNow = Calendar.getInstance();
                 if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getEnddate())){
-                    if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
-                        customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
+//                    if (customerInfo.getUserinfo().getEnddate().indexOf("Z") < 0) {
+//                        customerInfo.getUserinfo().setEnddate(formatStringDate(customerInfo.getUserinfo().getEnddate()));
+//                    }
+//                    endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
+                    String endddate = customerInfo.getUserinfo().getEnddate().substring(0, 10);
+                    rightNow.setTime(Convert.toDate(endddate));
+                    if (customerInfo.getUserinfo().getEnddate().length() >= 24) {
+                        rightNow.add(Calendar.DAY_OF_YEAR, 2);
+                    } else {
+                        rightNow.add(Calendar.DAY_OF_YEAR, 1);
                     }
-                    endDate = sfUTC.parse(customerInfo.getUserinfo().getEnddate().replace("Z", " UTC"));
+                    endddate = sfChina.format(rightNow.getTime());
+                    endDate = sfChina.parse(endddate);
+                    //endregion  add_qhr_20210528  更改转正日计算形式
                     if (endDate.getTime() < mouthStart) {
                         continue;
                     }
@@ -2494,7 +2549,7 @@ public class GivingServiceImpl implements GivingService {
                             && DateUtil.format(induction.getWorddate(), "dd").equals(lastday))){
                         // 今月試用社員出勤日数
                         thisMonthSuitDays = 0d;
-                        induction.setTrial(String.valueOf(""));
+                        induction.setTrial("");
                         induction.setGive(df.format(Double.parseDouble(thisMonthSalary)));
                     }
                     else{
@@ -2511,7 +2566,7 @@ public class GivingServiceImpl implements GivingService {
             if(!DateUtil.format(new Date(), "yyyyMM").equals(strEnterday)){//非当月入社的人员
                 // 今月試用社員出勤日数
                 thisMonthSuitDays = 0d;
-                induction.setTrial(String.valueOf(""));
+                induction.setTrial("");
             }
             if(intflg == 0){//上月未发工资的人
                 //上月工资 / 21.75 * 上月出勤天数 + 本月工资

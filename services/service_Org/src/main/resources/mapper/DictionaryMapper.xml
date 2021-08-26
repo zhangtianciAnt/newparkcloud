@@ -24,14 +24,22 @@
             AND (TYPE IS NULL OR TYPE = '')
         </if>
         <if test="pcode != null and pcode != ''" >
-            AND pcode = #{pcode,jdbcType=VARCHAR}
+            or pcode = #{pcode,jdbcType=VARCHAR}/*变更，实现前台数据字典页面的具体类别查询*/
         </if>
     </select>
     <select id="selectOrder" parameterType="com.nt.dao_Org.Dictionary" resultType="com.nt.dao_Org.Dictionary">
         select * from dictionary
+        WHERE STATUS = '0'
         <if test="code != null and code != ''" >
-            WHERE  pcode = #{code}
+            AND  pcode = #{code}
         </if>
         ORDER BY orderdic asc
+    </select>
+
+    <select id="getForSelectCode" parameterType="com.nt.dao_Org.Dictionary" resultType="com.nt.dao_Org.Dictionary">
+        select * from dictionary
+        <if test="code != null and code != ''" >
+            WHERE  code = #{code}
+        </if>
     </select>
 </mapper>

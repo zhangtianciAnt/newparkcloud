@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
@@ -12,6 +13,7 @@ import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Pfans.PFANS4000.Seal;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
+import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_Auth.RoleService;
@@ -21,26 +23,20 @@ import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.PurchaseApplyService;
-import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
-import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
-import com.nt.service_pfans.PFANS1000.mapper.IndividualMapper;
-import com.nt.service_pfans.PFANS1000.mapper.ContractcompoundMapper;
-import com.nt.service_pfans.PFANS1000.mapper.QuotationMapper;
-import com.nt.service_pfans.PFANS1000.mapper.ContractMapper;
-import com.nt.service_pfans.PFANS1000.mapper.NonJudgmentMapper;
-import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
-import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
-import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
+import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
 import com.nt.service_pfans.PFANS4000.mapper.SealMapper;
 import com.nt.service_pfans.PFANS5000.mapper.ProjectContractMapper;
+import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
 import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +44,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.nt.utils.MongoObject.CustmizeQuery;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -93,6 +91,12 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private ToDoNoticeService toDoNoticeService;
     @Autowired
     private PurchaseService PurchaseService;
+    @Autowired
+    private MongoTemplate mongoTemplate;
+    @Autowired
+    private CoststatisticsdetailMapper coststatisticsdetailMapper;
+    @Autowired
+    private AwardDetailMapper awardDetailMapper;
     //add-ws-7/22-禅道341任务
     @Override
     public List<Individual> getindividual(Individual individual) throws Exception {
@@ -117,10 +121,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         }
 
         //add ccm 1204 纳品回数可变的对应
-        //检索是否做成书类
+        //检索是否做成决裁书
         Award a =new Award();
         a.setContractnumber(contractapplication.getContractnumber());
-        a.setMaketype("4");
+//        a.setMaketype("4");
         List<Award> awardL = AwardMapper.select(a);
         //决裁书
         if(awardL!=null)
@@ -132,6 +136,27 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     for(Contractnumbercount c : numberList)
                     {
                         c.setBookStatus(true);
+                    }
+                }
+            }
+        }
+
+        //纳品书是否做成
+        Napalm napalm =new Napalm();
+        napalm.setContractnumber(contractapplication.getContractnumber());
+        List<Napalm> napalmL = napalmMapper.select(napalm);
+        if(napalmL!=null)
+        {
+            for(Napalm n :napalmL)
+            {
+                for(Contractnumbercount c : numberList)
+                {
+                    String numb = "";
+                    numb = contractapplication.getContractnumber() + "-" + c.getClaimtype().replace("第","").replace("回","");
+                    if(numb.equals(n.getClaimnumber()))
+                    {
+                        //临时存入TENANTID  "0"是存在纳品书，觉书后，回数不可编辑， null 为不存在觉书，可编辑。
+                        c.setTenantid("0");
                     }
                 }
             }
@@ -148,6 +173,18 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         vo.setContractcompound(compoundList);
         return vo;
     }
+
+    //add  ml  20210706   契约番号废弃check   from
+    @Override
+    public boolean getProject(String contractnumber) {
+        boolean result = false;
+        ProjectContract projectContract = new ProjectContract();
+        projectContract.setContract(contractnumber);
+        List<ProjectContract> projectList = projectContractMapper.select(projectContract);
+        result = projectList.size() > 0;
+        return result;
+    }
+    //add  ml  20210706   契约番号废弃check   to
 
     @Override
     public List<ContractapplicationVo> getList(List<Contractapplication> contractapplicationlist) {
@@ -183,14 +220,18 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     @Override
     public void update(ContractapplicationVo contractapplication, TokenModel tokenModel) throws Exception {
         SimpleDateFormat stf = new SimpleDateFormat("yyyy-MM-dd");
+        Date nowdate = new Date();
         //契约番号申请
         List<Contractapplication> cnList = contractapplication.getContractapplication();
         StringBuffer strBuffer = new StringBuffer();
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
+            //标记点，被copy的原始合同也可能是"NF210250102402-覚3"这种形式，用来判断是否是被copy的原始合同 scc to
+            int flag = 0;
+            // scc to
             for (Contractapplication citation : cnList) {
                 //去掉多次觉书无用数据
-                if (citation.getContractnumber().indexOf("-") != -1 && citation.getState().equals("无效")) {
+                if (citation.getContractnumber().indexOf("-") != -1 && citation.getState().equals("无效") && flag > 0) {
                     continue;
                 }
                 for (Contractnumbercount contractRemarks : numberList) {
@@ -204,14 +245,152 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 citation.setQingremarks(String.valueOf(strBuffer));
                 citation.setClaimtype(String.valueOf(numberList.size()));
+                //存放纳品预定日失效的回数集合对应的合同号id
+                ArrayList<String> time1 = new ArrayList<>();
+                //合同做觉书，更新原数据和插入新数据
                 if (!StringUtils.isNullOrEmpty(citation.getContractapplication_id())) {
-                    citation.preUpdate(tokenModel);
-                    contractapplicationMapper.updateByPrimaryKeySelective(citation);
-                } else {
+                    if(citation.getState().equals("无效") && !("HT004001").equals(citation.getEntrycondition())){
+                        //当前合同日期
+                        String contractdate = citation.getContractdate();
+                        //受托合同的Contractdate都为空，时间取的是cliamdatetime;修改cliamdatetime的值
+                        if (StringUtils.isNullOrEmpty(contractdate)) {
+                            //原始合同请求时间cliamdatetime
+                            String cliamdatetime = citation.getClaimdatetime();
+                            //获取受托合同对应的回数记录
+                            Contractnumbercount contractnumbercount = new Contractnumbercount();
+                            contractnumbercount.setContractnumber(citation.getContractnumber());
+                            List<Contractnumbercount> count = contractnumbercountMapper.select(contractnumbercount);
+                            //存放纳品预定日的时间集合(时间小于当前系统时间)
+                            ArrayList<Date> time = new ArrayList<>();
+                            if (count.size() > 0) {
+                                for (int i = 0; i < count.size(); i++) {
+                                    //如果有一次为空，那么剩下的也为空，直接更新记录
+                                    if (count.get(i).getDeliverydate() == null) {
+                                        citation.preUpdate(tokenModel);
+                                        contractapplicationMapper.updateByPrimaryKeySelective(citation);
+                                        break;
+                                    } else if (count.get(i).getDeliverydate().before(nowdate)) {
+                                        time.add(count.get(i).getDeliverydate());
+                                    } else {
+                                        time1.add(count.get(i).getContractnumbercount_id());
+                                    }
+                                }
+                                //比较最大纳品预定日时间(冒泡)
+                                for (int j = 0; j < time.size(); j++) {
+                                    for (int k = 0; k < time.size() - j - 1; k++) {
+                                        if (time.get(k).after(time.get(k + 1))) {
+                                            Date date = time.get(k);
+                                            time.set(k, time.get(k + 1));
+                                            time.set(k + 1, date);
+                                        }
+                                    }
+                                }
+                                //当纳品预定日的时间都大于当前系统时间
+                                if(time.size() == 0){
+                                    citation.preUpdate(tokenModel);
+                                    contractapplicationMapper.updateByPrimaryKeySelective(citation);
+                                    //time1中合同id对应回数状态改为1
+                                    contractapplicationMapper.updateProjectcontractById(time1);
+                                    continue;
+                                }else {
+                                    //获取新的记录
+                                    Contractapplication citation1 = contractapplicationMapper.selectByPrimaryKey(citation);
+                                    //延止日期清空
+                                    citation1.setExtensiondate(null);
+                                    //改变请求期间
+                                    String cliamdatetime1 = cliamdatetime.split("~")[0] + "~" + stf.format(time.get(time.size() - 1));
+                                    citation1.setClaimdatetime(cliamdatetime1);
+                                    citation1.setState("无效");
+                                    citation1.preUpdate(tokenModel);
+                                    contractapplicationMapper.updateByPrimaryKeySelective(citation1);
+                                }
+                            }
+                            else {
+                                citation.preUpdate(tokenModel);
+                                contractapplicationMapper.updateByPrimaryKeySelective(citation);
+                            }
+                        }
+                        //当contractdate存在时 scc to
+                        else{
+                            //获取合同号对应纳品预定日的日期
+                            Contractnumbercount contractnumbercount = new Contractnumbercount();
+                            contractnumbercount.setContractnumber(citation.getContractnumber());
+                            List<Contractnumbercount> count = contractnumbercountMapper.select(contractnumbercount);
+                            //存放纳品预定日的时间集合(时间小于当前系统时间)
+                            ArrayList<Date> time = new ArrayList<>();
+                            if (count.size() > 0) {
+                                for (int i = 0; i < count.size(); i++) {
+                                    //如果有一次为空，那么剩下的也为空，直接更新记录
+                                    if (count.get(i).getDeliverydate() == null) {
+                                        citation.preUpdate(tokenModel);
+                                        contractapplicationMapper.updateByPrimaryKeySelective(citation);
+                                        break;
+                                    } else if (count.get(i).getDeliverydate().before(nowdate)) {
+                                        time.add(count.get(i).getDeliverydate());
+                                    } else {
+                                        time1.add(count.get(i).getContractnumbercount_id());
+                                    }
+                                }
+                                //比较最大纳品预定日时间(冒泡)
+                                for (int j = 0; j < time.size(); j++) {
+                                    for (int k = 0; k < time.size() - j - 1; k++) {
+                                        if (time.get(k).after(time.get(k + 1))) {
+                                            Date date = time.get(k);
+                                            time.set(k, time.get(k + 1));
+                                            time.set(k + 1, date);
+                                        }
+                                    }
+                                }
+                                //当纳品预定日的时间都大于当前系统时间
+                                if (time.size() == 0) {
+                                    citation.preUpdate(tokenModel);
+                                    contractapplicationMapper.updateByPrimaryKeySelective(citation);
+                                    //time1中合同id对应回数状态改为1
+                                    contractapplicationMapper.updateProjectcontractById(time1);
+                                    continue;
+                                } else {
+                                    //获取新的记录
+                                    Contractapplication citation1 = contractapplicationMapper.selectByPrimaryKey(citation);
+                                    //延止日期清空
+                                    citation1.setExtensiondate(null);
+                                    //改变合同日期
+                                    String contractdate1 = contractdate.split("~")[0] + "~" + stf.format(time.get(time.size() - 1));
+                                    citation1.setContractdate(contractdate1);
+                                    citation1.setState("无效");
+                                    citation1.preUpdate(tokenModel);
+                                    contractapplicationMapper.updateByPrimaryKeySelective(citation1);
+                                }
+                            }
+                            else {
+                                citation.preUpdate(tokenModel);
+                                contractapplicationMapper.updateByPrimaryKeySelective(citation);
+                            }
+                        }
+                        //当contractdate存在时 scc to
+                    }
+                    else{
+                        citation.preUpdate(tokenModel);
+                        contractapplicationMapper.updateByPrimaryKeySelective(citation);
+                        //ml
+                        if (citation.getStatus().equals("4")) {
+                            citation.setState("无效");
+                            citation.setEntrycondition("HT004001");
+                            contractapplicationMapper.updateByPrimaryKey(citation);
+                        }
+                    }
+                }
+                else {
                     citation.preInsert(tokenModel);
                     citation.setContractapplication_id(UUID.randomUUID().toString());
                     contractapplicationMapper.insert(citation);
                 }
+                //合同做觉书，更新原数据和插入新数据
+                //time1中合同id对应回数状态改为1 scc to
+                if(time1.size() > 0) {
+                    contractapplicationMapper.updateProjectcontractById(time1);
+                }
+                flag ++;
+                //time1中合同id对应回数状态改为1 scc to
             }
         }
         //契约番号回数
@@ -226,6 +405,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             for (Contractnumbercount number : numberList) {
                 rowindex = rowindex + 1;
                 number.setRowindex(rowindex);
+                number.setBookStatus(false);
                 if (!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())) {
                     number.preUpdate(tokenModel);
                     contractnumbercountMapper.updateByPrimaryKeySelective(number);
@@ -552,8 +732,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //納品書作成
                 else if (rowindex.equals("5")) {
-                    List<String> numcountList = Arrays.asList(countNumber.split(","));
-                    String numcount[] = countNumber.split(",");
+                    String[] numcountList = countNumber.split(",");
+                    String[] numcount = countNumber.split(",");
                     int flg = 0;
                     for (String count : numcountList) {
                         Napalm napalmAnt = new Napalm();
@@ -650,7 +830,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
                 //請求書作成
                 else if (rowindex.equals("6")) {
-                    List<String> numcountList = Arrays.asList(countNumber.split(","));
+                    String[] numcountList = countNumber.split(",");
                     int flg = 0;
                     for (String count : numcountList) {
                         Petition petitionAnt = new Petition();
@@ -668,7 +848,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         throw new LogicalException("请求书正在印章中，不可更新！");
                     }
                     // add_fjl_0604 --添加请求书和纳品书的选择生成 start
-                    String numcount[] = countNumber.split(",");
+                    String[] numcount = countNumber.split(",");
                     if (numcount.length > 0) {
                         for (int i = 0; i < numcount.length; i++) {
                             Petition pet = new Petition();
@@ -820,6 +1000,25 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         award.setMaketype(rowindex);
                         award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
                         AwardMapper.insert(award);
+                        //region  add_qhr_20210723 委托决裁书-情报2表格带入信息
+                        Coststatisticsdetail coststatisticsdetail = new Coststatisticsdetail();
+                        coststatisticsdetail.setSupplierinforid(contractapp.getSupplierinfor_id());
+                        coststatisticsdetail.setDates(contractapp.getDates());
+                        List<Coststatisticsdetail> costlist =  coststatisticsdetailMapper.select(coststatisticsdetail);
+                        int n = 1;
+                        for (Coststatisticsdetail coslist : costlist) {
+                            AwardDetail awardDetail = new AwardDetail();
+                            awardDetail.preInsert(tokenModel);
+                            awardDetail.setAwarddetail_id(UUID.randomUUID().toString());
+                            awardDetail.setAward_id(award.getAward_id());
+                            awardDetail.setDepart(coslist.getGroupid());
+                            awardDetail.setWorknumber(coslist.getManhour());
+                            awardDetail.setAwardmoney(coslist.getCost());
+                            awardDetail.setRowindex(n);
+                            n++;
+                            awardDetailMapper.insert(awardDetail);
+                        }
+                        //endregion  add_qhr_20210723 委托决裁书-情报2表格带入信息
                     }
 //                    upd_fjl_05/26   --课题票No.176 生成决裁时ID不变（不能删除旧的数据，走更新处理）
                 }
@@ -951,6 +1150,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     }
 
     //系统服务--每月1号 给纳品担当和请求担当代办处理合同回款  fjl add start
+    //【每月1号凌晨0点10分】
     @Scheduled(cron = "0 10 0 1 * ?")
     public void updUseraccountStatus() throws Exception {
         TokenModel tokenModel = new TokenModel();
@@ -1106,7 +1306,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 List<String> coString = new ArrayList<String>();
                                 for (int i = 0; i < coList.size(); i++) {
                                     String strcon = coList.get(i).getContractnumber();
-                                    coListcount = String.valueOf(strcon.substring(strcon.length() - 2, strcon.length()));
+                                    coListcount = strcon.substring(strcon.length() - 2);
                                     coString.add(coListcount);
                                 }
                                 Collections.sort(coString);
@@ -1128,7 +1328,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 List<String> coString = new ArrayList<String>();
                                 for (int i = 0; i < coList.size(); i++) {
                                     String strcon = coList.get(i).getContractnumber();
-                                    coListcount = String.valueOf(strcon.substring(strcon.length() - 4, strcon.length()));
+                                    coListcount = strcon.substring(strcon.length() - 4);
                                     coString.add(coListcount);
                                 }
                                 Collections.sort(coString);
@@ -1153,7 +1353,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                                 List<String> coString = new ArrayList<String>();
                                 for (int i = 0; i < coList.size(); i++) {
                                     String strcon = coList.get(i).getContractnumber();
-                                    coListcount = String.valueOf(strcon.substring(strcon.length() - 2, strcon.length()));
+                                    coListcount = strcon.substring(strcon.length() - 2);
                                     coString.add(coListcount);
                                 }
                                 Collections.sort(coString);
@@ -1182,6 +1382,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             for (Contractnumbercount number : numberList) {
                 rowindex = rowindex + 1;
                 number.setRowindex(rowindex);
+                number.setBookStatus(false);
                 if (!StringUtils.isNullOrEmpty(number.getContractnumbercount_id())) {
                     number.preUpdate(tokenModel);
                     number.setContractnumber(cnList.get(0).getContractnumber());
@@ -1413,5 +1614,51 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             result = true;
         }
         return result;
+    }
+    //合同号申请页面中不同契约数据结转
+    @Override
+    public void dataCarryover(Contractapplication contractapplication,TokenModel tokenModel) throws Exception{
+        contractapplication.preUpdate(tokenModel);
+        contractapplicationMapper.updateByPrimaryKeySelective(contractapplication);
+    }
+
+    //根据合同号查合同区间 scc
+    @Override
+    public List<String> getContranumber(String contra , TokenModel tokenModel) throws Exception{
+        ArrayList<String> time = new ArrayList<>();
+        String[] contras = contra.split(",");
+        if(contras.length > 0){
+            for(String con : contras){
+                Contractapplication contractapplication = new Contractapplication();
+                contractapplication.setContractnumber(con);
+                List<Contractapplication> contraList = contractapplicationMapper.select(contractapplication);
+                if(contraList != null){
+                    if(!StringUtils.isNullOrEmpty(contraList.get(0).getContractdate())){
+                        time.add(contraList.get(0).getContractdate());
+                    }else{
+                        time.add(contraList.get(0).getClaimdatetime());
+                    }
+                }
+            }
+        }
+        return time;
+    }
+    //根据合同号查合同区间 scc
+
+    private OrgTree getCurrentOrg(OrgTree org,String orgId) throws Exception {
+        if (org.get_id().equals(orgId)) {
+            return org;
+        } else {
+            if (org.getOrgs() != null) {
+                for (OrgTree item : org.getOrgs()) {
+                    OrgTree or = getCurrentOrg(item,orgId);
+                    if (or.get_id().equals(orgId)) {
+                        return or;
+                    }
+                }
+            }
+
+        }
+        return org;
     }
 }

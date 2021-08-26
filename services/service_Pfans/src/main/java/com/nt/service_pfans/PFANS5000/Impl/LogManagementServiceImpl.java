@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS5000.Impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.PersonalProjects;
 import cn.hutool.poi.excel.ExcelReader;
@@ -17,6 +18,7 @@ import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementVo2;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.service_Org.OrgTreeService;
+import com.nt.service_pfans.PFANS2000.mapper.AnnualLeaveMapper;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
@@ -85,6 +87,10 @@ public class LogManagementServiceImpl implements LogManagementService {
 
     @Autowired
     private OrgTreeService orgTreeService;
+
+    @Autowired
+    private AnnualLeaveMapper annualLeaveMapper;
+
 
     @Override
     public void insert(LogManagement logmanagement, TokenModel tokenModel) throws Exception {
@@ -185,16 +191,59 @@ public class LogManagementServiceImpl implements LogManagementService {
     //add ccm 1118 日志优化
     @Override
     public List<LogManagement> getDataListByLog_date(LogManagement logmanagement) throws Exception {
-        String log_date = DateUtil.format(logmanagement.getLog_date(), "yyyy-MM");
-        return logmanagementmapper.getDataListByLog_date(logmanagement.getOwners(), log_date);
+        String log_date = DateUtil.format(logmanagement.getLog_date(),"yyyy-MM");
+        return logmanagementmapper.getDataListByLog_date(logmanagement.getOwners(),log_date);
     }
     //add ccm 1118 日志优化
+
+
+    @Override
+    public List<LogManagement> getOrgOwnerList(LogManagement logmanagement) throws Exception {
+        String log_date = DateUtil.format(logmanagement.getLog_date(), "yyyy-MM");
+        return logmanagementmapper.getOrgOwnerList(logmanagement.getGroup_id(), log_date);
+    }
 
     //add_fjl_0716_添加PL权限的人查看日志一览  start
     @Override
     public List<LogManagement> getDataListPL(TokenModel tokenModel) throws Exception {
         String owner = tokenModel.getUserId();
-        List<LogManagement> list2 = logmanagementmapper.getListPLlogman(owner);
+        //add ccm 20210819 所属center可看外注 fr
+        Calendar calendar = Calendar.getInstance();
+        //年度
+        int year = 0;
+        int monthlast = calendar.get(Calendar.MONTH);
+        int month = calendar.get(Calendar.MONTH)+1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        if(month >= 1 && month <= 4) {
+            //时间大于4月10日的，属于新年度，小于10日，属于旧年度
+            if(day >=10)
+            {
+                year = calendar.get(Calendar.YEAR);
+            }
+            else
+            {
+                year = calendar.get(Calendar.YEAR) - 1;
+            }
+        }
+        else
+        {
+            year = calendar.get(Calendar.YEAR);
+        }
+        //每年度所有员工在年休表中都有数据，从年休表中获取当前登录人的组织信息
+        List<AnnualLeave> aList = new ArrayList<>();
+        AnnualLeave annualLeave = new AnnualLeave();
+        annualLeave.setYears(String.valueOf(year));
+        annualLeave.setUser_id(owner);
+        aList = annualLeaveMapper.select(annualLeave);
+        String departmentcen = null;
+        String departmentgro = null;
+        if(aList.size()>0)
+        {
+            departmentcen = aList.get(0).getCenter_id();
+            departmentgro = aList.get(0).getGroup_id();
+        }
+        //add ccm 20210819 所属center可看外注 to
+        List<LogManagement> list2 = logmanagementmapper.getListPLlogman(owner,departmentcen,departmentgro);
         return list2;
     }
 
@@ -212,7 +261,7 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
 
     @Override
-    public List<Projectsystem> CheckList(Projectsystem projectsystem, TokenModel tokenModel) throws Exception {
+    public List<Projectsystem> CheckList(Projectsystem projectsystem,TokenModel tokenModel) throws Exception {
         projectsystem.setName(tokenModel.getUserId());
         List<Projectsystem> projectsystemlist = projectsystemMapper.select(projectsystem);
         return projectsystemlist;
@@ -332,6 +381,18 @@ public class LogManagementServiceImpl implements LogManagementService {
         String Confirmstatus = logmanagement.getConfirmstatus();
         logmanagement.setConfirmstatus(AuthConstants.DEL_FLAG_NORMAL);
         logmanagement.preUpdate(tokenModel);
+        //ADD ccm 210705 更新日志组织id获取项目有效组织信息 fr
+        if(!logmanagement.getProject_id().equals("PP024001") && !logmanagement.getProject_id().isEmpty())
+        {
+            CompanyProjects cp = new CompanyProjects();
+            cp = companyprojectsMapper.selectByPrimaryKey(logmanagement.getProject_id());
+            if(cp!=null && StringUtils.isNullOrEmpty(logmanagement.getGroup_id()))
+            {
+                logmanagement.setGroup_id(cp.getCenter_id());
+            }
+        }
+        logmanagement.setGroup_id(selectEcodeById(logmanagement.getGroup_id()));
+        //ADD ccm 210705 更新日志组织id获取项目有效组织信息 to
         logmanagementmapper.updateByPrimaryKeySelective(logmanagement);
     }
 

@@ -16,12 +16,17 @@ public interface LogManagementMapper extends MyMapper<LogManagement> {
     List<LogManagement> gettlist();
 
     //add_fjl_0716_添加PL权限的人查看日志一览  start
-    List<LogManagement> getListPLlogman(@Param("owner") String owner);
+    //upd ccm 20210819 所属center可看外注 fr
+    //List<LogManagement> getListPLlogman(@Param("owner") String owner);
+    List<LogManagement> getListPLlogman(@Param("owner") String owner,@Param("departmentcen") String departmentcen,@Param("departmentgro") String departmentgro);
+    //upd ccm 20210819 所属center可看外注 to
     //add_fjl_0716_添加PL权限的人查看日志一览  end
 
     //add ccm 1118 日志优化
     List<LogManagement> getDataListByLog_date(@Param("owners") List<String> owners, @Param("log_date") String log_date);
     //add ccm 1118 日志优化
+
+    List<LogManagement> getOrgOwnerList(@Param("group_id") String group_id, @Param("log_date") String log_date);
 
     List<LogManagement> selectByDate(@Param("owners") List<String> owners, @Param("startDate") String startDate, @Param("endDate") String endDate);
 
@@ -49,5 +54,6 @@ public interface LogManagementMapper extends MyMapper<LogManagement> {
 
     @Select("select time_start from logmanagement where  DATE_FORMAT(LOG_DATE, '%Y-%m') = #{logdate} and createby=#{createby}")
     List<LogManagement> selectsum(@Param("createby") String createby, @Param("logdate") String logdate);
+
 
 }

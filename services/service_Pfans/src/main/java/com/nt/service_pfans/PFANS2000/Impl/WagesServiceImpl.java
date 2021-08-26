@@ -354,7 +354,16 @@ public class WagesServiceImpl implements WagesService {
                     }
                 }
                 //update gbb 20210511 【当月实发工资】数据库加密 end
-                wage.setCreateonym(DateUtil.format(new Date(), "yyyy-MM"));
+                //region add_qhr_20210726 修改工资详细表中月份的存值方式
+                Giving giving = new Giving();
+                giving.setGiving_id(wages.get(0).getGiving_id());
+                List<Giving> givinglist = givingMapper.select(giving);
+                String strMonths = "";
+                if(givinglist.size() > 0){
+                    strMonths = givinglist.get(0).getMonths().substring(0, 4) + "-" + givinglist.get(0).getMonths().substring(4, 6);
+                }
+                wage.setCreateonym(strMonths);
+                //endregion add_qhr_20210726 修改工资详细表中月份的存值方式
                 wage.setActual(actual);
                 List<CustomerInfo> customerinfo = customerInfoList.stream().filter(coi -> (coi.getUserid().contains(wage.getUser_id()))).collect(Collectors.toList());
                 if(customerinfo.size() > 0){
@@ -2732,7 +2741,7 @@ public class WagesServiceImpl implements WagesService {
                 String remaning = "0";
                 //离职剩余年休天数
                 remaning = annualLeaveService.remainingAnnual(customerInfo.getUserid(),String.valueOf(year));
-                BigDecimal b1 = new BigDecimal(Double.parseDouble(thisMonthSalary) / dateBase * 2 * Double.parseDouble(remaning));
+                BigDecimal b1 = new BigDecimal(Double.parseDouble(thisMonthSalary) / dateBase * 2 * Double.parseDouble(remaning)).setScale(2, RoundingMode.HALF_UP);
                 BigDecimal b2 = new BigDecimal(retire.getGive());
                 double strannualleavegive = b1.add(b2).doubleValue();
                 //4月份计算工资此处无需计算，工资详情中的最终工资会集中体现

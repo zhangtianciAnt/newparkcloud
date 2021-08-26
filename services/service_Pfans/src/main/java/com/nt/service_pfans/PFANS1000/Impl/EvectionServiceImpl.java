@@ -9,14 +9,19 @@ import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.EvectionVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TravelCostVo;
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS5000.Comproject;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS1000.EvectionService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.service_pfans.PFANS5000.mapper.ComProjectMapper;
+import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -82,6 +87,10 @@ public class EvectionServiceImpl implements EvectionService {
     private DictionaryMapper dictionaryMapper;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private CompanyProjectsMapper companyProjectsMapper;
+    @Autowired
+    private ComProjectMapper comprojectMapper;
 
     @Override
     public Map<String, Object> exportjs(String evectionid, HttpServletRequest request) throws Exception {
@@ -228,6 +237,7 @@ public class EvectionServiceImpl implements EvectionService {
         return resultMap;
     }
 
+    //打印功能调用
     private Map<String, Object> oldmergeDetailList(List<Object> detailList) throws Exception {
         Map<String, Object> resultMap = new HashMap<>();
         Map<String, Float> specialMap = new HashMap<>();
@@ -267,7 +277,28 @@ public class EvectionServiceImpl implements EvectionService {
 
     @Override
     public List<Evection> get(Evection evection) throws Exception {
-        return evectionMapper.select(evection);
+        //region add_qhr_20210810 添加项目名称
+        List<Evection> evectionList = evectionMapper.select(evection);
+        List<Evection> evectionListf = new ArrayList<>();
+        for (Evection evect : evectionList) {
+            if (evect.getProject_id().equals("PP024001")) {
+                evect.setProjectname("共通项目（会议研修等）");
+            }
+            CompanyProjects companyProject = companyProjectsMapper.selectByPrimaryKey(evect.getProject_id());
+            Comproject comproject = comprojectMapper.selectByPrimaryKey(evect.getProject_id());
+            if (companyProject != null) {
+                if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(companyProject.getProject_name())) {
+                    evect.setProjectname(companyProject.getProject_name());
+                }
+            } else if (comproject != null) {
+                if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(comproject.getProject_name())) {
+                    evect.setProjectname(comproject.getProject_name());
+                }
+            }
+            evectionListf.add(evect);
+        }
+        return evectionListf;
+        //endregion add_qhr_20210810 添加项目名称
     }
 
     @Override
@@ -368,13 +399,25 @@ public class EvectionServiceImpl implements EvectionService {
             placeAnt = evectionVo.getEvection().getPlace();
         }
         SimpleDateFormat formatterAnt = new SimpleDateFormat("yyyy-MM-dd");
-
-        String startStr = formatterAnt.format(evectionVo.getEvection().getStartdate());
+        //region  add_qhr_20210609  添加实际出差替换计划出差的开始/结束日
+        String startStr = "";
+        if (evectionVo.getEvection().getRealstartdate() != null) {
+            startStr = formatterAnt.format(evectionVo.getEvection().getRealstartdate());
+        } else {
+            startStr = formatterAnt.format(evectionVo.getEvection().getStartdate());
+        }
+        //endregion  add_qhr_20210609  添加实际出差替换计划出差的开始/结束日
         LocalDate DateLocalStar = LocalDate.parse(startStr);
         String monthSStr = String.valueOf(DateLocalStar.getMonthValue());
         String daySStr = String.valueOf(DateLocalStar.getDayOfMonth());
-
-        String endStr = formatterAnt.format(evectionVo.getEvection().getEnddate());
+        //region  add_qhr_20210609  添加实际出差替换计划出差的开始/结束日
+        String endStr = "";
+        if (evectionVo.getEvection().getRealenddate() != null) {
+            endStr = formatterAnt.format(evectionVo.getEvection().getRealenddate());
+        } else {
+            endStr = formatterAnt.format(evectionVo.getEvection().getEnddate());
+        }
+        //region  add_qhr_20210609  添加实际出差替换计划出差的开始/结束日
         LocalDate DateLocalEnd = LocalDate.parse(endStr);
         String monthSEnd = String.valueOf(DateLocalEnd.getMonthValue());
         String daySEnd = String.valueOf(DateLocalEnd.getDayOfMonth());
@@ -648,50 +691,53 @@ public class EvectionServiceImpl implements EvectionService {
             // 如果是专票，处理税
             //updfjl_0722  添加增值税明细数据  start
             if (specialMap.containsKey(keyNo) && Float.parseFloat(gettaxes) > 0) {
-                float taxes = 0;
-                float taxesSUM = 0;
+                float taxes = 0f;
+                float taxesSUM = 0f;
                 if (invoicelist.size() > 0) {
                     for (Invoice inv : invoicelist) {
-                        taxes = Float.parseFloat(inv.getFacetax());
-                        List<TravelCost> taxList = (List<TravelCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
-                        resultMap.put(TAX_KEY, taxList);
-                        BigDecimal rate = specialMap.get(keyNo);
-                        TravelCost taxCost = new TravelCost();
-                        taxesSUM += taxes;
-                        // 税拔
-                        String lineCost = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(taxesSUM)));
-                        String lineCostNo = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(taxes)));
-                        // 税金
-                        String lineRate = FNUM.format(taxes);
-                        if (money > 0) {
-                            // 税
-                            //add-ws-4/22-税金不为0存2302-00-01A0
-                            if (!lineRate.equals("0")) {
-                                taxCost.setSubjectnumber("2302-00-01A0");
-                            } else {
-                                taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
-                            }
-                            //add-ws-4/22-税金不为0存2302-00-01A0
-                            taxCost.setLineamount(lineRate);
-                            taxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
-                            //发票说明
-                            taxCost.setRemarks(getProperty(inv, "invoicenumber"));
-                            taxCost.setCurrency("CNY");
-                            taxList.add(taxCost);
+                        if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(inv.getInvoicenumber()) && inv.getInvoicenumber().equals(keyNo)) {
+//                            taxes = Float.parseFloat(inv.getFacetax());
+                            taxes = Float.parseFloat(getProperty(detail, "taxes"));
+                            List<TravelCost> taxList = (List<TravelCost>) resultMap.getOrDefault(TAX_KEY, new ArrayList<>());
+                            resultMap.put(TAX_KEY, taxList);
+                            BigDecimal rate = specialMap.get(keyNo);
+                            TravelCost taxCost = new TravelCost();
+                            taxesSUM += taxes;
                             // 税拔
-                            setProperty(detail, "rmb", lineCost);
-                            BigDecimal diff = new BigDecimal(taxes).add(new BigDecimal(lineCostNo)).subtract(new BigDecimal(money));
-                            if (diff.compareTo(new BigDecimal(0)) == 1) {
-                                TravelCost padding = new TravelCost();
-                                padding.setLineamount(diff + "");
-                                padding.setBudgetcoding(getProperty(detail, "budgetcoding"));
-                                padding.setSubjectnumber(getProperty(detail, "subjectnumber"));
+                            String lineCost = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(taxesSUM)));
+                            String lineCostNo = FNUM.format(new BigDecimal(money).subtract(new BigDecimal(taxes)));
+                            // 税金
+                            String lineRate = FNUM.format(taxes);
+                            if (money > 0) {
+                                // 税
+                                //add-ws-4/22-税金不为0存2302-00-01A0
+                                if (!lineRate.equals("0")) {
+                                    taxCost.setSubjectnumber("2302-00-01A0");
+                                } else {
+                                    taxCost.setSubjectnumber(getProperty(detail, "subjectnumber"));
+                                }
+                                //add-ws-4/22-税金不为0存2302-00-01A0
+                                taxCost.setLineamount(lineRate);
+                                taxCost.setBudgetcoding(getProperty(detail, "budgetcoding"));
                                 //发票说明
-                                padding.setRemarks(getProperty(detail, "accountcode"));
-                                padding.setCurrency("CNY");
-                                List<TravelCost> paddingList = (List<TravelCost>) resultMap.getOrDefault(PADDING_KEY, new ArrayList<>());
-                                paddingList.add(padding);
-                                resultMap.put(PADDING_KEY, paddingList);
+                                taxCost.setRemarks(getProperty(inv, "invoicenumber"));
+                                taxCost.setCurrency("CNY");
+                                taxList.add(taxCost);
+                                // 税拔
+                                setProperty(detail, "rmb", lineCost);
+                                BigDecimal diff = new BigDecimal(String.valueOf(taxes)).add(new BigDecimal(lineCostNo)).subtract(new BigDecimal(String.valueOf(money)));
+                                if (diff.compareTo(new BigDecimal(0)) == 1) {
+                                    TravelCost padding = new TravelCost();
+                                    padding.setLineamount(diff + "");
+                                    padding.setBudgetcoding(getProperty(detail, "budgetcoding"));
+                                    padding.setSubjectnumber(getProperty(detail, "subjectnumber"));
+                                    //发票说明
+                                    padding.setRemarks(getProperty(detail, "accountcode"));
+                                    padding.setCurrency("CNY");
+                                    List<TravelCost> paddingList = (List<TravelCost>) resultMap.getOrDefault(PADDING_KEY, new ArrayList<>());
+                                    paddingList.add(padding);
+                                    resultMap.put(PADDING_KEY, paddingList);
+                                }
                             }
                         }
                     }

@@ -86,11 +86,17 @@ public class ThemePlanServiceImpl implements ThemePlanService {
     }
 
     //add-ws-01/06-禅道任务710
+    //add_qhr_20210707 改变接口参数
     @Override
-    public List<ThemePlanDetail> themenametype(String type) throws Exception {
+    public List<ThemePlanDetail> themenametype(String year) throws Exception {
         ThemePlanDetail theme = new ThemePlanDetail();
-        theme.setType(type);
-        return themePlanDetailMapper.select(theme);
+        theme.setYear(year);
+        List<ThemePlanDetail> themePlanDetailList = themePlanDetailMapper.select(theme);
+//        根据 themeinfor_id
+        if (themePlanDetailList.size() > 0) {
+            themePlanDetailList = themePlanDetailList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getThemeinfor_id()))), ArrayList::new));
+        }
+        return themePlanDetailList;
     }
 
     //add-ws-01/06-禅道任务710
@@ -249,6 +255,8 @@ public class ThemePlanServiceImpl implements ThemePlanService {
             }
             //region theme计划
             ThemePlan ct = new ThemePlan();
+            //add_qhr_20210707  增加themeinfor_id字段
+            ct.setThemeinfor_id(themePlanDetailVo.get(0).getThemeinfor_id());
             ct.setCenter_id(themePlanDetailVo.get(0).getCenter_id());
             ct.setGroup_id(themePlanDetailVo.get(0).getGroup_id());
             ct.setYear(themePlanDetailVo.get(0).getYear());
@@ -277,6 +285,8 @@ public class ThemePlanServiceImpl implements ThemePlanService {
                 ctDetail.setThemeplandetail_id(vo.getThemeplandetail_id());
 
                 ctDetail.setThemeplan_id(vo.getThemeplan_id());
+                //add_qhr_20210707  增加themeinfor_id字段
+                ctDetail.setThemeinfor_id(vo.getThemeinfor_id());
 
                 ctDetail.setPthemeplandetail_id(vo.getPthemeplandetail_id());
 

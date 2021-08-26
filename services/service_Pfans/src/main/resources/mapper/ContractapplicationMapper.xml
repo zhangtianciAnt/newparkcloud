@@ -81,4 +81,11 @@
         where p.contract =#{contractnumber}
         group by p.COMPANYPROJECTS_ID
     </select>
+
+    <update id="updateProjectcontractById"  parameterType="java.util.List">
+        <foreach collection="PtList" item="item" index="index" open="" close=";" separator=";">
+            update projectcontract set status = '1'
+            where CONTRACTNUMBERCOUNT_ID = #{item}
+        </foreach>
+    </update>
 </mapper>

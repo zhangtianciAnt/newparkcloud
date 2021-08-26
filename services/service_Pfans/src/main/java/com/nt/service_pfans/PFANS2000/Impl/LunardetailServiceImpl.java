@@ -75,7 +75,7 @@ public class LunardetailServiceImpl implements LunardetailService {
 
         return lunardetailMapper.select(lunardetail);
     }
-//获取详情状态
+    //获取详情状态
     @Override
     public List<Examinationproject> getExam(String id) throws Exception {
         Examinationproject e = new Examinationproject();

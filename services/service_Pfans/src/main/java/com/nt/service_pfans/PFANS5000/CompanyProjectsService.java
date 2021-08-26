@@ -2,10 +2,7 @@ package com.nt.service_pfans.PFANS5000;
 
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS5000.*;
-import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
-import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
-import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo3;
-import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
+import com.nt.dao_Pfans.PFANS5000.Vo.*;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,4 +51,11 @@ public interface CompanyProjectsService {
     List<CompanyProjectsVo3> getCompanyProject (String SyspName)throws Exception;
 
     void getPLLeader() throws Exception;
+// zy start 报表追加 2021/06/13
+    List<Object> report(String start, String end, List<String> ownerList, String userId) throws Exception;
+// zy end 报表追加 2021/06/13
+
+
+    //pj起案数据结转
+    void update1(CompanyProjects companyprojects, TokenModel tokenModel) throws Exception;
 }

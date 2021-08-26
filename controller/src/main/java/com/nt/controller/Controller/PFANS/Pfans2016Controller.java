@@ -3,6 +3,7 @@ package com.nt.controller.Controller.PFANS;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
+import com.nt.dao_Pfans.PFANS2000.Attendance;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -99,6 +100,8 @@ public class Pfans2016Controller {
                 return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
             }
             TokenModel tokenModel = tokenService.getToken(request);
+            //被承认过的日期不可申请考勤异常
+            abNormalService.selectTime(abNormal, tokenModel);
             //未承认
             abNormal.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
             abNormalService.insert(abNormal, tokenModel);
@@ -114,6 +117,8 @@ public class Pfans2016Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
+        //被承认过的日期不可申请考勤异常
+        abNormalService.selectTime(abNormal, tokenModel);
         abNormalService.upd(abNormal, tokenModel);
         return ApiResult.success();
     }

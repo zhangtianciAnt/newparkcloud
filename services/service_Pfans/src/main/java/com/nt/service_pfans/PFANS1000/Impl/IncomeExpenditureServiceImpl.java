@@ -7231,6 +7231,7 @@ public class IncomeExpenditureServiceImpl implements IncomeExpenditureService {
         return incomeexpenditurevolist;
     }
 
+    //【每年4月1日凌晨0点10分】
     //汇率定时任务
     @Scheduled(cron = "0 10 0 1 4 ?")
     public void getThemeDetatiList() throws Exception {

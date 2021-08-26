@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 @Data
@@ -49,6 +50,10 @@ public class PublicExpense extends BaseModel {
 
     @Column(name = "PROJECT_ID")
     private String project_id;
+
+    //add_qhr_20210810 添加项目名称
+    @Transient
+    private String projectname;
 
     @Column(name = "ACCOUNTNUMBER")
     private String accountnumber;
@@ -195,4 +200,9 @@ public class PublicExpense extends BaseModel {
     @Column(name = "PROCESSINGSTATUS")
     private String processingstatus;
     // add-ws-8/12-禅道任务446
+
+    //暂借款类型 0-个人账户（办公室）1-个人账户（费用）2-其他 //PSDCD_PFANS_20210519_BUG_006 修改供应商编码 供应商地点错误 fr
+    @Column(name = "LOANTYPE")
+    private String loantype;
+    //PSDCD_PFANS_20210519_BUG_006 修改供应商编码 供应商地点错误 to
 }

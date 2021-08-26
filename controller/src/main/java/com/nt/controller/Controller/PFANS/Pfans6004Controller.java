@@ -33,11 +33,6 @@ public class Pfans6004Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value = "/updExpatriatesinforStatus", method = {RequestMethod.GET})
-    public void upExpYjExitime() throws Exception {
-        expatriatesinforService.updExpatriatesinforStatus();
-    }
-
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult getexpatriatesinfor(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);

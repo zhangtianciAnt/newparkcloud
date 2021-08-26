@@ -431,7 +431,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         communicationMapper.updateByPrimaryKey(communicationList.get(0));
                     }
                 }
-            } else if (loanapplication.getJudgements_name().substring(0, 2).equals("JC"))//其他业务
+            }
+            else if (loanapplication.getJudgements_name().substring(0, 2).equals("JC"))//其他业务
             {
                 String[] pur = loanapplication.getJudgements_name().split(",");
                 for (String p : pur) {
@@ -461,7 +462,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         judgementMapper.updateByPrimaryKey(judgementList.get(0));
                     }
                 }
-            } else if (loanapplication.getJudgements_name().substring(0, 2).equals("WC"))//无偿设备
+            }
+            else if (loanapplication.getJudgements_name().substring(0, 2).equals("WC"))//无偿设备
             {
                 String[] pur = loanapplication.getJudgements_name().split(",");
                 for (String p : pur) {
@@ -491,7 +493,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         judgementMapper.updateByPrimaryKey(judgementList.get(0));
                     }
                 }
-            } else if (loanapplication.getJudgements_name().substring(0, 2).equals("QY"))//千元费用
+            }
+            else if (loanapplication.getJudgements_name().substring(0, 2).equals("QY"))//千元费用
             {
                 String[] pur = loanapplication.getJudgements_name().split(",");
                 for (String p : pur) {
@@ -522,7 +525,8 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                     }
                 }
                 //ADD_FJL_0730  end
-            } else if (loanapplication.getJudgements_name().substring(0, 1).equals("C"))//境内外出差
+            }
+            else if (loanapplication.getJudgements_name().substring(0, 1).equals("C"))//境内外出差
             {
                 String[] pur = loanapplication.getJudgements_name().split(",");
                 for (String p : pur) {

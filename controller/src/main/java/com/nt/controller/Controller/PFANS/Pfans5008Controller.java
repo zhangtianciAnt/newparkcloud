@@ -1,14 +1,17 @@
 package com.nt.controller.Controller.PFANS;
 
 import cn.hutool.core.date.DateUtil;
-import com.nt.dao_Pfans.PFANS5000.LogManagement;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS5000.PersonalProjects;
 import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS5000.Vo.PersonalProjectsVo;
-import com.nt.service_pfans.PFANS5000.LogManagementService;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
+import com.nt.service_pfans.PFANS5000.LogManagementService;
 import com.nt.service_pfans.PFANS5000.PersonalProjectsService;
+import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -17,8 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import javax.servlet.http.HttpServletResponse;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,6 +42,9 @@ public class Pfans5008Controller {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private OrgTreeService orgTreeService;
 
     @RequestMapping(value = "/createNewUser", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody LogManagement logmanagement, HttpServletRequest request) throws Exception {
@@ -155,32 +162,24 @@ public class Pfans5008Controller {
         SimpleDateFormat sf1ymd = new SimpleDateFormat("yyyy-MM-dd");
         TokenModel tokenModel = tokenService.getToken(request);
         logmanagement.setOwners(tokenModel.getOwnerList());
-        List<LogManagement> list = logmanagementService.getLogDataList(logmanagement,startDate,endDate);
+        List<LogManagement> list = logmanagementService.getLogDataList(logmanagement, startDate, endDate);
         List<LogManagement> list1 = logmanagementService.getDataListPL(tokenModel);
         for (LogManagement item : list1) {
-            if(StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate))
-            {
-                if(sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()>=sf1ymd.parse(startDate).getTime()
-                    && sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()<=sf1ymd.parse(endDate).getTime())
-                {
+            if (StringUtils.isNotBlank(startDate) && StringUtils.isNotBlank(endDate)) {
+                if (sf1ymd.parse(DateUtil.format(item.getLog_date(), "yyyy-MM-dd")).getTime() >= sf1ymd.parse(startDate).getTime()
+                        && sf1ymd.parse(DateUtil.format(item.getLog_date(), "yyyy-MM-dd")).getTime() <= sf1ymd.parse(endDate).getTime()) {
                     if (list.stream().filter(item2 -> item2.getLogmanagement_id().equals(item.getLogmanagement_id())).count() == 0) {
                         list.add(item);
                     }
                 }
-            }
-            else if(StringUtils.isNotBlank(startDate))
-            {
-                if(sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()>=sf1ymd.parse(startDate).getTime())
-                {
+            } else if (StringUtils.isNotBlank(startDate)) {
+                if (sf1ymd.parse(DateUtil.format(item.getLog_date(), "yyyy-MM-dd")).getTime() >= sf1ymd.parse(startDate).getTime()) {
                     if (list.stream().filter(item2 -> item2.getLogmanagement_id().equals(item.getLogmanagement_id())).count() == 0) {
                         list.add(item);
                     }
                 }
-            }
-            else if(StringUtils.isNotBlank(endDate))
-            {
-                if(sf1ymd.parse(DateUtil.format(item.getLog_date(),"yyyy-MM-dd")).getTime()<=sf1ymd.parse(endDate).getTime())
-                {
+            } else if (StringUtils.isNotBlank(endDate)) {
+                if (sf1ymd.parse(DateUtil.format(item.getLog_date(), "yyyy-MM-dd")).getTime() <= sf1ymd.parse(endDate).getTime()) {
                     if (list.stream().filter(item2 -> item2.getLogmanagement_id().equals(item.getLogmanagement_id())).count() == 0) {
                         list.add(item);
                     }
@@ -201,26 +200,83 @@ public class Pfans5008Controller {
         logmanagement.setLog_date(conditon.getLog_date());
         List<LogManagement> list = logmanagementService.getDataListByLog_date(logmanagement);
         //add_fjl_0716_添加PL权限的人查看日志一览  start
+
         List<LogManagement> list1 = logmanagementService.getDataListPL(tokenModel);
+
+        List<LogManagement> listOrgOwnerList = new ArrayList<>();
+        OrgTree newOrgInfo = orgTreeService.get(new OrgTree());
+        Map<OrgTree, List<String>> orgMap = getOrgInfo(newOrgInfo, tokenModel.getUserId(), new ArrayList<>());
+        List<String> orgOwnerList  = new ArrayList<>();
+        Set<Map.Entry<OrgTree, List<String>>> entrys = orgMap.entrySet();
+        for (Map.Entry<OrgTree, List<String>> entry : entrys) {
+            orgOwnerList = entry.getValue();
+        }
+        if(orgOwnerList.size() > 0){
+            for(String oId : orgOwnerList){
+                LogManagement logMant = new LogManagement();
+                logMant.setGroup_id(oId);
+                logMant.setLog_date(conditon.getLog_date());
+                List<LogManagement> logAnt = logmanagementService.getOrgOwnerList(logMant);
+                listOrgOwnerList.addAll(logAnt);
+            }
+        }
+//        List<String> orgIds = getOrgOwnerList(newOrgInfo,tokenModel.getUserId());
+//        String a = "";
         for (LogManagement item : list1) {
             //upd ccm 1118 日志管理可以看到外注员工的数据 fr
 //            if (list.stream().filter(item2 -> item2.getProject_id().equals(item.getProject_id())).count() == 0) {
 //                list.add(item);
 //            }
-            if(DateUtil.format(item.getLog_date(),"yyyy/MM").equals(
-                    DateUtil.format(conditon.getLog_date(),"yyyy/MM")))
-            {
+            if (DateUtil.format(item.getLog_date(), "yyyy/MM").equals(
+                    DateUtil.format(conditon.getLog_date(), "yyyy/MM"))) {
                 if (list.stream().filter(item2 -> item2.getLogmanagement_id().equals(item.getLogmanagement_id())).count() == 0) {
                     list.add(item);
                 }
             }
             //upd ccm 1118 日志管理可以看到外注员工的数据 to
         }
+        for (LogManagement item : listOrgOwnerList) {
+            if (DateUtil.format(item.getLog_date(), "yyyy/MM").equals(
+                    DateUtil.format(conditon.getLog_date(), "yyyy/MM"))) {
+                if (list.stream().filter(item2 -> item2.getLogmanagement_id().equals(item.getLogmanagement_id())).count() == 0) {
+                    list.add(item);
+                }
+            }
+        }
         //add_fjl_0716_添加PL权限的人查看日志一览  end
         list = list.stream().sorted(Comparator.comparing(LogManagement::getLog_date).reversed()).collect(Collectors.toList());
         return ApiResult.success(list);
     }
-    // add-ws-5/26-No.68
+
+    public Map<OrgTree, List<String>> getOrgInfo(OrgTree org, String owe, List<String> orgIdList) throws Exception {
+        OrgTree returnorg = new OrgTree();
+        Map<OrgTree, List<String>> retuMap = new HashMap<>();
+        if (org.getUser().equals(owe) && !orgIdList.contains(org.get_id())) {
+            orgIdList.add(org.get_id());
+        }
+        if (org.getOrgs() != null) {
+            for (OrgTree item : org.getOrgs()) {
+                if (!orgIdList.contains(item.get_id())) {
+                    Set<Map.Entry<OrgTree, List<String>>> entrys = getOrgInfo(item, owe, orgIdList).entrySet();
+                    for (Map.Entry<OrgTree, List<String>> entry : entrys) {
+                        returnorg = entry.getKey();
+                    }
+                    if (returnorg.getUser() != null) {
+                        if (returnorg.getUser().equals(owe)) {
+                            orgIdList.add(returnorg.get_id());
+                            retuMap.put(org, orgIdList);
+                            return retuMap;
+                        }
+                    }
+                }
+            }
+        }
+        retuMap.put(new OrgTree(), orgIdList);
+        return retuMap;
+    }
+
+
+    // add-ws-5/26-No.68  ztc：接口与getDataList1重复，日志管理前台掉这个接口暂时注掉
     @RequestMapping(value = "/getDataList2", method = {RequestMethod.POST})
     public ApiResult getDataList2(@RequestBody LogManagement conditon, HttpServletRequest request) throws Exception {
         if (conditon == null) {
@@ -228,9 +284,10 @@ public class Pfans5008Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         LogManagement logmanagement = new LogManagement();
-        logmanagement.setOwners(tokenModel.getOwnerList());
+//        logmanagement.setOwners(tokenModel.getOwnerList());
+        logmanagement.setCreateby(conditon.getCreateby());
         List<LogManagement> list = logmanagementService.getDataList(logmanagement);
-        list = list.stream().filter(item -> item.getCreateby().equals(conditon.getCreateby())).collect(Collectors.toList());
+//        list = list.stream().filter(item -> item.getCreateby().equals(conditon.getCreateby())).collect(Collectors.toList());
         return ApiResult.success(list);
     }
     // add-ws-5/26-No.68
@@ -249,7 +306,7 @@ public class Pfans5008Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(logmanagementService.CheckList(projectsystem,tokenModel));
+        return ApiResult.success(logmanagementService.CheckList(projectsystem, tokenModel));
     }
 
 
@@ -262,23 +319,23 @@ public class Pfans5008Controller {
         return ApiResult.success(logmanagementService.gettlist());
     }
 
-    @RequestMapping(value = "/importUser",method={RequestMethod.POST})
-    public ApiResult importUser(HttpServletRequest request,String flag){
-        try{
+    @RequestMapping(value = "/importUser", method = {RequestMethod.POST})
+    public ApiResult importUser(HttpServletRequest request, String flag) {
+        try {
             TokenModel tokenModel = tokenService.getToken(request);
-            return ApiResult.success(logmanagementService.importUser(request,tokenModel));
-        }catch(LogicalException e){
+            return ApiResult.success(logmanagementService.importUser(request, tokenModel));
+        } catch (LogicalException e) {
             return ApiResult.fail(e.getMessage());
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ApiResult.fail("操作失败！");
         }
     }
 
-    @RequestMapping(value = "/downloadUserModel",method={RequestMethod.GET})
-    public ApiResult downloadUserModel(){
-        try{
+    @RequestMapping(value = "/downloadUserModel", method = {RequestMethod.GET})
+    public ApiResult downloadUserModel() {
+        try {
             return ApiResult.success(logmanagementService.downloadUserModel());
-        }catch(LogicalException e){
+        } catch (LogicalException e) {
             return ApiResult.fail(e.getMessage());
         } catch (Exception e) {
             return ApiResult.fail("操作失败！");

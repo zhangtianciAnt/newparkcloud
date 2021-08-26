@@ -9,6 +9,7 @@ import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.dao_Pfans.PFANS6000.Customerinfor;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
+import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.LogManagementService;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -62,6 +64,8 @@ public class Pfans5001Controller {
     @Autowired
     private ProjectContractMapper projectcontractMapper;
 
+    @Autowired
+    private ContractapplicationService contractapplicationService;
 
     /**
      * 查看
@@ -198,6 +202,20 @@ public class Pfans5001Controller {
         }
         TokenModel tokenModel=tokenService.getToken(request);
         companyProjectsService.update(companyProjectsVo,tokenModel);
+        return ApiResult.success();
+    }
+
+    /**
+     *
+     * PJ起案数据结转
+     */
+    @RequestMapping(value = "/update1", method = {RequestMethod.POST})
+    public ApiResult update1(@RequestBody CompanyProjects companyprojects, HttpServletRequest request) throws Exception {
+        if(companyprojects==null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel=tokenService.getToken(request);
+        companyProjectsService.update1(companyprojects,tokenModel);
         return ApiResult.success();
     }
 
@@ -393,5 +411,33 @@ public class Pfans5001Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(companyProjectsService.getList2(flag, tokenModel.getOwnerList(), tokenModel.getUserId()));
     }
+//zy start 报表追加 2021/06/13
+    /**
+     * @方法名：report
+     * @描述：导出每个月项目报表
+     * @创建日期：2021/06/11
+     * @作者：zy
+     * @参数：[]
+     * @返回值：List<CompanyProjectsReport>
+     */
+    @RequestMapping(value = "/report", method={RequestMethod.GET})
+    public ApiResult report(HttpServletRequest request, String start,String end) throws Exception {
+        if (StringUtils.isEmpty(start) || StringUtils.isEmpty(end)) {
+            return ApiResult.fail("开始时间，结束时间不能为空");
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(companyProjectsService.report(start, end, tokenModel.getOwnerList(), tokenModel.getUserId()));
+    }
 
+    //根据合同号查合同区间 scc
+    @RequestMapping(value = "/getcontra", method={RequestMethod.GET})
+    public ApiResult getContranumber(HttpServletRequest request, String contra) throws Exception {
+        if (StringUtils.isEmpty(contra)) {
+            return ApiResult.fail("当前未找到合同");
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(contractapplicationService.getContranumber(contra,tokenModel));
+    }
+    //根据合同号查合同区间 scc
+//zy end 报表追加 2021/06/13
 }

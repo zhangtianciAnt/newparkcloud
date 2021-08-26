@@ -4,7 +4,9 @@ import com.mongodb.client.result.UpdateResult;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
+import com.nt.dao_Pfans.PFANS1000.Vo.OrgTreeVo;
 import com.nt.dao_Workflow.*;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS3000.*;
@@ -20,6 +22,7 @@ import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.dao_Workflow.Workflownodeinstance;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.mapper.TodoNoticeMapper;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_WorkFlow.mapper.WorkflownodeMapper;
@@ -292,6 +295,14 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
     @Autowired
     private AnnualLeaveService annualLeaveService;
 
+    @Autowired
+    private AttendanceMapper attendanceMapper;
+
+    @Autowired
+    private AttendanceResignationMapper attendanceResignationMapper;
+
+    @Autowired
+    private OrgTreeService orgTreeService;
     //列表查询
     @Override
     public List<Staffexitprocedure> get(Staffexitprocedure staffexitprocedure) throws Exception {
@@ -337,6 +348,71 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         staffVo.setStaffexitproce(Staff);
         staffVo.setCitation(citationlist);
         return staffVo;
+    }
+
+    //数据转结
+    @Override
+    public void change(Staffexitprocedure staffexitprocedure, TokenModel tokenModel) throws Exception {
+        Staffexitprocedure staff = staffexitprocedureMapper.selectByPrimaryKey(staffexitprocedure.getStaffexitprocedure_id());
+        staff.setCenter_id(staffexitprocedure.getCenter_id());
+        staff.setGroup_id(staffexitprocedure.getGroup_id());
+        staff.setTeam_id(staffexitprocedure.getTeam_id());
+        staff.preUpdate(tokenModel);
+        staffexitprocedureMapper.updateByPrimaryKey(staff);
+        //region  add_qhr_20210701 添加离职考勤对比数据转结
+        SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+        String exittime = sd.format(staffexitprocedure.getHope_exit_date());
+        Attendance attendence = new Attendance();
+        attendence.setYears(exittime.substring(0, 4));
+        attendence.setMonths(exittime.substring(5, 7));
+        attendence.setUser_id(staff.getUser_id());
+        List<Attendance> attendanceList = attendanceMapper.select(attendence);
+        AttendanceResignation attendanceResignation = new AttendanceResignation();
+        attendanceResignation.setYears(exittime.substring(0, 4));
+        attendanceResignation.setMonths(exittime.substring(5, 7));
+        attendanceResignation.setUser_id(staff.getUser_id());
+        List<AttendanceResignation> attendanceResignationList = attendanceResignationMapper.select(attendanceResignation);
+        OrgTreeVo orgTreeVo = new OrgTreeVo();
+        OrgTree orgTree = new OrgTree();
+        OrgTree orgTree1 = new OrgTree();
+        OrgTree orgTree2 = new OrgTree();
+        OrgTree newOrgInfo = orgTreeService.get(new OrgTree());
+        if (staffexitprocedure.getCenter_id() != null && !staffexitprocedure.getCenter_id().equals("")) {
+            orgTree = orgTreeService.getOrgInfo(newOrgInfo, staffexitprocedure.getCenter_id());
+        }
+        if (staffexitprocedure.getGroup_id() != null && !staffexitprocedure.getGroup_id().equals("")) {
+            orgTree1 = orgTreeService.getOrgInfo(newOrgInfo, staffexitprocedure.getGroup_id());
+        }
+        if (staffexitprocedure.getTeam_id() != null && !staffexitprocedure.getTeam_id().equals("")) {
+            orgTree2 = orgTreeService.getOrgInfo(newOrgInfo, staffexitprocedure.getTeam_id());
+        }
+        if (attendanceList.size() > 0) {
+            for (Attendance attendance : attendanceList) {
+                attendance.setCenter_id(orgTree.getCompanyname());
+                attendance.setGroup_id(orgTree1.getCompanyname());
+                attendance.setTeam_id(orgTree2.getCompanyname());
+                attendanceMapper.updateByPrimaryKey(attendance);
+            }
+        }
+        if (attendanceResignationList.size() > 0) {
+            for (AttendanceResignation attendanceresignation : attendanceResignationList) {
+                attendanceresignation.setCenter_id(orgTree.getCompanyname());
+                attendanceresignation.setGroup_id(orgTree1.getCompanyname());
+                attendanceresignation.setTeam_id(orgTree2.getCompanyname());
+                attendanceResignationMapper.updateByPrimaryKey(attendanceresignation);
+            }
+        }
+        //endregion  add_qhr_20210701 添加离职考勤对比数据转结
+    }
+
+    @Override
+    public void change2(Staffexitproce staffexitproce, TokenModel tokenModel) throws Exception {
+        Staffexitproce staff = staffexitproceMapper.selectByPrimaryKey(staffexitproce.getStaffexitproce_id());
+        staff.setCenter_id(staffexitproce.getCenter_id());
+        staff.setGroup_id(staffexitproce.getGroup_id());
+        staff.setTeam_id(staffexitproce.getTeam_id());
+        staff.preUpdate(tokenModel);
+        staffexitproceMapper.updateByPrimaryKey(staff);
     }
 
     //更新
@@ -408,7 +484,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
 
             //发起人创建代办
             ToDoNotice toDoNotice = new ToDoNotice();
-            toDoNotice.setTitle("【您的离职申请已审批通过，系统中如有进行中的流程，请及时处理。您现可以提前进行离职日前的考勤承认】");
+            toDoNotice.setTitle("【您的离职申请已审批通过，系统中如有进行中的流程，请及时处理。您可以提前进行离职日前的考勤承认】");
             toDoNotice.setInitiator(Userid);
             toDoNotice.setContent("您的离职申请已审批通过！");
             toDoNotice.setDataid(staffexitprocedureVo.getStaffexitprocedure().getStaffexitprocedure_id());
@@ -482,6 +558,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         }
     }
 
+    //【每天凌晨0点5分】
     //进行数据权限和审批权限交接
     @Scheduled(cron = "0 05 0 * * ?")
     public void getdataExittime() throws Exception {
@@ -497,7 +574,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         List<Staffexitproce> Staffexitprocelist = staffexitproceMapper.select(Staffexitproce);
         Staffexitprocelist = Staffexitprocelist.stream().filter(item -> (item.getStatus().equals("4"))).collect(Collectors.toList());
         for (Staffexitproce list : Staffexitprocelist) {
-            if (Integer.valueOf(month1) <= Integer.valueOf(sd.format(list.getResignation_date())) && Integer.valueOf(sd.format(list.getResignation_date())) <= Integer.valueOf(month2)) {
+            if (Integer.valueOf(month1) <= Integer.valueOf(sd.format(list.getResignation_date())) && Integer.valueOf(sd.format(list.getResignation_date())) < Integer.valueOf(month2)) {
                 //审批权限交接 gbb 20210326 此处不需要dataid,应将离职人员的所有代办转给数据权限交接担当
                 ToDoNotice condition = new ToDoNotice();
                 condition.setOwner(list.getUser_id());
@@ -1398,7 +1475,7 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         {
             //发提醒给离职者
             ToDoNotice toDoNotice = new ToDoNotice();
-            toDoNotice.setTitle("【系统消息:您的调书已经创建完成，请处理离职手续！】");
+            toDoNotice.setTitle("【您的调书已经创建完成，请选中待办跳转到调书页面处理离职手续！】");
             toDoNotice.setInitiator(staffexitprocedureVo.getStaffexitproce().getReporter());
             toDoNotice.setContent("您的调书已经创建完成，请处理离职手续！");
             toDoNotice.setDataid(staffexitprocedureVo.getStaffexitproce().getStaffexitproce_id());

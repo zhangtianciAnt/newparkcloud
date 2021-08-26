@@ -45,7 +45,7 @@ public class Pfans2027Controller {
 //        wagesService.select(tokenModel);
         return ApiResult.success(lunarbonusService.getList(tokenModel));
     }
-//考课对象List
+    //考课对象List
     @RequestMapping(value = "/getExaminationobject", method = {RequestMethod.GET})
     public ApiResult getExaminationobject(HttpServletRequest request) throws Exception {
 //        TokenModel tokenModel = tokenService.getToken(request);

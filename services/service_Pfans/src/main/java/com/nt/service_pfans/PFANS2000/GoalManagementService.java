@@ -13,4 +13,6 @@ public interface GoalManagementService {
     GoalManagement One(String goalmanagement_id) throws Exception;
 
     List<GoalManagement> yearsCheck(GoalManagement goalmanagement) throws Exception;
+
+    void change(GoalManagement goalmanagement, TokenModel tokenModel) throws Exception;
 }
