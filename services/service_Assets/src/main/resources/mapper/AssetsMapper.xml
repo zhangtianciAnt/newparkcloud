@@ -52,7 +52,7 @@
 
     <select id="getDepartment" resultType="String">
         SELECT
-        DISTINCT USEDEPARTMENT
+        DISTINCT ifnull(USEDEPARTMENT,'') USEDEPARTMENT
         FROM
         assets
         where
