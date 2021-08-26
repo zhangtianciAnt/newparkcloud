@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.google.common.collect.Iterables;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS1000.Vo.OrgTreeVo;
 import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
@@ -16,10 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/peopleware")
@@ -39,7 +38,23 @@ public class Pfans4003Controller {
         if (peoplewarefee == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
-        return ApiResult.success(peoplewarefeeService.getPeopleWareList(peoplewarefee));
+        //region add scc 8/25 页面rank显示升序排序 from
+        List<PeoplewareFee> peopleWareList = peoplewarefeeService.getPeopleWareList(peoplewarefee);
+        peopleWareList = peopleWareList.stream().sorted(Comparator.comparing(PeoplewareFee::getRanks)).collect(Collectors.toList());
+        List<PeoplewareFee> temp = new ArrayList<>();
+        for(PeoplewareFee peo : peopleWareList){
+            if(peo.getRanks().equals("R10") || peo.getRanks().equals("R11A") || peo.getRanks().equals("R11B")){
+                temp.add(peo);
+            }
+        }
+        if(peopleWareList.size() > 0) {
+            for (int i = 0; i < 3; i++) {
+                peopleWareList.remove(0);
+            }
+        }
+        peopleWareList.addAll(temp);
+        return ApiResult.success(peopleWareList);
+        //endregion add scc 8/25 页面rank显示升序排序 to
     }
 
     @RequestMapping(value = "/download", method = {RequestMethod.GET})

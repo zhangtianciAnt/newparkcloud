@@ -27,7 +27,7 @@ public class Pfans1052Controller {
         return ApiResult.success();
     }
 
-    @GetMapping("/insert")
+    @GetMapping("/getTableinfo")
     public ApiResult getTableinfo(@RequestParam String year,@RequestParam String group_id, HttpServletRequest request) throws Exception {
         return ApiResult.success(departmentalInsideService.getTableinfo(year, group_id));
     }
