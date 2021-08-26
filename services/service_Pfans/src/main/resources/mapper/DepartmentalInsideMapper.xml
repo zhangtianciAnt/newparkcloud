@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_pfans.PFANS1000.mapper.DepartmentalInsideMapper">
     <select id="getBaseInfo" resultType="com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalInsideBaseVo">
+
         SELECT
             cpt.THEMEINFOR_ID,
             cpt.THEMENAME,
@@ -11,37 +12,36 @@
             cpt.CONTRACTNUMBER,
             cpt.CLAIMAMOUNT,
             cpt.ENTRYCONDITION,
-            cpt.CONTRACATAMOUNTDETAIL,
+            pt.CONTRACTAMOUNT CONTRACATAMOUNTDETAIL,
             cs.COMPANYPROJECTS_ID,
             cs.NUMBERS,
             pm.`NAME`,
             pm.RANK
         FROM
             (
-                SELECT
-                    tr.THEMEINFOR_ID,
-                    tr.THEMENAME,
-                    tr.DIVIDE,
-                    tr.TOOLSORGS,
-                    cp.GROUP_ID,
-                    cp.CONTRACTNUMBER,
-                    cp.CLAIMAMOUNT,
-                    cp.ENTRYCONDITION,
-                    ct.CONTRACTNUMBERCOUNT_ID,
-                    ct.CLAIMAMOUNT AS CONTRACATAMOUNTDETAIL
-                FROM
-                    themeinfor tr
-                        INNER JOIN contractapplication cp ON tr.THEMEINFOR_ID = cp.THEMEINFOR_ID
-                        INNER JOIN contractnumbercount ct ON cp.CONTRACTNUMBER = ct.CONTRACTNUMBER
-                WHERE
-                    cp.`STATUS` != '1'
-	            AND tr.YEAR = #{YEAR}
+            SELECT
+            tr.THEMEINFOR_ID,
+            tr.THEMENAME,
+            tr.DIVIDE,
+            tr.TOOLSORGS,
+            cp.GROUP_ID,
+            cp.CONTRACTNUMBER,
+            cp.CLAIMAMOUNT,
+            cp.ENTRYCONDITION,
+            ct.CONTRACTNUMBERCOUNT_ID
+            FROM
+            themeinfor tr
+            INNER JOIN contractapplication cp ON tr.THEMEINFOR_ID = cp.THEMEINFOR_ID
+            INNER JOIN contractnumbercount ct ON cp.CONTRACTNUMBER = ct.CONTRACTNUMBER
+            WHERE
+            cp.`STATUS` != '1'
+            AND tr.YEAR = #{YEAR}
             ) cpt
-                INNER JOIN projectcontract pt ON pt.CONTRACTNUMBERCOUNT_ID = cpt.CONTRACTNUMBERCOUNT_ID
-                INNER JOIN projectsystem pm ON pm.COMPANYPROJECTS_ID = pt.COMPANYPROJECTS_ID
-                INNER JOIN companyprojects cs ON cs.COMPANYPROJECTS_ID = pm.COMPANYPROJECTS_ID
-                AND cs.`STATUS` >= 4
-                AND pm.type = '0'
+            INNER JOIN projectcontract pt ON pt.CONTRACTNUMBERCOUNT_ID = cpt.CONTRACTNUMBERCOUNT_ID
+            INNER JOIN projectsystem pm ON pm.COMPANYPROJECTS_ID = pt.COMPANYPROJECTS_ID
+            INNER JOIN companyprojects cs ON cs.COMPANYPROJECTS_ID = pm.COMPANYPROJECTS_ID
+            AND cs.`STATUS` >= 4
+            AND pm.type = '0' order by cpt.CONTRACTNUMBER desc
     </select>
     <select id="getWorkInfo" parameterType="list" resultType="com.nt.dao_Pfans.PFANS1000.Vo.StaffWorkMonthInfoVo">
         SELECT

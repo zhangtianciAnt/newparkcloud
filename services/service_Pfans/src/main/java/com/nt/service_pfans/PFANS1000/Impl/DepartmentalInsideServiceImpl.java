@@ -965,6 +965,11 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
         departmentalInside.setDepartment(group_id);
         List<DepartmentalInside> departmentalInsideList = departmentalInsideMapper.select(departmentalInside);
         for(DepartmentalInside depart : departmentalInsideList){
+            if(depart.getEntrycondition().equals("HT004001")){
+                depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "-废弃" + "】");
+            }else{
+
+            }
             depart.setContractnumber(depart.getEntrycondition().equals("HT004001") ? depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "-废弃" + "】" : depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "】");
             depart.setClaimamount(depart.getEntrycondition().equals("HT004001") ?  "-"  : depart.getClaimamount());
         }
