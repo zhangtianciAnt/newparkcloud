@@ -40,19 +40,70 @@ public class Pfans4003Controller {
         }
         //region add scc 8/25 页面rank显示升序排序 from
         List<PeoplewareFee> peopleWareList = peoplewarefeeService.getPeopleWareList(peoplewarefee);
-        peopleWareList = peopleWareList.stream().sorted(Comparator.comparing(PeoplewareFee::getRanks)).collect(Collectors.toList());
-        List<PeoplewareFee> temp = new ArrayList<>();
-        for(PeoplewareFee peo : peopleWareList){
-            if(peo.getRanks().equals("R10") || peo.getRanks().equals("R11A") || peo.getRanks().equals("R11B")){
-                temp.add(peo);
+
+        Collections.sort(peopleWareList,new Comparator<PeoplewareFee>(){
+
+            @Override
+            public int compare(PeoplewareFee o1, PeoplewareFee o2) {
+                String ran1 = "";
+                String ran2 = "";
+                if(o1.getRanks().length() == 3){//R10或R9A
+                    if(o1.getRanks().charAt(2) == 'B' || o1.getRanks().charAt(2) == 'C' || o1.getRanks().charAt(2) == 'A'){
+                        ran1 = String.valueOf(o1.getRanks().charAt(2));
+                    }
+                }
+                else if(o1.getRanks().length() == 4){
+                    ran1 = String.valueOf(o1.getRanks().charAt(3));
+                }
+                if(o2.getRanks().length() == 3){//R10或R9A
+                    if(o2.getRanks().charAt(2) == 'B' || o2.getRanks().charAt(2) == 'C' || o2.getRanks().charAt(2) == 'A'){
+                        ran2 = String.valueOf(o2.getRanks().charAt(2));
+                    }
+                }
+                else if(o2.getRanks().length() == 4){
+                    ran2 = String.valueOf(o2.getRanks().charAt(3));
+                }
+                return ran2.compareTo(ran1);
             }
-        }
-        if(peopleWareList.size() > 0) {
-            for (int i = 0; i < 3; i++) {
-                peopleWareList.remove(0);
+        });
+
+        Collections.sort(peopleWareList,new Comparator<PeoplewareFee>(){
+
+            @Override
+            public int compare(PeoplewareFee o1, PeoplewareFee o2) {
+                int RANK1 = 0;
+                int RANK2 = 0;
+                if(o1.getRanks().length() == 2) {//R3
+                    RANK1 = Integer.parseInt(o1.getRanks().substring(o1.getRanks().length() - 1));
+                }
+                else if(o1.getRanks().length() == 3){//R10或R9A
+                    if(o1.getRanks().charAt(2) == 'B' || o1.getRanks().charAt(2) == 'C' || o1.getRanks().charAt(2) == 'A'){
+                        RANK1 = Integer.parseInt(o1.getRanks().substring(1,2));
+                    }else{
+                        RANK1 = Integer.parseInt(o1.getRanks().substring(o1.getRanks().length() - 2));
+                    }
+                }
+                else if(o1.getRanks().length() == 4) {//R11A
+                    RANK1 = Integer.parseInt(o1.getRanks().substring(1, 3));
+                }
+                if(o2.getRanks().length() == 2){
+                    RANK2 = Integer.parseInt(o2.getRanks().substring(o2.getRanks().length() - 1));
+                }
+                else if(o2.getRanks().length() == 3){//R10或R9A
+                    if(o2.getRanks().charAt(2) == 'B' || o2.getRanks().charAt(2) == 'C' || o2.getRanks().charAt(2) == 'A'){
+                        RANK2 = Integer.parseInt(o2.getRanks().substring(1,2));
+                    }else{
+                        RANK2 = Integer.parseInt(o2.getRanks().substring(o2.getRanks().length() - 2));
+                    }
+                }
+                else if(o2.getRanks().length() == 4){
+                    RANK2 = Integer.parseInt(o2.getRanks().substring(1,3));
+                }
+                return RANK1 - RANK2;
             }
-        }
-        peopleWareList.addAll(temp);
+        });
+
+
         return ApiResult.success(peopleWareList);
         //endregion add scc 8/25 页面rank显示升序排序 to
     }

@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.Vo.DepartmentVo;
+import com.nt.dao_Pfans.PFANS1000.Departmental;
 import com.nt.dao_Pfans.PFANS1000.DepartmentalInside;
 import com.nt.dao_Pfans.PFANS1000.StaffDetail;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalInsideBaseVo;
@@ -964,6 +965,10 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
         departmentalInside.setYears(year);
         departmentalInside.setDepartment(group_id);
         List<DepartmentalInside> departmentalInsideList = departmentalInsideMapper.select(departmentalInside);
+        for(DepartmentalInside depart : departmentalInsideList){
+            depart.setContractnumber(depart.getEntrycondition().equals("HT004001") ? depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "-废弃" + "】" : depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "】");
+            depart.setClaimamount(depart.getEntrycondition().equals("HT004001") ?  "-"  : depart.getClaimamount());
+        }
         TreeMap<String,List<DepartmentalInside>> treeDepList =  departmentalInsideList.stream().collect(Collectors.groupingBy(DepartmentalInside :: getThemeinfor_id,TreeMap::new,Collectors.toList()));
         List<DepartmentalInside> depInsList = new ArrayList<>();
         DepartmentalInsideReturnVo deInsideReturnHjVo = new DepartmentalInsideReturnVo();
@@ -1214,8 +1219,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
             deInsideReturnHjVo.setStaffcustactual02((acalHj02).toString());
             deInsideReturnHjVo.setStaffcustplan03((planHj03).toString());
             deInsideReturnHjVo.setStaffcustactual03((acalHj03).toString());
-            deInsideReturnHjVo.setWorkdifferentthird((workHj04).toString());
-            deInsideReturnHjVo.setRankdifferentthird((rankHj04).toString());
+            deInsideReturnHjVo.setWorkdifferentfourth((workHj04).toString());
+            deInsideReturnHjVo.setRankdifferentfourth((rankHj04).toString());
             returnList.add(deInsideReturnHjVo);
         }
         return returnList;
