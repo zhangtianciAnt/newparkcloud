@@ -234,25 +234,25 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
             message.append("部门的人件费已存在，已自动跳过!");
             if (useradd.size() > 0) {
                 List<PeoplewareFee> all = new ArrayList<>(useradd);
-                Map<String, List<PeoplewareFee>> collect = useradd.stream().collect(Collectors.groupingBy(PeoplewareFee::getGroupid));
-                collect.forEach((keys, value) -> {
-                    List<String> ranks = new ArrayList<>();
-                    Set<String> yearscount = new HashSet<>();//防止同一部门填写两个rank，yearscount重复添加
-                    for (PeoplewareFee peo : value) {
-                        ranks.add(peo.getRanks());
-                        yearscount.add(peo.getYear());
-                    }
-                    List<Dictionary> collects = dictionaryRank.stream().filter(items -> (!ranks.contains(items.getValue1()))).collect(Collectors.toList());
-                    PeoplewareFee peomore = null;
-                    for (String years : yearscount) {
-                        for (Dictionary dic : collects) {
-                            String uuid = UUID.randomUUID().toString();
-                            peomore = new PeoplewareFee(uuid, keys, years, dic.getValue1(), "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0");
-                            peomore.preInsert(tokenModel);
-                            all.add(peomore);
+                Map<String, Map<String,List<PeoplewareFee>>> collect = useradd.stream().collect(Collectors.groupingBy(PeoplewareFee::getYear,Collectors.groupingBy(PeoplewareFee::getGroupid)));
+                collect.forEach((years,vale) -> {
+                    vale.forEach((group, value) -> {
+                        List<String> ranks = new ArrayList<>();
+                        Set<String> yearscount = new HashSet<>();//防止同一部门填写两个rank，yearscount重复添加
+                        for (PeoplewareFee peo : value) {
+                            ranks.add(peo.getRanks());
                         }
-                    }
+                        List<Dictionary> collects = dictionaryRank.stream().filter(items -> (!ranks.contains(items.getValue1()))).collect(Collectors.toList());
+                        PeoplewareFee peomore = null;
+                            for (Dictionary dic : collects) {
+                                String uuid = UUID.randomUUID().toString();
+                                peomore = new PeoplewareFee(uuid, group, years, dic.getValue1(), "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+                                peomore.preInsert(tokenModel);
+                                all.add(peomore);
+                            }
+                    });
                 });
+
                 peoplewarefeeMapper.insertList(all);
             }
         } else {
