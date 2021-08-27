@@ -14,7 +14,9 @@ import com.nt.dao_Pfans.PFANS6000.Vo.PjExternalInjectionVo;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.DepartmentAccountService;
+import com.nt.service_pfans.PFANS1000.DepartmentalInsideService;
 import com.nt.service_pfans.PFANS1000.DepartmentalService;
+import com.nt.service_pfans.PFANS2000.PersonalCostService;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.service_pfans.PFANS6000.PjExternalInjectionService;
 import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsMapper;
@@ -62,10 +64,13 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
     @Autowired
     private DepartmentAccountService departmentAccountService;
 
+    @Autowired
+    private DepartmentalInsideService departmentalInsideService;
+
 
     //pj别外注费统计定时任务
     //每日凌晨0点15分
-    @Scheduled(cron = "0 15 0 * * ?")
+    //@Scheduled(cron = "0 15 0 * * ?")
     public void saveTableinfo() throws Exception {
 
     //region add_修改定时任务时间、并对下面流程做判断
@@ -287,6 +292,9 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
 
             //调取部门别收支表任务
             departmentAccountService.insert();
+
+            //调取部门项目别年度统计
+            departmentalInsideService.insert();
         }
     //endregion add_修改定时任务时间、并对下面流程做判断
     }

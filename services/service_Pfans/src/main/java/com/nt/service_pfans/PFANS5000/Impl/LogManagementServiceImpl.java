@@ -196,13 +196,6 @@ public class LogManagementServiceImpl implements LogManagementService {
     }
     //add ccm 1118 日志优化
 
-
-    @Override
-    public List<LogManagement> getOrgOwnerList(LogManagement logmanagement) throws Exception {
-        String log_date = DateUtil.format(logmanagement.getLog_date(), "yyyy-MM");
-        return logmanagementmapper.getOrgOwnerList(logmanagement.getGroup_id(), log_date);
-    }
-
     //add_fjl_0716_添加PL权限的人查看日志一览  start
     @Override
     public List<LogManagement> getDataListPL(TokenModel tokenModel) throws Exception {

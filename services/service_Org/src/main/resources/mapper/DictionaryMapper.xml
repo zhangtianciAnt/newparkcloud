@@ -35,11 +35,4 @@
         </if>
         ORDER BY orderdic asc
     </select>
-
-    <select id="getForSelectCode" parameterType="com.nt.dao_Org.Dictionary" resultType="com.nt.dao_Org.Dictionary">
-        select * from dictionary
-        <if test="code != null and code != ''" >
-            WHERE  code = #{code}
-        </if>
-    </select>
 </mapper>

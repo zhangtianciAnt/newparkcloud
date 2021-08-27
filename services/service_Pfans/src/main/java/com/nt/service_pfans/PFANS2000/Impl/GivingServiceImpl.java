@@ -167,7 +167,7 @@ public class GivingServiceImpl implements GivingService {
     }
 
     /**
-     * 生成基数表
+     * 工资查询
      * FJL
      */
     @Override

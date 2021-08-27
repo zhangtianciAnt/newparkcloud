@@ -61,7 +61,6 @@ public class Pfans2036Controller {
         return ApiResult.success(personalCostService.getChangeRanks());
     }
 
-
     @RequestMapping(value = "/gettableBm", method = {RequestMethod.GET})
     public ApiResult gettableBm(String yearsantid, HttpServletRequest request) throws Exception {
         if (yearsantid == null ) {
@@ -88,13 +87,6 @@ public class Pfans2036Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(personalCostService.gettableRb(yearsantid));
     }
-
-
-
-
-
-
-
 
     @RequestMapping(value = "/getYears", method = {RequestMethod.GET})
     public ApiResult getYears(HttpServletRequest request) throws Exception {
@@ -128,7 +120,6 @@ public class Pfans2036Controller {
         PersonalCost personalcost = new PersonalCost();
         return ApiResult.success(personalCostService.getFuzzyQuery(yearsantid,username,allotmentAnt,group_id,rnAnt));
     }
-
 
     @RequestMapping(value = "/exportinfo", method = {RequestMethod.GET})
     public ApiResult exportinfo(String yearsantid, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -193,8 +184,6 @@ public class Pfans2036Controller {
         writer.close();
         return ApiResult.success();
     }
-
-
 
     @RequestMapping(value = "/importPersInfo", method = {RequestMethod.POST})
     public ApiResult importPersInfo( HttpServletRequest request) throws Exception {
