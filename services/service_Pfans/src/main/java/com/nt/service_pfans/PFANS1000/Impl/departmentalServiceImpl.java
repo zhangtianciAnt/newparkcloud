@@ -54,8 +54,6 @@ public class departmentalServiceImpl implements DepartmentalService {
      * @参数：[]
      * @返回值：[]
      */
-    //定时任务由pj别外注费统计调动
-//    @Scheduled(cron = "0 0 2 * * ?")
     public void getExpatureList() throws Exception {
         List<Dictionary> dictionaryL = dictionaryService.getForSelect("BP027");
         TokenModel tokenModel = new TokenModel();
