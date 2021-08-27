@@ -37,13 +37,4 @@ public interface CompanyProjectsMapper extends MyMapper<CompanyProjects> {
     List<Monthly> getMoneysByProject(@Param("companyprojectsId") String companyprojectsId);
     //zy end 报表追加 2021/06/13
 
-    @Select("SELECT COMPANYPROJECTS_ID FROM `companyprojects` WHERE STARTDATE < '2021-04-01' and ENDDATE > '2021-04-01'")
-    List<String> getComprojectIdZ();
-
-    @Select("SELECT COMPANYPROJECTS_ID from projectsystem pro where pro.COMPANYPROJECTS_ID in " +
-            "( SELECT COMPANYPROJECTS_ID FROM `companyprojects` WHERE ENDDATE <'2021-04-01' ) and pro.EXITTIME > '2021-03-31'")
-    List<String> getComprojectIdO();
-
-    @Select("SELECT value1 from dictionary where code = #{code}")
-    String getDicInfo(@Param("code") String code);
 }
