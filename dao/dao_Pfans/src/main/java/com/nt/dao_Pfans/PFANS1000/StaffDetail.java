@@ -96,6 +96,10 @@ public class StaffDetail extends BaseModel {
     @Column(name = "REASON")
     private String reason;
 
+    //合同金额
+    @Column(name = "CLAIMAMOUNT")
+    private String claimamount;
+
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 }

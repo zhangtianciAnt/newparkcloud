@@ -72,9 +72,6 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
             year = calendar.get(Calendar.YEAR);
         }
         Calendar calnew = Calendar.getInstance();
-        int yearnow = calnew.get(Calendar.YEAR);
-        List<DepartmentVo> departmentVoList = new ArrayList<>();
-        departmentVoList = orgTreeService.getAllDepartment();
         List<DepartmentalInsideBaseVo> departmentalInsideBaseVoList = departmentalInsideMapper.getBaseInfo(String.valueOf(year));
         Map<String, List<DepartmentalInsideBaseVo>> groupThemList = departmentalInsideBaseVoList.stream()
                 .collect(Collectors.groupingBy(DepartmentalInsideBaseVo::getThemeinfor_id));
@@ -83,12 +80,12 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
             monthStr = "0" + month;
         }
         for (Map.Entry<String, List<DepartmentalInsideBaseVo>> entryDep : groupThemList.entrySet()) {
-            List<String> userList = new ArrayList<>();
-            userList = entryDep.getValue().stream().map(DepartmentalInsideBaseVo::getName).distinct().collect(Collectors.toList());
+            List<String> departList = new ArrayList<>();
+            departList = entryDep.getValue().stream().map(DepartmentalInsideBaseVo::getGroup_id).distinct().collect(Collectors.toList());
             List<String> projectList = new ArrayList<>();;
             projectList = entryDep.getValue().stream().map(DepartmentalInsideBaseVo::getCompanyprojects_id).distinct().collect(Collectors.toList());
             String LOG_DATE = String.valueOf(year) + '-' + monthStr;
-            List<StaffWorkMonthInfoVo> staffWorkMonthInfoVoList = departmentalInsideMapper.getWorkInfo(LOG_DATE, userList, projectList);
+            List<StaffWorkMonthInfoVo> staffWorkMonthInfoVoList = departmentalInsideMapper.getWorkInfo(LOG_DATE, departList, projectList);
             PeoplewareFee peoplewareFee = new PeoplewareFee();
             peoplewareFee.setYear(String.valueOf(year));
             List<PeoplewareFee> peoplewareFeeList = peoplewarefeeMapper.select(peoplewareFee);
@@ -118,8 +115,10 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                         PeoplewareFee peoCost = finalPeoplewareFeeMap.get(ranksMap.get(rank).getCode());
                         departInsideSelect.setStaffrank(rank);
                         List<DepartmentalInside> getOldRanList = departmentalInsideMapper.select(departInsideSelect);
+                        List<StaffWorkMonthInfoVo> rangRankList = new ArrayList<>();
+                        rangRankList = rankList.stream().filter(range -> range.getTime_start() != null).collect(Collectors.toList());
                         String rankSum = "0.0";
-                        rankSum = rankList.stream().map(i -> new BigDecimal(i.getTime_start())).reduce(BigDecimal.ZERO, BigDecimal::add).toString();
+                        rankSum = rangRankList.stream().map(i -> new BigDecimal(i.getTime_start())).reduce(BigDecimal.ZERO, BigDecimal::add).toString();
                         StaffDetail staffDetail = new StaffDetail();
                         staffDetail.setIncondepartment(departInsideSelect.getDepartment());
                         staffDetail.setContractnumber(deBaseList.get(0).getContractnumber());
@@ -966,6 +965,11 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
         departmentalInside.setDepartment(group_id);
         List<DepartmentalInside> departmentalInsideList = departmentalInsideMapper.select(departmentalInside);
         for(DepartmentalInside depart : departmentalInsideList){
+            if(depart.getEntrycondition().equals("HT004001")){
+                depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "-废弃" + "】");
+            }else{
+
+            }
             depart.setContractnumber(depart.getEntrycondition().equals("HT004001") ? depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "-废弃" + "】" : depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "】");
             depart.setClaimamount(depart.getEntrycondition().equals("HT004001") ?  "-"  : depart.getClaimamount());
         }

@@ -557,12 +557,21 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
                         month.setMonth(sf.format(businessList.get(0).getLoanday()));
                         SimpleDateFormat sf1 = new SimpleDateFormat("yyyy");
                         month.setYear(sf1.format(businessList.get(0).getLoanday()));
-                        month.setCurrency(businessList.get(0).getCurrency());
+                        month.setCurrency(loanapplication.getCurrencychoice());
                         List<MonthlyRate> monthList = monthlyratemapper.select(month);
                         if(monthList.size() > 0){
-                            Double loanMoney = Double.valueOf(monthList.get(0).getExchangerate()) * Double.valueOf(businessList.get(0).getLoanmoney());
-                            businessList.get(0).setLoanmoney(String.valueOf(loanMoney));
+                            if(monthList.size() > 0){
+                                businessList.get(0).setLoanmoney(
+                                        String.valueOf(com.mysql.jdbc.StringUtils.isNullOrEmpty(monthList.get(0).getExchangerate())
+                                                ? BigDecimal.ZERO
+                                                : new BigDecimal(monthList.get(0).getExchangerate())
+                                                .multiply(com.mysql.jdbc.StringUtils.isNullOrEmpty(loanapplication.getMoneys())
+                                                        ? BigDecimal.ZERO
+                                                        : new BigDecimal(loanapplication.getMoneys()))
+                                                .setScale(2,BigDecimal.ROUND_HALF_UP)));
+                            }
                         }
+
                         //add  借款金额（元）  to
                         businessList.get(0).preUpdate(tokenModel);
                         businessMapper.updateByPrimaryKey(businessList.get(0));
