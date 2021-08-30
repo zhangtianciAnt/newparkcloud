@@ -142,6 +142,8 @@
 		GROUP BY
 		`base`.`GIVING_ID`,
 		`base`.`USER_ID`
+		ORDER BY
+		`base`.`WORKDATE`
 		) `tablewages`
 	</select>
 </mapper>
