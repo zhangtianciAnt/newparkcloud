@@ -145,6 +145,8 @@
 		`base`.`GIVING_ID`,
 		`base`.`USER_ID`,
 		`base`.`JOBNUMBER`
+        ORDER BY
+        `base`.`WORKDATE`
 		) `tablewages`
 	</select>
 </mapper>

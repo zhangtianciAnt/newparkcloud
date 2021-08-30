@@ -164,6 +164,8 @@
         GROUP BY
         `base`.`USER_ID`,
         `base`.`GIVING_ID`
+        ORDER BY
+        `base`.`WORKDATE`
         ) `tw`
         LEFT JOIN `dictionary` `dic` ON (((
         `dic`.`PCODE` = 'PR048'
