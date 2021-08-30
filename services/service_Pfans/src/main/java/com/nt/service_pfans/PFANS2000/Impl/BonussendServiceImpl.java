@@ -24,10 +24,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -116,7 +113,7 @@ public class BonussendServiceImpl implements BonussendService {
             List<Object> model = new ArrayList<Object>();
 //            标准模板
             model.add("年度");
-            model.add("工号");
+            model.add("姓名");  //update_qhr_20210830 修改模板列名
             model.add("奖金总额（元）");
             model.add("纳税方法（个人选择）");
             model.add("综合收入应纳税金（元）");
@@ -158,14 +155,16 @@ public class BonussendServiceImpl implements BonussendService {
 //                        }
 //                    }
                     Query query = new Query();
-                    String jobnumber = value.get(1).toString();
-                    query.addCriteria(Criteria.where("userinfo.jobnumber").is(jobnumber));
+//                    region update_qhr_20210830  修改检查项为名字
+                    String customername = value.get(1).toString();
+                    query.addCriteria(Criteria.where("userinfo.customername").is(customername));
                     CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                     if (customerInfo == null) {
                         error = error + 1;
-                        Result.add("模板第" + (k - 1) + "行的工号字段没有找到，请输入正确的工号，导入失败");
+                        Result.add("模板第" + (k - 1) + "行的姓名字段没有找到，请输入正确的姓名，导入失败");
                         continue;
                     }
+//                    endregion update_qhr_20210830  修改检查项为名字
                     if (customerInfo != null) {
                         bonussend.setUser_id(customerInfo.getUserid());
                         bonussend.setUsername(customerInfo.getUserinfo().getCustomername());
@@ -174,7 +173,7 @@ public class BonussendServiceImpl implements BonussendService {
                         bonussend.setYears(value.get(0).toString());
                     }
                     if(value.size() > 1){
-                        bonussend.setJobnumber(value.get(1).toString());
+                        bonussend.setJobnumber(customerInfo.getUserinfo().getJobnumber());  //update_qhr_20210830 修改保存项
                     }
                     if(value.size() > 2){
                         bonussend.setTotalbonus1(value.get(2).toString());
@@ -213,10 +212,28 @@ public class BonussendServiceImpl implements BonussendService {
                 // update gbb 20210312 NT_PFANS_20210305_BUG_131 点击送信发送代办 start
                 bonussend.preInsert();
                 bonussend.setBonussend_id(UUID.randomUUID().toString());
-                bonussendMapper.insert(bonussend);
+//                bonussendMapper.insert(bonussend);  //update_qhr_20210830 在下方进行保存
                 listVo.add(bonussend);
-                accesscount = accesscount + 1;
+//                accesscount = accesscount + 1;  //update_qhr_20210830 在下方进行保存
             }
+            //region add_qhr_20210830 添加导入数据的去重，保证每年每人有一条数据
+            listVo = listVo.stream().collect(Collectors.collectingAndThen(
+                    Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Bonussend::getJobnumber))), ArrayList::new));
+            for (Bonussend bonussend : listVo) {
+                Bonussend bonus = new Bonussend();
+                bonus.setUsername(bonussend.getUsername());
+                bonus.setYears(bonussend.getYears());
+                List<Bonussend> bonussends = bonussendMapper.select(bonus);
+                if (bonussends.size() > 0) {
+                    bonussend.setBonussend_id(bonussends.get(0).getBonussend_id());
+                    bonussendMapper.updateByPrimaryKey(bonussend);
+                    accesscount = accesscount + 1;
+                } else {
+                    bonussendMapper.insert(bonussend);
+                    accesscount = accesscount + 1;
+                }
+            }
+//            endregion add_qhr_20210830 添加导入数据的去重，保证每年每人有一条数据
             Result.add("失败数：" + error);
             Result.add("成功数：" + accesscount);
             return Result;
