@@ -1,4 +1,4 @@
-package com.nt.dao_Pfans.PFANS1000.Vo;
+package com.nt.dao_Org.Vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

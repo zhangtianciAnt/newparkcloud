@@ -177,9 +177,9 @@ public class BusinessServiceImpl implements BusinessService {
             url1 = "/PFANS1002View";
         }
         ToDoNotice toDoNotice3 = new ToDoNotice();
-        toDoNotice3.setTitle("【" + username + "得出差已取消，请及时处理】");
+        toDoNotice3.setTitle("【" + username + "的出差已取消，请及时处理】");
         toDoNotice3.setInitiator(Bus.getUser_id());
-        toDoNotice3.setContent("请您处理以取消得出差");
+        toDoNotice3.setContent("请您处理已取消的出差");
         toDoNotice3.setDataid(Bus.getBusiness_id());
         toDoNotice3.setUrl(url);
         toDoNotice3.setWorkflowurl(url1);
@@ -230,7 +230,7 @@ public class BusinessServiceImpl implements BusinessService {
             if (rolelist.size() > 0) {
                 for(MembersVo role:rolelist){
                     ToDoNotice toDoNotice = new ToDoNotice();
-                    toDoNotice.setTitle("【" + username + "得出差已取消，请及时处理机票】");
+                    toDoNotice.setTitle("【" + username + "的出差已取消，请及时处理机票】");
                     toDoNotice.setInitiator(Bus.getUser_id());
                     toDoNotice.setContent("请修改机票");
                     toDoNotice.setDataid(busserid);

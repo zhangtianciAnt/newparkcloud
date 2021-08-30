@@ -1,10 +1,12 @@
 package com.nt.dao_Pfans.PFANS1000.Vo;
 
+import com.nt.dao_Pfans.PFANS1000.Departmental;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
+import java.util.List;
 
 
 @Data
@@ -62,4 +64,6 @@ public class DepartmentalVo {
 
     /*monthcast*/
     private String monthcast;
+
+    private List<Departmental> departmentalList;
 }

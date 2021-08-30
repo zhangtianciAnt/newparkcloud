@@ -34,14 +34,20 @@ public class PersonalCost extends BaseModel {
     /**
      *CENTERID
      */
-    @Column(name = "CENTERID ")
+    @Column(name = "CENTERID")
     private String centerid ;
 
     /**
      *GROUPID
      */
-    @Column(name = "GROUPID ")
+    @Column(name = "GROUPID")
     private String groupid ;
+
+    /**
+     *有效部门
+     */
+    @Column(name = "DEPARTMENT")
+    private String department ;
 
     /**
      * 姓名id
@@ -54,6 +60,12 @@ public class PersonalCost extends BaseModel {
      */
     @Column(name = "USERNAME")
     private String username;
+
+    /**
+     * 卡号
+     */
+    @Column(name = "JOBNUMBER")
+    private String jobnumber;
 
     /**
      * 部门简称

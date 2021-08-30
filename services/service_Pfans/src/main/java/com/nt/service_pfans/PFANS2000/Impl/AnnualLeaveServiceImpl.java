@@ -898,7 +898,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     //【每天下午16点45分】
     //系统服务--取当天打卡记录//正式时间每天下午4点45分执行  GBB add
-    @Scheduled(cron="0 31 19 * * ?") //每天下午4点45分执行  GBB add -- 取当正式员工天下午4点45分之前打卡记录
+    @Scheduled(cron="0 45 16 * * ?") //每天下午4点45分执行  GBB add -- 取当正式员工天下午4点45分之前打卡记录
     public void selectattendanceTask()throws Exception {
         selectattendance();
     }

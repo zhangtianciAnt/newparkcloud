@@ -62,6 +62,10 @@ public class Departmental extends BaseModel {
     @Column(name = "CLAIMTYPE")
     private String claimtype;
 
+    /*合同状态*/
+    @Column(name = "ENTRYCONDITION")
+    private String entrycondition;
+
     /*PJNUMBER*/
     @Column(name = "NUMBERS")
     private String numbers;

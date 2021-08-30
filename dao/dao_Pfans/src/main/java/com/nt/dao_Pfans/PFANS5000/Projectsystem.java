@@ -85,5 +85,18 @@ public class Projectsystem extends BaseModel {
      */
     @Column(name = "ROWINDEX")
     private Integer rowindex;
+    //region add_qhr_20210810 添加rank、报告者字段
+    /**
+     * RANK
+     */
+    @Column(name = "`RANK`")
+    private String rank;
+
+    /**
+     * 报告者
+     */
+    @Column(name = "REPORTER")
+    private String reporter;
+    //endregion add_qhr_20210810 添加rank、报告者字段
 
 }

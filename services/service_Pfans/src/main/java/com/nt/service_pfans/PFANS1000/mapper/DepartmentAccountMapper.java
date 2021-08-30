@@ -25,6 +25,16 @@ public interface DepartmentAccountMapper extends MyMapper<DepartmentAccount>{
     List<DepartmentTotalVo> selectTotalBytheme(@Param("years") String years, @Param("department") String department, @Param("themeid") String themeid);
     //获取当前theme，当前年度，当前部门，产生的外注费用
     List<DepartmentAccountTotal> selectPJMount(@Param("years") String years, @Param("department") String department, @Param("themeid") String themeid);
+
+    //add ccm 20210810 下方合计增加经费和差旅费 fr
+    //获取当前theme，当前年度，当前部门，产生的经费
+    List<DepartmentAccountTotal> selectFundingBytheme(@Param("years") String years, @Param("department") String department, @Param("themeid") String themeid);
+    //获取当前theme，当前年度，当前部门，产生的经费
+    List<DepartmentAccountTotal> selectTravelMountBytheme(@Param("years") String years, @Param("department") String department, @Param("themeid") String themeid);
+    //查询部门填写的共通项目日志工数
+    List<DepartmentTotalVo> selectTotalByYearAndDep(@Param("years") String years, @Param("department") String department);
+    //add ccm 20210810 下方合计增加经费和差旅费 to
+
     //部门别合计表批量插入数据
     void insertDepTotalAll(@Param("list") List<DepartmentAccountTotal> departmentAccountTotalInsert);
     //部门别合计表批量更新数据

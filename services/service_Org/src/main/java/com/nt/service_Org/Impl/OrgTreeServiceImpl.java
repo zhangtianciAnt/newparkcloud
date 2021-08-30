@@ -1,7 +1,10 @@
 package com.nt.service_Org.Impl;
 
 import cn.hutool.core.util.ImageUtil;
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.Vo.DepartmentVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.OrgTreeVo;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.utils.ApiResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -182,6 +185,61 @@ public class OrgTreeServiceImpl implements OrgTreeService {
         }
         return new OrgTree();
     }
+
+    //根据部门id获取部门组织信息
+    @Override
+    public OrgTreeVo getDepartmentinfo(String departid) throws Exception {
+        OrgTree orgs = get(new OrgTree());
+        List<OrgTreeVo> OrgTreeVolist = new ArrayList<>();
+        OrgTreeVo orgtreevo = new OrgTreeVo();
+        for (OrgTree org : orgs.getOrgs()) {//第一层循环
+            orgtreevo = new OrgTreeVo();
+            orgtreevo.set_id(org.get_id());//第一层_id
+            orgtreevo.setMoney1(org.getCompanyname());//第一层名字
+            orgtreevo.setMoney2("");//第二层_id
+            orgtreevo.setMoney3("");//第二层名字
+            orgtreevo.setMoney4("");//第三层_id
+            orgtreevo.setMoney5("");//第三层名字
+            orgtreevo.setMoney6(org.getUser());//负责人
+            orgtreevo.setMoney7("1");//代表第一层
+            orgtreevo.setMoney8(org.get_id());//本部门id
+            OrgTreeVolist.add(orgtreevo);
+            if(org.getOrgs() != null){
+                for (OrgTree org1 : org.getOrgs()) {//第二层循环
+                    orgtreevo = new OrgTreeVo();
+                    orgtreevo.set_id(org.get_id());//第一层_id
+                    orgtreevo.setMoney1(org.getCompanyname());//第一层名字
+                    orgtreevo.setMoney2(org1.get_id());//第二层_id
+                    orgtreevo.setMoney3(org1.getCompanyname());//第二层名字
+                    orgtreevo.setMoney4("");//第三层_id
+                    orgtreevo.setMoney5("");//第三层名字
+                    orgtreevo.setMoney6(org1.getUser());//负责人
+                    orgtreevo.setMoney7("2");//代表第二层
+                    orgtreevo.setMoney8(org1.get_id());//本部门id
+                    OrgTreeVolist.add(orgtreevo);
+                    if(org1.getOrgs() != null){
+                        for (OrgTree org2 : org1.getOrgs()) {//第三层循环
+                            orgtreevo = new OrgTreeVo();
+                            orgtreevo.set_id(org.get_id());//第一层_id
+                            orgtreevo.setMoney1(org.getCompanyname());//第一层名字
+                            orgtreevo.setMoney2(org1.get_id());//第二层_id
+                            orgtreevo.setMoney3(org1.getCompanyname());//第二层名字
+                            orgtreevo.setMoney4(org2.get_id());//第三层_id
+                            orgtreevo.setMoney5(org2.getCompanyname());//第三层名字
+                            orgtreevo.setMoney6(org2.getUser());//负责人
+                            orgtreevo.setMoney7("3");//代表第三层
+                            orgtreevo.setMoney8(org2.get_id());//本部门id
+                            OrgTreeVolist.add(orgtreevo);
+                        }
+                    }
+                }
+            }
+        }
+        OrgTreeVolist = OrgTreeVolist.stream().distinct().filter(item -> (item.getMoney8().equals(departid))).collect(Collectors.toList());
+        OrgTreeVo orgTreeVoOne = OrgTreeVolist.get(0);
+        return orgTreeVoOne;
+    }
+
     //根据部门id获取部门组织信息
     @Override
     public OrgTree getOrgInfo(OrgTree org, String compn) throws Exception {
@@ -203,4 +261,51 @@ public class OrgTreeServiceImpl implements OrgTreeService {
         }
         return new OrgTree();
     }
+
+    //add ccm 20210819 获取所有有效部门的信息 fr
+    //获取所有有效部门，从center查找预算编码，存在则作为部门，不存在则获取center下group作为部门
+    @Override
+    public List<DepartmentVo> getAllDepartment() throws Exception {
+        List<DepartmentVo> departmentVoList = new ArrayList<>();
+        DepartmentVo departmentVo = new DepartmentVo();
+        //获取当前系统中有效的部门，按照预算编码统计
+        OrgTree orgs = get(new OrgTree());
+        //副总
+        for (OrgTree orgfu : orgs.getOrgs()) {
+            //Center
+            for (OrgTree orgCenter : orgfu.getOrgs()) {
+                if(!StringUtils.isNullOrEmpty(orgCenter.getEncoding()))
+                {
+                    departmentVo = new DepartmentVo();
+                    departmentVo.setDepartmentId(orgCenter.get_id());
+                    departmentVo.setDepartmentname(orgCenter.getCompanyname());
+                    departmentVo.setDepartmentshortname(orgCenter.getCompanyshortname());
+                    departmentVo.setDepartmentEncoding(orgCenter.getEncoding());
+                    departmentVo.setDepartmentEn(orgCenter.getCompanyen());
+                    departmentVo.setDepartmentType(orgCenter.getType());
+                    departmentVo.setDepartmentUserid(orgCenter.getUser());
+                    departmentVoList.add(departmentVo);
+                }
+                else
+                {
+                    for(OrgTree orgGroup : orgCenter.getOrgs())
+                    {
+                        departmentVo = new DepartmentVo();
+                        departmentVo.setDepartmentId(orgGroup.get_id());
+                        departmentVo.setDepartmentname(orgGroup.getCompanyname());
+                        departmentVo.setDepartmentshortname(orgGroup.getCompanyshortname());
+                        departmentVo.setDepartmentEncoding(orgGroup.getEncoding());
+                        departmentVo.setDepartmentEn(orgGroup.getCompanyen());
+                        departmentVo.setDepartmentType(orgGroup.getType());
+                        departmentVo.setDepartmentUserid(orgGroup.getUser());
+                        departmentVoList.add(departmentVo);
+                    }
+                }
+            }
+        }
+
+        return departmentVoList;
+    }
+    //add ccm 20210819 获取所有有效部门的信息 to
+
 }

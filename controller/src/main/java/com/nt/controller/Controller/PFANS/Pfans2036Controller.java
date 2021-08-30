@@ -52,7 +52,6 @@ public class Pfans2036Controller {
         return ApiResult.success(personalCostService.getChangeRanks());
     }
 
-
     @RequestMapping(value = "/gettableBm", method = {RequestMethod.GET})
     public ApiResult gettableBm(String yearsantid, HttpServletRequest request) throws Exception {
         if (yearsantid == null ) {
@@ -79,13 +78,6 @@ public class Pfans2036Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         return ApiResult.success(personalCostService.gettableRb(yearsantid));
     }
-
-
-
-
-
-
-
 
     @RequestMapping(value = "/getYears", method = {RequestMethod.GET})
     public ApiResult getYears(HttpServletRequest request) throws Exception {
