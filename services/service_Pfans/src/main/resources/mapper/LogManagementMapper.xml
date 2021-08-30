@@ -27,7 +27,17 @@
                 and name = #{owner}
                 and REPLACE(EXITTIME,'-','')  >= DATE_FORMAT(SYSDATE(),'%Y%m%d')
                 GROUP BY projectsystem.COMPANYPROJECTS_ID))
-        
+    </select>
+
+    <select id="getListCENTERlogman" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
+        SELECT *
+        FROM logmanagement
+        WHERE CREATEBY IN (
+        SELECT e.ACCOUNT
+        FROM expatriatesinfor e
+        WHERE 1=1 AND (e.GROUP_ID = #{departmentcen}
+                OR e.GROUP_ID = #{departmentgro})
+        )
     </select>
 
 <!--    add ccm 1118 日志优化-->
