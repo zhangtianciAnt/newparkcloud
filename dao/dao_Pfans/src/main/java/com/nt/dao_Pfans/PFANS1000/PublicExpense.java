@@ -205,4 +205,13 @@ public class PublicExpense extends BaseModel {
     @Column(name = "LOANTYPE")
     private String loantype;
     //PSDCD_PFANS_20210519_BUG_006 修改供应商编码 供应商地点错误 to
+    //region add_qhr_20210830 添加外注费用check和记账月份
+    //外注费用check 0-是 1-否
+    @Column(name = "CHECKEDWZFY")
+    private String checkedWZFY;
+
+    //记账月份
+    @Column(name = "JZMONTH")
+    private Date jzmonth;
+    //endregion add_qhr_20210830 添加外注费用check和记账月份
 }
