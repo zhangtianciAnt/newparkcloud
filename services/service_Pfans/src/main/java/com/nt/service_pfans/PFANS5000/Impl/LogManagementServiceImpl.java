@@ -1,7 +1,11 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.UserAccount;
+import com.nt.dao_Org.Vo.DepartmentVo;
+import com.nt.dao_Pfans.PFANS1000.DepartmentAccount;
 import com.nt.dao_Pfans.PFANS2000.AnnualLeave;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.PersonalProjects;
@@ -230,14 +234,32 @@ public class LogManagementServiceImpl implements LogManagementService {
         aList = annualLeaveMapper.select(annualLeave);
         String departmentcen = null;
         String departmentgro = null;
+        List<LogManagement> listCenter = new ArrayList<>();
         if(aList.size()>0)
         {
             departmentcen = aList.get(0).getCenter_id();
             departmentgro = aList.get(0).getGroup_id();
+            if(departmentcen != null && departmentcen != "")
+            {
+                listCenter = logmanagementmapper.getListCENTERlogman(departmentcen,departmentgro);
+            }
         }
         //add ccm 20210819 所属center可看外注 to
-        List<LogManagement> list2 = logmanagementmapper.getListPLlogman(owner,departmentcen,departmentgro);
-        return list2;
+        //根据登陆用户id查看人员角色
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(tokenModel.getUserId()));
+        List<UserAccount> userAccountlist = mongoTemplate.find(query,UserAccount.class);
+        String roles = "";
+        for(Role role : userAccountlist.get(0).getRoles()){
+            roles = roles + role.getDescription();
+        }
+        List<LogManagement> listEnd = new ArrayList<>();
+        listEnd = logmanagementmapper.getListPLlogman(owner);
+        if(roles.contains("center长"))
+        {
+            listEnd.addAll(listCenter);
+        }
+        return listEnd;
     }
 
     //add_fjl_0716_添加PL权限的人查看日志一览  end
