@@ -60,6 +60,7 @@
 		SELECT
 		`base`.`GIVING_ID` AS `GIVING_ID`,
 		`base`.`USER_ID` AS `USER_ID`,
+        `base`.`WORKDATE`,
 		ifnull( `bonussend`.`TOTALBONUS1`, 0 ) AS `TOTALBONUS1`,
 		max((
 		CASE
@@ -256,7 +257,8 @@
 		))
 		GROUP BY
 		`base`.`GIVING_ID`,
-		`base`.`USER_ID`
+		`base`.`USER_ID`,
+        `base`.`WORKDATE`
         ORDER BY
         `base`.`WORKDATE`
 		) `tablewages`
