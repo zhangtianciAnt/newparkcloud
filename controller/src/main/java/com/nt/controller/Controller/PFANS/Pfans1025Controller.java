@@ -749,7 +749,7 @@ public class Pfans1025Controller {
     @GetMapping(value = "/getRanks")
     public ApiResult getRanks(HttpServletRequest request) throws Exception{
         List<Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
-        List<Dictionary> collect = dictionaryRank.stream().filter(item -> (!item.getValue1().equals("R11A") && !item.getValue1().equals("R11B"))).collect(Collectors.toList());
+        List<Dictionary> collect = dictionaryRank.stream().filter(item -> (!item.getValue1().equals("R11A") && !item.getValue1().equals("R11B") && !item.getValue1().equals("R10"))).collect(Collectors.toList());
         List<String> ranks = new ArrayList<>();
         for(Dictionary ran : collect){
             ranks.add(ran.getValue1());
