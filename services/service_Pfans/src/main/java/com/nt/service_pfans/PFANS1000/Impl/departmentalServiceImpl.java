@@ -3,7 +3,6 @@ package com.nt.service_pfans.PFANS1000.Impl;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Departmental;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalVo;
-import com.nt.dao_Pfans.PFANS6000.PjExternalInjection;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.DepartmentalService;
@@ -13,7 +12,6 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +20,6 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.groupingBy;
 
 
 @Service
@@ -135,9 +131,20 @@ public class departmentalServiceImpl implements DepartmentalService {
         departmental.setYears(years);
         departmental.setDepartment(group_id);
         departmentalList = departmentalMapper.select(departmental);
+        Map<String, Map<String,List<Departmental>>> filterMap =
+                departmentalList.stream()
+                        .collect(Collectors.groupingBy(Departmental::getContractnumber,
+                                Collectors.groupingBy(Departmental::getNumbers)));
         for(Departmental depart : departmentalList){
-            depart.setContractnumber(depart.getEntrycondition().equals("HT004001") ? depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "-废弃" + "】" : depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "】");
-            depart.setClaimamount(depart.getEntrycondition().equals("HT004001") ?  "-"  : depart.getClaimamount());
+            if(depart.getEntrycondition().equals("HT004001")){
+                depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "-废弃" + "】");
+            }else{
+                if(filterMap.get(depart.getContractnumber()).size() > 1){
+                    depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "】");
+                }else{
+                    depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getClaimamount() + "】");
+                }
+            }
         }
         //按照theme分组
         TreeMap<String,List<Departmental>> departList =  departmentalList.stream().collect(Collectors.groupingBy(Departmental :: getThemeinfor_id,TreeMap::new,Collectors.toList()));
