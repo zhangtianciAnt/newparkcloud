@@ -964,14 +964,20 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
         departmentalInside.setYears(year);
         departmentalInside.setDepartment(group_id);
         List<DepartmentalInside> departmentalInsideList = departmentalInsideMapper.select(departmentalInside);
+        Map<String, Map<String, List<DepartmentalInside>>> filterMap =
+                departmentalInsideList.stream()
+                        .collect(Collectors.groupingBy(DepartmentalInside::getContractnumber,
+                                Collectors.groupingBy(DepartmentalInside::getProject_id)));
         for(DepartmentalInside depart : departmentalInsideList){
             if(depart.getEntrycondition().equals("HT004001")){
                 depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "-废弃" + "】");
             }else{
-
+                if(filterMap.get(depart.getContractnumber()).size() > 1){
+                    depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "】");
+                }else{
+                    depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getClaimamount() + "】");
+                }
             }
-            depart.setContractnumber(depart.getEntrycondition().equals("HT004001") ? depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "-废弃" + "】" : depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "】");
-            depart.setClaimamount(depart.getEntrycondition().equals("HT004001") ?  "-"  : depart.getClaimamount());
         }
         TreeMap<String,List<DepartmentalInside>> treeDepList =  departmentalInsideList.stream().collect(Collectors.groupingBy(DepartmentalInside :: getThemeinfor_id,TreeMap::new,Collectors.toList()));
         List<DepartmentalInside> depInsList = new ArrayList<>();
@@ -1087,7 +1093,7 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                 BigDecimal acalXj03 = BigDecimal.ZERO;
                 BigDecimal workXj04 = BigDecimal.ZERO;
                 BigDecimal rankXj04 = BigDecimal.ZERO;
-                value.sort(Comparator.comparing(DepartmentalInside::getProject_id).thenComparing(DepartmentalInside::getStaffrank));
+                value.sort(Comparator.comparing(DepartmentalInside::getClaimamount).thenComparing(DepartmentalInside::getProject_id).thenComparing(DepartmentalInside::getStaffrank));
                 for(DepartmentalInside getXj : value){
                     planXj04 = planXj04.add(StringUtils.isNullOrEmpty(getXj.getStaffcustplan04()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustplan04()));
                     acalXj04 = acalXj04.add(StringUtils.isNullOrEmpty(getXj.getStaffcustactual04()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustactual04()));
