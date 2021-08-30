@@ -27,20 +27,7 @@
                 and name = #{owner}
                 and REPLACE(EXITTIME,'-','')  >= DATE_FORMAT(SYSDATE(),'%Y%m%d')
                 GROUP BY projectsystem.COMPANYPROJECTS_ID))
-        OR CREATEBY IN (
-        SELECT e.ACCOUNT
-        FROM expatriatesinfor e
-        WHERE 1=1
-        <if test="departmentcen != null and departmentcen !=''">
-            AND (e.GROUP_ID = #{departmentcen}
-            <if test="departmentgro != null and departmentgro !=''">
-                OR e.GROUP_ID = #{departmentgro})
-            </if>
-            <if test="departmentgro == null or departmentgro ==''">
-                )
-            </if>
-        </if>
-        )
+        
     </select>
 
 <!--    add ccm 1118 日志优化-->
