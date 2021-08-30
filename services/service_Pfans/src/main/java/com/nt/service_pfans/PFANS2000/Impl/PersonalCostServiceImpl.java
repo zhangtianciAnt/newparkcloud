@@ -9,8 +9,10 @@ import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.PersonalCostExpVo;
+import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS2000.PersonalCostService;
@@ -39,6 +41,7 @@ import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.nt.utils.MongoObject.CustmizeQuery;
 
@@ -1425,4 +1428,45 @@ public class PersonalCostServiceImpl implements PersonalCostService {
         return personalCost;
     }
     //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-end
+
+    @Override
+    public Map<String, PeoplewareFee> getBmRanksInfo(String years, String department) throws Exception {
+        Map<String,PeoplewareFee> getRankReault = new HashMap<>();
+        List<Dictionary> dicList = dictionaryService.getForSelect("PR021");
+        List<String> rankList = dicList.stream().map(Dictionary::getCode).collect(Collectors.toList());
+        PersonalCostYears perCoYears = new PersonalCostYears();
+        perCoYears.setYears(years);
+        List<PersonalCostYears> perYeList = personalCostYearsMapper.select(perCoYears);
+        if(perYeList.size() > 0){
+            List<DepartmentVo> departmentVoList = new ArrayList<>();
+            departmentVoList = orgTreeService.getAllDepartment();
+            PersonalCost personalCost = new PersonalCost();
+            personalCost.setYearsantid(perYeList.get(0).getYearsantid());
+            personalCost.setDepartment(department);
+            List<PersonalCost> personalCostListList = personalCostMapper.select(personalCost);
+            Map<String,List<PersonalCost>> perGroupMap = personalCostListList.stream()
+                    .filter(ids -> !StringUtils.isNullOrEmpty(ids.getExrank()))
+                    .collect(Collectors.groupingBy(PersonalCost::getExrank));
+            for (String rks : rankList) {
+                PeoplewareFee peopleFee = new PeoplewareFee();
+                if(perGroupMap.get(rks) != null){
+                    List<PersonalCost> personCostList = new ArrayList<>();
+                    personCostList = perGroupMap.get(rks);
+                    String MonthResult = "";
+                    BigDecimal rankSum = BigDecimal.ZERO;
+                    rankSum = personCostList.stream().map(i -> new BigDecimal(i.getAptoju())).reduce(BigDecimal.ZERO, BigDecimal::add);
+                    MonthResult = rankSum.divide(new BigDecimal(personCostList.size()), 2, RoundingMode.HALF_UP).toString();
+                    peopleFee.setMonth4(MonthResult);
+                    rankSum = personCostList.stream().map(i -> new BigDecimal(i.getJutoma())).reduce(BigDecimal.ZERO, BigDecimal::add);
+                    MonthResult = rankSum.divide(new BigDecimal(personCostList.size()), 2, RoundingMode.HALF_UP).toString();
+                    peopleFee.setMonth7(MonthResult);
+                }else{
+                    peopleFee.setMonth4("0.0");
+                    peopleFee.setMonth7("0.0");
+                }
+                getRankReault.put(rks,peopleFee);
+            }
+        }
+        return getRankReault;
+    }
 }

@@ -19,6 +19,4 @@ public interface DictionaryService {
 
     public void upDictionary(List<Dictionary> dictionarylist, TokenModel tokenModel)throws Exception;
 
-    List<Dictionary> getForSelectCode(String code) throws Exception;
-
 }

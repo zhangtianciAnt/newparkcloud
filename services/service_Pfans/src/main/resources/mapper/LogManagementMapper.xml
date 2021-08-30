@@ -65,22 +65,6 @@
     </select>
     <!--    add ccm 1118 日志优化-->
 
-    <select id="getOrgOwnerList" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
-        SELECT * FROM logmanagement
-        WHERE 1=1
-        <if test="log_date != null and log_date !=''">
-            <![CDATA[
-            and DATE_FORMAT(LOG_DATE, '%Y-%m') = #{log_date}
-        ]]>
-        </if>
-
-        <if test="group_id != null and group_id !=''">
-           and group_id= #{group_id}
-        </if>
-
-    </select>
-
-
     <select id="selectByDate" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
 
         select *
