@@ -1698,6 +1698,9 @@ public class UserServiceImpl implements UserService {
                 //转正日(存入的是试用期截止日 试用期截止日 = 转正日 - 1）
                 if (!org.springframework.util.StringUtils.isEmpty(item.get("转正日"))) {
                     userinfo.setEnddate(formatStringDateadd(item.get("转正日").toString()));
+                } else {
+                    //add_qhr_20210830 添加转正日非空判断
+                    throw new LogicalException("第" + k + "行 转正日 不能为空，请确认。");
                 }
                 //ztc 修改用户导入BUG 20210804 to
 
