@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface GivingService {
 
-    GivingVo givinglist(String giving_id) throws Exception;
+    GivingVo givinglist(String giving_id,String wagesFlg) throws Exception;
 
     void initial()throws Exception;
 
