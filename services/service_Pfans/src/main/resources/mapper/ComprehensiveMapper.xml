@@ -258,7 +258,8 @@
 		GROUP BY
 		`base`.`GIVING_ID`,
 		`base`.`USER_ID`,
-        `base`.`WORKDATE`
+        `base`.`WORKDATE`,
+        `bonussend`.`TOTALBONUS1`
         ORDER BY
         `base`.`WORKDATE`
 		) `tablewages`
