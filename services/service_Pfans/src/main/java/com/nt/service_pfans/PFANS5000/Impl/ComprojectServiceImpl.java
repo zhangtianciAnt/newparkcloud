@@ -1018,7 +1018,11 @@ public class ComprojectServiceImpl implements ComprojectService {
             Comproject rs = comProjectMapper.selectByPrimaryKey(item.getComproject_id());
             if(rs!=null){
                 if ("4".equals(rs.getStatus())) {
-                    rst.add(rs);
+                    //region add_qhr_20210831 添加体制内人员退场后不能填写日志
+                    if (item.getExittime().after(new Date())) {
+                        rst.add(rs);
+                    }
+                    //endregion add_qhr_20210831 添加体制内人员退场后不能填写日志
                 }
             }
         }
