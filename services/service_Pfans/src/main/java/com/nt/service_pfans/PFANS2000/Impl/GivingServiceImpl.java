@@ -144,16 +144,18 @@ public class GivingServiceImpl implements GivingService {
         query.addCriteria(criteria);
         customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         for(int i = 0; i < customerInfos.size();i++){
-            if(customerInfos.get(i).getUserinfo().getEnddate().indexOf("16",10) > 0){
-                String enddate = customerInfos.get(i).getUserinfo().getEnddate().substring(0, 10).replace("-", "/");
-                Calendar cal1 = Calendar.getInstance();
-                try {
-                    cal1.setTime(sdfYMD.parse(enddate));//设置起时间
-                } catch (ParseException e) {
-                    e.printStackTrace();
+            if (StringUtils.isNotEmpty(customerInfos.get(i).getUserinfo().getEnddate())) {
+                if(customerInfos.get(i).getUserinfo().getEnddate().indexOf("16",10) > 0){
+                    String enddate = customerInfos.get(i).getUserinfo().getEnddate().substring(0, 10).replace("-", "/");
+                    Calendar cal1 = Calendar.getInstance();
+                    try {
+                        cal1.setTime(sdfYMD.parse(enddate));//设置起时间
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    cal1.add(Calendar.DATE, +1);
+                    customerInfos.get(i).getUserinfo().setEnddate(sdfYMD.format(cal1.getTime()));
                 }
-                cal1.add(Calendar.DATE, +1);
-                customerInfos.get(i).getUserinfo().setEnddate(sdfYMD.format(cal1.getTime()));
             }
         }
         customerinfoAll = mongoTemplate.findAll(CustomerInfo.class);
@@ -170,16 +172,18 @@ public class GivingServiceImpl implements GivingService {
         query.addCriteria(criteria);
         customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         for(int i = 0; i < customerInfos.size();i++){
-            if(customerInfos.get(i).getUserinfo().getEnddate().indexOf("16",10) > 0){
-                String enddate = customerInfos.get(i).getUserinfo().getEnddate().substring(0, 10).replace("-", "/");
-                Calendar cal1 = Calendar.getInstance();
-                try {
-                    cal1.setTime(sdfYMD.parse(enddate));//设置起时间
-                } catch (ParseException e) {
-                    e.printStackTrace();
+            if (StringUtils.isNotEmpty(customerInfos.get(i).getUserinfo().getEnddate())) {
+                if(customerInfos.get(i).getUserinfo().getEnddate().indexOf("16",10) > 0){
+                    String enddate = customerInfos.get(i).getUserinfo().getEnddate().substring(0, 10).replace("-", "/");
+                    Calendar cal1 = Calendar.getInstance();
+                    try {
+                        cal1.setTime(sdfYMD.parse(enddate));//设置起时间
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    cal1.add(Calendar.DATE, +1);
+                    customerInfos.get(i).getUserinfo().setEnddate(sdfYMD.format(cal1.getTime()));
                 }
-                cal1.add(Calendar.DATE, +1);
-                customerInfos.get(i).getUserinfo().setEnddate(sdfYMD.format(cal1.getTime()));
             }
         }
         customerinfoAll = mongoTemplate.findAll(CustomerInfo.class);
@@ -344,9 +348,17 @@ public class GivingServiceImpl implements GivingService {
         givingVo.setRetireVo(retireList);
         // 2020/03/11 add by myt end
 
-        //region 2021/08/27 gbb 工资计算审批状态为【未开始】或【驳回】时走工资查询汇总，否则走工资表查询 start
-        if ("0".equals(strGivingStatus) || "3".equals(strGivingStatus)) {
-            System.out.println("工资查询大汇总");
+        //region 2021/08/27 gbb 工资表有数据查询工资表 start
+        Wages wages = new Wages();
+        wages.setGiving_id(giving_id);
+        wages.setActual("0");
+        List<Wages> wagesList = wagesMapper.select(wages);
+        if(wagesList.size() > 0){
+            System.out.println("查询工资表");
+            givingVo.setWagesList(wagesList.stream().sorted(Comparator.comparing(Wages::getWorkdate)).collect(Collectors.toList()));
+        }
+        else{
+            System.out.println("查询SQL");
             long startTimeX =  System.currentTimeMillis();
             givingVo.setWagesList(wagesMapper.getWagesByGivingId(giving_id,""));
             //更新个人对比
@@ -368,21 +380,8 @@ public class GivingServiceImpl implements GivingService {
                 }
                 givingVo.setContrast(contrastList);
             }
-            long endTimeX =  System.currentTimeMillis();
-            long usedTimeX = (endTimeX-startTimeX)/1000;
-            System.out.println("用时：" + usedTimeX + "秒");
-        } else {
-            Wages wages = new Wages();
-            wages.setGiving_id(giving_id);
-            wages.setActual("0");
-            List<Wages> wagesList = wagesMapper.select(wages);
-            System.out.println("工资查询工资表");
-            if(wagesList.size() > 0){
-                givingVo.setWagesList(wagesList.stream().sorted(Comparator.comparing(Wages::getWorkdate)).collect(Collectors.toList()));
-            }
         }
-        //endregion 2021/08/27 gbb 工资计算审批状态为【未开始】或【驳回】时走工资查询汇总，否则走工资表查询 end
-
+        //endregion 2021/08/27 gbb 工资表有数据查询工资表 end
         System.out.println("工资查询结束");
         long endTime =  System.currentTimeMillis();
         long usedTime = (endTime-startTime)/1000;
@@ -393,10 +392,6 @@ public class GivingServiceImpl implements GivingService {
 
     @Override
     public void insertOtherOne(String givingid, TokenModel tokenModel) throws Exception {
-        System.out.println("其他1");
-        /*获取 customerInfos-lxx*/
-        //initial();
-        /*获取 customerInfos-lxx*/
         List<OtherOne> otherOnes = new ArrayList<>();
         DecimalFormat df = new DecimalFormat("#.00");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -530,9 +525,6 @@ public class GivingServiceImpl implements GivingService {
     @Override
     public void insertBase(String givingid, TokenModel tokenModel) throws Exception {
         System.out.println("基数");
-        /*获取 customerInfos-lxx*/
-        initial();
-        /*获取 customerInfos-lxx*/
         List<Base> bases = new ArrayList<>();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy/MM/dd");
         // 前月
@@ -2334,9 +2326,6 @@ public class GivingServiceImpl implements GivingService {
 
     // 入职
     public List<Induction> getInduction(String givingId) throws Exception {
-        /*获取 customerInfos-lxx*/
-        //initial();
-        /*获取 customerInfos-lxx*/
         List<Induction> inductions = new ArrayList<>();
         // 今月日期
         Calendar thisMonthDate = Calendar.getInstance();
@@ -2666,9 +2655,8 @@ public class GivingServiceImpl implements GivingService {
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         if (customerInfos.size() > 0) {
             for (CustomerInfo customerInfo : customerInfos) {
-
                 //转正日
-                if (StringUtils.isEmpty(customerInfo.getUserinfo().getEnddate())) {
+                if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
                     if(customerInfo.getUserinfo().getEnddate().indexOf("16",10) > 0){
                         String enddate = customerInfo.getUserinfo().getEnddate().substring(0, 10).replace("-", "/");
                         Calendar cal1 = Calendar.getInstance();
@@ -2887,12 +2875,14 @@ public class GivingServiceImpl implements GivingService {
         List<CustomerInfo> customerInfos = mongoTemplate.find(query, CustomerInfo.class);
         if (customerInfos.size() > 0) {
             for (CustomerInfo customerInfo : customerInfos) {
-                if(customerInfo.getUserinfo().getEnddate().indexOf("16",10) > 0){
-                    String enddate =customerInfo.getUserinfo().getEnddate().substring(0, 10).replace("-", "/");
-                    Calendar cal1 = Calendar.getInstance();
-                    cal1.setTime(sdfYMD.parse(enddate));//设置起时间
-                    cal1.add(Calendar.DATE, +1);
-                    customerInfo.getUserinfo().setEnddate(sdfYMD.format(cal1.getTime()));
+                if (StringUtils.isNotEmpty(customerInfo.getUserinfo().getEnddate())) {
+                    if(customerInfo.getUserinfo().getEnddate().indexOf("16",10) > 0){
+                        String enddate =customerInfo.getUserinfo().getEnddate().substring(0, 10).replace("-", "/");
+                        Calendar cal1 = Calendar.getInstance();
+                        cal1.setTime(sdfYMD.parse(enddate));//设置起时间
+                        cal1.add(Calendar.DATE, +1);
+                        customerInfo.getUserinfo().setEnddate(sdfYMD.format(cal1.getTime()));
+                    }
                 }
                 userIdList.add(customerInfo.getUserid());
             }

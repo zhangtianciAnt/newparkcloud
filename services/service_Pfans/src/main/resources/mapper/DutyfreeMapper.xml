@@ -38,6 +38,7 @@
 		SELECT
 		`base`.`GIVING_ID` AS `GIVING_ID`,
 		`base`.`USER_ID` AS `USER_ID`,
+		`base`.`WORKDATE`,
 		max((
 		CASE
 		REPLACE ( `wages`.`CREATEONYM`, '-', '' )
@@ -141,7 +142,8 @@
 		))
 		GROUP BY
 		`base`.`GIVING_ID`,
-		`base`.`USER_ID`
+		`base`.`USER_ID`,
+		`base`.`WORKDATE`
 		ORDER BY
 		`base`.`WORKDATE`
 		) `tablewages`

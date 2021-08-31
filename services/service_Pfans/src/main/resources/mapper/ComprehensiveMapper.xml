@@ -32,12 +32,27 @@
 		round( ifnull( `tablewages`.`month12wages`, 0 ), 2 ) AS `month12wages`,
 		round( ifnull( `tablewages`.`month12appreciation`, 0 ), 2 ) AS `month12appreciation`,(((((((((((
 		ifnull( `tablewages`.`month1appreciation`, 0 ) + ifnull( `tablewages`.`month2appreciation`, 0 )) + ifnull( `tablewages`.`month3appreciation`, 0 )) + ifnull( `tablewages`.`month4appreciation`, 0 )) + ifnull( `tablewages`.`month5appreciation`, 0 )) + ifnull( `tablewages`.`month6appreciation`, 0 )) + ifnull( `tablewages`.`month7appreciation`, 0 )) + ifnull( `tablewages`.`month8appreciation`, 0 )) + ifnull( `tablewages`.`month9appreciation`, 0 )) + ifnull( `tablewages`.`month10appreciation`, 0 )) + ifnull( `tablewages`.`month11appreciation`, 0 )) + ifnull( `tablewages`.`month12appreciation`, 0 )) AS `appreciationtotal`,
-		round((((((((((((((((((((((
-		ifnull( `tablewages`.`month1wages`, 0 ) + ifnull( `tablewages`.`month2wages`, 0 )) + ifnull( `tablewages`.`month3wages`, 0 )) + ifnull( `tablewages`.`month4wages`, 0 )) + ifnull( `tablewages`.`month5wages`, 0 )) + ifnull( `tablewages`.`month6wages`, 0 )) + ifnull( `tablewages`.`month7wages`, 0 )) + ifnull( `tablewages`.`month8wages`, 0 )) + ifnull( `tablewages`.`month9wages`, 0 )) + ifnull( `tablewages`.`month10wages`, 0 )) + ifnull( `tablewages`.`month11wages`, 0 )) + ifnull( `tablewages`.`month1appreciation`, 0 )) + ifnull( `tablewages`.`month2appreciation`, 0 )) + ifnull( `tablewages`.`month3appreciation`, 0 )) + ifnull( `tablewages`.`month4appreciation`, 0 )) + ifnull( `tablewages`.`month5appreciation`, 0 )) + ifnull( `tablewages`.`month6appreciation`, 0 )) + ifnull( `tablewages`.`month7appreciation`, 0 )) + ifnull( `tablewages`.`month8appreciation`, 0 )) + ifnull( `tablewages`.`month9appreciation`, 0 )) + ifnull( `tablewages`.`month10appreciation`, 0 )) + ifnull( `tablewages`.`month11appreciation`, 0 )),
+		round(((((((((((((((((((((((
+		ifnull( `tablewages`.`month1wages`, 0 ) + ifnull( `tablewages`.`month2wages`, 0 )) + ifnull( `tablewages`.`month3wages`, 0 ))
+		+ ifnull( `tablewages`.`month4wages`, 0 )) + ifnull( `tablewages`.`month5wages`, 0 )) + ifnull( `tablewages`.`month6wages`, 0 ))
+		+ ifnull( `tablewages`.`month7wages`, 0 )) + ifnull( `tablewages`.`month8wages`, 0 )) + ifnull( `tablewages`.`month9wages`, 0 ))
+		+ ifnull( `tablewages`.`month10wages`, 0 )) + ifnull( `tablewages`.`month11wages`, 0 )) + ifnull( `tablewages`.`month1appreciation`, 0 ))
+		+ ifnull( `tablewages`.`month2appreciation`, 0 )) + ifnull( `tablewages`.`month3appreciation`, 0 )) + ifnull( `tablewages`.`month4appreciation`, 0 ))
+		+ ifnull( `tablewages`.`month5appreciation`, 0 )) + ifnull( `tablewages`.`month6appreciation`, 0 )) + ifnull( `tablewages`.`month7appreciation`, 0 ))
+		+ ifnull( `tablewages`.`month8appreciation`, 0 )) + ifnull( `tablewages`.`month9appreciation`, 0 )) + ifnull( `tablewages`.`month10appreciation`, 0 ))
+		+ ifnull( `tablewages`.`month11appreciation`, 0 )) + ifnull( `tablewages`.`TOTALBONUS1`, 0 )),
 		2
 		) AS `totalwithout12`,
-		round((((((((((((((((((((((((
-		ifnull( `tablewages`.`month1wages`, 0 ) + ifnull( `tablewages`.`month2wages`, 0 )) + ifnull( `tablewages`.`month3wages`, 0 )) + ifnull( `tablewages`.`month4wages`, 0 )) + ifnull( `tablewages`.`month5wages`, 0 )) + ifnull( `tablewages`.`month6wages`, 0 )) + ifnull( `tablewages`.`month7wages`, 0 )) + ifnull( `tablewages`.`month8wages`, 0 )) + ifnull( `tablewages`.`month9wages`, 0 )) + ifnull( `tablewages`.`month10wages`, 0 )) + ifnull( `tablewages`.`month11wages`, 0 )) + ifnull( `tablewages`.`month12wages`, 0 )) + ifnull( `tablewages`.`month1appreciation`, 0 )) + ifnull( `tablewages`.`month2appreciation`, 0 )) + ifnull( `tablewages`.`month3appreciation`, 0 )) + ifnull( `tablewages`.`month4appreciation`, 0 )) + ifnull( `tablewages`.`month5appreciation`, 0 )) + ifnull( `tablewages`.`month6appreciation`, 0 )) + ifnull( `tablewages`.`month7appreciation`, 0 )) + ifnull( `tablewages`.`month8appreciation`, 0 )) + ifnull( `tablewages`.`month9appreciation`, 0 )) + ifnull( `tablewages`.`month10appreciation`, 0 )) + ifnull( `tablewages`.`month11appreciation`, 0 )) + ifnull( `tablewages`.`month12appreciation`, 0 )),
+		round(((((((((((((((((((((((((
+		ifnull( `tablewages`.`month1wages`, 0 ) + ifnull( `tablewages`.`month2wages`, 0 )) + ifnull( `tablewages`.`month3wages`, 0 ))
+		+ ifnull( `tablewages`.`month4wages`, 0 )) + ifnull( `tablewages`.`month5wages`, 0 )) + ifnull( `tablewages`.`month6wages`, 0 ))
+		+ ifnull( `tablewages`.`month7wages`, 0 )) + ifnull( `tablewages`.`month8wages`, 0 )) + ifnull( `tablewages`.`month9wages`, 0 ))
+		+ ifnull( `tablewages`.`month10wages`, 0 )) + ifnull( `tablewages`.`month11wages`, 0 )) + ifnull( `tablewages`.`month12wages`, 0 ))
+		+ ifnull( `tablewages`.`month1appreciation`, 0 )) + ifnull( `tablewages`.`month2appreciation`, 0 )) + ifnull( `tablewages`.`month3appreciation`, 0 ))
+		+ ifnull( `tablewages`.`month4appreciation`, 0 )) + ifnull( `tablewages`.`month5appreciation`, 0 )) + ifnull( `tablewages`.`month6appreciation`, 0 ))
+		+ ifnull( `tablewages`.`month7appreciation`, 0 )) + ifnull( `tablewages`.`month8appreciation`, 0 )) + ifnull( `tablewages`.`month9appreciation`, 0 ))
+		+ ifnull( `tablewages`.`month10appreciation`, 0 )) + ifnull( `tablewages`.`month11appreciation`, 0 )) + ifnull( `tablewages`.`month12appreciation`, 0 ))
+		+ ifnull( `tablewages`.`TOTALBONUS1`, 0 )),
 		2
 		) AS `totalwithin12`
 		FROM
@@ -45,7 +60,8 @@
 		SELECT
 		`base`.`GIVING_ID` AS `GIVING_ID`,
 		`base`.`USER_ID` AS `USER_ID`,
-		ifnull( sum( `bonussend`.`TOTALBONUS1` ), 0 ) AS `TOTALBONUS1`,
+        `base`.`WORKDATE`,
+		ifnull( `bonussend`.`TOTALBONUS1`, 0 ) AS `TOTALBONUS1`,
 		max((
 		CASE
 
@@ -226,15 +242,13 @@
 		substr( `wages`.`CREATEONYM`, 1, 4 ) = substr( #{strMonths}, 1, 4 ))
 		AND (
 		<![CDATA[ REPLACE ( `wages`.`CREATEONYM`, '-', '' ) < #{strMonths})))) ]]>
-		LEFT JOIN `bonussend` ON (((
+		LEFT JOIN `bonussend` ON
 		`base`.`USER_ID` = `bonussend`.`USER_ID`
-		)
+		AND
+		`bonussend`.`YEARS` = substr( #{strMonths}, 1, 4 )
 		AND (
-		`bonussend`.`YEARS` = substr( #{strMonths}, 1, 4 ))
-		AND ((
 		`bonussend`.`METHOD` = '累计'
-		)
-		OR ( `bonussend`.`METHOD` = '累計' )))))
+		OR  `bonussend`.`METHOD` = '累計' ))
 		WHERE
 		(
         `base`.GIVING_ID = #{givingid}
@@ -243,7 +257,9 @@
 		))
 		GROUP BY
 		`base`.`GIVING_ID`,
-		`base`.`USER_ID`
+		`base`.`USER_ID`,
+        `base`.`WORKDATE`,
+        `bonussend`.`TOTALBONUS1`
         ORDER BY
         `base`.`WORKDATE`
 		) `tablewages`

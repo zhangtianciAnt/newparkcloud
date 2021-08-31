@@ -58,6 +58,7 @@
         SELECT
         `base`.`USER_ID` AS `USER_ID`,
         `base`.`GIVING_ID` AS `GIVING_ID`,
+        `base`.`WORKDATE`,
         sum(
         ifnull( `wages`.`SHOULDWAGES`, 0 )) AS `SHOULDWAGES`,
         max((
@@ -163,7 +164,8 @@
         ))
         GROUP BY
         `base`.`USER_ID`,
-        `base`.`GIVING_ID`
+        `base`.`GIVING_ID`,
+        `base`.`WORKDATE`
         ORDER BY
         `base`.`WORKDATE`
         ) `tw`
