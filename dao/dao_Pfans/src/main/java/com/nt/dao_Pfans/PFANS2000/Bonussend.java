@@ -124,4 +124,11 @@ public class Bonussend extends BaseModel {
     @Column(name = "ROWINDEX")
     private String rowindex;
 
+
+    /**
+     * // 是否已关联工资（0：否，1：是）
+     */
+    @Column(name = "CALCULATION")
+    private String calculation;
+
 }
