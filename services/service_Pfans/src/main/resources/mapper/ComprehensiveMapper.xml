@@ -245,7 +245,7 @@
 		LEFT JOIN `bonussend` ON
 		`base`.`USER_ID` = `bonussend`.`USER_ID`
 		AND
-		`bonussend`.`YEARS` = substr( #{strMonths}, 1, 4 )
+		`bonussend`.`YEARS` = substr( #{strMonths}, 1, 4 ) - 1
 		AND (
 		`bonussend`.`METHOD` = '累计'
 		OR  `bonussend`.`METHOD` = '累計' ))
