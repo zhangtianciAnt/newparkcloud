@@ -17,8 +17,10 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @Aspect
 @Configuration
@@ -49,8 +51,14 @@ public class GlobalAop {
     public void doAfterReturning(Object ret) throws Throwable {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        //资产盘点不加密
-        if(request.getRequestURL().toString().indexOf("assets/scanList") < 0){
+        List<String> reqAwarList = new ArrayList<>();//不加密List
+        reqAwarList.add("assets/scanList");//资产盘点
+        reqAwarList.add("pjExternalInjection/getTableinfoReport");//PJ别外注费统计
+        reqAwarList.add("departmentalinside/getTableinfoReport");//部门项目别年度统计
+        reqAwarList.add("departmentaccount/getTable1051infoReport");//部门年度收支
+        String req = request.getRequestURL().toString();
+        String reqAwar = req.substring(req.indexOf("/",req.indexOf("/") + 3) + 1);
+        if(!reqAwarList.contains(reqAwar)){
 //        encoder
             AES aes = new AES();
             if(ret != null){

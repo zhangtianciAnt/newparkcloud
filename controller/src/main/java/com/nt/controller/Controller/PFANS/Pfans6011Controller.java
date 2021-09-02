@@ -36,6 +36,6 @@ public class Pfans6011Controller {
     //查看
     @RequestMapping(value = "/getTableinfoReport", method = {RequestMethod.GET})
     public ApiResult getTableinfoReport(String year, String group_id, HttpServletRequest request) throws Exception {
-        return ApiResult.success("getTableinfoReport",pjExternalInjectionService.getTableinfo(year, group_id));
+        return ApiResult.success("getTableinfoReport",pjExternalInjectionService.getTableinfoReport(year, group_id));
     }
 }
