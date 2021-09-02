@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -144,4 +145,9 @@ public class AnnualLeave extends BaseModel {
     //转正日
     private Date enddate;
 
+    //region scc add 9/1 添加离职日 from
+    //离职日
+    @Transient
+    private Date resignation_date;
+    //endregion scc add 9/1 添加离职日 to
 }
