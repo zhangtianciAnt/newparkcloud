@@ -138,6 +138,7 @@ public class departmentalServiceImpl implements DepartmentalService {
         for(Departmental depart : departmentalList){
             if(depart.getEntrycondition().equals("HT004001")){
                 depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "-废弃" + "】");
+                depart.setClaimamount("-");
             }else{
                 if(filterMap.get(depart.getContractnumber()).size() > 1){
                     depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "】");

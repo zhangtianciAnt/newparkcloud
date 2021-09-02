@@ -4,6 +4,7 @@ import cn.hutool.core.codec.Base64;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
@@ -12,6 +13,7 @@ import com.nt.dao_Pfans.PFANS6000.PjExternalInjection;
 import com.nt.dao_Pfans.PFANS6000.Variousfunds;
 import com.nt.dao_Pfans.PFANS6000.Vo.PjExternalInjectionVo;
 import com.nt.dao_Workflow.Workflowinstance;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.DepartmentAccountService;
 import com.nt.service_pfans.PFANS1000.DepartmentalInsideService;
@@ -66,6 +68,9 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
 
     @Autowired
     private DepartmentalInsideService departmentalInsideService;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
 
     //pj别外注费统计定时任务
@@ -524,15 +529,19 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
 
     @Override
     public Object getTableinfoReport(String year, String group_id) throws Exception {
+        List<Dictionary> dictionaryDivide = dictionaryService.getForSelect("PJ063");
+        Map<String,Dictionary> divideMap = dictionaryDivide.stream().collect(Collectors.toMap(Dictionary::getCode, a -> a,(k1,k2)->k1));
         PjExternalInjection pjExternalInjection = new PjExternalInjection();
         pjExternalInjection.setYears(year);
         pjExternalInjection.setGroup_id(group_id);
         List<PjExternalInjection> pjExternalInjectionList = pjExternalInjectionMapper.select(pjExternalInjection);
+        pjExternalInjectionList.sort(Comparator.comparing(PjExternalInjection::getThemename));
         if (pjExternalInjectionList.size() > 0) {
             for (PjExternalInjection injection : pjExternalInjectionList) {
                 if(com.nt.utils.StringUtils.isBase64Encode(injection.getProject_name())){
                     injection.setProject_name(Base64.decodeStr(injection.getProject_name()));
                 }
+                injection.setDivide(divideMap.get(injection.getDivide()).getValue1());
             }
         }
         return JSONObject.toJSON(pjExternalInjectionList);

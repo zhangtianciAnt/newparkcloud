@@ -27,6 +27,8 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -62,7 +64,9 @@ public class UserController {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
-
+//    出向者 身份证 出生年月 不是必填项 ztc from
+    private static final SimpleDateFormat sdfYMD = new SimpleDateFormat("yyyy/MM/dd");
+//    出向者 身份证 出生年月 不是必填项 ztc to
     @RequestMapping(value = "/download", method = {RequestMethod.GET})
     public void download(String type, HttpServletResponse response) throws Exception {
         Map<String, Object> data = new HashMap<>();
@@ -189,6 +193,21 @@ public class UserController {
     @RequestMapping(value = "/addAccountCustomer", method = {RequestMethod.POST})
     public ApiResult addAccountCustomer(@RequestBody UserVo userVo, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
+//        出向者 身份证 出生年月 不是必填项 ztc from
+        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(userVo.getCustomerInfo().getUserinfo().getBirthday())){
+            if(userVo.getCustomerInfo().getUserinfo().getBirthday().indexOf("00:00.000Z",10) > 0){
+                String birthday = userVo.getCustomerInfo().getUserinfo().getBirthday().substring(0, 10).replace("-", "/");
+                Calendar cal1 = Calendar.getInstance();
+                try {
+                    cal1.setTime(sdfYMD.parse(birthday));//设置起时间
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                cal1.add(Calendar.DATE, +1);
+                userVo.getCustomerInfo().getUserinfo().setBirthday(sdfYMD.format(cal1.getTime()));
+            }
+        }
+//        出向者 身份证 出生年月 不是必填项 ztc to
         String id = "";
         CustomerInfo info = new CustomerInfo();
         if (StrUtil.isNotBlank(userVo.getUserAccount().get_id())) {

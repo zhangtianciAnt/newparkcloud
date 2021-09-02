@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
@@ -15,10 +16,12 @@ import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS1000.DepartmentAccountService;
 import com.nt.service_pfans.PFANS1000.mapper.DepartmentAccountMapper;
+import com.nt.service_pfans.PFANS1000.mapper.DepartmentAccountTotalMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ThemeInforMapper;
 import com.nt.service_pfans.PFANS5000.mapper.ProjectContractMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.dao.TokenModel;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +53,9 @@ public class DepartmentAccountServiceImpl implements DepartmentAccountService {
 
     @Autowired
     private DictionaryMapper dictionaryMapper;
+
+    @Autowired
+    private DepartmentAccountTotalMapper departmentAccountTotalMapper;
 
 //update_qhr_20210813 后台返回数据类型变化
     @Override
@@ -2328,5 +2334,48 @@ public class DepartmentAccountServiceImpl implements DepartmentAccountService {
 //                }
             }
         }
+    }
+
+    @Override
+    public Object getTable1051infoReport(String year, String department) throws Exception {
+        List<DepartmentAccount> departmentReturnList = new ArrayList<>();
+        DepartmentAccount departmentAccount = new DepartmentAccount();
+        departmentAccount.setYears(year);
+        departmentAccount.setDepartment(department);
+        List<DepartmentAccount> departmentAccountList = departmentAccountMapper.select(departmentAccount);
+        Map<String,List<DepartmentAccount>> departMap = departmentAccountList.stream()
+                .collect(Collectors.groupingBy(DepartmentAccount::getDepartment));
+        departMap.forEach((departid,depList) -> {
+            DepartmentAccountTotal departmentAccountTotal = new DepartmentAccountTotal();
+            departmentAccountTotal.setYears(year);
+            departmentAccountTotal.setDepartment(department);
+            departmentAccountTotal.setTheme_id(departid);
+            departmentReturnList.addAll(depList);
+            List<DepartmentAccountTotal> departmentAccountTotalList = new ArrayList<>();
+            departmentAccountTotalList = departmentAccountTotalMapper.select(departmentAccountTotal);
+            departmentAccountTotalList.sort(Comparator.comparing(DepartmentAccountTotal::getIndextype));
+            departmentAccountTotalList.forEach(item -> {
+                DepartmentAccount copydep = new DepartmentAccount();
+                BeanUtils.copyProperties(item,copydep);
+                copydep.setThemename(depList.get(0).getThemename());
+                copydep.setContract(depList.get(0).getContract());
+                copydep.setToolsorgs(depList.get(0).getToolsorgs());
+                departmentReturnList.add(copydep);
+            });
+        });
+        DepartmentAccountTotal gtDepart = new DepartmentAccountTotal();
+        gtDepart.setDepartment(department);
+        gtDepart.setTheme_id("部门共通");
+        List<DepartmentAccountTotal> gtDepartList = departmentAccountTotalMapper.select(gtDepart);
+        gtDepartList.forEach(gtItem ->{
+            DepartmentAccount copyGtdep = new DepartmentAccount();
+            BeanUtils.copyProperties(gtItem,copyGtdep);
+            copyGtdep.setThemename("部门共通");
+            copyGtdep.setContract("社内");
+            copyGtdep.setToolsorgs("");
+            departmentReturnList.add(copyGtdep);
+        });
+        departmentReturnList.sort(Comparator.comparing(DepartmentAccount::getThemename));
+        return JSONObject.toJSON(departmentReturnList);
     }
 }
