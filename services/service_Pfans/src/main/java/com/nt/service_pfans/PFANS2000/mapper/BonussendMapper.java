@@ -10,4 +10,5 @@ public interface BonussendMapper extends MyMapper<Bonussend>{
 
 
     List<Bonussend> getBonussendList(@Param("years") String years);
+    int  upBonussend();
 }

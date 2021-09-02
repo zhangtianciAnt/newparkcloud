@@ -31,4 +31,14 @@ public class Pfans1052Controller {
     public ApiResult getTableinfo(@RequestParam String year,@RequestParam String group_id, HttpServletRequest request) throws Exception {
         return ApiResult.success(departmentalInsideService.getTableinfo(year, group_id));
     }
+
+    /**
+     * 积木报表
+     * 部门项目别年度统计
+     * 21/8/23 scc
+     * */
+    @GetMapping("/getTableinfoReport")
+    public ApiResult getTableinfoReport(@RequestParam String year,@RequestParam String group_id, HttpServletRequest request) throws Exception {
+        return ApiResult.success("getTableinfoReport",departmentalInsideService.getTableinfoReport(year, group_id));
+    }
 }

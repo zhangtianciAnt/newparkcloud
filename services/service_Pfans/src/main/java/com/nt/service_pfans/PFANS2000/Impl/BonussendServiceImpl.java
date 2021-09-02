@@ -223,6 +223,7 @@ public class BonussendServiceImpl implements BonussendService {
                 Bonussend bonus = new Bonussend();
                 bonus.setUsername(bonussend.getUsername());
                 bonus.setYears(bonussend.getYears());
+                bonus.setCalculation("0");
                 List<Bonussend> bonussends = bonussendMapper.select(bonus);
                 if (bonussends.size() > 0) {
                     bonussend.setBonussend_id(bonussends.get(0).getBonussend_id());

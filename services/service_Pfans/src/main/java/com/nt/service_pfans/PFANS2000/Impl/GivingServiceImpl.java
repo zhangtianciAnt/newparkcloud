@@ -119,6 +119,8 @@ public class GivingServiceImpl implements GivingService {
     private AnnualLeaveMapper annualLeaveMapper;
     @Autowired
     private AnnualLeaveService annualLeaveService;
+    @Autowired
+    private BonussendMapper bonussendMapper;
 
     private static List<CustomerInfo> customerInfos;
     private static List<CustomerInfo> customerinfoAll;
@@ -2846,6 +2848,11 @@ public class GivingServiceImpl implements GivingService {
             annualLeaveMapper.updateremaining_annual_leave_lastyear(generationdate.substring(0,4));
         }
         // add gbb 20210416 4月份工资发放之后清空上一年度剩余年休 end
+
+        // add gbb 20210901 修改年度奖金数据为已经发放 start
+        bonussendMapper.upBonussend();
+        // add gbb 20210901 修改年度奖金数据为已经发放 end
+
     }
 
     /**

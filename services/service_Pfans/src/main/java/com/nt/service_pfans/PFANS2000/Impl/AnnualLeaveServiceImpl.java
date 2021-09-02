@@ -159,6 +159,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 String enterday = null;
                 String workday = null;
                 String enddate = null;
+                //region scc add 9/1 离职日 from
+                String resignation_date = null;
+                //endregion scc add 9/1 离职日 to
                 //入职日
                 if(StrUtil.isNotBlank(customerinfo.get(0).getUserinfo().getEnterday()))
                 {
@@ -211,13 +214,15 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         rightNow.add(Calendar.DAY_OF_YEAR, 1);
                         resignationdate = s.format(rightNow.getTime());
                     }
+                    //region scc del 9/1 from
                     //离职日期 < 当前日期
-                    if(s.parse(resignationdate).getTime() < s.parse(s.format(cal.getTime())).getTime())
-                    {
-                        continue;
-                    }
-                    else
-                    {
+//                    if(s.parse(resignationdate).getTime() < s.parse(s.format(cal.getTime())).getTime())
+//                    {
+//                        continue;
+//                    }
+//                    else
+//                    {
+                    //endregion to
                         BigDecimal b = new BigDecimal(remainingAnnual(annualLeave.getUser_id(),String.valueOf(year)));
                         annualLeave.setAnnual_avg_remaining(b.toString());
 
@@ -250,10 +255,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             annualLeave.setEnddate(s.parse(enddate));
                         }
                         //年休一览添加入职日，仕事开始日，转正日 to
-
+                        //region scc add 9/1 离职日 from
+                        annualLeave.setResignation_date(s.parse(resignationdate));
+                        //endregion scc add 9/1 离职日 to
                         tempannualLeaveList.add(annualLeave);
                     }
-                }
+//                }
                 else
                 {
                     annualLeave.setAnnual_avg_remaining("-");
@@ -286,6 +293,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         annualLeave.setEnddate(s.parse(enddate));
                     }
                     //年休一览添加入职日，仕事开始日，转正日 to
+                    //region scc add 9/1 离职日 from
+                    annualLeave.setResignation_date(null);
+                    //endregion scc add 9/1 离职日 to
                     tempannualLeaveList.add(annualLeave);
                 }
             }
