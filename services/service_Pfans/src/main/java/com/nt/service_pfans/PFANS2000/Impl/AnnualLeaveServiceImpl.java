@@ -11,6 +11,7 @@ import com.nt.dao_Org.CustomerInfo;
 import com.alibaba.fastjson.JSONArray;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.Vo.UserVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.PersonalAvgVo;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.restViewVo;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
@@ -199,7 +200,12 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     cal.add(Calendar.DAY_OF_YEAR, 1);
                     enddate = s.format(cal.getTime());
                 }
-
+                //region scc add 9/2 查询年休，用上年度去查，上年度年度福利年休 from
+                AnnualLeave welfare = new AnnualLeave();
+                welfare.setUser_id(annualLeave.getUser_id());
+                welfare.setYears(String.valueOf((Integer.valueOf(String.valueOf(year)) - 1)));
+                List<AnnualLeave> welfareList = annualLeaveMapper.select(welfare);
+                //endregion scc add 9/2 查询年休，用上年度去查，上年度年度福利年休 to
                 //生成年休时，去除已离职人员
                 if(customerinfo.get(0).getUserinfo() .getResignation_date() != null && !customerinfo.get(0).getUserinfo() .getResignation_date().isEmpty())
                 {
@@ -223,79 +229,74 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 //                    else
 //                    {
                     //endregion to
-                        BigDecimal b = new BigDecimal(remainingAnnual(annualLeave.getUser_id(),String.valueOf(year)));
-                        annualLeave.setAnnual_avg_remaining(b.toString());
+                    BigDecimal b = new BigDecimal(remainingAnnual(annualLeave.getUser_id(), String.valueOf(year)));
+                    annualLeave.setAnnual_avg_remaining(b.toString());
 
-                        //年休一览添加入职日，仕事开始日，转正日 fr
-                        //入职日
-                        if(enterday == null)
-                        {
-                            annualLeave.setEnterday(null);
-                        }
-                        else
-                        {
-                            annualLeave.setEnterday(s.parse(enterday));
-                        }
-                        //仕事开始日，
-                        if(workday == null)
-                        {
-                            annualLeave.setWorkday(null);
-                        }
-                        else
-                        {
-                            annualLeave.setWorkday(s.parse(workday));
-                        }
-                        //转正日
-                        if(enddate == null)
-                        {
-                            annualLeave.setEnddate(null);
-                        }
-                        else
-                        {
-                            annualLeave.setEnddate(s.parse(enddate));
-                        }
-                        //年休一览添加入职日，仕事开始日，转正日 to
-                        //region scc add 9/1 离职日 from
-                        annualLeave.setResignation_date(s.parse(resignationdate));
-                        //endregion scc add 9/1 离职日 to
-                        tempannualLeaveList.add(annualLeave);
-                    }
-//                }
-                else
-                {
-                    annualLeave.setAnnual_avg_remaining("-");
                     //年休一览添加入职日，仕事开始日，转正日 fr
                     //入职日
-                    if(enterday == null)
-                    {
+                    if (enterday == null) {
                         annualLeave.setEnterday(null);
-                    }
-                    else
-                    {
+                    } else {
                         annualLeave.setEnterday(s.parse(enterday));
                     }
                     //仕事开始日，
-                    if(workday == null)
-                    {
+                    if (workday == null) {
                         annualLeave.setWorkday(null);
-                    }
-                    else
-                    {
+                    } else {
                         annualLeave.setWorkday(s.parse(workday));
                     }
                     //转正日
-                    if(enddate == null)
-                    {
+                    if (enddate == null) {
                         annualLeave.setEnddate(null);
+                    } else {
+                        annualLeave.setEnddate(s.parse(enddate));
                     }
-                    else
-                    {
+                    //年休一览添加入职日，仕事开始日，转正日 to
+                    //region scc add 9/1 离职日 from
+                    annualLeave.setResignation_date(s.parse(resignationdate));
+                    //endregion scc add 9/1 离职日 to
+                    //region scc add 9/2 年休 from
+                    if (welfareList.size() > 0) {
+                        annualLeave.setRemaining_paid_leave_lastyear(welfareList.get(0).getRemaining_paid_leave_thisyear());
+                    } else {
+                        annualLeave.setRemaining_paid_leave_lastyear(BigDecimal.ZERO);
+                    }
+                    //endregion scc add 9/2 年休 to
+                    tempannualLeaveList.add(annualLeave);
+                }
+//                }
+                else {
+                    annualLeave.setAnnual_avg_remaining("-");
+                    //年休一览添加入职日，仕事开始日，转正日 fr
+                    //入职日
+                    if (enterday == null) {
+                        annualLeave.setEnterday(null);
+                    } else {
+                        annualLeave.setEnterday(s.parse(enterday));
+                    }
+                    //仕事开始日，
+                    if (workday == null) {
+                        annualLeave.setWorkday(null);
+                    } else {
+                        annualLeave.setWorkday(s.parse(workday));
+                    }
+                    //转正日
+                    if (enddate == null) {
+                        annualLeave.setEnddate(null);
+                    } else {
                         annualLeave.setEnddate(s.parse(enddate));
                     }
                     //年休一览添加入职日，仕事开始日，转正日 to
                     //region scc add 9/1 离职日 from
                     annualLeave.setResignation_date(null);
                     //endregion scc add 9/1 离职日 to
+                    //region scc add 9/2 年休 from
+                    if (welfareList.size() > 0) {
+                        annualLeave.setRemaining_paid_leave_lastyear(welfareList.get(0).getRemaining_paid_leave_thisyear());
+                    } else {
+                        annualLeave.setRemaining_paid_leave_lastyear(BigDecimal.ZERO);
+                    }
+                    //endregion scc add 9/2 年休 to
                     tempannualLeaveList.add(annualLeave);
                 }
             }
