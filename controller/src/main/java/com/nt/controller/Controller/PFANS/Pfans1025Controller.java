@@ -761,9 +761,9 @@ public class Pfans1025Controller {
      * 获取成本
      * */
     @RequestMapping(value = "/getPersonalBm", method = {RequestMethod.GET})
-    public ApiResult getPersonalBm(@RequestParam String years,@RequestParam String companyen, HttpServletRequest request) throws Exception {
+    public ApiResult getPersonalBm(@RequestParam String years , HttpServletRequest request) throws Exception {
         List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
-        HashMap<String,String> companyid = new HashMap<>();
+        HashMap<String,String> companyid = new HashMap<>();//部门简称-部门ID，键值对
         for(DepartmentVo vo : allDepartment){
             companyid.put(vo.getDepartmentEn(),vo.getDepartmentId());
         }
@@ -772,8 +772,8 @@ public class Pfans1025Controller {
         for(Dictionary dic : dictionaryRank){
             dicList.put(dic.getCode(),dic.getValue1());
         }
-        HashMap<String, String> HashMap = null;
-        if(!StringUtils.isNullOrEmpty(years) && !StringUtils.isNullOrEmpty(companyen)){
+        Map<String,Map<String,String>> resultsOf= null;
+        if(!StringUtils.isNullOrEmpty(years)){
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date date = sdf.parse(years);
             Calendar calendar = new GregorianCalendar();
@@ -797,15 +797,19 @@ public class Pfans1025Controller {
                 now_year = calendar.get(Calendar.YEAR);
             }
             String yearss = String.valueOf(now_year);
-            Map<String, PeoplewareFee> bmRanksInfo = personalCostService.getBmRanksInfo(yearss, companyid.get(companyen));
-            HashMap = new HashMap<>();
-            //前台数组重复标识
-            HashMap.put(companyen,companyen);
-            for(String key : bmRanksInfo.keySet()){
-                HashMap.put(dicList.get(key),bmRanksInfo.get(key).getMonth4() + "~" + bmRanksInfo.get(key).getMonth7());
+            HashMap<String,String> costOf = null;
+            resultsOf= new HashMap<>();
+            List<String> companyen = awardService.getCompanyen();
+            for(String companyenKey : companyen){
+                costOf = new HashMap<>();
+                Map<String, PeoplewareFee> bmRanksInfo = personalCostService.getBmRanksInfo(yearss, companyid.get(companyenKey));
+                for(String key : bmRanksInfo.keySet()){
+                    costOf.put(dicList.get(key),bmRanksInfo.get(key).getMonth4() + "~" + bmRanksInfo.get(key).getMonth7());
+                }
+                resultsOf.put(companyenKey,costOf);
             }
         }
-        return ApiResult.success(HashMap);
+        return ApiResult.success(resultsOf);
 
     }
 }
