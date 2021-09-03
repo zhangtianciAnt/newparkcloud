@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Departmental;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalVo;
@@ -7,6 +8,7 @@ import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.DepartmentalService;
 import com.nt.service_pfans.PFANS1000.mapper.DepartmentalMapper;
+import com.nt.utils.BigDecimalUtils;
 import com.nt.utils.dao.TokenModel;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.springframework.beans.BeanUtils;
@@ -228,4 +230,85 @@ public class departmentalServiceImpl implements DepartmentalService {
         }
         return returnVoList;
     }
+
+
+    @Override
+    public Object getTable1050infoReport(String year, String group_id) throws Exception {
+        Departmental departHJ = new Departmental();
+        Departmental departmental = new Departmental();
+        List<Departmental> departmentalList = new ArrayList<>();
+        departmental.setYears(year);
+        departmental.setDepartment(group_id);
+        departmentalList = departmentalMapper.select(departmental);
+        List<Dictionary> dictionaryDivide = dictionaryService.getForSelect("PJ063");
+        Map<String,Dictionary> divideMap = dictionaryDivide.stream().collect(Collectors.toMap(Dictionary::getCode, a -> a,(k1,k2)->k1));
+        if(departmentalList.size() > 0){
+            Map<String, Map<String,List<Departmental>>> filterMap =
+                    departmentalList.stream()
+                            .collect(Collectors.groupingBy(Departmental::getContractnumber,
+                                    Collectors.groupingBy(Departmental::getNumbers)));
+            for(Departmental depart : departmentalList){
+                depart.setDivide(divideMap.get(depart.getDivide()).getValue1());
+                if(depart.getEntrycondition().equals("HT004001")){
+                    depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "-废弃" + "】");
+                    depart.setClaimamount("-");
+                }else{
+                    if(filterMap.get(depart.getContractnumber()).size() > 1){
+                        depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "】");
+                    }else{
+                        depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getClaimamount() + "】");
+                    }
+                }
+            }
+        }
+        departHJ.setThemename("合计");
+        departHJ.setDivide("—");
+        departHJ.setToolsorgs("—");
+        departHJ.setContractnumber("—");
+        departHJ.setClaimamount("—");
+        departHJ.setNumbers("—");
+        departHJ.setStaffnum("—");
+        departHJ.setOutstaffnum("—");
+        departHJ.setOutcompany("—");
+        departHJ.setStaffcust04(departmentalList.stream()
+                .map(Departmental::getStaffcust04)
+                .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+        departHJ.setStaffcust05(departmentalList.stream()
+                .map(Departmental::getStaffcust05)
+                .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+        departHJ.setStaffcust06(departmentalList.stream()
+                .map(Departmental::getStaffcust06)
+                .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+        departHJ.setStaffcust07(departmentalList.stream()
+                .map(Departmental::getStaffcust07)
+                .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+        departHJ.setStaffcust08(departmentalList.stream()
+                .map(Departmental::getStaffcust08)
+                .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+        departHJ.setStaffcust09(departmentalList.stream()
+                .map(Departmental::getStaffcust09)
+                .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+        departHJ.setStaffcust10(departmentalList.stream()
+                .map(Departmental::getStaffcust10)
+                .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+        departHJ.setStaffcust11(departmentalList.stream()
+                .map(Departmental::getStaffcust11)
+                .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+        departHJ.setStaffcust12(departmentalList.stream()
+                .map(Departmental::getStaffcust12)
+                .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+        departHJ.setStaffcust01(departmentalList.stream()
+                .map(Departmental::getStaffcust01)
+                .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+        departHJ.setStaffcust02(departmentalList.stream()
+                .map(Departmental::getStaffcust02)
+                .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+        departHJ.setStaffcust03(departmentalList.stream()
+                .map(Departmental::getStaffcust03)
+                .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+        departmentalList.add(departHJ);
+        departmentalList.sort(Comparator.comparing(Departmental::getThemename));
+        return JSONObject.toJSON(departmentalList);
+    }
+
 }

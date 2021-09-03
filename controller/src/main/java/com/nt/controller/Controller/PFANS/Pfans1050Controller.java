@@ -6,12 +6,10 @@ import com.nt.service_pfans.PFANS1000.DepartmentalService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
-import org.apache.catalina.servlet4preview.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 
 @RestController
@@ -28,8 +26,15 @@ public class Pfans1050Controller {
         departmentalService.getExpatureList();
         return ApiResult.success();
     }
+
     @PostMapping("/getDepartmental")
     public ApiResult getDepartmental(String years, String group_id) throws Exception {
         return ApiResult.success(departmentalService.getDepartmental(years,group_id));
     }
+
+    @RequestMapping(value = "/getTable1050infoReport", method = {RequestMethod.GET})
+    public ApiResult getTable1050infoReport(String year, String group_id, HttpServletRequest request) throws Exception {
+        return ApiResult.success("getTable1050infoReport",departmentalService.getTable1050infoReport(year, group_id));
+    }
+
 }

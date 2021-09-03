@@ -11,4 +11,6 @@ public interface DepartmentalService {
 
       List<DepartmentalVo> getDepartmental(String years, String group_id) throws Exception;
 
+      Object getTable1050infoReport(String year, String group_id) throws Exception;
+
 }
