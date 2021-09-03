@@ -27,6 +27,10 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
                 .excludePathPatterns("/incomeexpenditure/getradio")
                 .excludePathPatterns("/companyprojects/report")
                 .excludePathPatterns("/seal/changeSealWorkFlowInfo")
+                .excludePathPatterns("/pjExternalInjection/getTableinfoReport")
+                .excludePathPatterns("/departmentaccount/getTable1051infoReport")
+                .excludePathPatterns("/departmentalinside/getTableinfoReport")
+                .excludePathPatterns("/departmental/getTable1050infoReport")
         ;
     }
 
