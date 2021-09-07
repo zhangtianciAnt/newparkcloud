@@ -21,9 +21,9 @@ public interface LogManagementMapper extends MyMapper<LogManagement> {
     List<LogManagement> getListPLlogman(@Param("owner") String owner);
     //add_fjl_0716_添加PL权限的人查看日志一览  end
 
-    //add ccm 20210830 所属center可看外注 fr
-    List<LogManagement> getListCENTERlogman(@Param("departmentcen") String departmentcen,@Param("departmentgro") String departmentgro);
-    //add ccm 20210830 所属center可看外注 to
+    //add ccm 20210830 所属center,GM可看外注 fr
+    List<LogManagement> getListCENTERlogman(@Param("accounts") List<String> accounts);
+    //add ccm 20210830 所属center,GM可看外注 to
 
     //add ccm 1118 日志优化
     List<LogManagement> getDataListByLog_date(@Param("owners") List<String> owners, @Param("log_date") String log_date);

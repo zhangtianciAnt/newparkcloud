@@ -65,6 +65,7 @@ public class departmentalServiceImpl implements DepartmentalService {
         String setYears = (Integer.parseInt(nowMonth) < 4 ? String.valueOf(Integer.parseInt(nowYear) - 1) : nowYear);
         List<DepartmentalVo> departmentalVoList = departmentalMapper.getProConInfo(nowY_Month);
         List<String> departGroupFilter = new ArrayList<>();
+        if(departmentalVoList.size() == 0) return;
         departGroupFilter = departmentalVoList.stream().map(DepartmentalVo::getCompanyprojects_id).collect(Collectors.toList());
         departGroupFilter = departGroupFilter.stream().distinct().collect(Collectors.toList());
         Map<String,String> staffWorkSumMap = getStaffWorkSum(departGroupFilter,nowY_Month);

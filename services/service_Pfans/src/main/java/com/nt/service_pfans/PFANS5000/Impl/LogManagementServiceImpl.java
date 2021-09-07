@@ -204,60 +204,109 @@ public class LogManagementServiceImpl implements LogManagementService {
     @Override
     public List<LogManagement> getDataListPL(TokenModel tokenModel) throws Exception {
         String owner = tokenModel.getUserId();
-        //add ccm 20210819 所属center可看外注 fr
-        Calendar calendar = Calendar.getInstance();
-        //年度
-        int year = 0;
-        int monthlast = calendar.get(Calendar.MONTH);
-        int month = calendar.get(Calendar.MONTH)+1;
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        if(month >= 1 && month <= 4) {
-            //时间大于4月10日的，属于新年度，小于10日，属于旧年度
-            if(day >=10)
+
+        List<LogManagement> bpList = new ArrayList<>();
+        Query query = new Query();
+        query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
+        List<CustomerInfo> customerInfolist = mongoTemplate.find(query,CustomerInfo.class);
+        if(customerInfolist.size()>0)
+        {
+            List<String> accounts = new ArrayList<>();
+            List<Expatriatesinfor> expatriatesinforList = new ArrayList<>();
+            expatriatesinforList = expatriatesinforMapper.selectAll();
+            expatriatesinforList = expatriatesinforList.stream().filter(item->(!StringUtils.isNullOrEmpty(item.getOrgInformationcenterid()) && !StringUtils.isNullOrEmpty(item.getOrgInformationgroupid()))).collect(Collectors.toList());
+            query = new Query();
+            query.addCriteria(Criteria.where("_id").is(tokenModel.getUserId()));
+            List<UserAccount> userAccountlist = mongoTemplate.find(query,UserAccount.class);
+            String roles = "";
+            for(Role role : userAccountlist.get(0).getRoles()){
+                roles = roles + role.getDescription() +";";
+            }
+            if(roles.contains("副总经理"))
             {
-                year = calendar.get(Calendar.YEAR);
+                if(!StringUtils.isNullOrEmpty(customerInfolist.get(0).getUserinfo().getCenterid()))
+                {
+                    List<Expatriatesinfor> e1List1 = expatriatesinforList.stream().filter(item -> (item.getOrgInformationcenterid().equals(customerInfolist.get(0).getUserinfo().getCenterid()))).collect(Collectors.toList());
+                    for(Expatriatesinfor e1: e1List1)
+                    {
+                        accounts.add(e1.getAccount());
+                    }
+                }
+                if(customerInfolist.get(0).getUserinfo().getOtherorgs() != null && customerInfolist.get(0).getUserinfo().getOtherorgs().size()>0)
+                {
+                    for(CustomerInfo.OtherOrgs otherorg : customerInfolist.get(0).getUserinfo().getOtherorgs())
+                    {
+                        List<Expatriatesinfor> e1List1 = expatriatesinforList.stream().filter(item -> (item.getOrgInformationcenterid().equals(otherorg.getCenterid()))).collect(Collectors.toList());
+                        for(Expatriatesinfor e1: e1List1)
+                        {
+                            accounts.add(e1.getAccount());
+                        }
+                    }
+                }
+            }
+            else if(roles.contains("总经理"))
+            {
+                for(Expatriatesinfor e1: expatriatesinforList)
+                {
+                    accounts.add(e1.getAccount());
+                }
+            }
+            else if(roles.contains("center长"))
+            {
+                if(!StringUtils.isNullOrEmpty(customerInfolist.get(0).getUserinfo().getCenterid()))
+                {
+                    List<Expatriatesinfor> e1List1 = expatriatesinforList.stream().filter(item -> (item.getOrgInformationcenterid().equals(customerInfolist.get(0).getUserinfo().getCenterid()))).collect(Collectors.toList());
+                    for(Expatriatesinfor e1: e1List1)
+                    {
+                        accounts.add(e1.getAccount());
+                    }
+                }
+                if(customerInfolist.get(0).getUserinfo().getOtherorgs() != null && customerInfolist.get(0).getUserinfo().getOtherorgs().size()>0)
+                {
+                    for(CustomerInfo.OtherOrgs otherorg : customerInfolist.get(0).getUserinfo().getOtherorgs())
+                    {
+                        List<Expatriatesinfor> e1List1 = expatriatesinforList.stream().filter(item -> (item.getOrgInformationcenterid().equals(otherorg.getCenterid()))).collect(Collectors.toList());
+                        for(Expatriatesinfor e1: e1List1)
+                        {
+                            accounts.add(e1.getAccount());
+                        }
+                    }
+                }
+            }
+            else if(roles.contains("GM"))
+            {
+                if(!StringUtils.isNullOrEmpty(customerInfolist.get(0).getUserinfo().getGroupid()))
+                {
+                    List<Expatriatesinfor> e1List1 = expatriatesinforList.stream().filter(item -> (item.getOrgInformationgroupid().equals(customerInfolist.get(0).getUserinfo().getGroupid()))).collect(Collectors.toList());
+                    for(Expatriatesinfor e1: e1List1)
+                    {
+                        accounts.add(e1.getAccount());
+                    }
+                }
+                if(customerInfolist.get(0).getUserinfo().getOtherorgs() !=null && customerInfolist.get(0).getUserinfo().getOtherorgs().size()>0)
+                {
+                    for(CustomerInfo.OtherOrgs otherorg : customerInfolist.get(0).getUserinfo().getOtherorgs())
+                    {
+                        List<Expatriatesinfor> e1List1 = expatriatesinforList.stream().filter(item -> (item.getOrgInformationgroupid().equals(otherorg.getGroupid()))).collect(Collectors.toList());
+                        for(Expatriatesinfor e1: e1List1)
+                        {
+                            accounts.add(e1.getAccount());
+                        }
+                    }
+                }
             }
             else
             {
-                year = calendar.get(Calendar.YEAR) - 1;
+                accounts.add("0");
             }
+            bpList = logmanagementmapper.getListCENTERlogman(accounts);
         }
-        else
-        {
-            year = calendar.get(Calendar.YEAR);
-        }
-        //每年度所有员工在年休表中都有数据，从年休表中获取当前登录人的组织信息
-        List<AnnualLeave> aList = new ArrayList<>();
-        AnnualLeave annualLeave = new AnnualLeave();
-        annualLeave.setYears(String.valueOf(year));
-        annualLeave.setUser_id(owner);
-        aList = annualLeaveMapper.select(annualLeave);
-        String departmentcen = null;
-        String departmentgro = null;
-        List<LogManagement> listCenter = new ArrayList<>();
-        if(aList.size()>0)
-        {
-            departmentcen = aList.get(0).getCenter_id();
-            departmentgro = aList.get(0).getGroup_id();
-            if(departmentcen != null && departmentcen != "")
-            {
-                listCenter = logmanagementmapper.getListCENTERlogman(departmentcen,departmentgro);
-            }
-        }
-        //add ccm 20210819 所属center可看外注 to
-        //根据登陆用户id查看人员角色
-        Query query = new Query();
-        query.addCriteria(Criteria.where("_id").is(tokenModel.getUserId()));
-        List<UserAccount> userAccountlist = mongoTemplate.find(query,UserAccount.class);
-        String roles = "";
-        for(Role role : userAccountlist.get(0).getRoles()){
-            roles = roles + role.getDescription();
-        }
+
         List<LogManagement> listEnd = new ArrayList<>();
         listEnd = logmanagementmapper.getListPLlogman(owner);
-        if(roles.contains("center长"))
+        if(bpList.size()>0)
         {
-            listEnd.addAll(listCenter);
+            listEnd.addAll(bpList);
         }
         return listEnd;
     }

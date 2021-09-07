@@ -58,6 +58,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     @Autowired
     private SupplierinforMapper supplierinforMapper;
 
+    @Autowired
+    private BpCompanyCostMapper bpCompanyCostMapper;
+
 
     @Override
     public Map<String, Object> getCosts(String groupid, String years) throws Exception {
@@ -221,6 +224,30 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 
         }
         result.put("company", new ArrayList<>(companyMap.values()));
+
+        //region  add_qhr_20210901 添加bp社统计费用数据
+        BpCompanyCost bpCompanyCost = new BpCompanyCost();
+        bpCompanyCost.setGroup_id(groupid);
+        bpCompanyCost.setYear(years);
+        List<BpCompanyCost> bpCompanyCostList = bpCompanyCostMapper.select(bpCompanyCost);
+        HashMap<String, BpCompanyCost> bpmap = new HashMap<>();
+        for (BpCompanyCost companyCost : bpCompanyCostList) {
+            bpmap.put(companyCost.getBpcompany(), companyCost);
+        }
+        for (CompanyStatistics value : companyMap.values()) {
+            String BpCompany = value.getBpcompany();
+            BpCompanyCost bpCompanyCost1 = bpmap.get(BpCompany);
+            if (bpCompanyCost1 == null) {
+                continue;
+            }
+//            if (StringUtils.isNullOrEmpty(value.getManhour1f())) {
+//                value.setBpcompany(bpCompanyCost1.getBpcompany());
+//            }
+//            if (StringUtils.isNullOrEmpty(sameOr.getSex())) {
+//                sameOr.setSex(sameOr1.getSex());
+//            }
+        }
+        //endregion  add_qhr_20210901 添加bp社统计费用数据
 
         // year
         result.put("year", getBusinessYear());
