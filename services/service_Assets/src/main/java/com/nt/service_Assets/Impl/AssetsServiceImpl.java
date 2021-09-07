@@ -612,7 +612,9 @@ public class AssetsServiceImpl implements AssetsService {
                             Result.add("模板第" + lineNo + "行的姓名字段没有找到，请输入正确的姓名，导入失败");
                             continue;
                         }
-                        assets.setPrincipal(trim(value.get(3)));
+                        //region scc del 9/7 对外资产模板导入设备负责人时出现名字 from
+//                        assets.setPrincipal(trim(value.get(3)));
+                        //endregion scc del 9/7 对外资产模板导入设备负责人时出现名字 to
                     }
 
                     // 条码类型
