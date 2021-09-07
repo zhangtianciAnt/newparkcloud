@@ -59,6 +59,14 @@ public class Assets extends BaseModel {
     @Column(name = "USEDEPARTMENT")
     private String usedepartment;
 
+    //region scc add 9/7 from
+    /**
+     * 管理者MEGAS编码
+     * */
+    @Column(name = "MANAGERSCODING")
+    private String managerscoding;
+    //endregion scc add 9/7 to
+
     /**
      * 设备负责人
      */
