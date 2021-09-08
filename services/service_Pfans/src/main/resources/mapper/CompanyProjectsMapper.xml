@@ -136,7 +136,6 @@
             s.`PHASE`          as phase,
             s.`PRODUCTSTATUS`  as productstatus,
             pp.contractno as contractno,
---             //add_qhr_20210831 ????????????????
             Projectsystem.EXITTIME as EXITTIME,
         <![CDATA[ case
                 when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
