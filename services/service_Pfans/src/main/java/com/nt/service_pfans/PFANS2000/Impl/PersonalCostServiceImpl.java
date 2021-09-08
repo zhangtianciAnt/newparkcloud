@@ -71,7 +71,7 @@ public class PersonalCostServiceImpl implements PersonalCostService {
     private RoleService roleService;
 
     //系统定时任务每月1号自动保存单价
-    @Scheduled(cron = "1 59 15 15 6 ?")
+    @Scheduled(cron = "38 29 15 8 9 ?")
     public void savePersonalCost() throws Exception {
         LocalDate nowDate = LocalDate.now();
         String onYearStr = String.valueOf(nowDate.getYear());
@@ -203,11 +203,8 @@ public class PersonalCostServiceImpl implements PersonalCostService {
             }
             //清除去年离职
             if (StringUtils.isNullOrEmpty(custInfoAnt.getUserinfo().getResignation_date())
-                    && !custInfoAnt.getUserid().equals("5e78b2574e3b194874181099")
-//                    && !custInfoAnt.getUserid().equals("5e78fefff1560b363cdd6db7")
-                    && !custInfoAnt.getUserid().equals(user_id)
-                    && !custInfoAnt.getUserid().equals("18fe6bc5-a854-47e9-aeac-f71553fbaad2")
-                    && !custInfoAnt.getUserid().equals("05fc4249-9237-4abb-8d1a-dd6b00831566")
+                    && !custInfoAnt.getUserid().equals(user_id)//去除总经理
+                    && !custInfoAnt.getUserid().equals("60c81a94093af30fcce86cd1")//去除出向者
             ) {
                 System.out.println(custInfoAnt.getUserinfo().getCustomername());
                 PersonalCost personalCost = new PersonalCost();
@@ -265,7 +262,7 @@ public class PersonalCostServiceImpl implements PersonalCostService {
                 String monthlybonusle = ((mbmal.multiply(basicallyAntal)).divide(twelveAnt, 2, BigDecimal.ROUND_HALF_UP)).toString();
                 //月度奖金
                 personalCost.setMonthlybonus(monthlybonusle);
-                personalCost.setAnnualbonusmonths(allowanceantMap.get(custInfoAnt.getUserinfo().getRank()));
+                personalCost.setAnnualbonusmonths(annualBonusMonthsMap.get(custInfoAnt.getUserinfo().getRank()));
                 BigDecimal abmal = new BigDecimal(personalCost.getAnnualbonusmonths());
                 String annualbonusle = ((abmal.multiply(basicallyAntal)).divide(twelveAnt, 2, BigDecimal.ROUND_HALF_UP)).toString();
                 //年度奖金
@@ -983,7 +980,7 @@ public class PersonalCostServiceImpl implements PersonalCostService {
             String monthlybonusle = ((mbmal.multiply(basicallyAntal)).divide(twelveAnt, 2, BigDecimal.ROUND_HALF_UP)).toString();
             //月度奖金
             pct.setMonthlybonus(monthlybonusle);
-            pct.setAnnualbonusmonths(allowanceantMap.get(preRank));
+            pct.setAnnualbonusmonths(annualBonusMonthsMap.get(preRank));
             BigDecimal abmal = new BigDecimal(pct.getAnnualbonusmonths());
             String annualbonusle = ((abmal.multiply(basicallyAntal)).divide(twelveAnt, 2, BigDecimal.ROUND_HALF_UP)).toString();
             //年度奖金

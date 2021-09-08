@@ -4,7 +4,7 @@
 
     <select id="selectPersonalCost" resultType="com.nt.dao_Pfans.PFANS2000.PersonalCost">
         select * from personalcost
-        where CENTERID = #{groupid}
+        where (CENTERID = #{groupid} or GROUPID = #{groupid})
         and yearsantid = #{yearsantid}
     </select>
 
@@ -50,7 +50,7 @@
             and ALLOTMENT LIKE CONCAT('%',#{allotmentAnt},'%')
         </if>
         <if test="group_id!=null and group_id!=''">
-            AND CENTERID LIKE CONCAT('%',#{group_id},'%')
+            AND (CENTERID LIKE CONCAT('%',#{group_id},'%') or GROUPID LIKE CONCAT('%',#{group_id},'%'))
         </if>
         <if test="rnAnt!=null and rnAnt!=''">
             AND EXRANK LIKE CONCAT('%',#{rnAnt},'%')
