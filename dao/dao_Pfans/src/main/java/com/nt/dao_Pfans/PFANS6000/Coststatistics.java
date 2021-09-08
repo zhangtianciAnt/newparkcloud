@@ -66,6 +66,12 @@ public class Coststatistics extends BaseModel {
     private Double cost4;
 
     /**
+     * 経費4月
+     */
+    @Column(name = "EXPENSE4")
+    private String expense4;
+
+    /**
      * 5月工数
      */
     @Column(name = "MANHOUR5")
@@ -76,6 +82,12 @@ public class Coststatistics extends BaseModel {
      */
     @Column(name = "COST5")
     private Double cost5;
+
+    /**
+     * 経費5月
+     */
+    @Column(name = "EXPENSE5")
+    private String expense5;
 
     /**
      * 6月工数
@@ -132,6 +144,12 @@ public class Coststatistics extends BaseModel {
     private Double cost7;
 
     /**
+     * 経費7月
+     */
+    @Column(name = "EXPENSE7")
+    private String expense7;
+
+    /**
      * 8月工数
      */
     @Column(name = "MANHOUR8")
@@ -142,6 +160,12 @@ public class Coststatistics extends BaseModel {
      */
     @Column(name = "COST8")
     private Double cost8;
+
+    /**
+     * 経費8月
+     */
+    @Column(name = "EXPENSE8")
+    private String expense8;
 
     /**
      * 9月工数
@@ -198,6 +222,12 @@ public class Coststatistics extends BaseModel {
     private Double cost10;
 
     /**
+     * 経費10月
+     */
+    @Column(name = "EXPENSE10")
+    private String expense10;
+
+    /**
      * 11月工数
      */
     @Column(name = "MANHOUR11")
@@ -208,6 +238,12 @@ public class Coststatistics extends BaseModel {
      */
     @Column(name = "COST11")
     private Double cost11;
+
+    /**
+     * 経費11月
+     */
+    @Column(name = "EXPENSE11")
+    private String expense11;
 
     /**
      * 12月工数
@@ -264,6 +300,12 @@ public class Coststatistics extends BaseModel {
     private Double cost1;
 
     /**
+     * 経費1月
+     */
+    @Column(name = "EXPENSE1")
+    private String expense1;
+
+    /**
      * 2月工数
      */
     @Column(name = "MANHOUR2")
@@ -274,6 +316,12 @@ public class Coststatistics extends BaseModel {
      */
     @Column(name = "COST2")
     private Double cost2;
+
+    /**
+     * 経費2月
+     */
+    @Column(name = "EXPENSE2")
+    private String expense2;
 
     /**
      * 3月工数
