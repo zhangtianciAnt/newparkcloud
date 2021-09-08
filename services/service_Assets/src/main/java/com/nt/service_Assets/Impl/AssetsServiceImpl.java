@@ -222,7 +222,7 @@ public class AssetsServiceImpl implements AssetsService {
             file.transferTo(f);
             ExcelReader reader = ExcelUtil.getReader(f);
             List<List<Object>> list = reader.read();
-            String[] gudingzichan = "资产类型,名称,资产编号,使用部门,部门代码,管理者,条码类型,资产状态,在库状态,PC管理号,存放地点,启用日期,原值,帐面净值,型号,PSDCD_借还情况,PSDCD_带出理由,带出地点,PSDCD_责任人,联系电话,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_实际归还日,备注,资产说明".split(",");
+            String[] gudingzichan = "资产类型,名称,资产编号,使用部门,部门代码,管理者姓名,管理者Megas编码,条码类型,资产状态,在库状态,PC管理号,存放地点,启用日期,原值,帐面净值,型号,PSDCD_借还情况,PSDCD_带出理由,带出地点,PSDCD_责任人,联系电话,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_实际归还日,备注,资产说明".split(",");
             String[] jieruzichan = "资产类型,名称,资产编号,使用部门,部门代码,管理者,条码类型,型号,借出单位,借出单位联系人,联系电话,借用合同,借用合同编号,借用开始日,PSDCD_预计归还日,PSDCD_实际归还日,资产说明,备注,备注1".split(",");
             //String[] gudingzichan = "名称,资产类型,资产编号,资产状态,管理者,使用部门,部门代码,条码类型,启用日期,在库状态,购入时间,价格,帐面净值,型号,PC管理号,PSDCD_借还情况,PSDCD_带出理由,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_是否逾期,PSDCD_对方单位,PSDCD_责任人,PSDCD_归还确认,备注".split(",");
             String[] duiwaizichan = "名称,资产类型,资产编号,姓名,条码类型,资产状态,在库状态,通関資料管理番号,型号,原值,HS编码,輸入日付,延期返却期限,备注,客户,管理番号,機材名称,INVOICEと一致性,设备写真あるか,輸出部門担当者,実施日,動作状況,現場担当者,実施日,備考,動作状況,現場実施者,実施日,INVOICEとの一致性,入荷写真との一致性,梱包状況,現場担当者,輸出部門担当者,実施日,最終確認,現場TL,輸出部門TL,実施日,備考,部门".split(",");
@@ -321,9 +321,17 @@ public class AssetsServiceImpl implements AssetsService {
                         continue;
                     }
                     assets.setFilename(trim(value.get(1)));
+                    //region scc add 固定资产，资产编号必填 from
+                    if(StringUtils.isEmpty(value.get(2))){
+                        error++;
+                        Result.add("模板第" + lineNo + "行的资产编号不能为空，导入失败");
+                        continue;
+                    }
+                    assets.setAssetnumber(trim(value.get(2)));
+                    //endregion scc add 固定资产，资产编号必填 to
                     // 资产状态
-                    if (!StringUtils.isEmpty(trim(value.get(7)))) {
-                        String tValue = trim(value.get(7));
+                    if (!StringUtils.isEmpty(trim(value.get(8)))) {
+                        String tValue = trim(value.get(8));
                         if (PA003Map.containsKey(tValue)) {
                             assets.setAssetstatus(PA003Map.get(tValue));
                         } else {
@@ -332,12 +340,29 @@ public class AssetsServiceImpl implements AssetsService {
                             continue;
                         }
                     }
-                    // 管理者
-                    if (!StringUtils.isEmpty(trim(value.get(5)))) {
-                        CustomerInfo customerInfo = this.getCustomerInfoPer(value.get(5).toString());
+                    //region scc add 9/7 管理者姓名必填 from
+                    if(StringUtils.isEmpty(trim(value.get(5)))){
+                        error = error + 1;
+                        Result.add("模板第" + lineNo + "行的管理者不能为空，导入失败");
+                        continue;
+                    }
+                    //endregion scc add 9/7 管理者姓名必填 to
+                    // region scc upd 9/7 管理者megas编码 from
+                    if (!StringUtils.isEmpty(trim(value.get(6)))) {
+                        CustomerInfo customerInfo = this.getCustomerInfoPer(value.get(6).toString());
                         if (customerInfo != null) {
-                            assets.setPrincipal(customerInfo.getUserid());
-                            assets.setOwner(customerInfo.getUserid());
+                            Query query = new Query();
+                            query.addCriteria(Criteria.where("userinfo.customername").is(value.get(5).toString().trim()));
+                            CustomerInfo managers = mongoTemplate.findOne(query, CustomerInfo.class);
+                            if(customerInfo.getUserid().equals(managers.getUserid())){
+                                assets.setPrincipal(customerInfo.getUserid());
+                                assets.setOwner(customerInfo.getUserid());
+                                assets.setManagerscoding(value.get(6).toString());
+                            }else{
+                                error = error + 1;
+                                Result.add("模板第" + lineNo + "行的管理者与管理者MEGAS编码不对应，导入失败");
+                                continue;
+                            }
                         }
                         if (customerInfo == null) {
                             error = error + 1;
@@ -345,6 +370,7 @@ public class AssetsServiceImpl implements AssetsService {
                             continue;
                         }
                     }
+                    // endregion scc upd 9/7 管理者megas编码 to
                     //使用部门
                     if (StringUtils.isEmpty(value.get(3))) {
                         error++;
@@ -369,8 +395,8 @@ public class AssetsServiceImpl implements AssetsService {
 //                    }
                     //add_fjl_0911  添加条码类型 必填 添加启用日期
                     // 条码类型
-                    if (!StringUtils.isEmpty(trim(value.get(6)))) {
-                        String tValue = trim(value.get(6));
+                    if (!StringUtils.isEmpty(trim(value.get(7)))) {
+                        String tValue = trim(value.get(7));
                         if (PA004Map.containsKey(tValue)) {
                             assets.setBartype(PA004Map.get(tValue));
                         } else {
@@ -385,8 +411,8 @@ public class AssetsServiceImpl implements AssetsService {
                         continue;
                     }
                     // 在库状态
-                    if (!StringUtils.isEmpty(trim(value.get(8)))) {
-                        String tValue = trim(value.get(8));
+                    if (!StringUtils.isEmpty(trim(value.get(9)))) {
+                        String tValue = trim(value.get(9));
                         if (PA002Map.containsKey(tValue)) {
                             assets.setStockstatus(PA002Map.get(tValue));
                         } else {
@@ -402,21 +428,48 @@ public class AssetsServiceImpl implements AssetsService {
                     //启用日期,存放地点,原值,帐面净值,型号,PSDCD_借还情况,PSDCD_带出理由,带出地点,PSDCD_责任人,联系电话,PSDCD_带出开始日,PSDCD_预计归还日,PSDCD_实际归还日,备注,资产说明
                     String[] gudingCols = "pcno,storagelocation,activitiondate,price,realprice,model,psdcddebitsituation,psdcdbringoutreason,address,psdcdresponsible,psdcdphone,psdcdperiod,psdcdreturndate,psdcdshijidate,remarks,remarks1".split(",");
                     //add_fjl_0911  添加条码类型 必填 添加启用日期
-                    int start = 9;
+                    int start = 10;
                     setOrderedValues(start, assets, gudingCols, value);
                     //                    upd-lyt-21/4/2-start
                     // 启用日期 （固定资产&无形资产适用）
                     if (value != null && !value.isEmpty() && ("固定资产".equals(value.get(0).toString()) || "无形资产".equals(value.get(0).toString()))) {
-                        if (!StringUtils.isEmpty(trim(value.get(11)))) {
-                            String date1 = trim(value.get(11));
-                            SimpleDateFormat sf = new SimpleDateFormat("dd-MM-yyyy");
-                            SimpleDateFormat sf1 = new SimpleDateFormat("yyyy-MM-dd");
-                            Date date2 = sf.parse(date1);
-
-                            assets.setInparams4(sf1.parse(sf1.format(date2)));
-                            assets.setActivitiondate(sf1.parse(sf1.format(date2)));//111
+                        //region scc upd 9/7 导入时间格式变更 from
+                        if (!StringUtils.isEmpty(trim(value.get(12)))) {
+                            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+                            String date1 = trim(value.get(12));
+                            if(date1.indexOf("/") >= 0){
+                                SimpleDateFormat sf1 = new SimpleDateFormat("dd/MM/yyyy");
+                            }
+                            SimpleDateFormat sf1 = new SimpleDateFormat("dd-MM-yyyy");
+                            //region scc del 启用日期导入格式为DD-MM-YYYY from
+                            Date date2 = sf1.parse(date1);
+                            assets.setInparams4(date2);
+                            assets.setActivitiondate(date2);//111
+                            //endregion scc del 启用日期导入格式为DD-MM-YYYY to
                         }
+                        //endregion scc upd 9/7 导入时间格式变更 to
+                        //region scc add 9/7 启用日期必填 from
+                        else {
+                            error++;
+                            Result.add("模板第" + lineNo + "行的启用日期不能为空，导入失败");
+                            continue;
+                        }
+                        //endregion scc add 9/7 启用日期必填 from
                     }
+                    //region scc add 9/7 原值必填 from
+                    if(!StringUtils.isEmpty(value.get(13))) {
+                        int originalCost = Integer.parseInt(value.get(13).toString());
+                        if(originalCost < 0){
+                            error++;
+                            Result.add("模板第" + lineNo + "行的原值不能为负数，导入失败");
+                            continue;
+                        }
+                    }else{
+                        error++;
+                        Result.add("模板第" + lineNo + "行的原值不能为空，导入失败");
+                        continue;
+                    }
+                    //endregion scc add 9/7 原值必填 to
 //                    else {
 //                        error++;
 //                        Result.add("模板第" + lineNo + "行的启用日期没有找到，导入失败");
@@ -559,7 +612,9 @@ public class AssetsServiceImpl implements AssetsService {
                             Result.add("模板第" + lineNo + "行的姓名字段没有找到，请输入正确的姓名，导入失败");
                             continue;
                         }
-                        assets.setPrincipal(trim(value.get(3)));
+                        //region scc del 9/7 对外资产模板导入设备负责人时出现名字 from
+//                        assets.setPrincipal(trim(value.get(3)));
+                        //endregion scc del 9/7 对外资产模板导入设备负责人时出现名字 to
                     }
 
                     // 条码类型

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Data
 @AllArgsConstructor
@@ -102,4 +103,8 @@ public class StaffDetail extends BaseModel {
 
     @Column(name = "ROWINDEX")
     private Integer rowindex;
+
+    //计算成本
+    @Transient
+    private String bm;
 }

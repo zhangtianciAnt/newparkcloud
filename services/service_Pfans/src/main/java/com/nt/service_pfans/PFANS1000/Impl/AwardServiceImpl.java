@@ -1,17 +1,21 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
+import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
 import com.nt.service_Auth.RoleService;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS1000.AwardService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.service_pfans.PFANS2000.PersonalCostService;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
 import com.nt.utils.ExcelOutPutUtil;
@@ -24,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -57,6 +62,12 @@ public class AwardServiceImpl implements AwardService {
     @Autowired
     private OrgTreeService orgTreeService;
 
+    @Autowired
+    private PersonalCostService personalCostService;
+
+    @Autowired
+    private DictionaryService dictionaryService;
+
     @Override
     public List<Award> get(Award award) throws Exception {
         List<Award> awardlist = awardMapper.select(award);
@@ -75,13 +86,13 @@ public class AwardServiceImpl implements AwardService {
     // 禅道任务152
     @Override
     public AwardVo selectById(String award_id) throws Exception {
-        //region scc add 8/24 根据部门id取部门称存 from
+        //region scc add 8/24 id--部门键值对 from
         List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
         HashMap<String,String> companyid = new HashMap<>();
         for(DepartmentVo vo : allDepartment){
             companyid.put(vo.getDepartmentId(),vo.getDepartmentEn());
         }
-        //endregion scc add 8/24 根据部门id取部门称存 to
+        //endregion scc add 8/24 id--部门键值对 to
         AwardVo awavo = new AwardVo();
         AwardDetail awadetail = new AwardDetail();
         awadetail.setAward_id(award_id);
@@ -89,15 +100,34 @@ public class AwardServiceImpl implements AwardService {
         staffdetail.setAward_id(award_id);
         List<AwardDetail> awalist = awardDetailMapper.select(awadetail);
         List<StaffDetail> stafflist = staffDetailMapper.select(staffdetail);
-        //region scc add 8/24 根据部门id取部门称存 from
-        for(StaffDetail sta : stafflist){
-            sta.setIncondepartment(companyid.get(sta.getIncondepartment()));
-        }
-        //endregion scc add 8/24 根据部门id取部门称存 to
         awalist = awalist.stream().sorted(Comparator.comparing(AwardDetail::getRowindex)).collect(Collectors.toList());
         stafflist = stafflist.stream().sorted(Comparator.comparing(StaffDetail::getRowindex)).collect(Collectors.toList());
         Award awa = awardMapper.selectByPrimaryKey(award_id);
         Award award = awardMapper.selectByPrimaryKey(award_id);
+        //region scc add 8/24 页面初始化时页面所需rank及成本 from
+        //scc 所有rank from
+        List<com.nt.dao_Org.Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
+        HashMap<String, String> dicList = new HashMap<>();
+        for(Dictionary dic : dictionaryRank){
+            dicList.put(dic.getCode(),dic.getValue1());
+        }
+        //scc 所有rank to
+        for(StaffDetail sta : stafflist){
+            String beginningDate = award.getClaimdatetime().split("~")[0].trim();//开始日
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date parseBegin = sdf.parse(beginningDate);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(parseBegin);
+            String beginningYear = String.valueOf(cal.get(Calendar.YEAR));//年
+            Map<String, PeoplewareFee> bmRanksInfo = personalCostService.getBmRanksInfo(beginningYear, sta.getIncondepartment());//部门所有rank成本
+            HashMap<String, String> costOf = new HashMap<>();
+            for(String key : bmRanksInfo.keySet()){
+                costOf.put(dicList.get(key),bmRanksInfo.get(key).getMonth4() + "~" + bmRanksInfo.get(key).getMonth7());
+            }
+            sta.setBm(costOf.get(sta.getAttf()));//页面初始化成本
+            sta.setIncondepartment(companyid.get(sta.getIncondepartment()));//存部门
+        }
+        //endregion scc add 8/24 页面初始化时页面所需rank及成本 to
 //        String name = "";
 //        String [] companyProjectsid = award.getPjnamechinese().split(",");
 //        if(companyProjectsid.length > 0){
