@@ -1,10 +1,8 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS1000.*;
@@ -12,7 +10,6 @@ import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ReportContractEnVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
-import com.nt.dao_Pfans.PFANS4000.Seal;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
 import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
@@ -20,11 +17,9 @@ import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
-import com.nt.dao_Org.Dictionary;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
-import com.nt.service_pfans.PFANS1000.PurchaseApplyService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
@@ -34,9 +29,14 @@ import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
 import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
+import com.nt.utils.PageUtil;
+import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -184,6 +184,21 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         vo.setContractcompound(compoundList);
         return vo;
     }
+
+    //    dialog优化分页 ztc fr
+    @Override
+    public TableDataInfo getforContDiaLog(int currentPage, int pageSize) {
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Contractapplication contractapplication = new Contractapplication();
+        contractapplication.setState("有效");
+        List<Contractapplication> effAll = contractapplicationMapper.select(contractapplication);
+        Page<Contractapplication> pageFromList = PageUtil.createPageFromList(effAll, pageable);
+        TableDataInfo taInfo = new TableDataInfo();
+        taInfo.setTotal(pageFromList.getTotalElements() > effAll.size() ? effAll.size() : pageFromList.getTotalElements());
+        taInfo.setResultList(pageFromList.getContent());
+        return taInfo;
+    }
+    //    dialog优化分页 ztc to
 
     //add-ccm-0610-已经纳品的回数查询 str
     @Override

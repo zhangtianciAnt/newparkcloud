@@ -9,10 +9,7 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -48,6 +45,16 @@ public class Pfans6004Controller {
 //        expatriatesinfor.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(expatriatesinforService.getexpatriatesinfor(expatriatesinfor));
     }
+
+    //    dialog优化分页 ztc fr
+    @RequestMapping(value = "/getforSysDiaLog", method = {RequestMethod.GET})
+    public ApiResult getforSysDiaLog(@RequestParam(defaultValue = "1") int currentPage,
+                                    @RequestParam(defaultValue = "20") int pageSize,
+                                    HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(expatriatesinforService.getforSysDiaLog(currentPage,pageSize));
+    }
+    //    dialog优化分页 ztc to
 
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult getexpatriatesinforApplyOne(@RequestBody Expatriatesinfor expatriatesinfor, HttpServletRequest request) throws Exception {
