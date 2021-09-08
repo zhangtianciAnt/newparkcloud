@@ -71,7 +71,7 @@ public class PersonalCostServiceImpl implements PersonalCostService {
     private RoleService roleService;
 
     //系统定时任务每月1号自动保存单价
-    @Scheduled(cron = "38 29 15 8 9 ?")
+    @Scheduled(cron = "38 25 16 8 9 ?")
     public void savePersonalCost() throws Exception {
         LocalDate nowDate = LocalDate.now();
         String onYearStr = String.valueOf(nowDate.getYear());
@@ -312,7 +312,7 @@ public class PersonalCostServiceImpl implements PersonalCostService {
                 BigDecimal gjjal = new BigDecimal(personalCost.getGjjjsaj());
                 //社保企业4
                 String sbqyle = oldSum.add(losssySum).add(gsSum).add(sySum).add(ylSum).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-                personalCost.setSbgsaj(sbqyle);
+                personalCost.setSbqyaj(sbqyle);
                 BigDecimal sbqial = new BigDecimal(personalCost.getSbgsaj());
                 //大病险
                 personalCost.setDbxaj(dbXAnt);
