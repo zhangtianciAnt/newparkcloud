@@ -1,6 +1,5 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
-import ch.qos.logback.core.joran.spi.ElementSelector;
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
@@ -22,8 +21,13 @@ import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
 import com.nt.service_pfans.PFANS6000.mapper.*;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
+import com.nt.utils.PageUtil;
+import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -136,6 +140,18 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         //ceshi
         return expatriatesinforMapper.select(expatriatesinfor);
     }
+    //    dialog优化分页 ztc fr
+    @Override
+    public TableDataInfo getforSysDiaLog(int currentPage, int pageSize) throws Exception {
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        List<Expatriatesinfor> outAll = expatriatesinforMapper.getOutList();
+        Page<Expatriatesinfor> pageFromList = PageUtil.createPageFromList(outAll, pageable);
+        TableDataInfo taInfo = new TableDataInfo();
+        taInfo.setTotal(pageFromList.getTotalElements() > outAll.size() ? outAll.size() : pageFromList.getTotalElements());
+        taInfo.setResultList(pageFromList.getContent());
+        return taInfo;
+    }
+    //    dialog优化分页 ztc to
 
     @Override
     public Expatriatesinfor getexpatriatesinforApplyOne(String expatriatesinfor_id) throws Exception {

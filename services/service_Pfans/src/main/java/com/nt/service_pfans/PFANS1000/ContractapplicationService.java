@@ -4,7 +4,7 @@ import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ReportContractEnVo;
-import com.nt.dao_Pfans.PFANS5000.ProjectContract;
+import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -13,7 +13,9 @@ import java.util.Map;
 public interface ContractapplicationService {
 
     ContractapplicationVo get(Contractapplication contractapplication) throws Exception;
-
+    //    dialog优化分页 ztc fr
+    TableDataInfo getforContDiaLog(int currentPage, int pageSize) throws Exception;
+    //    dialog优化分页 ztc to
     //add-ccm-0610-已经纳品的回数查询 str
     List<Contractnumbercount> getNaPpinAftercount(String contractnumber) throws Exception;
     //add-ccm-0610-已经纳品的回数查询 end

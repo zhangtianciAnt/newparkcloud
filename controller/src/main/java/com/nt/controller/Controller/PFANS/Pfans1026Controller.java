@@ -149,6 +149,15 @@ public class Pfans1026Controller {
         return ApiResult.success(contractapplicationService.get(contractapplication));
     }
 
+    //    dialog优化分页 ztc fr
+    @RequestMapping(value = "/getforContDiaLog", method = {RequestMethod.GET})
+    public ApiResult getforContDiaLog(@RequestParam(defaultValue = "1") int currentPage,
+                                      @RequestParam(defaultValue = "20") int pageSize,
+                                      HttpServletRequest request) throws Exception {
+        return ApiResult.success(contractapplicationService.getforContDiaLog(currentPage,pageSize));
+    }
+    //    dialog优化分页 ztc to
+
     @RequestMapping(value = "/getList", method = {RequestMethod.POST})
     public ApiResult getList(@RequestBody List<Contractapplication> contractapplicationlist, HttpServletRequest request) throws Exception {
         if (contractapplicationlist == null) {
