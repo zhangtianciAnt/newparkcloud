@@ -144,9 +144,9 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
             if(eafter.size() > 0){
                 List<String> managements = eafter.stream().distinct().collect(Collectors.toList());
                 ToDoNotice toDoNotice1 = new ToDoNotice();
-                toDoNotice1.setTitle("有一个【资产部门间转移及管理者变更决裁】审批已结束，请注意查看！");
+                toDoNotice1.setTitle("您有资产需确认！");
                 toDoNotice1.setInitiator(softwaretransfer.getUser_id());
-                toDoNotice1.setContent("有一个【资产部门间转移及管理者变更决裁】审批已结束，请注意查看！");
+                toDoNotice1.setContent("有资产已经转移到您名下，请及时进行资产确认！");
                 toDoNotice1.setUrl("/PFANS1008FormView");
                 toDoNotice1.setWorkflowurl("/PFANS1008FormView");
                 toDoNotice1.setDataid(softwaretransfer.getSoftwaretransferid());
