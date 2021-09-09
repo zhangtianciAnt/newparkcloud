@@ -38,4 +38,6 @@ public interface ContractapplicationMapper extends MyMapper<Contractapplication>
 
     //做觉书时，不满足条件的回数设置status = 1，Projectcontract表
     public void updateProjectcontractById(@Param("PtList") List<String> PtList);
+    //获取所有合同关联的项目编号
+    public List<Contractapplication> getPjCode();
 }
