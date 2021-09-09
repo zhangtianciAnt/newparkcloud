@@ -19,6 +19,7 @@ import com.nt.service_pfans.PFANS2000.mapper.BonussendMapper;
 import com.nt.service_pfans.PFANS2000.mapper.PersonalCostMapper;
 import com.nt.service_pfans.PFANS2000.mapper.PersonalCostYearsMapper;
 import com.nt.service_pfans.PFANS2000.mapper.WagesMapper;
+import com.nt.utils.BigDecimalUtils;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,7 @@ public class PersonalCostServiceImpl implements PersonalCostService {
     private RoleService roleService;
 
     //系统定时任务每月1号自动保存单价
-    @Scheduled(cron = "38 25 16 8 9 ?")
+    @Scheduled(cron = "38 17 17 8 9 ?")
     public void savePersonalCost() throws Exception {
         LocalDate nowDate = LocalDate.now();
         String onYearStr = String.valueOf(nowDate.getYear());
@@ -230,6 +231,7 @@ public class PersonalCostServiceImpl implements PersonalCostService {
                 }
                 personalCost.setNewpersonaldate("-");
                 personalCost.setExrank(custInfoAnt.getUserinfo().getRank());
+                personalCost.setLtrank(custInfoAnt.getUserinfo().getRank());
                 personalCost.setChangerank("PR069001");
                 personalCost.setBasicallyant(basicallMap.get(custInfoAnt.getUserinfo().getRank()));
                 personalCost.setResponsibilityant(responsibilityMap.get(custInfoAnt.getUserinfo().getRank()));
@@ -313,7 +315,7 @@ public class PersonalCostServiceImpl implements PersonalCostService {
                 //社保企业4
                 String sbqyle = oldSum.add(losssySum).add(gsSum).add(sySum).add(ylSum).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                 personalCost.setSbqyaj(sbqyle);
-                BigDecimal sbqial = new BigDecimal(personalCost.getSbgsaj());
+                BigDecimal sbqial = new BigDecimal(personalCost.getSbqyaj());
                 //大病险
                 personalCost.setDbxaj(dbXAnt);
                 BigDecimal dbxal = new BigDecimal(personalCost.getDbxaj());
@@ -516,65 +518,15 @@ public class PersonalCostServiceImpl implements PersonalCostService {
 
     @Override
     public List<PersonalCostBmSum> gettableBm(String yearsantid) throws Exception {
-        List<Dictionary> dicList = dictionaryService.getForSelect("PR021");
-        List<String> rankList = dicList.stream().map(Dictionary::getCode).collect(Collectors.toList());
-        List<DepartmentVo> departmentVoList = new ArrayList<>();
-        departmentVoList = orgTreeService.getAllDepartment();
-        PersonalCost personalCost = new PersonalCost();
-        personalCost.setYearsantid(yearsantid);
-        List<PersonalCost> personalCostListList = personalCostMapper.select(personalCost);
-        Map<String, Map<String, List<PersonalCost>>> perGroupMap = personalCostListList.stream()
-                .filter(ids -> !StringUtils.isNullOrEmpty(ids.getDepartment()) && !StringUtils.isNullOrEmpty(ids.getExrank()))
-                .collect(Collectors.groupingBy(PersonalCost::getDepartment,
-                        Collectors.groupingBy(PersonalCost::getExrank)));
-        for (DepartmentVo dep : departmentVoList) {
-
-        }
-
         List<PersonalCostBmSum> pcbslist = new ArrayList<>();
-        List<String> groupList = personalCostMapper.getGroupId(yearsantid);
-        OrgTree org = new OrgTree();
-        org.setStatus("0");
-        Query query = CustmizeQuery(org);
-        org = mongoTemplate.findOne(query, OrgTree.class);
-        List<String> decomposeGruop = new ArrayList<>();
-        List<String> removeGroup = new ArrayList<>();
-        for (String cerid : groupList) {
-            OrgTree orgTreeProcess = new OrgTree();
-            orgTreeProcess = getCurrentOrg(org, cerid);
-            if (orgTreeProcess.getEncoding().isBlank() && orgTreeProcess.getOrgs().size() > 0) {
-                removeGroup.add(orgTreeProcess.get_id());
-                for (OrgTree otre : orgTreeProcess.getOrgs()) {
-                    decomposeGruop.add(otre.get_id());
-                }
-            }
-        }
-        for (String remGp : removeGroup) {
-            groupList.remove(remGp);
-        }
-        for (String gr : groupList) {
-            PersonalCostBmSum personalCostBmSum = personalCostMapper.getPersonalCostBmSum(gr, yearsantid);
-            if (personalCostBmSum.getDepartshortBmSum() == null) {
-                continue;
-            }
-            personalCostBmSum.setExrankBmSum("合计");
-            pcbslist.add(personalCostBmSum);
-            List<String> groupinRanks = personalCostMapper.getGroupinRanks(gr, yearsantid);
-            for (String rank : groupinRanks) {
-                pcbslist.add(personalCostMapper.getPersonalCostSum(gr, rank, yearsantid));
-            }
-        }
-        for (String decGp : decomposeGruop) {
-            PersonalCostBmSum personalCostBmSum = personalCostMapper.getPersonalCostBmSumGs(decGp, yearsantid);
-            if (personalCostBmSum.getDepartshortBmSum() == null) {
-                continue;
-            }
-            personalCostBmSum.setExrankBmSum("合计");
-            pcbslist.add(personalCostBmSum);
-            List<String> groupinRanks = personalCostMapper.getGroupinRanksGp(decGp, yearsantid);
-            for (String rank : groupinRanks) {
-                pcbslist.add(personalCostMapper.getPersonalCostSumGp(decGp, rank, yearsantid));
-            }
+        List<PersonalCostBmSum> getDepRankList = personalCostMapper.getDepShortList(yearsantid);
+        Map<String, List<PersonalCostBmSum>> groupDepRankMap = getDepRankList.stream()
+                .collect(Collectors.groupingBy(PersonalCostBmSum::getDepartshortBmSum));
+        for (Map.Entry<String, List<PersonalCostBmSum>> entryUser : groupDepRankMap.entrySet()) {
+            pcbslist.addAll(entryUser.getValue());
+            List<PersonalCostBmSum> depTotalList = personalCostMapper.getDepSum(entryUser.getKey());
+            if(depTotalList.size() > 0) depTotalList.get(0).setExrankBmSum("总计");
+            pcbslist.addAll(depTotalList);
         }
         return pcbslist;
     }

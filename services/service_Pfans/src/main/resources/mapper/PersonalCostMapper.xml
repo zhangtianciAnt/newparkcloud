@@ -65,6 +65,52 @@
         ORDER BY EXRANK DESC
     </select>
 <!--    add-lyt-21/1/29-禅道任务648-start-->
+    <select id="getDepShortList"  resultType="com.nt.dao_Pfans.PFANS2000.PersonalCostBmSum">
+        SELECT DEPARTSHORT AS departshortBmSum,
+            EXRANK AS exrankBmSum,
+            count( userid ) AS peopleBmSum,
+            round( sum( MONTHLYSALARY ) / count(userid), 2) AS monthBmSum,
+            round( sum( BASICALLYANT ) / count(userid), 2) AS basicBmSum,
+            round( sum( RESPONSIBILITYANT ) / count(userid), 2) AS balityBmSum,
+            round( sum( TOTALSUBSIDIES ) / count(userid), 2) AS totalsubsidiesBmSum,
+            round( sum( MONTHLYBONUS ) / count(userid), 2) AS monthlybonusBmSum,
+            round( sum( ANNUALBONUS ) / count(userid), 2) AS annualbonusBmSum,
+            round( sum( TOTALWAGES ) / count(userid), 2) AS totalwagesBmSum,
+            round( sum( TRADEUNIONFUNDS ) / count(userid), 2) AS tradeunionfundsBmSum,
+            round( sum( SBGSAJ ) / count(userid), 2) AS sbgsajBmSum,
+            round( sum( GJJGSFDAJ ) / count(userid), 2) AS gjjgsfdajBmSum,
+            round( sum( APTOJU ) / count(userid), 2) AS aptojuBmSum,
+            round( sum( SBGSJM ) / count(userid), 2) AS sbgsjmBmSum,
+            round( sum( GJJGSFDJM ) / count(userid), 2) AS gjjgsfdjmBmSum,
+            round( sum( JUTOMA ) / count(userid), 2) AS jutomaBmSum,
+            round( sum( OVERTIMEPAY ) / count(userid), 2) AS overtimepayBmSum
+        FROM personalcost
+        WHERE yearsantid = #{yearsantid}
+        GROUP BY DEPARTSHORT,EXRANK
+        ORDER BY DEPARTSHORT DESC,EXRANK DESC
+    </select>
+    <select id="getDepSum"  resultType="com.nt.dao_Pfans.PFANS2000.PersonalCostBmSum">
+        SELECT DEPARTSHORT AS departshortBmSum,
+               EXRANK AS exrankBmSum,
+               count( userid ) AS peopleBmSum,
+               sum( MONTHLYSALARY ) AS monthBmSum,
+               sum( BASICALLYANT ) AS basicBmSum,
+               sum( RESPONSIBILITYANT ) AS balityBmSum,
+               sum( TOTALSUBSIDIES ) AS totalsubsidiesBmSum,
+               sum( MONTHLYBONUS ) AS monthlybonusBmSum,
+               sum( ANNUALBONUS ) AS annualbonusBmSum,
+               sum( TOTALWAGES ) AS totalwagesBmSum,
+               sum( TRADEUNIONFUNDS ) AS tradeunionfundsBmSum,
+               sum( SBGSAJ ) AS sbgsajBmSum,
+               sum( GJJGSFDAJ ) AS gjjgsfdajBmSum,
+               sum( APTOJU ) AS aptojuBmSum,
+               sum( SBGSJM ) AS sbgsjmBmSum,
+               sum( GJJGSFDJM ) AS gjjgsfdjmBmSum,
+               sum( JUTOMA ) AS jutomaBmSum,
+               sum( OVERTIMEPAY ) AS overtimepayBmSum
+        FROM personalcost
+        WHERE DEPARTSHORT = #{DEPARTSHORT}
+    </select>
 </mapper>
 
 
