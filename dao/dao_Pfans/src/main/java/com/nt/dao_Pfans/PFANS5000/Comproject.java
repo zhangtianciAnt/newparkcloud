@@ -103,6 +103,14 @@ public class Comproject extends BaseModel {
     @Column(name = "NOWDATE")
     private Date nowdate;
 
+    //region add_qhr_20210909 添加项目退场check
+    /**
+     *退场时间
+     */
+    @Column(name = "EXITTIME")
+    private Date exittime;
+    //endregion add_qhr_20210909 添加项目退场check
+
 
 
 
