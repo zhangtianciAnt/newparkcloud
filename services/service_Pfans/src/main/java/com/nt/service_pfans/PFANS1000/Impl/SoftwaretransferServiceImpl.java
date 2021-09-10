@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -86,6 +87,9 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
         not.setSoftwaretransferid(ssoftwaretransferid);
         notificationMapper.delete(not);
         List<Notification> notificationlist = softwaretransferVo.getNotification();
+        //region scc add 9/6 资产转移及管理者变更决裁，接收人接受代办通知 from
+        ArrayList<String> eafter = new ArrayList<>();//接收人
+        //endregion scc add 9/6 资产转移及管理者变更决裁，接收人接受代办通知 to
         if (notificationlist != null) {
             int rowindex = 0;
             for (Notification notification : notificationlist) {
@@ -131,8 +135,29 @@ public class SoftwaretransferServiceImpl implements SoftwaretransferService {
                             }
                         }
                     }
+                    //region scc add 9/6 资产转移及管理者变更决裁，接收人接受代办通知 from
+                    eafter.add(notification.getEafter());//接收人
+                    //endregion scc add 9/6 资产转移及管理者变更决裁，接收人接受代办通知 to
                 }
             }
+            //region scc add 9/6 资产转移及管理者变更决裁，接收人接受代办通知 from
+            if(eafter.size() > 0){
+                List<String> managements = eafter.stream().distinct().collect(Collectors.toList());
+                ToDoNotice toDoNotice1 = new ToDoNotice();
+                toDoNotice1.setTitle("您有资产需确认！");
+                toDoNotice1.setInitiator(softwaretransfer.getUser_id());
+                toDoNotice1.setContent("有资产已经转移到您名下，请及时进行资产确认！");
+                toDoNotice1.setUrl("/PFANS1008FormView");
+                toDoNotice1.setWorkflowurl("/PFANS1008FormView");
+                toDoNotice1.setDataid(softwaretransfer.getSoftwaretransferid());
+                toDoNotice1.preInsert(tokenModel);
+                for(String management : managements){
+                    toDoNotice1.setOwner(management);
+                    toDoNoticeService.save(toDoNotice1);
+                }
+
+            }
+            //endregion scc add 9/6 资产转移及管理者变更决裁，接收人接受代办通知 to
         }
     }
 
