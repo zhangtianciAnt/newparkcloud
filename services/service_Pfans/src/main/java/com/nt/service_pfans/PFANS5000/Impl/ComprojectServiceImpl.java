@@ -1020,7 +1020,7 @@ public class ComprojectServiceImpl implements ComprojectService {
             rs.setExittime(item.getExittime());
             if(rs!=null){
                 if ("4".equals(rs.getStatus())) {
-                    rst.add(rs);
+                        rst.add(rs);
                 }
             }
         }

@@ -245,7 +245,7 @@ public class UserServiceImpl implements UserService {
                 SearchControls searchCtls = new SearchControls();
                 searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
                 //返回属性sn=姓，givenName=名
-                String[] returnedAtts = {"sn", "givenName"};
+                String returnedAtts[] = {"sn", "givenName"};
                 searchCtls.setReturningAttributes(returnedAtts);
                 //组织OU="组织名称"
                 String searchBase = "OU=p";

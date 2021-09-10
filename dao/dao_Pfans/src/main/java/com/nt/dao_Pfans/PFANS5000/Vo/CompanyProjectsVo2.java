@@ -143,9 +143,8 @@ public class CompanyProjectsVo2 {
      */
     private String contractno;
 
-    //add_qhr_20210910 添加退场时间
     /**
      * 退场时间
      */
-    private String exittime;
+    private Date exittime;
 }

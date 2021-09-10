@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS1000;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
+import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -11,7 +12,9 @@ import java.util.Map;
 public interface ContractapplicationService {
 
     ContractapplicationVo get(Contractapplication contractapplication) throws Exception;
-
+    //    dialog优化分页 ztc fr
+    TableDataInfo getforContDiaLog(int currentPage, int pageSize) throws Exception;
+    //    dialog优化分页 ztc to
     //add  ml  20210706   契约番号废弃check   from
     boolean getProject(String contractnumber) throws Exception;
     //add  ml  20210706   契约番号废弃check   from
