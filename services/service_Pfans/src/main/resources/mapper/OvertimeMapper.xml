@@ -13,7 +13,33 @@
 	</select>
 
 	<select id="getOvertimeOne" parameterType="com.nt.dao_Pfans.PFANS2000.Overtime" resultType="com.nt.dao_Pfans.PFANS2000.Overtime">
-		select * from overtime
+		select
+			 OVERTIME_ID overtimeid
+			,USER_ID userid
+			,CENTER_ID centerid
+			,GROUP_ID groupid
+			,TEAM_ID teamid
+			,APPLICATION_DATE applicationdate
+			,RESERVEOVERTIME_DATE reserveovertimedate
+			,OVERTIME_TYPE overtimetype
+			,RESERVEOVER_TIME reserveovertime
+			,ACTUALOVER_TIME actualovertime
+			,RESERVESUBSTITUTION_DATE reservesubstitutiondate
+			,ACTUALSUBSTITUTION_DATE actualsubstitutiondate
+			,CAUSE cause
+			,RECOGNITIONSTATE recognitionstate
+			,WORKTIME worktime
+			,OVERTIMELENGTH overtimelength
+			,USEDLENGTH usedlength
+			,OVERTIMETYPECOME overtimetypecome
+			,status
+			,createon
+			,createby
+			,modifyon
+			,modifyby
+			,owner
+			,tenantid
+		from overtime
 		where overtime_type in ('PR001001','PR001002','PR001003','PR001004','PR001005')
 		and DATE_FORMAT(RESERVEOVERTIME_DATE, '%Y-%m-%d') = #{reserdate}
 		and user_id = #{userid}
