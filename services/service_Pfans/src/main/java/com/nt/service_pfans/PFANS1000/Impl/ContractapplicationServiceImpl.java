@@ -116,8 +116,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             List<Contractapplication> newpjCodeList = pjCodeList.stream().filter(str -> (str.getContractnumber().equals(con.getContractnumber()))).collect(Collectors.toList());
             if(newpjCodeList.size() > 0){
                 //项目编号
-                String strProjectname = newpjCodeList.get(0).getProjectname();
-                con.setTenantid(strProjectname.substring(0,strProjectname.length() - 1));
+                String strProjectnumber = newpjCodeList.get(0).getProjectnumber();
+                con.setProjectnumber(strProjectnumber.substring(0,strProjectnumber.length() - 1));
             }
         }
         // add gbb 210909 受託契約列表添加【项目编号】 end
