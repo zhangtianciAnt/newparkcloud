@@ -21,10 +21,10 @@ public interface PageUtil {
         if (list == null) {
             throw new IllegalArgumentException("list不能为空");
         }
-        int startOfPage = pageable.getPageNumber() * pageable.getPageSize();
+        int startOfPage = (pageable.getPageNumber() - 1) * pageable.getPageSize();
         int endOfPage = 0;
         if(startOfPage > list.size()){
-            startOfPage = (pageable.getPageNumber() - 1) * pageable.getPageSize();
+            startOfPage = (int) Math.floor(Double.valueOf(list.size())/Double.valueOf(pageable.getPageSize()));
             endOfPage = list.size();
         }else{
             endOfPage = Math.min(startOfPage + pageable.getPageSize(), list.size());
