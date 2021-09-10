@@ -218,11 +218,12 @@ public class BonussendServiceImpl implements BonussendService {
             }
             //region add_qhr_20210830 添加导入数据的去重，保证每年每人有一条数据
             listVo = listVo.stream().collect(Collectors.collectingAndThen(
-                    Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Bonussend::getJobnumber))), ArrayList::new));
+                    Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Bonussend::getUsername))), ArrayList::new));
             for (Bonussend bonussend : listVo) {
                 Bonussend bonus = new Bonussend();
                 bonus.setUsername(bonussend.getUsername());
                 bonus.setYears(bonussend.getYears());
+                bonus.setCalculation("0");
                 List<Bonussend> bonussends = bonussendMapper.select(bonus);
                 if (bonussends.size() > 0) {
                     bonussend.setBonussend_id(bonussends.get(0).getBonussend_id());

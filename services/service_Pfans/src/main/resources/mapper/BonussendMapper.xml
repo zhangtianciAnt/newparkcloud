@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS2000.mapper.BonussendMapper">
+	<select id="upBonussend">
+        update bonussend set CALCULATION = '1'
+		WHERE
+		METHOD = '累计'
+		AND YEARS = DATE_FORMAT( NOW( ), '%Y' ) - 1
+		and CALCULATION = '0'
+    </select>
+</mapper>

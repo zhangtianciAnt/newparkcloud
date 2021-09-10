@@ -41,6 +41,7 @@
     AND base.user_id=wages.user_id
     where wages.CREATEONYM = #{dates}
     and wages.actual = '0'
+    order by wages.WORKDATE
     </select>
 
     <select id="getAttendanceRetireCount" resultType="Integer">

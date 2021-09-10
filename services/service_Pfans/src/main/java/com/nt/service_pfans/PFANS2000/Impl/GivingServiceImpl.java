@@ -119,6 +119,8 @@ public class GivingServiceImpl implements GivingService {
     private AnnualLeaveMapper annualLeaveMapper;
     @Autowired
     private AnnualLeaveService annualLeaveService;
+    @Autowired
+    private BonussendMapper bonussendMapper;
 
     private static List<CustomerInfo> customerInfos;
     private static List<CustomerInfo> customerinfoAll;
@@ -201,7 +203,7 @@ public class GivingServiceImpl implements GivingService {
      * FJL
      */
     @Override
-    public GivingVo givinglist(String giving_id) throws Exception {
+    public GivingVo givinglist(String giving_id,String wagesFlg) throws Exception {
         System.out.println("工资查询开始");
         long startTime =  System.currentTimeMillis();
         GivingVo givingVo = new GivingVo();
@@ -353,7 +355,10 @@ public class GivingServiceImpl implements GivingService {
         wages.setGiving_id(giving_id);
         wages.setActual("0");
         List<Wages> wagesList = wagesMapper.select(wages);
-        if(wagesList.size() > 0){
+        if(wagesList.size() > 0 && "0".equals(wagesFlg)){
+            wagesFlg = "1";
+        }
+        if("1".equals(wagesFlg)){
             System.out.println("查询工资表");
             givingVo.setWagesList(wagesList.stream().sorted(Comparator.comparing(Wages::getWorkdate)).collect(Collectors.toList()));
         }
@@ -2843,6 +2848,11 @@ public class GivingServiceImpl implements GivingService {
             annualLeaveMapper.updateremaining_annual_leave_lastyear(generationdate.substring(0,4));
         }
         // add gbb 20210416 4月份工资发放之后清空上一年度剩余年休 end
+
+        // add gbb 20210901 修改年度奖金数据为已经发放 start
+        bonussendMapper.upBonussend();
+        // add gbb 20210901 修改年度奖金数据为已经发放 end
+
     }
 
     /**
