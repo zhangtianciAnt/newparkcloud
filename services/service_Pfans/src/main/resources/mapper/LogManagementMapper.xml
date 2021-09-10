@@ -32,12 +32,15 @@
     <select id="getListCENTERlogman" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
         SELECT *
         FROM logmanagement
-        WHERE CREATEBY IN (
-        SELECT e.ACCOUNT
-        FROM expatriatesinfor e
-        WHERE 1=1 AND (e.GROUP_ID = #{departmentcen}
-                OR e.GROUP_ID = #{departmentgro})
-        )
+        WHERE  1=1
+        <if test="accounts != null and accounts.size() > 0">
+            and (CREATEBY in
+            <foreach item="item" index="index" collection="accounts"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
     </select>
 
 <!--    add ccm 1118 日志优化-->

@@ -280,4 +280,22 @@ public class Expatriatesinfor extends BaseModel {
     @Column(name = "LOCKERNUMBER")
     private String lockernumber;
 
+    /**
+     * 组织CENTER
+     */
+    @Column(name = "ORGINFORMATIONCENTERID")
+    private String orgInformationcenterid;
+
+    /**
+     * 组织GROUP
+     */
+    @Column(name = "ORGINFORMATIONGROUPID")
+    private String orgInformationgroupid;
+
+    /**
+     * 组织GROUP
+     */
+    @Column(name = "ORGINFORMATIONTEAMID")
+    private String orgInformationteamid;
+
 }
