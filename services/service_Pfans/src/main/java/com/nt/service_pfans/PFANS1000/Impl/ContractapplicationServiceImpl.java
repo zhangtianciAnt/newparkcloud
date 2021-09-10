@@ -109,6 +109,18 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         ContractapplicationVo vo = new ContractapplicationVo();
         //契约番号申请
         List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
+        // add gbb 210909 受託契約列表添加【项目编号】 start
+        //查询合同关联的所有项目编号
+        List<Contractapplication> pjCodeList = contractapplicationMapper.getPjCode();
+        for(Contractapplication con : coList){
+            List<Contractapplication> newpjCodeList = pjCodeList.stream().filter(str -> (str.getContractnumber().equals(con.getContractnumber()))).collect(Collectors.toList());
+            if(newpjCodeList.size() > 0){
+                //项目编号
+                String strProjectname = newpjCodeList.get(0).getProjectname();
+                con.setTenantid(strProjectname.substring(0,strProjectname.length() - 1));
+            }
+        }
+        // add gbb 210909 受託契約列表添加【项目编号】 end
         vo.setContractapplication(coList);
 
         //契约番号回数
