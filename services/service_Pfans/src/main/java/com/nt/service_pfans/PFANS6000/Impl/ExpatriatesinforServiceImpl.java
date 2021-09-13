@@ -1,6 +1,5 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
-import ch.qos.logback.core.joran.spi.ElementSelector;
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
@@ -14,14 +13,21 @@ import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.UserAccount;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS6000.*;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
 import com.nt.service_pfans.PFANS6000.mapper.*;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
+import com.nt.utils.PageUtil;
+import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -62,6 +68,9 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
     @Autowired
     private DictionaryService dictionaryService;
+
+    @Autowired
+    private OrgTreeService orgTreeService;
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -131,6 +140,18 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         //ceshi
         return expatriatesinforMapper.select(expatriatesinfor);
     }
+    //    dialog优化分页 ztc fr
+    @Override
+    public TableDataInfo getforSysDiaLog(int currentPage, int pageSize) throws Exception {
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        List<Expatriatesinfor> outAll = expatriatesinforMapper.getOutList();
+        Page<Expatriatesinfor> pageFromList = PageUtil.createPageFromList(outAll, pageable);
+        TableDataInfo taInfo = new TableDataInfo();
+        taInfo.setTotal(pageFromList.getTotalElements() > outAll.size() ? outAll.size() : pageFromList.getTotalElements());
+        taInfo.setResultList(pageFromList.getContent());
+        return taInfo;
+    }
+    //    dialog优化分页 ztc to
 
     @Override
     public Expatriatesinfor getexpatriatesinforApplyOne(String expatriatesinfor_id) throws Exception {
@@ -753,7 +774,12 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             model.add("供应商中文名称");
             model.add("Rn");
             model.add("邮箱地址");
-            model.add("部门");
+            //upd ccm 20210901 外注添加组织信息 fr
+            //model.add("部门");
+            model.add("センター");
+            model.add("グループ");
+            model.add("チーム");
+            //upd ccm 20210901 外注添加组织信息 to
             model.add("作業場所");
             model.add("卡号");
             model.add("作業分類");
@@ -795,17 +821,21 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             int error = 0;
             SimpleDateFormat sff = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat sf = new SimpleDateFormat("yyyy");
+            //add ccm 20210902 外注人员添加组织信息 fr
+            List<DepartmentVo> departmentList = new ArrayList<>();
+            departmentList = orgTreeService.getAllDepartment();
+            //add ccm 20210902 外注人员添加组织信息 to
             if (resultInsUpd) {
                 for (int i = 1; i < list.size(); i++) {
                     Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
                     List<Object> value = list.get(k);
                     k++;
                     if (value != null && !value.isEmpty()) {
-                        if (value.size() > 12) {
+                        if (value.size() > 14) {
                             if (value.size() > 0) {
                                 expatriatesinfor.setExpname(Convert.toStr(value.get(0)));
                                 if (expatriatesinfor.getExpname() != null && expatriatesinfor.getExpname().trim().length() > 36) {
-                                    throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 长度超长，最大长度为36");
+                                    throw new LogicalException("卡号（" + Convert.toStr(value.get(14)) + "）" + "对应的 姓名 长度超长，最大长度为36");
                                 }
                                 Expatriatesinfor expatriatesinforName = new Expatriatesinfor();
                                 expatriatesinforName.setExpname(expatriatesinfor.getExpname().trim());
@@ -830,7 +860,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 
                                 if(expatriatesinforList.size() > 0)
                                 {
-                                    throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
+                                    throw new LogicalException("卡号（" + Convert.toStr(value.get(14)) + "）" + "对应的 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
                                 }
                                 else
                                 {
@@ -839,7 +869,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     }
                                     expatriatesinforList = expatriatesinforMapper.select(expatriatesinforName);
                                     if (expatriatesinforList.size() > 0) {
-                                        throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
+                                        throw new LogicalException("卡号（" + Convert.toStr(value.get(14)) + "）" + "对应的 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
                                     } else {
                                         UserAccount userAccount = new UserAccount();
                                         userAccount.setAccount("KK-" + PinyinHelper.convertToPinyinString(expatriatesinfor.getExpname(), "", PinyinFormat.WITHOUT_TONE));
@@ -849,7 +879,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                         query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
                                         List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
                                         if (userAccountlist.size() > 0) {
-                                            throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                                            throw new LogicalException("卡号（" + Convert.toStr(value.get(14)) + "）" + "对应的 姓名 在外驻人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
                                         }
                                     }
                                 }
@@ -930,27 +960,88 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                             if (value.size() > 9) {
                                 expatriatesinfor.setEmail(Convert.toStr(value.get(9)));
                                 if (expatriatesinfor.getEmail() != null && expatriatesinfor.getEmail().length() > 255) {
-                                    throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 邮箱 长度超长，最大长度为255");
+                                    throw new LogicalException("卡号（" + Convert.toStr(value.get(14)) + "）" + "对应的 邮箱 长度超长，最大长度为255");
                                 }
                             }
+                            //upd ccm 20210902 外驻员工添加组织信息 fr
+//                            if (value.size() > 10) {
+//                                String groupName = Convert.toStr(value.get(10));
+//                                if (groupName != null && !groupName.isEmpty()) {
+//                                    Query query = new Query();
+//                                    query.addCriteria(Criteria.where("userinfo.centername").is(groupName));
+//                                    List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
+//                                    customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
+//                                    if (customerInfoList.size() > 0) {
+//                                        expatriatesinfor.setGroup_id(customerInfoList.get(0).getUserinfo().getCenterid());
+//                                    } else {
+//                                        throw new LogicalException("第" + i + "行的部门名称不存在，请确认。");
+//                                    }
+//                                } else {
+//                                    throw new LogicalException("第" + i + "行的部门名称不能为空，请确认。");
+//                                }
+//                            }
                             if (value.size() > 10) {
-                                String groupName = Convert.toStr(value.get(10));
-                                if (groupName != null && !groupName.isEmpty()) {
+                                String centerName = Convert.toStr(value.get(10));
+                                if (centerName != null && !centerName.isEmpty()) {
                                     Query query = new Query();
-                                    query.addCriteria(Criteria.where("userinfo.centername").is(groupName));
+                                    query.addCriteria(Criteria.where("userinfo.centername").is(centerName));
+                                    query.addCriteria(Criteria.where("userinfo.resignation_date").exists(false));
                                     List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
                                     customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
                                     if (customerInfoList.size() > 0) {
-                                        expatriatesinfor.setGroup_id(customerInfoList.get(0).getUserinfo().getCenterid());
+                                        expatriatesinfor.setOrgInformationcenterid(customerInfoList.get(0).getUserinfo().getCenterid());
                                     } else {
-                                        throw new LogicalException("第" + i + "行的部门名称不存在，请确认。");
+                                        throw new LogicalException("第" + i + "行的センター名称不存在，请确认。");
                                     }
                                 } else {
-                                    throw new LogicalException("第" + i + "行的部门名称不能为空，请确认。");
+                                    throw new LogicalException("第" + i + "行的センター名称不能为空，请确认。");
+                                }
+                                List<DepartmentVo> dList = departmentList.stream().filter(item -> (item.getDepartmentId().equals(expatriatesinfor.getOrgInformationcenterid()))).collect(Collectors.toList());
+                                if(dList.size()>0)
+                                {
+                                    expatriatesinfor.setGroup_id(dList.get(0).getDepartmentId());
                                 }
                             }
                             if (value.size() > 11) {
-                                String operationform = Convert.toStr(value.get(11));
+                                String groupName = Convert.toStr(value.get(11));
+                                if (groupName != null && !groupName.isEmpty()) {
+                                    Query query = new Query();
+                                    query.addCriteria(Criteria.where("userinfo.groupname").is(groupName));
+                                    query.addCriteria(Criteria.where("userinfo.resignation_date").exists(false));
+                                    List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
+                                    customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
+                                    if (customerInfoList.size() > 0) {
+                                        expatriatesinfor.setOrgInformationgroupid(customerInfoList.get(0).getUserinfo().getGroupid());
+                                    } else {
+                                        throw new LogicalException("第" + i + "行的グループ名称不存在，请确认。");
+                                    }
+                                } else {
+                                    throw new LogicalException("第" + i + "行的グループ名称不能为空，请确认。");
+                                }
+                                List<DepartmentVo> dList = departmentList.stream().filter(item -> (item.getDepartmentId().equals(expatriatesinfor.getOrgInformationgroupid()))).collect(Collectors.toList());
+                                if(dList.size()>0)
+                                {
+                                    expatriatesinfor.setGroup_id(dList.get(0).getDepartmentId());
+                                }
+                            }
+                            if (value.size() > 12) {
+                                String teamname = Convert.toStr(value.get(12));
+                                if (teamname != null && !teamname.isEmpty()) {
+                                    Query query = new Query();
+                                    query.addCriteria(Criteria.where("userinfo.teamname").is(teamname));
+                                    query.addCriteria(Criteria.where("userinfo.resignation_date").exists(false));
+                                    List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
+                                    customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
+                                    if (customerInfoList.size() > 0) {
+                                        expatriatesinfor.setOrgInformationteamid(customerInfoList.get(0).getUserinfo().getTeamid());
+                                    } else {
+                                        throw new LogicalException("第" + i + "行的チーム名称不存在，请确认。");
+                                    }
+                                }
+                            }
+                            //upd ccm 20210902 外驻员工添加组织信息 to
+                            if (value.size() > 13) {
+                                String operationform = Convert.toStr(value.get(13));
                                 if (operationform != null && !operationform.isEmpty()) {
                                     Dictionary dictionary = new Dictionary();
                                     dictionary.setValue1(operationform.trim());
@@ -962,8 +1053,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     }
                                 }
                             }
-                            if (value.size() > 12) {
-                                expatriatesinfor.setNumber(Convert.toStr(value.get(12)));
+                            if (value.size() > 14) {
+                                expatriatesinfor.setNumber(Convert.toStr(value.get(14)));
                                 if (expatriatesinfor.getNumber() == null || expatriatesinfor.getNumber().isEmpty()) {
                                     throw new LogicalException("第" + i + "行 卡号 不能为空，请确认。");
                                 }
@@ -978,8 +1069,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     throw new LogicalException("第" + i + "行的卡号在外驻人员表中已有人使用，请确认。");
                                 }
                             }
-                            if (value.size() > 13) {
-                                String jobclassification = Convert.toStr(value.get(13));
+                            if (value.size() > 15) {
+                                String jobclassification = Convert.toStr(value.get(15));
                                 if (jobclassification != null && !jobclassification.isEmpty()) {
                                     Dictionary dictionary = new Dictionary();
                                     dictionary.setValue1(jobclassification.trim());
@@ -991,11 +1082,11 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     }
                                 }
                             }
-                            if (value.size() > 14) {
-                                expatriatesinfor.setSpeciality(Convert.toStr(value.get(14)));
+                            if (value.size() > 16) {
+                                expatriatesinfor.setSpeciality(Convert.toStr(value.get(16)));
                             }
-                            if (value.size() > 15) {
-                                String interviewdep = Convert.toStr(value.get(15));
+                            if (value.size() > 17) {
+                                String interviewdep = Convert.toStr(value.get(17));
                                 if (interviewdep != null && !interviewdep.isEmpty()) {
                                     Query query = new Query();
                                     query.addCriteria(Criteria.where("userinfo.centername").is(interviewdep));
@@ -1016,15 +1107,15 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     throw new LogicalException("第" + i + "行的面试部门不能为空，请确认。");
                                 }
                             }
-                            if (value.size() > 16) {
-                                String interview_date = Convert.toStr(value.get(16));
+                            if (value.size() > 18) {
+                                String interview_date = Convert.toStr(value.get(18));
                                 if (interview_date != null && interview_date.length() > 9) {
                                     interview_date = interview_date.trim().substring(0, 10);
                                     expatriatesinfor.setInterview_date(interview_date);
                                 }
                             }
-                            if (value.size() > 17) {
-                                String result = Convert.toStr(value.get(17));
+                            if (value.size() > 19) {
+                                String result = Convert.toStr(value.get(19));
                                 if (result != null && !result.isEmpty()) {
                                     Dictionary dictionary = new Dictionary();
                                     dictionary.setValue1(result.trim());
@@ -1036,8 +1127,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     }
                                 }
                             }
-                            if (value.size() > 18) {
-                                String whetherentry = Convert.toStr(value.get(18));
+                            if (value.size() > 20) {
+                                String whetherentry = Convert.toStr(value.get(20));
                                 if (whetherentry != null && !whetherentry.isEmpty()) {
                                     Dictionary dictionary = new Dictionary();
                                     dictionary.setValue1(whetherentry.trim());
@@ -1049,15 +1140,15 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     }
                                 }
                             }
-                            if (value.size() > 19) {
-                                String admissiontime = Convert.toStr(value.get(19));
+                            if (value.size() > 21) {
+                                String admissiontime = Convert.toStr(value.get(21));
                                 if (admissiontime != null && admissiontime.length() > 9) {
                                     admissiontime = admissiontime.trim().substring(0, 10);
                                     expatriatesinfor.setAdmissiontime(sff.parse(admissiontime));
                                 }
                             }
-                            if (value.size() > 20) {
-                                String exits = Convert.toStr(value.get(20));
+                            if (value.size() > 22) {
+                                String exits = Convert.toStr(value.get(22));
                                 if (exits != null && !exits.isEmpty()) {
                                     if (exits.trim().equals("是")) {
                                         expatriatesinfor.setExits("0");
@@ -1066,15 +1157,15 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     }
                                 }
                                 if (expatriatesinfor.getExits().equals("0")) {
-                                    if (value.size() > 21) {
-                                        String exitime = Convert.toStr(value.get(21));
+                                    if (value.size() > 23) {
+                                        String exitime = Convert.toStr(value.get(23));
                                         if (exitime != null && exitime.length() > 9) {
                                             exitime = exitime.trim().substring(0, 10);
                                             expatriatesinfor.setExitime(sff.parse(exitime));
                                         }
                                     }
-                                    if (value.size() > 22) {
-                                        String exitreason = Convert.toStr(value.get(22));
+                                    if (value.size() > 24) {
+                                        String exitreason = Convert.toStr(value.get(24));
                                         if (exitreason != null && !exitreason.isEmpty()) {
                                             Dictionary dictionary = new Dictionary();
                                             dictionary.setValue1(exitreason.trim());
@@ -1086,8 +1177,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                             }
                                         }
                                     }
-                                    if (value.size() > 23) {
-                                        String alltechnology = Convert.toStr(value.get(23));
+                                    if (value.size() > 25) {
+                                        String alltechnology = Convert.toStr(value.get(25));
                                         if (alltechnology != null && !alltechnology.isEmpty()) {
                                             expatriatesinfor.setAlltechnology(alltechnology.trim());
 //                                            Dictionary dictionary =new Dictionary();
@@ -1100,8 +1191,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 //                                            }
                                         }
                                     }
-                                    if (value.size() > 24) {
-                                        String sitevaluation = Convert.toStr(value.get(24));
+                                    if (value.size() > 26) {
+                                        String sitevaluation = Convert.toStr(value.get(26));
                                         if (sitevaluation != null && !sitevaluation.isEmpty()) {
                                             Dictionary dictionary = new Dictionary();
                                             dictionary.setValue1(sitevaluation.trim());
@@ -1113,8 +1204,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                             }
                                         }
                                     }
-                                    if (value.size() > 25) {
-                                        String businessimpact = Convert.toStr(value.get(25));
+                                    if (value.size() > 27) {
+                                        String businessimpact = Convert.toStr(value.get(27));
                                         if (businessimpact != null && !businessimpact.isEmpty()) {
                                             Dictionary dictionary = new Dictionary();
                                             dictionary.setValue1(businessimpact.trim());
@@ -1126,8 +1217,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                             }
                                         }
                                     }
-                                    if (value.size() > 26) {
-                                        String countermeasure = Convert.toStr(value.get(26));
+                                    if (value.size() > 28) {
+                                        String countermeasure = Convert.toStr(value.get(28));
                                         if (countermeasure != null && !countermeasure.isEmpty()) {
                                             expatriatesinfor.setCountermeasure(countermeasure.trim());
 //                                            Dictionary dictionary =new Dictionary();
@@ -1142,11 +1233,11 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                     }
                                 }
                             }
-                            if (value.size() > 27) {
-                                expatriatesinfor.setRemarks(Convert.toStr(value.get(27)));
+                            if (value.size() > 29) {
+                                expatriatesinfor.setRemarks(Convert.toStr(value.get(29)));
                             }
-                            if (value.size() > 28) {
-                                expatriatesinfor.setLockernumber(Convert.toStr(value.get(28)));
+                            if (value.size() > 30) {
+                                expatriatesinfor.setLockernumber(Convert.toStr(value.get(30)));
                             }
                         } else {
                             throw new LogicalException("第" + i + "行 卡号 不能为空，请确认。");
@@ -1168,12 +1259,13 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                     listVo.add(expatriatesinfor);
                     accesscount = accesscount + 1;
                 }
-            } else {
+            }
+            else {
                 for (int i = 1; i < list.size(); i++) {
                     Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
                     List<Object> value = list.get(i);
-                    if (value != null && !value.isEmpty() && value.size() > 12) {
-                        expatriatesinfor.setNumber(Convert.toStr(value.get(12)));
+                    if (value != null && !value.isEmpty() && value.size() > 14) {
+                        expatriatesinfor.setNumber(Convert.toStr(value.get(14)));
                         List<Expatriatesinfor> expatriatesinforList = new ArrayList<Expatriatesinfor>();
                         expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
                         if (expatriatesinforList.size() > 0) {
@@ -1184,7 +1276,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                             String name = Convert.toStr(value.get(0));
 
                                             if (name != null && name.trim().length() > 36) {
-                                                throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 长度超长，最大长度为36");
+                                                throw new LogicalException("卡号（" + Convert.toStr(value.get(14)) + "）" + "对应的 姓名 长度超长，最大长度为36");
                                             }
                                             if (!(name.equals(expatriatesinforList.get(0).getExpname()))) {
                                                 Expatriatesinfor expatriatesinforName = new Expatriatesinfor();
@@ -1209,7 +1301,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
 //                                                }
                                                 if(inforList.size() > 0)
                                                 {
-                                                    throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
+                                                    throw new LogicalException("卡号（" + Convert.toStr(value.get(14)) + "）" + "对应的 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
                                                 }
                                                 else
                                                 {
@@ -1218,7 +1310,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                     }
                                                     inforList = expatriatesinforMapper.select(expatriatesinforName);
                                                     if (inforList.size() > 0) {
-                                                        throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
+                                                        throw new LogicalException("卡号（" + Convert.toStr(value.get(14)) + "）" + "对应的 姓名 在外驻人员表中已存在，生成登陆账号时会重复，请确认。");
                                                     } else {
                                                         UserAccount userAccount = new UserAccount();
                                                         userAccount.setAccount("KK-" + PinyinHelper.convertToPinyinString(expatriatesinforList.get(0).getExpname(), "", PinyinFormat.WITHOUT_TONE));
@@ -1228,7 +1320,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                         query.addCriteria(Criteria.where("usertype").is(userAccount.getUsertype()));
                                                         List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
                                                         if (userAccountlist.size() > 0) {
-                                                            throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 姓名 在外驻人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
+                                                            throw new LogicalException("卡号（" + Convert.toStr(value.get(14)) + "）" + "对应的 姓名 在外驻人员表中已存在同音的员工，生成登陆账号时会重复，请确认。");
                                                         }
                                                     }
                                                 }
@@ -1306,27 +1398,90 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                         case 9:
                                             expatriatesinforList.get(0).setEmail(Convert.toStr(value.get(9)));
                                             if (expatriatesinforList.get(0).getEmail() != null && expatriatesinforList.get(0).getEmail().length() > 255) {
-                                                throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "对应的 邮箱 长度超长，最大长度为255");
+                                                throw new LogicalException("卡号（" + Convert.toStr(value.get(14)) + "）" + "对应的 邮箱 长度超长，最大长度为255");
                                             }
                                             break;
+                                            //upd ccm 20210902 外注人员添加组织信息 fr
+//                                        case 10:
+//                                            String groupName = Convert.toStr(value.get(10));
+//                                            if (groupName != null && !groupName.isEmpty()) {
+//                                                Query query = new Query();
+//                                                query.addCriteria(Criteria.where("userinfo.centername").is(groupName));
+//                                                List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
+//                                                customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
+//                                                if (customerInfoList.size() > 0) {
+//                                                    expatriatesinforList.get(0).setGroup_id(customerInfoList.get(0).getUserinfo().getCenterid());
+//                                                } else {
+//                                                    throw new LogicalException("第" + i + "行的部门名称不存在，请确认。");
+//                                                }
+//                                            } else {
+//                                                throw new LogicalException("第" + i + "行的部门名称不能为空，请确认。");
+//                                            }
+//                                            break;
                                         case 10:
-                                            String groupName = Convert.toStr(value.get(10));
-                                            if (groupName != null && !groupName.isEmpty()) {
+                                            String centerName = Convert.toStr(value.get(10));
+                                            if (centerName != null && !centerName.isEmpty()) {
                                                 Query query = new Query();
-                                                query.addCriteria(Criteria.where("userinfo.centername").is(groupName));
+                                                query.addCriteria(Criteria.where("userinfo.centername").is(centerName));
+                                                query.addCriteria(Criteria.where("userinfo.resignation_date").exists(false));
                                                 List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
                                                 customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
                                                 if (customerInfoList.size() > 0) {
-                                                    expatriatesinforList.get(0).setGroup_id(customerInfoList.get(0).getUserinfo().getCenterid());
+                                                    expatriatesinforList.get(0).setOrgInformationcenterid(customerInfoList.get(0).getUserinfo().getCenterid());
                                                 } else {
-                                                    throw new LogicalException("第" + i + "行的部门名称不存在，请确认。");
+                                                    throw new LogicalException("第" + i + "行的センター名称不存在，请确认。");
                                                 }
                                             } else {
-                                                throw new LogicalException("第" + i + "行的部门名称不能为空，请确认。");
+                                                throw new LogicalException("第" + i + "行的センター名称不能为空，请确认。");
+                                            }
+                                            String center = expatriatesinforList.get(0).getOrgInformationcenterid();
+                                            List<DepartmentVo> dList = departmentList.stream().filter(item -> (item.getDepartmentId().equals(center))).collect(Collectors.toList());
+                                            if(dList.size()>0)
+                                            {
+                                                expatriatesinforList.get(0).setGroup_id(dList.get(0).getDepartmentId());
                                             }
                                             break;
                                         case 11:
-                                            String operationform = Convert.toStr(value.get(11));
+                                            String groupName = Convert.toStr(value.get(11));
+                                            if (groupName != null && !groupName.isEmpty()) {
+                                                Query query = new Query();
+                                                query.addCriteria(Criteria.where("userinfo.groupname").is(groupName));
+                                                query.addCriteria(Criteria.where("userinfo.resignation_date").exists(false));
+                                                List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
+                                                customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
+                                                if (customerInfoList.size() > 0) {
+                                                    expatriatesinforList.get(0).setOrgInformationgroupid(customerInfoList.get(0).getUserinfo().getGroupid());
+                                                } else {
+                                                    throw new LogicalException("第" + i + "行的グループ名称不存在，请确认。");
+                                                }
+                                            } else {
+                                                throw new LogicalException("第" + i + "行的グループ名称不能为空，请确认。");
+                                            }
+                                            String group = expatriatesinforList.get(0).getOrgInformationgroupid();
+                                            List<DepartmentVo> ddList = departmentList.stream().filter(item -> (item.getDepartmentId().equals(group))).collect(Collectors.toList());
+                                            if(ddList.size()>0)
+                                            {
+                                                expatriatesinforList.get(0).setGroup_id(ddList.get(0).getDepartmentId());
+                                            }
+                                            break;
+                                        case 12:
+                                            String teamName = Convert.toStr(value.get(12));
+                                            if (teamName != null && !teamName.isEmpty()) {
+                                                Query query = new Query();
+                                                query.addCriteria(Criteria.where("userinfo.teamname").is(teamName));
+                                                query.addCriteria(Criteria.where("userinfo.resignation_date").exists(false));
+                                                List<CustomerInfo> customerInfoList = new ArrayList<CustomerInfo>();
+                                                customerInfoList = mongoTemplate.find(query, CustomerInfo.class);
+                                                if (customerInfoList.size() > 0) {
+                                                    expatriatesinforList.get(0).setOrgInformationteamid(customerInfoList.get(0).getUserinfo().getTeamid());
+                                                } else {
+                                                    throw new LogicalException("第" + i + "行的チーム名称不存在，请确认。");
+                                                }
+                                            }
+                                            break;
+                                        //upd ccm 20210902 外注人员添加组织信息 to
+                                        case 13:
+                                            String operationform = Convert.toStr(value.get(13));
                                             if (operationform != null && !operationform.isEmpty()) {
                                                 Dictionary dictionary = new Dictionary();
                                                 dictionary.setValue1(operationform.trim());
@@ -1338,10 +1493,10 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 }
                                             }
                                             break;
-                                        case 12:
+                                        case 14:
                                             break;
-                                        case 13:
-                                            String jobclassification = Convert.toStr(value.get(13));
+                                        case 15:
+                                            String jobclassification = Convert.toStr(value.get(15));
                                             if (jobclassification != null && !jobclassification.isEmpty()) {
                                                 Dictionary dictionary = new Dictionary();
                                                 dictionary.setValue1(jobclassification.trim());
@@ -1353,11 +1508,11 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 }
                                             }
                                             break;
-                                        case 14:
-                                            expatriatesinforList.get(0).setSpeciality(Convert.toStr(value.get(14)));
+                                        case 16:
+                                            expatriatesinforList.get(0).setSpeciality(Convert.toStr(value.get(16)));
                                             break;
-                                        case 15:
-                                            String interviewdep = Convert.toStr(value.get(15));
+                                        case 17:
+                                            String interviewdep = Convert.toStr(value.get(17));
 
                                             if (interviewdep != null && !interviewdep.isEmpty()) {
                                                 Query query = new Query();
@@ -1379,15 +1534,15 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 throw new LogicalException("第" + i + "行的面试部门不能为空，请确认。");
                                             }
                                             break;
-                                        case 16:
-                                            String interview_date = Convert.toStr(value.get(16));
+                                        case 18:
+                                            String interview_date = Convert.toStr(value.get(18));
                                             if (interview_date != null && interview_date.length() > 9) {
                                                 interview_date = interview_date.trim().substring(0, 10);
                                                 expatriatesinforList.get(0).setInterview_date(interview_date);
                                             }
                                             break;
-                                        case 17:
-                                            String result = Convert.toStr(value.get(17));
+                                        case 19:
+                                            String result = Convert.toStr(value.get(19));
                                             if (result != null && !result.isEmpty()) {
                                                 Dictionary dictionary = new Dictionary();
                                                 dictionary.setValue1(result.trim());
@@ -1399,8 +1554,8 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 }
                                             }
                                             break;
-                                        case 18:
-                                            String whetherentry = Convert.toStr(value.get(18));
+                                        case 20:
+                                            String whetherentry = Convert.toStr(value.get(20));
                                             if (whetherentry != null && !whetherentry.isEmpty()) {
                                                 Dictionary dictionary = new Dictionary();
                                                 dictionary.setValue1(whetherentry.trim());
@@ -1412,15 +1567,15 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 }
                                             }
                                             break;
-                                        case 19:
-                                            String admissiontime = Convert.toStr(value.get(19));
+                                        case 21:
+                                            String admissiontime = Convert.toStr(value.get(21));
                                             if (admissiontime != null && admissiontime.length() > 9) {
                                                 admissiontime = admissiontime.trim().substring(0, 10);
                                                 expatriatesinforList.get(0).setAdmissiontime(sff.parse(admissiontime));
                                             }
                                             break;
-                                        case 20:
-                                            String exits = Convert.toStr(value.get(20));
+                                        case 22:
+                                            String exits = Convert.toStr(value.get(22));
                                             if (exits != null && !exits.isEmpty()) {
                                                 if (exits.trim().equals("是")) {
                                                     expatriatesinforList.get(0).setExits("0");
@@ -1429,18 +1584,18 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 }
                                             }
                                             break;
-                                        case 21:
+                                        case 23:
                                             if (expatriatesinforList.get(0).getExits().equals("0")) {
-                                                String exitime = Convert.toStr(value.get(21));
+                                                String exitime = Convert.toStr(value.get(23));
                                                 if (exitime != null && exitime.length() > 9) {
                                                     exitime = exitime.trim().substring(0, 10);
                                                     expatriatesinforList.get(0).setExitime(sff.parse(exitime));
                                                 }
                                             }
                                             break;
-                                        case 22:
+                                        case 24:
                                             if (expatriatesinforList.get(0).getExits().equals("0")) {
-                                                String exitreason = Convert.toStr(value.get(22));
+                                                String exitreason = Convert.toStr(value.get(24));
                                                 if (exitreason != null && !exitreason.isEmpty()) {
                                                     Dictionary dictionary = new Dictionary();
                                                     dictionary.setValue1(exitreason.trim());
@@ -1453,9 +1608,9 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 }
                                             }
                                             break;
-                                        case 23:
+                                        case 25:
                                             if (expatriatesinforList.get(0).getExits().equals("0")) {
-                                                String alltechnology = Convert.toStr(value.get(23));
+                                                String alltechnology = Convert.toStr(value.get(25));
                                                 if (alltechnology != null && !alltechnology.isEmpty()) {
                                                     expatriatesinforList.get(0).setAlltechnology(alltechnology.trim());
 //                                                    Dictionary dictionary =new Dictionary();
@@ -1469,9 +1624,9 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 }
                                             }
                                             break;
-                                        case 24:
+                                        case 26:
                                             if (expatriatesinforList.get(0).getExits().equals("0")) {
-                                                String sitevaluation = Convert.toStr(value.get(24));
+                                                String sitevaluation = Convert.toStr(value.get(26));
                                                 if (sitevaluation != null && !sitevaluation.isEmpty()) {
                                                     Dictionary dictionary = new Dictionary();
                                                     dictionary.setValue1(sitevaluation.trim());
@@ -1484,9 +1639,9 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 }
                                             }
                                             break;
-                                        case 25:
+                                        case 27:
                                             if (expatriatesinforList.get(0).getExits().equals("0")) {
-                                                String businessimpact = Convert.toStr(value.get(25));
+                                                String businessimpact = Convert.toStr(value.get(27));
                                                 if (businessimpact != null && !businessimpact.isEmpty()) {
                                                     Dictionary dictionary = new Dictionary();
                                                     dictionary.setValue1(businessimpact.trim());
@@ -1499,9 +1654,9 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 }
                                             }
                                             break;
-                                        case 26:
+                                        case 28:
                                             if (expatriatesinforList.get(0).getExits().equals("0")) {
-                                                String countermeasure = Convert.toStr(value.get(26));
+                                                String countermeasure = Convert.toStr(value.get(28));
                                                 if (countermeasure != null && !countermeasure.isEmpty()) {
                                                     expatriatesinforList.get(0).setCountermeasure(countermeasure.trim());
 //                                                    Dictionary dictionary =new Dictionary();
@@ -1515,11 +1670,11 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                                                 }
                                             }
                                             break;
-                                        case 27:
-                                            expatriatesinforList.get(0).setRemarks(Convert.toStr(value.get(27)));
+                                        case 29:
+                                            expatriatesinforList.get(0).setRemarks(Convert.toStr(value.get(29)));
                                             break;
-                                        case 28:
-                                            expatriatesinforList.get(0).setLockernumber(Convert.toStr(value.get(28)));
+                                        case 30:
+                                            expatriatesinforList.get(0).setLockernumber(Convert.toStr(value.get(30)));
                                             break;
                                     }
                                 }
@@ -1566,7 +1721,7 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
                             }
                             accesscount = accesscount + 1;
                         } else {
-                            throw new LogicalException("卡号（" + Convert.toStr(value.get(12)) + "）" + "在外驻人员表中不存在，无法更新，请确认。");
+                            throw new LogicalException("卡号（" + Convert.toStr(value.get(14)) + "）" + "在外驻人员表中不存在，无法更新，请确认。");
                         }
                     }
                 }

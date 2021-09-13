@@ -15,7 +15,8 @@
         value8,
         value9,
         value10,
-        pcode
+        pcode,
+        tenantid
         FROM
         dictionary
         WHERE STATUS = '0'
@@ -25,6 +26,9 @@
         </if>
         <if test="pcode != null and pcode != ''" >
             or pcode = #{pcode,jdbcType=VARCHAR}/*变更，实现前台数据字典页面的具体类别查询*/
+        </if>
+        <if test="tenantid != null and tenantid != ''" >
+            and LENGTH(CODE) = 5
         </if>
     </select>
     <select id="selectOrder" parameterType="com.nt.dao_Org.Dictionary" resultType="com.nt.dao_Org.Dictionary">

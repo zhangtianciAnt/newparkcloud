@@ -53,8 +53,37 @@ public class OvertimeServiceImpl implements OvertimeService {
     @Override
     public List<Overtime> getOvertimeOne(Overtime overtime) throws Exception {
         List<Overtime> overtimelist = overtimeMapper.getOvertimeOne(DateUtil.format(overtime.getReserveovertimedate(),"yyyy-MM-dd"),overtime.getUserid());
-        overtimelist = overtimelist.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
-        return overtimelist;
+        //upd ccm 20210901 加班申请同一天不能重复申请，时间为0不算在内 fr
+        //overtimelist = overtimelist.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
+        //return overtimelist;
+        List<Overtime> olist = new ArrayList<>();
+        for(Overtime o :overtimelist)
+        {
+            if(o.getStatus().equals("0") || o.getStatus().equals("2") || o.getStatus().equals("3") || o.getStatus().equals("4") || o.getStatus().equals("6") )
+            {
+                if(Double.valueOf(o.getReserveovertime()) == 0d)
+                {
+                    continue;
+                }
+                else
+                {
+                    olist.add(o);
+                }
+            }
+            else if(o.getStatus().equals("5") || o.getStatus().equals("7"))
+            {
+                if(Double.valueOf(o.getActualovertime()) == 0d)
+                {
+                    continue;
+                }
+                else
+                {
+                    olist.add(o);
+                }
+            }
+        }
+        return olist;
+        //upd ccm 20210901 加班申请同一天不能重复申请，时间为0不算在内 to
     }
 
     @Override

@@ -245,7 +245,7 @@ public class UserServiceImpl implements UserService {
                 SearchControls searchCtls = new SearchControls();
                 searchCtls.setSearchScope(SearchControls.SUBTREE_SCOPE);
                 //返回属性sn=姓，givenName=名
-                String[] returnedAtts = {"sn", "givenName"};
+                String returnedAtts[] = {"sn", "givenName"};
                 searchCtls.setReturningAttributes(returnedAtts);
                 //组织OU="组织名称"
                 String searchBase = "OU=p";
@@ -472,6 +472,70 @@ public class UserServiceImpl implements UserService {
 //                    }
 //del ccm  工资数据不能反向覆盖 不可以用履历盖原值 to
                 }
+                // region scc  add 21/8/13  医疗保险基数履历降序 from
+                List<CustomerInfo.Personal> medicalList = customerInfo.getUserinfo().getMedicalData();
+                if(medicalList != null && medicalList.size() > 0){
+                    medicalList = medicalList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setMedicalData(medicalList);
+                // endregion scc  add 21/8/13  医疗保险基数履历降序 to
+
+                // region scc  add 21/8/13  住房公积金基数履历降序 from
+                List<CustomerInfo.Personal> housingList = customerInfo.getUserinfo().getHouseData();
+                if(housingList != null && housingList.size() > 0){
+                    housingList = housingList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setHouseData(housingList);
+                // endregion scc  add 21/8/13  住房公积金基数履历降序 to
+
+                // region scc  add 21/8/13  养老保险基数履历降序 from
+                List<CustomerInfo.Personal> provideForAgedList = customerInfo.getUserinfo().getOldageData();
+                if(provideForAgedList != null && provideForAgedList.size() > 0){
+                    provideForAgedList = provideForAgedList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setOldageData(provideForAgedList);
+                // endregion scc  add 21/8/13  养老保险基数履历降序 to
+
+                // region scc  add 21/8/13  工伤保险基数履历降序 from
+                List<CustomerInfo.Personal> InjuryList = customerInfo.getUserinfo().getGsData();
+                if(InjuryList != null && InjuryList.size() > 0){
+                    InjuryList = InjuryList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setGsData(InjuryList);
+                // endregion scc  add 21/8/13  工伤保险基数履历降序 to
+
+                // region scc  add 21/8/13  失业保险基数履历降序 from
+                List<CustomerInfo.Personal> unemploymentList = customerInfo.getUserinfo().getSyeData();
+                if(unemploymentList != null && unemploymentList.size() > 0){
+                    unemploymentList = unemploymentList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setSyeData(unemploymentList);
+                // endregion scc  add 21/8/13  失业保险基数履历降序 to
+
+                // region scc  add 21/8/13  生育保险基数履历降序 from
+                List<CustomerInfo.Personal> fertilityList = customerInfo.getUserinfo().getSyuData();
+                if(fertilityList != null && fertilityList.size() > 0){
+                    fertilityList = fertilityList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setSyuData(fertilityList);
+                // endregion scc  add 21/8/13  生育保险基数履历降序 to
+
+                // region scc  add 21/8/16  Rank履历降序 from
+                List<CustomerInfo.Personal> RankList = customerInfo.getUserinfo().getRankData();
+                if(RankList != null && RankList.size() > 0){
+                    RankList = RankList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setRankData(RankList);
+                // endregion scc  add 21/8/16  Rank履历降序 to
+
+                // region scc  add 21/8/16  职务履历降序 from
+                List<CustomerInfo.Personal> positionList = customerInfo.getUserinfo().getPostData();
+                if(positionList != null && positionList.size() > 0){
+                    positionList = positionList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
+                }
+                userInfo.setPostData(positionList);
+                // endregion scc  add 21/8/16  职务履历降序 to
+
 //                ADD_FJL_05/21   --添加降序
                 customerInfo.setUserinfo(userInfo);
                 mongoTemplate.save(customerInfo);

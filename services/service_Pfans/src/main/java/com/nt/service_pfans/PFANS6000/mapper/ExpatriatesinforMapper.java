@@ -15,4 +15,8 @@ public interface ExpatriatesinforMapper extends MyMapper<Expatriatesinfor> {
     @Select(" SELECT EXPATRIATESINFOR_ID, WHETHERENTRY FROM expatriatesinfor WHERE Whetherentry = 'BP006001'")
     List<String> getPeolple1();
 
+    //    dialog优化分页 ztc fr
+    @Select(" SELECT * FROM expatriatesinfor WHERE NUMBER != '00000'")
+    List<Expatriatesinfor> getOutList();
+    //    dialog优化分页 ztc to
 }

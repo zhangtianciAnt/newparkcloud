@@ -1016,9 +1016,11 @@ public class ComprojectServiceImpl implements ComprojectService {
         List<Prosystem> prosystemlist = prosystemMapper.select(prosystem);
         for (Prosystem item : prosystemlist) {
             Comproject rs = comProjectMapper.selectByPrimaryKey(item.getComproject_id());
+            //add_qhr_20210909 添加项目退场check
+            rs.setExittime(item.getExittime());
             if(rs!=null){
                 if ("4".equals(rs.getStatus())) {
-                    rst.add(rs);
+                        rst.add(rs);
                 }
             }
         }

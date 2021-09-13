@@ -32,9 +32,14 @@ import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
 import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
+import com.nt.utils.PageUtil;
+import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -109,8 +114,19 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         ContractapplicationVo vo = new ContractapplicationVo();
         //契约番号申请
         List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
+        // add gbb 210909 受託契約列表添加【项目编号】 start
+        //查询合同关联的所有项目编号
+        List<Contractapplication> pjCodeList = contractapplicationMapper.getPjCode();
+        for(Contractapplication con : coList){
+            List<Contractapplication> newpjCodeList = pjCodeList.stream().filter(str -> (str.getContractnumber().equals(con.getContractnumber()))).collect(Collectors.toList());
+            if(newpjCodeList.size() > 0){
+                //项目编号
+                String strProjectnumber = newpjCodeList.get(0).getProjectnumber();
+                con.setProjectnumber(strProjectnumber.substring(0,strProjectnumber.length() - 1));
+            }
+        }
+        // add gbb 210909 受託契約列表添加【项目编号】 end
         vo.setContractapplication(coList);
-
         //契约番号回数
         Contractnumbercount number = new Contractnumbercount();
         number.setContractnumber(contractapplication.getContractnumber());
@@ -161,6 +177,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
             }
         }
+
         //add ccm 1204 纳品回数可变的对应
         vo.setContractnumbercount(numberList);
         //契约番号回数
@@ -173,6 +190,21 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         vo.setContractcompound(compoundList);
         return vo;
     }
+
+    //    dialog优化分页 ztc fr
+    @Override
+    public TableDataInfo getforContDiaLog(int currentPage, int pageSize) {
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Contractapplication contractapplication = new Contractapplication();
+        contractapplication.setState("有效");
+        List<Contractapplication> effAll = contractapplicationMapper.select(contractapplication);
+        Page<Contractapplication> pageFromList = PageUtil.createPageFromList(effAll, pageable);
+        TableDataInfo taInfo = new TableDataInfo();
+        taInfo.setTotal(pageFromList.getTotalElements() > effAll.size() ? effAll.size() : pageFromList.getTotalElements());
+        taInfo.setResultList(pageFromList.getContent());
+        return taInfo;
+    }
+    //    dialog优化分页 ztc to
 
     //add  ml  20210706   契约番号废弃check   from
     @Override
