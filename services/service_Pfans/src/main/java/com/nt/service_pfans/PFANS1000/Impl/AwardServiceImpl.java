@@ -322,4 +322,11 @@ public class AwardServiceImpl implements AwardService {
         return companyens;
     }
     //endregion scc add 21/8/20 受托合同，详情，部门下拉框数据源 to
+
+    //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc fr
+    public List<AwardDetail> getAwardEntr(List<String> awardIdList) throws Exception{
+        List<AwardDetail> awardDetails = awardDetailMapper.getAdInfoList(awardIdList);
+        return awardDetails;
+    }
+    //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc to
 }
