@@ -35,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Component("PjExternalInjection")
@@ -186,16 +188,49 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
                                 if (comList.size() > 0) {
                                     if (comList.get(0).getCompanyprojects_id().equals(pjExternalInjectionVo.getCompanyprojects_id())
                                             && various.getBpclubname().equals(pjExternalInjectionVo.getCompany())) {
-
-                                        if (various.getPlmonthplan().equals("BP013001")) {
-                                            pjExternal.setJune(String.valueOf(Integer.valueOf(pjExternal.getJune()) + Integer.valueOf(various.getPayment())));
-                                        } else if (various.getPlmonthplan().equals("BP013002")) {
-                                            pjExternal.setSeptember(String.valueOf(Integer.valueOf(pjExternal.getSeptember()) + Integer.valueOf(various.getPayment())));
-                                        } else if (various.getPlmonthplan().equals("BP013003")) {
-                                            pjExternal.setDecember(String.valueOf(Integer.valueOf(pjExternal.getDecember()) + Integer.valueOf(various.getPayment())));
-                                        } else if (various.getPlmonthplan().equals("BP013004")) {
-                                            pjExternal.setMarch(String.valueOf(Integer.valueOf(pjExternal.getMarch()) + Integer.valueOf(various.getPayment())));
+                                        //upd ccm 20210907 外注经费字典变更，不会影响计算，fr
+//                                        if (various.getPlmonthplan().equals("BP013001")) {
+//                                            pjExternal.setJune(String.valueOf(Integer.valueOf(pjExternal.getJune()) + Integer.valueOf(various.getPayment())));
+//                                        } else if (various.getPlmonthplan().equals("BP013002")) {
+//                                            pjExternal.setSeptember(String.valueOf(Integer.valueOf(pjExternal.getSeptember()) + Integer.valueOf(various.getPayment())));
+//                                        } else if (various.getPlmonthplan().equals("BP013003")) {
+//                                            pjExternal.setDecember(String.valueOf(Integer.valueOf(pjExternal.getDecember()) + Integer.valueOf(various.getPayment())));
+//                                        } else if (various.getPlmonthplan().equals("BP013004")) {
+//                                            pjExternal.setMarch(String.valueOf(Integer.valueOf(pjExternal.getMarch()) + Integer.valueOf(various.getPayment())));
+//                                        }
+                                        List<Dictionary> dictionaryList = dictionaryService.getForSelect("BP013");
+                                        Pattern pattern = Pattern.compile("(\\d+)");
+                                        for (Dictionary d : dictionaryList) {
+                                            Matcher matcher = pattern.matcher(d.getValue1());
+                                            if (matcher.find()) {
+                                                if(various.getPlmonthplan().equals(d.getCode()) && ("4月").equals(d.getValue1())) {
+                                                    pjExternal.setApril(String.valueOf(Integer.valueOf(pjExternal.getApril()) + Integer.valueOf(various.getPayment())));
+                                                } else if (various.getPlmonthplan().equals(d.getCode()) && ("5月").equals(d.getValue1())) {
+                                                    pjExternal.setMay(String.valueOf(Integer.valueOf(pjExternal.getMay()) + Integer.valueOf(various.getPayment())));
+                                                } else if (various.getPlmonthplan().equals(d.getCode()) && ("6月").equals(d.getValue1())) {
+                                                    pjExternal.setJune(String.valueOf(Integer.valueOf(pjExternal.getJune()) + Integer.valueOf(various.getPayment())));
+                                                } else if (various.getPlmonthplan().equals(d.getCode()) && ("7月").equals(d.getValue1())) {
+                                                    pjExternal.setJuly(String.valueOf(Integer.valueOf(pjExternal.getJuly()) + Integer.valueOf(various.getPayment())));
+                                                } else if (various.getPlmonthplan().equals(d.getCode()) && ("8月").equals(d.getValue1())) {
+                                                    pjExternal.setAugust(String.valueOf(Integer.valueOf(pjExternal.getAugust()) + Integer.valueOf(various.getPayment())));
+                                                } else if (various.getPlmonthplan().equals(d.getCode()) && ("9月").equals(d.getValue1())) {
+                                                    pjExternal.setSeptember(String.valueOf(Integer.valueOf(pjExternal.getSeptember()) + Integer.valueOf(various.getPayment())));
+                                                } else if (various.getPlmonthplan().equals(d.getCode()) && ("10月").equals(d.getValue1())) {
+                                                    pjExternal.setOctober(String.valueOf(Integer.valueOf(pjExternal.getOctober()) + Integer.valueOf(various.getPayment())));
+                                                } else if (various.getPlmonthplan().equals(d.getCode()) && ("11月").equals(d.getValue1())) {
+                                                    pjExternal.setNovember(String.valueOf(Integer.valueOf(pjExternal.getNovember()) + Integer.valueOf(various.getPayment())));
+                                                } else if (various.getPlmonthplan().equals(d.getCode()) && ("12月").equals(d.getValue1())) {
+                                                    pjExternal.setDecember(String.valueOf(Integer.valueOf(pjExternal.getDecember()) + Integer.valueOf(various.getPayment())));
+                                                } else if (various.getPlmonthplan().equals(d.getCode()) && ("1月").equals(d.getValue1())) {
+                                                    pjExternal.setJanuary(String.valueOf(Integer.valueOf(pjExternal.getJanuary()) + Integer.valueOf(various.getPayment())));
+                                                } else if (various.getPlmonthplan().equals(d.getCode()) && ("2月").equals(d.getValue1())) {
+                                                    pjExternal.setFebruary(String.valueOf(Integer.valueOf(pjExternal.getFebruary()) + Integer.valueOf(various.getPayment())));
+                                                } else if (various.getPlmonthplan().equals(d.getCode()) && ("3月").equals(d.getValue1())) {
+                                                    pjExternal.setMarch(String.valueOf(Integer.valueOf(pjExternal.getMarch()) + Integer.valueOf(various.getPayment())));
+                                                }
+                                            }
                                         }
+                                        //upd ccm 20210907 外注经费字典变更，不会影响计算，to
                                     }
                                 }
                             }
