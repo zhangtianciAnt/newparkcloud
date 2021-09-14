@@ -338,4 +338,58 @@
 			</foreach>
 		</if>
 	</select>
+	<!--	BP???-????-->
+	<select id="getCoststatisticsExpense" resultType="com.nt.dao_Pfans.PFANS6000.Coststatistics">
+		SELECT
+			BPCOMPANY,
+			CONVERT (
+				SUM( expense1 ),
+			DECIMAL ( 10, 2 )) AS expense1,
+			CONVERT (
+				SUM( expense2 ),
+			DECIMAL ( 10, 2 )) AS expense2,
+			CONVERT (
+				SUM( expense3 ),
+			DECIMAL ( 10, 2 )) AS expense3,
+			CONVERT (
+				SUM( expense4 ),
+			DECIMAL ( 10, 2 )) AS expense4,
+			CONVERT (
+				SUM( expense5 ),
+			DECIMAL ( 10, 2 )) AS expense5,
+			CONVERT (
+				SUM( expense6 ),
+			DECIMAL ( 10, 2 )) AS expense6,
+			CONVERT (
+				SUM( expense7 ),
+			DECIMAL ( 10, 2 )) AS expense7,
+			CONVERT (
+				SUM( expense8 ),
+			DECIMAL ( 10, 2 )) AS expense8,
+			CONVERT (
+				SUM( expense9 ),
+			DECIMAL ( 10, 2 )) AS expense9,
+			CONVERT (
+				SUM( expense10 ),
+			DECIMAL ( 10, 2 )) AS expense10,
+			CONVERT (
+				SUM( expense11 ),
+			DECIMAL ( 10, 2 )) AS expense11,
+			CONVERT (
+				SUM( expense12 ),
+			DECIMAL ( 10, 2 )) AS expense12
+		FROM
+			coststatistics
+		WHERE 1 = 1
+		<if test="groupid != null and groupid !=''">
+			and GROUP_ID = #{groupid}
+		</if>
+		<if test="years != null and years !=''">
+			and YEARS = #{years}
+		</if>
+		GROUP BY
+			BPCOMPANY
+		ORDER BY
+			GROUP_ID DESC
+	</select>
 </mapper>

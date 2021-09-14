@@ -1,15 +1,17 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
-import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Pfans.PFANS1000.PublicExpense;
 import com.nt.dao_Pfans.PFANS6000.*;
 import com.nt.dao_Pfans.PFANS6000.Vo.bpSum2Vo;
 import com.nt.dao_Pfans.PFANS6000.Vo.bpSum3Vo;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_pfans.PFANS1000.mapper.PublicExpenseMapper;
 import com.nt.service_pfans.PFANS6000.CompanyStatisticsService;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
 import com.nt.service_pfans.PFANS6000.mapper.*;
 import com.nt.utils.LogicalException;
+import com.nt.utils.StringUtils;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -27,11 +29,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -61,67 +65,71 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     @Autowired
     private BpCompanyCostMapper bpCompanyCostMapper;
 
+    @Autowired
+    private PublicExpenseMapper publicExpenseMapper;
+
 
     @Override
     public Map<String, Object> getCosts(String groupid, String years) throws Exception {
         Map<String, Object> result = new HashMap<>();
-        //Variousfunds variousfunds = new Variousfunds();
-        //variousfunds.setOwner(tokenModel.getUserId());
-        List<Variousfunds> allVariousfunds = variousfundsMapper.selectBygroupid(groupid, years);
-        List<Dictionary> dictionaryList = dictionaryService.getForSelect("BP013");
-        Map<String, String> plmonthPlanMap = new HashMap<>();
-        Pattern pattern = Pattern.compile("(\\d+)");
-        for (Dictionary d : dictionaryList) {
-            String value = d.getValue1();
-            Matcher matcher = pattern.matcher(value);
-            if (matcher.find()) {
-                value = matcher.group(1);
-            }
-            plmonthPlanMap.put(d.getCode(), value);
-        }
 
-        Map<String, Double> tripMap = new HashMap<>();
-        Map<String, Double> assetsMap = new HashMap<>();
-        for (Variousfunds v : allVariousfunds) {
-            String month = plmonthPlanMap.getOrDefault(v.getPlmonthplan(), "");
-            Map<String, Double> targetMap = null;
-            if ("BP014001".equals(v.getTypeoffees())) {
-                //出张经费
-                targetMap = tripMap;
-            } else if ("BP014002".equals(v.getTypeoffees())) {
-                //设备经费
-                targetMap = assetsMap;
-            } else {
-                continue;
-            }
-            double value = targetMap.getOrDefault(month, 0.0);
-            double addValue = 0;
-            try {
-                addValue = Double.parseDouble(v.getPayment());
-            } catch (Exception e) {
-            }
-            targetMap.put(month, value + addValue);
-        }
-
-        Map<String, Double> finalTripMap = new HashMap<>();
-        Map<String, Double> finalAssetsMap = new HashMap<>();
-        double totalTrip = 0;
-        double totalAssets = 0;
-        for (int i = 1; i <= 12; i++) {
-            String key = i + "";
-            double trip = tripMap.getOrDefault(key, 0.0);
-            double asset = assetsMap.getOrDefault(key, 0.0);
-            finalTripMap.put("cost".concat(key), trip);
-            finalAssetsMap.put("cost".concat(key), asset);
-            totalAssets += asset;
-            totalTrip += trip;
-        }
-        finalTripMap.put("totalcost", totalTrip);
-        finalAssetsMap.put("totalcost", totalAssets);
-
-        // add to result
-        result.put("trip", finalTripMap);
-        result.put("asset", finalAssetsMap);
+        // reigon BP社统计页面【出差经费(元)】和【设备经费(元)】合并为经费字段放置【预提】-【外注费用】列
+//        List<Variousfunds> allVariousfunds = variousfundsMapper.selectBygroupid(groupid, years);
+//        List<Dictionary> dictionaryList = dictionaryService.getForSelect("BP013");
+//        Map<String, String> plmonthPlanMap = new HashMap<>();
+//        Pattern pattern = Pattern.compile("(\\d+)");
+//        for (Dictionary d : dictionaryList) {
+//            String value = d.getValue1();
+//            Matcher matcher = pattern.matcher(value);
+//            if (matcher.find()) {
+//                value = matcher.group(1);
+//            }
+//            plmonthPlanMap.put(d.getCode(), value);
+//        }
+//
+//        Map<String, Double> tripMap = new HashMap<>();
+//        Map<String, Double> assetsMap = new HashMap<>();
+//        for (Variousfunds v : allVariousfunds) {
+//            String month = plmonthPlanMap.getOrDefault(v.getPlmonthplan(), "");
+//            Map<String, Double> targetMap = null;
+//            if ("BP014001".equals(v.getTypeoffees())) {
+//                //出张经费
+//                targetMap = tripMap;
+//            } else if ("BP014002".equals(v.getTypeoffees())) {
+//                //设备经费
+//                targetMap = assetsMap;
+//            } else {
+//                continue;
+//            }
+//            double value = targetMap.getOrDefault(month, 0.0);
+//            double addValue = 0;
+//            try {
+//                addValue = Double.parseDouble(v.getPayment());
+//            } catch (Exception e) {
+//            }
+//            targetMap.put(month, value + addValue);
+//        }
+//
+//        Map<String, Double> finalTripMap = new HashMap<>();
+//        Map<String, Double> finalAssetsMap = new HashMap<>();
+//        double totalTrip = 0;
+//        double totalAssets = 0;
+//        for (int i = 1; i <= 12; i++) {
+//            String key = i + "";
+//            double trip = tripMap.getOrDefault(key, 0.0);
+//            double asset = assetsMap.getOrDefault(key, 0.0);
+//            finalTripMap.put("cost".concat(key), trip);
+//            finalAssetsMap.put("cost".concat(key), asset);
+//            totalAssets += asset;
+//            totalTrip += trip;
+//        }
+//        finalTripMap.put("totalcost", totalTrip);
+//        finalAssetsMap.put("totalcost", totalAssets);
+//
+//        // add to result
+//        result.put("trip", finalTripMap);
+//        result.put("asset", finalAssetsMap);
+        // endreigon BP社统计页面【出差经费(元)】和【设备经费(元)】合并为经费字段放置【预提】-【外注费用】列
 
         //获取该group下外驻人员的单价
         Map<String, Double> userPriceMap = coststatisticsService.getUserPriceMapBygroupid(groupid, years);
@@ -147,6 +155,12 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 //            year = calendar.get(Calendar.YEAR);
 //        }
         List<Coststatistics> allCostList = coststatisticsMapper.getCoststatisticsBygroupid(Integer.valueOf(years), groupid);
+        // add gbb 210914 BP社统计添加添加费用列 start
+        // 查询费用的作业工数和外注费用
+        List<PublicExpense> publicExpenseList = publicExpenseMapper.getPublicexpenseRmb(years,groupid);
+        // 查询经费
+        List<Coststatistics> cosExpenseList = coststatisticsMapper.getCoststatisticsExpense(years,groupid);
+        // add gbb 210914 BP社统计添加添加费用列 end
         Map<String, CompanyStatistics> companyMap = new HashMap<>();
         DecimalFormat df = new DecimalFormat("######0.00");
         DecimalFormat dlf = new DecimalFormat("#0.00");
@@ -169,6 +183,8 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             for (int i = 1; i <= 12; i++) {
                 String p_manhour = "manhour" + i;
                 String p_cost = "cost" + i;
+                String p_manhourf = "manhour" + i + "f";
+                String p_costf = "cost" + i + "f";
 
                 // 上一次合计结果
                 double oldManhour = 0;
@@ -202,6 +218,8 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 //                company.setManhour1("");
                 BeanUtils.setProperty(company, p_cost, df.format(newCost));
                 BeanUtils.setProperty(company, p_manhour, newManhour);
+                BeanUtils.setProperty(company, p_manhourf, 0.0);
+                BeanUtils.setProperty(company, p_costf, 0.00);
                 totalcost += cost;
                 totalmanhours += manhour;
             }
@@ -223,6 +241,129 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             companyMap.put(bpcompany, company);
 
         }
+        // add gbb 210914 BP社统计添加添加费用列 start
+        for (Map.Entry<String, CompanyStatistics> map : companyMap.entrySet()){
+            List<PublicExpense> newPList = publicExpenseList.stream().filter(str ->(str.getPayeename().contains(map.getKey()))).collect(Collectors.toList());
+            List<Coststatistics> newCoststatisticsList = cosExpenseList.stream().filter(str ->(str.getBpcompany().contains(map.getKey()))).collect(Collectors.toList());
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat formatterM = new SimpleDateFormat("M");
+            // 单价
+            BigDecimal unitPrice = new BigDecimal(Double.toString(18500));
+            // 费用-作业工数
+            double bigTormbCount = 0;
+            // 费用-外注费用
+            double bigManhourCount = 0;
+            //费用计算
+            for(PublicExpense newPub : newPList){
+                if (newPub.getJzmonth() != null && StringUtils.isNotEmpty(newPub.getTormb())) {
+                    String strJzmonth = formatterM.format(newPub.getJzmonth());
+                    // 外注费用
+                    BigDecimal bigTormb = new BigDecimal(newPub.getTormb());
+                    // 费用-总外注费用
+                    bigManhourCount += bigTormb.doubleValue();
+
+                    // 作业工数 = 外注费用 / 18500
+                    BigDecimal bigManhour = BigDecimal.valueOf(bigTormb.doubleValue() / 18500).setScale(2, RoundingMode.HALF_UP);
+
+                    // 费用-总作业工数
+                    bigTormbCount += bigTormb.doubleValue() / 18500;
+
+                    if(strJzmonth.equals("1")){
+                        map.getValue().setCost1f(bigTormb.toString());
+                        map.getValue().setManhour1f(bigManhour.toString());
+                    }
+                    else if(strJzmonth.equals("2")){
+                        map.getValue().setCost2(bigTormb.toString());
+                        map.getValue().setManhour2f(bigManhour.toString());
+                    }
+                    if(strJzmonth.equals("3")){
+                        map.getValue().setCost3f(bigTormb.toString());
+                        map.getValue().setManhour3f(bigManhour.toString());
+                    }
+                    if(strJzmonth.equals("4")){
+                        map.getValue().setCost4f(bigTormb.toString());
+                        map.getValue().setManhour4f(bigManhour.toString());
+                    }
+                    if(strJzmonth.equals("5")){
+                        map.getValue().setCost5f(bigTormb.toString());
+                        map.getValue().setManhour5f(bigManhour.toString());
+                    }
+                    if(strJzmonth.equals("6")){
+                        map.getValue().setCost6f(bigTormb.toString());
+                        map.getValue().setManhour6f(bigManhour.toString());
+                    }
+                    if(strJzmonth.equals("7")){
+                        map.getValue().setCost7f(bigTormb.toString());
+                        map.getValue().setManhour7f(bigManhour.toString());
+                    }
+                    if(strJzmonth.equals("8")){
+                        map.getValue().setCost8f(bigTormb.toString());
+                        map.getValue().setManhour8f(bigManhour.toString());
+                    }
+                    if(strJzmonth.equals("9")){
+                        map.getValue().setCost9f(bigTormb.toString());
+                        map.getValue().setManhour9f(bigManhour.toString());
+                    }
+                    if(strJzmonth.equals("10")){
+                        map.getValue().setCost10f(bigTormb.toString());
+                        map.getValue().setManhour10f(bigManhour.toString());
+                    }
+                    if(strJzmonth.equals("11")){
+                        map.getValue().setCost11f(bigTormb.toString());
+                        map.getValue().setManhour11f(bigManhour.toString());
+                    }
+                    if(strJzmonth.equals("12")){
+                        map.getValue().setCost12f(bigTormb.toString());
+                        map.getValue().setManhour12f(bigManhour.toString());
+                    }
+                    companyMap.put(map.getKey(),map.getValue());
+                }
+            }
+            // 预提费用计算
+            for(Coststatistics newCoststatistics : newCoststatisticsList){
+                // 外注费用1月
+                BigDecimal bigExpense1 = new BigDecimal(newCoststatistics.getExpense1()).add(new BigDecimal(map.getValue().getCost1()));
+                map.getValue().setCost1(bigExpense1.setScale(2, RoundingMode.HALF_UP).toString());
+                // 外注费用2月
+                BigDecimal bigExpense2 = new BigDecimal(newCoststatistics.getExpense2()).add(new BigDecimal(map.getValue().getCost2()));
+                map.getValue().setCost2(bigExpense2.setScale(2, RoundingMode.HALF_UP).toString());
+                // 外注费用3月
+                BigDecimal bigExpense3 = new BigDecimal(newCoststatistics.getExpense3()).add(new BigDecimal(map.getValue().getCost3()));
+                map.getValue().setCost3(bigExpense3.setScale(2, RoundingMode.HALF_UP).toString());
+                // 外注费用4月
+                BigDecimal bigExpense4 = new BigDecimal(newCoststatistics.getExpense4()).add(new BigDecimal(map.getValue().getCost4()));
+                map.getValue().setCost4(bigExpense4.setScale(2, RoundingMode.HALF_UP).toString());
+                // 外注费用5月
+                BigDecimal bigExpense5 = new BigDecimal(newCoststatistics.getExpense5()).add(new BigDecimal(map.getValue().getCost5()));
+                map.getValue().setCost5(bigExpense5.setScale(2, RoundingMode.HALF_UP).toString());
+                // 外注费用6月
+                BigDecimal bigExpense6 = new BigDecimal(newCoststatistics.getExpense6()).add(new BigDecimal(map.getValue().getCost6()));
+                map.getValue().setCost6(bigExpense6.setScale(2, RoundingMode.HALF_UP).toString());
+                // 外注费用7月
+                BigDecimal bigExpense7 = new BigDecimal(newCoststatistics.getExpense7()).add(new BigDecimal(map.getValue().getCost7()));
+                map.getValue().setCost7(bigExpense7.setScale(2, RoundingMode.HALF_UP).toString());
+                // 外注费用8月
+                BigDecimal bigExpense8 = new BigDecimal(newCoststatistics.getExpense8()).add(new BigDecimal(map.getValue().getCost8()));
+                map.getValue().setCost8(bigExpense8.setScale(2, RoundingMode.HALF_UP).toString());
+                // 外注费用9月
+                BigDecimal bigExpense9 = new BigDecimal(newCoststatistics.getExpense9()).add(new BigDecimal(map.getValue().getCost9()));
+                map.getValue().setCost9(bigExpense9.setScale(2, RoundingMode.HALF_UP).toString());
+                // 外注费用10月
+                BigDecimal bigExpense10 = new BigDecimal(newCoststatistics.getExpense10()).add(new BigDecimal(map.getValue().getCost10()));
+                map.getValue().setCost10(bigExpense10.setScale(2, RoundingMode.HALF_UP).toString());
+                // 外注费用11月
+                BigDecimal bigExpense11 = new BigDecimal(newCoststatistics.getExpense11()).add(new BigDecimal(map.getValue().getCost11()));
+                map.getValue().setCost11(bigExpense11.setScale(2, RoundingMode.HALF_UP).toString());
+                // 外注费用12月
+                BigDecimal bigExpense12 = new BigDecimal(newCoststatistics.getExpense12()).add(new BigDecimal(map.getValue().getCost12()));
+                map.getValue().setCost12(bigExpense12.setScale(2, RoundingMode.HALF_UP).toString());
+            }
+            // 费用合计费用
+            map.getValue().setTotalcostf(new BigDecimal(bigManhourCount).setScale(2, RoundingMode.HALF_UP).toString());
+            // 费用合计工数
+            map.getValue().setTotalmanhourf(new BigDecimal(bigTormbCount).setScale(2, RoundingMode.HALF_UP).toString());
+        }
+        // add gbb 210914 BP社统计添加添加费用列 end
         result.put("company", new ArrayList<>(companyMap.values()));
 
         //region  add_qhr_20210901 添加bp社统计费用数据

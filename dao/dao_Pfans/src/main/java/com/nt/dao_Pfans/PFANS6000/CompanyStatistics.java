@@ -228,153 +228,158 @@ public class CompanyStatistics extends BaseModel {
     private String rowindex;
 //  region add_qhr_20210907  bp社统计每月加入实际费用列
     /**
+     * 4月工数
+     */
+    @Column(name = "MANHOUR4F")
+    private String manhour4f;
+    /**
      * 4月費用
      */
     @Column(name = "COST4F")
-    private Double cost4f;
+    private String cost4f;
 
     /**
      * 5月工数
      */
     @Column(name = "MANHOUR5F")
-    private Double manhour5f;
+    private String manhour5f;
 
     /**
      * 5月費用
      */
     @Column(name = "COST5F")
-    private Double cost5f;
+    private String cost5f;
 
     /**
      * 6月工数
      */
     @Column(name = "MANHOUR6F")
-    private Double manhour6f;
+    private String manhour6f;
 
     /**
      * 6月費用
      */
     @Column(name = "COST6F")
-    private Double cost6f;
+    private String cost6f;
 
     /**
      * 7月工数
      */
     @Column(name = "MANHOUR7F")
-    private Double manhour7f;
+    private String manhour7f;
 
     /**
      * 7月費用
      */
     @Column(name = "COST7F")
-    private Double cost7f;
+    private String cost7f;
 
     /**
      * 8月工数
      */
     @Column(name = "MANHOUR8F")
-    private Double manhour8f;
+    private String manhour8f;
 
     /**
      * 8月費用
      */
     @Column(name = "COST8F")
-    private Double cost8f;
+    private String cost8f;
 
     /**
      * 9月工数
      */
     @Column(name = "MANHOUR9F")
-    private Double manhour9f;
+    private String manhour9f;
 
     /**
      * 9月費用
      */
     @Column(name = "COST9F")
-    private Double cost9f;
+    private String cost9f;
 
     /**
      * 10月工数
      */
     @Column(name = "MANHOUR10F")
-    private Double manhour10f;
+    private String manhour10f;
 
     /**
      * 10月費用
      */
     @Column(name = "COST10F")
-    private Double cost10f;
+    private String cost10f;
 
     /**
      * 11月工数
      */
     @Column(name = "MANHOUR11F")
-    private Double manhour11f;
+    private String manhour11f;
 
     /**
      * 11月費用
      */
     @Column(name = "COST11F")
-    private Double cost11f;
+    private String cost11f;
 
     /**
      * 12月工数
      */
     @Column(name = "MANHOUR12F")
-    private Double manhour12f;
+    private String manhour12f;
 
     /**
      * 12月費用
      */
     @Column(name = "COST12F")
-    private Double cost12f;
+    private String cost12f;
 
     /**
      * 1月工数
      */
     @Column(name = "MANHOUR1F")
-    private Double manhour1f;
+    private String manhour1f;
 
     /**
      * 1月費用
      */
     @Column(name = "COST1F")
-    private Double cost1f;
+    private String cost1f;
 
     /**
      * 2月工数
      */
     @Column(name = "MANHOUR2F")
-    private Double manhour2f;
+    private String manhour2f;
 
     /**
      * 2月費用
      */
     @Column(name = "COST2F")
-    private Double cost2f;
+    private String cost2f;
 
     /**
      * 3月工数
      */
     @Column(name = "MANHOUR3F")
-    private Double manhour3f;
+    private String manhour3f;
 
     /**
      * 3月費用
      */
     @Column(name = "COST3F")
-    private Double cost3f;
+    private String cost3f;
 
     /**
      * 费用合计工数
      */
     @Column(name = "TOTALMANHOURF")
-    private Double totalmanhourf;
+    private String totalmanhourf;
 
     /**
      * 费用合计费用
      */
     @Column(name = "TOTALCOSTF")
-    private Double totalcostf;
+    private String totalcostf;
 //    endregion add_qhr_20210907  bp社统计每月加入实际费用列
 }
