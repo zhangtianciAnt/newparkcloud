@@ -251,4 +251,9 @@ public class Contractapplication extends BaseModel {
     @Column(name = "SUPPLIERINFOR_ID")
     private String supplierinfor_id;
     //endregion  add_qhr_20210616 委托决裁书-情报2表格带入信息
+
+    // add gbb 210910 项目编号 start
+    @Column(name = "PROJECTNUMBER")
+    private String projectnumber;
+    // add gbb 210910 项目编号 end
 }
