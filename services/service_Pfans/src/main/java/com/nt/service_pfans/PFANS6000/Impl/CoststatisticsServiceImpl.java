@@ -721,6 +721,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 for (int k = 1; k <=12; k++) {
                     double manhour = 0;
                     double cost = 0;
+                    double expenseAll = 0;
                     double price = 0;
                     double totalmanhours = 0;
                     double totalcost = 0;
@@ -728,6 +729,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     double contract = 0;
                     String property = "manhour" + k;
                     String propertyc = "cost" + k;
+                    String propertyEAll = "expense" + k;
                     String propertyp = "price" + k;
                     String propertyM = "";
                     String propertyCo = "";
@@ -745,45 +747,50 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         manhour = Double.parseDouble(BeanUtils.getProperty(c, property));
                         price = Double.parseDouble(BeanUtils.getProperty(c, propertyp));
                         cost = Double.parseDouble(BeanUtils.getProperty(c, propertyc));
+                        expenseAll = Double.parseDouble(BeanUtils.getProperty(c, propertyEAll));
 
 
                         if(k <= 3) {
-                            row.createCell(51 + r).setCellValue(price);
-                            row.createCell(52 + r).setCellValue(manhour);
-                            row.createCell(53 + r).setCellValue(cost);
-                            row.createCell(54 + r).setCellValue(c.getSupport3());
-                            r = r + 4;
+                            row.createCell(60 + r).setCellValue(price);
+                            row.createCell(61 + r).setCellValue(manhour);
+                            row.createCell(62 + r).setCellValue(cost);
+                            row.createCell(63 + r).setCellValue(expenseAll);
+                            row.createCell(64 + r).setCellValue(c.getSupport3());
+                            r = r + 5;
                         }
 
                         if(k >=4 && k<=6){
                             row.createCell(3 + j).setCellValue(price);
                             row.createCell(4 + j).setCellValue(manhour);
                             row.createCell(5 + j).setCellValue(cost);
-                            row.createCell(6 + j).setCellValue(c.getSupport6());
-                            j = j + 4;
+                            row.createCell(6 + j).setCellValue(expenseAll);
+                            row.createCell(7 + j).setCellValue(c.getSupport6());
+                            j = j + 5;
                         }
 
                         if(k>=7 && k<=9) {
                             row.createCell(7 + j).setCellValue(price);
                             row.createCell(8 + j).setCellValue(manhour);
                             row.createCell(9 + j).setCellValue(cost);
-                            row.createCell(10 + j).setCellValue(c.getSupport9());
-                            j = j + 4;
+                            row.createCell(10 + j).setCellValue(expenseAll);
+                            row.createCell(11 + j).setCellValue(c.getSupport9());
+                            j = j + 5;
                         }
 
                         if(k>=10 && k<=12) {
                             row.createCell(11 + j).setCellValue(price);
                             row.createCell(12 + j).setCellValue(manhour);
                             row.createCell(13 + j).setCellValue(cost);
-                            row.createCell(14 + j).setCellValue(c.getSupport12());
-                            j = j + 4;
+                            row.createCell(14 + j).setCellValue(expenseAll);
+                            row.createCell(15 + j).setCellValue(c.getSupport12());
+                            j = j + 5;
                         }
 
                         if(k == 3) {
-                            row.createCell(63).setCellValue(c.getTotalmanhours3());
-                            row.createCell(64).setCellValue(c.getTotalcost3());
-                            row.createCell(65).setCellValue(c.getExpense3());
-                            row.createCell(66).setCellValue(c.getContract3());
+                            row.createCell(75).setCellValue(c.getTotalmanhours3());
+                            row.createCell(76).setCellValue(c.getTotalcost3());
+                            row.createCell(77).setCellValue(c.getExpense3());
+                            row.createCell(78).setCellValue(c.getContract3());
                         }
 
                         totalmanhours = Double.parseDouble(BeanUtils.getProperty(c, propertyM));
@@ -792,11 +799,11 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         contract = Double.parseDouble(BeanUtils.getProperty(c, propertyCon));
 
                         if(k%3 == 0 && k>=6){
-                            row.createCell(15 + t).setCellValue(totalmanhours);
-                            row.createCell(16 + t).setCellValue(totalcost);
-                            row.createCell(17 + t).setCellValue(expense);
-                            row.createCell(18 + t).setCellValue(contract);
-                            t = t + 16;
+                            row.createCell(18 + t).setCellValue(totalmanhours);
+                            row.createCell(19 + t).setCellValue(totalcost);
+                            row.createCell(20 + t).setCellValue(expense);
+                            row.createCell(21 + t).setCellValue(contract);
+                            t = t + 19;
                         }
 
                     } catch (Exception e) {}
