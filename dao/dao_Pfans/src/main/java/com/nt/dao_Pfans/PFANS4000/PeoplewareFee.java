@@ -79,4 +79,8 @@ public class PeoplewareFee extends BaseModel {
     @Column(name = "MONTH12")
     private String month12;
 
+    //年度rank平均值
+    @Column(name = "AGEPRICE")
+    private String ageprice;
+
 }
