@@ -3,7 +3,7 @@ package com.nt.utils;
 import java.math.BigDecimal;
 
 public class BigDecimalUtils {
-    public static BigDecimal ifNullSet0(BigDecimal in) {
+    public static BigDecimal ifNullSet0_Big(BigDecimal in) {
         if (in != null) {
             return in;
         }
