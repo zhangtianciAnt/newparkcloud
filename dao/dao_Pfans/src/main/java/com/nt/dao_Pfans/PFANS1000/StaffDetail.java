@@ -111,6 +111,6 @@ public class StaffDetail extends BaseModel {
     //人件费 获取实际成本变更 ztc fr
     //计算成本
     @Transient
-    private Map<String,List<PeoplewareFee>> bm;
+    private List<PeoplewareFee> bm;
     //人件费 获取实际成本变更 ztc to
 }
