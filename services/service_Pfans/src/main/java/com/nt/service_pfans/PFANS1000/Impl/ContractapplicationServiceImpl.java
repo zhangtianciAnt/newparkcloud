@@ -805,17 +805,22 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         award.setUser_id(contractapp.getUser_id());
                         award.setRemarks(contractapp.getRemarks());
                         award.setMaketype(rowindex);
+                        award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
                         //region acc add 9/16 在觉书做成时生成汇率和売上(RMB) from
-                        award.setConjapanese(contractapp.getConjapanese());
                         String startDate = contractapp.getClaimdatetime().split("~")[0].trim();
                         String exchangeRateMonthly = startDate.substring(0, startDate.length() - 3);
                         MonthlyRate findrate = new MonthlyRate();
                         findrate.setMonth(exchangeRateMonthly);
                         findrate.setCurrency(contractapp.getCurrencyposition());
                         List<MonthlyRate> rateresult = monthlyRateMapper.select(findrate);
-                        award.setExchangerate(rateresult.get(0).getExchangerate());//契約概要（/開発タイトル）和文
-                        BigDecimal requestAmount = new BigDecimal(contractapp.getClaimamount());
-                        award.setSarmb((new BigDecimal(contractapp.getClaimamount()).multiply(new BigDecimal(rateresult.get(0).getExchangerate())).setScale(2,BigDecimal.ROUND_HALF_UP)).toString());
+                        if(rateresult.size() > 0){
+                            award.setExchangerate(rateresult.get(0).getExchangerate());
+                            BigDecimal requestAmount = new BigDecimal(contractapp.getClaimamount());
+                            award.setSarmb((new BigDecimal(contractapp.getClaimamount()).multiply(new BigDecimal(rateresult.get(0).getExchangerate())).setScale(2,BigDecimal.ROUND_HALF_UP)).toString());
+                        }else{
+                            award.setExchangerate("0");
+                            award.setSarmb("0");
+                        }
                         //endregion acc add 9/16 在觉书做成时生成汇率和売上(RMB) to
                         AwardMapper.insert(award);
                     }
