@@ -16,6 +16,7 @@ import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS1000.AwardService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS2000.PersonalCostService;
+import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
 import com.nt.utils.ExcelOutPutUtil;
@@ -58,6 +59,9 @@ public class AwardServiceImpl implements AwardService {
 
     @Autowired
     CompanyProjectsMapper companyProjectsMapper;
+
+    @Autowired
+    PeoplewareFeeMapper peoplewareFeeMapper;
 
     @Autowired
     private OrgTreeService orgTreeService;
@@ -119,12 +123,19 @@ public class AwardServiceImpl implements AwardService {
             Calendar cal = Calendar.getInstance();
             cal.setTime(parseBegin);
             String beginningYear = String.valueOf(cal.get(Calendar.YEAR));//年
-            Map<String, PeoplewareFee> bmRanksInfo = personalCostService.getBmRanksInfo(beginningYear, sta.getIncondepartment());//部门所有rank成本
-            HashMap<String, String> costOf = new HashMap<>();
-            for(String key : bmRanksInfo.keySet()){
-                costOf.put(dicList.get(key),bmRanksInfo.get(key).getMonth4() + "~" + bmRanksInfo.get(key).getMonth7());
-            }
-            sta.setBm(costOf.get(sta.getAttf()));//页面初始化成本
+            //人件费 获取实际成本变更 ztc fr
+            PeoplewareFee getFee = new PeoplewareFee();
+            getFee.setGroupid(sta.getIncondepartment());
+            getFee.setYear(beginningYear);
+            List<PeoplewareFee> peeList = peoplewareFeeMapper.select(getFee);
+            //Map<String, PeoplewareFee> bmRanksInfo = personalCostService.getBmRanksInfo(beginningYear, sta.getIncondepartment());//部门所有rank成本
+            HashMap<String, List<PeoplewareFee>> costOf = new HashMap<>();
+            costOf.put(sta.getIncondepartment(),peeList);
+//            for(String key : bmRanksInfo.keySet()){
+//                costOf.put(dicList.get(key),bmRanksInfo.get(key).getMonth4() + "~" + bmRanksInfo.get(key).getMonth7());
+//            }
+            sta.setBm(costOf);//页面初始化成本
+            //人件费 获取实际成本变更 ztc to
             sta.setIncondepartment(companyid.get(sta.getIncondepartment()));//存部门
         }
         //endregion scc add 8/24 页面初始化时页面所需rank及成本 to
