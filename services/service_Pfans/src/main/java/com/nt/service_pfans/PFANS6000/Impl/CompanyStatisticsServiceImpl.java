@@ -462,6 +462,10 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     @Override
     public XSSFWorkbook downloadExcel(String groupid, String years, HttpServletRequest request, HttpServletResponse resp) throws LogicalException {
         InputStream in = null;
+        if(groupid.equals("all"))
+        {
+            groupid = "";
+        }
         try {
             //表格操作
             in = getClass().getClassLoader().getResourceAsStream("jxls_templates/BPshetongji.xlsx");
@@ -485,22 +489,23 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 
             Map<String, Object> result = getCosts(groupid, years);
             List<CompanyStatistics> companyStatisticsList = (List<CompanyStatistics>) result.get("company");
-            Map<String, Double> trip = (Map<String, Double>) result.get("trip");
-            Map<String, Double> asset = (Map<String, Double>) result.get("asset");
+//            Map<String, Double> trip = (Map<String, Double>) result.get("trip");
+//            Map<String, Double> asset = (Map<String, Double>) result.get("asset");
 
             Calendar now = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("MM月");
             now.setTime(sdf.parse("04月"));
             //日期赋值
             for (int j = 1; j <= 12; j++) {
-                sheet1.getRow(1).getCell(2 * j + 1).setCellValue(sdf.format(now.getTime()));
+                // sheet1.getRow(1).getCell(2 * j + 1).setCellValue(sdf.format(now.getTime()))
+                sheet1.getRow(1).getCell(3 +  4 * (j - 1)).setCellValue(sdf.format(now.getTime()));
                 now.set(Calendar.MONTH, now.get(Calendar.MONTH) + 1);
             }
             //
             Map<String, Double> totalCostMap = new HashMap<>();
             //Map<String, Double> totalCostMap1 = new HashMap<>();
             //将数据放入Excel
-            int i = 3;
+            int i = 4;
             for (CompanyStatistics c : companyStatisticsList) {
                 //创建工作表的行
                 XSSFRow row = sheet1.createRow(i);
@@ -508,29 +513,41 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 for (int k = 1; k <= 13; k++) {
                     double manhour = 0;
                     double cost = 0;
+                    double manhourf = 0;
+                    double costf = 0;
                     String property = "manhour" + k;
                     String propertyC = "cost" + k;
+                    String propertyf = "manhour" + k + "f";
+                    String propertyCf = "cost" + k + "f";
                     if (k > 12) {
                         property = "totalmanhours";
                         propertyC = "totalcost";
+                        propertyf = "totalmanhourf";
+                        propertyCf = "totalcostf";
                     }
                     try {
 
                         manhour = Double.parseDouble(BeanUtils.getProperty(c, property));
                         cost = Double.parseDouble(BeanUtils.getProperty(c, propertyC));
+                        manhourf = Double.parseDouble(BeanUtils.getProperty(c, propertyf));
+                        costf = Double.parseDouble(BeanUtils.getProperty(c, propertyCf));
 
-                        int colIndex = getColIndex4Month(k);
+                        int colIndex = getColIndex41Month(k);
                         row.createCell(colIndex).setCellValue(manhour);
                         row.createCell(colIndex + 1).setCellValue(cost);
+                        row.createCell(colIndex + 2).setCellValue(manhourf);
+                        row.createCell(colIndex + 3).setCellValue(costf);
 
                         totalCostMap.put(property, totalCostMap.getOrDefault(property, 0.0) + manhour);
                         totalCostMap.put(propertyC, totalCostMap.getOrDefault(propertyC, 0.0) + cost);
+                        totalCostMap.put(propertyf, totalCostMap.getOrDefault(propertyf, 0.0) + manhourf);
+                        totalCostMap.put(propertyCf, totalCostMap.getOrDefault(propertyCf, 0.0) + costf);
                     } catch (Exception e) {
                     }
 
                 }
 
-                row.createCell(1).setCellValue(i - 2);
+                row.createCell(1).setCellValue(i - 3);
                 Supplierinfor ls = supplierinforMapper.selectByPrimaryKey(c.getBpcompany());
                 if (ls != null) {
                     row.createCell(2).setCellValue(ls.getSupchinese());
@@ -542,83 +559,89 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 //totalCostMap.put("totalcost", totalCostMap.getOrDefault("totalcost", 0.0) + getDoubleValue(c, "totalcost"));
                 i++;
             }
-            int rowIndex = companyStatisticsList.size() + 2;
+            int rowIndex = companyStatisticsList.size() + 3;
             //合计行
             XSSFRow rowT = sheet1.createRow(1 + rowIndex);
             rowT.createCell(1).setCellValue("合计");
-            //経費除きの平均単価(人月)
-            XSSFRow rowT1 = sheet1.createRow(2 + rowIndex);
-            rowT1.createCell(1).setCellValue("経費除きの平均単価(人月)");
-            //出張経費(元)
-            XSSFRow rowT2 = sheet1.createRow(3 + rowIndex);
-            rowT2.createCell(1).setCellValue("出張経費(元)");
-            //設備経費(元)
-            XSSFRow rowT3 = sheet1.createRow(4 + rowIndex);
-            rowT3.createCell(1).setCellValue("設備経費(元)");
-            //外注総合費用合計(元)
-            XSSFRow rowT4 = sheet1.createRow(5 + rowIndex);
-            rowT4.createCell(1).setCellValue("外注総合費用合計(元)");
+//            //経費除きの平均単価(人月)
+//            XSSFRow rowT1 = sheet1.createRow(2 + rowIndex);
+//            rowT1.createCell(1).setCellValue("経費除きの平均単価(人月)");
+//            //出張経費(元)
+//            XSSFRow rowT2 = sheet1.createRow(3 + rowIndex);
+//            rowT2.createCell(1).setCellValue("出張経費(元)");
+//            //設備経費(元)
+//            XSSFRow rowT3 = sheet1.createRow(4 + rowIndex);
+//            rowT3.createCell(1).setCellValue("設備経費(元)");
+//            //外注総合費用合計(元)
+//            XSSFRow rowT4 = sheet1.createRow(5 + rowIndex);
+//            rowT4.createCell(1).setCellValue("外注総合費用合計(元)");
 
             CellRangeAddress region = new CellRangeAddress(1 + rowIndex, 1 + rowIndex, 1, 2);
             sheet1.addMergedRegion(region);
             // 合计28列，后数4行，两两合并
-            for (int r = rowIndex + 2; r < rowIndex + 6; r++) {
-                for (i = 1; i <= 28; i = i + 2) {
-                    CellRangeAddress region1 = new CellRangeAddress(r, r, i, i + 1);
-                    sheet1.addMergedRegion(region1);
-                }
-            }
+//            for (int r = rowIndex + 2; r < rowIndex + 6; r++) {
+//                for (i = 1; i <= 28; i = i + 2) {
+//                    CellRangeAddress region1 = new CellRangeAddress(r, r, i, i + 1);
+//                    sheet1.addMergedRegion(region1);
+//                }
+//            }
             // 设置值
             for (int k = 1; k <= 13; k++) {
                 String property = "manhour" + k;
                 String propertyC = "cost" + k;
+                String propertyf = "manhour" + k + "f";
+                String propertyCf = "cost" + k + "f";
                 if (k > 12) {
                     property = "totalmanhours";
                     propertyC = "totalcost";
+                    propertyf = "totalmanhourf";
+                    propertyCf = "totalcostf";
                 }
-                int colIndex = getColIndex4Month(k);
-                double tripflg = 0.0;
-                double assetflg = 0.0;
-                double totalCostMapflg = 0.0;
-                if (trip.size() > 0) {
-                    //出張経費(元)
-                    rowT2.createCell(colIndex).setCellValue(trip.get(propertyC));
-                    tripflg = trip.get(propertyC);
-                } else {
-                    rowT2.createCell(colIndex).setCellValue(0.0);
-                }
-                if (asset.size() > 0) {
-                    //設備経費(元)
-                    rowT3.createCell(colIndex).setCellValue(asset.get(propertyC));
-                    assetflg = asset.get(propertyC);
-                } else {
-                    rowT3.createCell(colIndex).setCellValue(0.0);
-                }
+                int colIndex = getColIndex41Month(k);
+//                double tripflg = 0.0;
+//                double assetflg = 0.0;
+//                double totalCostMapflg = 0.0;
+//                if (trip.size() > 0) {
+//                    //出張経費(元)
+//                    rowT2.createCell(colIndex).setCellValue(trip.get(propertyC));
+//                    tripflg = trip.get(propertyC);
+//                } else {
+//                    rowT2.createCell(colIndex).setCellValue(0.0);
+//                }
+//                if (asset.size() > 0) {
+//                    //設備経費(元)
+//                    rowT3.createCell(colIndex).setCellValue(asset.get(propertyC));
+//                    assetflg = asset.get(propertyC);
+//                } else {
+//                    rowT3.createCell(colIndex).setCellValue(0.0);
+//                }
                 if (totalCostMap.size() > 0) {
                     //合计行
                     rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
                     rowT.createCell(colIndex + 1).setCellValue(totalCostMap.get(propertyC));
+                    rowT.createCell(colIndex + 2).setCellValue(totalCostMap.get(propertyf));
+                    rowT.createCell(colIndex + 3).setCellValue(totalCostMap.get(propertyCf));
                     //経費除きの平均単価(人月)
-                    if (totalCostMap.get(property) == 0) {
-                        Double avg = 0.00;
-                        rowT1.createCell(colIndex).setCellValue(avg);
-                        totalCostMapflg = totalCostMap.get(propertyC);
-                    } else {
-                        Double avg = totalCostMap.get(propertyC) / totalCostMap.get(property);
-                        DecimalFormat dlf = new DecimalFormat("#0.00");
-                        avg = Double.valueOf(dlf.format(avg));
-                        rowT1.createCell(colIndex).setCellValue(avg);
-                        totalCostMapflg = totalCostMap.get(propertyC);
-                    }
+//                    if (totalCostMap.get(property) == 0) {
+//                        Double avg = 0.00;
+//                        rowT1.createCell(colIndex).setCellValue(avg);
+//                        totalCostMapflg = totalCostMap.get(propertyC);
+//                    } else {
+//                        Double avg = totalCostMap.get(propertyC) / totalCostMap.get(property);
+//                        DecimalFormat dlf = new DecimalFormat("#0.00");
+//                         avg = Double.valueOf(dlf.format(avg));
+//                         rowT1.createCell(colIndex).setCellValue(avg);
+//                        totalCostMapflg = totalCostMap.get(propertyC);
+//                    }
 
                 } else {
                     rowT.createCell(colIndex).setCellValue(0.0);
                     rowT.createCell(colIndex + 1).setCellValue(0.0);
-                    rowT1.createCell(colIndex).setCellValue(0.0);
+                    // rowT1.createCell(colIndex).setCellValue(0.0);
                 }
                 //外注総合費用合計(元)
-                Double totalAll = totalCostMapflg + tripflg + assetflg;
-                rowT4.createCell(colIndex).setCellValue(totalAll);
+                // Double totalAll = totalCostMapflg + tripflg + assetflg;
+                // rowT4.createCell(colIndex).setCellValue(totalAll);
             }
 
         } catch (Exception e) {
@@ -931,6 +954,16 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             return 2 * month + 1;
         } else {
             return 2 * (month - 4) + 3;
+        }
+    }
+
+    private int getColIndex41Month(int month) {
+        if (month <= 3) {
+            return 4 * (month - 1) + 39;
+        } else if (month > 12) {
+            return 51;
+        } else {
+            return 4 * (month - 4) + 3;
         }
     }
 }
