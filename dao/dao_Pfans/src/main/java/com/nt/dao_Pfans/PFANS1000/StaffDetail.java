@@ -1,5 +1,6 @@
 package com.nt.dao_Pfans.PFANS1000;
 
+import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,6 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.List;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -104,7 +107,10 @@ public class StaffDetail extends BaseModel {
     @Column(name = "ROWINDEX")
     private Integer rowindex;
 
+
+    //人件费 获取实际成本变更 ztc fr
     //计算成本
     @Transient
-    private String bm;
+    private Map<String,List<PeoplewareFee>> bm;
+    //人件费 获取实际成本变更 ztc to
 }

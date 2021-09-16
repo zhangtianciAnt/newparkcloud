@@ -1149,7 +1149,7 @@ public class PersonalCostServiceImpl implements PersonalCostService {
     //add-lyt-21/2/19-PSDCD_PFANS_20201123_XQ_017-end
 
     @Override
-    public Map<String,PeoplewareFee> getBmRanksInfo(String years, String department) throws Exception {
+    public Map<String,PeoplewareFee> getBmRanksInfo(String years, String department) throws Exception {//人件费共通接口 取4 7月rank单价 未用 ztc
         Map<String,PeoplewareFee> getRankReault = new HashMap<>();
         List<Dictionary> dicList = dictionaryService.getForSelect("PR021");
         List<String> rankList = dicList.stream().map(Dictionary::getCode).collect(Collectors.toList());
