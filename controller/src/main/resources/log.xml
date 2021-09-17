@@ -19,7 +19,7 @@
             <fileNamePattern>logs/log.%d{yyyy-MM-dd}.%i.log.gz
             </fileNamePattern>
             <maxFileSize>50MB</maxFileSize>
-            <maxHistory>30</maxHistory>
+            <maxHistory>180</maxHistory>
             <totalSizeCap>10GB</totalSizeCap>
         </rollingPolicy>
 
