@@ -775,6 +775,22 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             io.setRemarks(contractapp.getRemarks());
                             io.setMaketype(rowindex);
                             io.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                            //region acc add 9/16 重做决裁书时更新汇率和売上(RMB) from
+                            String startDate = contractapp.getClaimdatetime().split("~")[0].trim();
+                            String exchangeRateMonthly = startDate.substring(0, startDate.length() - 3);
+                            MonthlyRate findrate = new MonthlyRate();
+                            findrate.setMonth(exchangeRateMonthly);
+                            findrate.setCurrency(contractapp.getCurrencyposition());
+                            List<MonthlyRate> rateresult = monthlyRateMapper.select(findrate);
+                            if(rateresult.size() > 0){
+                                io.setExchangerate(rateresult.get(0).getExchangerate());
+                                BigDecimal requestAmount = new BigDecimal(contractapp.getClaimamount());
+                                io.setSarmb((new BigDecimal(contractapp.getClaimamount()).multiply(new BigDecimal(rateresult.get(0).getExchangerate())).setScale(2,BigDecimal.ROUND_HALF_UP)).toString());
+                            }else{
+                                award.setExchangerate("0");
+                                award.setSarmb("0");
+                            }
+                            //endregion acc add 9/16 重做决裁书时更新汇率和売上(RMB) to
                             AwardMapper.updateByPrimaryKeySelective(io);
                         }
                     } else {
