@@ -1,11 +1,14 @@
 package com.nt.service_pfans.PFANS6000.Impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.PublicExpense;
 import com.nt.dao_Pfans.PFANS6000.*;
 import com.nt.dao_Pfans.PFANS6000.Vo.bpSum2Vo;
 import com.nt.dao_Pfans.PFANS6000.Vo.bpSum3Vo;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.mapper.PublicExpenseMapper;
 import com.nt.service_pfans.PFANS6000.CompanyStatisticsService;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
@@ -67,7 +70,8 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 
     @Autowired
     private PublicExpenseMapper publicExpenseMapper;
-
+    @Autowired
+    private OrgTreeService orgTreeService;
 
     @Override
     public Map<String, Object> getCosts(String groupid, String years) throws Exception {
@@ -965,5 +969,119 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         } else {
             return 4 * (month - 4) + 3;
         }
+    }
+
+    @Override
+    public Map<String, Object> downloadPdf(String dates) throws Exception {
+        Map<String, Object> resultRet = new HashMap<>();
+
+        String strYears = dates.substring(0,4);
+        int intMonths = Integer.valueOf(dates.substring(5,7));
+        if(intMonths == 1 || intMonths == 2 || intMonths == 3){
+            strYears = String.valueOf(Integer.valueOf(strYears) - 1);
+        }
+        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+        JSONObject mapJb = new JSONObject();
+        List<String> supchinese = new ArrayList<>();
+
+        Map<String, Double> totalCostMapx = new HashMap<>();
+
+        if(allDepartment.size() > 0){
+            // 预提-工数
+            String property = "manhour" + intMonths;
+            // 预提-费用
+            String propertyC = "cost" + intMonths;
+            // 费用-工数
+            String propertyf = "manhour" + intMonths + "f";
+            // 费用-费用
+            String propertyCf = "cost" + intMonths + "f";
+            // 预提-工数总额-部门
+            String propertyCountD = "totalmanhoursD";
+            // 预提-工数总额-公司
+            String propertyCountP = "totalmanhoursP";
+            // 预提-费用总额-部门
+            String propertyCCountD = "totalcostD";
+            // 预提-费用总额-公司
+            String propertyCCountC = "totalcostC";
+            // 费用-工数总额-部门
+            String propertyfCountD = "totalmanhourf";
+            // 费用-工数总额-公司
+            String propertyfCountC = "totalmanhourfC";
+            // 费用-费用总额-部门
+            String propertyCfCountD = "totalcostf";
+            // 费用-费用总额-公司
+            String propertyCfCountC = "totalcostfC";
+
+            // 循环部门
+            for(DepartmentVo depVo : allDepartment){
+                totalCostMapx.put("manhour" + depVo.getDepartmentEn(), 0.0);
+                totalCostMapx.put("cost" + depVo.getDepartmentEn(), 0.0);
+                totalCostMapx.put("manhourf" + depVo.getDepartmentEn(), 0.0);
+                totalCostMapx.put("costf" + depVo.getDepartmentEn(), 0.0);
+                // 单个部门数据
+                Map<String, Object> resultRetAll = new HashMap<>();
+                double manhourCount = 0;
+                double costCount = 0;
+                double manhourfCount = 0;
+                double  costfCount = 0;
+                //获取数据
+                Map<String, Object> result = getCosts(depVo.getDepartmentId(), strYears);
+
+                List<CompanyStatistics> companyStatisticsList = (List<CompanyStatistics>) result.get("company");
+
+                for (CompanyStatistics c : companyStatisticsList) {
+                    Map<String, Double> totalCostMap = new HashMap<>();
+
+                    //预提/费用计算
+                    double manhour = Double.parseDouble(BeanUtils.getProperty(c, property));
+                    double cost = Double.parseDouble(BeanUtils.getProperty(c, propertyC));
+                    double manhourf = Double.parseDouble(BeanUtils.getProperty(c, propertyf));
+                    double  costf = Double.parseDouble(BeanUtils.getProperty(c, propertyCf));
+                    // 合计值
+                    manhourCount = manhourCount + manhour;
+                    costCount = costCount + cost;
+                    manhourfCount = manhourfCount + manhourf;
+                    costfCount = costfCount + costf;
+
+                    totalCostMap.put("manhour", totalCostMap.getOrDefault(property, 0.0) + manhour);
+                    totalCostMap.put("cost", totalCostMap.getOrDefault(propertyC, 0.0) + cost);
+                    totalCostMap.put("manhourf", totalCostMap.getOrDefault(propertyf, 0.0) + manhourf);
+                    totalCostMap.put("costf", totalCostMap.getOrDefault(propertyCf, 0.0) + costf);
+
+
+                    Supplierinfor ls = supplierinforMapper.selectByPrimaryKey(c.getBpcompany());
+                    if (ls != null) {
+                        resultRetAll.put(ls.getSupchinese(),totalCostMap);
+                        if(supchinese.indexOf(ls.getSupchinese()) < 0){
+                            supchinese.add(ls.getSupchinese());
+                            resultRet.put(ls.getSupchinese(),new ArrayList<>());
+                        }
+                    }
+                }
+                resultRetAll.put("manhourCount", manhourCount);
+                resultRetAll.put("costCount", costCount);
+                resultRetAll.put("manhourfCount", manhourfCount);
+                resultRetAll.put("costfCount", costfCount);
+                mapJb.put(depVo.getDepartmentEn(), resultRetAll);
+            }
+        }
+        for (Map.Entry<String, Object> map : mapJb.entrySet()){
+            String mapkry = map.getKey();
+            Object mapkryValue = map.getValue();
+//            for (Object resultRetmap : mapkryValue){
+//                resultRetmap.setValue(totalCostMapx);
+//                String b = "1";
+//            }
+            for (Map.Entry<String, Object> resultRetmap : resultRet.entrySet()){
+                resultRetmap.setValue(totalCostMapx);
+            }
+        }
+//        Iterator iter = mapJb.entrySet().iterator();
+//        while (iter.hasNext()) {
+//            Map.Entry entry = (Map.Entry) iter.next();
+//            System.out.println(entry.getKey().toString());
+//            System.out.println(entry.getValue().toString());
+//        }
+        return resultRet;
     }
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -98,5 +99,27 @@ public class Pfans6009Controller {
         } catch (Exception e) {
             return ApiResult.fail("操作失败！");
         }
+    }
+
+    /**
+     * 月度费用总览导出pdf
+     *
+     */
+    @RequestMapping(value = "/downloadPdf", method = { RequestMethod.GET })
+    public void downloadPdf(String dates,HttpServletRequest request, HttpServletResponse resp)  throws Exception {
+
+        Map<String, Object> pdfMap = companyStatisticsService.downloadPdf(dates);
+        Map<String, Object> data = new HashMap<>();
+        dates = dates.replace("-"," 年 ");
+        data.put("dates", dates.replace("-"," 年 "));
+        data.put("estimateNumAs1", "1");
+        data.put("costNumAs1", "2");
+        data.put("estimateNumAs2", "3");
+        data.put("costNumAs2", "4");
+        data.put("estimateNumAs3", "5");
+
+        ExcelOutPutUtil.OutPutPdf("月度费用总览", "yuedufeiyongzonglan.xls", data, resp);
+
+        ExcelOutPutUtil.deleteDir("E:\\PFANS\\image");
     }
 }

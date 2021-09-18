@@ -23,4 +23,6 @@ public interface CompanyStatisticsService {
     List<bpSum3Vo> getWorkerCounts(String groupid, String years) throws LogicalException;
 
     XSSFWorkbook downloadExcel(String groupid,String years,HttpServletRequest request, HttpServletResponse resp) throws LogicalException;
+
+    Map<String, Object> downloadPdf(String dates) throws Exception;
 }
