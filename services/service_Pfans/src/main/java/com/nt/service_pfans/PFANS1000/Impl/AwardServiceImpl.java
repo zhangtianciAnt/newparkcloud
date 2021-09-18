@@ -7,8 +7,6 @@ import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
 import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
-import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
-import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
@@ -18,16 +16,12 @@ import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS2000.PersonalCostService;
 import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
-import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
-import com.nt.utils.ExcelOutPutUtil;
 import com.nt.utils.dao.TokenModel;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -112,6 +106,7 @@ public class AwardServiceImpl implements AwardService {
         //scc 所有rank from
         List<com.nt.dao_Org.Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
         HashMap<String, String> dicList = new HashMap<>();
+
         for(Dictionary dic : dictionaryRank){
             dicList.put(dic.getCode(),dic.getValue1());
         }
@@ -127,14 +122,15 @@ public class AwardServiceImpl implements AwardService {
             PeoplewareFee getFee = new PeoplewareFee();
             getFee.setGroupid(sta.getIncondepartment());
             getFee.setYear(beginningYear);
+            getFee.setRanks(sta.getAttf());
             List<PeoplewareFee> peeList = peoplewareFeeMapper.select(getFee);
             //Map<String, PeoplewareFee> bmRanksInfo = personalCostService.getBmRanksInfo(beginningYear, sta.getIncondepartment());//部门所有rank成本
-            HashMap<String, List<PeoplewareFee>> costOf = new HashMap<>();
-            costOf.put(sta.getIncondepartment(),peeList);
+
+
 //            for(String key : bmRanksInfo.keySet()){
 //                costOf.put(dicList.get(key),bmRanksInfo.get(key).getMonth4() + "~" + bmRanksInfo.get(key).getMonth7());
 //            }
-            sta.setBm(costOf);//页面初始化成本
+            sta.setBm(peeList);//页面初始化成本
             //人件费 获取实际成本变更 ztc to
             sta.setIncondepartment(companyid.get(sta.getIncondepartment()));//存部门
         }

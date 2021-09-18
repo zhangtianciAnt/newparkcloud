@@ -13,6 +13,7 @@ import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
 import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
+import com.nt.dao_Pfans.PFANS8000.MonthlyRate;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.OrgTreeService;
@@ -27,6 +28,7 @@ import com.nt.service_pfans.PFANS4000.mapper.SealMapper;
 import com.nt.service_pfans.PFANS5000.mapper.ProjectContractMapper;
 import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
 import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
+import com.nt.service_pfans.PFANS8000.mapper.MonthlyRateMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.PageUtil;
@@ -43,6 +45,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -103,6 +106,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private AwardDetailMapper awardDetailMapper;
     @Autowired
     private OrgTreeService orgtreeService;
+
+    @Autowired
+    private MonthlyRateMapper monthlyRateMapper;
+
     //add-ws-7/22-禅道341任务
     @Override
     public List<Individual> getindividual(Individual individual) throws Exception {
@@ -768,6 +775,22 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             io.setRemarks(contractapp.getRemarks());
                             io.setMaketype(rowindex);
                             io.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                            //region acc add 9/16 重做决裁书时更新汇率和売上(RMB) from
+                            String startDate = contractapp.getClaimdatetime().split("~")[0].trim();
+                            String exchangeRateMonthly = startDate.substring(0, startDate.length() - 3);
+                            MonthlyRate findrate = new MonthlyRate();
+                            findrate.setMonth(exchangeRateMonthly);
+                            findrate.setCurrency(contractapp.getCurrencyposition());
+                            List<MonthlyRate> rateresult = monthlyRateMapper.select(findrate);
+                            if(rateresult.size() > 0){
+                                io.setExchangerate(rateresult.get(0).getExchangerate());
+                                BigDecimal requestAmount = new BigDecimal(contractapp.getClaimamount());
+                                io.setSarmb((new BigDecimal(contractapp.getClaimamount()).multiply(new BigDecimal(rateresult.get(0).getExchangerate())).setScale(2,BigDecimal.ROUND_HALF_UP)).toString());
+                            }else{
+                                award.setExchangerate("0");
+                                award.setSarmb("0");
+                            }
+                            //endregion acc add 9/16 重做决裁书时更新汇率和売上(RMB) to
                             AwardMapper.updateByPrimaryKeySelective(io);
                         }
                     } else {
@@ -799,6 +822,22 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         award.setRemarks(contractapp.getRemarks());
                         award.setMaketype(rowindex);
                         award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                        //region acc add 9/16 在觉书做成时生成汇率和売上(RMB) from
+                        String startDate = contractapp.getClaimdatetime().split("~")[0].trim();
+                        String exchangeRateMonthly = startDate.substring(0, startDate.length() - 3);
+                        MonthlyRate findrate = new MonthlyRate();
+                        findrate.setMonth(exchangeRateMonthly);
+                        findrate.setCurrency(contractapp.getCurrencyposition());
+                        List<MonthlyRate> rateresult = monthlyRateMapper.select(findrate);
+                        if(rateresult.size() > 0){
+                            award.setExchangerate(rateresult.get(0).getExchangerate());
+                            BigDecimal requestAmount = new BigDecimal(contractapp.getClaimamount());
+                            award.setSarmb((new BigDecimal(contractapp.getClaimamount()).multiply(new BigDecimal(rateresult.get(0).getExchangerate())).setScale(2,BigDecimal.ROUND_HALF_UP)).toString());
+                        }else{
+                            award.setExchangerate("0");
+                            award.setSarmb("0");
+                        }
+                        //endregion acc add 9/16 在觉书做成时生成汇率和売上(RMB) to
                         AwardMapper.insert(award);
                     }
 //                    upd_fjl_05/26   --课题票No.176 生成决裁时ID不变（不能删除旧的数据，走更新处理）
