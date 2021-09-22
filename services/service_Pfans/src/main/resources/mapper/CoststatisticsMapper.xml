@@ -137,7 +137,7 @@
 			COST12 = #{item.cost12},
 			EXPENSESOLO12 = #{item.expensesolo12},
 			SUPPORT12 = #{item.support12},
-			TOTALMANHOURS12 =#{item.totalmanhoues12},
+			TOTALMANHOURS12 =#{item.totalmanhours12},
 			TOTALCOST12 = #{item.totalcost12},
 			EXPENSE12 = #{item.expense12},
 			CONTRACT12 = #{item.contract12},
@@ -177,7 +177,7 @@
 			TENANTID = #{item.tenantid},
 			BPNAME1 = #{item.bpname1},
 			YEARS = #{item.years},
-			GROUP_ID =#{item.groupid})
+			GROUP_ID =#{item.groupid}
 			WHERE COSTSTATISTICS_ID = #{item.coststatistics_id};
 		</foreach>
 	</update>

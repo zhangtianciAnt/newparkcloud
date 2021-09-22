@@ -61,7 +61,7 @@ public class Pfans6009Controller {
         }
         Coststatistics coststatistics = new Coststatistics();
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(companyStatisticsService.getCosts(groupid,years));
+        return ApiResult.success(companyStatisticsService.getCostsByGrpAndY(groupid,years));
     }
 
 

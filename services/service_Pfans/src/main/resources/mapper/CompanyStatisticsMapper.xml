@@ -498,7 +498,7 @@
 
 	<insert id="insertAll" parameterType="java.util.List">
 		insert into companystatistics
-		(COMPANYSTATISTICS_ID,YEAR,GROUP_ID,BPCOMPANYID,BPCOMPANY
+		(COMPANYSTATISTICS_ID,YEAR,GROUP_ID,BPCOMPANYID,BPCOMPANY,
 		MANHOUR4,COST4,MANHOUR4F,COST4F,
 		MANHOUR5,COST5,MANHOUR5F,COST5F,
 		MANHOUR6,COST6,MANHOUR6F,COST6F,
@@ -515,7 +515,7 @@
 		MANHOUR2,COST2,MANHOUR2F,COST2F,
 		MANHOUR3,COST3,MANHOUR3F,COST3F,
 
-		TOTALMANHOURS,TOTALCOST,TOTALMANHOURF,TOTALCOSTF,
+		TOTALMANHOUR,TOTALCOST,TOTALMANHOURF,TOTALCOSTF,
 
 		CREATEBY,CREATEON,MODIFYBY,MODIFYON,OWNER,STATUS,TENANTID)
 		values
@@ -537,7 +537,7 @@
 			#{item.manhour2},#{item.cost2},   #{item.manhour2f},#{item.cost2f},
 			#{item.manhour3},#{item.cost3},   #{item.manhour3f},#{item.cost3f},
 
-			#{item.totalmanhours},#{item.totalcost},#{item.totalmanhourf},#{item.totalcostf}
+			#{item.totalmanhour},#{item.totalcost},#{item.totalmanhourf},#{item.totalcostf},
 
 			#{item.createby},
 			#{item.createon},
@@ -614,7 +614,7 @@
 			MANHOUR3F = #{item.manhour3f},
 			COST3F = #{item.cost3f},
 
-			TOTALMANHOURS = #{item.totalmanhours},
+			TOTALMANHOUR = #{item.totalmanhour},
 			TOTALCOST = #{item.totalcost},
 			TOTALMANHOURF = #{item.totalmanhourf},
 			TOTALCOSTF = #{item.totalcostf},
@@ -626,7 +626,7 @@
 			MODIFYON = #{item.modifyon},
 			OWNER = #{item.owner},
 			STATUS = #{item.status},
-			TENANTID = #{item.tenantid})
+			TENANTID = #{item.tenantid}
 			WHERE COMPANYSTATISTICS_ID = #{item.companystatistics_id};
 		</foreach>
 	</update>
