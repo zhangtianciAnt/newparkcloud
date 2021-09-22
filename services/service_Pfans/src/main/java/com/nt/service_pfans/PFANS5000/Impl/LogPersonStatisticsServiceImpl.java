@@ -199,9 +199,10 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
                 personReturnVo.setProject("—");
                 personReturnVo.setAdjust(null);
                 BigDecimal total = BigDecimal.ZERO;
+                BigDecimal adtotal = BigDecimal.ZERO;
                 for (LogPersonStatistics logs : m.getValue()) {
-                    total = total.add(StringUtils.isNullOrEmpty(logs.getDuration()) ? BigDecimal.ZERO : new BigDecimal(logs.getDuration()));
-//                    total = total.add(StringUtils.isNullOrEmpty(logs.getDuration()) ? BigDecimal.ZERO : new BigDecimal(logs.getAdjust()));
+                    total = total.add(StringUtils.isNullOrEmpty(logs.getDuration()) ? BigDecimal.ZERO : new BigDecimal(logs.getDuration()));//总计
+                    adtotal = adtotal.add(StringUtils.isNullOrEmpty(logs.getAdjust()) ? BigDecimal.ZERO : new BigDecimal(logs.getAdjust()));//工时调整总计
                     //region scc add 获取名字 from
                     Query name = new Query();
                     name.addCriteria(Criteria.where("userid").is(logs.getUser_id()));
@@ -219,7 +220,7 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
                     //endregion scc add 获取名字 to
                 }
                 personReturnVo.setGeneral(total.toString());
-                BigDecimal ratio = total.divide(new BigDecimal(workDaysExceptWeekend * 8),4,BigDecimal.ROUND_HALF_UP);
+                BigDecimal ratio = adtotal.divide(new BigDecimal(workDaysExceptWeekend * 8),4,BigDecimal.ROUND_HALF_UP);
                 BigDecimal percentageOf = ratio.multiply(new BigDecimal("100")).setScale(2,BigDecimal.ROUND_HALF_UP);
                 personReturnVo.setRatio(percentageOf.toString() + "%");
                 personReturnVo.setLogpersonstatistics(m.getValue());

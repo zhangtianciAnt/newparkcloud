@@ -169,7 +169,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             wL = wL.stream().filter(item -> (item.getStatus().equals("4")) || item.getStatus().equals("0")).collect(Collectors.toList());
             if(wL.size()>0)
             {
-//                throw new LogicalException(months+"月的费用已经通过审批，不允许再次生成。");
+                throw new LogicalException(months+"月的费用已经通过审批，不允许再次生成。");
             }
         }
         //add ccm to 2021-04
@@ -852,7 +852,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         //费用
         String cost = "cost" + months;
         //经费（3,6,9,12月有数据）
-        String expense = "expense" + months;
+        String expensesolo = "expensesolo" + months;
         Integer groupIdListcount = groupIdList.size();
         List<Map<String, String>> dataList = new ArrayList<Map<String,String>>();
         String strGroupid = "";
@@ -913,7 +913,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 }
                 //endregion 事业计划费用
 
-                List<Map<String, String>> data = coststatisticsMapper.getcostMonth(dates.substring(0,7),manhour,cost,expense,months,groupIdList.get(i));
+                List<Map<String, String>> data = coststatisticsMapper.getcostMonth(dates.substring(0,7),manhour,cost,expensesolo,months,groupIdList.get(i));
                 if(data.size() > 0){
                     if(i == 0){
                         dataList = data;

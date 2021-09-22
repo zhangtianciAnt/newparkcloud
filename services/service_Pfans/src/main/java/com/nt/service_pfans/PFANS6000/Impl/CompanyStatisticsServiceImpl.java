@@ -201,7 +201,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                     bigManhourCount = bigManhourCount.add(bigTormb);
 
                     // 作业工数 = 外注费用 / 18500
-                    BigDecimal bigManhour = bigTormb.divide(new BigDecimal(18500)).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal bigManhour = bigTormb.divide(new BigDecimal(18500),2,4).setScale(2, RoundingMode.HALF_UP);
 
                     // 费用-总作业工数
                     bigTormbCount = bigTormbCount.add(bigManhour);
@@ -839,7 +839,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                     String propertyf = "manhour" + k + "f";
                     String propertyCf = "cost" + k + "f";
                     if (k > 12) {
-                        property = "totalmanhours";
+                        property = "totalmanhour";
                         propertyC = "totalcost";
                         propertyf = "totalmanhourf";
                         propertyCf = "totalcostf";
@@ -862,8 +862,8 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                         totalCostMap.put(propertyf, totalCostMap.getOrDefault(propertyf, 0.0) + manhourf);
                         totalCostMap.put(propertyCf, totalCostMap.getOrDefault(propertyCf, 0.0) + costf);
                     } catch (Exception e) {
-                    }
 
+                    }
                 }
 
                 row.createCell(1).setCellValue(i - 3);
@@ -887,7 +887,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 String propertyf = "manhour" + k + "f";
                 String propertyCf = "cost" + k + "f";
                 if (k > 12) {
-                    property = "totalmanhours";
+                    property = "totalmanhour";
                     propertyC = "totalcost";
                     propertyf = "totalmanhourf";
                     propertyCf = "totalcostf";
@@ -1081,30 +1081,6 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             int i = 4;
             Map<String, Double> totalCostMap = new HashMap<>();
             SimpleDateFormat sf1ym = new SimpleDateFormat("yyyy-MM");
-//            for (bpSum3Vo c : list) {
-//                //创建工作表的行
-//                XSSFRow row = sheet.createRow(i);
-//                Double lineTotalManhour = 0.0;
-//                int month = Integer.valueOf(sf1ym.format(sf1ym.parse(c.getDate())).substring(5, 7));
-//                for (int k = 1; k <= 12; k++) {
-//                    double manhour = 0;
-//                    String property = "manhour" + k;
-//                    int colIndex = k > 12 ? k + 2 : (getColIndex4Month(k) - 3) / 2 + 3;
-//                    if (month == k) {
-//                        manhour = Double.valueOf(c.getCounts());
-//                    }
-//                    lineTotalManhour += manhour;
-//                    lineTotal += manhour;
-//                    row.createCell(colIndex).setCellValue(manhour);
-//                    totalCostMap.put(property, totalCostMap.getOrDefault(property, 0.0) + manhour);
-//                }
-//                row.createCell(1).setCellValue(i - 3);
-//                row.createCell(2).setCellValue(c.getSUPPLIERNAME());
-//                row.createCell(15).setCellValue(lineTotalManhour);
-//                totalCostMap.put("totalmanhours", totalCostMap.getOrDefault("totalmanhours", 0.0) + getDoubleValue(c, "totalmanhours"));
-//                i++;
-//            }
-
             for (bpSum3Vo c : list) {
                 //创建工作表的行
                 XSSFRow row = sheet.createRow(i);
@@ -1198,14 +1174,6 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             rowT.createCell(colIndexTol).setCellValue(Total);
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
-        }
-    }
-
-    private Double getDoubleValue(Object o, String property) {
-        try {
-            return Double.parseDouble(BeanUtils.getProperty(o, property));
-        } catch (Exception e) {
-            return 0.0;
         }
     }
 
