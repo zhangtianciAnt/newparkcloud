@@ -73,7 +73,17 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 
     public List<CompanyStatistics> getCostsByGrpAndY(String groupid,String years) throws Exception{
         List<CompanyStatistics> companyStatisticsList = new ArrayList<>();
-        //todo  画面数据加载时内容
+        CompanyStatistics companyStatistics = new CompanyStatistics();
+        companyStatistics.setGroup_id(groupid);
+        companyStatistics.setYear(years);
+        if(groupid.equals(""))
+        {
+            companyStatisticsList = companyStatisticsMapper.selectAllcompany(years);
+        }
+        else
+        {
+            companyStatisticsList = companyStatisticsMapper.select(companyStatistics);
+        }
         return companyStatisticsList;
     }
 
@@ -294,24 +304,6 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         // add gbb 210914 BP社统计添加添加费用列 end
         result.put("company", new ArrayList<>(companyMap.values()));
 
-        //region  add_qhr_20210901 添加bp社统计费用数据
-//        BpCompanyCost bpCompanyCost = new BpCompanyCost();
-//        bpCompanyCost.setGroup_id(groupid);
-//        bpCompanyCost.setYear(years);
-//        List<BpCompanyCost> bpCompanyCostList = bpCompanyCostMapper.select(bpCompanyCost);
-//        HashMap<String, BpCompanyCost> bpmap = new HashMap<>();
-//        for (BpCompanyCost companyCost : bpCompanyCostList) {
-//            bpmap.put(companyCost.getBpcompany(), companyCost);
-//        }
-//        for (CompanyStatistics value : companyMap.values()) {
-//            String BpCompany = value.getBpcompany();
-//            BpCompanyCost bpCompanyCost1 = bpmap.get(BpCompany);
-//            if (bpCompanyCost1 == null) {
-//                continue;
-//            }
-//        }
-        //endregion  add_qhr_20210901 添加bp社统计费用数据
-
         // year
         result.put("year", years);
         result.put("group", groupid);
@@ -349,6 +341,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                     if(supplierinfors!=null)
                     {
                         company.setBpcompany(supplierinfors.getSupchinese());
+                        cpany.setYear(years);
                         cpany.setGroup_id(groupid);
                         cpany.setBpcompanyid(company.getBpcompanyid());
                         cpany.setBpcompany(company.getBpcompany());
@@ -770,35 +763,6 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         return insertCount;
     }
 
-//    @Override
-//    public Map<String, Object> getWorkTimes(Coststatistics coststatistics,String groupid,String years) {
-//        Map<String, Object> result = new HashMap<>();
-//
-//        Map<String, Object> sqlParams = new HashMap<>();
-//        sqlParams.putAll(BeanMap.create(coststatistics));
-//        sqlParams.put("yesValue", "是");
-//        sqlParams.put("noValue", "否");
-//        List<CompanyStatistics> list = companyStatisticsMapper.getWorkTimes(sqlParams);
-//        result.put("worktimes", list);
-//        // year
-//        result.put("year", getBusinessYear());
-//        return result;
-//    }
-//
-//    @Override
-//    public Map<String, Object> getWorkerCounts(Coststatistics coststatistics,String groupid,String years) {
-//        Map<String, Object> result = new HashMap<>();
-//        Map<String, Object> sqlParams = new HashMap<>();
-//        sqlParams.putAll(BeanMap.create(coststatistics));
-//        sqlParams.put("yesValue", "是");
-//        List<CompanyStatistics> list = companyStatisticsMapper.getWorkers(sqlParams);
-//        result.put("workers", list);
-//        // year
-//        result.put("year", getBusinessYear());
-//        return result;
-//    }
-
-
     @Override
     public List<bpSum2Vo> getWorkTimes(String groupid, String years) throws LogicalException {
         List<bpSum2Vo> list2 = companyStatisticsMapper.getbpsum2(groupid, years);
@@ -810,27 +774,6 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     public List<bpSum3Vo> getWorkerCounts(String groupid, String years) throws LogicalException {
         List<bpSum3Vo> list = companyStatisticsMapper.getbpsum(groupid, years);
         return list;
-    }
-
-
-    private String[] getBusinessYear() {
-        String[] arr = {"", ""};
-        Calendar now = Calendar.getInstance();
-        int month = now.get(Calendar.MONTH) + 1;
-
-        if (month >= 1 && month <= 3) {
-            String yearL = String.valueOf(now.get(Calendar.YEAR) - 1);
-            String year = String.valueOf(now.get(Calendar.YEAR));
-            arr[0] = yearL;
-            arr[1] = year;
-            return arr;
-        } else {
-            String yearL = String.valueOf(now.get(Calendar.YEAR));
-            String year = String.valueOf(now.get(Calendar.YEAR) + 1);
-            arr[0] = yearL;
-            arr[1] = year;
-            return arr;
-        }
     }
 
     @Override
@@ -856,28 +799,30 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         }
     }
 
-
     private void getReportWork1(XSSFSheet sheet1, String groupid, String years) throws LogicalException {
         try {
-            Coststatistics coststatistics = new Coststatistics();
-//todo
-            Map<String, Object> result = null;
-            List<CompanyStatistics> companyStatisticsList = (List<CompanyStatistics>) result.get("company");
-//            Map<String, Double> trip = (Map<String, Double>) result.get("trip");
-//            Map<String, Double> asset = (Map<String, Double>) result.get("asset");
-
+            CompanyStatistics companyStatistics = new CompanyStatistics();
+            companyStatistics.setYear(years);
+            companyStatistics.setGroup_id(groupid);
+            List<CompanyStatistics> companyStatisticsList = new ArrayList<>();
+            if(groupid.equals(""))
+            {
+                companyStatisticsList = companyStatisticsMapper.selectAllcompany(years);
+            }
+            else
+            {
+                companyStatisticsList = companyStatisticsMapper.select(companyStatistics);
+            }
             Calendar now = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("MM月");
             now.setTime(sdf.parse("04月"));
             //日期赋值
             for (int j = 1; j <= 12; j++) {
-                // sheet1.getRow(1).getCell(2 * j + 1).setCellValue(sdf.format(now.getTime()))
                 sheet1.getRow(1).getCell(3 +  4 * (j - 1)).setCellValue(sdf.format(now.getTime()));
                 now.set(Calendar.MONTH, now.get(Calendar.MONTH) + 1);
             }
             //
             Map<String, Double> totalCostMap = new HashMap<>();
-            //Map<String, Double> totalCostMap1 = new HashMap<>();
             //将数据放入Excel
             int i = 4;
             for (CompanyStatistics c : companyStatisticsList) {
@@ -926,39 +871,15 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 if (ls != null) {
                     row.createCell(2).setCellValue(ls.getSupchinese());
                 }
-//                row.createCell(27).setCellValue(c.getTotalmanhours());
-//                row.createCell(28).setCellValue(c.getTotalcost());
-
-                //totalCostMap.put("totalmanhours", totalCostMap.getOrDefault("totalmanhours", 0.0) + getDoubleValue(c, "totalmanhours"));
-                //totalCostMap.put("totalcost", totalCostMap.getOrDefault("totalcost", 0.0) + getDoubleValue(c, "totalcost"));
                 i++;
             }
             int rowIndex = companyStatisticsList.size() + 3;
             //合计行
             XSSFRow rowT = sheet1.createRow(1 + rowIndex);
             rowT.createCell(1).setCellValue("合计");
-//            //経費除きの平均単価(人月)
-//            XSSFRow rowT1 = sheet1.createRow(2 + rowIndex);
-//            rowT1.createCell(1).setCellValue("経費除きの平均単価(人月)");
-//            //出張経費(元)
-//            XSSFRow rowT2 = sheet1.createRow(3 + rowIndex);
-//            rowT2.createCell(1).setCellValue("出張経費(元)");
-//            //設備経費(元)
-//            XSSFRow rowT3 = sheet1.createRow(4 + rowIndex);
-//            rowT3.createCell(1).setCellValue("設備経費(元)");
-//            //外注総合費用合計(元)
-//            XSSFRow rowT4 = sheet1.createRow(5 + rowIndex);
-//            rowT4.createCell(1).setCellValue("外注総合費用合計(元)");
 
             CellRangeAddress region = new CellRangeAddress(1 + rowIndex, 1 + rowIndex, 1, 2);
             sheet1.addMergedRegion(region);
-            // 合计28列，后数4行，两两合并
-//            for (int r = rowIndex + 2; r < rowIndex + 6; r++) {
-//                for (i = 1; i <= 28; i = i + 2) {
-//                    CellRangeAddress region1 = new CellRangeAddress(r, r, i, i + 1);
-//                    sheet1.addMergedRegion(region1);
-//                }
-//            }
             // 设置值
             for (int k = 1; k <= 13; k++) {
                 String property = "manhour" + k;
@@ -972,57 +893,24 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                     propertyCf = "totalcostf";
                 }
                 int colIndex = getColIndex41Month(k);
-//                double tripflg = 0.0;
-//                double assetflg = 0.0;
-//                double totalCostMapflg = 0.0;
-//                if (trip.size() > 0) {
-//                    //出張経費(元)
-//                    rowT2.createCell(colIndex).setCellValue(trip.get(propertyC));
-//                    tripflg = trip.get(propertyC);
-//                } else {
-//                    rowT2.createCell(colIndex).setCellValue(0.0);
-//                }
-//                if (asset.size() > 0) {
-//                    //設備経費(元)
-//                    rowT3.createCell(colIndex).setCellValue(asset.get(propertyC));
-//                    assetflg = asset.get(propertyC);
-//                } else {
-//                    rowT3.createCell(colIndex).setCellValue(0.0);
-//                }
                 if (totalCostMap.size() > 0) {
                     //合计行
                     rowT.createCell(colIndex).setCellValue(totalCostMap.get(property));
                     rowT.createCell(colIndex + 1).setCellValue(totalCostMap.get(propertyC));
                     rowT.createCell(colIndex + 2).setCellValue(totalCostMap.get(propertyf));
                     rowT.createCell(colIndex + 3).setCellValue(totalCostMap.get(propertyCf));
-                    //経費除きの平均単価(人月)
-//                    if (totalCostMap.get(property) == 0) {
-//                        Double avg = 0.00;
-//                        rowT1.createCell(colIndex).setCellValue(avg);
-//                        totalCostMapflg = totalCostMap.get(propertyC);
-//                    } else {
-//                        Double avg = totalCostMap.get(propertyC) / totalCostMap.get(property);
-//                        DecimalFormat dlf = new DecimalFormat("#0.00");
-//                         avg = Double.valueOf(dlf.format(avg));
-//                         rowT1.createCell(colIndex).setCellValue(avg);
-//                        totalCostMapflg = totalCostMap.get(propertyC);
-//                    }
 
                 } else {
                     rowT.createCell(colIndex).setCellValue(0.0);
                     rowT.createCell(colIndex + 1).setCellValue(0.0);
-                    // rowT1.createCell(colIndex).setCellValue(0.0);
                 }
                 //外注総合費用合計(元)
-                // Double totalAll = totalCostMapflg + tripflg + assetflg;
-                // rowT4.createCell(colIndex).setCellValue(totalAll);
             }
 
         } catch (Exception e) {
             throw new LogicalException(e.getMessage());
         }
     }
-
 
     private void getReportWork2(XSSFSheet sheet1, String groupid, String years) throws LogicalException {
         try {
