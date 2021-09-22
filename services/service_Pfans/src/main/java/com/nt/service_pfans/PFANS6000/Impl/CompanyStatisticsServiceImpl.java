@@ -15,6 +15,7 @@ import com.nt.service_pfans.PFANS6000.CoststatisticsService;
 import com.nt.service_pfans.PFANS6000.mapper.*;
 import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
+import com.nt.utils.dao.TokenModel;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -77,72 +78,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     public Map<String, Object> getCosts(String groupid, String years) throws Exception {
         Map<String, Object> result = new HashMap<>();
 
-        // reigon BP社统计页面【出差经费(元)】和【设备经费(元)】合并为经费字段放置【预提】-【外注费用】列
-//        List<Variousfunds> allVariousfunds = variousfundsMapper.selectBygroupid(groupid, years);
-//        List<Dictionary> dictionaryList = dictionaryService.getForSelect("BP013");
-//        Map<String, String> plmonthPlanMap = new HashMap<>();
-//        Pattern pattern = Pattern.compile("(\\d+)");
-//        for (Dictionary d : dictionaryList) {
-//            String value = d.getValue1();
-//            Matcher matcher = pattern.matcher(value);
-//            if (matcher.find()) {
-//                value = matcher.group(1);
-//            }
-//            plmonthPlanMap.put(d.getCode(), value);
-//        }
-//
-//        Map<String, Double> tripMap = new HashMap<>();
-//        Map<String, Double> assetsMap = new HashMap<>();
-//        for (Variousfunds v : allVariousfunds) {
-//            String month = plmonthPlanMap.getOrDefault(v.getPlmonthplan(), "");
-//            Map<String, Double> targetMap = null;
-//            if ("BP014001".equals(v.getTypeoffees())) {
-//                //出张经费
-//                targetMap = tripMap;
-//            } else if ("BP014002".equals(v.getTypeoffees())) {
-//                //设备经费
-//                targetMap = assetsMap;
-//            } else {
-//                continue;
-//            }
-//            double value = targetMap.getOrDefault(month, 0.0);
-//            double addValue = 0;
-//            try {
-//                addValue = Double.parseDouble(v.getPayment());
-//            } catch (Exception e) {
-//            }
-//            targetMap.put(month, value + addValue);
-//        }
-//
-//        Map<String, Double> finalTripMap = new HashMap<>();
-//        Map<String, Double> finalAssetsMap = new HashMap<>();
-//        double totalTrip = 0;
-//        double totalAssets = 0;
-//        for (int i = 1; i <= 12; i++) {
-//            String key = i + "";
-//            double trip = tripMap.getOrDefault(key, 0.0);
-//            double asset = assetsMap.getOrDefault(key, 0.0);
-//            finalTripMap.put("cost".concat(key), trip);
-//            finalAssetsMap.put("cost".concat(key), asset);
-//            totalAssets += asset;
-//            totalTrip += trip;
-//        }
-//        finalTripMap.put("totalcost", totalTrip);
-//        finalAssetsMap.put("totalcost", totalAssets);
-//
-//        // add to result
-//        result.put("trip", finalTripMap);
-//        result.put("asset", finalAssetsMap);
-        // endreigon BP社统计页面【出差经费(元)】和【设备经费(元)】合并为经费字段放置【预提】-【外注费用】列
-
-        //获取该group下外驻人员的单价
         Map<String, Double> userPriceMap = coststatisticsService.getUserPriceMapBygroupid(groupid, years);
         // 获取公司名称
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
-//        if(groupid !=null && !groupid.isEmpty())
-//        {
-//            expatriatesinfor.setGroup_id(groupid);
-//        }
         List<Expatriatesinfor> companyList = expatriatesinforMapper.select(expatriatesinfor);
         Map<String, String> user2CompanyMap = new HashMap<String, String>();
         for (Expatriatesinfor ex : companyList) {
@@ -150,14 +88,6 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             String value = ex.getSupplierinfor_id();
             user2CompanyMap.put(key, value);
         }
-//        Calendar calendar = Calendar.getInstance();
-//        int year = 0;
-//        int month = calendar.get(Calendar.MONTH);
-//        if(month >= 1 && month <= 3) {
-//            year = calendar.get(Calendar.YEAR) - 1;
-//        }else {
-//            year = calendar.get(Calendar.YEAR);
-//        }
         List<Coststatistics> allCostList = coststatisticsMapper.getCoststatisticsBygroupid(Integer.valueOf(years), groupid);
         // add gbb 210914 BP社统计添加添加费用列 start
         // 查询费用的作业工数和外注费用
@@ -172,16 +102,13 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
 
             String bpcompany = user2CompanyMap.getOrDefault(c.getBpname(), "");
             CompanyStatistics company = companyMap.getOrDefault(bpcompany, new CompanyStatistics());
-//            if(!StringUtils.isNullOrEmpty(company.getManhour5())){
-//                company.setManhour5(dlf.format(Double.valueOf(company.getManhour5())));
-//            }
             company.setBpcompany(bpcompany);
 
             String userPriceKey = c.getBpname() + c.getGroupid() + "price";
             // 个人单位的合计费用(行合计)
-            double totalmanhours = 0;
+            BigDecimal totalmanhours = BigDecimal.ZERO;
             // 个人单位的合计工数(行合计)
-            double totalcost = 0;
+            BigDecimal totalcost = BigDecimal.ZERO;
 
             // 分别计算12个月的累计值
             for (int i = 1; i <= 12; i++) {
@@ -191,57 +118,51 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 String p_costf = "cost" + i + "f";
 
                 // 上一次合计结果
-                double oldManhour = 0;
-                double oldCost = 0;
+                BigDecimal oldManhour = BigDecimal.ZERO;
+                BigDecimal oldCost = BigDecimal.ZERO;
                 try {
-                    oldManhour = Double.parseDouble(BeanUtils.getProperty(company, p_manhour));
+                    oldManhour = new BigDecimal(BeanUtils.getProperty(company, p_manhour));
                 } catch (Exception e) {
                 }
                 try {
-                    oldCost = Double.parseDouble(BeanUtils.getProperty(company, p_cost));
+                    oldCost = new BigDecimal(BeanUtils.getProperty(company, p_cost));
                 } catch (Exception e) {
                 }
 
                 // 当前结果
-                double manhour = 0;
+                BigDecimal manhour = BigDecimal.ZERO;
                 try {
-                    manhour = Double.parseDouble(BeanUtils.getProperty(c, p_manhour));
+                    manhour = new BigDecimal(BeanUtils.getProperty(c, p_manhour));
                 } catch (Exception e) {
                 }
-                double price = userPriceMap.getOrDefault(userPriceKey + i, 0d);
-                double cost = price * manhour;
+                BigDecimal price = new BigDecimal(userPriceMap.getOrDefault(userPriceKey + i, 0d));
+                BigDecimal cost = price.multiply(manhour);
 
-                BigDecimal cost1 = new BigDecimal(Double.toString(cost));
-                BigDecimal cost2 = new BigDecimal(Double.toString(oldCost));
-                BigDecimal cost3 = new BigDecimal(Double.toString(manhour));
-                BigDecimal cost4 = new BigDecimal(Double.toString(oldManhour));
-                double newCost = cost1.add(cost2).doubleValue();
-                double newManhour =cost3.add(cost4).doubleValue();
+                BigDecimal newCost = cost.add(oldCost);
+                BigDecimal newManhour =manhour.add(oldManhour);
 
-//                company.setCost1("");
-//                company.setManhour1("");
                 BeanUtils.setProperty(company, p_cost, df.format(newCost));
                 BeanUtils.setProperty(company, p_manhour, newManhour);
                 BeanUtils.setProperty(company, p_manhourf, 0.0);
                 BeanUtils.setProperty(company, p_costf, 0.00);
-                totalcost += cost;
-                totalmanhours += manhour;
+                totalcost = totalcost.add(cost);
+                totalmanhours = totalmanhours.add(manhour);
             }
 
             // 操作行合计值
-            double oldTotalmanhours = 0;
-            double oldTotalcost = 0;
+            BigDecimal oldTotalmanhours = BigDecimal.ZERO;
+            BigDecimal oldTotalcost = BigDecimal.ZERO;
             try {
-                oldTotalcost = Double.parseDouble(company.getTotalcost());
+                oldTotalcost = company.getTotalcost() ==null  ?  BigDecimal.ZERO :company.getTotalcost();
             } catch (Exception e) {
             }
             try {
-                oldTotalmanhours = Double.parseDouble(company.getTotalmanhours());
+                oldTotalmanhours = company.getTotalmanhours()==null  ?  BigDecimal.ZERO :company.getTotalmanhours();
             } catch (Exception e) {
             }
 
-            company.setTotalcost(df.format(oldTotalcost + totalcost));
-            company.setTotalmanhours(df.format(oldTotalmanhours + totalmanhours));
+            company.setTotalcost(oldTotalcost.add(totalcost));
+            company.setTotalmanhours(oldTotalmanhours.add(totalmanhours));
             companyMap.put(bpcompany, company);
 
         }
@@ -252,11 +173,11 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat formatterM = new SimpleDateFormat("M");
             // 单价
-            BigDecimal unitPrice = new BigDecimal(Double.toString(18500));
+            BigDecimal unitPrice = new BigDecimal(18500);
             // 费用-作业工数
-            double bigTormbCount = 0;
+            BigDecimal bigTormbCount = BigDecimal.ZERO;
             // 费用-外注费用
-            double bigManhourCount = 0;
+            BigDecimal bigManhourCount = BigDecimal.ZERO;
             //费用计算
             for(PublicExpense newPub : newPList){
                 if (newPub.getJzmonth() != null && StringUtils.isNotEmpty(newPub.getTormb())) {
@@ -264,61 +185,61 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                     // 外注费用
                     BigDecimal bigTormb = new BigDecimal(newPub.getTormb());
                     // 费用-总外注费用
-                    bigManhourCount += bigTormb.doubleValue();
+                    bigManhourCount = bigManhourCount.add(bigTormb);
 
                     // 作业工数 = 外注费用 / 18500
-                    BigDecimal bigManhour = BigDecimal.valueOf(bigTormb.doubleValue() / 18500).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal bigManhour = bigTormb.divide(new BigDecimal(18500)).setScale(2, RoundingMode.HALF_UP);
 
                     // 费用-总作业工数
-                    bigTormbCount += bigTormb.doubleValue() / 18500;
+                    bigTormbCount = bigTormbCount.add(bigManhour);
 
                     if(strJzmonth.equals("1")){
-                        map.getValue().setCost1f(bigTormb.toString());
-                        map.getValue().setManhour1f(bigManhour.toString());
+                        map.getValue().setCost1f(bigTormb);
+                        map.getValue().setManhour1f(bigManhour);
                     }
                     else if(strJzmonth.equals("2")){
-                        map.getValue().setCost2(bigTormb.toString());
-                        map.getValue().setManhour2f(bigManhour.toString());
+                        map.getValue().setCost2(bigTormb);
+                        map.getValue().setManhour2f(bigManhour);
                     }
                     if(strJzmonth.equals("3")){
-                        map.getValue().setCost3f(bigTormb.toString());
-                        map.getValue().setManhour3f(bigManhour.toString());
+                        map.getValue().setCost3f(bigTormb);
+                        map.getValue().setManhour3f(bigManhour);
                     }
                     if(strJzmonth.equals("4")){
-                        map.getValue().setCost4f(bigTormb.toString());
-                        map.getValue().setManhour4f(bigManhour.toString());
+                        map.getValue().setCost4f(bigTormb);
+                        map.getValue().setManhour4f(bigManhour);
                     }
                     if(strJzmonth.equals("5")){
-                        map.getValue().setCost5f(bigTormb.toString());
-                        map.getValue().setManhour5f(bigManhour.toString());
+                        map.getValue().setCost5f(bigTormb);
+                        map.getValue().setManhour5f(bigManhour);
                     }
                     if(strJzmonth.equals("6")){
-                        map.getValue().setCost6f(bigTormb.toString());
-                        map.getValue().setManhour6f(bigManhour.toString());
+                        map.getValue().setCost6f(bigTormb);
+                        map.getValue().setManhour6f(bigManhour);
                     }
                     if(strJzmonth.equals("7")){
-                        map.getValue().setCost7f(bigTormb.toString());
-                        map.getValue().setManhour7f(bigManhour.toString());
+                        map.getValue().setCost7f(bigTormb);
+                        map.getValue().setManhour7f(bigManhour);
                     }
                     if(strJzmonth.equals("8")){
-                        map.getValue().setCost8f(bigTormb.toString());
-                        map.getValue().setManhour8f(bigManhour.toString());
+                        map.getValue().setCost8f(bigTormb);
+                        map.getValue().setManhour8f(bigManhour);
                     }
                     if(strJzmonth.equals("9")){
-                        map.getValue().setCost9f(bigTormb.toString());
-                        map.getValue().setManhour9f(bigManhour.toString());
+                        map.getValue().setCost9f(bigTormb);
+                        map.getValue().setManhour9f(bigManhour);
                     }
                     if(strJzmonth.equals("10")){
-                        map.getValue().setCost10f(bigTormb.toString());
-                        map.getValue().setManhour10f(bigManhour.toString());
+                        map.getValue().setCost10f(bigTormb);
+                        map.getValue().setManhour10f(bigManhour);
                     }
                     if(strJzmonth.equals("11")){
-                        map.getValue().setCost11f(bigTormb.toString());
-                        map.getValue().setManhour11f(bigManhour.toString());
+                        map.getValue().setCost11f(bigTormb);
+                        map.getValue().setManhour11f(bigManhour);
                     }
                     if(strJzmonth.equals("12")){
-                        map.getValue().setCost12f(bigTormb.toString());
-                        map.getValue().setManhour12f(bigManhour.toString());
+                        map.getValue().setCost12f(bigTormb);
+                        map.getValue().setManhour12f(bigManhour);
                     }
                     companyMap.put(map.getKey(),map.getValue());
                 }
@@ -326,46 +247,46 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             // 预提费用计算
             for(Coststatistics newCoststatistics : newCoststatisticsList){
                 // 外注费用1月
-                BigDecimal bigExpense1 = new BigDecimal(newCoststatistics.getExpense1()).add(new BigDecimal(map.getValue().getCost1()));
-                map.getValue().setCost1(bigExpense1.setScale(2, RoundingMode.HALF_UP).toString());
+                BigDecimal bigExpense1 = new BigDecimal(newCoststatistics.getExpensesolo1()).add(map.getValue().getCost1());
+                map.getValue().setCost1(bigExpense1.setScale(2, RoundingMode.HALF_UP));
                 // 外注费用2月
-                BigDecimal bigExpense2 = new BigDecimal(newCoststatistics.getExpense2()).add(new BigDecimal(map.getValue().getCost2()));
-                map.getValue().setCost2(bigExpense2.setScale(2, RoundingMode.HALF_UP).toString());
+                BigDecimal bigExpense2 = new BigDecimal(newCoststatistics.getExpensesolo2()).add(map.getValue().getCost2());
+                map.getValue().setCost2(bigExpense2.setScale(2, RoundingMode.HALF_UP));
                 // 外注费用3月
-                BigDecimal bigExpense3 = new BigDecimal(newCoststatistics.getExpense3()).add(new BigDecimal(map.getValue().getCost3()));
-                map.getValue().setCost3(bigExpense3.setScale(2, RoundingMode.HALF_UP).toString());
+                BigDecimal bigExpense3 = new BigDecimal(newCoststatistics.getExpensesolo3()).add(map.getValue().getCost3());
+                map.getValue().setCost3(bigExpense3.setScale(2, RoundingMode.HALF_UP));
                 // 外注费用4月
-                BigDecimal bigExpense4 = new BigDecimal(newCoststatistics.getExpense4()).add(new BigDecimal(map.getValue().getCost4()));
-                map.getValue().setCost4(bigExpense4.setScale(2, RoundingMode.HALF_UP).toString());
+                BigDecimal bigExpense4 = new BigDecimal(newCoststatistics.getExpensesolo4()).add(map.getValue().getCost4());
+                map.getValue().setCost4(bigExpense4.setScale(2, RoundingMode.HALF_UP));
                 // 外注费用5月
-                BigDecimal bigExpense5 = new BigDecimal(newCoststatistics.getExpense5()).add(new BigDecimal(map.getValue().getCost5()));
-                map.getValue().setCost5(bigExpense5.setScale(2, RoundingMode.HALF_UP).toString());
+                BigDecimal bigExpense5 = new BigDecimal(newCoststatistics.getExpensesolo5()).add(map.getValue().getCost5());
+                map.getValue().setCost5(bigExpense5.setScale(2, RoundingMode.HALF_UP));
                 // 外注费用6月
-                BigDecimal bigExpense6 = new BigDecimal(newCoststatistics.getExpense6()).add(new BigDecimal(map.getValue().getCost6()));
-                map.getValue().setCost6(bigExpense6.setScale(2, RoundingMode.HALF_UP).toString());
+                BigDecimal bigExpense6 = new BigDecimal(newCoststatistics.getExpensesolo6()).add(map.getValue().getCost6());
+                map.getValue().setCost6(bigExpense6.setScale(2, RoundingMode.HALF_UP));
                 // 外注费用7月
-                BigDecimal bigExpense7 = new BigDecimal(newCoststatistics.getExpense7()).add(new BigDecimal(map.getValue().getCost7()));
-                map.getValue().setCost7(bigExpense7.setScale(2, RoundingMode.HALF_UP).toString());
+                BigDecimal bigExpense7 = new BigDecimal(newCoststatistics.getExpensesolo7()).add(map.getValue().getCost7());
+                map.getValue().setCost7(bigExpense7.setScale(2, RoundingMode.HALF_UP));
                 // 外注费用8月
-                BigDecimal bigExpense8 = new BigDecimal(newCoststatistics.getExpense8()).add(new BigDecimal(map.getValue().getCost8()));
-                map.getValue().setCost8(bigExpense8.setScale(2, RoundingMode.HALF_UP).toString());
+                BigDecimal bigExpense8 = new BigDecimal(newCoststatistics.getExpensesolo8()).add(map.getValue().getCost8());
+                map.getValue().setCost8(bigExpense8.setScale(2, RoundingMode.HALF_UP));
                 // 外注费用9月
-                BigDecimal bigExpense9 = new BigDecimal(newCoststatistics.getExpense9()).add(new BigDecimal(map.getValue().getCost9()));
-                map.getValue().setCost9(bigExpense9.setScale(2, RoundingMode.HALF_UP).toString());
+                BigDecimal bigExpense9 = new BigDecimal(newCoststatistics.getExpensesolo9()).add(map.getValue().getCost9());
+                map.getValue().setCost9(bigExpense9.setScale(2, RoundingMode.HALF_UP));
                 // 外注费用10月
-                BigDecimal bigExpense10 = new BigDecimal(newCoststatistics.getExpense10()).add(new BigDecimal(map.getValue().getCost10()));
-                map.getValue().setCost10(bigExpense10.setScale(2, RoundingMode.HALF_UP).toString());
+                BigDecimal bigExpense10 = new BigDecimal(newCoststatistics.getExpensesolo10()).add(map.getValue().getCost10());
+                map.getValue().setCost10(bigExpense10.setScale(2, RoundingMode.HALF_UP));
                 // 外注费用11月
-                BigDecimal bigExpense11 = new BigDecimal(newCoststatistics.getExpense11()).add(new BigDecimal(map.getValue().getCost11()));
-                map.getValue().setCost11(bigExpense11.setScale(2, RoundingMode.HALF_UP).toString());
+                BigDecimal bigExpense11 = new BigDecimal(newCoststatistics.getExpensesolo11()).add(map.getValue().getCost11());
+                map.getValue().setCost11(bigExpense11.setScale(2, RoundingMode.HALF_UP));
                 // 外注费用12月
-                BigDecimal bigExpense12 = new BigDecimal(newCoststatistics.getExpense12()).add(new BigDecimal(map.getValue().getCost12()));
-                map.getValue().setCost12(bigExpense12.setScale(2, RoundingMode.HALF_UP).toString());
+                BigDecimal bigExpense12 = new BigDecimal(newCoststatistics.getExpensesolo12()).add(map.getValue().getCost12());
+                map.getValue().setCost12(bigExpense12.setScale(2, RoundingMode.HALF_UP));
             }
             // 费用合计费用
-            map.getValue().setTotalcostf(new BigDecimal(bigManhourCount).setScale(2, RoundingMode.HALF_UP).toString());
+            map.getValue().setTotalcostf(bigManhourCount.setScale(2, RoundingMode.HALF_UP));
             // 费用合计工数
-            map.getValue().setTotalmanhourf(new BigDecimal(bigTormbCount).setScale(2, RoundingMode.HALF_UP).toString());
+            map.getValue().setTotalmanhourf(bigTormbCount.setScale(2, RoundingMode.HALF_UP));
         }
         // add gbb 210914 BP社统计添加添加费用列 end
         result.put("company", new ArrayList<>(companyMap.values()));
@@ -385,17 +306,460 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             if (bpCompanyCost1 == null) {
                 continue;
             }
-//            if (StringUtils.isNullOrEmpty(value.getManhour1f())) {
-//                value.setBpcompany(bpCompanyCost1.getBpcompany());
-//            }
-//            if (StringUtils.isNullOrEmpty(sameOr.getSex())) {
-//                sameOr.setSex(sameOr1.getSex());
-//            }
         }
         //endregion  add_qhr_20210901 添加bp社统计费用数据
 
         // year
-        result.put("year", getBusinessYear());
+        result.put("year", years);
+        result.put("group", groupid);
+
+        Integer months = 4;
+        if(years.length()  == 7)
+        {
+            String [] ym = years.split("-");
+            years = ym[0];
+            months = Integer.parseInt(ym[1]);
+        }
+        else
+        {
+            Calendar calendar = Calendar.getInstance();
+            months = calendar.get(Calendar.MONTH);
+            if(months == 0)
+            {
+                months = 12;
+            }
+        }
+        List<CompanyStatistics> cmyListinsertall = new ArrayList<>();
+        List<CompanyStatistics> cmyListupdateall = new ArrayList<>();
+        TokenModel tokenModel = new TokenModel();
+        for (Map.Entry<String, Object> entry : result.entrySet())
+        {
+            CompanyStatistics company = new CompanyStatistics();
+            company.setYear(years);
+            company.setGroup_id(groupid);
+            if(entry.getKey().equals("company"))
+            {
+                for(CompanyStatistics cpany : new ArrayList<CompanyStatistics>((Integer) entry.getValue()))
+                {
+                    company.setBpcompanyid(cpany.getBpcompanyid());
+                    Supplierinfor supplierinfors = supplierinforMapper.selectByPrimaryKey(cpany.getBpcompanyid());
+                    if(supplierinfors!=null)
+                    {
+                        company.setBpcompany(supplierinfors.getSupchinese());
+                    }
+                    List<CompanyStatistics> clist = null;
+                    switch (months)
+                    {
+                        case 4:
+                            clist = companyStatisticsMapper.select(company);
+                            if(clist.size()>0)
+                            {
+                                clist.get(0).setManhour4(cpany.getManhour4());
+                                clist.get(0).setCost4(cpany.getCost4());
+                                clist.get(0).setManhour4f(cpany.getManhour4f());
+                                clist.get(0).setCost4f(cpany.getCost4f());
+                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                        .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
+                                        .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
+
+                                clist.get(0).setTotalcost(clist.get(0).getCost4().add(clist.get(0).getCost5().add(clist.get(0).getCost6().add(clist.get(0).getCost7()
+                                        .add(clist.get(0).getCost8().add(clist.get(0).getCost9().add(clist.get(0).getCost10().add(clist.get(0).getCost11()
+                                                .add(clist.get(0).getCost12().add(clist.get(0).getCost1().add(clist.get(0).getCost2().add(clist.get(0).getCost3()))))))))))));
+
+                                clist.get(0).setTotalmanhourf(clist.get(0).getManhour4f().add(clist.get(0).getManhour5f().add(clist.get(0).getManhour6f().add(clist.get(0).getManhour7f()
+                                        .add(clist.get(0).getManhour8f().add(clist.get(0).getManhour9f().add(clist.get(0).getManhour10f().add(clist.get(0).getManhour11f()
+                                                .add(clist.get(0).getManhour12f().add(clist.get(0).getManhour1f().add(clist.get(0).getManhour2f().add(clist.get(0).getManhour3f()))))))))))));
+
+                                clist.get(0).setTotalcostf(clist.get(0).getCost4f().add(clist.get(0).getCost5f().add(clist.get(0).getCost6f().add(clist.get(0).getCost7f()
+                                        .add(clist.get(0).getCost8f().add(clist.get(0).getCost9f().add(clist.get(0).getCost10f().add(clist.get(0).getCost11f()
+                                                .add(clist.get(0).getCost12f().add(clist.get(0).getCost1f().add(clist.get(0).getCost2f().add(clist.get(0).getCost3f()))))))))))));
+                                clist.get(0).preUpdate(tokenModel);
+                                cmyListupdateall.add(clist.get(0));
+                            }
+                            else
+                            {
+                                company.setCompanystatistics_id(UUID.randomUUID().toString());
+                                company.preInsert();
+                                cmyListinsertall.add(company);
+                            }
+                            break;
+                        case 5:
+                            clist = companyStatisticsMapper.select(company);
+                            if(clist.size()>0)
+                            {
+                                clist.get(0).setManhour5(cpany.getManhour5());
+                                clist.get(0).setCost5(cpany.getCost5());
+                                clist.get(0).setManhour5f(cpany.getManhour5f());
+                                clist.get(0).setCost5f(cpany.getCost5f());
+                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                        .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
+                                                .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
+
+                                clist.get(0).setTotalcost(clist.get(0).getCost4().add(clist.get(0).getCost5().add(clist.get(0).getCost6().add(clist.get(0).getCost7()
+                                        .add(clist.get(0).getCost8().add(clist.get(0).getCost9().add(clist.get(0).getCost10().add(clist.get(0).getCost11()
+                                                .add(clist.get(0).getCost12().add(clist.get(0).getCost1().add(clist.get(0).getCost2().add(clist.get(0).getCost3()))))))))))));
+
+                                clist.get(0).setTotalmanhourf(clist.get(0).getManhour4f().add(clist.get(0).getManhour5f().add(clist.get(0).getManhour6f().add(clist.get(0).getManhour7f()
+                                        .add(clist.get(0).getManhour8f().add(clist.get(0).getManhour9f().add(clist.get(0).getManhour10f().add(clist.get(0).getManhour11f()
+                                                .add(clist.get(0).getManhour12f().add(clist.get(0).getManhour1f().add(clist.get(0).getManhour2f().add(clist.get(0).getManhour3f()))))))))))));
+
+                                clist.get(0).setTotalcostf(clist.get(0).getCost4f().add(clist.get(0).getCost5f().add(clist.get(0).getCost6f().add(clist.get(0).getCost7f()
+                                        .add(clist.get(0).getCost8f().add(clist.get(0).getCost9f().add(clist.get(0).getCost10f().add(clist.get(0).getCost11f()
+                                                .add(clist.get(0).getCost12f().add(clist.get(0).getCost1f().add(clist.get(0).getCost2f().add(clist.get(0).getCost3f()))))))))))));
+                                clist.get(0).preUpdate(tokenModel);
+                                cmyListupdateall.add(clist.get(0));
+                            }
+                            else
+                            {
+                                company.setCompanystatistics_id(UUID.randomUUID().toString());
+                                company.preInsert();
+                                cmyListinsertall.add(company);
+                            }
+                            break;
+                        case 6:
+                            clist = companyStatisticsMapper.select(company);
+                            if(clist.size()>0)
+                            {
+                                clist.get(0).setManhour6(cpany.getManhour6());
+                                clist.get(0).setCost6(cpany.getCost6());
+                                clist.get(0).setManhour6f(cpany.getManhour6f());
+                                clist.get(0).setCost6f(cpany.getCost6f());
+                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                        .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
+                                                .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
+
+                                clist.get(0).setTotalcost(clist.get(0).getCost4().add(clist.get(0).getCost5().add(clist.get(0).getCost6().add(clist.get(0).getCost7()
+                                        .add(clist.get(0).getCost8().add(clist.get(0).getCost9().add(clist.get(0).getCost10().add(clist.get(0).getCost11()
+                                                .add(clist.get(0).getCost12().add(clist.get(0).getCost1().add(clist.get(0).getCost2().add(clist.get(0).getCost3()))))))))))));
+
+                                clist.get(0).setTotalmanhourf(clist.get(0).getManhour4f().add(clist.get(0).getManhour5f().add(clist.get(0).getManhour6f().add(clist.get(0).getManhour7f()
+                                        .add(clist.get(0).getManhour8f().add(clist.get(0).getManhour9f().add(clist.get(0).getManhour10f().add(clist.get(0).getManhour11f()
+                                                .add(clist.get(0).getManhour12f().add(clist.get(0).getManhour1f().add(clist.get(0).getManhour2f().add(clist.get(0).getManhour3f()))))))))))));
+
+                                clist.get(0).setTotalcostf(clist.get(0).getCost4f().add(clist.get(0).getCost5f().add(clist.get(0).getCost6f().add(clist.get(0).getCost7f()
+                                        .add(clist.get(0).getCost8f().add(clist.get(0).getCost9f().add(clist.get(0).getCost10f().add(clist.get(0).getCost11f()
+                                                .add(clist.get(0).getCost12f().add(clist.get(0).getCost1f().add(clist.get(0).getCost2f().add(clist.get(0).getCost3f()))))))))))));
+                                clist.get(0).preUpdate(tokenModel);
+                                cmyListupdateall.add(clist.get(0));
+                            }
+                            else
+                            {
+                                company.setCompanystatistics_id(UUID.randomUUID().toString());
+                                company.preInsert();
+                                cmyListinsertall.add(company);
+                            }
+                            break;
+                        case 7:
+                            clist = companyStatisticsMapper.select(company);
+                            if(clist.size()>0)
+                            {
+                                clist.get(0).setManhour7(cpany.getManhour7());
+                                clist.get(0).setCost7(cpany.getCost7());
+                                clist.get(0).setManhour7f(cpany.getManhour7f());
+                                clist.get(0).setCost7f(cpany.getCost7f());
+                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                        .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
+                                                .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
+
+                                clist.get(0).setTotalcost(clist.get(0).getCost4().add(clist.get(0).getCost5().add(clist.get(0).getCost6().add(clist.get(0).getCost7()
+                                        .add(clist.get(0).getCost8().add(clist.get(0).getCost9().add(clist.get(0).getCost10().add(clist.get(0).getCost11()
+                                                .add(clist.get(0).getCost12().add(clist.get(0).getCost1().add(clist.get(0).getCost2().add(clist.get(0).getCost3()))))))))))));
+
+                                clist.get(0).setTotalmanhourf(clist.get(0).getManhour4f().add(clist.get(0).getManhour5f().add(clist.get(0).getManhour6f().add(clist.get(0).getManhour7f()
+                                        .add(clist.get(0).getManhour8f().add(clist.get(0).getManhour9f().add(clist.get(0).getManhour10f().add(clist.get(0).getManhour11f()
+                                                .add(clist.get(0).getManhour12f().add(clist.get(0).getManhour1f().add(clist.get(0).getManhour2f().add(clist.get(0).getManhour3f()))))))))))));
+
+                                clist.get(0).setTotalcostf(clist.get(0).getCost4f().add(clist.get(0).getCost5f().add(clist.get(0).getCost6f().add(clist.get(0).getCost7f()
+                                        .add(clist.get(0).getCost8f().add(clist.get(0).getCost9f().add(clist.get(0).getCost10f().add(clist.get(0).getCost11f()
+                                                .add(clist.get(0).getCost12f().add(clist.get(0).getCost1f().add(clist.get(0).getCost2f().add(clist.get(0).getCost3f()))))))))))));
+                                clist.get(0).preUpdate(tokenModel);
+                                cmyListupdateall.add(clist.get(0));
+                            }
+                            else
+                            {
+                                company.setCompanystatistics_id(UUID.randomUUID().toString());
+                                company.preInsert();
+                                cmyListinsertall.add(company);
+                            }
+                            break;
+                        case 8:
+                            clist = companyStatisticsMapper.select(company);
+                            if(clist.size()>0)
+                            {
+                                clist.get(0).setManhour8(cpany.getManhour8());
+                                clist.get(0).setCost8(cpany.getCost8());
+                                clist.get(0).setManhour8f(cpany.getManhour8f());
+                                clist.get(0).setCost8f(cpany.getCost8f());
+                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                        .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
+                                                .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
+
+                                clist.get(0).setTotalcost(clist.get(0).getCost4().add(clist.get(0).getCost5().add(clist.get(0).getCost6().add(clist.get(0).getCost7()
+                                        .add(clist.get(0).getCost8().add(clist.get(0).getCost9().add(clist.get(0).getCost10().add(clist.get(0).getCost11()
+                                                .add(clist.get(0).getCost12().add(clist.get(0).getCost1().add(clist.get(0).getCost2().add(clist.get(0).getCost3()))))))))))));
+
+                                clist.get(0).setTotalmanhourf(clist.get(0).getManhour4f().add(clist.get(0).getManhour5f().add(clist.get(0).getManhour6f().add(clist.get(0).getManhour7f()
+                                        .add(clist.get(0).getManhour8f().add(clist.get(0).getManhour9f().add(clist.get(0).getManhour10f().add(clist.get(0).getManhour11f()
+                                                .add(clist.get(0).getManhour12f().add(clist.get(0).getManhour1f().add(clist.get(0).getManhour2f().add(clist.get(0).getManhour3f()))))))))))));
+
+                                clist.get(0).setTotalcostf(clist.get(0).getCost4f().add(clist.get(0).getCost5f().add(clist.get(0).getCost6f().add(clist.get(0).getCost7f()
+                                        .add(clist.get(0).getCost8f().add(clist.get(0).getCost9f().add(clist.get(0).getCost10f().add(clist.get(0).getCost11f()
+                                                .add(clist.get(0).getCost12f().add(clist.get(0).getCost1f().add(clist.get(0).getCost2f().add(clist.get(0).getCost3f()))))))))))));
+                                clist.get(0).preUpdate(tokenModel);
+                                cmyListupdateall.add(clist.get(0));
+                            }
+                            else
+                            {
+                                company.setCompanystatistics_id(UUID.randomUUID().toString());
+                                company.preInsert();
+                                cmyListinsertall.add(company);
+                            }
+                            break;
+                        case 9:
+                            clist = companyStatisticsMapper.select(company);
+                            if(clist.size()>0)
+                            {
+                                clist.get(0).setManhour9(cpany.getManhour9());
+                                clist.get(0).setCost9(cpany.getCost9());
+                                clist.get(0).setManhour9f(cpany.getManhour9f());
+                                clist.get(0).setCost9f(cpany.getCost9f());
+                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                        .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
+                                                .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
+
+                                clist.get(0).setTotalcost(clist.get(0).getCost4().add(clist.get(0).getCost5().add(clist.get(0).getCost6().add(clist.get(0).getCost7()
+                                        .add(clist.get(0).getCost8().add(clist.get(0).getCost9().add(clist.get(0).getCost10().add(clist.get(0).getCost11()
+                                                .add(clist.get(0).getCost12().add(clist.get(0).getCost1().add(clist.get(0).getCost2().add(clist.get(0).getCost3()))))))))))));
+
+                                clist.get(0).setTotalmanhourf(clist.get(0).getManhour4f().add(clist.get(0).getManhour5f().add(clist.get(0).getManhour6f().add(clist.get(0).getManhour7f()
+                                        .add(clist.get(0).getManhour8f().add(clist.get(0).getManhour9f().add(clist.get(0).getManhour10f().add(clist.get(0).getManhour11f()
+                                                .add(clist.get(0).getManhour12f().add(clist.get(0).getManhour1f().add(clist.get(0).getManhour2f().add(clist.get(0).getManhour3f()))))))))))));
+
+                                clist.get(0).setTotalcostf(clist.get(0).getCost4f().add(clist.get(0).getCost5f().add(clist.get(0).getCost6f().add(clist.get(0).getCost7f()
+                                        .add(clist.get(0).getCost8f().add(clist.get(0).getCost9f().add(clist.get(0).getCost10f().add(clist.get(0).getCost11f()
+                                                .add(clist.get(0).getCost12f().add(clist.get(0).getCost1f().add(clist.get(0).getCost2f().add(clist.get(0).getCost3f()))))))))))));
+                                clist.get(0).preUpdate(tokenModel);
+                                cmyListupdateall.add(clist.get(0));
+                            }
+                            else
+                            {
+                                company.setCompanystatistics_id(UUID.randomUUID().toString());
+                                company.preInsert();
+                                cmyListinsertall.add(company);
+                            }
+                            break;
+                        case 10:
+                            clist = companyStatisticsMapper.select(company);
+                            if(clist.size()>0)
+                            {
+                                clist.get(0).setManhour10(cpany.getManhour10());
+                                clist.get(0).setCost10(cpany.getCost10());
+                                clist.get(0).setManhour10f(cpany.getManhour10f());
+                                clist.get(0).setCost10f(cpany.getCost10f());
+                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                        .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
+                                                .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
+
+                                clist.get(0).setTotalcost(clist.get(0).getCost4().add(clist.get(0).getCost5().add(clist.get(0).getCost6().add(clist.get(0).getCost7()
+                                        .add(clist.get(0).getCost8().add(clist.get(0).getCost9().add(clist.get(0).getCost10().add(clist.get(0).getCost11()
+                                                .add(clist.get(0).getCost12().add(clist.get(0).getCost1().add(clist.get(0).getCost2().add(clist.get(0).getCost3()))))))))))));
+
+                                clist.get(0).setTotalmanhourf(clist.get(0).getManhour4f().add(clist.get(0).getManhour5f().add(clist.get(0).getManhour6f().add(clist.get(0).getManhour7f()
+                                        .add(clist.get(0).getManhour8f().add(clist.get(0).getManhour9f().add(clist.get(0).getManhour10f().add(clist.get(0).getManhour11f()
+                                                .add(clist.get(0).getManhour12f().add(clist.get(0).getManhour1f().add(clist.get(0).getManhour2f().add(clist.get(0).getManhour3f()))))))))))));
+
+                                clist.get(0).setTotalcostf(clist.get(0).getCost4f().add(clist.get(0).getCost5f().add(clist.get(0).getCost6f().add(clist.get(0).getCost7f()
+                                        .add(clist.get(0).getCost8f().add(clist.get(0).getCost9f().add(clist.get(0).getCost10f().add(clist.get(0).getCost11f()
+                                                .add(clist.get(0).getCost12f().add(clist.get(0).getCost1f().add(clist.get(0).getCost2f().add(clist.get(0).getCost3f()))))))))))));
+                                clist.get(0).preUpdate(tokenModel);
+                                cmyListupdateall.add(clist.get(0));
+                            }
+                            else
+                            {
+                                company.setCompanystatistics_id(UUID.randomUUID().toString());
+                                company.preInsert();
+                                cmyListinsertall.add(company);
+                            }
+                            break;
+                        case 11:
+                            clist = companyStatisticsMapper.select(company);
+                            if(clist.size()>0)
+                            {
+                                clist.get(0).setManhour11(cpany.getManhour11());
+                                clist.get(0).setCost11(cpany.getCost11());
+                                clist.get(0).setManhour11f(cpany.getManhour11f());
+                                clist.get(0).setCost11f(cpany.getCost11f());
+                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                        .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
+                                                .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
+
+                                clist.get(0).setTotalcost(clist.get(0).getCost4().add(clist.get(0).getCost5().add(clist.get(0).getCost6().add(clist.get(0).getCost7()
+                                        .add(clist.get(0).getCost8().add(clist.get(0).getCost9().add(clist.get(0).getCost10().add(clist.get(0).getCost11()
+                                                .add(clist.get(0).getCost12().add(clist.get(0).getCost1().add(clist.get(0).getCost2().add(clist.get(0).getCost3()))))))))))));
+
+                                clist.get(0).setTotalmanhourf(clist.get(0).getManhour4f().add(clist.get(0).getManhour5f().add(clist.get(0).getManhour6f().add(clist.get(0).getManhour7f()
+                                        .add(clist.get(0).getManhour8f().add(clist.get(0).getManhour9f().add(clist.get(0).getManhour10f().add(clist.get(0).getManhour11f()
+                                                .add(clist.get(0).getManhour12f().add(clist.get(0).getManhour1f().add(clist.get(0).getManhour2f().add(clist.get(0).getManhour3f()))))))))))));
+
+                                clist.get(0).setTotalcostf(clist.get(0).getCost4f().add(clist.get(0).getCost5f().add(clist.get(0).getCost6f().add(clist.get(0).getCost7f()
+                                        .add(clist.get(0).getCost8f().add(clist.get(0).getCost9f().add(clist.get(0).getCost10f().add(clist.get(0).getCost11f()
+                                                .add(clist.get(0).getCost12f().add(clist.get(0).getCost1f().add(clist.get(0).getCost2f().add(clist.get(0).getCost3f()))))))))))));
+                                clist.get(0).preUpdate(tokenModel);
+                                cmyListupdateall.add(clist.get(0));
+                            }
+                            else
+                            {
+                                company.setCompanystatistics_id(UUID.randomUUID().toString());
+                                company.preInsert();
+                                cmyListinsertall.add(company);
+                            }
+                            break;
+                        case 12:
+                            clist = companyStatisticsMapper.select(company);
+                            if(clist.size()>0)
+                            {
+                                clist.get(0).setManhour12(cpany.getManhour12());
+                                clist.get(0).setCost12(cpany.getCost12());
+                                clist.get(0).setManhour12f(cpany.getManhour12f());
+                                clist.get(0).setCost12f(cpany.getCost12f());
+                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                        .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
+                                                .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
+
+                                clist.get(0).setTotalcost(clist.get(0).getCost4().add(clist.get(0).getCost5().add(clist.get(0).getCost6().add(clist.get(0).getCost7()
+                                        .add(clist.get(0).getCost8().add(clist.get(0).getCost9().add(clist.get(0).getCost10().add(clist.get(0).getCost11()
+                                                .add(clist.get(0).getCost12().add(clist.get(0).getCost1().add(clist.get(0).getCost2().add(clist.get(0).getCost3()))))))))))));
+
+                                clist.get(0).setTotalmanhourf(clist.get(0).getManhour4f().add(clist.get(0).getManhour5f().add(clist.get(0).getManhour6f().add(clist.get(0).getManhour7f()
+                                        .add(clist.get(0).getManhour8f().add(clist.get(0).getManhour9f().add(clist.get(0).getManhour10f().add(clist.get(0).getManhour11f()
+                                                .add(clist.get(0).getManhour12f().add(clist.get(0).getManhour1f().add(clist.get(0).getManhour2f().add(clist.get(0).getManhour3f()))))))))))));
+
+                                clist.get(0).setTotalcostf(clist.get(0).getCost4f().add(clist.get(0).getCost5f().add(clist.get(0).getCost6f().add(clist.get(0).getCost7f()
+                                        .add(clist.get(0).getCost8f().add(clist.get(0).getCost9f().add(clist.get(0).getCost10f().add(clist.get(0).getCost11f()
+                                                .add(clist.get(0).getCost12f().add(clist.get(0).getCost1f().add(clist.get(0).getCost2f().add(clist.get(0).getCost3f()))))))))))));
+                                clist.get(0).preUpdate(tokenModel);
+                                cmyListupdateall.add(clist.get(0));
+                            }
+                            else
+                            {
+                                company.setCompanystatistics_id(UUID.randomUUID().toString());
+                                company.preInsert();
+                                cmyListinsertall.add(company);
+                            }
+                            break;
+                        case 1:
+                            clist = companyStatisticsMapper.select(company);
+                            if(clist.size()>0)
+                            {
+                                clist.get(0).setManhour1(cpany.getManhour1());
+                                clist.get(0).setCost1(cpany.getCost1());
+                                clist.get(0).setManhour1f(cpany.getManhour1f());
+                                clist.get(0).setCost1f(cpany.getCost1f());
+                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                        .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
+                                                .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
+
+                                clist.get(0).setTotalcost(clist.get(0).getCost4().add(clist.get(0).getCost5().add(clist.get(0).getCost6().add(clist.get(0).getCost7()
+                                        .add(clist.get(0).getCost8().add(clist.get(0).getCost9().add(clist.get(0).getCost10().add(clist.get(0).getCost11()
+                                                .add(clist.get(0).getCost12().add(clist.get(0).getCost1().add(clist.get(0).getCost2().add(clist.get(0).getCost3()))))))))))));
+
+                                clist.get(0).setTotalmanhourf(clist.get(0).getManhour4f().add(clist.get(0).getManhour5f().add(clist.get(0).getManhour6f().add(clist.get(0).getManhour7f()
+                                        .add(clist.get(0).getManhour8f().add(clist.get(0).getManhour9f().add(clist.get(0).getManhour10f().add(clist.get(0).getManhour11f()
+                                                .add(clist.get(0).getManhour12f().add(clist.get(0).getManhour1f().add(clist.get(0).getManhour2f().add(clist.get(0).getManhour3f()))))))))))));
+
+                                clist.get(0).setTotalcostf(clist.get(0).getCost4f().add(clist.get(0).getCost5f().add(clist.get(0).getCost6f().add(clist.get(0).getCost7f()
+                                        .add(clist.get(0).getCost8f().add(clist.get(0).getCost9f().add(clist.get(0).getCost10f().add(clist.get(0).getCost11f()
+                                                .add(clist.get(0).getCost12f().add(clist.get(0).getCost1f().add(clist.get(0).getCost2f().add(clist.get(0).getCost3f()))))))))))));
+                                clist.get(0).preUpdate(tokenModel);
+                                cmyListupdateall.add(clist.get(0));
+                            }
+                            else
+                            {
+                                company.setCompanystatistics_id(UUID.randomUUID().toString());
+                                company.preInsert();
+                                cmyListinsertall.add(company);
+                            }
+                            break;
+                        case 2:
+                            clist = companyStatisticsMapper.select(company);
+                            if(clist.size()>0)
+                            {
+                                clist.get(0).setManhour2(cpany.getManhour2());
+                                clist.get(0).setCost2(cpany.getCost2());
+                                clist.get(0).setManhour2f(cpany.getManhour2f());
+                                clist.get(0).setCost2f(cpany.getCost2f());
+                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                        .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
+                                                .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
+
+                                clist.get(0).setTotalcost(clist.get(0).getCost4().add(clist.get(0).getCost5().add(clist.get(0).getCost6().add(clist.get(0).getCost7()
+                                        .add(clist.get(0).getCost8().add(clist.get(0).getCost9().add(clist.get(0).getCost10().add(clist.get(0).getCost11()
+                                                .add(clist.get(0).getCost12().add(clist.get(0).getCost1().add(clist.get(0).getCost2().add(clist.get(0).getCost3()))))))))))));
+
+                                clist.get(0).setTotalmanhourf(clist.get(0).getManhour4f().add(clist.get(0).getManhour5f().add(clist.get(0).getManhour6f().add(clist.get(0).getManhour7f()
+                                        .add(clist.get(0).getManhour8f().add(clist.get(0).getManhour9f().add(clist.get(0).getManhour10f().add(clist.get(0).getManhour11f()
+                                                .add(clist.get(0).getManhour12f().add(clist.get(0).getManhour1f().add(clist.get(0).getManhour2f().add(clist.get(0).getManhour3f()))))))))))));
+
+                                clist.get(0).setTotalcostf(clist.get(0).getCost4f().add(clist.get(0).getCost5f().add(clist.get(0).getCost6f().add(clist.get(0).getCost7f()
+                                        .add(clist.get(0).getCost8f().add(clist.get(0).getCost9f().add(clist.get(0).getCost10f().add(clist.get(0).getCost11f()
+                                                .add(clist.get(0).getCost12f().add(clist.get(0).getCost1f().add(clist.get(0).getCost2f().add(clist.get(0).getCost3f()))))))))))));
+                                clist.get(0).preUpdate(tokenModel);
+                                cmyListupdateall.add(clist.get(0));
+                            }
+                            else
+                            {
+                                company.setCompanystatistics_id(UUID.randomUUID().toString());
+                                company.preInsert();
+                                cmyListinsertall.add(company);
+                            }
+                            break;
+                        case 3:
+                            clist = companyStatisticsMapper.select(company);
+                            if(clist.size()>0)
+                            {
+                                clist.get(0).setManhour3(cpany.getManhour3());
+                                clist.get(0).setCost3(cpany.getCost3());
+                                clist.get(0).setManhour3f(cpany.getManhour3f());
+                                clist.get(0).setCost3f(cpany.getCost3f());
+                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                        .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
+                                                .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
+
+                                clist.get(0).setTotalcost(clist.get(0).getCost4().add(clist.get(0).getCost5().add(clist.get(0).getCost6().add(clist.get(0).getCost7()
+                                        .add(clist.get(0).getCost8().add(clist.get(0).getCost9().add(clist.get(0).getCost10().add(clist.get(0).getCost11()
+                                                .add(clist.get(0).getCost12().add(clist.get(0).getCost1().add(clist.get(0).getCost2().add(clist.get(0).getCost3()))))))))))));
+
+                                clist.get(0).setTotalmanhourf(clist.get(0).getManhour4f().add(clist.get(0).getManhour5f().add(clist.get(0).getManhour6f().add(clist.get(0).getManhour7f()
+                                        .add(clist.get(0).getManhour8f().add(clist.get(0).getManhour9f().add(clist.get(0).getManhour10f().add(clist.get(0).getManhour11f()
+                                                .add(clist.get(0).getManhour12f().add(clist.get(0).getManhour1f().add(clist.get(0).getManhour2f().add(clist.get(0).getManhour3f()))))))))))));
+
+                                clist.get(0).setTotalcostf(clist.get(0).getCost4f().add(clist.get(0).getCost5f().add(clist.get(0).getCost6f().add(clist.get(0).getCost7f()
+                                        .add(clist.get(0).getCost8f().add(clist.get(0).getCost9f().add(clist.get(0).getCost10f().add(clist.get(0).getCost11f()
+                                                .add(clist.get(0).getCost12f().add(clist.get(0).getCost1f().add(clist.get(0).getCost2f().add(clist.get(0).getCost3f()))))))))))));
+                                clist.get(0).preUpdate(tokenModel);
+                                cmyListupdateall.add(clist.get(0));
+                            }
+                            else
+                            {
+                                company.setCompanystatistics_id(UUID.randomUUID().toString());
+                                company.preInsert();
+                                cmyListinsertall.add(company);
+                            }
+                            break;
+                    }
+                }
+            }
+
+        }
+        Integer insertCount = 0;
+        if(cmyListinsertall.size()>0)
+        {
+            insertCount = companyStatisticsMapper.insertAll(cmyListinsertall);
+        }
+        if(cmyListupdateall.size()>0)
+        {
+            insertCount = insertCount + companyStatisticsMapper.updateAll(cmyListinsertall);
+        }
 
         return result;
     }

@@ -172,6 +172,8 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         List<Coststatistics> allCostList = getCostList(groupid,year,coststatistics, tokenModel);
         Coststatistics cmy = new Coststatistics();
         List<Coststatistics> cmyList = new ArrayList<>();
+        List<Coststatistics> cmyListinsertall = new ArrayList<>();
+        List<Coststatistics> cmyListupdateall = new ArrayList<>();
         for (Coststatistics c : allCostList) {
             switch (months)
             {
@@ -186,19 +188,20 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setManhour4(c.getManhour4());
                         cmyList.get(0).setCost4(c.getCost4());
                         cmyList.get(0).setPrice4(c.getPrice4());
-                        cmyList.get(0).setExpense4(c.getExpense4());
+                        cmyList.get(0).setExpensesolo4(c.getExpensesolo4());
                         cmyList.get(0).setTotalmanhours6(String.valueOf(Double.valueOf(cmyList.get(0).getManhour4()) + Double.valueOf(cmyList.get(0).getManhour5())+Double.valueOf(cmyList.get(0).getManhour6())));
                         cmyList.get(0).setTotalcost6(String.valueOf(Double.valueOf(cmyList.get(0).getCost4()) + Double.valueOf(cmyList.get(0).getCost5())+Double.valueOf(cmyList.get(0).getCost6())));
+                        cmyList.get(0).setExpense6(String.valueOf(Double.valueOf(cmyList.get(0).getExpensesolo4()) + Double.valueOf(cmyList.get(0).getExpensesolo5()) + Double.valueOf(cmyList.get(0).getExpensesolo6())));
                         cmyList.get(0).setContract6(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost6()) + Double.valueOf(cmyList.get(0).getExpense6())));
                         cmyList.get(0).preUpdate(tokenModel);
-                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                        cmyListupdateall.add(cmyList.get(0));
                     }
                     else
-                        {
-                            c.preInsert();
-                            coststatisticsMapper.insert(c);
-                        }
-                        break;
+                    {
+                        c.preInsert();
+                        cmyListinsertall.add(c);
+                    }
+                    break;
                 case 5:
                     cmy = new Coststatistics();
                     cmy.setBpname(c.getBpname());
@@ -210,17 +213,18 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setManhour5(c.getManhour5());
                         cmyList.get(0).setCost5(c.getCost5());
                         cmyList.get(0).setPrice5(c.getPrice5());
-                        cmyList.get(0).setExpense5(c.getExpense5());
+                        cmyList.get(0).setExpensesolo5(c.getExpensesolo5());
                         cmyList.get(0).setTotalmanhours6(String.valueOf(Double.valueOf(cmyList.get(0).getManhour4()) + Double.valueOf(cmyList.get(0).getManhour5())+Double.valueOf(cmyList.get(0).getManhour6())));
                         cmyList.get(0).setTotalcost6(String.valueOf(Double.valueOf(cmyList.get(0).getCost4()) + Double.valueOf(cmyList.get(0).getCost5())+Double.valueOf(cmyList.get(0).getCost6())));
+                        cmyList.get(0).setExpense6(String.valueOf(Double.valueOf(cmyList.get(0).getExpensesolo4()) + Double.valueOf(cmyList.get(0).getExpensesolo5()) + Double.valueOf(cmyList.get(0).getExpensesolo6())));
                         cmyList.get(0).setContract6(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost6()) + Double.valueOf(cmyList.get(0).getExpense6())));
                         cmyList.get(0).preUpdate(tokenModel);
-                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                        cmyListupdateall.add(cmyList.get(0));
                     }
                     else
                     {
                         c.preInsert();
-                        coststatisticsMapper.insert(c);
+                        cmyListinsertall.add(c);
                     }
                     break;
                 case 6:
@@ -234,21 +238,18 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setManhour6(c.getManhour6());
                         cmyList.get(0).setCost6(c.getCost6());
                         cmyList.get(0).setPrice6(c.getPrice6());
-                        System.out.println(cmyList.get(0).getBpname());
-                        if(cmyList.get(0).getBpname().equals("4b887475-580f-42ce-a1b1-eac3c740a12b")){
-                            System.out.println(cmyList.get(0));
-                        }
+                        cmyList.get(0).setExpensesolo6(c.getExpensesolo6());
                         cmyList.get(0).setTotalmanhours6(String.valueOf(Double.valueOf(cmyList.get(0).getManhour4()) + Double.valueOf(cmyList.get(0).getManhour5())+Double.valueOf(cmyList.get(0).getManhour6())));
                         cmyList.get(0).setTotalcost6(String.valueOf(Double.valueOf(cmyList.get(0).getCost4()) + Double.valueOf(cmyList.get(0).getCost5())+Double.valueOf(cmyList.get(0).getCost6())));
-                        cmyList.get(0).setExpense6(c.getExpense6());
+                        cmyList.get(0).setExpense6(String.valueOf(Double.valueOf(cmyList.get(0).getExpensesolo4()) + Double.valueOf(cmyList.get(0).getExpensesolo5()) + Double.valueOf(cmyList.get(0).getExpensesolo6())));
                         cmyList.get(0).setContract6(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost6()) + Double.valueOf(cmyList.get(0).getExpense6())));
                         cmyList.get(0).preUpdate(tokenModel);
-                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                        cmyListupdateall.add(cmyList.get(0));
                     }
                     else
                     {
                         c.preInsert();
-                        coststatisticsMapper.insert(c);
+                        cmyListinsertall.add(c);
                     }
                     break;
                 case 7:
@@ -262,17 +263,18 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setManhour7(c.getManhour7());
                         cmyList.get(0).setCost7(c.getCost7());
                         cmyList.get(0).setPrice7(c.getPrice7());
-                        cmyList.get(0).setExpense7(c.getExpense7());
+                        cmyList.get(0).setExpensesolo7(c.getExpensesolo7());
                         cmyList.get(0).setTotalmanhours9(String.valueOf(Double.valueOf(cmyList.get(0).getManhour7()) + Double.valueOf(cmyList.get(0).getManhour8())+Double.valueOf(cmyList.get(0).getManhour9())));
                         cmyList.get(0).setTotalcost9(String.valueOf(Double.valueOf(cmyList.get(0).getCost7()) + Double.valueOf(cmyList.get(0).getCost8())+Double.valueOf(cmyList.get(0).getCost9())));
+                        cmyList.get(0).setExpense9(String.valueOf(Double.valueOf(cmyList.get(0).getExpensesolo7()) + Double.valueOf(cmyList.get(0).getExpensesolo8()) + Double.valueOf(cmyList.get(0).getExpensesolo9())));
                         cmyList.get(0).setContract9(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost9()) + Double.valueOf(cmyList.get(0).getExpense9())));
                         cmyList.get(0).preUpdate(tokenModel);
-                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                        cmyListupdateall.add(cmyList.get(0));
                     }
                     else
                     {
                         c.preInsert();
-                        coststatisticsMapper.insert(c);
+                        cmyListinsertall.add(c);
                     }
                     break;
                 case 8:
@@ -286,17 +288,18 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setManhour8(c.getManhour8());
                         cmyList.get(0).setCost8(c.getCost8());
                         cmyList.get(0).setPrice8(c.getPrice8());
-                        cmyList.get(0).setExpense8(c.getExpense8());
+                        cmyList.get(0).setExpensesolo8(c.getExpensesolo8());
                         cmyList.get(0).setTotalmanhours9(String.valueOf(Double.valueOf(cmyList.get(0).getManhour7()) + Double.valueOf(cmyList.get(0).getManhour8())+Double.valueOf(cmyList.get(0).getManhour9())));
                         cmyList.get(0).setTotalcost9(String.valueOf(Double.valueOf(cmyList.get(0).getCost7()) + Double.valueOf(cmyList.get(0).getCost8())+Double.valueOf(cmyList.get(0).getCost9())));
+                        cmyList.get(0).setExpense9(String.valueOf(Double.valueOf(cmyList.get(0).getExpensesolo7()) + Double.valueOf(cmyList.get(0).getExpensesolo8()) + Double.valueOf(cmyList.get(0).getExpensesolo9())));
                         cmyList.get(0).setContract9(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost9()) + Double.valueOf(cmyList.get(0).getExpense9())));
                         cmyList.get(0).preUpdate(tokenModel);
-                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                        cmyListupdateall.add(cmyList.get(0));
                     }
                     else
                     {
                         c.preInsert();
-                        coststatisticsMapper.insert(c);
+                        cmyListinsertall.add(c);
                     }
                     break;
                 case 9:
@@ -310,18 +313,18 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setManhour9(c.getManhour9());
                         cmyList.get(0).setCost9(c.getCost9());
                         cmyList.get(0).setPrice9(c.getPrice9());
-                        cmyList.get(0).setExpense9(c.getExpense9());
+                        cmyList.get(0).setExpensesolo9(c.getExpensesolo9());
                         cmyList.get(0).setTotalmanhours9(String.valueOf(Double.valueOf(cmyList.get(0).getManhour7()) + Double.valueOf(cmyList.get(0).getManhour8())+Double.valueOf(cmyList.get(0).getManhour9())));
                         cmyList.get(0).setTotalcost9(String.valueOf(Double.valueOf(cmyList.get(0).getCost7()) + Double.valueOf(cmyList.get(0).getCost8())+Double.valueOf(cmyList.get(0).getCost9())));
-                        cmyList.get(0).setExpense9(c.getExpense9());
+                        cmyList.get(0).setExpense9(String.valueOf(Double.valueOf(cmyList.get(0).getExpensesolo7()) + Double.valueOf(cmyList.get(0).getExpensesolo8()) + Double.valueOf(cmyList.get(0).getExpensesolo9())));
                         cmyList.get(0).setContract9(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost9()) + Double.valueOf(cmyList.get(0).getExpense9())));
                         cmyList.get(0).preUpdate(tokenModel);
-                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                        cmyListupdateall.add(cmyList.get(0));
                     }
                     else
                     {
                         c.preInsert();
-                        coststatisticsMapper.insert(c);
+                        cmyListinsertall.add(c);
                     }
                     break;
                 case 10:
@@ -335,17 +338,18 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setManhour10(c.getManhour10());
                         cmyList.get(0).setCost10(c.getCost10());
                         cmyList.get(0).setPrice10(c.getPrice10());
-                        cmyList.get(0).setExpense10(c.getExpense10());
+                        cmyList.get(0).setExpensesolo10(c.getExpensesolo10());
                         cmyList.get(0).setTotalmanhours12(String.valueOf(Double.valueOf(cmyList.get(0).getManhour10()) + Double.valueOf(cmyList.get(0).getManhour11())+Double.valueOf(cmyList.get(0).getManhour12())));
                         cmyList.get(0).setTotalcost12(String.valueOf(Double.valueOf(cmyList.get(0).getCost10()) + Double.valueOf(cmyList.get(0).getCost11())+Double.valueOf(cmyList.get(0).getCost12())));
+                        cmyList.get(0).setExpense12(String.valueOf(Double.valueOf(cmyList.get(0).getExpensesolo10()) + Double.valueOf(cmyList.get(0).getExpensesolo11()) + Double.valueOf(cmyList.get(0).getExpensesolo12())));
                         cmyList.get(0).setContract12(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost12()) + Double.valueOf(cmyList.get(0).getExpense12())));
                         cmyList.get(0).preUpdate(tokenModel);
-                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                        cmyListupdateall.add(cmyList.get(0));
                     }
                     else
                     {
                         c.preInsert();
-                        coststatisticsMapper.insert(c);
+                        cmyListinsertall.add(c);
                     }
                     break;
                 case 11:
@@ -359,17 +363,18 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setManhour11(c.getManhour11());
                         cmyList.get(0).setCost11(c.getCost11());
                         cmyList.get(0).setPrice11(c.getPrice11());
-                        cmyList.get(0).setExpense11(c.getExpense11());
+                        cmyList.get(0).setExpensesolo11(c.getExpensesolo11());
                         cmyList.get(0).setTotalmanhours12(String.valueOf(Double.valueOf(cmyList.get(0).getManhour10()) + Double.valueOf(cmyList.get(0).getManhour11())+Double.valueOf(cmyList.get(0).getManhour12())));
                         cmyList.get(0).setTotalcost12(String.valueOf(Double.valueOf(cmyList.get(0).getCost10()) + Double.valueOf(cmyList.get(0).getCost11())+Double.valueOf(cmyList.get(0).getCost12())));
+                        cmyList.get(0).setExpense12(String.valueOf(Double.valueOf(cmyList.get(0).getExpensesolo10()) + Double.valueOf(cmyList.get(0).getExpensesolo11()) + Double.valueOf(cmyList.get(0).getExpensesolo12())));
                         cmyList.get(0).setContract12(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost12()) + Double.valueOf(cmyList.get(0).getExpense12())));
                         cmyList.get(0).preUpdate(tokenModel);
-                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                        cmyListupdateall.add(cmyList.get(0));
                     }
                     else
                     {
                         c.preInsert();
-                        coststatisticsMapper.insert(c);
+                        cmyListinsertall.add(c);
                     }
                     break;
                 case 12:
@@ -383,18 +388,18 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setManhour12(c.getManhour12());
                         cmyList.get(0).setCost12(c.getCost12());
                         cmyList.get(0).setPrice12(c.getPrice12());
-                        cmyList.get(0).setExpense12(c.getExpense12());
+                        cmyList.get(0).setExpensesolo12(c.getExpensesolo12());
                         cmyList.get(0).setTotalmanhours12(String.valueOf(Double.valueOf(cmyList.get(0).getManhour10()) + Double.valueOf(cmyList.get(0).getManhour11())+Double.valueOf(cmyList.get(0).getManhour12())));
                         cmyList.get(0).setTotalcost12(String.valueOf(Double.valueOf(cmyList.get(0).getCost10()) + Double.valueOf(cmyList.get(0).getCost11())+Double.valueOf(cmyList.get(0).getCost12())));
-                        cmyList.get(0).setExpense12(c.getExpense12());
+                        cmyList.get(0).setExpense12(String.valueOf(Double.valueOf(cmyList.get(0).getExpensesolo10()) + Double.valueOf(cmyList.get(0).getExpensesolo11()) + Double.valueOf(cmyList.get(0).getExpensesolo12())));
                         cmyList.get(0).setContract12(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost12()) + Double.valueOf(cmyList.get(0).getExpense12())));
                         cmyList.get(0).preUpdate(tokenModel);
-                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                        cmyListupdateall.add(cmyList.get(0));
                     }
                     else
                     {
                         c.preInsert();
-                        coststatisticsMapper.insert(c);
+                        cmyListinsertall.add(c);
                     }
                     break;
                 case 1:
@@ -408,17 +413,18 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setManhour1(c.getManhour1());
                         cmyList.get(0).setCost1(c.getCost1());
                         cmyList.get(0).setPrice1(c.getPrice1());
-                        cmyList.get(0).setExpense1(c.getExpense1());
+                        cmyList.get(0).setExpensesolo1(c.getExpensesolo1());
                         cmyList.get(0).setTotalmanhours3(String.valueOf(Double.valueOf(cmyList.get(0).getManhour1()) + Double.valueOf(cmyList.get(0).getManhour2())+Double.valueOf(cmyList.get(0).getManhour3())));
                         cmyList.get(0).setTotalcost3(String.valueOf(Double.valueOf(cmyList.get(0).getCost1()) + Double.valueOf(cmyList.get(0).getCost2())+Double.valueOf(cmyList.get(0).getCost3())));
+                        cmyList.get(0).setExpense3(String.valueOf(Double.valueOf(cmyList.get(0).getExpensesolo1()) + Double.valueOf(cmyList.get(0).getExpensesolo2()) + Double.valueOf(cmyList.get(0).getExpensesolo3())));
                         cmyList.get(0).setContract3(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost3()) + Double.valueOf(cmyList.get(0).getExpense3())));
                         cmyList.get(0).preUpdate(tokenModel);
-                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                        cmyListupdateall.add(cmyList.get(0));
                     }
                     else
                     {
                         c.preInsert();
-                        coststatisticsMapper.insert(c);
+                        cmyListinsertall.add(c);
                     }
                     break;
                 case 2:
@@ -432,17 +438,18 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setManhour2(c.getManhour2());
                         cmyList.get(0).setCost2(c.getCost2());
                         cmyList.get(0).setPrice2(c.getPrice2());
-                        cmyList.get(0).setExpense2(c.getExpense2());
+                        cmyList.get(0).setExpensesolo2(c.getExpensesolo2());
                         cmyList.get(0).setTotalmanhours3(String.valueOf(Double.valueOf(cmyList.get(0).getManhour1()) + Double.valueOf(cmyList.get(0).getManhour2())+Double.valueOf(cmyList.get(0).getManhour3())));
                         cmyList.get(0).setTotalcost3(String.valueOf(Double.valueOf(cmyList.get(0).getCost1()) + Double.valueOf(cmyList.get(0).getCost2())+Double.valueOf(cmyList.get(0).getCost3())));
+                        cmyList.get(0).setExpense3(String.valueOf(Double.valueOf(cmyList.get(0).getExpensesolo1()) + Double.valueOf(cmyList.get(0).getExpensesolo2()) + Double.valueOf(cmyList.get(0).getExpensesolo3())));
                         cmyList.get(0).setContract3(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost3()) + Double.valueOf(cmyList.get(0).getExpense3())));
                         cmyList.get(0).preUpdate(tokenModel);
-                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                        cmyListupdateall.add(cmyList.get(0));
                     }
                     else
                     {
                         c.preInsert();
-                        coststatisticsMapper.insert(c);
+                        cmyListinsertall.add(c);
                     }
                     break;
                 case 3:
@@ -456,39 +463,44 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                         cmyList.get(0).setManhour3(c.getManhour3());
                         cmyList.get(0).setCost3(c.getCost3());
                         cmyList.get(0).setPrice3(c.getPrice3());
-                        cmyList.get(0).setExpense3(c.getExpense3());
+                        cmyList.get(0).setExpensesolo3(c.getExpensesolo3());
                         cmyList.get(0).setTotalmanhours3(String.valueOf(Double.valueOf(cmyList.get(0).getManhour1()) + Double.valueOf(cmyList.get(0).getManhour2())+Double.valueOf(cmyList.get(0).getManhour3())));
                         cmyList.get(0).setTotalcost3(String.valueOf(Double.valueOf(cmyList.get(0).getCost1()) + Double.valueOf(cmyList.get(0).getCost2())+Double.valueOf(cmyList.get(0).getCost3())));
-                        cmyList.get(0).setExpense3(c.getExpense3());
+                        cmyList.get(0).setExpense3(String.valueOf(Double.valueOf(cmyList.get(0).getExpensesolo1()) + Double.valueOf(cmyList.get(0).getExpensesolo2()) + Double.valueOf(cmyList.get(0).getExpensesolo3())));
                         cmyList.get(0).setContract3(String.valueOf(Double.valueOf(cmyList.get(0).getTotalcost3()) + Double.valueOf(cmyList.get(0).getExpense3())));
                         cmyList.get(0).preUpdate(tokenModel);
-                        coststatisticsMapper.updateByPrimaryKey(cmyList.get(0));
+                        cmyListupdateall.add(cmyList.get(0));
                     }
                     else
                     {
                         c.preInsert();
-                        coststatisticsMapper.insert(c);
+                        cmyListinsertall.add(c);
                     }
                     break;
             }
+
         }
 
-        int insertCount = 0;
+        Integer insertCount = 0;
+        if(cmyListinsertall.size()>0)
+        {
+            insertCount = coststatisticsMapper.insertAll(cmyListinsertall);
+        }
+        if(cmyListupdateall.size()>0)
+        {
+            insertCount = insertCount + coststatisticsMapper.updateAll(cmyListinsertall);
+        }
+
+        //生成BP社統計数据
+
+
         return insertCount;
     }
 
     private List<Coststatistics> getCostList(String groupid,String year ,Coststatistics coststatistics, TokenModel tokenModel) throws Exception {
         //获取经费
         Variousfunds variousfunds = new Variousfunds();
-//        variousfunds.setOwner(tokenModel.getUserId());
         Calendar calendar = Calendar.getInstance();
-//        int year = 0;
-//        int month = calendar.get(Calendar.MONTH)+1;
-//        if(month >= 1 && month <= 3) {
-//            year = calendar.get(Calendar.YEAR) - 1;
-//        }else {
-//            year = calendar.get(Calendar.YEAR);
-//        }
         List<Variousfunds> allVariousfunds = variousfundsMapper.selectBygroupid(groupid, String.valueOf(year));
         Map<String, Double> variousfundsMap = new HashMap<String, Double>();
         for ( Variousfunds v : allVariousfunds ) {
@@ -525,22 +537,15 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             String value = ex.getSupplierinfor_id();
             companyMap.put(key, value);
         }
-//        Calendar calendar = Calendar.getInstance();
-//        //calendar.add(Calendar.MONTH, -3);
-//        int year = 0;
-//        int month = calendar.get(Calendar.MONTH);
-//        if(month >= 1 && month <= 3) {
-//            year = calendar.get(Calendar.YEAR) - 1;
-//        }else {
-//            year = calendar.get(Calendar.YEAR);
-//        }
         // 获取活用情报信息
         List<Coststatistics> allCostList = coststatisticsMapper.getCoststatisticsBygroupid(Integer.valueOf(year), groupid);
         for ( Coststatistics c : allCostList ) {
-            // 合计费用
-            double totalmanhours = 0;
             // 合计工数
+            double totalmanhours = 0;
+            // 合计费用
             double totalcost = 0;
+            //合计经费
+            double expensevarious =0;
 
             for ( int i = 1 ; i <= 12; i++ ) {
                 // 单价
@@ -563,22 +568,24 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 totalmanhours += manhour;
                 totalcost += cost;
                 // 【各种经费】-【PL表支払予定月】由3,6,9,12月改成全月1-12月
-                //if ( i%3 ==0 ) {
-                    // 经费处理
-                    String variousKey = c.getBpname1() + i;
-                    double various = 0;
-                    if ( variousfundsMap.containsKey(variousKey) ) {
-                        various = variousfundsMap.get(variousKey);
-                    }
-                    BeanUtils.setProperty(c, "expense" +i, String.format("%.2f", various));
-                    BeanUtils.setProperty(c, "contract" +i, String.format("%.2f", various + totalcost));
 
+                // 经费处理
+                String variousKey = c.getBpname1() + i;
+                double various = 0;
+                if ( variousfundsMap.containsKey(variousKey) ) {
+                    various = variousfundsMap.get(variousKey);
+                }
+                expensevarious += various;
+                BeanUtils.setProperty(c, "expensesolo" +i, String.format("%.2f", various));
+                if ( i%3 ==0 ) {
                     BeanUtils.setProperty(c,"support" + i, i );
                     BeanUtils.setProperty(c, "totalcost" + i, String.format("%.2f", totalcost));
                     BeanUtils.setProperty(c, "totalmanhours" + i, String.format("%.2f", totalmanhours));
+                    BeanUtils.setProperty(c, "expense" +i, String.format("%.2f", expensevarious));
+                    BeanUtils.setProperty(c, "contract" +i, String.format("%.2f", expensevarious + totalcost));
                     totalcost = 0;
                     totalmanhours = 0;
-                //}
+                }
             }
             //供应商名称
             String companyName = "";
@@ -612,20 +619,11 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         List<Priceset> allPriceset = pricesetMapper.selectByYear(String.valueOf(year).trim());
         Map<String, Double> pricesetMap = new HashMap<String, Double>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        //DateFormat df = DateFormat.getDateInstance();
-        //Date startDate = sdf.parse(startTime);
         for ( Priceset priceset : allPriceset ) {
-            //Date pointDate = sdf.parse(priceset.getAssesstime().substring(0, 10));
-
-            //int startM = Integer.parseInt(priceset.getAssesstime().substring(5, 7));
             String totalUnit = "0";
             if(StringUtils.isNotBlank(priceset.getTotalunit())){
                 totalUnit = priceset.getTotalunit().trim();
             }
-//            String key = priceset.getUser_id() + "price" + startM;
-//            Double value = 0.0;
-//            value = Double.parseDouble(totalUnit);
-//            pricesetMap.put(key, value);
             PricesetGroup pricesetGroup = new PricesetGroup();
             pricesetGroup.setPricesetgroup_id(priceset.getPricesetgroup_id());
             pricesetGroup = pricesetGroupMapper.selectOne(pricesetGroup);
@@ -635,30 +633,6 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             Double value = 0.0;
             value = Double.parseDouble(totalUnit);
             pricesetMap.put(key, value);
-
-//            for ( int i=1; i<=12; i++) {
-//                    String key = priceset.getUser_id() + "price" + i;
-//                    Double value = 0.0;
-//                    value = Double.parseDouble(totalUnit);
-//                    pricesetMap.put(key, value);
-//            }
-//            if ( pointDate.before(startDate) ) {
-//
-//            }else {
-//                if(startM >= 1 && startM<=3){
-//                    for (int k = startM; k<=3; k++) {
-//                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
-//                    }
-//                }else {
-//                    for (int k = startM; k<=12; k++) {
-//                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
-//                    }
-//                    for (int k = 1; k<=3; k++) {
-//                        pricesetMap.put(priceset.getUser_id() + "price" + k, Double.parseDouble(totalUnit));
-//                    }
-//                }
-//            }
-
         }
         return pricesetMap;
     }
@@ -666,15 +640,6 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     @Override
     public Map<String, Double> getUserPriceMapBygroupid(String groupid,String years) throws Exception {
         // 获取所有人的单价设定
-//        Calendar now = Calendar.getInstance();
-//        int year = 0;
-//        int month = now.get(Calendar.MONTH);
-//        if(month >= 1 && month <= 3) {
-//            year = now.get(Calendar.YEAR) - 1;
-//        }else {
-//            year = now.get(Calendar.YEAR);
-//        }
-
         List<Priceset> allPriceset = pricesetMapper.selectBygroupid(Integer.valueOf(years),groupid);
 
         Map<String, Double> pricesetMap = new HashMap<String, Double>();
@@ -729,7 +694,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     double contract = 0;
                     String property = "manhour" + k;
                     String propertyc = "cost" + k;
-                    String propertyEAll = "expense" + k;
+                    String propertyEAll = "expensesolo" + k;
                     String propertyp = "price" + k;
                     String propertyM = "";
                     String propertyCo = "";

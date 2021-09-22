@@ -15,4 +15,5 @@ public class DepartmentVo {
     private String DepartmentType;
     private String DepartmentUserid;
     private String DepartmentEncoding;
+    private String DepartmentRedirict;
 }
