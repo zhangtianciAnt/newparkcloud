@@ -657,7 +657,7 @@
         GROUP BY
             BPCOMPANY UNION ALL
         SELECT
-            '??' ,
+            '??',
             SUM( CASE `GROUP_ID` WHEN #{groupid} THEN IFNULL(${strColumn[0]},0) ELSE 0 END ) AS MANHOUR4,
             SUM( CASE `GROUP_ID` WHEN #{groupid} THEN IFNULL(${strColumn[1]},0) ELSE 0 END ) AS COST4,
             SUM( CASE `GROUP_ID` WHEN #{groupid} THEN IFNULL(${strColumn[2]},0) ELSE 0 END ) AS MANHOUR4F,
