@@ -137,12 +137,11 @@ public class Pfans6009Controller {
         dates = dates.replace("-"," 年 ");
         data.put("dates", dates.replace("-"," 年 "));
         data.put("dataList", pdfMap);
-
+        HashMap totalCostMap = (HashMap) pdfMap.get(pdfMap.size() - 1);
         //承认人
         if(allDepartment.size() > 0){
             Query query = new Query();
             for(DepartmentVo depVo : allDepartment){
-                HashMap totalCostMap = (HashMap) pdfMap.get(pdfMap.size() - 1);
                 // 预提工数和
                 data.put("manhourCount" + depVo.getDepartmentEn(), totalCostMap.get("manhour" + depVo.getDepartmentEn()));
                 // 费用工数和
@@ -167,6 +166,6 @@ public class Pfans6009Controller {
         }
         ExcelOutPutUtil.OutPutPdf("月度费用总览", "yuedufeiyongzonglan.xls", data, resp);
 
-        ExcelOutPutUtil.deleteDir("E:\\PFANS\\image");
+        ExcelOutPutUtil.deleteDir(AuthConstants.FILE_DIRECTORY + "image");
     }
 }
