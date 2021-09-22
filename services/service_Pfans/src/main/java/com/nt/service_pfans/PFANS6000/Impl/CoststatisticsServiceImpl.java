@@ -21,6 +21,7 @@ import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.mapper.BusinessplanMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
+import com.nt.service_pfans.PFANS6000.CompanyStatisticsService;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
 import com.nt.service_pfans.PFANS6000.mapper.*;
 import com.nt.utils.ApiResult;
@@ -86,6 +87,10 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
     private CoststatisticsdetailMapper coststatisticsdetailMapper;
     @Autowired
     private ToDoNoticeService toDoNoticeService;
+
+    @Autowired
+    private CompanyStatisticsService companyStatisticsService;
+
     @Autowired
     private RoleService roleService;
     @Autowired
@@ -488,11 +493,11 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         }
         if(cmyListupdateall.size()>0)
         {
-            insertCount = insertCount + coststatisticsMapper.updateAll(cmyListinsertall);
+            insertCount = insertCount + coststatisticsMapper.updateAll(cmyListupdateall);
         }
 
         //生成BP社統計数据
-
+        companyStatisticsService.insertCosts(groupid, year);
 
         return insertCount;
     }

@@ -218,8 +218,8 @@ public class CompanyStatistics extends BaseModel {
      * 構内工数(合计)
      * 構内人数(合计)
      */
-    @Column(name = "TOTALMANHOURS")
-    private BigDecimal totalmanhours;
+    @Column(name = "TOTALMANHOUR")
+    private BigDecimal totalmanhour;
 
     /**
      * 外注費用 (合计)

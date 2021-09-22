@@ -15,8 +15,8 @@ import java.util.Map;
 
 public interface CompanyStatisticsService {
 
-    Map<String, Object> getCosts(String groupid,String years) throws Exception;
-
+    Integer insertCosts(String groupid,String years) throws Exception;
+    List<CompanyStatistics> getCostsByGrpAndY(String groupid,String years) throws Exception;
 
     List<bpSum2Vo> getWorkTimes(String groupid, String years) throws LogicalException;
 

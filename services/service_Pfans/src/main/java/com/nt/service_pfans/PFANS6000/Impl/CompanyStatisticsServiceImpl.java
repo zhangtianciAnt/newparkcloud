@@ -71,8 +71,14 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     @Autowired
     private OrgTreeService orgTreeService;
 
+    public List<CompanyStatistics> getCostsByGrpAndY(String groupid,String years) throws Exception{
+        List<CompanyStatistics> companyStatisticsList = new ArrayList<>();
+        //todo  画面数据加载时内容
+        return companyStatisticsList;
+    }
+
     @Override
-    public Map<String, Object> getCosts(String groupid, String years) throws Exception {
+    public Integer insertCosts(String groupid, String years) throws Exception {
         Map<String, Object> result = new HashMap<>();
 
         Map<String, Double> userPriceMap = coststatisticsService.getUserPriceMapBygroupid(groupid, years);
@@ -154,12 +160,12 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             } catch (Exception e) {
             }
             try {
-                oldTotalmanhours = company.getTotalmanhours()==null  ?  BigDecimal.ZERO :company.getTotalmanhours();
+                oldTotalmanhours = company.getTotalmanhour()==null  ?  BigDecimal.ZERO :company.getTotalmanhour();
             } catch (Exception e) {
             }
 
             company.setTotalcost(oldTotalcost.add(totalcost));
-            company.setTotalmanhours(oldTotalmanhours.add(totalmanhours));
+            company.setTotalmanhour(oldTotalmanhours.add(totalmanhours));
             companyMap.put(bpcompany, company);
 
         }
@@ -289,21 +295,21 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         result.put("company", new ArrayList<>(companyMap.values()));
 
         //region  add_qhr_20210901 添加bp社统计费用数据
-        BpCompanyCost bpCompanyCost = new BpCompanyCost();
-        bpCompanyCost.setGroup_id(groupid);
-        bpCompanyCost.setYear(years);
-        List<BpCompanyCost> bpCompanyCostList = bpCompanyCostMapper.select(bpCompanyCost);
-        HashMap<String, BpCompanyCost> bpmap = new HashMap<>();
-        for (BpCompanyCost companyCost : bpCompanyCostList) {
-            bpmap.put(companyCost.getBpcompany(), companyCost);
-        }
-        for (CompanyStatistics value : companyMap.values()) {
-            String BpCompany = value.getBpcompany();
-            BpCompanyCost bpCompanyCost1 = bpmap.get(BpCompany);
-            if (bpCompanyCost1 == null) {
-                continue;
-            }
-        }
+//        BpCompanyCost bpCompanyCost = new BpCompanyCost();
+//        bpCompanyCost.setGroup_id(groupid);
+//        bpCompanyCost.setYear(years);
+//        List<BpCompanyCost> bpCompanyCostList = bpCompanyCostMapper.select(bpCompanyCost);
+//        HashMap<String, BpCompanyCost> bpmap = new HashMap<>();
+//        for (BpCompanyCost companyCost : bpCompanyCostList) {
+//            bpmap.put(companyCost.getBpcompany(), companyCost);
+//        }
+//        for (CompanyStatistics value : companyMap.values()) {
+//            String BpCompany = value.getBpcompany();
+//            BpCompanyCost bpCompanyCost1 = bpmap.get(BpCompany);
+//            if (bpCompanyCost1 == null) {
+//                continue;
+//            }
+//        }
         //endregion  add_qhr_20210901 添加bp社统计费用数据
 
         // year
@@ -336,13 +342,16 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             company.setGroup_id(groupid);
             if(entry.getKey().equals("company"))
             {
-                for(CompanyStatistics cpany : new ArrayList<CompanyStatistics>((Integer) entry.getValue()))
+                for(CompanyStatistics cpany : (List<CompanyStatistics>) result.get("company"))
                 {
-                    company.setBpcompanyid(cpany.getBpcompanyid());
-                    Supplierinfor supplierinfors = supplierinforMapper.selectByPrimaryKey(cpany.getBpcompanyid());
+                    company.setBpcompanyid(cpany.getBpcompany());
+                    Supplierinfor supplierinfors = supplierinforMapper.selectByPrimaryKey(company.getBpcompanyid());
                     if(supplierinfors!=null)
                     {
                         company.setBpcompany(supplierinfors.getSupchinese());
+                        cpany.setGroup_id(groupid);
+                        cpany.setBpcompanyid(company.getBpcompanyid());
+                        cpany.setBpcompany(company.getBpcompany());
                     }
                     List<CompanyStatistics> clist = null;
                     switch (months)
@@ -355,7 +364,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                                 clist.get(0).setCost4(cpany.getCost4());
                                 clist.get(0).setManhour4f(cpany.getManhour4f());
                                 clist.get(0).setCost4f(cpany.getCost4f());
-                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                clist.get(0).setTotalmanhour(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
                                         .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
                                         .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
 
@@ -375,9 +384,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                             }
                             else
                             {
-                                company.setCompanystatistics_id(UUID.randomUUID().toString());
-                                company.preInsert();
-                                cmyListinsertall.add(company);
+                                cpany.setCompanystatistics_id(UUID.randomUUID().toString());
+                                cpany.preInsert();
+                                cmyListinsertall.add(cpany);
                             }
                             break;
                         case 5:
@@ -388,7 +397,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                                 clist.get(0).setCost5(cpany.getCost5());
                                 clist.get(0).setManhour5f(cpany.getManhour5f());
                                 clist.get(0).setCost5f(cpany.getCost5f());
-                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                clist.get(0).setTotalmanhour(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
                                         .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
                                                 .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
 
@@ -408,9 +417,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                             }
                             else
                             {
-                                company.setCompanystatistics_id(UUID.randomUUID().toString());
-                                company.preInsert();
-                                cmyListinsertall.add(company);
+                                cpany.setCompanystatistics_id(UUID.randomUUID().toString());
+                                cpany.preInsert();
+                                cmyListinsertall.add(cpany);
                             }
                             break;
                         case 6:
@@ -421,7 +430,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                                 clist.get(0).setCost6(cpany.getCost6());
                                 clist.get(0).setManhour6f(cpany.getManhour6f());
                                 clist.get(0).setCost6f(cpany.getCost6f());
-                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                clist.get(0).setTotalmanhour(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
                                         .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
                                                 .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
 
@@ -441,9 +450,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                             }
                             else
                             {
-                                company.setCompanystatistics_id(UUID.randomUUID().toString());
-                                company.preInsert();
-                                cmyListinsertall.add(company);
+                                cpany.setCompanystatistics_id(UUID.randomUUID().toString());
+                                cpany.preInsert();
+                                cmyListinsertall.add(cpany);
                             }
                             break;
                         case 7:
@@ -454,7 +463,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                                 clist.get(0).setCost7(cpany.getCost7());
                                 clist.get(0).setManhour7f(cpany.getManhour7f());
                                 clist.get(0).setCost7f(cpany.getCost7f());
-                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                clist.get(0).setTotalmanhour(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
                                         .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
                                                 .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
 
@@ -474,9 +483,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                             }
                             else
                             {
-                                company.setCompanystatistics_id(UUID.randomUUID().toString());
-                                company.preInsert();
-                                cmyListinsertall.add(company);
+                                cpany.setCompanystatistics_id(UUID.randomUUID().toString());
+                                cpany.preInsert();
+                                cmyListinsertall.add(cpany);
                             }
                             break;
                         case 8:
@@ -487,7 +496,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                                 clist.get(0).setCost8(cpany.getCost8());
                                 clist.get(0).setManhour8f(cpany.getManhour8f());
                                 clist.get(0).setCost8f(cpany.getCost8f());
-                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                clist.get(0).setTotalmanhour(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
                                         .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
                                                 .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
 
@@ -507,9 +516,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                             }
                             else
                             {
-                                company.setCompanystatistics_id(UUID.randomUUID().toString());
-                                company.preInsert();
-                                cmyListinsertall.add(company);
+                                cpany.setCompanystatistics_id(UUID.randomUUID().toString());
+                                cpany.preInsert();
+                                cmyListinsertall.add(cpany);
                             }
                             break;
                         case 9:
@@ -520,7 +529,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                                 clist.get(0).setCost9(cpany.getCost9());
                                 clist.get(0).setManhour9f(cpany.getManhour9f());
                                 clist.get(0).setCost9f(cpany.getCost9f());
-                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                clist.get(0).setTotalmanhour(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
                                         .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
                                                 .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
 
@@ -540,9 +549,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                             }
                             else
                             {
-                                company.setCompanystatistics_id(UUID.randomUUID().toString());
-                                company.preInsert();
-                                cmyListinsertall.add(company);
+                                cpany.setCompanystatistics_id(UUID.randomUUID().toString());
+                                cpany.preInsert();
+                                cmyListinsertall.add(cpany);
                             }
                             break;
                         case 10:
@@ -553,7 +562,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                                 clist.get(0).setCost10(cpany.getCost10());
                                 clist.get(0).setManhour10f(cpany.getManhour10f());
                                 clist.get(0).setCost10f(cpany.getCost10f());
-                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                clist.get(0).setTotalmanhour(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
                                         .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
                                                 .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
 
@@ -573,9 +582,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                             }
                             else
                             {
-                                company.setCompanystatistics_id(UUID.randomUUID().toString());
-                                company.preInsert();
-                                cmyListinsertall.add(company);
+                                cpany.setCompanystatistics_id(UUID.randomUUID().toString());
+                                cpany.preInsert();
+                                cmyListinsertall.add(cpany);
                             }
                             break;
                         case 11:
@@ -586,7 +595,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                                 clist.get(0).setCost11(cpany.getCost11());
                                 clist.get(0).setManhour11f(cpany.getManhour11f());
                                 clist.get(0).setCost11f(cpany.getCost11f());
-                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                clist.get(0).setTotalmanhour(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
                                         .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
                                                 .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
 
@@ -606,9 +615,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                             }
                             else
                             {
-                                company.setCompanystatistics_id(UUID.randomUUID().toString());
-                                company.preInsert();
-                                cmyListinsertall.add(company);
+                                cpany.setCompanystatistics_id(UUID.randomUUID().toString());
+                                cpany.preInsert();
+                                cmyListinsertall.add(cpany);
                             }
                             break;
                         case 12:
@@ -619,7 +628,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                                 clist.get(0).setCost12(cpany.getCost12());
                                 clist.get(0).setManhour12f(cpany.getManhour12f());
                                 clist.get(0).setCost12f(cpany.getCost12f());
-                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                clist.get(0).setTotalmanhour(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
                                         .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
                                                 .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
 
@@ -639,9 +648,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                             }
                             else
                             {
-                                company.setCompanystatistics_id(UUID.randomUUID().toString());
-                                company.preInsert();
-                                cmyListinsertall.add(company);
+                                cpany.setCompanystatistics_id(UUID.randomUUID().toString());
+                                cpany.preInsert();
+                                cmyListinsertall.add(cpany);
                             }
                             break;
                         case 1:
@@ -652,7 +661,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                                 clist.get(0).setCost1(cpany.getCost1());
                                 clist.get(0).setManhour1f(cpany.getManhour1f());
                                 clist.get(0).setCost1f(cpany.getCost1f());
-                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                clist.get(0).setTotalmanhour(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
                                         .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
                                                 .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
 
@@ -672,9 +681,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                             }
                             else
                             {
-                                company.setCompanystatistics_id(UUID.randomUUID().toString());
-                                company.preInsert();
-                                cmyListinsertall.add(company);
+                                cpany.setCompanystatistics_id(UUID.randomUUID().toString());
+                                cpany.preInsert();
+                                cmyListinsertall.add(cpany);
                             }
                             break;
                         case 2:
@@ -685,7 +694,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                                 clist.get(0).setCost2(cpany.getCost2());
                                 clist.get(0).setManhour2f(cpany.getManhour2f());
                                 clist.get(0).setCost2f(cpany.getCost2f());
-                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                clist.get(0).setTotalmanhour(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
                                         .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
                                                 .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
 
@@ -705,9 +714,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                             }
                             else
                             {
-                                company.setCompanystatistics_id(UUID.randomUUID().toString());
-                                company.preInsert();
-                                cmyListinsertall.add(company);
+                                cpany.setCompanystatistics_id(UUID.randomUUID().toString());
+                                cpany.preInsert();
+                                cmyListinsertall.add(cpany);
                             }
                             break;
                         case 3:
@@ -718,7 +727,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                                 clist.get(0).setCost3(cpany.getCost3());
                                 clist.get(0).setManhour3f(cpany.getManhour3f());
                                 clist.get(0).setCost3f(cpany.getCost3f());
-                                clist.get(0).setTotalmanhours(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
+                                clist.get(0).setTotalmanhour(clist.get(0).getManhour4().add(clist.get(0).getManhour5().add(clist.get(0).getManhour6().add(clist.get(0).getManhour7()
                                         .add(clist.get(0).getManhour8().add(clist.get(0).getManhour9().add(clist.get(0).getManhour10().add(clist.get(0).getManhour11()
                                                 .add(clist.get(0).getManhour12().add(clist.get(0).getManhour1().add(clist.get(0).getManhour2().add(clist.get(0).getManhour3()))))))))))));
 
@@ -738,9 +747,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                             }
                             else
                             {
-                                company.setCompanystatistics_id(UUID.randomUUID().toString());
-                                company.preInsert();
-                                cmyListinsertall.add(company);
+                                cpany.setCompanystatistics_id(UUID.randomUUID().toString());
+                                cpany.preInsert();
+                                cmyListinsertall.add(cpany);
                             }
                             break;
                     }
@@ -755,10 +764,10 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         }
         if(cmyListupdateall.size()>0)
         {
-            insertCount = insertCount + companyStatisticsMapper.updateAll(cmyListinsertall);
+            insertCount = insertCount + companyStatisticsMapper.updateAll(cmyListupdateall);
         }
 
-        return result;
+        return insertCount;
     }
 
 //    @Override
@@ -851,8 +860,8 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     private void getReportWork1(XSSFSheet sheet1, String groupid, String years) throws LogicalException {
         try {
             Coststatistics coststatistics = new Coststatistics();
-
-            Map<String, Object> result = getCosts(groupid, years);
+//todo
+            Map<String, Object> result = null;
             List<CompanyStatistics> companyStatisticsList = (List<CompanyStatistics>) result.get("company");
 //            Map<String, Double> trip = (Map<String, Double>) result.get("trip");
 //            Map<String, Double> asset = (Map<String, Double>) result.get("asset");
