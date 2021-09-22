@@ -8,17 +8,27 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "bpnewsagency")
+@Table(name = "companystatistics")
 public class CompanyStatistics extends BaseModel {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "BPNEWSAGENCY_ID")
-    private String bpnewsagency_id;
+    @Column(name = "COMPANYSTATISTICS_ID")
+    private String companystatistics_id;
+
+    @Column(name = "YEAR")
+    private String year;
+
+    @Column(name = "GROUP_ID")
+    private String group_id;
+
+    @Column(name = "BPCOMPANYID")
+    private String bpcompanyid;
 
     @Column(name = "BPCOMPANY")
     private String bpcompany;
@@ -29,14 +39,14 @@ public class CompanyStatistics extends BaseModel {
      * 構内人数
      */
     @Column(name = "MANHOUR4")
-    private String manhour4;
+    private BigDecimal manhour4;
 
     /**
      * 外注費用
      * 構外工数
      */
     @Column(name = "COST4")
-    private String cost4;
+    private BigDecimal cost4;
 
     /**
      * 作業工数
@@ -44,14 +54,14 @@ public class CompanyStatistics extends BaseModel {
      * 構内人数
      */
     @Column(name = "MANHOUR5")
-    private String manhour5;
+    private BigDecimal manhour5;
 
     /**
      * 外注費用
      * 構外工数
      */
     @Column(name = "COST5")
-    private String cost5;
+    private BigDecimal cost5;
 
     /**
      * 作業工数
@@ -59,14 +69,14 @@ public class CompanyStatistics extends BaseModel {
      * 構内人数
      */
     @Column(name = "MANHOUR6")
-    private String manhour6;
+    private BigDecimal manhour6;
 
     /**
      * 外注費用
      * 構外工数
      */
     @Column(name = "COST6")
-    private String cost6;
+    private BigDecimal cost6;
 
     /**
      * 作業工数
@@ -74,14 +84,14 @@ public class CompanyStatistics extends BaseModel {
      * 構内人数
      */
     @Column(name = "MANHOUR7")
-    private String manhour7;
+    private BigDecimal manhour7;
 
     /**
      * 外注費用
      * 構外工数
      */
     @Column(name = "COST7")
-    private String cost7;
+    private BigDecimal cost7;
 
     /**
      * 作業工数
@@ -89,14 +99,14 @@ public class CompanyStatistics extends BaseModel {
      * 構内人数
      */
     @Column(name = "MANHOUR8")
-    private String manhour8;
+    private BigDecimal manhour8;
 
     /**
      * 外注費用
      * 構外工数
      */
     @Column(name = "COST8")
-    private String cost8;
+    private BigDecimal cost8;
 
     /**
      * 作業工数
@@ -104,14 +114,14 @@ public class CompanyStatistics extends BaseModel {
      * 構内人数
      */
     @Column(name = "MANHOUR9")
-    private String manhour9;
+    private BigDecimal manhour9;
 
     /**
      * 外注費用
      * 構外工数
      */
     @Column(name = "COST9")
-    private String cost9;
+    private BigDecimal cost9;
 
     /**
      * 作業工数
@@ -119,14 +129,14 @@ public class CompanyStatistics extends BaseModel {
      * 構内人数
      */
     @Column(name = "MANHOUR10")
-    private String manhour10;
+    private BigDecimal manhour10;
 
     /**
      * 外注費用
      * 構外工数
      */
     @Column(name = "COST10")
-    private String cost10;
+    private BigDecimal cost10;
 
     /**
      * 作業工数
@@ -134,14 +144,14 @@ public class CompanyStatistics extends BaseModel {
      * 構内人数
      */
     @Column(name = "MANHOUR11")
-    private String manhour11;
+    private BigDecimal manhour11;
 
     /**
      * 外注費用
      * 構外工数
      */
     @Column(name = "COST11")
-    private String cost11;
+    private BigDecimal cost11;
 
     /**
      * 作業工数
@@ -149,14 +159,14 @@ public class CompanyStatistics extends BaseModel {
      * 構内人数
      */
     @Column(name = "MANHOUR12")
-    private String manhour12;
+    private BigDecimal manhour12;
 
     /**
      * 外注費用
      * 構外工数
      */
     @Column(name = "COST12")
-    private String cost12;
+    private BigDecimal cost12;
 
     /**
      * 作業工数
@@ -164,14 +174,14 @@ public class CompanyStatistics extends BaseModel {
      * 構内人数
      */
     @Column(name = "MANHOUR1")
-    private String manhour1;
+    private BigDecimal manhour1;
 
     /**
      * 外注費用
      * 構外工数
      */
     @Column(name = "COST1")
-    private String cost1;
+    private BigDecimal cost1;
 
     /**
      * 作業工数
@@ -179,14 +189,14 @@ public class CompanyStatistics extends BaseModel {
      * 構内人数
      */
     @Column(name = "MANHOUR2")
-    private String manhour2;
+    private BigDecimal manhour2;
 
     /**
      * 外注費用
      * 構外工数
      */
     @Column(name = "COST2")
-    private String cost2;
+    private BigDecimal cost2;
 
     /**
      * 作業工数
@@ -194,14 +204,14 @@ public class CompanyStatistics extends BaseModel {
      * 構内人数
      */
     @Column(name = "MANHOUR3")
-    private String manhour3;
+    private BigDecimal manhour3;
 
     /**
      * 外注費用
      * 構外工数
      */
     @Column(name = "COST3")
-    private String cost3;
+    private BigDecimal cost3;
 
     /**
      * 作業工数(合计)
@@ -209,177 +219,177 @@ public class CompanyStatistics extends BaseModel {
      * 構内人数(合计)
      */
     @Column(name = "TOTALMANHOURS")
-    private String totalmanhours;
+    private BigDecimal totalmanhours;
 
     /**
      * 外注費用 (合计)
      * 構外工数 (合计)
      */
     @Column(name = "TOTALCOST")
-    private String totalcost;
+    private BigDecimal totalcost;
 
-    @Column(name = "TYPE")
-    private String type;
-
-    @Column(name = "STATE")
-    private String state;
-
-    @Column(name = "ROWINDEX")
-    private String rowindex;
+//    @Column(name = "TYPE")
+//    private String type;
+//
+//    @Column(name = "STATE")
+//    private String state;
+//
+//    @Column(name = "ROWINDEX")
+//    private String rowindex;
 //  region add_qhr_20210907  bp社统计每月加入实际费用列
     /**
      * 4月工数
      */
     @Column(name = "MANHOUR4F")
-    private String manhour4f;
+    private BigDecimal manhour4f;
     /**
      * 4月費用
      */
     @Column(name = "COST4F")
-    private String cost4f;
+    private BigDecimal cost4f;
 
     /**
      * 5月工数
      */
     @Column(name = "MANHOUR5F")
-    private String manhour5f;
+    private BigDecimal manhour5f;
 
     /**
      * 5月費用
      */
     @Column(name = "COST5F")
-    private String cost5f;
+    private BigDecimal cost5f;
 
     /**
      * 6月工数
      */
     @Column(name = "MANHOUR6F")
-    private String manhour6f;
+    private BigDecimal manhour6f;
 
     /**
      * 6月費用
      */
     @Column(name = "COST6F")
-    private String cost6f;
+    private BigDecimal cost6f;
 
     /**
      * 7月工数
      */
     @Column(name = "MANHOUR7F")
-    private String manhour7f;
+    private BigDecimal manhour7f;
 
     /**
      * 7月費用
      */
     @Column(name = "COST7F")
-    private String cost7f;
+    private BigDecimal cost7f;
 
     /**
      * 8月工数
      */
     @Column(name = "MANHOUR8F")
-    private String manhour8f;
+    private BigDecimal manhour8f;
 
     /**
      * 8月費用
      */
     @Column(name = "COST8F")
-    private String cost8f;
+    private BigDecimal cost8f;
 
     /**
      * 9月工数
      */
     @Column(name = "MANHOUR9F")
-    private String manhour9f;
+    private BigDecimal manhour9f;
 
     /**
      * 9月費用
      */
     @Column(name = "COST9F")
-    private String cost9f;
+    private BigDecimal cost9f;
 
     /**
      * 10月工数
      */
     @Column(name = "MANHOUR10F")
-    private String manhour10f;
+    private BigDecimal manhour10f;
 
     /**
      * 10月費用
      */
     @Column(name = "COST10F")
-    private String cost10f;
+    private BigDecimal cost10f;
 
     /**
      * 11月工数
      */
     @Column(name = "MANHOUR11F")
-    private String manhour11f;
+    private BigDecimal manhour11f;
 
     /**
      * 11月費用
      */
     @Column(name = "COST11F")
-    private String cost11f;
+    private BigDecimal cost11f;
 
     /**
      * 12月工数
      */
     @Column(name = "MANHOUR12F")
-    private String manhour12f;
+    private BigDecimal manhour12f;
 
     /**
      * 12月費用
      */
     @Column(name = "COST12F")
-    private String cost12f;
+    private BigDecimal cost12f;
 
     /**
      * 1月工数
      */
     @Column(name = "MANHOUR1F")
-    private String manhour1f;
+    private BigDecimal manhour1f;
 
     /**
      * 1月費用
      */
     @Column(name = "COST1F")
-    private String cost1f;
+    private BigDecimal cost1f;
 
     /**
      * 2月工数
      */
     @Column(name = "MANHOUR2F")
-    private String manhour2f;
+    private BigDecimal manhour2f;
 
     /**
      * 2月費用
      */
     @Column(name = "COST2F")
-    private String cost2f;
+    private BigDecimal cost2f;
 
     /**
      * 3月工数
      */
     @Column(name = "MANHOUR3F")
-    private String manhour3f;
+    private BigDecimal manhour3f;
 
     /**
      * 3月費用
      */
     @Column(name = "COST3F")
-    private String cost3f;
+    private BigDecimal cost3f;
 
     /**
      * 费用合计工数
      */
     @Column(name = "TOTALMANHOURF")
-    private String totalmanhourf;
+    private BigDecimal totalmanhourf;
 
     /**
      * 费用合计费用
      */
     @Column(name = "TOTALCOSTF")
-    private String totalcostf;
+    private BigDecimal totalcostf;
 //    endregion add_qhr_20210907  bp社统计每月加入实际费用列
 }
