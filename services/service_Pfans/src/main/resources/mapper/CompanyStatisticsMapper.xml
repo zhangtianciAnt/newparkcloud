@@ -3,37 +3,7 @@
 <mapper namespace="com.nt.service_pfans.PFANS6000.mapper.CompanyStatisticsMapper">
 
 	<select id="getWorkTimes" parameterType="map" resultType="com.nt.dao_Pfans.PFANS6000.CompanyStatistics">
-		<!--select a.SUPPLIERNAME as bpcompany,
-		IFNULL(a.JANUARY,0) as manhour1, IFNULL(a.FEBRUARY,0) as manhour2, IFNULL(a.MARCH,0) as manhour3, IFNULL(a.APRIL,0) as manhour4, IFNULL(a.MAY,0) as manhour5, IFNULL(a.JUNE,0) as manhour6,
-		IFNULL(a.JULY,0) as manhour7, IFNULL(a.AUGUST,0) as manhour8, IFNULL(a.SEPTEMBER,0) as manhour9, IFNULL(a.OCTOBER,0) as manhour10, IFNULL(a.NOVEMBER,0) as manhour11, IFNULL(a.DECEMBER,0) as manhour12,
-		IFNULL(b.JANUARY,0) as cost1, IFNULL(b.FEBRUARY,0) as cost2, IFNULL(b.MARCH,0) as cost3, IFNULL(b.APRIL,0) as cost4, IFNULL(b.MAY,0) as cost5, IFNULL(b.JUNE,0) as cost6,
-		IFNULL(b.JULY,0) as cost7, IFNULL(b.AUGUST,0) as cost8, IFNULL(b.SEPTEMBER,0) as cost9, IFNULL(b.OCTOBER,0) as cost10, IFNULL(b.NOVEMBER,0) as cost11, IFNULL(b.DECEMBER,0) as cost12
-		 from
-		(
-			select exp.SUPPLIERNAME, sum(exp.`JANUARY`) as JANUARY, sum(exp.FEBRUARY) as FEBRUARY, sum(exp.MARCH) as MARCH, sum(exp.APRIL) as APRIL, sum(exp.MAY) as MAY, sum(exp.JUNE) as JUNE,
-					sum(exp.`JULY`) as JULY, sum(exp.AUGUST) as AUGUST, sum(exp.SEPTEMBER) as SEPTEMBER, sum(exp.OCTOBER) as OCTOBER, sum(exp.NOVEMBER) as NOVEMBER, sum(exp.DECEMBER) as DECEMBER
-					from `expatriatesinfor` exp
-			where
-			1 = 1
-			<if test="owner!=null">
-				and OWNER = #{owner}
-			</if>
-			and VENUETARGET = #{yesValue}
-			group by SUPPLIERNAME
-		) a
-		left join (
-			select exp.SUPPLIERNAME, sum(exp.`JANUARY`) as JANUARY, sum(exp.FEBRUARY) as FEBRUARY, sum(exp.MARCH) as MARCH, sum(exp.APRIL) as APRIL, sum(exp.MAY) as MAY, sum(exp.JUNE) as JUNE,
-					sum(exp.`JULY`) as JULY, sum(exp.AUGUST) as AUGUST, sum(exp.SEPTEMBER) as SEPTEMBER, sum(exp.OCTOBER) as OCTOBER, sum(exp.NOVEMBER) as NOVEMBER, sum(exp.DECEMBER) as DECEMBER
-					from `expatriatesinfor` exp
-			where
-			1 = 1
-			<if test="owner!=null">
-				and OWNER = #{owner}
-			</if>
-			and VENUETARGET = #{noValue}
-			group by SUPPLIERNAME
-		) b
-		on a.SUPPLIERNAME = b.SUPPLIERNAME-->
+
 		select a.SUPPLIERINFOR_ID as bpcompany,
 		IFNULL(a.JANUARY,0) as manhour1, IFNULL(a.FEBRUARY,0) as manhour2, IFNULL(a.MARCH,0) as manhour3, IFNULL(a.APRIL,0) as manhour4, IFNULL(a.MAY,0) as manhour5, IFNULL(a.JUNE,0) as manhour6,
 		IFNULL(a.JULY,0) as manhour7, IFNULL(a.AUGUST,0) as manhour8, IFNULL(a.SEPTEMBER,0) as manhour9, IFNULL(a.OCTOBER,0) as manhour10, IFNULL(a.NOVEMBER,0) as manhour11, IFNULL(a.DECEMBER,0) as manhour12,
@@ -525,4 +495,141 @@
 		order by
 		year
 	</select>
+
+	<insert id="insertAll" parameterType="java.util.List">
+		insert into companystatistics
+		(COMPANYSTATISTICS_ID,YEAR,GROUP_ID,BPCOMPANYID,BPCOMPANY
+		MANHOUR4,COST4,MANHOUR4F,COST4F,
+		MANHOUR5,COST5,MANHOUR5F,COST5F,
+		MANHOUR6,COST6,MANHOUR6F,COST6F,
+
+		MANHOUR7,COST7,MANHOUR7F,COST7F,
+		MANHOUR8,COST8,MANHOUR8F,COST8F,
+		MANHOUR9,COST9,MANHOUR9F,COST9F,
+
+		MANHOUR10,COST10,MANHOUR10F,COST10F,
+		MANHOUR11,COST11,MANHOUR11F,COST11F,
+		MANHOUR12,COST12,MANHOUR12F,COST12F,
+
+		MANHOUR1,COST1,MANHOUR1F,COST1F,
+		MANHOUR2,COST2,MANHOUR2F,COST2F,
+		MANHOUR3,COST3,MANHOUR3F,COST3F,
+
+		TOTALMANHOURS,TOTALCOST,TOTALMANHOURF,TOTALCOSTF,
+
+		CREATEBY,CREATEON,MODIFYBY,MODIFYON,OWNER,STATUS,TENANTID)
+		values
+		<foreach item="item" collection="list" separator=",">
+			(#{item.companystatistics_id},#{item.year},#{item.group_id},#{item.bpcompanyid},#{item.bpcompany},
+			#{item.manhour4},#{item.cost4},   #{item.manhour4f},#{item.cost4f},
+			#{item.manhour5},#{item.cost5},   #{item.manhour5f},#{item.cost5f},
+			#{item.manhour6},#{item.cost6},   #{item.manhour6f},#{item.cost6f},
+
+			#{item.manhour7},#{item.cost7},   #{item.manhour7f},#{item.cost7f},
+			#{item.manhour8},#{item.cost8},   #{item.manhour8f},#{item.cost8f},
+			#{item.manhour9},#{item.cost9},   #{item.manhour9f},#{item.cost9f},
+
+			#{item.manhour10},#{item.cost10}, #{item.manhour10f},#{item.cost10f},
+			#{item.manhour11},#{item.cost11}, #{item.manhour11f},#{item.cost11f},
+			#{item.manhour12},#{item.cost12}, #{item.manhour12f},#{item.cost12f},
+
+			#{item.manhour1},#{item.cost1},   #{item.manhour1f},#{item.cost1f},
+			#{item.manhour2},#{item.cost2},   #{item.manhour2f},#{item.cost2f},
+			#{item.manhour3},#{item.cost3},   #{item.manhour3f},#{item.cost3f},
+
+			#{item.totalmanhours},#{item.totalcost},#{item.totalmanhourf},#{item.totalcostf}
+
+			#{item.createby},
+			#{item.createon},
+			#{item.modifyby},
+			#{item.modifyon},
+			#{item.owner},
+			#{item.status},
+			#{item.tenantid})
+		</foreach>
+	</insert>
+
+	<update id="updateAll" parameterType="java.util.List">
+		<foreach item="item" collection="list" index="index">
+			UPDATE companystatistics
+			SET
+			YEAR = #{item.year} , GROUP_ID = #{item.group_id} , BPCOMPANYID = #{item.bpcompanyid} , BPCOMPANY = #{item.bpcompany},
+			MANHOUR4 = #{item.manhour4},
+			COST4 = #{item.cost4},
+			MANHOUR4F = #{item.manhour4f},
+			COST4F = #{item.cost4f},
+
+			MANHOUR5 = #{item.manhour5},
+			COST5 = #{item.cost5},
+			MANHOUR5F = #{item.manhour5f},
+			COST5F = #{item.cost5f},
+
+			MANHOUR6 = #{item.manhour6},
+			COST6 = #{item.cost6},
+			MANHOUR6F = #{item.manhour6f},
+			COST6F = #{item.cost6f},
+
+			MANHOUR7 = #{item.manhour7},
+			COST7 = #{item.cost7},
+			MANHOUR7F = #{item.manhour7f},
+			COST7F = #{item.cost7f},
+
+			MANHOUR8 = #{item.manhour8},
+			COST8 = #{item.cost8},
+			MANHOUR8F = #{item.manhour8f},
+			COST8F = #{item.cost8f},
+
+			MANHOUR9 = #{item.manhour9},
+			COST9 = #{item.cost9},
+			MANHOUR9F = #{item.manhour9f},
+			COST9F = #{item.cost9f},
+
+			MANHOUR10 = #{item.manhour10},
+			COST10 = #{item.cost10},
+			MANHOUR10F = #{item.manhour10f},
+			COST10F = #{item.cost10f},
+
+			MANHOUR11 = #{item.manhour11},
+			COST11 = #{item.cost11},
+			MANHOUR11F = #{item.manhour11f},
+			COST11F = #{item.cost11f},
+
+			MANHOUR12 = #{item.manhour12},
+			COST12 = #{item.cost12},
+			MANHOUR12F = #{item.manhour12f},
+			COST12F = #{item.cost12f},
+
+			MANHOUR1 = #{item.manhour1},
+			COST1 = #{item.cost1},
+			MANHOUR1F = #{item.manhour1f},
+			COST1F = #{item.cost1f},
+
+			MANHOUR2 = #{item.manhour2},
+			COST2 = #{item.cost2},
+			MANHOUR2F = #{item.manhour2f},
+			COST2F = #{item.cost2f},
+
+			MANHOUR3 = #{item.manhour3},
+			COST3 = #{item.cost3},
+			MANHOUR3F = #{item.manhour3f},
+			COST3F = #{item.cost3f},
+
+			TOTALMANHOURS = #{item.totalmanhours},
+			TOTALCOST = #{item.totalcost},
+			TOTALMANHOURF = #{item.totalmanhourf},
+			TOTALCOSTF = #{item.totalcostf},
+
+
+			CREATEBY = #{item.createby},
+			CREATEON = #{item.createon},
+			MODIFYBY = #{item.modifyby},
+			MODIFYON = #{item.modifyon},
+			OWNER = #{item.owner},
+			STATUS = #{item.status},
+			TENANTID = #{item.tenantid})
+			WHERE COMPANYSTATISTICS_ID = #{item.companystatistics_id};
+		</foreach>
+	</update>
+
+
 </mapper>
