@@ -169,7 +169,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
             wL = wL.stream().filter(item -> (item.getStatus().equals("4")) || item.getStatus().equals("0")).collect(Collectors.toList());
             if(wL.size()>0)
             {
-//                throw new LogicalException(months+"月的费用已经通过审批，不允许再次生成。");
+                throw new LogicalException(months+"月的费用已经通过审批，不允许再次生成。");
             }
         }
         //add ccm to 2021-04

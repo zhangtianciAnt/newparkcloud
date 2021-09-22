@@ -201,7 +201,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                     bigManhourCount = bigManhourCount.add(bigTormb);
 
                     // 作业工数 = 外注费用 / 18500
-                    BigDecimal bigManhour = bigTormb.divide(new BigDecimal(18500)).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal bigManhour = bigTormb.divide(new BigDecimal(18500),2,4).setScale(2, RoundingMode.HALF_UP);
 
                     // 费用-总作业工数
                     bigTormbCount = bigTormbCount.add(bigManhour);
