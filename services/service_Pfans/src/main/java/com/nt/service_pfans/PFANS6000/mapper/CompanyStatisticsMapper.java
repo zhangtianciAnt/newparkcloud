@@ -23,5 +23,8 @@ public interface CompanyStatisticsMapper extends MyMapper<CompanyStatistics> {
     int insertAll(List<CompanyStatistics> allCostList);
     int updateAll(List<CompanyStatistics> allCostList);
 
+    List<CompanyStatistics> getCompanyList(@Param("years") String years);
+
+    List<CompanyStatistics> getcompanyStatisticsList(@Param("groupid") String groupid,@Param("years") String years,@Param("strColumn") String[] strColumn);
 }
 

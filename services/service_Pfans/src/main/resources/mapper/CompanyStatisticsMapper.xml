@@ -631,5 +631,40 @@
 		</foreach>
 	</update>
 
+	<select id="getCompanyList"  resultType="com.nt.dao_Pfans.PFANS6000.CompanyStatistics">
+        SELECT
+            BPCOMPANY
+        FROM
+            companystatistics
+        WHERE
+            YEAR = #{years}
+        GROUP BY
+            BPCOMPANY
+        ORDER BY
+            BPCOMPANY
+    </select>
+
+	<select id="getcompanyStatisticsList"  resultType="com.nt.dao_Pfans.PFANS6000.CompanyStatistics">
+        SELECT
+            BPCOMPANY,
+            SUM( CASE `GROUP_ID` WHEN #{groupid} THEN IFNULL(${strColumn[0]},0) ELSE 0 END ) AS MANHOUR4,
+            SUM( CASE `GROUP_ID` WHEN #{groupid} THEN IFNULL(${strColumn[1]},0) ELSE 0 END ) AS COST4,
+            SUM( CASE `GROUP_ID` WHEN #{groupid} THEN IFNULL(${strColumn[2]},0) ELSE 0 END ) AS MANHOUR4F,
+            SUM( CASE `GROUP_ID` WHEN #{groupid} THEN IFNULL(${strColumn[3]},0) ELSE 0 END ) AS COST4F
+        FROM
+            companystatistics
+        WHERE YEAR = #{years}
+        GROUP BY
+            BPCOMPANY UNION ALL
+        SELECT
+            '??',
+            SUM( CASE `GROUP_ID` WHEN #{groupid} THEN IFNULL(${strColumn[0]},0) ELSE 0 END ) AS MANHOUR4,
+            SUM( CASE `GROUP_ID` WHEN #{groupid} THEN IFNULL(${strColumn[1]},0) ELSE 0 END ) AS COST4,
+            SUM( CASE `GROUP_ID` WHEN #{groupid} THEN IFNULL(${strColumn[2]},0) ELSE 0 END ) AS MANHOUR4F,
+            SUM( CASE `GROUP_ID` WHEN #{groupid} THEN IFNULL(${strColumn[3]},0) ELSE 0 END ) AS COST4F
+        FROM
+            companystatistics
+        WHERE YEAR = #{years}
+    </select>
 
 </mapper>

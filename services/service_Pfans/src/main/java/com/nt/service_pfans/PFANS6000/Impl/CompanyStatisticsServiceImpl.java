@@ -67,9 +67,6 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     private SupplierinforMapper supplierinforMapper;
 
     @Autowired
-    private BpCompanyCostMapper bpCompanyCostMapper;
-
-    @Autowired
     private PublicExpenseMapper publicExpenseMapper;
     @Autowired
     private OrgTreeService orgTreeService;
@@ -1336,8 +1333,8 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
     }
 
     @Override
-    public Map<String, Object> downloadPdf(String dates) throws Exception {
-        Map<String, Object> resultRet = new HashMap<>();
+    public List downloadPdf(String dates) throws Exception {
+        List listAll = new ArrayList<>();
 
         String strYears = dates.substring(0,4);
         int intMonths = Integer.valueOf(dates.substring(5,7));
@@ -1345,107 +1342,37 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             strYears = String.valueOf(Integer.valueOf(strYears) - 1);
         }
         List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
-        JSONObject mapJb = new JSONObject();
-        List<String> supchinese = new ArrayList<>();
-
-        Map<String, Double> totalCostMapx = new HashMap<>();
-
         if(allDepartment.size() > 0){
-            // 预提-工数
-            String property = "manhour" + intMonths;
-            // 预提-费用
-            String propertyC = "cost" + intMonths;
-            // 费用-工数
-            String propertyf = "manhour" + intMonths + "f";
-            // 费用-费用
-            String propertyCf = "cost" + intMonths + "f";
-            // 预提-工数总额-部门
-            String propertyCountD = "totalmanhoursD";
-            // 预提-工数总额-公司
-            String propertyCountP = "totalmanhoursP";
-            // 预提-费用总额-部门
-            String propertyCCountD = "totalcostD";
-            // 预提-费用总额-公司
-            String propertyCCountC = "totalcostC";
-            // 费用-工数总额-部门
-            String propertyfCountD = "totalmanhourf";
-            // 费用-工数总额-公司
-            String propertyfCountC = "totalmanhourfC";
-            // 费用-费用总额-部门
-            String propertyCfCountD = "totalcostf";
-            // 费用-费用总额-公司
-            String propertyCfCountC = "totalcostfC";
+            //需要查詢的字段
+            String[] strColumn = new String[]{"MANHOUR" + intMonths, "COST" + intMonths,"MANHOUR" + intMonths + "F","COST" + intMonths + "F"};
+
+            Map<String, Object> companyMap = new HashMap<>();
+            List<CompanyStatistics> companyList = companyStatisticsMapper.getCompanyList(strYears);
+            for(CompanyStatistics company : companyList){
+                companyMap = new HashMap<>();
+                companyMap.put("company", company.getBpcompany());
+                listAll.add(companyMap);
+            }
+            companyMap = new HashMap<>();
+            companyMap.put("company", "合计");
+            listAll.add(companyMap);
 
             // 循环部门
             for(DepartmentVo depVo : allDepartment){
-                totalCostMapx.put("manhour" + depVo.getDepartmentEn(), 0.0);
-                totalCostMapx.put("cost" + depVo.getDepartmentEn(), 0.0);
-                totalCostMapx.put("manhourf" + depVo.getDepartmentEn(), 0.0);
-                totalCostMapx.put("costf" + depVo.getDepartmentEn(), 0.0);
-                // 单个部门数据
-                Map<String, Object> resultRetAll = new HashMap<>();
-                double manhourCount = 0;
-                double costCount = 0;
-                double manhourfCount = 0;
-                double  costfCount = 0;
-                //获取数据
-                Map<String, Object> result = getCosts(depVo.getDepartmentId(), strYears);
-
-                List<CompanyStatistics> companyStatisticsList = (List<CompanyStatistics>) result.get("company");
-
-                for (CompanyStatistics c : companyStatisticsList) {
-                    Map<String, Double> totalCostMap = new HashMap<>();
-
-                    //预提/费用计算
-                    double manhour = Double.parseDouble(BeanUtils.getProperty(c, property));
-                    double cost = Double.parseDouble(BeanUtils.getProperty(c, propertyC));
-                    double manhourf = Double.parseDouble(BeanUtils.getProperty(c, propertyf));
-                    double  costf = Double.parseDouble(BeanUtils.getProperty(c, propertyCf));
-                    // 合计值
-                    manhourCount = manhourCount + manhour;
-                    costCount = costCount + cost;
-                    manhourfCount = manhourfCount + manhourf;
-                    costfCount = costfCount + costf;
-
-                    totalCostMap.put("manhour", totalCostMap.getOrDefault(property, 0.0) + manhour);
-                    totalCostMap.put("cost", totalCostMap.getOrDefault(propertyC, 0.0) + cost);
-                    totalCostMap.put("manhourf", totalCostMap.getOrDefault(propertyf, 0.0) + manhourf);
-                    totalCostMap.put("costf", totalCostMap.getOrDefault(propertyCf, 0.0) + costf);
-
-
-                    Supplierinfor ls = supplierinforMapper.selectByPrimaryKey(c.getBpcompany());
-                    if (ls != null) {
-                        resultRetAll.put(ls.getSupchinese(),totalCostMap);
-                        if(supchinese.indexOf(ls.getSupchinese()) < 0){
-                            supchinese.add(ls.getSupchinese());
-                            resultRet.put(ls.getSupchinese(),new ArrayList<>());
+                List<CompanyStatistics> companyStatisticsList = companyStatisticsMapper.getcompanyStatisticsList(depVo.getDepartmentId(),strYears,strColumn);
+                for(CompanyStatistics bp : companyStatisticsList){
+                    for(int i = 0; i < listAll.size(); i++) {
+                        HashMap totalCostMap = (HashMap) listAll.get(i);
+                        if(bp.getBpcompany().equals(totalCostMap.get("company"))){
+                            totalCostMap.put("manhour" + depVo.getDepartmentEn(), bp.getManhour4());
+                            totalCostMap.put("cost" + depVo.getDepartmentEn(), bp.getCost4());
+                            totalCostMap.put("manhourf" + depVo.getDepartmentEn(), bp.getManhour4f());
+                            totalCostMap.put("costf" + depVo.getDepartmentEn(), bp.getCost4f());
                         }
                     }
                 }
-                resultRetAll.put("manhourCount", manhourCount);
-                resultRetAll.put("costCount", costCount);
-                resultRetAll.put("manhourfCount", manhourfCount);
-                resultRetAll.put("costfCount", costfCount);
-                mapJb.put(depVo.getDepartmentEn(), resultRetAll);
             }
         }
-        for (Map.Entry<String, Object> map : mapJb.entrySet()){
-            String mapkry = map.getKey();
-            Object mapkryValue = map.getValue();
-//            for (Object resultRetmap : mapkryValue){
-//                resultRetmap.setValue(totalCostMapx);
-//                String b = "1";
-//            }
-            for (Map.Entry<String, Object> resultRetmap : resultRet.entrySet()){
-                resultRetmap.setValue(totalCostMapx);
-            }
-        }
-//        Iterator iter = mapJb.entrySet().iterator();
-//        while (iter.hasNext()) {
-//            Map.Entry entry = (Map.Entry) iter.next();
-//            System.out.println(entry.getKey().toString());
-//            System.out.println(entry.getValue().toString());
-//        }
-        return resultRet;
+        return listAll;
     }
 }
