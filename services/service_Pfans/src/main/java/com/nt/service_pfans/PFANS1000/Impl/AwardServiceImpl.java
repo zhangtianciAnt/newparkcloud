@@ -84,6 +84,13 @@ public class AwardServiceImpl implements AwardService {
     // 禅道任务152
     @Override
     public AwardVo selectById(String award_id) throws Exception {
+        //region scc add 8/24 id--部门键值对 from
+        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+        HashMap<String,String> companyid = new HashMap<>();
+        for(DepartmentVo vo : allDepartment){
+            companyid.put(vo.getDepartmentId(),vo.getDepartmentEn());
+        }
+        //endregion scc add 8/24 id--部门键值对 to
         AwardVo awavo = new AwardVo();
         AwardDetail awadetail = new AwardDetail();
         awadetail.setAward_id(award_id);
@@ -95,6 +102,39 @@ public class AwardServiceImpl implements AwardService {
         stafflist = stafflist.stream().sorted(Comparator.comparing(StaffDetail::getRowindex)).collect(Collectors.toList());
         Award awa = awardMapper.selectByPrimaryKey(award_id);
         Award award = awardMapper.selectByPrimaryKey(award_id);
+        //region scc add 8/24 页面初始化时页面所需rank及成本 from
+        //scc 所有rank from
+        List<com.nt.dao_Org.Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
+        HashMap<String, String> dicList = new HashMap<>();
+
+        for(Dictionary dic : dictionaryRank){
+            dicList.put(dic.getCode(),dic.getValue1());
+        }
+        //scc 所有rank to
+        for(StaffDetail sta : stafflist){
+            String beginningDate = award.getClaimdatetime().split("~")[0].trim();//开始日
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date parseBegin = sdf.parse(beginningDate);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(parseBegin);
+            String beginningYear = String.valueOf(cal.get(Calendar.YEAR));//年
+            //人件费 获取实际成本变更 ztc fr
+            PeoplewareFee getFee = new PeoplewareFee();
+            getFee.setGroupid(sta.getIncondepartment());
+            getFee.setYear(beginningYear);
+            getFee.setRanks(sta.getAttf());
+            List<PeoplewareFee> peeList = peoplewareFeeMapper.select(getFee);
+            //Map<String, PeoplewareFee> bmRanksInfo = personalCostService.getBmRanksInfo(beginningYear, sta.getIncondepartment());//部门所有rank成本
+
+
+//            for(String key : bmRanksInfo.keySet()){
+//                costOf.put(dicList.get(key),bmRanksInfo.get(key).getMonth4() + "~" + bmRanksInfo.get(key).getMonth7());
+//            }
+            sta.setBm(peeList);//页面初始化成本
+            //人件费 获取实际成本变更 ztc to
+            sta.setIncondepartment(companyid.get(sta.getIncondepartment()));//存部门
+        }
+        //endregion scc add 8/24 页面初始化时页面所需rank及成本 to
 //        String name = "";
 //        String [] companyProjectsid = award.getPjnamechinese().split(",");
 //        if(companyProjectsid.length > 0){
@@ -244,13 +284,30 @@ public class AwardServiceImpl implements AwardService {
 
         if (stalist != null) {
             int rowindex = 0;
+            //region scc add 8/24 根据部门简称存部门id from
+            List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+            HashMap<String,String> companyid = new HashMap<>();
+            for(DepartmentVo vo : allDepartment){
+                companyid.put(vo.getDepartmentEn(),vo.getDepartmentId());
+            }
+            //endregion scc add 8/24 根据部门简称存部门id to
             for (StaffDetail staffDetail : stalist) {
                 rowindex = rowindex + 1;
                 staffDetail.preInsert(tokenModel);
                 staffDetail.setStaffdetail_id(UUID.randomUUID().toString());
                 staffDetail.setAward_id(awardid);
+                //region scc 存部门id from
+                staffDetail.setIncondepartment(companyid.get(staffDetail.getIncondepartment()));
+                //endregion scc 存部门id to
                 staffDetail.setRowindex(rowindex);
                 staffDetailMapper.insertSelective(staffDetail);
+            }
+        }
+
+        if(awardVo.getAwardReunites() != null){
+            for(AwardReunite awardReunite : awardVo.getAwardReunites()){
+                awardReunite.preUpdate(tokenModel);
+                awardReuniteMapper.updateByPrimaryKey(awardReunite);
             }
         }
 
@@ -261,6 +318,18 @@ public class AwardServiceImpl implements AwardService {
         award.preUpdate(tokenModel);
         awardMapper.updateByPrimaryKeySelective(award);
     }
+
+    //region scc add 21/8/20 受托合同，详情，部门下拉框数据源 from
+    public List<String> getCompanyen() throws Exception{
+        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+        List<String> companyens = new ArrayList<>();
+        for(DepartmentVo vo : allDepartment){
+            companyens.add(vo.getDepartmentEn());
+        }
+        return companyens;
+    }
+    //endregion scc add 21/8/20 受托合同，详情，部门下拉框数据源 to
+
     //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc fr
     public List<AwardDetail> getAwardEntr(List<String> awardIdList) throws Exception{
         List<AwardDetail> awardDetails = awardDetailMapper.getAdInfoList(awardIdList);
