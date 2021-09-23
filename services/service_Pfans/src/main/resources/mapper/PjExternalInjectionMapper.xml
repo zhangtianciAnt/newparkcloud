@@ -20,10 +20,19 @@
         DATE_FORMAT(LOG_DATE,'%Y-%m') LOG_DATE,
         PROJECT_ID PROJECT_ID
                 FROM
-                (SELECT `CREATEBY`, SUM(TIME_START) TIME_START, PROJECT_ID, GROUP_ID, LOG_DATE
-                FROM logmanagement
-                WHERE   DATE_FORMAT(LOG_DATE,'%Y%m') = #{year}
-                GROUP BY `CREATEBY`,PROJECT_ID) log
+                (SELECT
+            USER_ID AS `CREATEBY`,
+            SUM( ADJUST ) TIME_START,
+            PROJECT_ID,
+            DEPARTMENT AS GROUP_ID,
+            LOG_DATE
+            FROM
+            logpersonstatistics
+            WHERE
+            DATE_FORMAT( LOG_DATE, '%Y%m' ) = #{year}
+            GROUP BY
+            `CREATEBY`,
+            PROJECT_ID) log
         ) workrate
         INNER JOIN (SELECT unit.USER_ID USER_ID, ex.ACCOUNT ACCOUNT, unit.TOTALUNIT TOTALUNIT, unit.GROUP_ID GROUP_ID, unit.PD_DATE PD_DATE
         FROM
