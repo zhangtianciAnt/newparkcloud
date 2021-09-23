@@ -21,14 +21,9 @@ public class PersonalAvgVo {
     private String nextyear;
 
     /**
-     * 46月平均值
+     * 人件费平均值
      */
     private Double summerplanpc;
-
-    /**
-     * 73月平均值
-     */
-    private Double winterplanpc;
 
     /**
      * 加班时给
@@ -40,10 +35,9 @@ public class PersonalAvgVo {
      */
     private Double overtimehour;
 
-    public PersonalAvgVo(String code,String money46,String money73,String overtimepay,String overtimehour){
+    public PersonalAvgVo(String code,String summerplanpc,String overtimepay,String overtimehour){
         this.nextyear = code;
-        this.summerplanpc = Double.parseDouble(money46);
-        this.winterplanpc = Double.parseDouble(money73);
+        this.summerplanpc = Double.parseDouble(summerplanpc);
         this.overtimepay = Double.parseDouble(overtimepay);
         this.overtimehour = Double.parseDouble(overtimehour);
     }

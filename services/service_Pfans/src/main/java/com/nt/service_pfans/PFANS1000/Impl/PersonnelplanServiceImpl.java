@@ -5,15 +5,19 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Employed;
 import com.nt.dao_Pfans.PFANS1000.Moneyavg;
 import com.nt.dao_Pfans.PFANS1000.PersonnelPlan;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExternalVo;
 import com.nt.dao_Pfans.PFANS2000.PersonalCost;
+import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.PersonnelplanService;
 import com.nt.service_pfans.PFANS1000.mapper.PersonnelplanMapper;
 import com.nt.service_pfans.PFANS2000.mapper.PersonalCostMapper;
+import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PersonnelplanServiceImpl implements PersonnelplanService {
@@ -35,6 +40,12 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private PersonalCostMapper personalcostmapper;
+
+    @Autowired
+    private PeoplewareFeeMapper peoplewarefeeMapper;
+
+    @Autowired
+    private DictionaryService dictionaryService;
     @Override
     public List<CustomerInfo> SelectCustomer(String id) {
         Query query = new Query();
@@ -98,10 +109,9 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
         for(Moneyavg mavg : moneyavgList){
             perNum ++;
             //update gbb 20210415 事业计划-外驻计划-新建时统计值用【Unitprice】 start
-            if(mavg.getSummerplanpc() != null){
+            if(!StringUtils.isNullOrEmpty(mavg.getSummerplanpc())){
                 BigDecimal summerMoney = new BigDecimal(mavg.getSummerplanpc());
-                BigDecimal winterMoney = new BigDecimal(mavg.getWinterplanpc());
-                moneyavgSum = moneyavgSum.add(summerMoney.add(winterMoney));
+                moneyavgSum = moneyavgSum.add(summerMoney);
             }
             else{
                 BigDecimal unitprice = new BigDecimal(mavg.getUnitprice() == null ? "0":mavg.getUnitprice());
@@ -115,21 +125,15 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
         {
             for(Moneyavg newmavg : newmoneyavgList){
                 perNum ++;
-                if(newmavg.getSummerplanpc() != null){
+                if(!StringUtils.isNullOrEmpty(newmavg.getSummerplanpc())){
                     BigDecimal newsummerMoney = new BigDecimal(newmavg.getSummerplanpc());
-                    BigDecimal newwinterMoney = new BigDecimal(newmavg.getSummerplanpc());
-                    moneyavgSum = moneyavgSum.add(newsummerMoney.add(newwinterMoney));
+                    moneyavgSum = moneyavgSum.add(newsummerMoney);
                 }
                 else
                 {
-                    //add gbb 20210507 人员计划报错出错 start
-//                    if(newmavg.getUnitprice() != null){
-                        BigDecimal unitprice = new BigDecimal(newmavg.getUnitprice() == null ? "0":newmavg.getUnitprice());
-                        moneyavgSum = moneyavgSum.add(unitprice);
-//                    }
-                    //add gbb 20210507 人员计划报错出错 end
+                    BigDecimal unitprice = new BigDecimal(newmavg.getUnitprice() == null ? "0":newmavg.getUnitprice());
+                    moneyavgSum = moneyavgSum.add(unitprice);
                 }
-
             }
         }
 
@@ -157,7 +161,41 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
     // add-lyt-21/1/29-禅道任务648-start
     @Override
     public List<PersonalCost> getPersonalCost(String groupid, String years) throws Exception {
-        List<PersonalCost> personalcost =  personalcostmapper.getPersonalCost(groupid,years);
+        List<PersonalCost> personalcost =  new ArrayList<>();
+
+        //查询rank字典
+        List<Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
+        //查询当前部门，当前年度的rank人件费
+        PeoplewareFee pw = new PeoplewareFee();
+        pw.setGroupid(groupid);
+        pw.setYear(years);
+        List<PeoplewareFee> peoplewareFeeList = peoplewarefeeMapper.select(pw);
+        if(peoplewareFeeList.size()>0)
+        {
+            //查询当前年度当前部门所有人的信息
+            Query query = new Query();
+            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(groupid),Criteria.where("userinfo.groupid").is(groupid)));
+            //todo 筛选条件需要修改
+//            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.resignation_date").exists(false),new Criteria().andOperator(Criteria.where("userinfo.resignation_date").exists(true),Criteria.where("userinfo.resignation_date").ne(null).ne(""))));
+            List<CustomerInfo> customerInfoList = mongoTemplate.find(query,CustomerInfo.class);
+            for(CustomerInfo customerInfo : customerInfoList)
+            {
+                PersonalCost p = new PersonalCost();
+                p.setUserid(customerInfo.getUserid());
+                p.setUsername(customerInfo.getUserinfo().getCustomername());
+                p.setExrank(customerInfo.getUserinfo().getRank());
+                p.setLtrank(customerInfo.getUserinfo().getRank());
+                //暂存年度平均值
+                p.setAptoju(peoplewareFeeList.stream().filter(item->item.getRanks().equals(
+                        dictionaryRank.stream().filter(i->i.getCode().equals(customerInfo.getUserinfo().getRank())).collect(Collectors.toList())
+                                .get(0).getValue1())).collect(Collectors.toList()).get(0).getAgeprice());
+                personalcost.add(p);
+            }
+        }
+        else
+        {
+            throw new LogicalException("当前年度的人件费还未导入，请确认！");
+        }
         return personalcost;
     }
    // add-lyt-21/1/29-禅道任务648-end
