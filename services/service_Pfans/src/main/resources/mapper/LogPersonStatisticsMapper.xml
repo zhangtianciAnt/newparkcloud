@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS5000.mapper.LogPersonStatisticsMapper">
+    <select id="selectByDate" resultType="com.nt.dao_Pfans.PFANS5000.LogPersonStatistics">
+        select *
+        from logpersonstatistics
+        where
+        1=1
+        <if test="dateOf != null and dateOf !=''">
+            and LOG_DATE = #{dateOf}
+        </if>
+
+        <if test="owners != null and owners.size() > 0">
+            and (owner in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            )
+        </if>
+    </select>
+
+    <select id="selectByDateLogment" resultType="com.nt.dao_Pfans.PFANS5000.LogPersonStatistics">
+        SELECT
+        m.LOG_DATE,
+        m.PROJECT_ID,
+        m.PROJECT_NAME,
+        m.CREATEBY AS USER_ID,
+        m.TIME_START AS DURATION,
+        m.GROUP_ID as DEPARTMENT
+        FROM
+        (
+        SELECT
+        DATE_FORMAT( l.LOG_DATE, '%Y-%m' ) LOG_DATE,
+        l.PROJECT_ID PROJECT_ID,
+        l.PROJECT_NAME PROJECT_NAME,
+        l.CREATEBY CREATEBY,
+        ROUND( SUM( l.TIME_START ), 2 ) TIME_START,
+        l.GROUP_ID GROUP_ID
+        FROM
+        logmanagement l
+        GROUP BY
+        DATE_FORMAT( l.LOG_DATE, '%Y-%m' ),
+        l.PROJECT_ID,
+        l.CREATEBY
+        ) m
+        WHERE
+        m.LOG_DATE = #{years}
+    </select>
+</mapper>
