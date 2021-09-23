@@ -49,7 +49,7 @@
             AND DATE_FORMAT( publicexpense.jzmonth, '%Y' ) = #{years}
         </if>
         GROUP BY
-        publicexpense.payeename,
+        supplierinfor.SUPPLIERINFOR_ID,
         publicexpense.jzmonth
     </select>
 
