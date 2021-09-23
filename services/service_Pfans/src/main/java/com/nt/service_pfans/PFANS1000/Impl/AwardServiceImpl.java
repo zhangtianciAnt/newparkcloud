@@ -1,27 +1,29 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.ToDoNotice;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
-import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
-import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
+import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
 import com.nt.service_Auth.RoleService;
+import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS1000.AwardService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.service_pfans.PFANS2000.PersonalCostService;
+import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
-import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
-import com.nt.utils.ExcelOutPutUtil;
 import com.nt.utils.dao.TokenModel;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,6 +39,8 @@ public class AwardServiceImpl implements AwardService {
     private ToDoNoticeService toDoNoticeService;
     @Autowired
     private AwardMapper awardMapper;
+    @Autowired
+    private AwardReuniteMapper awardReuniteMapper;
 
     @Autowired
     private AwardDetailMapper awardDetailMapper;
@@ -49,6 +53,18 @@ public class AwardServiceImpl implements AwardService {
 
     @Autowired
     CompanyProjectsMapper companyProjectsMapper;
+
+    @Autowired
+    PeoplewareFeeMapper peoplewareFeeMapper;
+
+    @Autowired
+    private OrgTreeService orgTreeService;
+
+    @Autowired
+    private PersonalCostService personalCostService;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @Override
     public List<Award> get(Award award) throws Exception {
@@ -108,6 +124,17 @@ public class AwardServiceImpl implements AwardService {
             }
             awavo.setNumbercounts(contractList);
         }
+        //    PSDCD_PFANS_20210525_XQ_054 复合合同决裁书分配金额可修改 ztc fr
+        if (awa != null) {
+            AwardReunite awardReunite = new AwardReunite();
+            awardReunite.setContractnumber(awa.getContractnumber());
+            List<AwardReunite> awardReuniteList = awardReuniteMapper.select(awardReunite);
+            if (awardReuniteList != null && awardReuniteList.size() > 1) {
+                awardReuniteList = awardReuniteList.stream().sorted(Comparator.comparing(AwardReunite::getRowindex)).collect(Collectors.toList());
+            }
+            awavo.setAwardReunites(awardReuniteList);
+        }
+        //    PSDCD_PFANS_20210525_XQ_054 复合合同决裁书分配金额可修改 ztc to
         return awavo;
     }
 
@@ -234,5 +261,10 @@ public class AwardServiceImpl implements AwardService {
         award.preUpdate(tokenModel);
         awardMapper.updateByPrimaryKeySelective(award);
     }
-
+    //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc fr
+    public List<AwardDetail> getAwardEntr(List<String> awardIdList) throws Exception{
+        List<AwardDetail> awardDetails = awardDetailMapper.getAdInfoList(awardIdList);
+        return awardDetails;
+    }
+    //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc to
 }

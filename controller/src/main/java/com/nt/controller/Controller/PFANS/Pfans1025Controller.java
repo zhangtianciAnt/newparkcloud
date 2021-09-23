@@ -448,4 +448,10 @@ public class Pfans1025Controller {
         return ApiResult.success();
 
     }
+    //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc fr
+    @RequestMapping(value = "/getAwardEntr", method = {RequestMethod.POST})
+    public ApiResult getAwardEntr(@RequestBody List<String> awardIdList , HttpServletRequest request) throws Exception {
+        return ApiResult.success(awardService.getAwardEntr(awardIdList));
+    }
+    //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc to
 }

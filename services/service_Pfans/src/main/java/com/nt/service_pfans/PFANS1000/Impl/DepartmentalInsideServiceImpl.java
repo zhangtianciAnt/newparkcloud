@@ -101,11 +101,20 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
             int finalYear = year;
             staffGroupMap.forEach((dep, depList) -> {//部门
                 Map<String, PeoplewareFee> peoplewareFeeMap = new HashMap<>();
-                try {
-                    peoplewareFeeMap = personalCostService.getBmRanksInfo(String.valueOf(finalYear), dep);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                //人件费 获取实际成本变更 ztc fr
+                PeoplewareFee peoFee = new PeoplewareFee();
+                peoFee.setYear(String.valueOf(finalYear));
+                peoFee.setGroupid(dep);
+                List<PeoplewareFee> peoFeeList = peoplewarefeeMapper.select(peoFee);
+                peoFeeList.forEach(poem -> {
+                    peoplewareFeeMap.put(poem.getRanks(),poem);
+                });
+//                try {
+//                    peoplewareFeeMap.put(dep,peoFeeList);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+                //人件费 获取实际成本变更 ztc to
                 DepartmentalInside departInsideSelect = new DepartmentalInside();
                 departInsideSelect.setYears(String.valueOf(finalYear));
                 departInsideSelect.setDepartment(dep);
@@ -246,7 +255,7 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                                                         ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan05()))
                                                                                         .multiply(
                                                                                                 (peoFilterList.size() > 0
-                                                                                                        ? new BigDecimal(peoCost.getMonth4()) : BigDecimal.ZERO)
+                                                                                                        ? new BigDecimal(peoCost.getMonth5()) : BigDecimal.ZERO)
                                                                                         )
                                                                         )
                                                                 ).add(
@@ -255,7 +264,7 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                                                 ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan06()))
                                                                                 .multiply(
                                                                                         (peoFilterList.size() > 0
-                                                                                                ? new BigDecimal(peoCost.getMonth4()) : BigDecimal.ZERO)
+                                                                                                ? new BigDecimal(peoCost.getMonth6()) : BigDecimal.ZERO)
                                                                                 )
                                                                 )
                                                         )
@@ -316,8 +325,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                         String.valueOf(
                                                 (
                                                         (
-                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan04())
-                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan04()))
+                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan07())
+                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan07()))
                                                                         .multiply(
                                                                                 (peoFilterList.size() > 0
                                                                                         ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
@@ -325,27 +334,27 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                         )
                                                                 .add(
                                                                         (
-                                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan05())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan05()))
+                                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan08())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan08()))
                                                                                         .multiply(
                                                                                                 (peoFilterList.size() > 0
-                                                                                                        ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                                        ? new BigDecimal(peoCost.getMonth8()) : BigDecimal.ZERO)
                                                                                         )
                                                                         )
                                                                 ).add(
                                                                 (
-                                                                        (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan06())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan06()))
+                                                                        (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan09())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan09()))
                                                                                 .multiply(
                                                                                         (peoFilterList.size() > 0
-                                                                                                ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                                ? new BigDecimal(peoCost.getMonth9()) : BigDecimal.ZERO)
                                                                                 )
                                                                 )
                                                         )
                                                 ).subtract(
                                                         (
-                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual04())
-                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual04()))
+                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual07())
+                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual07()))
                                                                         .multiply(
                                                                                 (peoFilterList.size() > 0
                                                                                         ? new BigDecimal(peoFilterList.get(0).getMonth7()) : BigDecimal.ZERO)
@@ -353,8 +362,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                         )
                                                                 .add(
                                                                         (
-                                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual05())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual05()))
+                                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual08())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual08()))
                                                                                         .multiply(
                                                                                                 (peoFilterList.size() > 0
                                                                                                         ? new BigDecimal(peoFilterList.get(0).getMonth8()) : BigDecimal.ZERO)
@@ -362,8 +371,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                                         )
                                                                 ).add(
                                                                 (
-                                                                        (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual06())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual06()))
+                                                                        (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual09())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual09()))
                                                                                 .multiply(
                                                                                         (peoFilterList.size() > 0
                                                                                                 ? new BigDecimal(peoFilterList.get(0).getMonth9()) : BigDecimal.ZERO)
@@ -399,36 +408,36 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                         String.valueOf(
                                                 (
                                                         (
-                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan04())
-                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan04()))
+                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan10())
+                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan10()))
                                                                         .multiply(
                                                                                 (peoFilterList.size() > 0
-                                                                                        ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                        ? new BigDecimal(peoCost.getMonth10()) : BigDecimal.ZERO)
                                                                         )
                                                         )
                                                                 .add(
                                                                         (
-                                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan05())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan05()))
+                                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan11())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan11()))
                                                                                         .multiply(
                                                                                                 (peoFilterList.size() > 0
-                                                                                                        ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                                        ? new BigDecimal(peoCost.getMonth11()) : BigDecimal.ZERO)
                                                                                         )
                                                                         )
                                                                 ).add(
                                                                 (
-                                                                        (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan06())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan06()))
+                                                                        (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan12())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan12()))
                                                                                 .multiply(
                                                                                         (peoFilterList.size() > 0
-                                                                                                ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                                ? new BigDecimal(peoCost.getMonth12()) : BigDecimal.ZERO)
                                                                                 )
                                                                 )
                                                         )
                                                 ).subtract(
                                                         (
-                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual04())
-                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual04()))
+                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual10())
+                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual10()))
                                                                         .multiply(
                                                                                 (peoFilterList.size() > 0
                                                                                         ? new BigDecimal(peoFilterList.get(0).getMonth10()) : BigDecimal.ZERO)
@@ -436,8 +445,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                         )
                                                                 .add(
                                                                         (
-                                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual05())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual05()))
+                                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual11())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual11()))
                                                                                         .multiply(
                                                                                                 (peoFilterList.size() > 0
                                                                                                         ? new BigDecimal(peoFilterList.get(0).getMonth11()) : BigDecimal.ZERO)
@@ -445,8 +454,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                                         )
                                                                 ).add(
                                                                 (
-                                                                        (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual06())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual06()))
+                                                                        (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual12())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual12()))
                                                                                 .multiply(
                                                                                         (peoFilterList.size() > 0
                                                                                                 ? new BigDecimal(peoFilterList.get(0).getMonth12()) : BigDecimal.ZERO)
@@ -482,36 +491,36 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                         String.valueOf(
                                                 (
                                                         (
-                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan04())
-                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan04()))
+                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan01())
+                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan01()))
                                                                         .multiply(
                                                                                 (peoFilterList.size() > 0
-                                                                                        ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                        ? new BigDecimal(peoCost.getMonth1()) : BigDecimal.ZERO)
                                                                         )
                                                         )
                                                                 .add(
                                                                         (
-                                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan05())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan05()))
+                                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan02())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan02()))
                                                                                         .multiply(
                                                                                                 (peoFilterList.size() > 0
-                                                                                                        ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                                        ? new BigDecimal(peoCost.getMonth2()) : BigDecimal.ZERO)
                                                                                         )
                                                                         )
                                                                 ).add(
                                                                 (
-                                                                        (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan06())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan06()))
+                                                                        (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan03())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustplan03()))
                                                                                 .multiply(
                                                                                         (peoFilterList.size() > 0
-                                                                                                ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                                ? new BigDecimal(peoCost.getMonth3()) : BigDecimal.ZERO)
                                                                                 )
                                                                 )
                                                         )
                                                 ).subtract(
                                                         (
-                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual04())
-                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual04()))
+                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual01())
+                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual01()))
                                                                         .multiply(
                                                                                 (peoFilterList.size() > 0
                                                                                         ? new BigDecimal(peoFilterList.get(0).getMonth1()) : BigDecimal.ZERO)
@@ -519,8 +528,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                         )
                                                                 .add(
                                                                         (
-                                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual05())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual05()))
+                                                                                (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual02())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual02()))
                                                                                         .multiply(
                                                                                                 (peoFilterList.size() > 0
                                                                                                         ? new BigDecimal(peoFilterList.get(0).getMonth2()) : BigDecimal.ZERO)
@@ -528,8 +537,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                                         )
                                                                 ).add(
                                                                 (
-                                                                        (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual06())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual06()))
+                                                                        (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual03())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual03()))
                                                                                 .multiply(
                                                                                         (peoFilterList.size() > 0
                                                                                                 ? new BigDecimal(peoFilterList.get(0).getMonth3()) : BigDecimal.ZERO)
@@ -648,7 +657,7 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                                                         ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan05()))
                                                                                         .multiply(
                                                                                                 (peoFilterListUpdate.size() > 0
-                                                                                                        ? new BigDecimal(peoCost.getMonth4()) : BigDecimal.ZERO)
+                                                                                                        ? new BigDecimal(peoCost.getMonth5()) : BigDecimal.ZERO)
                                                                                         )
                                                                         )
                                                                 ).add(
@@ -657,7 +666,7 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                                                 ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan06()))
                                                                                 .multiply(
                                                                                         (peoFilterListUpdate.size() > 0
-                                                                                                ? new BigDecimal(peoCost.getMonth4()) : BigDecimal.ZERO)
+                                                                                                ? new BigDecimal(peoCost.getMonth6()) : BigDecimal.ZERO)
                                                                                 )
                                                                 )
                                                         )
@@ -718,8 +727,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                         String.valueOf(
                                                 (
                                                         (
-                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan04())
-                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan04()))
+                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan07())
+                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan07()))
                                                                         .multiply(
                                                                                 (peoFilterListUpdate.size() > 0
                                                                                         ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
@@ -727,27 +736,27 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                         )
                                                                 .add(
                                                                         (
-                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan05())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan05()))
+                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan08())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan08()))
                                                                                         .multiply(
                                                                                                 (peoFilterListUpdate.size() > 0
-                                                                                                        ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                                        ? new BigDecimal(peoCost.getMonth8()) : BigDecimal.ZERO)
                                                                                         )
                                                                         )
                                                                 ).add(
                                                                 (
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan06())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan06()))
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan09())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan09()))
                                                                                 .multiply(
                                                                                         (peoFilterListUpdate.size() > 0
-                                                                                                ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                                ? new BigDecimal(peoCost.getMonth9()) : BigDecimal.ZERO)
                                                                                 )
                                                                 )
                                                         )
                                                 ).subtract(
                                                         (
-                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual04())
-                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual04()))
+                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual07())
+                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual07()))
                                                                         .multiply(
                                                                                 (peoFilterListUpdate.size() > 0
                                                                                         ? new BigDecimal(peoFilterListUpdate.get(0).getMonth7()) : BigDecimal.ZERO)
@@ -755,8 +764,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                         )
                                                                 .add(
                                                                         (
-                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual05())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual05()))
+                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual08())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual08()))
                                                                                         .multiply(
                                                                                                 (peoFilterListUpdate.size() > 0
                                                                                                         ? new BigDecimal(peoFilterListUpdate.get(0).getMonth8()) : BigDecimal.ZERO)
@@ -764,8 +773,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                                         )
                                                                 ).add(
                                                                 (
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual06())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual06()))
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual09())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual09()))
                                                                                 .multiply(
                                                                                         (peoFilterListUpdate.size() > 0
                                                                                                 ? new BigDecimal(peoFilterListUpdate.get(0).getMonth9()) : BigDecimal.ZERO)
@@ -801,36 +810,36 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                         String.valueOf(
                                                 (
                                                         (
-                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan04())
-                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan04()))
+                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan10())
+                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan10()))
                                                                         .multiply(
                                                                                 (peoFilterListUpdate.size() > 0
-                                                                                        ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                        ? new BigDecimal(peoCost.getMonth10()) : BigDecimal.ZERO)
                                                                         )
                                                         )
                                                                 .add(
                                                                         (
-                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan05())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan05()))
+                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan11())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan11()))
                                                                                         .multiply(
                                                                                                 (peoFilterListUpdate.size() > 0
-                                                                                                        ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                                        ? new BigDecimal(peoCost.getMonth11()) : BigDecimal.ZERO)
                                                                                         )
                                                                         )
                                                                 ).add(
                                                                 (
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan06())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan06()))
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan12())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan12()))
                                                                                 .multiply(
                                                                                         (peoFilterListUpdate.size() > 0
-                                                                                                ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                                ? new BigDecimal(peoCost.getMonth12()) : BigDecimal.ZERO)
                                                                                 )
                                                                 )
                                                         )
                                                 ).subtract(
                                                         (
-                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual04())
-                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual04()))
+                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual10())
+                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual10()))
                                                                         .multiply(
                                                                                 (peoFilterListUpdate.size() > 0
                                                                                         ? new BigDecimal(peoFilterListUpdate.get(0).getMonth10()) : BigDecimal.ZERO)
@@ -838,8 +847,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                         )
                                                                 .add(
                                                                         (
-                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual05())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual05()))
+                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual11())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual11()))
                                                                                         .multiply(
                                                                                                 (peoFilterListUpdate.size() > 0
                                                                                                         ? new BigDecimal(peoFilterListUpdate.get(0).getMonth11()) : BigDecimal.ZERO)
@@ -847,8 +856,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                                         )
                                                                 ).add(
                                                                 (
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual06())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual06()))
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual12())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual12()))
                                                                                 .multiply(
                                                                                         (peoFilterListUpdate.size() > 0
                                                                                                 ? new BigDecimal(peoFilterListUpdate.get(0).getMonth12()) : BigDecimal.ZERO)
@@ -884,36 +893,36 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                         String.valueOf(
                                                 (
                                                         (
-                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan04())
-                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan04()))
+                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan01())
+                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan01()))
                                                                         .multiply(
                                                                                 (peoFilterListUpdate.size() > 0
-                                                                                        ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                        ? new BigDecimal(peoCost.getMonth1()) : BigDecimal.ZERO)
                                                                         )
                                                         )
                                                                 .add(
                                                                         (
-                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan05())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan05()))
+                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan02())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan02()))
                                                                                         .multiply(
                                                                                                 (peoFilterListUpdate.size() > 0
-                                                                                                        ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                                        ? new BigDecimal(peoCost.getMonth2()) : BigDecimal.ZERO)
                                                                                         )
                                                                         )
                                                                 ).add(
                                                                 (
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan06())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan06()))
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan03())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan03()))
                                                                                 .multiply(
                                                                                         (peoFilterListUpdate.size() > 0
-                                                                                                ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                                ? new BigDecimal(peoCost.getMonth3()) : BigDecimal.ZERO)
                                                                                 )
                                                                 )
                                                         )
                                                 ).subtract(
                                                         (
-                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual04())
-                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual04()))
+                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual01())
+                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual01()))
                                                                         .multiply(
                                                                                 (peoFilterListUpdate.size() > 0
                                                                                         ? new BigDecimal(peoFilterListUpdate.get(0).getMonth1()) : BigDecimal.ZERO)
@@ -921,8 +930,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                         )
                                                                 .add(
                                                                         (
-                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual05())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual05()))
+                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual02())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual02()))
                                                                                         .multiply(
                                                                                                 (peoFilterListUpdate.size() > 0
                                                                                                         ? new BigDecimal(peoFilterListUpdate.get(0).getMonth2()) : BigDecimal.ZERO)
@@ -930,8 +939,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                                         )
                                                                 ).add(
                                                                 (
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual06())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual06()))
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual03())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual03()))
                                                                                 .multiply(
                                                                                         (peoFilterListUpdate.size() > 0
                                                                                                 ? new BigDecimal(peoFilterListUpdate.get(0).getMonth3()) : BigDecimal.ZERO)

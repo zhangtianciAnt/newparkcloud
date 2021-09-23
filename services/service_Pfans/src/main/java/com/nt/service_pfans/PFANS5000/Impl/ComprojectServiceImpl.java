@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
@@ -8,15 +9,20 @@ import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo3;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanageMentVo;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
-import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS5000.ComprojectService;
 import com.nt.service_pfans.PFANS5000.mapper.*;
 import com.nt.service_pfans.PFANS6000.mapper.DelegainformationMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
+import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
+import com.nt.utils.dao.TimePair;
 import com.nt.utils.dao.TokenModel;
+import com.nt.utils.impl.IsOverLapImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +56,9 @@ public class ComprojectServiceImpl implements ComprojectService {
     private ExpatriatesinforMapper expatriatesinforMapper;
     @Autowired
     private DelegainformationMapper delegainformationMapper;
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
 
 
     @Override
@@ -142,6 +151,8 @@ public class ComprojectServiceImpl implements ComprojectService {
     public void update(CompanyProjectsVo companyProjectsVo, TokenModel tokenModel) throws Exception {
 //        CompanyProjects companyProjects = new CompanyProjects();
 //        BeanUtils.copyProperties(companyProjectsVo.getCompanyprojects(), companyProjects);
+        //可以进行重复选择，只需要做进组退组时间不重复的check ztc
+        this.checkDupSystem(companyProjectsVo.getProsystem());
         Comproject comproject = new Comproject();
         BeanUtils.copyProperties(companyProjectsVo.getComproject(), comproject);
         comproject.preUpdate(tokenModel);
@@ -227,9 +238,48 @@ public class ComprojectServiceImpl implements ComprojectService {
         comProjectMapper.updateByPrimaryKey(comp);
     }
 
+    /**
+     * 判断同一个人多个入退场是否有重叠（交集）
+     * @return 返回是否重叠 true重叠 false不重叠
+     */
+    public void checkDupSystem(List<Prosystem> checkDepSystem) throws Exception {
+        Map<String,List<Prosystem>> groupSyeMap = checkDepSystem.stream()
+                .collect(Collectors.groupingBy(Prosystem::getName));
+        for(Map.Entry<String,List<Prosystem>> entryName : groupSyeMap.entrySet()){
+            List<TimePair> timePairList = new ArrayList<>();
+            String nameId = entryName.getKey();
+            List<Prosystem> proList = entryName.getValue();
+            if(proList.size() > 1){
+                proList.forEach(item ->{
+                    TimePair timePair = new TimePair();
+                    timePair.setStart(item.getAdmissiontime().getTime());
+                    timePair.setEnd(item.getExittime().getTime());
+                    timePairList.add(timePair);
+                });
+                Boolean dupResult = IsOverLapImpl.isOverlap(timePairList,true);
+                if(dupResult){
+                    String staffName = "";
+                    if(proList.get(0).getType().equals("1")){
+                        staffName = proList.get(0).getName_id();
+                    }else{
+                        Query cusquery = new Query();
+                        cusquery.addCriteria(Criteria.where("userid").is(nameId));
+                        CustomerInfo cus = mongoTemplate.findOne(cusquery, CustomerInfo.class);
+                        if(cus != null){
+                            staffName = cus.getUserinfo().getCustomername();
+                        }
+                    }
+                    throw new LogicalException("体制中" + staffName + "进退场时间重复");
+                }
+            }
+        }
+    }
+
     //新建
     @Override
     public void insert(CompanyProjectsVo companyProjectsVo, TokenModel tokenModel) throws Exception {
+        //可以进行重复选择，只需要做进组退组时间不重复的check ztc
+        this.checkDupSystem(companyProjectsVo.getProsystem());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         String thisYear_s = String.valueOf(Integer.parseInt(DateUtil.format(new Date(), "yyyy")) - 1);
         String initial_s_01 = "0401";

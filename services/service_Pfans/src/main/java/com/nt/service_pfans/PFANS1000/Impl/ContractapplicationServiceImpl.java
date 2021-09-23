@@ -1,17 +1,15 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.ReportContractEnVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
-import com.nt.dao_Pfans.PFANS4000.Seal;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
 import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
@@ -20,11 +18,9 @@ import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
-import com.nt.dao_Org.Dictionary;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
-import com.nt.service_pfans.PFANS1000.PurchaseApplyService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
@@ -72,6 +68,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private ContractnumbercountMapper contractnumbercountMapper;
     @Autowired
     private ContractcompoundMapper contractcompoundMapper;
+    @Autowired
+    private AwardReuniteMapper awardReuniteMapper;
     @Autowired
     private ProjectContractMapper projectContractMapper;
     @Autowired
@@ -1535,7 +1533,36 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
             }
         }
-        result.put("contractnumbercount", numberList);
+        //    PSDCD_PFANS_20210525_XQ_054 复合合同决裁书分配金额可修改 ztc fr
+        if (cnList != null && compoundList != null && numberList != null) {
+            OrgTree newOrgInfo = orgtreeService.get(new OrgTree());
+            List<AwardReunite> awardReunites = new ArrayList<>();
+            AwardReunite arte = new AwardReunite();
+            arte.setContractnumber(cnList.get(0).getContractnumber());
+            awardReuniteMapper.delete(arte);
+            int rowindex = 0;
+            for(Contractnumbercount count : numberList) {
+                arte.setDeliverydate(count.getDeliverydate());
+                arte.setCompletiondate(count.getCompletiondate());
+                arte.setClaimdate(count.getClaimdate());
+                arte.setSupportdate(count.getSupportdate());
+                arte.setClaimamount(count.getClaimamount());
+                List<Contractcompound> comListAnt = compoundList.stream().filter(item -> item.getClaimtype().equals(count.getClaimtype())).collect(Collectors.toList());
+                for (Contractcompound compound : comListAnt) {
+                    rowindex = rowindex + 1;
+                    arte.setRowindex(rowindex);
+                    arte.preInsert(tokenModel);
+                    arte.setAwardreunite_id(UUID.randomUUID().toString());
+                    arte.setClaimtype(compound.getClaimtype());
+                    OrgTree orginfo = orgtreeService.getOrgInfo(newOrgInfo, compound.getGroup_id());
+                    arte.setDepartment(orginfo.getCompanyname());
+                    arte.setDistriamount(compound.getContractrequestamount());
+                    awardReuniteMapper.insert(arte);
+                }
+            }
+        }
+        //    PSDCD_PFANS_20210525_XQ_054 复合合同决裁书分配金额可修改 ztc to
+         result.put("contractnumbercount", numberList);
         return result;
     }
 

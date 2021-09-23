@@ -233,6 +233,11 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
             }
             message.append("部门的人件费已存在，已自动跳过!");
             if (useradd.size() > 0) {
+                //rank平均值 ztc fr
+                useradd.forEach(item ->{
+                    item.setAgeprice(item.getSum());
+                });
+                //rank平均值 ztc to
                 List<PeoplewareFee> all = new ArrayList<>(useradd);
                 Map<String, Map<String,List<PeoplewareFee>>> collect = useradd.stream().collect(Collectors.groupingBy(PeoplewareFee::getYear,Collectors.groupingBy(PeoplewareFee::getGroupid)));
                 collect.forEach((years,vale) -> {
@@ -246,7 +251,7 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
                         PeoplewareFee peomore = null;
                             for (Dictionary dic : collects) {
                                 String uuid = UUID.randomUUID().toString();
-                                peomore = new PeoplewareFee(uuid, group, years, dic.getValue1(), "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+                                peomore = new PeoplewareFee(uuid, group, years, dic.getValue1(), "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0");
                                 peomore.preInsert(tokenModel);
                                 all.add(peomore);
                             }
@@ -323,6 +328,11 @@ public  class PeoplewareFeeServiceImpl implements PeoplewareFeeService {
             }
             upd.append("部门数据不存在，需要导入，不可更新，请确认。");
             if (useradd.size() > 0) {
+                //rank平均值 ztc fr
+                useradd.forEach(item ->{
+                    item.setAgeprice(item.getSum());
+                });
+                //rank平均值 ztc to
                 peoplewarefeeMapper.updateFeeList(useradd);
             } else {
                 throw new LogicalException("页面数据为新数据，需要导入，不可更新，请确认。");
