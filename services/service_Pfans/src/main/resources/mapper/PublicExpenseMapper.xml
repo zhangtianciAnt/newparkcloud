@@ -20,5 +20,38 @@
      select * from publicexpense where LOAN like CONCAT('%',#{loan},'%')
     </select>
 
+    <select id="getPublicexpenseRmb"  resultType="com.nt.dao_Pfans.PFANS1000.PublicExpense">
+        SELECT
+        supplierinfor.SUPPLIERINFOR_ID PAYEENAME,
+        publicexpense.JZMONTH,
+        SUM(ot.RMB) TORMB
+        FROM
+        publicexpense
+        LEFT JOIN supplierinfor ON publicexpense.payeename = supplierinfor.SUPCHINESE
+        OR publicexpense.payeename = supplierinfor.SUPJAPANESE
+        OR publicexpense.payeename = supplierinfor.SUPENGLISH
+        LEFT JOIN
+        (
+            SELECT otherdetails.PUBLICEXPENSE_ID, CONVERT ( SUM( RMB ), DECIMAL ( 10, 2 )) AS RMB
+            FROM otherdetails
+        <if test="groupid != null and groupid != ''" >
+            WHERE  DEPARTMENTNAME = #{groupid}
+        </if>
+            GROUP BY otherdetails.PUBLICEXPENSE_ID
+        )
+        ot ON publicexpense.PUBLICEXPENSE_ID = ot.PUBLICEXPENSE_ID
+        WHERE
+        1 = 1
+        AND checkedWZFY = 0 #外注费用
+        AND publicexpense.status = '4'
+        AND supplierinfor.SUPPLIERINFOR_ID IS NOT NULL
+        <if test="years != null and years != ''" >
+            AND DATE_FORMAT( publicexpense.jzmonth, '%Y' ) = #{years}
+        </if>
+        GROUP BY
+        publicexpense.payeename,
+        publicexpense.jzmonth
+    </select>
+
 
 </mapper>
