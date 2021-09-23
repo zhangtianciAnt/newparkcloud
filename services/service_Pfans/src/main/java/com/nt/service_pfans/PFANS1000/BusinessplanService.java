@@ -22,9 +22,9 @@ public interface BusinessplanService {
 
     List<BusinessGroupA1Vo> getgroupA1(String year,String groupid) throws Exception;
 
-    List<OrgTreeVo> getgroupcompanyen(String year) throws Exception;
+    List<OrgTreeVo> getgroupcompanyen(String year,String groupid) throws Exception;
 
-    List<BusinessGroupA2Vo> getgroup(String year,String type) throws Exception;
+    List<BusinessGroupA2Vo> getgroup(String year,String groupid,String type) throws Exception;
 
     public Businessplan selectById(String businessplanid) throws Exception;
 

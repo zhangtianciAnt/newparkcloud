@@ -740,7 +740,7 @@
 
 			FROM companystatistics c
 			WHERE c.YEAR = #{years}
-			GROUP BY c.YEAR,c.BPCOMPANYID
+			GROUP BY c.YEAR,c.BPCOMPANYID,c.BPCOMPANY
     </select>
 
 </mapper>

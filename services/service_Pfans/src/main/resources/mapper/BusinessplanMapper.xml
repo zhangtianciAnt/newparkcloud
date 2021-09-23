@@ -130,70 +130,217 @@ group by cost.BPCOMPANY,code
 
     <select id="getoneGroupA1" resultType="com.nt.dao_Pfans.PFANS1000.Vo.BusinessGroupA1Vo">
 select
-contracttype AS name1,
-contracttype AS name2,
-SUM(AMOUNT4) AS money4,
-SUM(AMOUNT5) AS money5,
-SUM(AMOUNT6) AS money6,
-SUM(AMOUNT7) AS money7,
-SUM(AMOUNT8) AS money8,
-SUM(AMOUNT9) AS money9,
-SUM(AMOUNT10) AS money10,
-SUM(AMOUNT11) AS money11,
-SUM(AMOUNT12) AS money12,
-SUM(AMOUNT1) AS money1,
-SUM(AMOUNT2) AS money2,
-SUM(AMOUNT3) AS money3,
-SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9) AS moneyfirst,
-SUM(AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneysecond,
-SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9+AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneytotal
-from themeplandetail where type = 0 and year = #{year} and contracttype = 'PJ142001' and group_id = #{groupid}
+       t.contracttype AS name1,
+       t.contracttype AS name2,
+       SUM(AMOUNT4*m4.BUSINESSPLANEXCHANGERATE) AS money4,
+       SUM(AMOUNT5*m5.BUSINESSPLANEXCHANGERATE) AS money5,
+       SUM(AMOUNT6*m6.BUSINESSPLANEXCHANGERATE) AS money6,
+       SUM(AMOUNT7*m7.BUSINESSPLANEXCHANGERATE) AS money7,
+       SUM(AMOUNT8*m8.BUSINESSPLANEXCHANGERATE) AS money8,
+       SUM(AMOUNT9*m9.BUSINESSPLANEXCHANGERATE) AS money9,
+       SUM(AMOUNT10*m10.BUSINESSPLANEXCHANGERATE) AS money10,
+       SUM(AMOUNT11*m11.BUSINESSPLANEXCHANGERATE) AS money11,
+       SUM(AMOUNT12*m12.BUSINESSPLANEXCHANGERATE) AS money12,
+       SUM(AMOUNT1*m1.BUSINESSPLANEXCHANGERATE) AS money1,
+       SUM(AMOUNT2*m2.BUSINESSPLANEXCHANGERATE) AS money2,
+       SUM(AMOUNT3*m3.BUSINESSPLANEXCHANGERATE) AS money3,
+       SUM(AMOUNT4*m4.BUSINESSPLANEXCHANGERATE+AMOUNT5*m5.BUSINESSPLANEXCHANGERATE+AMOUNT6*m6.BUSINESSPLANEXCHANGERATE+AMOUNT7*m7.BUSINESSPLANEXCHANGERATE+AMOUNT8*m8.BUSINESSPLANEXCHANGERATE+AMOUNT9*m9.BUSINESSPLANEXCHANGERATE) AS moneyfirst,
+       SUM(AMOUNT10*m10.BUSINESSPLANEXCHANGERATE+AMOUNT11*m11.BUSINESSPLANEXCHANGERATE+AMOUNT12*m12.BUSINESSPLANEXCHANGERATE+AMOUNT1*m1.BUSINESSPLANEXCHANGERATE+AMOUNT2*m2.BUSINESSPLANEXCHANGERATE+AMOUNT3*m3.BUSINESSPLANEXCHANGERATE) AS moneysecond,
+       SUM(AMOUNT4*m4.BUSINESSPLANEXCHANGERATE+AMOUNT5*m5.BUSINESSPLANEXCHANGERATE+AMOUNT6*m6.BUSINESSPLANEXCHANGERATE+AMOUNT7*m7.BUSINESSPLANEXCHANGERATE+AMOUNT8*m8.BUSINESSPLANEXCHANGERATE+AMOUNT9*m9.BUSINESSPLANEXCHANGERATE+AMOUNT10*m10.BUSINESSPLANEXCHANGERATE+AMOUNT11*m11.BUSINESSPLANEXCHANGERATE+AMOUNT12*m12.BUSINESSPLANEXCHANGERATE+AMOUNT1*m1.BUSINESSPLANEXCHANGERATE+AMOUNT2*m2.BUSINESSPLANEXCHANGERATE+AMOUNT3*m3.BUSINESSPLANEXCHANGERATE) AS moneytotal
+from themeplandetail t
+left join monthlyrate m4
+    on t.CURRENCYTYPE = m4.CURRENCY
+    and m4.year = t.YEAR
+    and m4.MONTH = concat(t.YEAR,'-','04')
+left join monthlyrate m5
+    on t.CURRENCYTYPE = m5.CURRENCY
+    and m5.year = t.YEAR
+    and m5.MONTH = concat(t.YEAR,'-','05')
+left join monthlyrate m6
+    on t.CURRENCYTYPE = m6.CURRENCY
+    and m6.year = t.YEAR
+    and m6.MONTH = concat(t.YEAR,'-','06')
+left join monthlyrate m7
+on t.CURRENCYTYPE = m7.CURRENCY
+    and m7.year = t.YEAR
+    and m7.MONTH = concat(t.YEAR,'-','07')
+left join monthlyrate m8
+on t.CURRENCYTYPE = m8.CURRENCY
+    and m8.year = t.YEAR
+    and m8.MONTH = concat(t.YEAR,'-','08')
+left join monthlyrate m9
+on t.CURRENCYTYPE = m9.CURRENCY
+    and m9.year = t.YEAR
+    and m9.MONTH = concat(t.YEAR,'-','09')
+left join monthlyrate m10
+on t.CURRENCYTYPE = m10.CURRENCY
+    and m10.year = t.YEAR
+    and m10.MONTH = concat(t.YEAR,'-','10')
+left join monthlyrate m11
+on t.CURRENCYTYPE = m11.CURRENCY
+    and m11.year = t.YEAR
+    and m11.MONTH = concat(t.YEAR,'-','11')
+left join monthlyrate m12
+on t.CURRENCYTYPE = m12.CURRENCY
+    and m12.year = t.YEAR
+    and m12.MONTH = concat(t.YEAR,'-','12')
+left join monthlyrate m1
+on t.CURRENCYTYPE = m1.CURRENCY
+    and m1.year = t.YEAR
+    and m1.MONTH = concat(t.YEAR + 1,'-','01')
+left join monthlyrate m2
+on t.CURRENCYTYPE = m2.CURRENCY
+    and m2.year = t.YEAR
+    and m2.MONTH = concat(t.YEAR + 1,'-','02')
+left join monthlyrate m3
+on t.CURRENCYTYPE = m3.CURRENCY
+    and m3.year = t.YEAR
+    and m3.MONTH = concat(t.YEAR + 1,'-','03')
+where t.type = 0 and t.year = #{year} and t.contracttype = 'PJ142001' and t.center_id = #{groupid}
     </select>
     <select id="gettwoGroupA1" resultType="com.nt.dao_Pfans.PFANS1000.Vo.BusinessGroupA1Vo">
 select
-contracttype AS name1,
-contracttype AS name2,
-SUM(AMOUNT4) AS money4,
-SUM(AMOUNT5) AS money5,
-SUM(AMOUNT6) AS money6,
-SUM(AMOUNT7) AS money7,
-SUM(AMOUNT8) AS money8,
-SUM(AMOUNT9) AS money9,
-SUM(AMOUNT10) AS money10,
-SUM(AMOUNT11) AS money11,
-SUM(AMOUNT12) AS money12,
-SUM(AMOUNT1) AS money1,
-SUM(AMOUNT2) AS money2,
-SUM(AMOUNT3) AS money3,
-SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9) AS moneyfirst,
-SUM(AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneysecond,
-SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9+AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneytotal
-from themeplandetail where type = 0 and contracttype = 'PJ142002' and year = #{year} and group_id = #{groupid}
+       t.contracttype AS name1,
+       t.contracttype AS name2,
+       SUM(AMOUNT4*m4.BUSINESSPLANEXCHANGERATE) AS money4,
+       SUM(AMOUNT5*m5.BUSINESSPLANEXCHANGERATE) AS money5,
+       SUM(AMOUNT6*m6.BUSINESSPLANEXCHANGERATE) AS money6,
+       SUM(AMOUNT7*m7.BUSINESSPLANEXCHANGERATE) AS money7,
+       SUM(AMOUNT8*m8.BUSINESSPLANEXCHANGERATE) AS money8,
+       SUM(AMOUNT9*m9.BUSINESSPLANEXCHANGERATE) AS money9,
+       SUM(AMOUNT10*m10.BUSINESSPLANEXCHANGERATE) AS money10,
+       SUM(AMOUNT11*m11.BUSINESSPLANEXCHANGERATE) AS money11,
+       SUM(AMOUNT12*m12.BUSINESSPLANEXCHANGERATE) AS money12,
+       SUM(AMOUNT1*m1.BUSINESSPLANEXCHANGERATE) AS money1,
+       SUM(AMOUNT2*m2.BUSINESSPLANEXCHANGERATE) AS money2,
+       SUM(AMOUNT3*m3.BUSINESSPLANEXCHANGERATE) AS money3,
+       SUM(AMOUNT4*m4.BUSINESSPLANEXCHANGERATE+AMOUNT5*m5.BUSINESSPLANEXCHANGERATE+AMOUNT6*m6.BUSINESSPLANEXCHANGERATE+AMOUNT7*m7.BUSINESSPLANEXCHANGERATE+AMOUNT8*m8.BUSINESSPLANEXCHANGERATE+AMOUNT9*m9.BUSINESSPLANEXCHANGERATE) AS moneyfirst,
+       SUM(AMOUNT10*m10.BUSINESSPLANEXCHANGERATE+AMOUNT11*m11.BUSINESSPLANEXCHANGERATE+AMOUNT12*m12.BUSINESSPLANEXCHANGERATE+AMOUNT1*m1.BUSINESSPLANEXCHANGERATE+AMOUNT2*m2.BUSINESSPLANEXCHANGERATE+AMOUNT3*m3.BUSINESSPLANEXCHANGERATE) AS moneysecond,
+       SUM(AMOUNT4*m4.BUSINESSPLANEXCHANGERATE+AMOUNT5*m5.BUSINESSPLANEXCHANGERATE+AMOUNT6*m6.BUSINESSPLANEXCHANGERATE+AMOUNT7*m7.BUSINESSPLANEXCHANGERATE+AMOUNT8*m8.BUSINESSPLANEXCHANGERATE+AMOUNT9*m9.BUSINESSPLANEXCHANGERATE+AMOUNT10*m10.BUSINESSPLANEXCHANGERATE+AMOUNT11*m11.BUSINESSPLANEXCHANGERATE+AMOUNT12*m12.BUSINESSPLANEXCHANGERATE+AMOUNT1*m1.BUSINESSPLANEXCHANGERATE+AMOUNT2*m2.BUSINESSPLANEXCHANGERATE+AMOUNT3*m3.BUSINESSPLANEXCHANGERATE) AS moneytotal
+from themeplandetail t
+left join monthlyrate m4
+    on t.CURRENCYTYPE = m4.CURRENCY
+    and m4.year = t.YEAR
+    and m4.MONTH = concat(t.YEAR,'-','04')
+left join monthlyrate m5
+    on t.CURRENCYTYPE = m5.CURRENCY
+    and m5.year = t.YEAR
+    and m5.MONTH = concat(t.YEAR,'-','05')
+left join monthlyrate m6
+    on t.CURRENCYTYPE = m6.CURRENCY
+    and m6.year = t.YEAR
+    and m6.MONTH = concat(t.YEAR,'-','06')
+left join monthlyrate m7
+on t.CURRENCYTYPE = m7.CURRENCY
+    and m7.year = t.YEAR
+    and m7.MONTH = concat(t.YEAR,'-','07')
+left join monthlyrate m8
+on t.CURRENCYTYPE = m8.CURRENCY
+    and m8.year = t.YEAR
+    and m8.MONTH = concat(t.YEAR,'-','08')
+left join monthlyrate m9
+on t.CURRENCYTYPE = m9.CURRENCY
+    and m9.year = t.YEAR
+    and m9.MONTH = concat(t.YEAR,'-','09')
+left join monthlyrate m10
+on t.CURRENCYTYPE = m10.CURRENCY
+    and m10.year = t.YEAR
+    and m10.MONTH = concat(t.YEAR,'-','10')
+left join monthlyrate m11
+on t.CURRENCYTYPE = m11.CURRENCY
+    and m11.year = t.YEAR
+    and m11.MONTH = concat(t.YEAR,'-','11')
+left join monthlyrate m12
+on t.CURRENCYTYPE = m12.CURRENCY
+    and m12.year = t.YEAR
+    and m12.MONTH = concat(t.YEAR,'-','12')
+left join monthlyrate m1
+on t.CURRENCYTYPE = m1.CURRENCY
+    and m1.year = t.YEAR
+    and m1.MONTH = concat(t.YEAR + 1,'-','01')
+left join monthlyrate m2
+on t.CURRENCYTYPE = m2.CURRENCY
+    and m2.year = t.YEAR
+    and m2.MONTH = concat(t.YEAR + 1,'-','02')
+left join monthlyrate m3
+on t.CURRENCYTYPE = m3.CURRENCY
+    and m3.year = t.YEAR
+    and m3.MONTH = concat(t.YEAR + 1,'-','03')
+where t.type = 0 and t.year = #{year} and t.contracttype = 'PJ142002' and t.center_id = #{groupid}
     </select>
     <select id="getthreeGroupA1" resultType="com.nt.dao_Pfans.PFANS1000.Vo.BusinessGroupA1Vo">
 select
-contracttype AS name1,
-contracttype AS name2,
-SUM(AMOUNT4) AS money4,
-SUM(AMOUNT5) AS money5,
-SUM(AMOUNT6) AS money6,
-SUM(AMOUNT7) AS money7,
-SUM(AMOUNT8) AS money8,
-SUM(AMOUNT9) AS money9,
-SUM(AMOUNT10) AS money10,
-SUM(AMOUNT11) AS money11,
-SUM(AMOUNT12) AS money12,
-SUM(AMOUNT1) AS money1,
-SUM(AMOUNT2) AS money2,
-SUM(AMOUNT3) AS money3,
-SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9) AS moneyfirst,
-SUM(AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneysecond,
-SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9+AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneytotal
-from themeplandetail where type = 0 and contracttype = 'PJ142003' and year = #{year} and group_id = #{groupid}
+       t.contracttype AS name1,
+       t.contracttype AS name2,
+       SUM(AMOUNT4*m4.BUSINESSPLANEXCHANGERATE) AS money4,
+       SUM(AMOUNT5*m5.BUSINESSPLANEXCHANGERATE) AS money5,
+       SUM(AMOUNT6*m6.BUSINESSPLANEXCHANGERATE) AS money6,
+       SUM(AMOUNT7*m7.BUSINESSPLANEXCHANGERATE) AS money7,
+       SUM(AMOUNT8*m8.BUSINESSPLANEXCHANGERATE) AS money8,
+       SUM(AMOUNT9*m9.BUSINESSPLANEXCHANGERATE) AS money9,
+       SUM(AMOUNT10*m10.BUSINESSPLANEXCHANGERATE) AS money10,
+       SUM(AMOUNT11*m11.BUSINESSPLANEXCHANGERATE) AS money11,
+       SUM(AMOUNT12*m12.BUSINESSPLANEXCHANGERATE) AS money12,
+       SUM(AMOUNT1*m1.BUSINESSPLANEXCHANGERATE) AS money1,
+       SUM(AMOUNT2*m2.BUSINESSPLANEXCHANGERATE) AS money2,
+       SUM(AMOUNT3*m3.BUSINESSPLANEXCHANGERATE) AS money3,
+       SUM(AMOUNT4*m4.BUSINESSPLANEXCHANGERATE+AMOUNT5*m5.BUSINESSPLANEXCHANGERATE+AMOUNT6*m6.BUSINESSPLANEXCHANGERATE+AMOUNT7*m7.BUSINESSPLANEXCHANGERATE+AMOUNT8*m8.BUSINESSPLANEXCHANGERATE+AMOUNT9*m9.BUSINESSPLANEXCHANGERATE) AS moneyfirst,
+       SUM(AMOUNT10*m10.BUSINESSPLANEXCHANGERATE+AMOUNT11*m11.BUSINESSPLANEXCHANGERATE+AMOUNT12*m12.BUSINESSPLANEXCHANGERATE+AMOUNT1*m1.BUSINESSPLANEXCHANGERATE+AMOUNT2*m2.BUSINESSPLANEXCHANGERATE+AMOUNT3*m3.BUSINESSPLANEXCHANGERATE) AS moneysecond,
+       SUM(AMOUNT4*m4.BUSINESSPLANEXCHANGERATE+AMOUNT5*m5.BUSINESSPLANEXCHANGERATE+AMOUNT6*m6.BUSINESSPLANEXCHANGERATE+AMOUNT7*m7.BUSINESSPLANEXCHANGERATE+AMOUNT8*m8.BUSINESSPLANEXCHANGERATE+AMOUNT9*m9.BUSINESSPLANEXCHANGERATE+AMOUNT10*m10.BUSINESSPLANEXCHANGERATE+AMOUNT11*m11.BUSINESSPLANEXCHANGERATE+AMOUNT12*m12.BUSINESSPLANEXCHANGERATE+AMOUNT1*m1.BUSINESSPLANEXCHANGERATE+AMOUNT2*m2.BUSINESSPLANEXCHANGERATE+AMOUNT3*m3.BUSINESSPLANEXCHANGERATE) AS moneytotal
+from themeplandetail t
+left join monthlyrate m4
+    on t.CURRENCYTYPE = m4.CURRENCY
+    and m4.year = t.YEAR
+    and m4.MONTH = concat(t.YEAR,'-','04')
+left join monthlyrate m5
+    on t.CURRENCYTYPE = m5.CURRENCY
+    and m5.year = t.YEAR
+    and m5.MONTH = concat(t.YEAR,'-','05')
+left join monthlyrate m6
+    on t.CURRENCYTYPE = m6.CURRENCY
+    and m6.year = t.YEAR
+    and m6.MONTH = concat(t.YEAR,'-','06')
+left join monthlyrate m7
+on t.CURRENCYTYPE = m7.CURRENCY
+    and m7.year = t.YEAR
+    and m7.MONTH = concat(t.YEAR,'-','07')
+left join monthlyrate m8
+on t.CURRENCYTYPE = m8.CURRENCY
+    and m8.year = t.YEAR
+    and m8.MONTH = concat(t.YEAR,'-','08')
+left join monthlyrate m9
+on t.CURRENCYTYPE = m9.CURRENCY
+    and m9.year = t.YEAR
+    and m9.MONTH = concat(t.YEAR,'-','09')
+left join monthlyrate m10
+on t.CURRENCYTYPE = m10.CURRENCY
+    and m10.year = t.YEAR
+    and m10.MONTH = concat(t.YEAR,'-','10')
+left join monthlyrate m11
+on t.CURRENCYTYPE = m11.CURRENCY
+    and m11.year = t.YEAR
+    and m11.MONTH = concat(t.YEAR,'-','11')
+left join monthlyrate m12
+on t.CURRENCYTYPE = m12.CURRENCY
+    and m12.year = t.YEAR
+    and m12.MONTH = concat(t.YEAR,'-','12')
+left join monthlyrate m1
+on t.CURRENCYTYPE = m1.CURRENCY
+    and m1.year = t.YEAR
+    and m1.MONTH = concat(t.YEAR + 1,'-','01')
+left join monthlyrate m2
+on t.CURRENCYTYPE = m2.CURRENCY
+    and m2.year = t.YEAR
+    and m2.MONTH = concat(t.YEAR + 1,'-','02')
+left join monthlyrate m3
+on t.CURRENCYTYPE = m3.CURRENCY
+    and m3.year = t.YEAR
+    and m3.MONTH = concat(t.YEAR + 1,'-','03')
+where t.type = 0 and t.year = #{year} and t.contracttype = 'PJ142003' and t.center_id = #{groupid}
     </select>
     <select id="getgroupA2" resultType="com.nt.dao_Pfans.PFANS1000.Vo.BusinessGroupA2Vo">
 select
-GROUP_ID as groupname,
+ASSIGNOR as groupname,
 SUM(PERSONNEL4) AS number4,
 SUM(PERSONNEL5) AS number5,
 SUM(PERSONNEL6) AS number6,
@@ -224,11 +371,11 @@ SUM(AMOUNT3) AS money3,
 SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9) AS moneyfirst,
 SUM(AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneysecond,
 SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9+AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneytotal
-from themeplandetail where type = 0 and (contracttype = 'PJ142004' or contracttype = 'PJ142005' ) and year = #{year} group by GROUP_ID
+from themeplandetail where type = 0 and (contracttype = 'PJ142004' or contracttype = 'PJ142005' ) and year = #{year} and center_id = #{groupid} group by ASSIGNOR
     </select>
     <select id="getgroupB1" resultType="com.nt.dao_Pfans.PFANS1000.Vo.BusinessGroupA2Vo">
 select
-GROUP_ID as groupname,
+ASSIGNOR as groupname,
 SUM(PERSONNEL4) AS number4,
 SUM(PERSONNEL5) AS number5,
 SUM(PERSONNEL6) AS number6,
@@ -259,11 +406,11 @@ SUM(AMOUNT3) AS money3,
 SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9) AS moneyfirst,
 SUM(AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneysecond,
 SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9+AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneytotal
-from themeplandetail where type = 1 and contracttype = 'PJ142006' and year = #{year} group by GROUP_ID
+from themeplandetail where type = 1 and contracttype = 'PJ142006' and year = #{year} and center_id = #{groupid} group by ASSIGNOR
     </select>
     <select id="getgroupB2" resultType="com.nt.dao_Pfans.PFANS1000.Vo.BusinessGroupA2Vo">
 select
-GROUP_ID as groupname,
+ASSIGNOR as groupname,
 SUM(PERSONNEL4) AS number4,
 SUM(PERSONNEL5) AS number5,
 SUM(PERSONNEL6) AS number6,
@@ -294,11 +441,11 @@ SUM(AMOUNT3) AS money3,
 SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9) AS moneyfirst,
 SUM(AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneysecond,
 SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9+AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneytotal
-from themeplandetail where type = 1 and contracttype = 'PJ142007' and year = #{year} group by GROUP_ID
+from themeplandetail where type = 1 and contracttype = 'PJ142007' and year = #{year} and center_id = #{groupid} group by ASSIGNOR
     </select>
     <select id="getgroupB3" resultType="com.nt.dao_Pfans.PFANS1000.Vo.BusinessGroupA2Vo">
 select
-GROUP_ID as groupname,
+ASSIGNOR as groupname,
 SUM(PERSONNEL4) AS number4,
 SUM(PERSONNEL5) AS number5,
 SUM(PERSONNEL6) AS number6,
@@ -329,7 +476,7 @@ SUM(AMOUNT3) AS money3,
 SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9) AS moneyfirst,
 SUM(AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneysecond,
 SUM(AMOUNT4+AMOUNT5+AMOUNT6+AMOUNT7+AMOUNT8+AMOUNT9+AMOUNT10+AMOUNT11+AMOUNT12+AMOUNT1+AMOUNT2+AMOUNT3) AS moneytotal
-from themeplandetail where type = 1 and (contracttype = 'PJ142008' or contracttype = 'PJ142009' ) and year = #{year} group by GROUP_ID
+from themeplandetail where type = 1 and (contracttype = 'PJ142008' or contracttype = 'PJ142009' ) and year = #{year} and center_id = #{groupid} group by ASSIGNOR
     </select>
 </mapper>
 
