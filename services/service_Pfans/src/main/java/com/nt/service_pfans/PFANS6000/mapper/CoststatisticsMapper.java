@@ -13,12 +13,17 @@ public interface CoststatisticsMapper extends MyMapper<Coststatistics> {
     List<Coststatistics> getExpatriatesinfor(@Param("year") int year,@Param("groupid") String groupid);
     List<Coststatistics> selectBygroupid(@Param("groupid") String groupid,@Param("year") String year);
     List<Coststatistics> getCoststatisticsBygroupid(@Param("year") int year,@Param("groupid") String groupid);
-    int insertAll(List<Coststatistics> allCostList);
+
+    int insertAll(@Param("list")  List<Coststatistics> allCostList);
+    int updateAll(@Param("list")  List<Coststatistics> allCostList);
+
     //gbb add 0804 月度赏与列表
     List<Coststatistics> getcostMonthList(@Param("years") String years,@Param("groupIdList")List<String> groupIdList);
     //gbb add 0804 月度赏与详情
     List<Map<String, String>> getcostMonth(@Param("years") String years,@Param("manhour") String manhour,@Param("cost") String cost
-            ,@Param("expense") String expense,@Param("months") String months,@Param("groupid") String groupid);
+            ,@Param("expensesolo") String expensesolo,@Param("months") String months,@Param("groupid") String groupid);
     List<Workflowinstance> getworkflowinstance(@Param("groupIdList")List<String> groupIdList);
+    //gbb add 0914 查询经费
+    List<Coststatistics> getCoststatisticsExpense(@Param("years") String years,@Param("groupid") String groupid);
 }
 

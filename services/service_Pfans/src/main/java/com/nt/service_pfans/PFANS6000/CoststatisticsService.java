@@ -9,6 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,7 @@ public interface CoststatisticsService {
     Integer insertCoststatistics(String groupid,String year,Coststatistics coststatistics, TokenModel tokenModel) throws Exception;
 
     Map<String, Double> getUserPriceMap() throws Exception;
-    Map<String, Double> getUserPriceMapBygroupid(String groupid,String years) throws Exception;
+    Map<String, Double> getUserPriceMapBygroupid(String groupid, String years) throws Exception;
 
     public XSSFWorkbook downloadExcel(CoststatisticsVo coststatisticsVo, HttpServletRequest request, HttpServletResponse resp) throws LogicalException;
 
