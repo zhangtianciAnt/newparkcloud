@@ -869,7 +869,7 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                 row.createCell(1).setCellValue(i - 3);
                 Supplierinfor ls = supplierinforMapper.selectByPrimaryKey(c.getBpcompany());
                 if (ls != null) {
-                    row.createCell(2).setCellValue(ls.getSupchinese());
+                    row.createCell(2).setCellValue(c.getBpcompany());
                 }
                 i++;
             }
