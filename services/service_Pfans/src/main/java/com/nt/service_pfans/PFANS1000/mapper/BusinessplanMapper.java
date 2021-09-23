@@ -23,12 +23,12 @@ public interface BusinessplanMapper extends MyMapper<Businessplan> {
 
     List<BusinessGroupA1Vo> getthreeGroupA1(@Param("groupid") String groupid , @Param("year") String year);
 
-    List<BusinessGroupA2Vo> getgroupA2(@Param("year") String year);
+    List<BusinessGroupA2Vo> getgroupA2(@Param("year") String year,@Param("groupid") String groupid);
 
-    List<BusinessGroupA2Vo> getgroupB1(@Param("year") String year);
+    List<BusinessGroupA2Vo> getgroupB1(@Param("year") String year,@Param("groupid") String groupid);
 
-    List<BusinessGroupA2Vo> getgroupB2(@Param("year") String year);
+    List<BusinessGroupA2Vo> getgroupB2(@Param("year") String year,@Param("groupid") String groupid);
 
-    List<BusinessGroupA2Vo> getgroupB3(@Param("year") String year);
+    List<BusinessGroupA2Vo> getgroupB3(@Param("year") String year,@Param("groupid") String groupid);
 
 }
