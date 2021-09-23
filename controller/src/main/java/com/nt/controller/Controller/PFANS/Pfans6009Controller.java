@@ -1,8 +1,14 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS6000.Coststatistics;
 import com.nt.dao_Pfans.PFANS6000.CoststatisticsVo;
+import com.nt.dao_Workflow.Vo.StartWorkflowVo;
+import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
+import com.nt.service_Org.OrgTreeService;
+import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_pfans.PFANS6000.CompanyStatisticsService;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
 import com.nt.utils.*;
@@ -10,6 +16,9 @@ import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,6 +41,13 @@ public class Pfans6009Controller {
 
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private OrgTreeService orgTreeService;
+    @Autowired
+    private WorkflowServices workflowServices;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
 
     @RequestMapping(value = "/getCompanyReport1", method = {RequestMethod.GET})
     public ApiResult getCompanyReport1(String groupid,String years, HttpServletRequest request) throws Exception {
@@ -43,7 +61,7 @@ public class Pfans6009Controller {
         }
         Coststatistics coststatistics = new Coststatistics();
         TokenModel tokenModel = tokenService.getToken(request);
-        return ApiResult.success(companyStatisticsService.getCosts(groupid,years));
+        return ApiResult.success(companyStatisticsService.getCostsByGrpAndY(groupid,years));
     }
 
 
@@ -98,5 +116,56 @@ public class Pfans6009Controller {
         } catch (Exception e) {
             return ApiResult.fail("操作失败！");
         }
+    }
+
+    /**
+     * 月度费用总览导出pdf
+     *
+     */
+    @RequestMapping(value = "/downloadPdf", method = { RequestMethod.GET })
+    public void downloadPdf(String dates,HttpServletRequest request, HttpServletResponse resp)  throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+
+        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+        String strYears = dates.substring(0,4);
+        String strMonths = dates.substring(5,7);
+        if(Integer.valueOf(dates.substring(5,7)) == 1 || Integer.valueOf(dates.substring(5,7)) == 2 || Integer.valueOf(dates.substring(5,7)) == 3){
+            strYears = String.valueOf(Integer.valueOf(strYears) - 1);
+        }
+        List pdfMap = companyStatisticsService.downloadPdf(dates);
+        Map<String, Object> data = new HashMap<>();
+        dates = dates.replace("-"," 年 ");
+        data.put("dates", dates.replace("-"," 年 "));
+        data.put("dataList", pdfMap);
+        HashMap totalCostMap = (HashMap) pdfMap.get(pdfMap.size() - 1);
+        //承认人
+        if(allDepartment.size() > 0){
+            Query query = new Query();
+            for(DepartmentVo depVo : allDepartment){
+                // 预提工数和
+                data.put("manhourCount" + depVo.getDepartmentEn(), totalCostMap.get("manhour" + depVo.getDepartmentEn()));
+                // 费用工数和
+                data.put("manhourfCount" + depVo.getDepartmentEn(), totalCostMap.get("manhourf" + depVo.getDepartmentEn()));
+                // 部门组件 + 年 + 月
+                String strDataid = depVo.getDepartmentId() + "," + strYears + "," + strMonths;
+                StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
+                startWorkflowVo.setDataId(strDataid);
+                // 审批人
+                List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
+                if (wfList.size() > 0) {
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfo != null) {
+                        // 审批人图片
+                        String strUser = sign.startGraphics2D(customerInfo.getUserinfo().getCustomername());
+                        data.put(depVo.getDepartmentEn() + "User", strUser);
+                    }
+                }
+            }
+        }
+        ExcelOutPutUtil.OutPutPdf("月度费用总览", "yuedufeiyongzonglan.xls", data, resp);
+
+        ExcelOutPutUtil.deleteDir(AuthConstants.FILE_DIRECTORY + "image");
     }
 }
