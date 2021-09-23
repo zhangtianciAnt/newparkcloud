@@ -432,7 +432,7 @@ public class AssetsServiceImpl implements AssetsService {
                     setOrderedValues(start, assets, gudingCols, value);
                     //                    upd-lyt-21/4/2-start
                     // 启用日期 （固定资产&无形资产适用）
-                    if (value != null && !value.isEmpty() && ("固定资产".equals(value.get(0).toString()) || "无形资产".equals(value.get(0).toString()))) {
+                    if (value != null && !value.isEmpty()) {
                         //region scc upd 9/7 导入时间格式变更 from
                         if (!StringUtils.isEmpty(trim(value.get(12)))) {
                             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");

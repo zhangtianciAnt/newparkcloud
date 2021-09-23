@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.*;
 //import com.nt.dao_Pfans.PFANS1000.Businessplandet;
 import com.nt.dao_Pfans.PFANS1000.Vo.*;
@@ -393,77 +394,35 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     @Override
     public List<OrgTreeVo> getgroupcompanyen(String year,String groupid) throws Exception {
         List<OrgTreeVo> OrgTreeVolist = new ArrayList<>();
-        OrgTree orgs = orgTreeService.get(new OrgTree());
-        for (OrgTree org : orgs.getOrgs()) {
-            for (OrgTree orgC : org.getOrgs()) {
-                if(orgC.get_id().equals(groupid))
-                {
-                    OrgTreeVo orgtreevo = new OrgTreeVo();
-                    orgtreevo.set_id(orgC.get_id());
-                    orgtreevo.setCompanyen(orgC.getCompanyen());
-                    orgtreevo.setRedirict(orgC.getRedirict());
-                    if(orgC.getEncoding()!=null && !orgC.getEncoding().equals(""))
-                    {
-                        orgtreevo.setEncoding(orgC.getEncoding().substring(0, 2));
-                    }
-                    orgtreevo.setMoney4("0");
-                    orgtreevo.setMoney5("0");
-                    orgtreevo.setMoney6("0");
-                    orgtreevo.setMoney7("0");
-                    orgtreevo.setMoney8("0");
-                    orgtreevo.setMoney9("0");
-                    orgtreevo.setMoney10("0");
-                    orgtreevo.setMoney11("0");
-                    orgtreevo.setMoney12("0");
-                    orgtreevo.setMoney1("0");
-                    orgtreevo.setMoney2("0");
-                    orgtreevo.setMoney3("0");
-                    OrgTreeVolist.add(orgtreevo);
-                }
-                else
-                {
-                    for (OrgTree orgG : orgC.getOrgs()) {
-                        if(orgC.get_id().equals(groupid))
-                        {
-                            OrgTreeVo orgtreevo = new OrgTreeVo();
-                            orgtreevo.set_id(orgC.get_id());
-                            orgtreevo.setCompanyen(orgC.getCompanyen());
-                            orgtreevo.setRedirict(orgC.getRedirict());
-                            if(orgC.getEncoding()!=null && !orgC.getEncoding().equals(""))
-                            {
-                                orgtreevo.setEncoding(orgC.getEncoding().substring(0, 2));
-                            }
-                            orgtreevo.setMoney4("0");
-                            orgtreevo.setMoney5("0");
-                            orgtreevo.setMoney6("0");
-                            orgtreevo.setMoney7("0");
-                            orgtreevo.setMoney8("0");
-                            orgtreevo.setMoney9("0");
-                            orgtreevo.setMoney10("0");
-                            orgtreevo.setMoney11("0");
-                            orgtreevo.setMoney12("0");
-                            orgtreevo.setMoney1("0");
-                            orgtreevo.setMoney2("0");
-                            orgtreevo.setMoney3("0");
-                            OrgTreeVolist.add(orgtreevo);
-                        }
-                    }
-                }
+
+        //获取当前系统中有效的部门，按照预算编码统计
+        List<DepartmentVo> departmentVoList = new ArrayList<>();
+        departmentVoList = orgTreeService.getAllDepartment();
+        if(departmentVoList.size()>0)
+        {
+            departmentVoList = departmentVoList.stream().filter(item->(item.getDepartmentId().equals(groupid))).collect(Collectors.toList());
+            if(departmentVoList.size()>0)
+            {
+                OrgTreeVo orgtreevo = new OrgTreeVo();
+                orgtreevo.set_id(departmentVoList.get(0).getDepartmentId());
+                orgtreevo.setCompanyen(departmentVoList.get(0).getDepartmentEn());
+                orgtreevo.setRedirict(departmentVoList.get(0).getDepartmentRedirict());
+                orgtreevo.setEncoding(departmentVoList.get(0).getDepartmentEncoding().substring(0, 2));
+                orgtreevo.setMoney4("0");
+                orgtreevo.setMoney5("0");
+                orgtreevo.setMoney6("0");
+                orgtreevo.setMoney7("0");
+                orgtreevo.setMoney8("0");
+                orgtreevo.setMoney9("0");
+                orgtreevo.setMoney10("0");
+                orgtreevo.setMoney11("0");
+                orgtreevo.setMoney12("0");
+                orgtreevo.setMoney1("0");
+                orgtreevo.setMoney2("0");
+                orgtreevo.setMoney3("0");
+                OrgTreeVolist.add(orgtreevo);
             }
         }
-//        Businessplan businessplan = new Businessplan();
-//        businessplan.setYear(year);
-//        businessplan.setStatus("4");
-//        businessplan.setGroup_id("91B253A1C605E9CA814462FB4C4D2605F43F");
-//        List<Businessplan> businessplanlist = businessplanMapper.select(businessplan);
-//        if (businessplanlist.size() > 0) {
-//            OrgTreeVolist.get(0).setType("1");
-//            OrgTreeVolist.get(0).setAssets_lodyear(businessplanlist.get(0).getAssets_lodyear());
-//            OrgTreeVolist.get(0).setEquipment_lodyear(businessplanlist.get(0).getEquipment_lodyear());
-//        } else {
-//            OrgTreeVolist.get(0).setType("0");
-//
-//        }
         return OrgTreeVolist;
     }
 
@@ -1059,7 +1018,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         }
         else
         {
-            //List<PersonPlanTable> personPlanTables = businessplanMapper.selectPersonTable(groupid);
+            //现时点
             List<PersonPlanTable> personPlanTables = new ArrayList<>();
             List<PersonalAvgVo> personalAvgVoList = JSON.parseArray(personnelPlanList.get(0).getEmployed(), PersonalAvgVo.class);
             //统计rank出现的个数
@@ -1071,60 +1030,60 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                     rankNum.put(pav.getNextyear(),rankNum.get(pav.getNextyear())+1);
                 }
             }
-            //ADD
-//            List<PersonalAvgVo> personalAvgVoListNEW = JSON.parseArray(personnelPlanList.get(0).getNewentry(), PersonalAvgVo.class);
-//            for (PersonalAvgVo pav : personalAvgVoListNEW) {
-//                if(null == rankNum.get(pav.getNextyear())){
-//                    rankNum.put(pav.getNextyear(),1);
-//                }else {
-//                    rankNum.put(pav.getNextyear(),rankNum.get(pav.getNextyear())+1);
-//                }
-//            }
-            //ADD
-
             Map<String,Double> summerplanpcSumMap = personalAvgVoList.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getSummerplanpc)));
-            Map<String,Double> winterplanpcSumMap = personalAvgVoList.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getWinterplanpc)));
-            Map<String,Double> overtimepaySumMap = personalAvgVoList.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getOvertimepay)));
-            Map<String,Double> payhourSumMap = personalAvgVoList.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getOvertimehour)));
             for (Map.Entry<String, Integer> rm : rankNum.entrySet()) {
                 PersonPlanTable personPlanTable = new PersonPlanTable();
-                //46
+                //人件费总额
                 BigDecimal sppcSum = new BigDecimal(summerplanpcSumMap.get(rm.getKey()));
-                //73
-                BigDecimal wppcSum = new BigDecimal(winterplanpcSumMap.get(rm.getKey()));
-                //加班时给
-                BigDecimal otpcSum = new BigDecimal(overtimepaySumMap.get(rm.getKey()));
-                //加班时给
-                BigDecimal phscSum = new BigDecimal(payhourSumMap.get(rm.getKey()));
                 //人数
                 BigDecimal perNum = new BigDecimal(rm.getValue());
-                //46Avg
+                //人件费平均值
                 BigDecimal sppcAvg = sppcSum.divide(perNum,2, BigDecimal.ROUND_HALF_UP);
-                //73Avg
-                BigDecimal wppcAvg = wppcSum.divide(perNum,2, BigDecimal.ROUND_HALF_UP);
-                //加班时给Avg
-                BigDecimal otpcAvg = otpcSum.divide(perNum,2, BigDecimal.ROUND_HALF_UP);
-                //加班小时Avg
-                BigDecimal phscAvg = phscSum.divide(perNum,2, BigDecimal.ROUND_HALF_UP);
+                personPlanTable.setPayhour("0");
+                personPlanTable.setOvertimehour("0");
                 personPlanTable.setCode(rm.getKey());
-                personPlanTable.setMoney46(sppcAvg.toString());
-                personPlanTable.setMoney73(wppcAvg.toString());
-                personPlanTable.setPayhour(otpcAvg.toString());
-                personPlanTable.setOvertimehour(phscAvg.toString());
+                personPlanTable.setSummerplanpc(sppcAvg.toString());
                 personPlanTables.add(personPlanTable);
             }
             //降序
             personPlanTables = personPlanTables.stream().sorted(Comparator.comparing(PersonPlanTable::getCode).reversed()).collect(Collectors.toList());
-            personnelPlan.setYears(year);
-            personnelPlan.setCenterid(groupid);
-            personnelPlan.setType(0);
-            List<PersonnelPlan> personnelPlans = personnelplanMapper.select(personnelPlan);
-            if (personnelPlans.size() > 0) {
-                personnelPlan = personnelPlans.get(0);
+
+            //新人
+            List<PersonPlanTable> personPlanTablesnew = new ArrayList<>();
+            List<PersonalAvgVo> personalAvgVoListnew = JSON.parseArray(personnelPlanList.get(0).getNewentry(), PersonalAvgVo.class);
+            //统计rank出现的个数
+            Map<String,Integer> rankNumnew = new HashMap<>();
+            for (PersonalAvgVo pav : personalAvgVoListnew) {
+                if(null == rankNumnew.get(pav.getNextyear())){
+                    rankNumnew.put(pav.getNextyear(),1);
+                }else {
+                    rankNumnew.put(pav.getNextyear(),rankNumnew.get(pav.getNextyear())+1);
+                }
+            }
+            Map<String,Double> summerplanpcSumMapnew = personalAvgVoListnew.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getSummerplanpc)));
+            for (Map.Entry<String, Integer> rm : rankNumnew.entrySet()) {
+                PersonPlanTable personPlanTable = new PersonPlanTable();
+                //人件费总额
+                BigDecimal sppcSum = new BigDecimal(summerplanpcSumMapnew.get(rm.getKey()));
+                //人数
+                BigDecimal perNum = new BigDecimal(rm.getValue());
+                //人件费平均值
+                BigDecimal sppcAvg = sppcSum.divide(perNum,2, BigDecimal.ROUND_HALF_UP);
+                personPlanTable.setPayhour("0");
+                personPlanTable.setOvertimehour("0");
+                personPlanTable.setCode(rm.getKey());
+                personPlanTable.setSummerplanpc(sppcAvg.toString());
+                personPlanTablesnew.add(personPlanTable);
+            }
+            //降序
+            personPlanTablesnew = personPlanTablesnew.stream().sorted(Comparator.comparing(PersonPlanTable::getCode).reversed()).collect(Collectors.toList());
+
+            if (personnelPlanList.size() > 0) {
+                personnelPlan = personnelPlanList.get(0);
                 PersonPlanTable personPlan = new PersonPlanTable();
                 Field[] fields = personPlan.getClass().getDeclaredFields();
                 List<PersonPlanTable> nowPersonTable = getNowPersonTable(personnelPlan, personPlanTables);
-                List<PersonPlanTable> nextPersonTable = getNextPersonTable(personnelPlan, personPlanTables);
+                List<PersonPlanTable> nextPersonTable = getNextPersonTable(personnelPlan, personPlanTablesnew);
                 List<PersonPlanTable> allPersonTable = new ArrayList<>();
                 allPersonTable.addAll(nowPersonTable);
                 allPersonTable.addAll(nextPersonTable);
@@ -1136,8 +1095,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                             int value = (int) fields[i].get(allPT) + (int) fields[i].get(personPlan);
                             fields[i].set(personPlan, value);
                         } else if (fields[i].getGenericType() == BigDecimal.class) {
-                            BigDecimal value1 = (BigDecimal) fields[i].get(allPT);
-                            BigDecimal value2 = fields[i].get(personPlan) == null ? new BigDecimal(0) : (BigDecimal) fields[i].get(personPlan);
+                            BigDecimal value1 = fields[i].get(allPT) == null || fields[i].get(allPT) == "" ? new BigDecimal(0) :(BigDecimal) fields[i].get(allPT);
+                            BigDecimal value2 = fields[i].get(personPlan) == null || fields[i].get(personPlan) == "" ? new BigDecimal(0) : (BigDecimal) fields[i].get(personPlan);
                             fields[i].set(personPlan, value1.add(value2));
                         }
                     }
@@ -1214,6 +1173,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
 
     }
 
+    //现时点人员统计
     private List<PersonPlanTable> getNowPersonTable(PersonnelPlan personnelPlan, List<PersonPlanTable> personPlanTables) throws Exception {
         if (!personnelPlan.getEmployed().equals("[]")) {
             List<PersonPlanTable> _personPlanTables = deepCopy(personPlanTables);
@@ -1229,35 +1189,26 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                         }
                     }
                 }
-                BigDecimal payHour = pt.getPayhour().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getPayhour());
-                BigDecimal overTimeHour = pt.getOvertimehour().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getOvertimehour());
-                BigDecimal giving46 = pt.getMoney46().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getMoney46()); //给与4-6
-                BigDecimal giving37 = pt.getMoney73().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getMoney73()); //给与3-7
+                BigDecimal giving46 = pt.getSummerplanpc().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getSummerplanpc()); //给与4-6
                 for (int i = 1; i <= 12; i++) {
                     BigDecimal giving;
                     int count = (int) PropertyUtils.getProperty(pt, "amount" + i);
-                    BigDecimal workingHour = new BigDecimal(count).multiply(overTimeHour); //残業总数
-                    BigDecimal pay = workingHour.multiply(payHour); //残業总费
-                    PropertyUtils.setProperty(pt, "workinghour" + i, workingHour);
-                    PropertyUtils.setProperty(pt, "pay" + i, pay);
-                    if (i == 4 || i == 5 || i == 6) {
-                        giving = new BigDecimal(count).multiply(giving46);
-                    } else {
-                        giving = new BigDecimal(count).multiply(giving37);
-                    }
+                    PropertyUtils.setProperty(pt, "workinghour" + i, BigDecimal.ZERO);
+                    PropertyUtils.setProperty(pt, "pay" + i, BigDecimal.ZERO);
+                    giving = new BigDecimal(count).multiply(giving46);
                     PropertyUtils.setProperty(pt, "giving" + i, giving);
                 }
                 pt.setAmountfirst(pt.getAmount4() * 6);
                 pt.setAmountsecond(pt.getAmount4() * 6);
                 pt.setAmounttotal(pt.getAmount4() * 12);
 
-                pt.setWorkinghourfirst(pt.getWorkinghour4().multiply(new BigDecimal(6)));
-                pt.setWorkinghoursecond(pt.getWorkinghour4().multiply(new BigDecimal(6)));
-                pt.setWorkinghourtotal(pt.getWorkinghour4().multiply(new BigDecimal(12)));
+                pt.setWorkinghourfirst(AllAdd(pt.getWorkinghour4(), pt.getWorkinghour5(), pt.getWorkinghour6(), pt.getWorkinghour7(), pt.getWorkinghour8(), pt.getWorkinghour9()));
+                pt.setWorkinghoursecond(AllAdd(pt.getWorkinghour10(), pt.getWorkinghour11(), pt.getWorkinghour12(), pt.getWorkinghour1(), pt.getWorkinghour2(), pt.getWorkinghour3()));
+                pt.setWorkinghourtotal(pt.getWorkinghourfirst().add(pt.getWorkinghoursecond()));
 
-                pt.setPayfirst(pt.getPay4().multiply(new BigDecimal(6)));
-                pt.setPaysecond(pt.getPay4().multiply(new BigDecimal(6)));
-                pt.setPaytotal(pt.getPay4().multiply(new BigDecimal(12)));
+                pt.setPayfirst(AllAdd(pt.getPay4(), pt.getPay5(), pt.getPay6(), pt.getPay7(), pt.getPay8(), pt.getPay9()));
+                pt.setPaysecond(AllAdd(pt.getPay10(), pt.getPay11(), pt.getPay12(), pt.getPay1(), pt.getPay2(), pt.getPay3()));
+                pt.setPaytotal(pt.getPayfirst().add(pt.getPaysecond()));
 
                 pt.setGivingfirst(AllAdd(pt.getGiving4(), pt.getGiving5(), pt.getGiving6(), pt.getGiving7(), pt.getGiving8(), pt.getGiving9()));
                 pt.setGivingsecond(AllAdd(pt.getGiving10(), pt.getGiving11(), pt.getGiving12(), pt.getGiving1(), pt.getGiving2(), pt.getGiving3()));
@@ -1268,6 +1219,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         return new ArrayList<PersonPlanTable>();
     }
 
+    //新人人员统计
     private List<PersonPlanTable> getNextPersonTable(PersonnelPlan personnelPlan, List<PersonPlanTable> personPlanTables) throws Exception {
         if (!personnelPlan.getNewentry().equals("[]")) {
             int[] arr = new int[]{4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3};
@@ -1289,22 +1241,13 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                         }
                     }
                 }
-                BigDecimal payHour = pt.getPayhour().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getPayhour());
-                BigDecimal overTimeHour = pt.getOvertimehour().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getOvertimehour());
-                BigDecimal giving46 = pt.getMoney46().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getMoney46()); //给与4-6
-                BigDecimal giving37 = pt.getMoney73().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getMoney73()); //给与3-7
+                BigDecimal giving46 = pt.getSummerplanpc().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getSummerplanpc()); //给与4-6
                 for (int i = 1; i <= 12; i++) {
                     BigDecimal giving;
                     int count = (int) PropertyUtils.getProperty(pt, "amount" + i);
-                    BigDecimal workingHour = new BigDecimal(count).multiply(overTimeHour); //残業总数
-                    BigDecimal pay = workingHour.multiply(payHour); //残業总费
-                    PropertyUtils.setProperty(pt, "workinghour" + i, workingHour);
-                    PropertyUtils.setProperty(pt, "pay" + i, pay);
-                    if (i == 4 || i == 5 || i == 6) {
-                        giving = new BigDecimal(count).multiply(giving46);
-                    } else {
-                        giving = new BigDecimal(count).multiply(giving37);
-                    }
+                    PropertyUtils.setProperty(pt, "workinghour" + i, BigDecimal.ZERO);
+                    PropertyUtils.setProperty(pt, "pay" + i, BigDecimal.ZERO);
+                    giving = new BigDecimal(count).multiply(giving46);
                     PropertyUtils.setProperty(pt, "giving" + i, giving);
                 }
                 pt.setAmountfirst(pt.getAmount4() + pt.getAmount5() + pt.getAmount6() + pt.getAmount7() + pt.getAmount8() + pt.getAmount9());
