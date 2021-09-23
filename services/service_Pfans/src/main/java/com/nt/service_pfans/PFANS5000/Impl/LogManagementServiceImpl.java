@@ -299,7 +299,10 @@ public class LogManagementServiceImpl implements LogManagementService {
             {
                 accounts.add("0");
             }
-            bpList = logmanagementmapper.getListCENTERlogman(accounts);
+            if(accounts.size()>0)
+            {
+                bpList = logmanagementmapper.getListCENTERlogman(accounts);
+            }
         }
 
         List<LogManagement> listEnd = new ArrayList<>();

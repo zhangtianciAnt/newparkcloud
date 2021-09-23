@@ -136,6 +136,7 @@
             s.`PHASE`          as phase,
             s.`PRODUCTSTATUS`  as productstatus,
             pp.contractno as contractno,
+            Projectsystem.EXITTIME as EXITTIME,
         <![CDATA[ case
                 when s.`COMPANYPROJECTS_ID` != "" && s.`ESTIMATEDENDTIME` < s.`ACTUALSTARTTIME` ]]> then '0'
                 when s.`COMPANYPROJECTS_ID` != "" then '1'

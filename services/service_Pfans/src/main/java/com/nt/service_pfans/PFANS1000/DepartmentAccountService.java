@@ -12,4 +12,6 @@ public interface DepartmentAccountService {
     List<DepartmentAccountVo> selectBygroupid(String year, String groupid) throws Exception;
     //创建
     public void insert() throws Exception;
+
+    Object getTable1051infoReport(String year, String department) throws Exception;
 }

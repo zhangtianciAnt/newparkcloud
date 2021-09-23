@@ -38,4 +38,10 @@ public class Pfans1051Controller {
         departmentAccountService.insert();
         return ApiResult.success();
     }
+
+    //查看
+    @RequestMapping(value = "/getTable1051infoReport", method = {RequestMethod.GET})
+    public ApiResult getTable1051infoReport(String year, String group_id, HttpServletRequest request) throws Exception {
+        return ApiResult.success("getTable1051infoReport",departmentAccountService.getTable1051infoReport(year, group_id));
+    }
 }

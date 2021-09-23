@@ -142,4 +142,9 @@ public class CompanyProjectsVo2 {
      * 合同号
      */
     private String contractno;
+
+    /**
+     * 退场时间
+     */
+    private Date exittime;
 }
