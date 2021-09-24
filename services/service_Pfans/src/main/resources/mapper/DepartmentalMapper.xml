@@ -42,17 +42,17 @@
         (SELECT
         CASE
         WHEN
-        ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) BETWEEN 1
+        ROUND( sum( logment.ADJUST ) / my_WorkingDays ( DATE_FORMAT( concat( logment.LOG_DATE, '-01' ), '%Y%m' ) ), 4 ) BETWEEN 1
         AND 1.1999 THEN
         1
-        WHEN ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) BETWEEN 1.2
+        WHEN ROUND( sum( logment.ADJUST ) / my_WorkingDays ( DATE_FORMAT( concat( logment.LOG_DATE, '-01' ), '%Y%m' ) ), 4 ) BETWEEN 1.2
         AND 1.3999 THEN
         1.1
-        WHEN ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) BETWEEN 1.4
+        WHEN ROUND( sum( logment.ADJUST ) / my_WorkingDays ( DATE_FORMAT( concat( logment.LOG_DATE, '-01' ), '%Y%m' ) ), 4 ) BETWEEN 1.4
         AND 1.5999 THEN
         1.15
-        WHEN ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) >= 1.6 THEN
-        1.3 ELSE ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 2 )
+        WHEN ROUND( sum( logment.ADJUST ) / my_WorkingDays ( DATE_FORMAT( concat( logment.LOG_DATE, '-01' ), '%Y%m' ) ), 4 ) >= 1.6 THEN
+        1.3 ELSE ROUND( sum( logment.ADJUST ) / my_WorkingDays ( DATE_FORMAT( concat( logment.LOG_DATE, '-01' ), '%Y%m' ) ), 2 )
         END WORKRATE,
         logment.USER_ID AS USERID,
         themexpor.THEMEINFOR_ID,
@@ -177,21 +177,62 @@
         WHERE
         prosys.type = '1'
         GROUP BY
-        prosys.`NAME`
+        prosys.`NAME`,
+        themcompro.THEMEINFOR_ID,
+        themcompro.THEMENAME,
+        themcompro.DIVIDE,
+        themcompro.TOOLSORGS,
+        themcompro.CONTRACTNUMBER,
+        themcompro.ENTRYCONDITION,
+        themcompro.CLAIMAMOUNT,
+        themcompro.CONTRACTNUMBERCOUNT_ID,
+        themcompro.CONTRACATAMOUNTDETAIL,
+        themcompro.CLAIMTYPE,
+        themcompro.COMPANYPROJECTS_ID,
+        themcompro.CONTRACTAMOUNT,
+        themcompro.NUMBERS
         ) themprosys
         INNER JOIN expatriatesinfor exinfor ON themprosys.`NAME` = exinfor.ACCOUNT
         ) themexpor
         INNER JOIN logpersonstatistics logment ON logment.USER_ID = themexpor.`NAME`
         WHERE
-        DATE_FORMAT( logment.LOG_DATE, '%Y-%m' ) = #{logdate}
+        DATE_FORMAT( concat( logment.LOG_DATE, '-01' ), '%Y-%m' ) = #{logdate}
         GROUP BY
-        CREATEBY) themelog left join priceset prset on themelog.EXPATRIATESINFOR_ID = prset.USER_ID and themelog.department = prset.GROUP_ID and prset.PRICESETGROUP_ID in (select PRICESETGROUP_ID from pricesetgroup where PD_DATE = left(#{logdate},7) )
+        logment.USER_ID,
+        themexpor.THEMEINFOR_ID,
+        themexpor.THEMENAME,
+        themexpor.DIVIDE,
+        themexpor.TOOLSORGS,
+        themexpor.CONTRACTNUMBER,
+        themexpor.ENTRYCONDITION,
+        themexpor.CLAIMAMOUNT,
+        themexpor.CONTRACATAMOUNTDETAIL,
+        themexpor.CLAIMTYPE,
+        themexpor.CONTRACTAMOUNT,
+        themexpor.NUMBERS,
+        themexpor.SUPPLIERNAME,
+        themexpor.COMPANYPROJECTS_ID,
+        themexpor.EXPATRIATESINFOR_ID,
+        logment.DEPARTMENT,
+        logment.LOG_DATE
+        )
+        themelog left join priceset prset on themelog.EXPATRIATESINFOR_ID = prset.USER_ID and themelog.department = prset.GROUP_ID and prset.PRICESETGROUP_ID in (select PRICESETGROUP_ID from pricesetgroup where PD_DATE = left(#{logdate},7) )
         ) lastresult
         GROUP BY
-            outcompany,
-            CLAIMAMOUNT,
-            CLAIMTYPE,
-            NUMBERS
+            lastresult.department,
+            lastresult.CONTRACTNUMBER,
+            lastresult.CLAIMAMOUNT,
+            lastresult.CLAIMTYPE,
+            lastresult.ENTRYCONDITION,
+            lastresult.CONTRACATAMOUNTDETAIL,
+            lastresult.THEMEINFOR_ID,
+            lastresult.THEMENAME,
+            lastresult.DIVIDE,
+            lastresult.TOOLSORGS,
+            lastresult.CONTRACTAMOUNT,
+            lastresult.NUMBERS,
+            lastresult.outcompany,
+            lastresult.COMPANYPROJECTS_ID
         ORDER BY
             contractnumber,
             CLAIMTYPE,
@@ -204,25 +245,25 @@
             SELECT
             prosys.NAME as USER_ID,
             CASE
-            WHEN ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) BETWEEN 1
+            WHEN ROUND( sum( logment.ADJUST ) / my_WorkingDays ( DATE_FORMAT( concat( logment.LOG_DATE, '-01' ), '%Y%m' ) ), 4 ) BETWEEN 1
             AND 1.1999 THEN
             1
-            WHEN ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) BETWEEN 1.2
+            WHEN ROUND( sum( logment.ADJUST ) / my_WorkingDays ( DATE_FORMAT( concat( logment.LOG_DATE, '-01' ), '%Y%m' ) ), 4 ) BETWEEN 1.2
             AND 1.3999 THEN
             1.1
-            WHEN ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) BETWEEN 1.4
+            WHEN ROUND( sum( logment.ADJUST ) / my_WorkingDays ( DATE_FORMAT( concat( logment.LOG_DATE, '-01' ), '%Y%m' ) ), 4 ) BETWEEN 1.4
             AND 1.5999 THEN
             1.15
-            WHEN ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) >= 1.6 THEN
-            1.3 ELSE ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 2 )
+            WHEN ROUND( sum( logment.ADJUST ) / my_WorkingDays ( DATE_FORMAT( concat( logment.LOG_DATE, '-01' ), '%Y%m' ) ), 4 ) >= 1.6 THEN
+            1.3 ELSE ROUND( sum( logment.ADJUST ) / my_WorkingDays ( DATE_FORMAT( concat( logment.LOG_DATE, '-01' ), '%Y%m' ) ), 2 )
             END WORKRATE
             FROM
             ( SELECT NAME FROM projectsystem WHERE COMPANYPROJECTS_ID = #{departGroupFilter} AND TYPE = '0' ) prosys
             INNER JOIN logpersonstatistics logment on logment.USER_ID = prosys.name
             WHERE
             logment.USER_ID = prosys.NAME
-            AND DATE_FORMAT( logment.LOG_DATE, '%Y-%m' ) = #{logdate}
-            GROUP BY USER_ID) as staffwork
+            AND DATE_FORMAT( concat( logment.LOG_DATE, '-01' ), '%Y-%m' ) = #{logdate}
+            GROUP BY prosys.NAME) as staffwork
     </select>
 
     <insert id="saveStaffList" parameterType="java.util.List" >
