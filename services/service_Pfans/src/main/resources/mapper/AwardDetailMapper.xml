@@ -17,6 +17,7 @@
                 </foreach>
             </if>
             group by
+                BUDGETCODE,
                 DEPART
             ORDER BY
                 BUDGETCODE
