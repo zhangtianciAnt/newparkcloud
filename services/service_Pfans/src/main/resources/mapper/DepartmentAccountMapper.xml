@@ -95,7 +95,7 @@ select
 
 		SELECT
 	temp. themeid as theme_id
-	,temp.  themename as themename
+	,temp. themename as themename
 	,temp. contract as contract
 	,temp. toolsorgs as toolsorgs
 	,temp. contractapplication_id as contractapplication_id
@@ -137,18 +137,18 @@ select
 	,SUM(temp.contractamountSum1) as contractamountSum1
 	,SUM(temp.contractamountSum2) as contractamountSum2
 	,SUM(temp.contractamountSum3) as contractamountSum3
-	,temp.AMOUNT4 AS moneyplan4
-	,temp.AMOUNT5 AS moneyplan5
-	,temp.AMOUNT6 AS moneyplan6
-	,temp.AMOUNT7 AS moneyplan7
-	,temp.AMOUNT8 AS moneyplan8
-	,temp.AMOUNT9 AS moneyplan9
-	,temp.AMOUNT10 AS moneyplan10
-	,temp.AMOUNT11 AS moneyplan11
-	,temp.AMOUNT12 AS moneyplan12
-	,temp.AMOUNT1 AS moneyplan1
-	,temp.AMOUNT2 AS moneyplan2
-	,temp.AMOUNT3 AS moneyplan3
+	,SUM(temp.AMOUNT4) AS moneyplan4
+	,SUM(temp.AMOUNT5) AS moneyplan5
+	,SUM(temp.AMOUNT6) AS moneyplan6
+	,SUM(temp.AMOUNT7) AS moneyplan7
+	,SUM(temp.AMOUNT8) AS moneyplan8
+	,SUM(temp.AMOUNT9) AS moneyplan9
+	,SUM(temp.AMOUNT10) AS moneyplan10
+	,SUM(temp.AMOUNT11) AS moneyplan11
+	,SUM(temp.AMOUNT12) AS moneyplan12
+	,SUM(temp.AMOUNT1) AS moneyplan1
+	,SUM(temp.AMOUNT2) AS moneyplan2
+	,SUM(temp.AMOUNT3) AS moneyplan3
 FROM (
 SELECT
 	 thr.THEMEINFOR_ID AS themeid
@@ -217,18 +217,18 @@ SELECT
 		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '02' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum2
 	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
 		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '03' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum3
-	,thr.AMOUNT4 AS amount4
-	,thr.AMOUNT5 AS amount5
-	,thr.AMOUNT6 AS amount6
-	,thr.AMOUNT7 AS amount7
-	,thr.AMOUNT8 AS amount8
-	,thr.AMOUNT9 AS amount9
-	,thr.AMOUNT10 AS amount10
-	,thr.AMOUNT11 AS amount11
-	,thr.AMOUNT12 AS amount12
-	,thr.AMOUNT1 AS amount1
-	,thr.AMOUNT2 AS amount2
-	,thr.AMOUNT3 AS amount3
+	,SUM(thr.AMOUNT4) AS amount4
+	,SUM(thr.AMOUNT5) AS amount5
+	,SUM(thr.AMOUNT6) AS amount6
+	,SUM(thr.AMOUNT7) AS amount7
+	,SUM(thr.AMOUNT8) AS amount8
+	,SUM(thr.AMOUNT9) AS amount9
+	,SUM(thr.AMOUNT10) AS amount10
+	,SUM(thr.AMOUNT11) AS amount11
+	,SUM(thr.AMOUNT12) AS amount12
+	,SUM(thr.AMOUNT1) AS amount1
+	,SUM(thr.AMOUNT2) AS amount2
+	,SUM(thr.AMOUNT3) AS amount3
 FROM
 (
 	SELECT
@@ -258,7 +258,7 @@ FROM
 	ON cr.CUSTOMERINFOR_ID = thr.CUSTOMERINFOR_ID
 	WHERE td.CENTER_ID = #{department} OR td.GROUP_ID = #{department} AND thr.YEAR = #{years}
 
-	GROUP BY thr.THEMEINFOR_ID
+	GROUP BY thr.THEMEINFOR_ID,thr.THEMENAME,cr.THECOMPANY,thr.TOOLSORGS,thr.YEAR
 ) thr
 INNER  JOIN contractapplication ct
 ON ct.THEMEINFOR_ID = thr.THEMEINFOR_ID
@@ -282,9 +282,35 @@ INNER JOIN
 	AND cp.CENTER_ID =  #{department} OR cp.GROUP_ID =  #{department}
 ) AS pr
 ON pr.CONTRACTNUMBERCOUNT_ID = cn.CONTRACTNUMBERCOUNT_ID
-GROUP BY themeid,contractapplication_id,companyprojects_id,DATE_FORMAT(cn.DELIVERYDATE, '%m')
+GROUP BY
+thr.THEMEINFOR_ID
+	,thr.THEMENAME
+	,thr.CONTRACT
+	,thr.TOOLSORGS
+	,ct.CONTRACTAPPLICATION_ID
+	,ct.CONTRACTNUMBER
+	,ct.CLAIMAMOUNT
+	,ct.entrycondition
+	,ct.state
+	,pr.COMPANYPROJECTS_ID
+	,pr.NUMBERS
+	,thr.YEAR
+	,cn.DELIVERYDATE
+	,cn.CLAIMAMOUNT
 ) temp
-GROUP BY temp.themeid,temp.contractapplication_id,temp.companyprojects_id
+GROUP BY
+temp. themeid
+	,temp. themename
+	,temp. contract
+	,temp. toolsorgs
+	,temp. contractapplication_id
+	,temp. contractnumber
+	,temp. claimamounttotal
+	,temp. entrycondition
+	,temp. state
+	,temp. companyprojects_id
+	,temp. numbers
+	,temp. year
 	</select>
 	<insert id="insertDepAll" parameterType="java.util.List">
 		insert into DepartmentAccount
@@ -537,13 +563,13 @@ GROUP BY temp.themeid,temp.contractapplication_id,temp.companyprojects_id
 				INNER JOIN projectsystem ps
 				ON pj.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
 				WHERE ca.THEMEINFOR_ID = #{themeid}
-				GROUP BY pj.NUMBERS,ps.NAME,ps.`TYPE`
+				GROUP BY pj.NUMBERS,ps.NAME,ps.`TYPE`,pj.COMPANYPROJECTS_ID
 			)   pjtemp
             ON pjtemp.COMPANYPROJECTS_ID = lg.PROJECT_ID
             AND pjtemp.name = lg.CREATEBY
             WHERE date_format(lg.LOG_DATE,'%Y-%m') BETWEEN date_format( concat( #{years}, '-04-01' ) ,'%Y-%m')
                                 				   AND  date_format( concat(  CONVERT(#{years}, SIGNED) + 1 , '-03-31' ),'%Y-%m')
-            GROUP BY userid,PROJECT_ID, DATE_FORMAT(LOG_DATE,'%Y%m')
+            GROUP BY userid,PROJECT_ID, GROUP_ID,DATE_FORMAT(LOG_DATE,'%Y%m'),pjtemp.type
         ) a
 	</select>
 	<select id="selectTotalByYearAndDep" resultType="com.nt.dao_Pfans.PFANS1000.Vo.DepartmentTotalVo">
@@ -556,7 +582,8 @@ GROUP BY temp.themeid,temp.contractapplication_id,temp.companyprojects_id
          a.LDATE LOGDATE
         FROM
         (
-        	SELECT `CREATEBY` AS userid, SUM(TIME_START) TIME_START, PROJECT_ID, GROUP_ID, DATE_FORMAT(LOG_DATE,'%Y%m') LOG_DATE,DATE_FORMAT(LOG_DATE,'%m') LDATE
+
+        	SELECT SUM(TIME_START) TIME_START, DATE_FORMAT(LOG_DATE,'%Y%m') LOG_DATE,DATE_FORMAT(LOG_DATE,'%m') LDATE
 			FROM logmanagement lg
 
             WHERE date_format(lg.LOG_DATE,'%Y-%m') BETWEEN date_format( CONCAT( #{years}, '-04-01' ) ,'%Y-%m')
@@ -646,7 +673,10 @@ GROUP BY temp.themeid,temp.contractapplication_id,temp.companyprojects_id
 			AND e.`STATUS` = '4'
 			AND (e.GROUP_ID = #{department} or e.CENTER_ID = #{department})
 
-			GROUP BY e.PUBLICEXPENSE_ID) pub
+			GROUP BY e.REIMBURSEMENTDATE
+		  		,e.MONEYS
+		  		,e.PUBLICEXPENSE_ID
+		  		,e.PROJECT_ID) pub
 	</select>
 	<select id="selectTravelMountBytheme" resultType="com.nt.dao_Pfans.PFANS1000.DepartmentAccountTotal">
 
@@ -768,7 +798,10 @@ GROUP BY temp.themeid,temp.contractapplication_id,temp.companyprojects_id
 			AND pubd.`STATUS` = '4'
 			AND (pubd.GROUP_ID = #{department} or pubd.CENTER_ID = #{department})
 
-			GROUP BY pubd.EVECTION_ID
+			GROUP BY pubd.REIMBURSEMENTDATE
+		  		,pubd.TOTALPAY
+		  		,pubd.EVECTION_ID
+		  		,pubd.PROJECT_ID
 			) pub
 	</select>
 	<insert id="insertDepTotalAll" parameterType="java.util.List">

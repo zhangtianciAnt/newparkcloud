@@ -60,13 +60,13 @@
             (
             SELECT
                 USER_ID AS userid,
-                ROUND( ADJUST / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 2 ) TIME_START,
+                ROUND( ADJUST / my_WorkingDays ( DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y%m' ) ), 2 ) TIME_START,
                 DEPARTMENT AS GROUP_ID,
                 PROJECT_ID
             FROM
                 logpersonstatistics lg
             WHERE
-                date_format( lg.LOG_DATE, '%Y-%m' ) = #{LOG_DATE}
+                date_format( concat( LOG_DATE, '-01' ), '%Y%m', '%Y-%m' ) = #{LOG_DATE}
             AND PROJECT_ID != 'PP024001'
             AND PROJECT_ID IN
             <foreach collection="projectList" index="index" item="projectid" open="("
@@ -74,8 +74,10 @@
                 #{projectid}
             </foreach>
             GROUP BY
-            CREATEBY,
-            PROJECT_ID
+               USER_ID,
+               ADJUST,
+               GROUP_ID,
+               PROJECT_ID
             ) cd
         INNER JOIN projectsystem pm ON pm.`NAME` = cd.userid
         AND pm.COMPANYPROJECTS_ID = cd.PROJECT_ID
