@@ -1,9 +1,6 @@
 package com.nt.dao_Pfans.PFANS1000.Vo;
 
-import com.nt.dao_Pfans.PFANS1000.Award;
-import com.nt.dao_Pfans.PFANS1000.AwardDetail;
-import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
-import com.nt.dao_Pfans.PFANS1000.StaffDetail;
+import com.nt.dao_Pfans.PFANS1000.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,4 +23,7 @@ public class AwardVo {
     private List<StaffDetail> staffDetail;
 
     private List<Contractnumbercount> numbercounts;
+//    PSDCD_PFANS_20210525_XQ_054 复合合同决裁书分配金额可修改 ztc fr
+    private List<AwardReunite> awardReunites;
+//    PSDCD_PFANS_20210525_XQ_054 复合合同决裁书分配金额可修改 ztc to
 }

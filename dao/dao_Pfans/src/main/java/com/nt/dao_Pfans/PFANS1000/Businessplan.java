@@ -92,6 +92,15 @@ public class Businessplan extends BaseModel {
     @Column(name = "TABLEO")
     private String tableO;
 
+    @Column(name = "TABLEA")
+    private String tableA;
+
+    @Column(name = "TABLEC")
+    private String tableC;
+
+    @Column(name = "TABLED")
+    private String tableD;
+
     @Column(name = "YEAR")
     private String year;
 

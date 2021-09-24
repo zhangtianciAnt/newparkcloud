@@ -1,5 +1,6 @@
 package com.nt.dao_Pfans.PFANS4000;
 
+import com.nt.utils.BigDecimalUtils;
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -78,5 +80,21 @@ public class PeoplewareFee extends BaseModel {
 
     @Column(name = "MONTH12")
     private String month12;
+
+    //年度rank平均值
+    @Column(name = "AGEPRICE")
+    private String ageprice;
+
+    //rank平均值 ztc fr
+    public String getSum(){
+        String sumAnt = BigDecimalUtils.sum(
+                this.getMonth1(), this.getMonth2(), this.getMonth3(),
+                this.getMonth4(), this.getMonth5(), this.getMonth6(),
+                this.getMonth7(), this.getMonth8(), this.getMonth9(),
+                this.getMonth10(), this.getMonth11(), this.getMonth12()
+                );
+        return new BigDecimal(sumAnt).divide(new BigDecimal("12"),2,BigDecimal.ROUND_UP).toString();
+    }
+    //rank平均值 ztc to
 
 }

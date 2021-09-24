@@ -282,6 +282,7 @@ public class OrgTreeServiceImpl implements OrgTreeService {
                     departmentVo.setDepartmentshortname(orgCenter.getCompanyshortname());
                     departmentVo.setDepartmentEncoding(orgCenter.getEncoding());
                     departmentVo.setDepartmentEn(orgCenter.getCompanyen());
+                    departmentVo.setDepartmentRedirict(orgCenter.getRedirict());
                     departmentVo.setDepartmentType(orgCenter.getType());
                     departmentVo.setDepartmentUserid(orgCenter.getUser());
                     departmentVoList.add(departmentVo);
@@ -296,6 +297,7 @@ public class OrgTreeServiceImpl implements OrgTreeService {
                         departmentVo.setDepartmentshortname(orgGroup.getCompanyshortname());
                         departmentVo.setDepartmentEncoding(orgGroup.getEncoding());
                         departmentVo.setDepartmentEn(orgGroup.getCompanyen());
+                        departmentVo.setDepartmentRedirict(orgCenter.getRedirict());
                         departmentVo.setDepartmentType(orgGroup.getType());
                         departmentVo.setDepartmentUserid(orgGroup.getUser());
                         departmentVoList.add(departmentVo);

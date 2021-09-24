@@ -54,7 +54,7 @@
         WHEN ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 4 ) >= 1.6 THEN
         1.3 ELSE ROUND( sum( TIME_START ) / my_WorkingDays ( DATE_FORMAT( LOG_DATE, '%Y%m' ) ), 2 )
         END WORKRATE,
-        logment.CREATEBY AS USERID,
+        logment.USER_ID AS USERID,
         themexpor.THEMEINFOR_ID,
         themexpor.THEMENAME,
         themexpor.DIVIDE,
@@ -69,7 +69,7 @@
         themexpor.SUPPLIERNAME AS outcompany,
         themexpor.COMPANYPROJECTS_ID AS COMPANYPROJECTS_ID,
         themexpor.EXPATRIATESINFOR_ID AS EXPATRIATESINFOR_ID,
-        logment.GROUP_ID AS department
+        logment.DEPARTMENT
         FROM
         (
         SELECT
@@ -181,7 +181,7 @@
         ) themprosys
         INNER JOIN expatriatesinfor exinfor ON themprosys.`NAME` = exinfor.ACCOUNT
         ) themexpor
-        INNER JOIN logmanagement logment ON logment.CREATEBY = themexpor.`NAME`
+        INNER JOIN logpersonstatistics logment ON logment.USER_ID = themexpor.`NAME`
         WHERE
         DATE_FORMAT( logment.LOG_DATE, '%Y-%m' ) = #{logdate}
         GROUP BY
@@ -218,9 +218,9 @@
             END WORKRATE
             FROM
             ( SELECT NAME FROM projectsystem WHERE COMPANYPROJECTS_ID = #{departGroupFilter} AND TYPE = '0' ) prosys
-            INNER JOIN logmanagement logment on logment.CREATEBY = prosys.name
+            INNER JOIN logpersonstatistics logment on logment.USER_ID = prosys.name
             WHERE
-            logment.CREATEBY = prosys.NAME
+            logment.USER_ID = prosys.NAME
             AND DATE_FORMAT( logment.LOG_DATE, '%Y-%m' ) = #{logdate}
             GROUP BY USER_ID) as staffwork
     </select>

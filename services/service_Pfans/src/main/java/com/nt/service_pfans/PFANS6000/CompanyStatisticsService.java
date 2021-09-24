@@ -15,12 +15,14 @@ import java.util.Map;
 
 public interface CompanyStatisticsService {
 
-    Map<String, Object> getCosts(String groupid,String years) throws Exception;
-
+    Integer insertCosts(String groupid,String years) throws Exception;
+    List<CompanyStatistics> getCostsByGrpAndY(String groupid,String years) throws Exception;
 
     List<bpSum2Vo> getWorkTimes(String groupid, String years) throws LogicalException;
 
     List<bpSum3Vo> getWorkerCounts(String groupid, String years) throws LogicalException;
 
     XSSFWorkbook downloadExcel(String groupid,String years,HttpServletRequest request, HttpServletResponse resp) throws LogicalException;
+
+    List downloadPdf(String dates) throws Exception;
 }

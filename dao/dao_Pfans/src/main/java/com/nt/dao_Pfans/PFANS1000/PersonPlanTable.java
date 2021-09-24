@@ -14,8 +14,7 @@ public class PersonPlanTable implements java.io.Serializable{
     private static final long serialVersionUID = 1L;
 
     private String code;
-    private String money46;
-    private String money73;
+    private String summerplanpc;
     private String payhour;
     private String overtimehour;
 

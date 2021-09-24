@@ -20,5 +20,13 @@ public interface CompanyStatisticsMapper extends MyMapper<CompanyStatistics> {
 
     List<bpSum2Vo> getbpsum2(@Param("groupid") String groupid,@Param("years") String years);
 
+    List<CompanyStatistics> selectAllcompany(@Param("years") String years);
+
+    int insertAll(@Param("list")  List<CompanyStatistics> allCostList);
+    int updateAll(@Param("list")  List<CompanyStatistics> allCostList);
+
+    List<CompanyStatistics> getCompanyList(@Param("years") String years);
+
+    List<CompanyStatistics> getcompanyStatisticsList(@Param("groupid") String groupid,@Param("years") String years,@Param("strColumn") String[] strColumn);
 }
 

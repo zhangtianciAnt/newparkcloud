@@ -21,4 +21,7 @@ public interface PublicExpenseMapper extends MyMapper<PublicExpense> {
     @Select("select publicexpense_id as publicexpenseid,loan from publicexpense where loan <> ''")
     List<PublicExpense> getEmpty();
 //    PSDCD_PFANS_20210519_BUG_006
+    // add 210909 gbb BP社统计添加外注费用字段 start
+    List<PublicExpense> getPublicexpenseRmb(@Param("years") String years,@Param("groupid") String groupid);
+    // add 210909 gbb BP社统计添加外注费用字段 end
 }

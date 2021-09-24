@@ -1,28 +1,36 @@
 package com.nt.controller.Controller.PFANS;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.convert.Convert;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
+import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
+import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.AwardService;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.service_pfans.PFANS2000.PersonalCostService;
+import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -62,11 +70,19 @@ public class Pfans1025Controller {
     private NonJudgmentMapper nonJudgmentMapper;
 
     @Autowired
+    private PeoplewareFeeMapper peoplewareFeeMapper;
+
+    @Autowired
     private ContractapplicationService contractapplicationService;
 
     @Autowired
     private OrgTreeService orgtreeservice;
 
+    @Autowired
+    private PersonalCostService personalCostService;
+
+    @Autowired
+    private OrgTreeService orgTreeService;
 
     @RequestMapping(value = "/generateJxls", method = {RequestMethod.POST})
     public void generateJxls(@RequestBody AwardVo av, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -448,4 +464,131 @@ public class Pfans1025Controller {
         return ApiResult.success();
 
     }
+
+    /**
+     * 受托合同，详情，部门下拉框数据源
+     * */
+    //region scc add 21/8/20 from
+    @GetMapping(value = "/getcompanyen")
+    public ApiResult getCompanyen(HttpServletRequest request) throws Exception {
+        return ApiResult.success(awardService.getCompanyen());
+    }
+    //endregion scc add 21/8/20 to
+
+    /**
+     * 受托合同，详情，RANK下拉框数据源
+     * */
+    @GetMapping(value = "/getRanks")
+    public ApiResult getRanks(HttpServletRequest request) throws Exception{
+        List<Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
+        List<Dictionary> collect = dictionaryRank.stream().filter(item -> (!item.getValue1().equals("R11A") && !item.getValue1().equals("R11B") && !item.getValue1().equals("R10"))).collect(Collectors.toList());
+        List<String> ranks = new ArrayList<>();
+        for(Dictionary ran : collect){
+            ranks.add(ran.getValue1());
+        }
+        return ApiResult.success(ranks);
+    }
+
+    /**
+     * 获取成本
+     * */
+    @RequestMapping(value = "/getPersonalBm", method = {RequestMethod.GET})
+    public ApiResult getPersonalBm(@RequestParam String years , HttpServletRequest request) throws Exception {
+        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+        HashMap<String,String> companyid = new HashMap<>();//部门简称-部门ID，键值对
+        //人件费 获取实际成本变更 ztc fr
+        HashMap<String,String> companySort = new HashMap<>();//部门简称-部门ID，键值对
+        Map<String,Map<String,List<PeoplewareFee>>> resultMap= new HashMap<>();
+        //人件费 获取实际成本变更 ztc to
+        for(DepartmentVo vo : allDepartment){
+            companyid.put(vo.getDepartmentEn(),vo.getDepartmentId());
+            //人件费 获取实际成本变更 ztc fr
+            companySort.put(vo.getDepartmentId(),vo.getDepartmentEn());
+            //人件费 获取实际成本变更 ztc to
+        }
+        List<Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
+        HashMap<String, String> dicList = new HashMap<>();
+        //人件费 获取实际成本变更 ztc fr
+        List<String> ranks = new ArrayList<>();
+        for(Dictionary dic : dictionaryRank){
+            dicList.put(dic.getCode(),dic.getValue1());
+            ranks.add(dic.getValue1());
+        }
+        Map<String,Map<String,List<PeoplewareFee>>> resultsOf= new HashMap<>();
+        //人件费 获取实际成本变更 ztc to
+        if(!StringUtils.isNullOrEmpty(years)){
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = sdf.parse(years);
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(date);
+            int now_year = 0;
+            int month = calendar.get(Calendar.MONTH)+1;
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+            if(month >= 1 && month <= 4) {
+                //时间大于4月10日的，属于新年度，小于10日，属于旧年度
+                if(day >=10)
+                {
+                    now_year = calendar.get(Calendar.YEAR);
+                }
+                else
+                {
+                    now_year = calendar.get(Calendar.YEAR) - 1;
+                }
+            }
+            else
+            {
+                now_year = calendar.get(Calendar.YEAR);
+            }
+            String yearss = String.valueOf(now_year);
+            //人件费 获取实际成本变更 ztc fr
+            PeoplewareFee plefee = new PeoplewareFee();
+            plefee.setYear(yearss);
+            List<String> orgList = new ArrayList<>();
+            List<PeoplewareFee> peowafeList = peoplewareFeeMapper.select(plefee);
+            Map<String,Map<String,List<PeoplewareFee>>> getPeoRanksMap = peowafeList.stream()
+                    .filter(item -> !StringUtils.isNullOrEmpty(item.getGroupid()) && !StringUtils.isNullOrEmpty(item.getRanks()))
+                    .collect(Collectors.groupingBy(PeoplewareFee::getGroupid,Collectors.groupingBy(PeoplewareFee::getRanks)));
+            getPeoRanksMap.forEach((gro,groList) ->{
+                orgList.add(companySort.get(gro));
+                HashMap<String,List<PeoplewareFee>> costOf = new HashMap<>();
+                groList.forEach((itrank,rankList)->{
+                    costOf.put(itrank,rankList);
+                });
+                resultsOf.put(companySort.get(gro),costOf);
+            });
+            //取部门差集
+            List<String> companyen = companyid.keySet().stream().collect(Collectors.toList());
+            List<String> reduceOrg = companyen.stream().filter(item -> !orgList.contains(item)).collect(Collectors.toList());
+            Map<String,List<PeoplewareFee>> dicrankMap = new HashMap<>();
+            ranks.forEach(rankdic -> {
+                List<PeoplewareFee> dicranksList = new ArrayList<>();
+                PeoplewareFee rankFee = new PeoplewareFee(null, null, null, rankdic, "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+                dicranksList.add(rankFee);
+                dicrankMap.put(rankdic,dicranksList);
+            });
+            Map<String,Map<String,List<PeoplewareFee>>> recostOf= new HashMap<>();
+            reduceOrg.forEach(reOrg -> {
+                recostOf.put(reOrg,dicrankMap);
+            });
+            resultMap.putAll(resultsOf);
+            resultMap.putAll(recostOf);
+//            for(String companyenKey : companyen){
+//                costOf = new HashMap<>();
+//                Map<String, PeoplewareFee> bmRanksInfo = personalCostService.getBmRanksInfo(yearss, companyid.get(companyenKey));
+//                for(String key : bmRanksInfo.keySet()){
+//                    costOf.put(dicList.get(key), bmRanksInfo.get(key).getMonth4() + "~" + bmRanksInfo.get(key).getMonth7());
+//                }
+//                resultsOf.put(companyenKey,costOf);
+//            }
+        }
+        return ApiResult.success(resultMap);
+        //人件费 获取实际成本变更 ztc to
+    }
+
+    //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc fr
+    @RequestMapping(value = "/getAwardEntr", method = {RequestMethod.POST})
+    public ApiResult getAwardEntr(@RequestBody List<String> awardIdList , HttpServletRequest request) throws Exception {
+        return ApiResult.success(awardService.getAwardEntr(awardIdList));
+    }
+    //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc to
 }

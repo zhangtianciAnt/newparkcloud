@@ -1,27 +1,29 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Auth.Vo.MembersVo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.ToDoNotice;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
-import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
-import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
+import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
 import com.nt.service_Auth.RoleService;
+import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS1000.AwardService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
+import com.nt.service_pfans.PFANS2000.PersonalCostService;
+import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
-import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
-import com.nt.utils.ExcelOutPutUtil;
 import com.nt.utils.dao.TokenModel;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,6 +39,8 @@ public class AwardServiceImpl implements AwardService {
     private ToDoNoticeService toDoNoticeService;
     @Autowired
     private AwardMapper awardMapper;
+    @Autowired
+    private AwardReuniteMapper awardReuniteMapper;
 
     @Autowired
     private AwardDetailMapper awardDetailMapper;
@@ -49,6 +53,18 @@ public class AwardServiceImpl implements AwardService {
 
     @Autowired
     CompanyProjectsMapper companyProjectsMapper;
+
+    @Autowired
+    PeoplewareFeeMapper peoplewareFeeMapper;
+
+    @Autowired
+    private OrgTreeService orgTreeService;
+
+    @Autowired
+    private PersonalCostService personalCostService;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @Override
     public List<Award> get(Award award) throws Exception {
@@ -68,6 +84,13 @@ public class AwardServiceImpl implements AwardService {
     // 禅道任务152
     @Override
     public AwardVo selectById(String award_id) throws Exception {
+        //region scc add 8/24 id--部门键值对 from
+        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+        HashMap<String,String> companyid = new HashMap<>();
+        for(DepartmentVo vo : allDepartment){
+            companyid.put(vo.getDepartmentId(),vo.getDepartmentEn());
+        }
+        //endregion scc add 8/24 id--部门键值对 to
         AwardVo awavo = new AwardVo();
         AwardDetail awadetail = new AwardDetail();
         awadetail.setAward_id(award_id);
@@ -79,6 +102,39 @@ public class AwardServiceImpl implements AwardService {
         stafflist = stafflist.stream().sorted(Comparator.comparing(StaffDetail::getRowindex)).collect(Collectors.toList());
         Award awa = awardMapper.selectByPrimaryKey(award_id);
         Award award = awardMapper.selectByPrimaryKey(award_id);
+        //region scc add 8/24 页面初始化时页面所需rank及成本 from
+        //scc 所有rank from
+        List<com.nt.dao_Org.Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
+        HashMap<String, String> dicList = new HashMap<>();
+
+        for(Dictionary dic : dictionaryRank){
+            dicList.put(dic.getCode(),dic.getValue1());
+        }
+        //scc 所有rank to
+        for(StaffDetail sta : stafflist){
+            String beginningDate = award.getClaimdatetime().split("~")[0].trim();//开始日
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date parseBegin = sdf.parse(beginningDate);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(parseBegin);
+            String beginningYear = String.valueOf(cal.get(Calendar.YEAR));//年
+            //人件费 获取实际成本变更 ztc fr
+            PeoplewareFee getFee = new PeoplewareFee();
+            getFee.setGroupid(sta.getIncondepartment());
+            getFee.setYear(beginningYear);
+            getFee.setRanks(sta.getAttf());
+            List<PeoplewareFee> peeList = peoplewareFeeMapper.select(getFee);
+            //Map<String, PeoplewareFee> bmRanksInfo = personalCostService.getBmRanksInfo(beginningYear, sta.getIncondepartment());//部门所有rank成本
+
+
+//            for(String key : bmRanksInfo.keySet()){
+//                costOf.put(dicList.get(key),bmRanksInfo.get(key).getMonth4() + "~" + bmRanksInfo.get(key).getMonth7());
+//            }
+            sta.setBm(peeList);//页面初始化成本
+            //人件费 获取实际成本变更 ztc to
+            sta.setIncondepartment(companyid.get(sta.getIncondepartment()));//存部门
+        }
+        //endregion scc add 8/24 页面初始化时页面所需rank及成本 to
 //        String name = "";
 //        String [] companyProjectsid = award.getPjnamechinese().split(",");
 //        if(companyProjectsid.length > 0){
@@ -108,6 +164,17 @@ public class AwardServiceImpl implements AwardService {
             }
             awavo.setNumbercounts(contractList);
         }
+        //    PSDCD_PFANS_20210525_XQ_054 复合合同决裁书分配金额可修改 ztc fr
+        if (awa != null) {
+            AwardReunite awardReunite = new AwardReunite();
+            awardReunite.setContractnumber(awa.getContractnumber());
+            List<AwardReunite> awardReuniteList = awardReuniteMapper.select(awardReunite);
+            if (awardReuniteList != null && awardReuniteList.size() > 1) {
+                awardReuniteList = awardReuniteList.stream().sorted(Comparator.comparing(AwardReunite::getRowindex)).collect(Collectors.toList());
+            }
+            awavo.setAwardReunites(awardReuniteList);
+        }
+        //    PSDCD_PFANS_20210525_XQ_054 复合合同决裁书分配金额可修改 ztc to
         return awavo;
     }
 
@@ -217,13 +284,30 @@ public class AwardServiceImpl implements AwardService {
 
         if (stalist != null) {
             int rowindex = 0;
+            //region scc add 8/24 根据部门简称存部门id from
+            List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+            HashMap<String,String> companyid = new HashMap<>();
+            for(DepartmentVo vo : allDepartment){
+                companyid.put(vo.getDepartmentEn(),vo.getDepartmentId());
+            }
+            //endregion scc add 8/24 根据部门简称存部门id to
             for (StaffDetail staffDetail : stalist) {
                 rowindex = rowindex + 1;
                 staffDetail.preInsert(tokenModel);
                 staffDetail.setStaffdetail_id(UUID.randomUUID().toString());
                 staffDetail.setAward_id(awardid);
+                //region scc 存部门id from
+                staffDetail.setIncondepartment(companyid.get(staffDetail.getIncondepartment()));
+                //endregion scc 存部门id to
                 staffDetail.setRowindex(rowindex);
                 staffDetailMapper.insertSelective(staffDetail);
+            }
+        }
+
+        if(awardVo.getAwardReunites() != null){
+            for(AwardReunite awardReunite : awardVo.getAwardReunites()){
+                awardReunite.preUpdate(tokenModel);
+                awardReuniteMapper.updateByPrimaryKey(awardReunite);
             }
         }
 
@@ -235,4 +319,21 @@ public class AwardServiceImpl implements AwardService {
         awardMapper.updateByPrimaryKeySelective(award);
     }
 
+    //region scc add 21/8/20 受托合同，详情，部门下拉框数据源 from
+    public List<String> getCompanyen() throws Exception{
+        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+        List<String> companyens = new ArrayList<>();
+        for(DepartmentVo vo : allDepartment){
+            companyens.add(vo.getDepartmentEn());
+        }
+        return companyens;
+    }
+    //endregion scc add 21/8/20 受托合同，详情，部门下拉框数据源 to
+
+    //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc fr
+    public List<AwardDetail> getAwardEntr(List<String> awardIdList) throws Exception{
+        List<AwardDetail> awardDetails = awardDetailMapper.getAdInfoList(awardIdList);
+        return awardDetails;
+    }
+    //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc to
 }

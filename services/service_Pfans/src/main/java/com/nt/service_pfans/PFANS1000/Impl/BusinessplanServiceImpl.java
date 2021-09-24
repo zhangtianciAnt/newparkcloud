@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
@@ -8,15 +9,18 @@ import com.alibaba.fastjson.JSONArray;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.*;
 //import com.nt.dao_Pfans.PFANS1000.Businessplandet;
 import com.nt.dao_Pfans.PFANS1000.Vo.*;
+import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 //import com.nt.service_pfans.PFANS1000.mapper.BusinessplandetMapper;
+import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
@@ -64,6 +68,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     private PersonnelplanMapper personnelplanMapper;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private ExpatriatesinforMapper expatriatesinforMapper;
 
     DecimalFormat df = new DecimalFormat("#0.00");
     //@Autowired
@@ -386,19 +392,22 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     }
 
     @Override
-    public List<OrgTreeVo> getgroupcompanyen(String year) throws Exception {
+    public List<OrgTreeVo> getgroupcompanyen(String year,String groupid) throws Exception {
         List<OrgTreeVo> OrgTreeVolist = new ArrayList<>();
-        OrgTree orgs = orgTreeService.get(new OrgTree());
-        for (OrgTree org : orgs.getOrgs()) {
-            for (OrgTree org1 : org.getOrgs()) {
+
+        //获取当前系统中有效的部门，按照预算编码统计
+        List<DepartmentVo> departmentVoList = new ArrayList<>();
+        departmentVoList = orgTreeService.getAllDepartment();
+        if(departmentVoList.size()>0)
+        {
+            departmentVoList = departmentVoList.stream().filter(item->(item.getDepartmentId().equals(groupid))).collect(Collectors.toList());
+            if(departmentVoList.size()>0)
+            {
                 OrgTreeVo orgtreevo = new OrgTreeVo();
-                orgtreevo.set_id(org1.get_id());
-                orgtreevo.setCompanyen(org1.getCompanyen());
-                orgtreevo.setRedirict(org1.getRedirict());
-                if(org1.getEncoding()!=null && !org1.getEncoding().equals(""))
-                {
-                    orgtreevo.setEncoding(org1.getEncoding().substring(0, 2));
-                }
+                orgtreevo.set_id(departmentVoList.get(0).getDepartmentId());
+                orgtreevo.setCompanyen(departmentVoList.get(0).getDepartmentEn());
+                orgtreevo.setRedirict(departmentVoList.get(0).getDepartmentRedirict());
+                orgtreevo.setEncoding(departmentVoList.get(0).getDepartmentEncoding().substring(0, 2));
                 orgtreevo.setMoney4("0");
                 orgtreevo.setMoney5("0");
                 orgtreevo.setMoney6("0");
@@ -414,48 +423,47 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 OrgTreeVolist.add(orgtreevo);
             }
         }
-        Businessplan businessplan = new Businessplan();
-        businessplan.setYear(year);
-        businessplan.setStatus("4");
-        businessplan.setGroup_id("91B253A1C605E9CA814462FB4C4D2605F43F");
-        List<Businessplan> businessplanlist = businessplanMapper.select(businessplan);
-        if (businessplanlist.size() > 0) {
-            OrgTreeVolist.get(0).setType("1");
-            OrgTreeVolist.get(0).setAssets_lodyear(businessplanlist.get(0).getAssets_lodyear());
-            OrgTreeVolist.get(0).setEquipment_lodyear(businessplanlist.get(0).getEquipment_lodyear());
-        } else {
-            OrgTreeVolist.get(0).setType("0");
-
-        }
         return OrgTreeVolist;
     }
 
     @Override
-    public List<BusinessGroupA2Vo> getgroup(String year, String type) throws Exception {
+    public List<BusinessGroupA2Vo> getgroup(String year,String groupid, String type) throws Exception {
         int scale = 2;//设置位数
         int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
         List<BusinessGroupA2Vo> VoList = new ArrayList<>();
         List<BusinessGroupA2Vo> getgroup = new ArrayList<>();
         if (type.equals("1")) {
-            getgroup = businessplanMapper.getgroupA2(year);
+            getgroup = businessplanMapper.getgroupA2(year,groupid);
         } else if (type.equals("2")) {
-            getgroup = businessplanMapper.getgroupB1(year);
+            getgroup = businessplanMapper.getgroupB1(year,groupid);
         } else if (type.equals("3")) {
-            getgroup = businessplanMapper.getgroupB2(year);
+            getgroup = businessplanMapper.getgroupB2(year,groupid);
         } else if (type.equals("4")) {
-            getgroup = businessplanMapper.getgroupB3(year);
+            getgroup = businessplanMapper.getgroupB3(year,groupid);
         }
         Map<String, String> map = new HashMap<>();
         OrgTree orgs = orgTreeService.get(new OrgTree());
         for (OrgTree org : orgs.getOrgs()) {
             for (OrgTree org1 : org.getOrgs()) {
-                map.put(org1.get_id(), org1.getCompanyen());
+                if(com.mysql.jdbc.StringUtils.isNullOrEmpty(org1.getEncoding()))
+                {
+                    for (OrgTree orgG: org1.getOrgs()) {
+                        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(orgG.getEncoding()))
+                        {
+                            map.put(orgG.get_id(), orgG.getCompanyen());
+                        }
+                    }
+                }
+                else
+                {
+                    map.put(org1.get_id(), org1.getCompanyen());
+                }
             }
         }
-        Set<String> conditionKeys = map.keySet();
-        for (BusinessGroupA2Vo vo2 : getgroup) {
-            conditionKeys = conditionKeys.parallelStream().filter(i -> !i.equals(vo2.getGroupname())).collect(Collectors.toSet());
-        }
+//        Set<String> conditionKeys = map.keySet();
+//        for (BusinessGroupA2Vo vo2 : getgroup) {
+//            conditionKeys = conditionKeys.parallelStream().filter(i -> !i.equals(vo2.getGroupname())).collect(Collectors.toSet());
+//        }
 
         for (BusinessGroupA2Vo vo2 : getgroup) {
             PersonnelPlan personnelplan = new PersonnelPlan();
@@ -514,62 +522,69 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             vo2.setMoneytotal(String.valueOf(moneytotals));
             VoList.add(vo2);
         }
-        if (conditionKeys.size() > 0) {
-            for (String str : conditionKeys) {
-                PersonnelPlan personnelplan = new PersonnelPlan();
-                BusinessGroupA2Vo businessgroupa2 = new BusinessGroupA2Vo();
-                personnelplan.setCenterid(str);
-                personnelplan.setYears(year);
-                if (type.equals("2") || type.equals("3")) {
-                    personnelplan.setType(1);
-                } else if (type.equals("1") || type.equals("4")) {
-                    personnelplan.setType(0);
-                }
-                List<PersonnelPlan> personnelplanlist = personnelplanMapper.select(personnelplan);
-                if (personnelplanlist.size() > 0) {
-                    businessgroupa2.setCommission(personnelplanlist.get(0).getMoneyavg());
-                } else {
-                    businessgroupa2.setCommission("0");
-                }
-                businessgroupa2.setMoney1("0");
-                businessgroupa2.setMoney2("0");
-                businessgroupa2.setMoney3("0");
-                businessgroupa2.setMoney4("0");
-                businessgroupa2.setMoney5("0");
-                businessgroupa2.setMoney6("0");
-                businessgroupa2.setMoney7("0");
-                businessgroupa2.setMoney8("0");
-                businessgroupa2.setMoney9("0");
-                businessgroupa2.setMoney10("0");
-                businessgroupa2.setMoney11("0");
-                businessgroupa2.setMoney12("0");
-                businessgroupa2.setMoneyfirst("0");
-                businessgroupa2.setMoneysecond("0");
-                businessgroupa2.setMoneytotal("0");
-                businessgroupa2.setNumber1("0");
-                businessgroupa2.setNumber2("0");
-                businessgroupa2.setNumber3("0");
-                businessgroupa2.setNumber4("0");
-                businessgroupa2.setNumber5("0");
-                businessgroupa2.setNumber6("0");
-                businessgroupa2.setNumber7("0");
-                businessgroupa2.setNumber8("0");
-                businessgroupa2.setNumber9("0");
-                businessgroupa2.setNumber10("0");
-                businessgroupa2.setNumber11("0");
-                businessgroupa2.setNumber12("0");
-                businessgroupa2.setNumberfirst("0");
-                businessgroupa2.setNumbersecond("0");
-                businessgroupa2.setNumbertotal("0");
-                businessgroupa2.setGroupname(str);
-                VoList.add(businessgroupa2);
-            }
-        }
+//        if (conditionKeys.size() > 0) {
+//            for (String str : conditionKeys) {
+//        if(getgroup.size()==0)
+//        {
+//            PersonnelPlan personnelplan = new PersonnelPlan();
+//            BusinessGroupA2Vo businessgroupa2 = new BusinessGroupA2Vo();
+//            personnelplan.setCenterid(groupid);
+//            personnelplan.setYears(year);
+//            if (type.equals("2") || type.equals("3")) {
+//                personnelplan.setType(1);
+//            } else if (type.equals("1") || type.equals("4")) {
+//                personnelplan.setType(0);
+//            }
+//            List<PersonnelPlan> personnelplanlist = personnelplanMapper.select(personnelplan);
+//            if (personnelplanlist.size() > 0) {
+//                businessgroupa2.setCommission(personnelplanlist.get(0).getMoneyavg());
+//            } else {
+//                businessgroupa2.setCommission("0");
+//            }
+//            businessgroupa2.setMoney1("0");
+//            businessgroupa2.setMoney2("0");
+//            businessgroupa2.setMoney3("0");
+//            businessgroupa2.setMoney4("0");
+//            businessgroupa2.setMoney5("0");
+//            businessgroupa2.setMoney6("0");
+//            businessgroupa2.setMoney7("0");
+//            businessgroupa2.setMoney8("0");
+//            businessgroupa2.setMoney9("0");
+//            businessgroupa2.setMoney10("0");
+//            businessgroupa2.setMoney11("0");
+//            businessgroupa2.setMoney12("0");
+//            businessgroupa2.setMoneyfirst("0");
+//            businessgroupa2.setMoneysecond("0");
+//            businessgroupa2.setMoneytotal("0");
+//            businessgroupa2.setNumber1("0");
+//            businessgroupa2.setNumber2("0");
+//            businessgroupa2.setNumber3("0");
+//            businessgroupa2.setNumber4("0");
+//            businessgroupa2.setNumber5("0");
+//            businessgroupa2.setNumber6("0");
+//            businessgroupa2.setNumber7("0");
+//            businessgroupa2.setNumber8("0");
+//            businessgroupa2.setNumber9("0");
+//            businessgroupa2.setNumber10("0");
+//            businessgroupa2.setNumber11("0");
+//            businessgroupa2.setNumber12("0");
+//            businessgroupa2.setNumberfirst("0");
+//            businessgroupa2.setNumbersecond("0");
+//            businessgroupa2.setNumbertotal("0");
+//            businessgroupa2.setGroupname(groupid);
+//            VoList.add(businessgroupa2);
+//        }
+
+//            }
+//        }
         for (Map.Entry<String, String> str : map.entrySet())
             for (BusinessGroupA2Vo volist : VoList) {
                 {
-                    if (volist.getGroupname().equals(str.getKey())) {
-                        volist.setGroupname(str.getValue());
+                    if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(volist.getGroupname())) {
+                        if(volist.getGroupname().equals(str.getKey()))
+                        {
+                            volist.setGroupname(str.getValue());
+                        }
                     }
                 }
             }
@@ -583,7 +598,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         List<BusinessGroupA1Vo> VoList = new ArrayList<>();
         ThemePlanDetail themeplandetail = new ThemePlanDetail();
         themeplandetail.setYear(year);
-        themeplandetail.setGroup_id(groupid);
+        themeplandetail.setCenter_id(groupid);
         themeplandetail.setType("0");
         themeplandetail.setContracttype("PJ142001");
         List<ThemePlanDetail> themeplandetaillist = themePlanDetailMapper.select(themeplandetail);
@@ -682,7 +697,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 }
                 VoList.add(businessgroupa1vo1);
             }
-        } else {
+        }
+        else {
             BusinessGroupA1Vo businessgroupa1vo1 = new BusinessGroupA1Vo();
             businessgroupa1vo1.setMoney1("0");
             businessgroupa1vo1.setMoney2("0");
@@ -807,7 +823,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 }
                 VoList.add(businessgroupa1vo1);
             }
-        } else {
+        }
+        else {
             BusinessGroupA1Vo businessgroupa1vo1 = new BusinessGroupA1Vo();
             businessgroupa1vo1.setMoney1("0");
             businessgroupa1vo1.setMoney2("0");
@@ -932,7 +949,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 }
                 VoList.add(businessgroupa1vo1);
             }
-        } else {
+        }
+        else {
             BusinessGroupA1Vo businessgroupa1vo1 = new BusinessGroupA1Vo();
             businessgroupa1vo1.setMoney1("0");
             businessgroupa1vo1.setMoney2("0");
@@ -973,7 +991,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         String businessplanid = businessplan.getBusinessplanid();
         Businessplan business = new Businessplan();
         business.setYear(businessplan.getYear());
-        business.setGroup_id(businessplan.getGroup_id());
+        business.setCenter_id(businessplan.getCenter_id());
         List<Businessplan> businessplanlist = businessplanMapper.select(business);
         businessplanlist = businessplanlist.stream().filter(item -> (!item.getBusinessplanid().equals(businessplanid))).collect(Collectors.toList());
         if (businessplanlist.size() > 0) {
@@ -985,7 +1003,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
 
     @Override
     public String[] getPersonPlan(String year, String groupid) throws Exception {
-        String[] personTable = new String[4];
+        String[] personTable = new String[7];
         List<ActualPL> actualPl = businessplanMapper.getAcutal(groupid, year + "-04-01", (Integer.parseInt(year) + 1) + "-03-31");
         for (ActualPL pl : actualPl) {
             Convert(pl, "code");
@@ -995,95 +1013,154 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         personnelPlan.setYears(year);
         personnelPlan.setType(0);
         List<PersonnelPlan> personnelPlanList = personnelplanMapper.select(personnelPlan);
-        //List<PersonPlanTable> personPlanTables = businessplanMapper.selectPersonTable(groupid);
-        List<PersonPlanTable> personPlanTables = new ArrayList<>();
-        List<PersonalAvgVo> personalAvgVoList = JSON.parseArray(personnelPlanList.get(0).getEmployed(), PersonalAvgVo.class);
-        //统计rank出现的个数
-        Map<String,Integer> rankNum = new HashMap<>();
-        for (PersonalAvgVo pav : personalAvgVoList) {
-            if(null == rankNum.get(pav.getNextyear())){
-                rankNum.put(pav.getNextyear(),1);
-            }else {
-                rankNum.put(pav.getNextyear(),rankNum.get(pav.getNextyear())+1);
-            }
+        if (personnelPlanList.size() == 0) {
+            throw new LogicalException("本部门该年度的人员计划还未创建，请先创建人员计划。");
         }
-        Map<String,Double> summerplanpcSumMap = personalAvgVoList.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getSummerplanpc)));
-        Map<String,Double> winterplanpcSumMap = personalAvgVoList.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getWinterplanpc)));
-        Map<String,Double> overtimepaySumMap = personalAvgVoList.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getOvertimepay)));
-        Map<String,Double> payhourSumMap = personalAvgVoList.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getOvertimehour)));
-        for (Map.Entry<String, Integer> rm : rankNum.entrySet()) {
-            PersonPlanTable personPlanTable = new PersonPlanTable();
-            //46
-            BigDecimal sppcSum = new BigDecimal(summerplanpcSumMap.get(rm.getKey()));
-            //73
-            BigDecimal wppcSum = new BigDecimal(winterplanpcSumMap.get(rm.getKey()));
-            //加班时给
-            BigDecimal otpcSum = new BigDecimal(overtimepaySumMap.get(rm.getKey()));
-            //加班时给
-            BigDecimal phscSum = new BigDecimal(payhourSumMap.get(rm.getKey()));
-            //人数
-            BigDecimal perNum = new BigDecimal(rm.getValue());
-            //46Avg
-            BigDecimal sppcAvg = sppcSum.divide(perNum,2, BigDecimal.ROUND_HALF_UP);
-            //73Avg
-            BigDecimal wppcAvg = wppcSum.divide(perNum,2, BigDecimal.ROUND_HALF_UP);
-            //加班时给Avg
-            BigDecimal otpcAvg = otpcSum.divide(perNum,2, BigDecimal.ROUND_HALF_UP);
-            //加班小时Avg
-            BigDecimal phscAvg = phscSum.divide(perNum,2, BigDecimal.ROUND_HALF_UP);
-            personPlanTable.setCode(rm.getKey());
-            personPlanTable.setMoney46(sppcAvg.toString());
-            personPlanTable.setMoney73(wppcAvg.toString());
-            personPlanTable.setPayhour(otpcAvg.toString());
-            personPlanTable.setOvertimehour(phscAvg.toString());
-            personPlanTables.add(personPlanTable);
-        }
-        //降序
-        personPlanTables = personPlanTables.stream().sorted(Comparator.comparing(PersonPlanTable::getCode).reversed()).collect(Collectors.toList());
-        personnelPlan.setYears(year);
-        personnelPlan.setCenterid(groupid);
-        List<PersonnelPlan> personnelPlans = personnelplanMapper.select(personnelPlan);
-        if (personnelPlans.size() > 0) {
-            personnelPlan = personnelPlans.get(0);
-            PersonPlanTable personPlan = new PersonPlanTable();
-            Field[] fields = personPlan.getClass().getDeclaredFields();
-            List<PersonPlanTable> nowPersonTable = getNowPersonTable(personnelPlan, personPlanTables);
-            List<PersonPlanTable> nextPersonTable = getNextPersonTable(personnelPlan, personPlanTables);
-            List<PersonPlanTable> allPersonTable = new ArrayList<>();
-            allPersonTable.addAll(nowPersonTable);
-            allPersonTable.addAll(nextPersonTable);
-            for (PersonPlanTable allPT :
-                    allPersonTable) {
-                for (int i = 0; i < fields.length; i++) {
-                    fields[i].setAccessible(true);
-                    if (fields[i].getGenericType() == int.class) {
-                        int value = (int) fields[i].get(allPT) + (int) fields[i].get(personPlan);
-                        fields[i].set(personPlan, value);
-                    } else if (fields[i].getGenericType() == BigDecimal.class) {
-                        BigDecimal value1 = (BigDecimal) fields[i].get(allPT);
-                        BigDecimal value2 = fields[i].get(personPlan) == null ? new BigDecimal(0) : (BigDecimal) fields[i].get(personPlan);
-                        fields[i].set(personPlan, value1.add(value2));
-                    }
+        else
+        {
+            //现时点
+            List<PersonPlanTable> personPlanTables = new ArrayList<>();
+            List<PersonalAvgVo> personalAvgVoList = JSON.parseArray(personnelPlanList.get(0).getEmployed(), PersonalAvgVo.class);
+            //统计rank出现的个数
+            Map<String,Integer> rankNum = new HashMap<>();
+            for (PersonalAvgVo pav : personalAvgVoList) {
+                if(null == rankNum.get(pav.getNextyear())){
+                    rankNum.put(pav.getNextyear(),1);
+                }else {
+                    rankNum.put(pav.getNextyear(),rankNum.get(pav.getNextyear())+1);
                 }
             }
-            personTable[0] = JSON.toJSONString(nowPersonTable);
-            personTable[1] = JSON.toJSONString(nextPersonTable);
-            personTable[2] = JSON.toJSONString(personPlan);
-            personTable[3] = JSON.toJSONString(actualPl);
-        } else {
-            personTable[0] = "";
-            personTable[1] = "";
-            personTable[2] = "";
-            personTable[3] = JSON.toJSONString(actualPl);
+            Map<String,Double> summerplanpcSumMap = personalAvgVoList.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getSummerplanpc)));
+            for (Map.Entry<String, Integer> rm : rankNum.entrySet()) {
+                PersonPlanTable personPlanTable = new PersonPlanTable();
+                //人件费总额
+                BigDecimal sppcSum = new BigDecimal(summerplanpcSumMap.get(rm.getKey()));
+                //人数
+                BigDecimal perNum = new BigDecimal(rm.getValue());
+                //人件费平均值
+                BigDecimal sppcAvg = sppcSum.divide(perNum,2, BigDecimal.ROUND_HALF_UP);
+                personPlanTable.setPayhour("0");
+                personPlanTable.setOvertimehour("0");
+                personPlanTable.setCode(rm.getKey());
+                personPlanTable.setSummerplanpc(sppcAvg.toString());
+                personPlanTables.add(personPlanTable);
+            }
+            //降序
+            personPlanTables = personPlanTables.stream().sorted(Comparator.comparing(PersonPlanTable::getCode).reversed()).collect(Collectors.toList());
+
+            //新人
+            List<PersonPlanTable> personPlanTablesnew = new ArrayList<>();
+            List<PersonalAvgVo> personalAvgVoListnew = JSON.parseArray(personnelPlanList.get(0).getNewentry(), PersonalAvgVo.class);
+            //统计rank出现的个数
+            Map<String,Integer> rankNumnew = new HashMap<>();
+            for (PersonalAvgVo pav : personalAvgVoListnew) {
+                if(null == rankNumnew.get(pav.getNextyear())){
+                    rankNumnew.put(pav.getNextyear(),1);
+                }else {
+                    rankNumnew.put(pav.getNextyear(),rankNumnew.get(pav.getNextyear())+1);
+                }
+            }
+            Map<String,Double> summerplanpcSumMapnew = personalAvgVoListnew.stream().collect(Collectors.groupingBy(PersonalAvgVo::getNextyear,Collectors.summingDouble(PersonalAvgVo::getSummerplanpc)));
+            for (Map.Entry<String, Integer> rm : rankNumnew.entrySet()) {
+                PersonPlanTable personPlanTable = new PersonPlanTable();
+                //人件费总额
+                BigDecimal sppcSum = new BigDecimal(summerplanpcSumMapnew.get(rm.getKey()));
+                //人数
+                BigDecimal perNum = new BigDecimal(rm.getValue());
+                //人件费平均值
+                BigDecimal sppcAvg = sppcSum.divide(perNum,2, BigDecimal.ROUND_HALF_UP);
+                personPlanTable.setPayhour("0");
+                personPlanTable.setOvertimehour("0");
+                personPlanTable.setCode(rm.getKey());
+                personPlanTable.setSummerplanpc(sppcAvg.toString());
+                personPlanTablesnew.add(personPlanTable);
+            }
+            //降序
+            personPlanTablesnew = personPlanTablesnew.stream().sorted(Comparator.comparing(PersonPlanTable::getCode).reversed()).collect(Collectors.toList());
+
+            if (personnelPlanList.size() > 0) {
+                personnelPlan = personnelPlanList.get(0);
+                PersonPlanTable personPlan = new PersonPlanTable();
+                Field[] fields = personPlan.getClass().getDeclaredFields();
+                List<PersonPlanTable> nowPersonTable = getNowPersonTable(personnelPlan, personPlanTables);
+                List<PersonPlanTable> nextPersonTable = getNextPersonTable(personnelPlan, personPlanTablesnew);
+                List<PersonPlanTable> allPersonTable = new ArrayList<>();
+                allPersonTable.addAll(nowPersonTable);
+                allPersonTable.addAll(nextPersonTable);
+                for (PersonPlanTable allPT :
+                        allPersonTable) {
+                    for (int i = 0; i < fields.length; i++) {
+                        fields[i].setAccessible(true);
+                        if (fields[i].getGenericType() == int.class) {
+                            int value = (int) fields[i].get(allPT) + (int) fields[i].get(personPlan);
+                            fields[i].set(personPlan, value);
+                        } else if (fields[i].getGenericType() == BigDecimal.class) {
+                            BigDecimal value1 = fields[i].get(allPT) == null || fields[i].get(allPT) == "" ? new BigDecimal(0) :(BigDecimal) fields[i].get(allPT);
+                            BigDecimal value2 = fields[i].get(personPlan) == null || fields[i].get(personPlan) == "" ? new BigDecimal(0) : (BigDecimal) fields[i].get(personPlan);
+                            fields[i].set(personPlan, value1.add(value2));
+                        }
+                    }
+                }
+                personTable[0] = JSON.toJSONString(nowPersonTable);
+                personTable[1] = JSON.toJSONString(nextPersonTable);
+                personTable[2] = JSON.toJSONString(personPlan);
+                personTable[3] = JSON.toJSONString(actualPl);
+            } else {
+                personTable[0] = "";
+                personTable[1] = "";
+                personTable[2] = "";
+                personTable[3] = JSON.toJSONString(actualPl);
+            }
+            //region add_qhr_20210603 查找外注人员
+            PersonnelPlan personnelwai = new PersonnelPlan();
+            personnelwai.setCenterid(groupid);
+            personnelwai.setYears(year);
+            personnelwai.setType(1);
+            List<PersonnelPlan> personwai = personnelplanMapper.select(personnelwai);  //查找所有外注人员
+            JSONArray waizhuList = new JSONArray();
+            if (personwai.size() > 0) {
+                waizhuList = JSONArray.parseArray(personwai.get(0).getEmployed()); //已经在计划中的人
+
+                List<String> wainameList = new ArrayList<>();
+                List<String> newwainameList = new ArrayList<>();
+                String wainame = "", newwainame = "";
+                int gounei = 0, gouwai = 0, newgounei = 0, newgouwai = 0;
+                for (Object object : waizhuList) {       //根据人员姓名去人员表匹配,拿到已经在计划中的人名字
+                    String name = getProperty(object, "name");
+                    if (!com.nt.utils.StringUtils.isBase64Encode(name)) {
+                        wainame = Base64.encode(name);
+                    }
+                    wainameList.add(wainame);
+                }
+
+                Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+                for (int i = 0; i < wainameList.size(); i++) {
+                    expatriatesinfor.setExpname(wainameList.get(i));
+                    List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+                    if (expatriatesinforList.size() > 0) {
+                        if (expatriatesinforList.get(0).getOperationform().equals("BP024001")) {
+                            gounei++;
+                        } else if (expatriatesinforList.get(0).getOperationform().equals("BP024002")) {
+                            gouwai++;
+                        }
+                    }
+                }
+                personTable[4] = String.valueOf(gounei);
+                personTable[5] = String.valueOf(gouwai);
+                personTable[6] = personwai.get(0).getNewentry();
+            } else {
+                personTable[4] = String.valueOf(0);
+                personTable[5] = String.valueOf(0);
+            }
+            return personTable;
         }
-        return personTable;
     }
 
     @Override
     public void insertBusinessplan(Businessplan businessplan, TokenModel tokenModel) throws Exception {
         Businessplan business = new Businessplan();
         business.setYear(businessplan.getYear());
-        business.setGroup_id(businessplan.getGroup_id());
+        business.setCenter_id(businessplan.getCenter_id());
         List<Businessplan> businessplanlist = businessplanMapper.select(business);
         if (businessplanlist.size() > 0) {
             throw new LogicalException("本部门该年度事业计划已经创建，请到列表页中查找编辑。");
@@ -1096,6 +1173,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
 
     }
 
+    //现时点人员统计
     private List<PersonPlanTable> getNowPersonTable(PersonnelPlan personnelPlan, List<PersonPlanTable> personPlanTables) throws Exception {
         if (!personnelPlan.getEmployed().equals("[]")) {
             List<PersonPlanTable> _personPlanTables = deepCopy(personPlanTables);
@@ -1111,35 +1189,26 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                         }
                     }
                 }
-                BigDecimal payHour = pt.getPayhour().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getPayhour());
-                BigDecimal overTimeHour = pt.getOvertimehour().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getOvertimehour());
-                BigDecimal giving46 = pt.getMoney46().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getMoney46()); //给与4-6
-                BigDecimal giving37 = pt.getMoney73().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getMoney73()); //给与3-7
+                BigDecimal giving46 = pt.getSummerplanpc().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getSummerplanpc()); //给与4-6
                 for (int i = 1; i <= 12; i++) {
                     BigDecimal giving;
                     int count = (int) PropertyUtils.getProperty(pt, "amount" + i);
-                    BigDecimal workingHour = new BigDecimal(count).multiply(payHour); //残業
-                    BigDecimal pay = workingHour.multiply(overTimeHour); //残業费
-                    PropertyUtils.setProperty(pt, "workinghour" + i, workingHour);
-                    PropertyUtils.setProperty(pt, "pay" + i, pay);
-                    if (i == 4 || i == 5 || i == 6) {
-                        giving = new BigDecimal(count).multiply(giving46);
-                    } else {
-                        giving = new BigDecimal(count).multiply(giving37);
-                    }
+                    PropertyUtils.setProperty(pt, "workinghour" + i, BigDecimal.ZERO);
+                    PropertyUtils.setProperty(pt, "pay" + i, BigDecimal.ZERO);
+                    giving = new BigDecimal(count).multiply(giving46);
                     PropertyUtils.setProperty(pt, "giving" + i, giving);
                 }
                 pt.setAmountfirst(pt.getAmount4() * 6);
                 pt.setAmountsecond(pt.getAmount4() * 6);
                 pt.setAmounttotal(pt.getAmount4() * 12);
 
-                pt.setWorkinghourfirst(pt.getWorkinghour4().multiply(new BigDecimal(6)));
-                pt.setWorkinghoursecond(pt.getWorkinghour4().multiply(new BigDecimal(6)));
-                pt.setWorkinghourtotal(pt.getWorkinghour4().multiply(new BigDecimal(12)));
+                pt.setWorkinghourfirst(AllAdd(pt.getWorkinghour4(), pt.getWorkinghour5(), pt.getWorkinghour6(), pt.getWorkinghour7(), pt.getWorkinghour8(), pt.getWorkinghour9()));
+                pt.setWorkinghoursecond(AllAdd(pt.getWorkinghour10(), pt.getWorkinghour11(), pt.getWorkinghour12(), pt.getWorkinghour1(), pt.getWorkinghour2(), pt.getWorkinghour3()));
+                pt.setWorkinghourtotal(pt.getWorkinghourfirst().add(pt.getWorkinghoursecond()));
 
-                pt.setPayfirst(pt.getPay4().multiply(new BigDecimal(6)));
-                pt.setPaysecond(pt.getPay4().multiply(new BigDecimal(6)));
-                pt.setPaytotal(pt.getPay4().multiply(new BigDecimal(12)));
+                pt.setPayfirst(AllAdd(pt.getPay4(), pt.getPay5(), pt.getPay6(), pt.getPay7(), pt.getPay8(), pt.getPay9()));
+                pt.setPaysecond(AllAdd(pt.getPay10(), pt.getPay11(), pt.getPay12(), pt.getPay1(), pt.getPay2(), pt.getPay3()));
+                pt.setPaytotal(pt.getPayfirst().add(pt.getPaysecond()));
 
                 pt.setGivingfirst(AllAdd(pt.getGiving4(), pt.getGiving5(), pt.getGiving6(), pt.getGiving7(), pt.getGiving8(), pt.getGiving9()));
                 pt.setGivingsecond(AllAdd(pt.getGiving10(), pt.getGiving11(), pt.getGiving12(), pt.getGiving1(), pt.getGiving2(), pt.getGiving3()));
@@ -1150,8 +1219,9 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         return new ArrayList<PersonPlanTable>();
     }
 
+    //新人人员统计
     private List<PersonPlanTable> getNextPersonTable(PersonnelPlan personnelPlan, List<PersonPlanTable> personPlanTables) throws Exception {
-        if (!personnelPlan.getNewentry().equals("[{\"isoutside\":false,\"entermouth\":null}]")) {
+        if (!personnelPlan.getNewentry().equals("[]")) {
             int[] arr = new int[]{4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3};
             List<PersonPlanTable> _personPlanTables = deepCopy(personPlanTables);
             Calendar calendar = Calendar.getInstance();
@@ -1171,22 +1241,13 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                         }
                     }
                 }
-                BigDecimal payHour = pt.getPayhour().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getPayhour());
-                BigDecimal overTimeHour = pt.getOvertimehour().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getOvertimehour());
-                BigDecimal giving46 = pt.getMoney46().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getMoney46()); //给与4-6
-                BigDecimal giving37 = pt.getMoney73().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getMoney73()); //给与3-7
+                BigDecimal giving46 = pt.getSummerplanpc().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getSummerplanpc()); //给与4-6
                 for (int i = 1; i <= 12; i++) {
                     BigDecimal giving;
                     int count = (int) PropertyUtils.getProperty(pt, "amount" + i);
-                    BigDecimal workingHour = new BigDecimal(count).multiply(payHour); //残業
-                    BigDecimal pay = workingHour.multiply(overTimeHour); //残業费
-                    PropertyUtils.setProperty(pt, "workinghour" + i, workingHour);
-                    PropertyUtils.setProperty(pt, "pay" + i, pay);
-                    if (i == 4 || i == 5 || i == 6) {
-                        giving = new BigDecimal(count).multiply(giving46);
-                    } else {
-                        giving = new BigDecimal(count).multiply(giving37);
-                    }
+                    PropertyUtils.setProperty(pt, "workinghour" + i, BigDecimal.ZERO);
+                    PropertyUtils.setProperty(pt, "pay" + i, BigDecimal.ZERO);
+                    giving = new BigDecimal(count).multiply(giving46);
                     PropertyUtils.setProperty(pt, "giving" + i, giving);
                 }
                 pt.setAmountfirst(pt.getAmount4() + pt.getAmount5() + pt.getAmount6() + pt.getAmount7() + pt.getAmount8() + pt.getAmount9());

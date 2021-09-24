@@ -26,9 +26,9 @@ public interface ThemePlanService {
     List<ThemePlanDetail> themenametype(String year) throws Exception;
     //add-ws-01/06-禅道任务710
     //更新
-    void update(ThemePlanVo themePlan, TokenModel tokenModel) throws LogicalException;
+    public void update(ThemePlanVo themePlan, TokenModel tokenModel) throws LogicalException;
 
     //新建
-    void inserttheme(List<ThemePlanDetailVo> themePlanDetailVo, TokenModel tokenModel) throws LogicalException;
+    public void inserttheme(List<ThemePlanDetailVo> themePlanDetailVo, TokenModel tokenModel) throws LogicalException;
 
 }
