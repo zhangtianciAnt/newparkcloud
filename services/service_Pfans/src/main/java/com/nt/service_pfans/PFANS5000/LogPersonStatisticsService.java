@@ -20,6 +20,10 @@ public interface LogPersonStatisticsService {
     void updateByVoId(List<LogPersonReturnVo> logPersonReturnVoList) throws Exception;
     //endregion scc add 9/13 更新数据 to
 
+    //region scc 9/24 定时任务获取日志人别数据 from
+    void saveLogPersonStatistics() throws Exception;
+    //endregion scc 9/24 定时任务获取日志人别数据 to
+
     //region scc add 21/9/14 报表 from
 //    Object getTableinfoReport(String month) throws Exception;
     //endregion scc add 21/9/14 报表 to

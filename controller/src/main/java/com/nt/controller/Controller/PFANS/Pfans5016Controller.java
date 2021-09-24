@@ -60,6 +60,14 @@ public class Pfans5016Controller {
     //endregion scc add 9/13 根据id更新记录，参数vo to
 
 
+    //region scc add 9/24 定时任务获取日志人别数据 from
+    @RequestMapping(value = "/saveLogPersonStatistics", method = {RequestMethod.GET})
+    public ApiResult saveLogPersonStatistics(HttpServletRequest request) throws Exception {
+        logpersonstatisticsservice.saveLogPersonStatistics();
+        return ApiResult.success();
+    }
+    //region scc add 9/24 定时任务获取日志人别数据 to
+
 
 //    /**
 //     * 积木报表
