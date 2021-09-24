@@ -15,14 +15,14 @@
         SELECT USER_ID, BONUSSIGN
         FROM lunardetail
         WHERE EVALUATIONDAY = #{Years} AND `MONTH` = #{Types}
-        GROUP BY USER_ID
+        GROUP BY USER_ID,BONUSSIGN
     </select>
     <!--    查询前回月度评价记号-->
     <select id="selectSymbol" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
         SELECT USER_ID, LASTSYMBOL
         FROM lunardetail
         WHERE EVALUATIONDAY = #{Years} AND `MONTH` = #{Typess}
-        GROUP BY USER_ID
+        GROUP BY USER_ID,LASTSYMBOL
     </select>
 <!--更新Process字段-->
     <select id="updateProcesT" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.Lunardetail">
