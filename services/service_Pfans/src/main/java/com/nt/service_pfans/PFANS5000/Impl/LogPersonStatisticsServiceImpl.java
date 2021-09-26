@@ -187,7 +187,7 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
 //        logPersonList = logPersonList.stream().filter(item -> (item.getDepartment().equals(groupid))).collect(Collectors.toList());
         //region scc add 添加能看到的外注人员 from
         logPersonList.addAll(bpList);
-        logPersonList.stream().distinct().collect(Collectors.toList());
+        logPersonList = logPersonList.stream().distinct().collect(Collectors.toList());
         //endregion scc add 添加能看到的外注人员 to
         if(logPersonList.size() > 0) {
         Map<String,List<LogPersonStatistics>> lptList =  logPersonList.stream().collect(Collectors.groupingBy(LogPersonStatistics :: getUser_id, HashMap::new,Collectors.toList()));
