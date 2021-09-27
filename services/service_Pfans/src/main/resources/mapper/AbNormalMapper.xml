@@ -62,7 +62,7 @@
             AND error_type = 'PR013012'
             AND DATE_FORMAT( occurrence_date, '%Y%m' ) &lt;= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' ) AND DATE_FORMAT( finished_date, '%Y%m' ) >= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' )
             GROUP BY
-            USER_ID UNION ALL
+            USER_ID,error_type UNION ALL
             SELECT
             USER_ID,
             error_type AS errortype,
@@ -79,7 +79,7 @@
             AND error_type = 'PR013013'
             AND DATE_FORMAT( occurrence_date, '%Y%m' ) &lt;= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' ) AND DATE_FORMAT( finished_date, '%Y%m' ) >= DATE_FORMAT( DATE_SUB( NOW(), INTERVAL 1 MONTH ), '%Y%m' )
             GROUP BY
-            USER_ID
+            USER_ID,error_type
         ) newtable
     </select>
     <select id="selectAbNormalThisYear" resultType="Double">

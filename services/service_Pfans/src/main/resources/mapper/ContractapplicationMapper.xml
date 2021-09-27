@@ -96,6 +96,6 @@
         FROM
             ( SELECT DISTINCT CONTRACT, NUMBERS FROM projectcontract p, CompanyProjects c WHERE p.COMPANYPROJECTS_ID = c.COMPANYPROJECTS_ID ) pro
         GROUP BY
-            pro.CONTRACT
+            pro.CONTRACT,pro.NUMBERS
     </select>
 </mapper>

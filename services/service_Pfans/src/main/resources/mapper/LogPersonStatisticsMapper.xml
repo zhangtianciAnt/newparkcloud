@@ -42,7 +42,9 @@
         GROUP BY
         DATE_FORMAT( l.LOG_DATE, '%Y-%m' ),
         l.PROJECT_ID,
-        l.CREATEBY
+        l.CREATEBY,
+        l.PROJECT_NAME,
+        l.GROUP_ID
         ) m
         WHERE
         m.LOG_DATE = #{years}

@@ -31,8 +31,10 @@
             WHERE
             DATE_FORMAT( LOG_DATE, '%Y%m' ) = #{year}
             GROUP BY
-            `CREATEBY`,
-            PROJECT_ID) log
+            USER_ID,
+            PROJECT_ID,
+            DEPARTMENT,
+            LOG_DATE) log
         ) workrate
         INNER JOIN (SELECT unit.USER_ID USER_ID, ex.ACCOUNT ACCOUNT, unit.TOTALUNIT TOTALUNIT, unit.GROUP_ID GROUP_ID, unit.PD_DATE PD_DATE
         FROM
@@ -40,14 +42,19 @@
         FROM priceset pr
         INNER JOIN pricesetgroup pg
         ON pr.PRICESETGROUP_ID = pg.PRICESETGROUP_ID
-        GROUP BY GROUP_ID, pr.USER_ID) unit
+        GROUP BY pr.USER_ID,pr.TOTALUNIT,pr.GROUP_ID,pg.PD_DATE) unit
         INNER JOIN expatriatesinfor ex
         ON unit.USER_ID = ex.EXPATRIATESINFOR_ID
-        GROUP BY ex.ACCOUNT,GROUP_ID) unitmoney
+        GROUP BY unit.USER_ID, ex.ACCOUNT, unit.TOTALUNIT, unit.GROUP_ID, unit.PD_DATE) unitmoney
         ON workrate.USER_ID = unitmoney.ACCOUNT
         AND workrate.GROUP_ID = unitmoney.GROUP_ID
         AND workrate.LOG_DATE = unitmoney.PD_DATE
-        GROUP BY ACCOUNT, PROJECT_ID, GROUP_ID) money
+        GROUP BY
+        unitmoney.ACCOUNT,
+        workrate.GROUP_ID,
+        workrate.PROJECT_ID,
+        workrate.LOG_DATE,
+        MONEY) money
         INNER JOIN
         (SELECT
          thr.THEMEINFOR_ID,thr.THEMENAME,thr.DIVIDE,thr.TOOLSORGS,pr.COMPANYPROJECTS_ID,pr.PROJECT_NAME,pr.NUMBERS,ps.`NAME`,ps.COMPANY
@@ -82,10 +89,10 @@
         ON pr.COMPANYPROJECTS_ID = ps.COMPANYPROJECTS_ID
         AND ps.`TYPE` = '1'
         WHERE thr.`YEAR` = LEFT(#{year}, 4)
-        GROUP BY thr.THEMENAME,pr.COMPANYPROJECTS_ID,pr.NUMBERS,ps.`NAME`) project
+        GROUP BY thr.THEMEINFOR_ID,thr.THEMENAME,thr.DIVIDE,thr.TOOLSORGS,pr.COMPANYPROJECTS_ID,pr.PROJECT_NAME,pr.NUMBERS,ps.`NAME`,ps.COMPANY) project
         ON project.COMPANYPROJECTS_ID = money.PROJECT_ID
         AND project.`NAME` = money.ACCOUNT
-        GROUP BY project.COMPANYPROJECTS_ID, project.COMPANY
+        GROUP BY THEMEINFOR_ID, THEMENAME, DIVIDE, TOOLSORGS, GROUP_ID, YEARS, COMPANYPROJECTS_ID, PROJECT_NAME, COMPANY
 	</select>
 
     <insert id="insertpj" parameterType="java.util.List">
