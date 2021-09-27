@@ -29,7 +29,7 @@
             FROM
             logpersonstatistics
             WHERE
-            DATE_FORMAT( LOG_DATE, '%Y%m' ) = '202106'
+            DATE_FORMAT( LOG_DATE, '%Y%m' ) = #{year}
             GROUP BY
             USER_ID,
             PROJECT_ID,
