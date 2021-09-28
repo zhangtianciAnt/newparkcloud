@@ -448,7 +448,615 @@
 	    select
 		<if test="groupid!=null and groupid !=''">
 		*
-			from bpsum3
+			from
+			(
+				SELECT
+				`t`.`GROUP_ID` AS `GROUP_ID`,
+				`t`.`SUPPLIERNAME` AS `SUPPLIERNAME`,
+				`t`.`year` AS `year`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-04' )) THEN
+				0 ELSE `t`.`APRIL`
+				END
+				) AS `APRIL`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-05' )) THEN
+				0 ELSE `t`.`MAY`
+				END
+				) AS `MAY`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-06' )) THEN
+				0 ELSE `t`.`JUNE`
+				END
+				) AS `JUNE`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-07' )) THEN
+				0 ELSE `t`.`JULY`
+				END
+				) AS `JULY`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-08' )) THEN
+				0 ELSE `t`.`AUGUST`
+				END
+				) AS `AUGUST`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-09' )) THEN
+				0 ELSE `t`.`SEPTEMBER`
+				END
+				) AS `SEPTEMBER`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-10' )) THEN
+				0 ELSE `t`.`OCTOBER`
+				END
+				) AS `OCTOBER`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-11' )) THEN
+				0 ELSE `t`.`NOVEMBER`
+				END
+				) AS `NOVEMBER`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-12' )) THEN
+				0 ELSE `t`.`DECEMBER`
+				END
+				) AS `DECEMBER`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; CONVERT ( concat(( cast( `t`.`year` AS DECIMAL ( 10, 0 )) + 1 ), '-01' ) USING utf8mb4 )) THEN
+				0 ELSE `t`.`JANUARY`
+				END
+				) AS `JANUARY`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; CONVERT ( concat(( cast( `t`.`year` AS DECIMAL ( 10, 0 )) + 1 ), '-02' ) USING utf8mb4 )) THEN
+				0 ELSE `t`.`FEBRUARY`
+				END
+				) AS `FEBRUARY`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; CONVERT ( concat(( cast( `t`.`year` AS DECIMAL ( 10, 0 )) + 1 ), '-03' ) USING utf8mb4 )) THEN
+				0 ELSE `t`.`MARCH`
+				END
+				) AS `MARCH`
+				FROM
+				(
+				SELECT
+				`tmp`.`GROUP_ID` AS `GROUP_ID`,
+				`tmp`.`SUPPLIERNAME` AS `SUPPLIERNAME`,
+				`tmp`.`yaer` AS `year`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`EXITIME` IS NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-04' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-04' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				) ELSE (
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`EXITIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-04' )) THEN 0 ELSE ( CASE WHEN ( date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-04' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-04' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				)
+				END
+				)
+				END
+				)) AS `APRIL`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`EXITIME` IS NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-05' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-05' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				) ELSE (
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`EXITIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-05' )) THEN 0 ELSE ( CASE WHEN ( date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-05' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-05' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				)
+				END
+				)
+				END
+				)) AS `MAY`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`EXITIME` IS NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-06' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-06' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				) ELSE (
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`EXITIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-06' )) THEN 0 ELSE ( CASE WHEN ( date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-06' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-06' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				)
+				END
+				)
+				END
+				)) AS `JUNE`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`EXITIME` IS NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-07' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-07' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				) ELSE (
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`EXITIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-07' )) THEN 0 ELSE ( CASE WHEN ( date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-07' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-07' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				)
+				END
+				)
+				END
+				)) AS `JULY`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`EXITIME` IS NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-08' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-08' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				) ELSE (
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`EXITIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-08' )) THEN 0 ELSE ( CASE WHEN ( date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-08' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-08' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				)
+				END
+				)
+				END
+				)) AS `AUGUST`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`EXITIME` IS NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-09' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-09' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				) ELSE (
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`EXITIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-09' )) THEN 0 ELSE ( CASE WHEN ( date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-09' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-09' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				)
+				END
+				)
+				END
+				)) AS `SEPTEMBER`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`EXITIME` IS NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-10' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-10' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				) ELSE (
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`EXITIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-10' )) THEN 0 ELSE ( CASE WHEN ( date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-10' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-10' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				)
+				END
+				)
+				END
+				)) AS `OCTOBER`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`EXITIME` IS NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-11' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-11' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				) ELSE (
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`EXITIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-11' )) THEN 0 ELSE ( CASE WHEN ( date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-11' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-11' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				)
+				END
+				)
+				END
+				)) AS `NOVEMBER`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`EXITIME` IS NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-12' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-12' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				) ELSE (
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`EXITIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-12' )) THEN 0 ELSE ( CASE WHEN ( date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > concat( `tmp`.`yaer`, '-12' )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= concat( `tmp`.`yaer`, '-12' )) THEN 1 ELSE 0 END ) ELSE 1
+				END
+				)
+				END
+				)
+				END
+				)
+				END
+				)) AS `DECEMBER`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`EXITIME` IS NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-01' ) USING utf8mb4 )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-01' ) USING utf8mb4 )) THEN
+				1 ELSE 0
+				END
+				) ELSE 1
+				END
+				)
+				END
+				) ELSE (
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`EXITIME`, '%Y-%m' ) &lt; CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-01' ) USING utf8mb4 )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-01' ) USING utf8mb4 )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-01' ) USING utf8mb4 )) THEN
+				1 ELSE 0
+				END
+				) ELSE 1
+				END
+				)
+				END
+				)
+				END
+				)
+				END
+				)) AS `JANUARY`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`EXITIME` IS NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-02' ) USING utf8mb4 )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-02' ) USING utf8mb4 )) THEN
+				1 ELSE 0
+				END
+				) ELSE 1
+				END
+				)
+				END
+				) ELSE (
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`EXITIME`, '%Y-%m' ) &lt; CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-02' ) USING utf8mb4 )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-02' ) USING utf8mb4 )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-02' ) USING utf8mb4 )) THEN
+				1 ELSE 0
+				END
+				) ELSE 1
+				END
+				)
+				END
+				)
+				END
+				)
+				END
+				)) AS `FEBRUARY`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`EXITIME` IS NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-03' ) USING utf8mb4 )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-03' ) USING utf8mb4 )) THEN
+				1 ELSE 0
+				END
+				) ELSE 1
+				END
+				)
+				END
+				) ELSE (
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`EXITIME`, '%Y-%m' ) &lt; CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-03' ) USING utf8mb4 )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMESTR`, '%Y-%m' ) > CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-03' ) USING utf8mb4 )) THEN
+				0 ELSE (
+				CASE
+
+				WHEN ( `tmp`.`TIMEEND` IS NOT NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIMEEND`, '%Y-%m' ) >= CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-03' ) USING utf8mb4 )) THEN
+				1 ELSE 0
+				END
+				) ELSE 1
+				END
+				)
+				END
+				)
+				END
+				)
+				END
+				)) AS `MARCH`
+				FROM
+				(
+				SELECT
+				( CASE WHEN ( `e`.`GROUP_ID` = `e1`.`GROUP_ID` ) THEN `e`.`GROUP_ID` ELSE `e1`.`GROUP_ID` END ) AS `GROUP_ID`,
+				`e1`.`EXDATESTR` AS `TIMESTR`,
+				`e1`.`EXDATEEND` AS `TIMEEND`,
+				`e`.`EXITIME` AS `EXITIME`,
+				`e`.`SUPPLIERNAME` AS `SUPPLIERNAME`,(
+				CASE
+
+				WHEN ( date_format( now(), '%m' ) &lt; '04' ) THEN
+				( cast( date_format( now(), '%Y' ) AS signed ) - 1 ) ELSE date_format( now(), '%Y' )
+				END
+				) AS `yaer`,
+				`e`.`ACCOUNT` AS `ACCOUNT`
+				FROM
+				(
+				`expatriatesinfor` `e`
+				LEFT JOIN `expatriatesinfordetail` `e1` ON ((
+				`e`.`EXPATRIATESINFOR_ID` = `e1`.`EXPATRIATESINFOR_ID`
+				)))
+				WHERE
+				((
+				`e`.`OPERATIONFORM` = 'BP024001'
+				)
+				AND (
+				`e`.`EXITS` IN ( '1', '0' )))) `tmp`
+				GROUP BY
+				`tmp`.`GROUP_ID`,
+				`tmp`.`SUPPLIERNAME`,
+				`tmp`.`yaer`
+				ORDER BY
+				`tmp`.`SUPPLIERNAME` DESC
+				) `t`
+			)
+			bpsum3
 			where
 			year = #{years}
 			and GROUP_ID= #{groupid}
@@ -457,7 +1065,254 @@
 		</if>
 		<if test="groupid ==null || groupid ==''">
 			*
-			from bpsum3_1
+			from
+			(
+				SELECT
+				`t`.`GROUP_ID` AS `GROUP_ID`,
+				`t`.`SUPPLIERNAME` AS `SUPPLIERNAME`,
+				`t`.`year` AS `year`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-04' )) THEN
+				0 ELSE `t`.`APRIL`
+				END
+				) AS `APRIL`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-05' )) THEN
+				0 ELSE `t`.`MAY`
+				END
+				) AS `MAY`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-06' )) THEN
+				0 ELSE `t`.`JUNE`
+				END
+				) AS `JUNE`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-07' )) THEN
+				0 ELSE `t`.`JULY`
+				END
+				) AS `JULY`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-08' )) THEN
+				0 ELSE `t`.`AUGUST`
+				END
+				) AS `AUGUST`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-09' )) THEN
+				0 ELSE `t`.`SEPTEMBER`
+				END
+				) AS `SEPTEMBER`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-10' )) THEN
+				0 ELSE `t`.`OCTOBER`
+				END
+				) AS `OCTOBER`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-11' )) THEN
+				0 ELSE `t`.`NOVEMBER`
+				END
+				) AS `NOVEMBER`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; concat( `t`.`year`, '-12' )) THEN
+				0 ELSE `t`.`DECEMBER`
+				END
+				) AS `DECEMBER`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; CONVERT ( concat(( cast( `t`.`year` AS DECIMAL ( 10, 0 )) + 1 ), '-01' ) USING utf8mb4 )) THEN
+				0 ELSE `t`.`JANUARY`
+				END
+				) AS `JANUARY`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; CONVERT ( concat(( cast( `t`.`year` AS DECIMAL ( 10, 0 )) + 1 ), '-02' ) USING utf8mb4 )) THEN
+				0 ELSE `t`.`FEBRUARY`
+				END
+				) AS `FEBRUARY`,(
+				CASE
+
+				WHEN (
+				date_format( now(), '%Y-%m' ) &lt; CONVERT ( concat(( cast( `t`.`year` AS DECIMAL ( 10, 0 )) + 1 ), '-03' ) USING utf8mb4 )) THEN
+				0 ELSE `t`.`MARCH`
+				END
+				) AS `MARCH`
+				FROM
+				(
+				SELECT
+				`tmp`.`GROUP_ID` AS `GROUP_ID`,
+				`tmp`.`SUPPLIERNAME` AS `SUPPLIERNAME`,
+				`tmp`.`yaer` AS `year`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`TIME` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-04' )) THEN 0 ELSE 1 END ) ELSE 1
+				END
+				)) AS `APRIL`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`TIME` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-05' )) THEN 0 ELSE 1 END ) ELSE 1
+				END
+				)) AS `MAY`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`TIME` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-06' )) THEN 0 ELSE 1 END ) ELSE 1
+				END
+				)) AS `JUNE`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`TIME` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-07' )) THEN 0 ELSE 1 END ) ELSE 1
+				END
+				)) AS `JULY`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`TIME` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-08' )) THEN 0 ELSE 1 END ) ELSE 1
+				END
+				)) AS `AUGUST`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`TIME` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-09' )) THEN 0 ELSE 1 END ) ELSE 1
+				END
+				)) AS `SEPTEMBER`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`TIME` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-10' )) THEN 0 ELSE 1 END ) ELSE 1
+				END
+				)) AS `OCTOBER`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`TIME` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-11' )) THEN 0 ELSE 1 END ) ELSE 1
+				END
+				)) AS `NOVEMBER`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`TIME` IS NOT NULL ) THEN
+				( CASE WHEN ( date_format( `tmp`.`TIME`, '%Y-%m' ) &lt; concat( `tmp`.`yaer`, '-12' )) THEN 0 ELSE 1 END ) ELSE 1
+				END
+				)) AS `DECEMBER`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`TIME` IS NOT NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIME`, '%Y-%m' ) &lt; CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-01' ) USING utf8mb4 )) THEN
+				0 ELSE 1
+				END
+				) ELSE 1
+				END
+				)) AS `JANUARY`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`TIME` IS NOT NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIME`, '%Y-%m' ) &lt; CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-02' ) USING utf8mb4 )) THEN
+				0 ELSE 1
+				END
+				) ELSE 1
+				END
+				)) AS `FEBRUARY`,
+				sum((
+				CASE
+
+				WHEN ( `tmp`.`TIME` IS NOT NULL ) THEN
+				(
+				CASE
+
+				WHEN (
+				date_format( `tmp`.`TIME`, '%Y-%m' ) &lt; CONVERT ( concat(( cast( `tmp`.`yaer` AS DECIMAL ( 10, 0 )) + 1 ), '-03' ) USING utf8mb4 )) THEN
+				0 ELSE 1
+				END
+				) ELSE 1
+				END
+				)) AS `MARCH`
+				FROM
+				(
+				SELECT
+				'' AS `GROUP_ID`,
+				`e`.`SUPPLIERNAME` AS `SUPPLIERNAME`,(
+				CASE
+
+				WHEN ( date_format( now(), '%m' ) &lt; '04' ) THEN
+				( cast( date_format( now(), '%Y' ) AS signed ) - 1 ) ELSE date_format( now(), '%Y' )
+				END
+				) AS `yaer`,
+				`e`.`ACCOUNT` AS `ACCOUNT`,
+				`e`.`EXITIME` AS `TIME`
+				FROM
+				`expatriatesinfor` `e`
+				WHERE
+				((
+				`e`.`OPERATIONFORM` = 'BP024001'
+				)
+				AND ( `e`.`EXITS` = '1' )) UNION
+				SELECT
+				'' AS `GROUP_ID`,
+				`e`.`SUPPLIERNAME` AS `SUPPLIERNAME`,(
+				CASE
+
+				WHEN ( date_format( now(), '%m' ) &lt; '04' ) THEN
+				( cast( date_format( now(), '%Y' ) AS signed ) - 1 ) ELSE date_format( now(), '%Y' )
+				END
+				) AS `yaer`,
+				`e`.`ACCOUNT` AS `ACCOUNT`,
+				`e`.`EXITIME` AS `TIME`
+				FROM
+				`expatriatesinfor` `e`
+				WHERE
+				((
+				`e`.`OPERATIONFORM` = 'BP024001'
+				)
+				AND ( `e`.`EXITS` = '0' ))) `tmp`
+				GROUP BY
+				`tmp`.`GROUP_ID`,
+				`tmp`.`SUPPLIERNAME`,
+				`tmp`.`yaer`
+				ORDER BY
+				`tmp`.`SUPPLIERNAME` DESC
+				) `t`
+			)
+			bpsum3_1
 			where
 			year = #{years}
 			order by
@@ -483,7 +1338,199 @@
 			sum(CONVERT(JULYGW,DECIMAL(10,2))) as JULYGW, sum(CONVERT(AUGUSTGW,DECIMAL(10,2))) as AUGUSTGW, sum(CONVERT(SEPTEMBERGW,DECIMAL(10,2))) as SEPTEMBERGW, sum(CONVERT(OCTOBERGW,DECIMAL(10,2))) as OCTOBERGW,
 			sum(CONVERT(NOVEMBERGW,DECIMAL(10,2))) as NOVEMBERGW, sum(CONVERT(DECEMBERGW,DECIMAL(10,2))) as DECEMBERGW
 		</if>
-		from bpsum2
+		from
+		(
+			SELECT
+				`tmp`.`GROUP_ID` AS `GROUP_ID`,
+				`e`.`SUPPLIERNAME` AS `SUPPLIERNAME`,
+				`tmp`.`YEAR` AS `YEAR`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
+				cast(
+				sum( `tmp`.`APRIL` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `APRILGN`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
+				cast(
+				sum( `tmp`.`APRIL` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `APRILGW`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
+				cast(
+				sum( `tmp`.`MAY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `MAYGN`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
+				cast(
+				sum( `tmp`.`MAY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `MAYGW`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
+				cast(
+				sum( `tmp`.`JUNE` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `JUNEGN`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
+				cast(
+				sum( `tmp`.`JUNE` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `JUNEGW`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
+				cast(
+				sum( `tmp`.`JULY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `JULYGN`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
+				cast(
+				sum( `tmp`.`JULY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `JULYGW`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
+				cast(
+				sum( `tmp`.`AUGUST` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `AUGUSTGN`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
+				cast(
+				sum( `tmp`.`AUGUST` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `AUGUSTGW`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
+				cast(
+				sum( `tmp`.`SEPTEMBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `SEPTEMBERGN`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
+				cast(
+				sum( `tmp`.`SEPTEMBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `SEPTEMBERGW`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
+				cast(
+				sum( `tmp`.`OCTOBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `OCTOBERGN`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
+				cast(
+				sum( `tmp`.`OCTOBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `OCTOBERGW`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
+				cast(
+				sum( `tmp`.`NOVEMBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `NOVEMBERGN`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
+				cast(
+				sum( `tmp`.`NOVEMBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `NOVEMBERGW`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
+				cast(
+				sum( `tmp`.`DECEMBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `DECEMBERGN`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
+				cast(
+				sum( `tmp`.`DECEMBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `DECEMBERGW`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
+				cast(
+				sum( `tmp`.`JANUARY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `JANUARYGN`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
+				cast(
+				sum( `tmp`.`JANUARY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `JANUARYGW`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
+				cast(
+				sum( `tmp`.`FEBRUARY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `FEBRUARYGN`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
+				cast(
+				sum( `tmp`.`FEBRUARY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `FEBRUARYGW`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
+				cast(
+				sum( `tmp`.`MARCH` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `MARCHGN`,(
+				CASE
+
+				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
+				cast(
+				sum( `tmp`.`MARCH` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
+				END
+				) AS `MARCHGW`
+			FROM
+				(
+				`delegainformation` `tmp`
+				LEFT JOIN `expatriatesinfor` `e` ON ((
+				`e`.`ACCOUNT` = `tmp`.`ACCOUNT`
+				)))
+			WHERE
+				(`e`.`OPERATIONFORM` IN ( 'BP024001', 'BP024002' ))
+				and `tmp`.year = #{years}
+				<if test="groupid!=null and groupid !=''">
+					and `tmp`.GROUP_ID= #{groupid}
+				</if>
+			GROUP BY
+				`tmp`.`YEAR`,
+				`tmp`.`GROUP_ID`,
+				`e`.`SUPPLIERNAME`,
+				`e`.`OPERATIONFORM`
+		)
+		bpsum2
 		where
 		year = #{years}
 		<if test="groupid!=null and groupid !=''">
