@@ -1218,7 +1218,9 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
             companyMap = new HashMap<>();
             companyMap.put("company", "合计");
             listAll.add(companyMap);
-
+            companyMap = new HashMap<>();
+            companyMap.put("company", "工数");
+            listAll.add(companyMap);
             // 循环部门
             for(DepartmentVo depVo : allDepartment){
                 List<CompanyStatistics> companyStatisticsList = companyStatisticsMapper.getcompanyStatisticsList(depVo.getDepartmentId(),strYears,strColumn);
@@ -1230,8 +1232,73 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
                             totalCostMap.put("cost" + depVo.getDepartmentEn(), bp.getCost4());
                             totalCostMap.put("manhourf" + depVo.getDepartmentEn(), bp.getManhour4f());
                             totalCostMap.put("costf" + depVo.getDepartmentEn(), bp.getCost4f());
+                            break;
                         }
                     }
+                }
+                // 工数获取
+                List<bpSum2Vo> list2 = companyStatisticsMapper.getbpsum2(depVo.getDepartmentId(), strYears);
+
+                if(list2.size() > 0){
+                    //构内工数
+                    BigDecimal manhourCount = BigDecimal.ZERO;
+                    //构外工数
+                    BigDecimal manhourfCount = BigDecimal.ZERO;
+                    for(bpSum2Vo bpsum2vo : list2){
+                        if(intMonths == 4){
+                            manhourCount = manhourCount.add(new BigDecimal(bpsum2vo.getAprilgn()));
+                            manhourfCount = manhourfCount.add(new BigDecimal(bpsum2vo.getAprilgw()));
+                        }
+                        else if(intMonths == 5){
+                            manhourCount = manhourCount.add(new BigDecimal(bpsum2vo.getMaygn()));
+                            manhourfCount = manhourfCount.add(new BigDecimal(bpsum2vo.getMaygw()));
+                        }
+                        else if(intMonths == 6){
+                            manhourCount = manhourCount.add(new BigDecimal(bpsum2vo.getJunegn()));
+                            manhourfCount = manhourfCount.add(new BigDecimal(bpsum2vo.getJunegw()));
+                        }
+                        else if(intMonths == 7){
+                            manhourCount = manhourCount.add(new BigDecimal(bpsum2vo.getJulygn()));
+                            manhourfCount = manhourfCount.add(new BigDecimal(bpsum2vo.getJulygw()));
+                        }
+                        else if(intMonths == 8){
+                            manhourCount = manhourCount.add(new BigDecimal(bpsum2vo.getAugustgn()));
+                            manhourfCount = manhourfCount.add(new BigDecimal(bpsum2vo.getAugustgw()));
+                        }
+                        else if(intMonths == 9){
+                            manhourCount = manhourCount.add(new BigDecimal(bpsum2vo.getSeptembergn()));
+                            manhourfCount = manhourfCount.add(new BigDecimal(bpsum2vo.getSeptembergw()));
+                        }
+                        else if(intMonths == 10){
+                            manhourCount = manhourCount.add(new BigDecimal(bpsum2vo.getOctobergn()));
+                            manhourfCount = manhourfCount.add(new BigDecimal(bpsum2vo.getOctobergw()));
+                        }
+                        else if(intMonths == 11){
+                            manhourCount = manhourCount.add(new BigDecimal(bpsum2vo.getNovembergn()));
+                            manhourfCount = manhourfCount.add(new BigDecimal(bpsum2vo.getNovembergw()));
+                        }
+                        else if(intMonths == 12){
+                            manhourCount = manhourCount.add(new BigDecimal(bpsum2vo.getDecembergn()));
+                            manhourfCount = manhourfCount.add(new BigDecimal(bpsum2vo.getDecembergw()));
+                        }
+                        else if(intMonths == 1){
+                            manhourCount = manhourCount.add(new BigDecimal(bpsum2vo.getJanuarygn()));
+                            manhourfCount = manhourfCount.add(new BigDecimal(bpsum2vo.getJanuarygw()));
+                        }
+                        else if(intMonths == 2){
+                            manhourCount = manhourCount.add(new BigDecimal(bpsum2vo.getFebruarygn()));
+                            manhourfCount = manhourfCount.add(new BigDecimal(bpsum2vo.getFebruarygw()));
+                        }
+                        else if(intMonths == 3){
+                            manhourCount = manhourCount.add(new BigDecimal(bpsum2vo.getMarchgn()));
+                            manhourfCount = manhourfCount.add(new BigDecimal(bpsum2vo.getMarchgw()));
+                        }
+                    }
+                    HashMap totalCostMap = (HashMap) listAll.get(listAll.size() - 1);
+                    // 构内工数
+                    totalCostMap.put("manhourCount" + depVo.getDepartmentEn(), manhourCount);
+                    // 构外工数
+                    totalCostMap.put("manhourfCount" + depVo.getDepartmentEn(), manhourfCount);
                 }
             }
         }
