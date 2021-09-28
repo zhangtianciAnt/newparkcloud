@@ -136,16 +136,17 @@ public class Pfans6009Controller {
         Map<String, Object> data = new HashMap<>();
         dates = dates.replace("-"," 年 ");
         data.put("dates", dates.replace("-"," 年 "));
-        data.put("dataList", pdfMap);
         HashMap totalCostMap = (HashMap) pdfMap.get(pdfMap.size() - 1);
+        pdfMap.remove(pdfMap.size() - 1);
+        data.put("dataList", pdfMap);
         //承认人
         if(allDepartment.size() > 0){
             Query query = new Query();
             for(DepartmentVo depVo : allDepartment){
-                // 预提工数和
-                data.put("manhourCount" + depVo.getDepartmentEn(), totalCostMap.get("manhour" + depVo.getDepartmentEn()));
-                // 费用工数和
-                data.put("manhourfCount" + depVo.getDepartmentEn(), totalCostMap.get("manhourf" + depVo.getDepartmentEn()));
+                // 构内工数
+                data.put("manhourCount" + depVo.getDepartmentEn(), totalCostMap.get("manhourCount" + depVo.getDepartmentEn()));
+                // 构外工数
+                data.put("manhourfCount" + depVo.getDepartmentEn(), totalCostMap.get("manhourfCount" + depVo.getDepartmentEn()));
                 // 部门组件 + 年 + 月
                 String strDataid = depVo.getDepartmentId() + "," + strYears + "," + strMonths;
                 StartWorkflowVo startWorkflowVo = new StartWorkflowVo();
