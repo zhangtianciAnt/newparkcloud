@@ -3,18 +3,21 @@ package com.nt.service_pfans.PFANS1000.Impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
-import com.nt.dao_Pfans.PFANS1000.Employed;
-import com.nt.dao_Pfans.PFANS1000.Moneyavg;
-import com.nt.dao_Pfans.PFANS1000.PersonnelPlan;
+import com.nt.dao_Pfans.PFANS1000.*;
+import com.nt.dao_Pfans.PFANS1000.Vo.BusinessInBase;
+import com.nt.dao_Pfans.PFANS1000.Vo.BusinessOutBase;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExternalVo;
 import com.nt.dao_Pfans.PFANS2000.PersonalCost;
 import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.PersonnelplanService;
+import com.nt.service_pfans.PFANS1000.mapper.BusinessplanMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PersonnelplanMapper;
 import com.nt.service_pfans.PFANS2000.mapper.PersonalCostMapper;
 import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
@@ -46,6 +49,13 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
 
     @Autowired
     private DictionaryService dictionaryService;
+
+    @Autowired
+    private BusinessplanMapper businessplanMapper;
+
+    @Autowired
+    private BusinessplanService businessplanService;
+
     @Override
     public List<CustomerInfo> SelectCustomer(String id) {
         Query query = new Query();
@@ -89,6 +99,120 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
     public void update(PersonnelPlan personnelPlan, TokenModel tokenModel) {
         personnelPlan.preUpdate(tokenModel);
         personnelplanMapper.updateByPrimaryKeySelective(personnelPlan);
+        //事业计划状态为0或3时修改人员计划，事业计划数据变更 ztc fr
+        String[] resultPlan = {};
+        List<JSONObject> resultTableP = new ArrayList<>();
+        Businessplan businessplan = new Businessplan();
+        businessplan.setYear(personnelPlan.getYears());
+        businessplan.setCenter_id(personnelPlan.getCenterid());
+        List<Businessplan> busplanList = businessplanMapper.select(businessplan);
+        try {
+            resultPlan = businessplanService.getPersonPlan(personnelPlan.getYears(),personnelPlan.getCenterid());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(busplanList.size() != 0 && (busplanList.get(0).getStatus().equals("0") || busplanList.get(0).getStatus().equals("3"))) {
+            busplanList.get(0).setTableC(resultPlan[0]);
+            busplanList.get(0).setTableD(resultPlan[1]);
+            busplanList.get(0).setTableA(resultPlan[2]);
+            JSONArray tablePList = JSON.parseArray(busplanList.get(0).getTableP());
+            List<BusinessInBase> businessTablePList = JSONArray.parseObject(tablePList.toJSONString(), new TypeReference<List<BusinessInBase>>() {});
+            JSONObject jsonObjectTbP = JSON.parseObject(String.valueOf(businessTablePList.get(4)));
+            JSONObject jsonObjectTbP9 = JSON.parseObject(String.valueOf(businessTablePList.get(9)));//构外
+            JSONObject jsonObjectTbP10 = JSON.parseObject(String.valueOf(businessTablePList.get(10)));//构内
+            if(resultPlan[2] != null){
+                JSONObject resultPlanJson = JSON.parseObject(resultPlan[2]);
+                jsonObjectTbP.put("money4", Integer.valueOf(resultPlanJson.getString("amount4")));
+                jsonObjectTbP.put("money5", Integer.valueOf(resultPlanJson.getString("amount5")));
+                jsonObjectTbP.put("money6", Integer.valueOf(resultPlanJson.getString("amount6")));
+                jsonObjectTbP.put("money7", Integer.valueOf(resultPlanJson.getString("amount7")));
+                jsonObjectTbP.put("money8", Integer.valueOf(resultPlanJson.getString("amount8")));
+                jsonObjectTbP.put("money9", Integer.valueOf(resultPlanJson.getString("amount9")));
+                jsonObjectTbP.put("money10", Integer.valueOf(resultPlanJson.getString("amount10")));
+                jsonObjectTbP.put("money11", Integer.valueOf(resultPlanJson.getString("amount11")));
+                jsonObjectTbP.put("money12", Integer.valueOf(resultPlanJson.getString("amount12")));
+                jsonObjectTbP.put("money1", Integer.valueOf(resultPlanJson.getString("amount1")));
+                jsonObjectTbP.put("money2", Integer.valueOf(resultPlanJson.getString("amount2")));
+                jsonObjectTbP.put("money3", Integer.valueOf(resultPlanJson.getString("amount3")));
+            }
+            //外驻新人
+            if (resultPlan[6] != null) {
+                int[] inside = new int[12]; //4~12~3月  构内
+                int[] outside = new int[12]; //4~12~3月 构外
+                JSONArray resultPlan6 = JSON.parseArray(resultPlan[6]);
+                List<BusinessOutBase> businessTableP6 = JSONArray.parseObject(resultPlan6.toJSONString(), new TypeReference<List<BusinessOutBase>>() {
+                });
+                for (int t = 0; t < businessTableP6.size(); t++) {
+                    int monthAnt = 0;
+                    if (businessTableP6.get(t).getString("isoutside").equals("false")) {//构内
+                        monthAnt = Integer.parseInt(businessTableP6.get(t).getString("entermouth").substring(5, 7));
+                        if (monthAnt >= 4) {
+                            inside[monthAnt - 4] = inside[monthAnt - 4] + 1;
+                        } else {
+                            inside[monthAnt + 8] = inside[monthAnt - 8] + 1;
+                        }
+                    } else {//构外
+                        monthAnt = Integer.parseInt(businessTableP6.get(t).getString("entermouth").substring(5, 7));
+                        if (monthAnt >= 4) {
+                            outside[monthAnt - 4] = inside[monthAnt - 4] + 1;
+                        } else {
+                            outside[monthAnt + 8] = inside[monthAnt - 8] + 1;
+                        }
+                    }
+                }
+                int inAnt = 0;
+                int[] insideResult = new int[12];
+                for (int ins = 0; ins < inside.length; ins++) {
+                    inAnt = inside[ins] + inAnt;
+                    insideResult[ins] = inAnt;
+                }
+                int outAnt = 0;
+                int[] outsideResult = new int[12];
+                for (int outs = 0; outs < outsideResult.length; outs++) {
+                    outAnt = outsideResult[outs] + outAnt;
+                    outsideResult[outs] = outAnt;
+                }
+                jsonObjectTbP10.put("money4", insideResult[0]);
+                jsonObjectTbP10.put("money5", insideResult[1]);
+                jsonObjectTbP10.put("money6", insideResult[2]);
+                jsonObjectTbP10.put("money7", insideResult[3]);
+                jsonObjectTbP10.put("money8", insideResult[4]);
+                jsonObjectTbP10.put("money9", insideResult[5]);
+                jsonObjectTbP10.put("money10", insideResult[6]);
+                jsonObjectTbP10.put("money11", insideResult[7]);
+                jsonObjectTbP10.put("money12", insideResult[8]);
+                jsonObjectTbP10.put("money1", insideResult[9]);
+                jsonObjectTbP10.put("money2", insideResult[10]);
+                jsonObjectTbP10.put("money3", insideResult[11]);
+                jsonObjectTbP9.put("money4", outsideResult[0]);
+                jsonObjectTbP9.put("money5", outsideResult[1]);
+                jsonObjectTbP9.put("money6", outsideResult[2]);
+                jsonObjectTbP9.put("money7", outsideResult[3]);
+                jsonObjectTbP9.put("money8", outsideResult[4]);
+                jsonObjectTbP9.put("money9", outsideResult[5]);
+                jsonObjectTbP9.put("money10", outsideResult[6]);
+                jsonObjectTbP9.put("money11", outsideResult[7]);
+                jsonObjectTbP9.put("money12", outsideResult[8]);
+                jsonObjectTbP9.put("money1", outsideResult[9]);
+                jsonObjectTbP9.put("money2", outsideResult[10]);
+                jsonObjectTbP9.put("money3", outsideResult[11]);
+            }
+
+            for (int i = 0; i < businessTablePList.size(); i++) {
+                if (i == 4) {
+                    resultTableP.add(jsonObjectTbP);
+                } else if (i == 9) {
+                    resultTableP.add(jsonObjectTbP9);
+                } else if (i == 10) {
+                    resultTableP.add(jsonObjectTbP10);
+                } else {
+                    resultTableP.add(JSONObject.parseObject(String.valueOf(businessTablePList.get(i))));
+                }
+            }
+            busplanList.get(0).setTableP(String.valueOf(resultTableP));
+            businessplanMapper.updateByPrimaryKey(busplanList.get(0));
+        }
+//        事业计划状态为0或3时修改人员计划，事业计划数据变更 ztc to
     }
 
     @Override
