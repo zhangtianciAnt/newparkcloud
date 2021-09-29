@@ -149,14 +149,14 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
                         if (monthAnt >= 4) {
                             inside[monthAnt - 4] = inside[monthAnt - 4] + 1;
                         } else {
-                            inside[monthAnt + 8] = inside[monthAnt - 8] + 1;
+                            inside[monthAnt + 8] = inside[monthAnt + 8] + 1;
                         }
                     } else {//构外
                         monthAnt = Integer.parseInt(businessTableP6.get(t).getString("entermouth").substring(5, 7));
                         if (monthAnt >= 4) {
                             outside[monthAnt - 4] = inside[monthAnt - 4] + 1;
                         } else {
-                            outside[monthAnt + 8] = inside[monthAnt - 8] + 1;
+                            outside[monthAnt + 8] = inside[monthAnt + 8] + 1;
                         }
                     }
                 }
@@ -168,8 +168,8 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
                 }
                 int outAnt = 0;
                 int[] outsideResult = new int[12];
-                for (int outs = 0; outs < outsideResult.length; outs++) {
-                    outAnt = outsideResult[outs] + outAnt;
+                for (int outs = 0; outs < outside.length; outs++) {
+                    outAnt = outside[outs] + outAnt;
                     outsideResult[outs] = outAnt;
                 }
                 jsonObjectTbP10.put("money4", insideResult[0]);
