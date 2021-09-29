@@ -114,7 +114,7 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
         if(busplanList.size() != 0 && (busplanList.get(0).getStatus().equals("0") || busplanList.get(0).getStatus().equals("3"))) {
             busplanList.get(0).setTableC(resultPlan[0]);
             busplanList.get(0).setTableD(resultPlan[1]);
-            busplanList.get(0).setTableA(resultPlan[2]);
+            busplanList.get(0).setTableA("[" + resultPlan[2] + "]");
             JSONArray tablePList = JSON.parseArray(busplanList.get(0).getTableP());
             List<BusinessInBase> businessTablePList = JSONArray.parseObject(tablePList.toJSONString(), new TypeReference<List<BusinessInBase>>() {});
             JSONObject jsonObjectTbP = JSON.parseObject(String.valueOf(businessTablePList.get(4)));
