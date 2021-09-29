@@ -1,15 +1,15 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.mysql.jdbc.StringUtils;
-import com.nt.dao_Pfans.PFANS1000.PersonnelPlan;
-import com.nt.dao_Pfans.PFANS1000.Routingdetail;
-import com.nt.dao_Pfans.PFANS1000.ThemePlan;
-import com.nt.dao_Pfans.PFANS1000.ThemePlanDetail;
+import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.*;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.ThemePlanService;
+import com.nt.service_pfans.PFANS1000.mapper.BusinessplanMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PersonnelplanMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ThemePlanDetailMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ThemePlanMapper;
@@ -36,6 +36,12 @@ public class ThemePlanServiceImpl implements ThemePlanService {
 
     @Autowired
     private ThemePlanDetailMapper themePlanDetailMapper;
+
+    @Autowired
+    private BusinessplanMapper businessplanMapper;
+
+    @Autowired
+    private BusinessplanService businessplanService;
 
     @Override
     public List<ThemePlan> getList(ThemePlan themePlan) throws Exception {
@@ -429,5 +435,42 @@ public class ThemePlanServiceImpl implements ThemePlanService {
             }
             // endregion
         }
+        //事业计划状态为0或3时，受托委托theme修改，变更事业计划 ztc fr
+        try {
+            this.upBusinessPlanTheme(themePlanDetailVo.get(0),tokenModel);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //事业计划状态为0或3时，受托委托theme修改，变更事业计划 ztc to
     }
+    //事业计划状态为0或3时，受托委托theme修改，变更事业计划 ztc fr
+    public void upBusinessPlanTheme(ThemePlanDetailVo themePlanDetailVo, TokenModel tokenModel) throws Exception {
+        Businessplan businessplan = new Businessplan();
+        businessplan.setYear(themePlanDetailVo.getYear());
+        businessplan.setCenter_id(themePlanDetailVo.getCenter_id());
+        List<Businessplan> busplanList = businessplanMapper.select(businessplan);
+        // getgroupA1  contracttype = 'PJ142001' or contracttype = 'PJ142002' or contracttype = 'PJ142003'
+        // getgroupA2 type = 1 contracttype = 'PJ142004' or contracttype = 'PJ142005'
+        // getgroupB1 type = 2 contracttype = 'PJ142006'
+        // getgroupB2 type = 3 contracttype = 'PJ142007'
+        // getgroupB3 type = 4 contracttype = 'PJ142008' or contracttype = 'PJ142009'
+        if (busplanList.size() != 0 && (busplanList.get(0).getStatus().equals("0") || busplanList.get(0).getStatus().equals("3"))) {
+            List<BusinessGroupA1Vo> groupA1List = businessplanService.getgroupA1(themePlanDetailVo.getYear(),themePlanDetailVo.getCenter_id());
+
+            List<BusinessGroupA2Vo> groupA2List = businessplanService.getgroup(themePlanDetailVo.getYear(),themePlanDetailVo.getCenter_id(),"1");
+
+            List<BusinessGroupA2Vo> groupB1List = businessplanService.getgroup(themePlanDetailVo.getYear(),themePlanDetailVo.getCenter_id(),"2");
+
+            List<BusinessGroupA2Vo> groupB2List = businessplanService.getgroup(themePlanDetailVo.getYear(),themePlanDetailVo.getCenter_id(),"3");
+
+            List<BusinessGroupA2Vo> groupB3List = businessplanService.getgroup(themePlanDetailVo.getYear(),themePlanDetailVo.getCenter_id(),"4");
+            busplanList.get(0).setGroupA1(String.valueOf(JSONArray.parseArray(JSON.toJSONString(groupA1List))));
+            busplanList.get(0).setGroupA2(String.valueOf(JSONArray.parseArray(JSON.toJSONString(groupA2List))));
+            busplanList.get(0).setGroupB1(String.valueOf(JSONArray.parseArray(JSON.toJSONString(groupB1List))));
+            busplanList.get(0).setGroupB2(String.valueOf(JSONArray.parseArray(JSON.toJSONString(groupB2List))));
+            busplanList.get(0).setGroupB3(String.valueOf(JSONArray.parseArray(JSON.toJSONString(groupB3List))));
+            businessplanMapper.updateByPrimaryKey(busplanList.get(0));
+        }
+    }
+    //事业计划状态为0或3时，受托委托theme修改，变更事业计划 ztc to
 }
