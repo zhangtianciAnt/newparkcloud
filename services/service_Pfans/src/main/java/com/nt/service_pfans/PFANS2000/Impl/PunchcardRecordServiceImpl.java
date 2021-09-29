@@ -272,6 +272,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         String closingtime_start = null;
         //下班时间结束
         String closingtime_end = null;
+        //临时下班时间结束
+        String workshiftTemporary_end = null;
         //午休时间开始
         String lunchbreak_start = null;
         //午休时间结束
@@ -298,6 +300,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             //公司考勤设定上班开始时间
             workshift_start = attendancesettinglist.get(0).getWorkshift_start().replace(":", "");
             workshift_end = attendancesettinglist.get(0).getWorkshift_end().replace(":", "");
+            workshiftTemporary_end = "1800";
             //公司考勤设定下班开始时间
             closingtime_start = attendancesettinglist.get(0).getClosingtime_start().replace(":", "");
             closingtime_end = attendancesettinglist.get(0).getClosingtime_end().replace(":", "");
@@ -737,9 +740,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             } else {
                                 workinghours = "0";
                             }
-                        } else if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+                        }
+                        else if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
                             workinghours = "0";
-                        } else if (sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "yyyy").toString() + "-03-08") || sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "yyyy").toString() + "-05-04")) {
+                        }
+                        else if (sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "yyyy").toString() + "-03-08") || sf1ymd.format(ad.getDates()).equals(DateUtil.format(ad.getDates(), "yyyy").toString() + "-05-04")) {
                             //ccm add 0110
                             List<CustomerInfo> custwomenboy = mongoTemplate.find(new Query(Criteria.where("userid").is(ad.getUser_id())), CustomerInfo.class);
                             for(CustomerInfo c : custwomenboy)
@@ -790,7 +795,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 }
                             }
                             //ccm add 0110
-                        } else {
+                        }
+                        else {
                             workinghours = "8";
                         }
 
@@ -921,11 +927,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             String overtimeHours = "0";
 
                                             if (sdf.parse(time_end).getTime() <= sdf.parse(closingtime_end).getTime()) {
-                                                //18点之前下班
+                                                //19点之前下班
                                                 //实际加班时间
                                                 overtimeHours = "0";
                                             } else if (!(sdf.parse(time_end).getTime() == sdf.parse(time_start).getTime())) {
-                                                //18点之后下班
+                                                //19点之后下班
                                                 long result1 = sdf.parse(time_end).getTime() - sdf.parse(closingtime_end).getTime();
                                                 //实际加班时间
                                                 overtimeHours = String.valueOf(Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000);
@@ -1296,7 +1302,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 //                                                }
                                             }
                                         }
-                                    } else {
+                                    }
+                                    else {
                                         //有打卡记录 没有申请
                                         ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime())));
                                     }
@@ -1620,15 +1627,19 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if (Double.valueOf(sdf.parse(time_start).getTime()) <= Double.valueOf(sdf.parse(workshift_start).getTime())) {
                                                 time_start_temp = workshift_start;
                                             }
-                                            String shijiworkHours = shijiworkLength(time_start_temp, time_end_temp, lunchbreak_start, lunchbreak_end, PR);
-                                            //shijiworkHours = df.format(Math.floor(Double.valueOf(shijiworkHours) / ((Double.valueOf(strovertime)) / 60 / 60 / 1000)) * ((Double.valueOf(strovertime)) / 60 / 60 / 1000));
+                                            String shijiworkHours = shijiworkLength(time_start_temp, time_end_temp, lunchbreak_start, lunchbreak_end, PR ,"0");
+                                            //add ccm 20210927 考勤年休半天  计算总计出勤时间 fr
+                                            String shijiAnnualworkHours = shijiworkLength(time_start_temp, time_end_temp, lunchbreak_start, lunchbreak_end, PR ,"1");
+                                            //add ccm 20210927 考勤年休半天  计算总计出勤时间 to
 
                                             if (Double.valueOf(sdf.parse(time_start_temp).getTime()) >= Double.valueOf(sdf.parse(time_end_temp).getTime())) {
                                                 shijiworkHours = "0";
+                                                shijiAnnualworkHours = "0";
                                             }
 
                                             if (sdf.parse(time_end).getTime() == sdf.parse(time_start).getTime()) {
                                                 shijiworkHours = "0";
+                                                shijiAnnualworkHours = "0";
                                             }
                                             //申请代休，没有申请年休
                                             if (i > 0 && j == 0) {
@@ -1658,13 +1669,15 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ad.setNormal("0");
                                                     ad.setAbsenteeism("0");
                                                 } else {
-                                                    if (Double.valueOf(shijiworkHours) + Double.valueOf(nomal) >= 4) {
+                                                    if (Double.valueOf(shijiAnnualworkHours) + Double.valueOf(nomal) >= 4) {
                                                         ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
                                                         ad.setAbsenteeism("0");
                                                     } else {
-                                                        ad.setNormal(df.format(Double.valueOf(shijiworkHours) + Double.valueOf(nomal)));
+                                                        ad.setNormal(df.format(Double.valueOf(shijiAnnualworkHours) + Double.valueOf(nomal)));
                                                         ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
-                                                        ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+                                                        ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - (Double.valueOf(ad.getNormal()) < 0 ? 0 : Double.valueOf(ad.getNormal()))));
+                                                        ad.setAbsenteeism(df.format(Double.valueOf(ad.getAbsenteeism()) > 0 ? Double.valueOf(ad.getAbsenteeism()) : 0));
+                                                        ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getAbsenteeism())));
                                                     }
                                                 }
                                             }
@@ -1704,37 +1717,124 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 if (Double.valueOf(workinghours) == 8) {
                                                     ad.setAbsenteeism("0");
                                                 }
-                                            } else //异常打卡的情况
+                                            }
+                                            else //异常打卡的情况
                                             {
                                                 if (workinghours.equals("8")) {
 
-                                                    //除去申请以外的出勤时间
-                                                    String shuyutime = df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime));
+                                                    //add ccm 20210927 fr
+                                                    if(Double.valueOf(sdf.parse(time_start).getTime()) > Double.valueOf(sdf.parse(workshift_end).getTime()))
+                                                    {
+                                                        String[] timeLengthHours = timeLengthEfficient(time_start,time_end_temp,lunchbreak_start,lunchbreak_end);
 
-                                                    if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) >= Double.valueOf(shuyutime)) {
-                                                        ad.setNormal(df.format(Math.floor(Double.valueOf(shuyutime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
-                                                        ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getNormal()) - Double.valueOf(leavetime)));
-                                                    } else {
-                                                        if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) > 0) {
-                                                            //欠勤 = 8-（实际出勤(出勤 +申请因公外出异常 - 外出时间 + 申请的其他休假)）
-                                                            ad.setAbsenteeism(df.format(Double.valueOf(workinghours) -
-                                                                    (Double.valueOf(resultwork) + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) + Double.valueOf(leavetime))));
+                                                        String time_actal_start = timeLengthHours[0];
+                                                        String time_actal_end = timeLengthHours[1];
+                                                        if(timeLengthHours[2].equals("0"))
+                                                        {
+                                                            //计算的出勤时间,只有上午
+                                                            Double resultworkHours = Double.valueOf(timeLength(time_start, time_end_temp, lunchbreak_start, lunchbreak_end));
+                                                            //正常出勤显示的时间
+                                                            String nomalHours = df.format(resultworkHours + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()));
+
+                                                            ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(nomalHours)));
                                                             if (!(Double.valueOf(ad.getAbsenteeism()) % (Double.valueOf(lateearlyleave)) == 0)) {
                                                                 ad.setAbsenteeism(df.format(Math.floor(Double.valueOf(ad.getAbsenteeism()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
+                                                            }
+                                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - (Double.valueOf(ad.getAbsenteeism()) < 0 ? 0 : Double.valueOf(ad.getAbsenteeism()))));
+                                                            ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+                                                        }
+                                                        else if(timeLengthHours[2].equals("1"))
+                                                        {
+                                                            Double resultworkHours = 0d;
+                                                            //剩余未补的外出时间
+                                                            Double weibuHours = 0d;
+                                                            if(Double.valueOf(sdf.parse(time_end_temp).getTime()) <= Double.valueOf(sdf.parse(workshiftTemporary_end).getTime()))
+                                                            {
 
+                                                                //计算的出勤时间，只有下午
+                                                                resultworkHours = Double.valueOf(timeLength(time_start, time_end_temp, lunchbreak_start, lunchbreak_end));
+                                                                weibuHours = Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime());
                                                             }
-                                                            if (Double.valueOf(ad.getAbsenteeism()) > 0) {
-                                                                ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(leavetime)));
-                                                            } else {
-                                                                ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
+                                                            else
+                                                            {
+                                                                //计算的出勤时间，只有下午
+                                                                resultworkHours = Double.valueOf(timeLength(time_start, workshiftTemporary_end, lunchbreak_start, lunchbreak_end));
+                                                                long kebuHoursLong = sdf.parse(time_end_temp).getTime() - sdf.parse(workshiftTemporary_end).getTime();
+                                                                weibuHours = Double.valueOf(String.valueOf(kebuHoursLong)) / 60 / 60 / 1000 - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()) >=0
+                                                                        ? 0 : Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()) - Double.valueOf(String.valueOf(kebuHoursLong)) / 60 / 60 / 1000;
                                                             }
-                                                        } else {
-                                                            ad.setNormal(df.format(Double.valueOf(nomal)));
+                                                            //正常出勤显示的时间
+                                                            String nomalHours = df.format(resultworkHours + Double.valueOf(nomal) - Double.valueOf(weibuHours));
+
+                                                            ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(nomalHours)));
+                                                            if (!(Double.valueOf(ad.getAbsenteeism()) % (Double.valueOf(lateearlyleave)) == 0)) {
+                                                                ad.setAbsenteeism(df.format(Math.floor(Double.valueOf(ad.getAbsenteeism()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
+                                                            }
+                                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - (Double.valueOf(ad.getAbsenteeism())< 0 ? 0 : Double.valueOf(ad.getAbsenteeism()))));
+                                                            ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+                                                        }
+                                                        else
+                                                        {
+                                                            //迟到时间计算 （打卡上班时间 - 规定最晚上班时间）
+                                                            long result1 = sdf.parse(time_actal_start).getTime() - sdf.parse(workshift_end).getTime();
+                                                            String lateHours = df.format(Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000);
+
+                                                            //早退时间（含外出）计算 （打卡下班时间 - 下午18点）
+                                                            long result2 = 0;
+                                                            String leaveearlyHours = "0";
+                                                            if(sdf.parse(time_actal_end).getTime() >= sdf.parse(workshiftTemporary_end).getTime())
+                                                            {
+                                                                //打卡下班时间 >= 下午18点
+                                                                result2 = sdf.parse(time_actal_end).getTime() - sdf.parse(workshiftTemporary_end).getTime();
+                                                                leaveearlyHours = df.format(Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 - Double.valueOf(PR.getWorktime() == null
+                                                                        ? "0" : PR.getWorktime()) >= 0 ? 0 : Math.abs(Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime())));
+                                                            }
+                                                            else
+                                                            {
+                                                                //打卡下班时间 < 下午18点
+                                                                result2 = sdf.parse(workshiftTemporary_end).getTime() - sdf.parse(time_actal_end).getTime();
+                                                                leaveearlyHours = df.format(Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 + Double.valueOf(PR.getWorktime()));
+                                                            }
+                                                            //迟到+早退 - 申请的因公外出
+                                                            String allHours = df.format(Double.valueOf(String.valueOf(lateHours)) + Double.valueOf(String.valueOf(leaveearlyHours)) - Double.valueOf(nomal) > 0
+                                                                    ? Double.valueOf(String.valueOf(lateHours)) + Double.valueOf(String.valueOf(leaveearlyHours)) - Double.valueOf(nomal) : 0);
+
+                                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(allHours)));
                                                             ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
                                                             ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
                                                         }
                                                     }
+                                                    //add ccm 20210927 to
+                                                    else
+                                                    {
+                                                        //除去申请以外的出勤时间
+                                                        String shuyutime = df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime));
 
+                                                        if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) >= Double.valueOf(shuyutime)) {
+                                                            ad.setNormal(df.format(Math.floor(Double.valueOf(shuyutime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+                                                            ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getNormal()) - Double.valueOf(leavetime)));
+                                                        }
+                                                        else {
+                                                            if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) > 0) {
+                                                                //欠勤 = 8-（实际出勤(出勤 +申请因公外出异常 - 外出时间 + 申请的其他休假)）
+                                                                ad.setAbsenteeism(df.format(Double.valueOf(workinghours) -
+                                                                        (Double.valueOf(resultwork) + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) + Double.valueOf(leavetime))));
+                                                                if (!(Double.valueOf(ad.getAbsenteeism()) % (Double.valueOf(lateearlyleave)) == 0)) {
+                                                                    ad.setAbsenteeism(df.format(Math.floor(Double.valueOf(ad.getAbsenteeism()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
+
+                                                                }
+                                                                if (Double.valueOf(ad.getAbsenteeism()) > 0) {
+                                                                    ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(leavetime)));
+                                                                } else {
+                                                                    ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
+                                                                }
+                                                            } else {
+                                                                ad.setNormal(df.format(Double.valueOf(nomal)));
+                                                                ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+                                                                ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
@@ -2481,6 +2581,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         String closingtime_start = null;
         //下班时间结束
         String closingtime_end = null;
+        //临时下班时间结束
+        String workshiftTemporary_end = null;
         //午休时间开始
         String lunchbreak_start = null;
         //午休时间结束
@@ -2507,6 +2609,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             //公司考勤设定上班开始时间
             workshift_start = attendancesettinglist.get(0).getWorkshift_start().replace(":", "");
             workshift_end = attendancesettinglist.get(0).getWorkshift_end().replace(":", "");
+            workshiftTemporary_end = "1800";
             //公司考勤设定下班开始时间
             closingtime_start = attendancesettinglist.get(0).getClosingtime_start().replace(":", "");
             closingtime_end = attendancesettinglist.get(0).getClosingtime_end().replace(":", "");
@@ -2744,11 +2847,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             String overtimeHours = "0";
 
                                             if (sdf.parse(time_end).getTime() <= sdf.parse(closingtime_end).getTime()) {
-                                                //18点之前下班
+                                                //19点之前下班
                                                 //实际加班时间
                                                 overtimeHours = "0";
                                             } else if (!(sdf.parse(time_end).getTime() == sdf.parse(time_start).getTime())) {
-                                                //18点之后下班
+                                                //19点之后下班
                                                 long result1 = sdf.parse(time_end).getTime() - sdf.parse(closingtime_end).getTime();
                                                 //实际加班时间
                                                 overtimeHours = String.valueOf(Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000);
@@ -3119,7 +3222,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
 //                                                }
                                             }
                                         }
-                                    } else {
+                                    }
+                                    else {
                                         //有打卡记录 没有申请
                                         ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime())));
                                     }
@@ -3433,7 +3537,8 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             //UPD CCM 20210309 PSDCD_PFANS_20210309_BUG_028 TO
 
                                         }
-                                    } else if (workinghours.equals("8")) {
+                                    }
+                                    else if (workinghours.equals("8")) {
                                         //申请了年休，代休
                                         if (i > 0 || j > 0) {
                                             String time_end_temp = time_end;
@@ -3444,15 +3549,20 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if (Double.valueOf(sdf.parse(time_start).getTime()) <= Double.valueOf(sdf.parse(workshift_start).getTime())) {
                                                 time_start_temp = workshift_start;
                                             }
-                                            String shijiworkHours = shijiworkLength(time_start_temp, time_end_temp, lunchbreak_start, lunchbreak_end, PR);
-//                                            shijiworkHours = df.format(Math.floor(Double.valueOf(shijiworkHours) / ((Double.valueOf(strovertime)) / 60 / 60 / 1000)) * ((Double.valueOf(strovertime)) / 60 / 60 / 1000));
+                                            String shijiworkHours = shijiworkLength(time_start_temp, time_end_temp, lunchbreak_start, lunchbreak_end, PR,"0");
+
+                                            //add ccm 20210927 考勤年休半天  计算总计出勤时间 fr
+                                            String shijiAnnualworkHours = shijiworkLength(time_start_temp, time_end_temp, lunchbreak_start, lunchbreak_end, PR ,"1");
+                                            //add ccm 20210927 考勤年休半天  计算总计出勤时间 to
 
                                             if (Double.valueOf(sdf.parse(time_start_temp).getTime()) >= Double.valueOf(sdf.parse(time_end_temp).getTime())) {
                                                 shijiworkHours = "0";
+                                                shijiAnnualworkHours = "0";
                                             }
 
                                             if (sdf.parse(time_end).getTime() == sdf.parse(time_start).getTime()) {
                                                 shijiworkHours = "0";
+                                                shijiAnnualworkHours = "0";
                                             }
                                             //申请代休，没有申请年休
                                             if (i > 0 && j == 0) {
@@ -3482,13 +3592,15 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ad.setNormal("0");
                                                     ad.setAbsenteeism("0");
                                                 } else {
-                                                    if (Double.valueOf(shijiworkHours) + Double.valueOf(nomal) >= 4) {
+                                                    if (Double.valueOf(shijiAnnualworkHours) + Double.valueOf(nomal) >= 4) {
                                                         ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
                                                         ad.setAbsenteeism("0");
                                                     } else {
-                                                        ad.setNormal(df.format(Double.valueOf(shijiworkHours) + Double.valueOf(nomal)));
+                                                        ad.setNormal(df.format(Double.valueOf(shijiAnnualworkHours) + Double.valueOf(nomal)));
                                                         ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
-                                                        ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+                                                        ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - (Double.valueOf(ad.getNormal()) < 0 ? 0 : Double.valueOf(ad.getNormal()))));
+                                                        ad.setAbsenteeism(df.format(Double.valueOf(ad.getAbsenteeism()) > 0 ? Double.valueOf(ad.getAbsenteeism()) : 0));
+                                                        ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getAbsenteeism())));
                                                     }
                                                 }
                                             }
@@ -3528,41 +3640,129 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 if (Double.valueOf(workinghours) == 8) {
                                                     ad.setAbsenteeism("0");
                                                 }
-                                            } else //异常打卡的情况
+                                            }
+                                            else //异常打卡的情况
                                             {
                                                 if (workinghours.equals("8")) {
 
-                                                    //除去申请以外的出勤时间
-                                                    String shuyutime = df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime));
+                                                    //add ccm 20210927 fr
+                                                    if(Double.valueOf(sdf.parse(time_start).getTime()) > Double.valueOf(sdf.parse(workshift_end).getTime()))
+                                                    {
+                                                        String[] timeLengthHours = timeLengthEfficient(time_start,time_end_temp,lunchbreak_start,lunchbreak_end);
 
-                                                    if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) >= Double.valueOf(shuyutime)) {
-                                                        ad.setNormal(df.format(Math.floor(Double.valueOf(shuyutime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
-                                                        ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getNormal()) - Double.valueOf(leavetime)));
-                                                    } else {
-                                                        if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) > 0) {
-                                                            //欠勤 = 8-（实际出勤(出勤 +申请因公外出异常 - 外出时间 + 申请的其他休假)）
-                                                            ad.setAbsenteeism(df.format(Double.valueOf(workinghours) -
-                                                                    (Double.valueOf(resultwork) + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) + Double.valueOf(leavetime))));
+                                                        String time_actal_start = timeLengthHours[0];
+                                                        String time_actal_end = timeLengthHours[1];
+                                                        if(timeLengthHours[2].equals("0"))
+                                                        {
+                                                            //计算的出勤时间,只有上午
+                                                            Double resultworkHours = Double.valueOf(timeLength(time_start, time_end_temp, lunchbreak_start, lunchbreak_end));
+                                                            //正常出勤显示的时间
+                                                            String nomalHours = df.format(resultworkHours + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()));
+
+                                                            ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(nomalHours)));
                                                             if (!(Double.valueOf(ad.getAbsenteeism()) % (Double.valueOf(lateearlyleave)) == 0)) {
                                                                 ad.setAbsenteeism(df.format(Math.floor(Double.valueOf(ad.getAbsenteeism()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
+                                                            }
+                                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - (Double.valueOf(ad.getAbsenteeism()) < 0 ? 0 : Double.valueOf(ad.getAbsenteeism()))));
+                                                            ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+                                                        }
+                                                        else if(timeLengthHours[2].equals("1"))
+                                                        {
+                                                            Double resultworkHours = 0d;
+                                                            //剩余未补的外出时间
+                                                            Double weibuHours = 0d;
+                                                            if(Double.valueOf(sdf.parse(time_end_temp).getTime()) <= Double.valueOf(sdf.parse(workshiftTemporary_end).getTime()))
+                                                            {
 
+                                                                //计算的出勤时间，只有下午
+                                                                resultworkHours = Double.valueOf(timeLength(time_start, time_end_temp, lunchbreak_start, lunchbreak_end));
+                                                                weibuHours = Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime());
                                                             }
-                                                            if (Double.valueOf(ad.getAbsenteeism()) > 0) {
-                                                                ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(leavetime)));
-                                                            } else {
-                                                                ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
+                                                            else
+                                                            {
+                                                                //计算的出勤时间，只有下午
+                                                                resultworkHours = Double.valueOf(timeLength(time_start, workshiftTemporary_end, lunchbreak_start, lunchbreak_end));
+                                                                long kebuHoursLong = sdf.parse(time_end_temp).getTime() - sdf.parse(workshiftTemporary_end).getTime();
+                                                                weibuHours = Double.valueOf(String.valueOf(kebuHoursLong)) / 60 / 60 / 1000 - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()) >=0
+                                                                        ? 0 : Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()) - Double.valueOf(String.valueOf(kebuHoursLong)) / 60 / 60 / 1000;
                                                             }
-                                                        } else {
-                                                            ad.setNormal(df.format(Double.valueOf(nomal)));
+                                                            //正常出勤显示的时间
+                                                            String nomalHours = df.format(resultworkHours + Double.valueOf(nomal) - Double.valueOf(weibuHours));
+
+                                                            ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(nomalHours)));
+                                                            if (!(Double.valueOf(ad.getAbsenteeism()) % (Double.valueOf(lateearlyleave)) == 0)) {
+                                                                ad.setAbsenteeism(df.format(Math.floor(Double.valueOf(ad.getAbsenteeism()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
+                                                            }
+                                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - (Double.valueOf(ad.getAbsenteeism())< 0 ? 0 : Double.valueOf(ad.getAbsenteeism()))));
+                                                            ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+                                                        }
+                                                        else
+                                                        {
+                                                            //迟到时间计算 （打卡上班时间 - 规定最晚上班时间）
+                                                            long result1 = sdf.parse(time_actal_start).getTime() - sdf.parse(workshift_end).getTime();
+                                                            String lateHours = df.format(Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000);
+
+                                                            //早退时间（含外出）计算 （打卡下班时间 - 下午18点）
+                                                            long result2 = 0;
+                                                            String leaveearlyHours = "0";
+                                                            if(sdf.parse(time_actal_end).getTime() >= sdf.parse(workshiftTemporary_end).getTime())
+                                                            {
+                                                                //打卡下班时间 >= 下午18点
+                                                                result2 = sdf.parse(time_actal_end).getTime() - sdf.parse(workshiftTemporary_end).getTime();
+                                                                leaveearlyHours = df.format(Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 - Double.valueOf(PR.getWorktime() == null
+                                                                        ? "0" : PR.getWorktime()) >= 0 ? 0 : Math.abs(Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime())));
+                                                            }
+                                                            else
+                                                            {
+                                                                //打卡下班时间 < 下午18点
+                                                                result2 = sdf.parse(workshiftTemporary_end).getTime() - sdf.parse(time_actal_end).getTime();
+                                                                leaveearlyHours = df.format(Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 + Double.valueOf(PR.getWorktime()));
+                                                            }
+                                                            //迟到+早退 - 申请的因公外出
+                                                            String allHours = df.format(Double.valueOf(String.valueOf(lateHours)) + Double.valueOf(String.valueOf(leaveearlyHours)) - Double.valueOf(nomal) > 0
+                                                                    ? Double.valueOf(String.valueOf(lateHours)) + Double.valueOf(String.valueOf(leaveearlyHours)) - Double.valueOf(nomal) : 0);
+
+                                                            ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(allHours)));
                                                             ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
                                                             ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
                                                         }
                                                     }
+                                                    //add ccm 20210927 to
+                                                    else
+                                                    {
+                                                        //除去申请以外的出勤时间
+                                                        String shuyutime = df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime));
 
+                                                        if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) >= Double.valueOf(shuyutime)) {
+                                                            ad.setNormal(df.format(Math.floor(Double.valueOf(shuyutime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+                                                            ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getNormal()) - Double.valueOf(leavetime)));
+                                                        }
+                                                        else {
+                                                            if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) > 0) {
+                                                                //欠勤 = 8-（实际出勤(出勤 +申请因公外出异常 - 外出时间 + 申请的其他休假)）
+                                                                ad.setAbsenteeism(df.format(Double.valueOf(workinghours) -
+                                                                        (Double.valueOf(resultwork) + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) + Double.valueOf(leavetime))));
+                                                                if (!(Double.valueOf(ad.getAbsenteeism()) % (Double.valueOf(lateearlyleave)) == 0)) {
+                                                                    ad.setAbsenteeism(df.format(Math.floor(Double.valueOf(ad.getAbsenteeism()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
+
+                                                                }
+                                                                if (Double.valueOf(ad.getAbsenteeism()) > 0) {
+                                                                    ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(leavetime)));
+                                                                } else {
+                                                                    ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime)));
+                                                                }
+                                                            } else {
+                                                                ad.setNormal(df.format(Double.valueOf(nomal)));
+                                                                ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
+                                                                ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(ad.getNormal())));
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
-                                    } else {
+                                    }
+                                    else {
                                         if (ad.getWeekendindustry() != null && !ad.getWeekendindustry().isEmpty()) {
                                             if (Double.valueOf(ad.getWeekendindustry()) >= 8) {
                                                 //换代休1天
@@ -4170,8 +4370,46 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         return overtimeHours;
     }
 
+    //判断打卡时长是否包含午休，决定真正的打卡上班和打卡下班
+    public String[] timeLengthEfficient(String time_start, String time_end, String lunchbreak_start, String lunchbreak_end) throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
+        String[] overtimeHours = new String[3];
+        if (sdf.parse(time_end).getTime() < sdf.parse(lunchbreak_start).getTime()) {
+            //午休不都包括在内 ，只有上午
+            //打卡开始-结束时间
+            overtimeHours[0] = time_start;
+            overtimeHours[1] = lunchbreak_end;
+            overtimeHours[2] = "0";
+        } else if (sdf.parse(time_start).getTime() > sdf.parse(lunchbreak_end).getTime()) {
+            //午休不包括在内,只有下午
+            //打卡开始-结束时间
+            overtimeHours[0] = lunchbreak_start;
+            overtimeHours[1] = time_end;
+            overtimeHours[2] = "1";
+        } else if (sdf.parse(time_start).getTime() <= sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() <= sdf.parse(lunchbreak_end).getTime()) {
+            //午休包括在内一部分（打卡结束时间在午休内）
+            //打卡开始-结束时间
+            overtimeHours[0] = time_start;
+            overtimeHours[1] = lunchbreak_end;
+            overtimeHours[2] = "2";
+        } else if (sdf.parse(time_start).getTime() >= sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() >= sdf.parse(lunchbreak_end).getTime()) {
+            //午休包括在内一部分（打卡结束时间在午休内）
+            //打卡开始-午休开始时间
+            overtimeHours[0] = lunchbreak_start;
+            overtimeHours[1] = time_end;
+            overtimeHours[2] = "2";
+        } else {
+            //午休包括在
+            //午休结束-打开结束时间
+            overtimeHours[0] = time_start;
+            overtimeHours[1] = time_end;
+            overtimeHours[2] = "2";
+        }
+        return overtimeHours;
+    }
+
     //平日出勤
-    public String shijiworkLength(String time_start, String time_end, String lunchbreak_start, String lunchbreak_end, PunchcardRecord PR) throws Exception {
+    public String shijiworkLength(String time_start, String time_end, String lunchbreak_start, String lunchbreak_end, PunchcardRecord PR ,String flg) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("HHmm");
         String shijiworkHours = "0";
         if (sdf.parse(time_end).getTime() <= sdf.parse(lunchbreak_start).getTime()) {
@@ -4187,15 +4425,28 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             long result1 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
             shijiworkHours = String.valueOf((Double.valueOf(String.valueOf(result1)) / 60 / 60 / 1000) - (Double.valueOf(PR.getWorktime()) - Double.valueOf(PR.getAbsenteeismam())));
         } else {
-            //下午上班时间
-            long result1 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
-            //上午上班时间
-            long result2 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
+            if(flg.equals("0"))
+            {
+                //下午上班时间
+                long result1 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
+                //上午上班时间
+                long result2 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
 
-            Double result3 = Double.valueOf(result2) / 60 / 60 / 1000 - Double.valueOf(PR.getAbsenteeismam());
-            Double result4 = Double.valueOf(result1) / 60 / 60 / 1000 - (Double.valueOf(PR.getWorktime()) - Double.valueOf(PR.getAbsenteeismam()));
-            shijiworkHours = String.valueOf(result3 > result4 ? result3 : result4);
+                Double result3 = Double.valueOf(result2) / 60 / 60 / 1000 - Double.valueOf(PR.getAbsenteeismam());
+                Double result4 = Double.valueOf(result1) / 60 / 60 / 1000 - (Double.valueOf(PR.getWorktime()) - Double.valueOf(PR.getAbsenteeismam()));
+                shijiworkHours = String.valueOf(result3 > result4 ? result3 : result4);
+            }
+            else
+            {
+                //下午上班时间
+                long result1 = sdf.parse(time_end).getTime() - sdf.parse(lunchbreak_end).getTime();
+                //上午上班时间
+                long result2 = sdf.parse(lunchbreak_start).getTime() - sdf.parse(time_start).getTime();
 
+                Double result3 = Double.valueOf(result2) / 60 / 60 / 1000 - Double.valueOf(PR.getAbsenteeismam());
+                Double result4 = Double.valueOf(result1) / 60 / 60 / 1000 - (Double.valueOf(PR.getWorktime()) - Double.valueOf(PR.getAbsenteeismam()));
+                shijiworkHours = String.valueOf(result3 + result4);
+            }
         }
         return shijiworkHours;
     }
@@ -4242,30 +4493,6 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                     shijiworkHours = String.valueOf(0);
                 }
             }
-//            //上午
-//            if (result3 >= 4) {
-//                shijiworkHours = String.valueOf(4);
-//            } else {
-//                shijiworkHours = String.valueOf(0);
-//            }
-//
-//            //下午
-//            if (result4 >= 4) {
-//                shijiworkHours = String.valueOf(4 + Double.valueOf(shijiworkHours));
-//            } else {
-//                shijiworkHours = String.valueOf(0 + Double.valueOf(shijiworkHours));
-//            }
-            //upd_fjl_0819_会社特别休日的出勤时间判断 end
-//
-//
-//            if(result3 + result4 >= 8)
-//            {
-//                shijiworkHours = String.valueOf(8);
-//            }
-//            else
-//            {
-//                shijiworkHours = String.valueOf(result3 > result4 ? result3 : result4);
-//            }
         }
         return shijiworkHours;
     }
