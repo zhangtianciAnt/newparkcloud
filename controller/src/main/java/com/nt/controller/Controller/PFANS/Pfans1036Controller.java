@@ -90,4 +90,11 @@ public class Pfans1036Controller {
         return ApiResult.success(businessplanService.getPersonPlan(year, groupid));
     }
 
+    @RequestMapping(value = "/whetherEditor", method = {RequestMethod.GET})
+    public ApiResult whetherEditor(@RequestParam String years,@RequestParam String centerid, HttpServletRequest request) throws Exception {
+        if (centerid == "") {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(businessplanService.whetherEditor(years, centerid));
+    }
 }
