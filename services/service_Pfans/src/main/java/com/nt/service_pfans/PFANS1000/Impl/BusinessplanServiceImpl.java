@@ -1173,6 +1173,26 @@ public class BusinessplanServiceImpl implements BusinessplanService {
 
     }
 
+    //region scc add 9/28 根据审批状态，人员计划，受托theme,委托theme编辑按钮状态 from
+    @Override
+    public boolean whetherEditor(String years, String centerid) throws Exception {
+        Businessplan data = new Businessplan();
+        data.setYear(years);
+        data.setCenter_id(centerid);
+        List<Businessplan> res = businessplanMapper.select(data);
+        if(res != null){
+            if(res.size() != 0) {
+                if (res.get(0).getStatus().equals("2") || res.get(0).getStatus().equals("4")) {
+                    return true;
+                }
+            }else{
+                return false;
+            }
+        }
+            return false;
+    }
+    //endregion scc add 9/28 根据审批状态，人员计划，受托theme,委托theme编辑按钮状态 to
+
     //现时点人员统计
     private List<PersonPlanTable> getNowPersonTable(PersonnelPlan personnelPlan, List<PersonPlanTable> personPlanTables) throws Exception {
         if (!personnelPlan.getEmployed().equals("[]")) {
