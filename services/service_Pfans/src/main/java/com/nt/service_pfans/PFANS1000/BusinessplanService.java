@@ -33,4 +33,8 @@ public interface BusinessplanService {
     public void updateBusinessplanVo(Businessplan businessplan, TokenModel tokenModel) throws Exception;
 
     String[] getPersonPlan(String year, String groupid) throws Exception;
+
+    //region scc add 9/28 根据审批状态，人员计划，受托theme,委托theme编辑按钮状态 from
+    boolean whetherEditor(String years,String centerid) throws Exception;
+    //endregion scc add 9/28 根据审批状态，人员计划，受托theme,委托theme编辑按钮状态 to
 }
