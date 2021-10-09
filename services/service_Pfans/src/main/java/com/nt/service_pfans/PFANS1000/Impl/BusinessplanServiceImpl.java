@@ -117,7 +117,11 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                     throw new LogicalException("第" + (i) + "列标题错误，应为" + model.get(i - 1).toString());
                 }
             }
-            int year = Integer.valueOf(DateUtil.format(new Date(), "MM")) >= 4 ? Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1 : Integer.valueOf(DateUtil.format(new Date(), "YYYY"));
+            //TODO 事业计划，以前年度资产导入，年度判定？
+            //region scc upd 10/9 todo年度 from
+//            int year = Integer.valueOf(DateUtil.format(new Date(), "MM")) >= 4 ? Integer.valueOf(DateUtil.format(new Date(), "YYYY")) + 1 : Integer.valueOf(DateUtil.format(new Date(), "YYYY"));
+            int year = Integer.valueOf(DateUtil.format(new Date(), "YYYY"));
+            //endregion scc upd 10/9 todo年度 to
             int n = 1;
             int accesscount = 0;
             int error = 0;
