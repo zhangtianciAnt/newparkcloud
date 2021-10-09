@@ -41,7 +41,7 @@ public class Pfans4003Controller {
         //region add scc 8/25 页面rank显示升序排序 from
         List<PeoplewareFee> peopleWareList = peoplewarefeeService.getPeopleWareList(peoplewarefee);
 
-        Collections.sort(peopleWareList,new Comparator<PeoplewareFee>(){
+        Collections.sort(peopleWareList,new Comparator<PeoplewareFee>(){//先排字母
 
             @Override
             public int compare(PeoplewareFee o1, PeoplewareFee o2) {
@@ -52,22 +52,36 @@ public class Pfans4003Controller {
                         ran1 = String.valueOf(o1.getRanks().charAt(2));
                     }
                 }
-                else if(o1.getRanks().length() == 4){
-                    ran1 = String.valueOf(o1.getRanks().charAt(3));
+                else if(o1.getRanks().length() == 4){//R11A、R4新人、R5新人
+                    if(Character.isLetter(o1.getRanks().charAt(3))){
+                        ran1 = String.valueOf(o1.getRanks().charAt(3));
+                    }else{
+                        ran1 = String.valueOf(o1.getRanks().charAt(0));//取R比较，手动写死，使按字母排序时R4新人、R5新人排在前面
+                    }
+                }
+                else if(o1.getRanks().length() == 5){//日本出项者
+                    ran1 = "R";//取R比较，手动写死，使按字母排序时日本出项者排在前面
                 }
                 if(o2.getRanks().length() == 3){//R10或R9A
                     if(o2.getRanks().charAt(2) == 'B' || o2.getRanks().charAt(2) == 'C' || o2.getRanks().charAt(2) == 'A'){
                         ran2 = String.valueOf(o2.getRanks().charAt(2));
                     }
                 }
-                else if(o2.getRanks().length() == 4){
-                    ran2 = String.valueOf(o2.getRanks().charAt(3));
+                else if(o2.getRanks().length() == 4){//R11A、R4新人、R5新人
+                    if(Character.isLetter(o2.getRanks().charAt(3))){
+                        ran2 = String.valueOf(o2.getRanks().charAt(3));
+                    }else{
+                        ran2 = String.valueOf(o2.getRanks().charAt(0));//取R比较，手动写死，使按字母排序时R4新人、R5新人排在前面
+                    }
+                }
+                else if(o2.getRanks().length() == 5){//日本出项者
+                    ran2 = "R";//取R比较，手动写死，使按字母排序时日本出项者排在前面
                 }
                 return ran2.compareTo(ran1);
             }
         });
 
-        Collections.sort(peopleWareList,new Comparator<PeoplewareFee>(){
+        Collections.sort(peopleWareList,new Comparator<PeoplewareFee>(){//再排数字
 
             @Override
             public int compare(PeoplewareFee o1, PeoplewareFee o2) {
@@ -83,8 +97,15 @@ public class Pfans4003Controller {
                         RANK1 = Integer.parseInt(o1.getRanks().substring(o1.getRanks().length() - 2));
                     }
                 }
-                else if(o1.getRanks().length() == 4) {//R11A
-                    RANK1 = Integer.parseInt(o1.getRanks().substring(1, 3));
+                else if(o1.getRanks().length() == 4) {//R11A、R4新人、R5新人
+                    if(Character.isDigit(o1.getRanks().charAt(2))){
+                        RANK1 = Integer.parseInt(o1.getRanks().substring(1, 3));
+                    }else{
+                        RANK1 = 0;//取0比较，手动写死，再次按照数字排序时，使R4新人、R5新人排在前面
+                    }
+                }
+                else if(o1.getRanks().length() == 5){//日本出项者
+                    RANK1 = 100;//取100比较，手动写死，再次按照数字排序时，使R4新人、R5新人排在前面
                 }
                 if(o2.getRanks().length() == 2){
                     RANK2 = Integer.parseInt(o2.getRanks().substring(o2.getRanks().length() - 1));
@@ -96,8 +117,15 @@ public class Pfans4003Controller {
                         RANK2 = Integer.parseInt(o2.getRanks().substring(o2.getRanks().length() - 2));
                     }
                 }
-                else if(o2.getRanks().length() == 4){
-                    RANK2 = Integer.parseInt(o2.getRanks().substring(1,3));
+                else if(o2.getRanks().length() == 4){//R11A、R4新人、R5新人
+                    if(Character.isDigit(o2.getRanks().charAt(2))){
+                        RANK2 = Integer.parseInt(o2.getRanks().substring(1, 3));
+                    }else{
+                        RANK2 = 0;//取0比较，手动写死，再次按照数字排序时，使R4新人、R5新人排在前面
+                    }
+                }
+                else if(o2.getRanks().length() == 5){//日本出项者
+                    RANK2 = 100;//取100比较，手动写死，再次按照数字排序时，使R4新人、R5新人排在前面
                 }
                 return RANK1 - RANK2;
             }
