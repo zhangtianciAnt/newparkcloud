@@ -13,6 +13,7 @@ import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.*;
 //import com.nt.dao_Pfans.PFANS1000.Businessplandet;
 import com.nt.dao_Pfans.PFANS1000.Vo.*;
+import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
@@ -20,6 +21,7 @@ import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 //import com.nt.service_pfans.PFANS1000.mapper.BusinessplandetMapper;
+import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
@@ -70,6 +72,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     private MongoTemplate mongoTemplate;
     @Autowired
     private ExpatriatesinforMapper expatriatesinforMapper;
+    @Autowired
+    PeoplewareFeeMapper peoplewareFeeMapper;
 
     DecimalFormat df = new DecimalFormat("#0.00");
     //@Autowired
@@ -1079,11 +1083,31 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             personPlanTablesnew = personPlanTablesnew.stream().sorted(Comparator.comparing(PersonPlanTable::getCode).reversed()).collect(Collectors.toList());
 
             if (personnelPlanList.size() > 0) {
+//                事业计划人件费单价 每个月份乘以人数 ztc fr
+                List<Dictionary> dictionaryRank = dictionaryService.getForSelect("PR021");
+                PeoplewareFee peoRank = new PeoplewareFee();
+                peoRank.setGroupid(personnelPlan.getCenterid());
+                peoRank.setYear(personnelPlan.getYears());
+                List<PeoplewareFee> peoplewareFeeList = peoplewareFeeMapper.select(peoRank);
+                Map<String, String> rankBaseMap = new HashMap<>();
+                dictionaryRank.forEach(rankBase ->{
+                    rankBaseMap.put(rankBase.getValue1(),rankBase.getCode());
+                });
+                Map<String, PeoplewareFee> rankResultMap = new HashMap<>();
+                if(peoplewareFeeList.size()>0)
+                {
+                    peoplewareFeeList.forEach(rankResult -> {
+                        rankResultMap.put(rankBaseMap.get(rankResult.getRanks()),rankResult);
+                    });
+                }
+//                事业计划人件费单价 每个月份乘以人数 ztc to
                 personnelPlan = personnelPlanList.get(0);
                 PersonPlanTable personPlan = new PersonPlanTable();
                 Field[] fields = personPlan.getClass().getDeclaredFields();
-                List<PersonPlanTable> nowPersonTable = getNowPersonTable(personnelPlan, personPlanTables);
-                List<PersonPlanTable> nextPersonTable = getNextPersonTable(personnelPlan, personPlanTablesnew);
+                //                事业计划人件费单价 每个月份乘以人数 ztc fr
+                List<PersonPlanTable> nowPersonTable = getNowPersonTable(personnelPlan, personPlanTables,rankResultMap);
+                List<PersonPlanTable> nextPersonTable = getNextPersonTable(personnelPlan, personPlanTablesnew,rankResultMap);
+                //                事业计划人件费单价 每个月份乘以人数 ztc to
                 List<PersonPlanTable> allPersonTable = new ArrayList<>();
                 allPersonTable.addAll(nowPersonTable);
                 allPersonTable.addAll(nextPersonTable);
@@ -1193,8 +1217,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     }
     //endregion scc add 9/28 根据审批状态，人员计划，受托theme,委托theme编辑按钮状态 to
 
-    //现时点人员统计
-    private List<PersonPlanTable> getNowPersonTable(PersonnelPlan personnelPlan, List<PersonPlanTable> personPlanTables) throws Exception {
+    //现时点人员统计 //                事业计划人件费单价 每个月份乘以人数 ztc fr
+    private List<PersonPlanTable> getNowPersonTable(PersonnelPlan personnelPlan, List<PersonPlanTable> personPlanTables, Map<String,PeoplewareFee> rankResultMap) throws Exception {
         if (!personnelPlan.getEmployed().equals("[]")) {
             List<PersonPlanTable> _personPlanTables = deepCopy(personPlanTables);
             List<Employed> employedList = JSON.parseArray(personnelPlan.getEmployed(), Employed.class);
@@ -1209,13 +1233,15 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                         }
                     }
                 }
-                BigDecimal giving46 = pt.getSummerplanpc().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getSummerplanpc()); //给与4-6
+                //BigDecimal giving46 = pt.getSummerplanpc().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getSummerplanpc()); //给与4-6
                 for (int i = 1; i <= 12; i++) {
                     BigDecimal giving;
                     int count = (int) PropertyUtils.getProperty(pt, "amount" + i);
                     PropertyUtils.setProperty(pt, "workinghour" + i, BigDecimal.ZERO);
                     PropertyUtils.setProperty(pt, "pay" + i, BigDecimal.ZERO);
-                    giving = new BigDecimal(count).multiply(giving46);
+                    giving = new BigDecimal(count).multiply(new BigDecimal(getProperty(rankResultMap.get(pt.getCode()),"month" + i)));
+                    //giving = new BigDecimal(count).multiply(giving46);
+                    //                事业计划人件费单价 每个月份乘以人数 ztc to
                     PropertyUtils.setProperty(pt, "giving" + i, giving);
                 }
                 pt.setAmountfirst(pt.getAmount4() * 6);
@@ -1239,8 +1265,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         return new ArrayList<PersonPlanTable>();
     }
 
-    //新人人员统计
-    private List<PersonPlanTable> getNextPersonTable(PersonnelPlan personnelPlan, List<PersonPlanTable> personPlanTables) throws Exception {
+    //新人人员统计 //                事业计划人件费单价 每个月份乘以人数 ztc fr
+    private List<PersonPlanTable> getNextPersonTable(PersonnelPlan personnelPlan, List<PersonPlanTable> personPlanTables, Map<String,PeoplewareFee> rankResultMap) throws Exception {
         if (!personnelPlan.getNewentry().equals("[]")) {
             int[] arr = new int[]{4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3};
             List<PersonPlanTable> _personPlanTables = deepCopy(personPlanTables);
@@ -1261,13 +1287,15 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                         }
                     }
                 }
-                BigDecimal giving46 = pt.getSummerplanpc().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getSummerplanpc()); //给与4-6
+                //BigDecimal giving46 = pt.getSummerplanpc().equals("") ? new BigDecimal(0) : new BigDecimal(pt.getSummerplanpc()); //给与4-6
                 for (int i = 1; i <= 12; i++) {
                     BigDecimal giving;
                     int count = (int) PropertyUtils.getProperty(pt, "amount" + i);
                     PropertyUtils.setProperty(pt, "workinghour" + i, BigDecimal.ZERO);
                     PropertyUtils.setProperty(pt, "pay" + i, BigDecimal.ZERO);
-                    giving = new BigDecimal(count).multiply(giving46);
+                    giving = new BigDecimal(count).multiply(new BigDecimal(getProperty(rankResultMap.get(pt.getCode()),"month" + i)));
+                    //giving = new BigDecimal(count).multiply(giving46);
+                    //                事业计划人件费单价 每个月份乘以人数 ztc to
                     PropertyUtils.setProperty(pt, "giving" + i, giving);
                 }
                 pt.setAmountfirst(pt.getAmount4() + pt.getAmount5() + pt.getAmount6() + pt.getAmount7() + pt.getAmount8() + pt.getAmount9());
