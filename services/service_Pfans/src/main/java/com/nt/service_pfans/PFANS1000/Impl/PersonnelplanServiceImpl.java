@@ -160,13 +160,15 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
                         }
                     }
                 }
-                int inAnt = 0;
+                //                事业计划人件费单价 每个月份乘以人数 ztc fr
+                int inAnt = Integer.parseInt(resultPlan[4] != null ? resultPlan[4] : "0");
                 int[] insideResult = new int[12];
                 for (int ins = 0; ins < inside.length; ins++) {
                     inAnt = inside[ins] + inAnt;
                     insideResult[ins] = inAnt;
                 }
-                int outAnt = 0;
+                int outAnt = Integer.parseInt(resultPlan[5] != null ? resultPlan[5] : "0");
+                //                事业计划人件费单价 每个月份乘以人数 ztc to
                 int[] outsideResult = new int[12];
                 for (int outs = 0; outs < outside.length; outs++) {
                     outAnt = outside[outs] + outAnt;
