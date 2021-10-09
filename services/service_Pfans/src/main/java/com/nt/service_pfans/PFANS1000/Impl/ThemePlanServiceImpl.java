@@ -117,6 +117,11 @@ public class ThemePlanServiceImpl implements ThemePlanService {
             //region 赋值
             Vo.setThemeplandetail_id(tpd.getThemeplandetail_id());
 
+            Vo.setThemeinfor_id(tpd.getThemeinfor_id());
+            Vo.setOtherone(tpd.getOtherone());
+            Vo.setOthertwo(tpd.getOthertwo());
+            Vo.setOtherthree(tpd.getOtherthree());
+
             Vo.setMonth(tpd.getMonth());
 
             Vo.setThemeplan_id(tpd.getThemeplan_id());
