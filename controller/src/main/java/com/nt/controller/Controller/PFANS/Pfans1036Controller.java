@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/businessplan")
@@ -96,5 +99,22 @@ public class Pfans1036Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         return ApiResult.success(businessplanService.whetherEditor(years, centerid));
+    }
+
+    /**
+     * scc 事业计划，模板下载
+     * */
+    @RequestMapping(value = "/download", method = {RequestMethod.GET})
+    public void download(String type, HttpServletResponse response) throws Exception {
+        Map<String, Object> data = new HashMap<>();
+        String templateName = null;
+        String fileName = null;
+        if ("0".equals(type) ) {
+            templateName = "shiyejihuayiqiannianduzichan.xlsx";
+            fileName = "事业计划以前年度资产导入模板";
+        }
+        if (templateName != null ) {
+            ExcelOutPutUtil.OutPut(fileName,templateName,data,response);
+        }
     }
 }
