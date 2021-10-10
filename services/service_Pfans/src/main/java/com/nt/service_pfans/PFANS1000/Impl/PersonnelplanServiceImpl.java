@@ -160,6 +160,7 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
                         }
                     }
                 }
+                //                事业计划人件费单价 每个月份乘以人数 ztc fr
                 int inAnt = Integer.parseInt(resultPlan[4] != null ? resultPlan[4] : "0");
                 int[] insideResult = new int[12];
                 for (int ins = 0; ins < inside.length; ins++) {
@@ -167,6 +168,7 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
                     insideResult[ins] = inAnt;
                 }
                 int outAnt = Integer.parseInt(resultPlan[5] != null ? resultPlan[5] : "0");
+                //                事业计划人件费单价 每个月份乘以人数 ztc to
                 int[] outsideResult = new int[12];
                 for (int outs = 0; outs < outside.length; outs++) {
                     outAnt = outside[outs] + outAnt;
@@ -310,9 +312,18 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
                 p.setExrank(customerInfo.getUserinfo().getRank());
                 p.setLtrank(customerInfo.getUserinfo().getRank());
                 //暂存年度平均值
-                p.setAptoju(peoplewareFeeList.stream().filter(item->item.getRanks().equals(
-                        dictionaryRank.stream().filter(i->i.getCode().equals(customerInfo.getUserinfo().getRank())).collect(Collectors.toList())
-                                .get(0).getValue1())).collect(Collectors.toList()).get(0).getAgeprice());
+                List<Dictionary> dtemp = new ArrayList<>();
+                dtemp = dictionaryRank.stream().filter(i->i.getCode().equals(customerInfo.getUserinfo().getRank())).collect(Collectors.toList());
+                if(dtemp.size()>0)
+                {
+                    String dictionaryValue1 = dtemp.get(0).getValue1();
+                    p.setAptoju(peoplewareFeeList.stream().filter(item->item.getRanks().equals(dictionaryValue1)).collect(Collectors.toList()).get(0).getAgeprice());
+                }
+                else
+                {
+                    String dictionarynull = "日本出向者";
+                    p.setAptoju(peoplewareFeeList.stream().filter(item->item.getRanks().equals(dictionarynull)).collect(Collectors.toList()).get(0).getAgeprice());
+                }
                 personalcost.add(p);
             }
         }
