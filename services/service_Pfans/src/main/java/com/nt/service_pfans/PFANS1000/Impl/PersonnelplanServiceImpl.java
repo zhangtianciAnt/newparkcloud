@@ -312,9 +312,18 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
                 p.setExrank(customerInfo.getUserinfo().getRank());
                 p.setLtrank(customerInfo.getUserinfo().getRank());
                 //暂存年度平均值
-                p.setAptoju(peoplewareFeeList.stream().filter(item->item.getRanks().equals(
-                        dictionaryRank.stream().filter(i->i.getCode().equals(customerInfo.getUserinfo().getRank())).collect(Collectors.toList())
-                                .get(0).getValue1())).collect(Collectors.toList()).get(0).getAgeprice());
+                List<Dictionary> dtemp = new ArrayList<>();
+                dtemp = dictionaryRank.stream().filter(i->i.getCode().equals(customerInfo.getUserinfo().getRank())).collect(Collectors.toList());
+                if(dtemp.size()>0)
+                {
+                    String dictionaryValue1 = dtemp.get(0).getValue1();
+                    p.setAptoju(peoplewareFeeList.stream().filter(item->item.getRanks().equals(dictionaryValue1)).collect(Collectors.toList()).get(0).getAgeprice());
+                }
+                else
+                {
+                    String dictionarynull = "日本出向者";
+                    p.setAptoju(peoplewareFeeList.stream().filter(item->item.getRanks().equals(dictionarynull)).collect(Collectors.toList()).get(0).getAgeprice());
+                }
                 personalcost.add(p);
             }
         }
