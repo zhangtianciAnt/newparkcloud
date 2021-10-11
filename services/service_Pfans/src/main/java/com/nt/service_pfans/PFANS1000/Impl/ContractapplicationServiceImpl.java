@@ -546,6 +546,34 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
             }
         }
+
+        if (cnList != null && compoundList != null && numberList != null) {
+            OrgTree newOrgInfo = orgtreeService.get(new OrgTree());
+            List<AwardReunite> awardReunites = new ArrayList<>();
+            AwardReunite arte = new AwardReunite();
+            arte.setContractnumber(cnList.get(0).getContractnumber());
+            awardReuniteMapper.delete(arte);
+            int rowindex = 0;
+            for(Contractnumbercount count : numberList) {
+                arte.setDeliverydate(count.getDeliverydate());
+                arte.setCompletiondate(count.getCompletiondate());
+                arte.setClaimdate(count.getClaimdate());
+                arte.setSupportdate(count.getSupportdate());
+                arte.setClaimamount(count.getClaimamount());
+                List<Contractcompound> comListAnt = compoundList.stream().filter(item -> item.getClaimtype().equals(count.getClaimtype())).collect(Collectors.toList());
+                for (Contractcompound compound : comListAnt) {
+                    rowindex = rowindex + 1;
+                    arte.setRowindex(rowindex);
+                    arte.preInsert(tokenModel);
+                    arte.setAwardreunite_id(UUID.randomUUID().toString());
+                    arte.setClaimtype(compound.getClaimtype());
+                    OrgTree orginfo = orgtreeService.getOrgInfo(newOrgInfo, compound.getGroup_id());
+                    arte.setDepartment(orginfo.getCompanyname());
+                    arte.setDistriamount(compound.getContractrequestamount());
+                    awardReuniteMapper.insert(arte);
+                }
+            }
+        }
     }
 
     @Override
