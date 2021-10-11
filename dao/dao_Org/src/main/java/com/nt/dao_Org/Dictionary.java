@@ -65,6 +65,46 @@ public class Dictionary extends BaseModel {
     private String value12;
     //人件费 需要添加 1229 ztc
 
+    //事业计划 需要添加 1011 ccm
+    @Column(name = "VALUE13")
+    private String value13;
+    //事业计划 需要添加 1011 ccm
+
+    //事业计划 需要添加 1011 ccm
+    @Column(name = "VALUE14")
+    private String value14;
+    //事业计划 需要添加 1011 ccm
+
+    //事业计划 需要添加 1011 ccm
+    @Column(name = "VALUE15")
+    private String value15;
+    //事业计划 需要添加 1011 ccm
+
+    //事业计划 需要添加 1011 ccm
+    @Column(name = "VALUE16")
+    private String value16;
+    //事业计划 需要添加 1011 ccm
+
+    //事业计划 需要添加 1011 ccm
+    @Column(name = "VALUE17")
+    private String value17;
+    //事业计划 需要添加 1011 ccm
+
+    //事业计划 需要添加 1011 ccm
+    @Column(name = "VALUE18")
+    private String value18;
+    //事业计划 需要添加 1011 ccm
+
+    //事业计划 需要添加 1011 ccm
+    @Column(name = "VALUE19")
+    private String value19;
+    //事业计划 需要添加 1011 ccm
+
+    //事业计划 需要添加 1011 ccm
+    @Column(name = "VALUE20")
+    private String value20;
+    //事业计划 需要添加 1011 ccm
+
     @Column(name = "PCODE")
     private String pcode;
 
