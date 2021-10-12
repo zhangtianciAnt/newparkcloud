@@ -1050,6 +1050,10 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 personPlanTable.setPayhour("0");
                 personPlanTable.setOvertimehour("0");
                 personPlanTable.setCode(rm.getKey());
+                if(rm.getKey().equals("その他"))
+                {
+                    personPlanTable.setCode("PR021016");
+                }
                 personPlanTable.setSummerplanpc(sppcAvg.toString());
                 personPlanTables.add(personPlanTable);
             }
@@ -1101,10 +1105,17 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 if(peoplewareFeeList.size()>0)
                 {
                     peoplewareFeeList.forEach(rankResult -> {
-                        rankResultMap.put(rankBaseMap.get(rankResult.getRanks()),rankResult);
+                        if(rankBaseMap.get(rankResult.getRanks()).equals("その他"))
+                        {
+                            rankResultMap.put(rankBaseMap.get("PR021016"),rankResult);
+                        }
+                        else
+                        {
+                            rankResultMap.put(rankBaseMap.get(rankResult.getRanks()),rankResult);
+                        }
                     });
                 }
-//                事业计划人件费单价 每个月份乘以人数 ztc to
+//              事业计划人件费单价 每个月份乘以人数 ztc to
                 personnelPlan = personnelPlanList.get(0);
                 PersonPlanTable personPlan = new PersonPlanTable();
                 Field[] fields = personPlan.getClass().getDeclaredFields();
@@ -1230,6 +1241,10 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                     _personPlanTables) {
                 for (Employed employed :
                         employedList) {
+                    if(employed.getNextyear().equals("その他"))
+                    {
+                        employed.setNextyear("PR021016");
+                    }
                     if (pt.getCode().equals(employed.getNextyear())) {
                         for (int i = 1; i <= 12; i++) {
                             int count = (int) PropertyUtils.getSimpleProperty(pt, "amount" + i) + 1;
