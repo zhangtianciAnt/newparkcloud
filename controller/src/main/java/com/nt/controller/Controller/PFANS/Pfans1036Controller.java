@@ -1,17 +1,23 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Businessplan;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessplanVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.ReportBusinessVo;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,6 +27,8 @@ public class Pfans1036Controller {
     private BusinessplanService businessplanService;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @PostMapping("/importUser")
     public ApiResult importUser(HttpServletRequest request, String radio) {
@@ -116,5 +124,26 @@ public class Pfans1036Controller {
         if (templateName != null ) {
             ExcelOutPutUtil.OutPut(fileName,templateName,data,response);
         }
+    }
+
+    /**
+     * scc 事业计划PL导出
+     * */
+    @RequestMapping(value = "/export", method = {RequestMethod.POST})
+    public void export(@RequestBody List<ReportBusinessVo> businessVos, HttpServletRequest request,HttpServletResponse response) throws Exception {
+        if(businessVos == null && businessVos.size() == 0){
+//            return ApiResult.fail();
+        }
+        for (ReportBusinessVo item : businessVos) {
+            if (item.getName1() != null) {
+                Dictionary dic = new Dictionary();
+                dic.setCode(item.getName1());
+                List<Dictionary> forSelect = dictionaryService.getDictionaryList(dic);
+                if(forSelect != null && forSelect.size() > 0){
+                    item.setName1(forSelect.get(0).getValue1());
+                }
+            }
+        }
+        businessplanService.export(businessVos,request,response);
     }
 }
