@@ -3556,12 +3556,16 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     avgannual = 0d;
                 }
             String avgannual1 = String.valueOf(avgannual);
-            avgannual1 = avgannual1.substring(0,avgannual1.indexOf("."));
+            if(avgannual1.contains(".")){//小数点
+                avgannual1 = avgannual1.substring(0,avgannual1.indexOf("."));
+            }
             ra = String.valueOf(Double.valueOf(avgannual1) - finishAnnuel);
-            //endregion scc upd 离职年休计算变化 to
                 //DecimalFormat df = new DecimalFormat("######0.0");
                 //ra = df.format(df.parse(ra));
+            if(ra.contains(".")){//小数点
                 ra = ra.substring(0,ra.indexOf("."));
+            }
+            //endregion scc upd 离职年休计算变化 to
         }
         if(Double.valueOf(ra) < 0)
         {
