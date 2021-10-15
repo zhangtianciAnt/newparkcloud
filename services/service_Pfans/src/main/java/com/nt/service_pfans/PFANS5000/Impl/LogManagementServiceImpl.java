@@ -120,6 +120,7 @@ public class LogManagementServiceImpl implements LogManagementService {
             if (logmanagement.getProject_id().equals("PP024001") || logmanagement.getProject_id().isEmpty()) {
                 logmanagement.setGroup_id(expatriatesinforList.get(0).getGroup_id());
             }
+            logmanagement.setTenantid(expatriatesinforList.get(0).getSupplierinfor_id());
         }
         //ADD
         if(!logmanagement.getProject_id().equals("PP024001") && !logmanagement.getProject_id().isEmpty())
@@ -460,6 +461,13 @@ public class LogManagementServiceImpl implements LogManagementService {
         }
         logmanagement.setGroup_id(selectEcodeById(logmanagement.getGroup_id()));
         //ADD ccm 210705 更新日志组织id获取项目有效组织信息 to
+
+        Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+        expatriatesinfor.setAccount(logmanagement.getCreateby());
+        List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+        if (expatriatesinforList.size() > 0) {
+            logmanagement.setTenantid(expatriatesinforList.get(0).getSupplierinfor_id());
+        }
         logmanagementmapper.updateByPrimaryKeySelective(logmanagement);
     }
 

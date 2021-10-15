@@ -187,6 +187,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     cmy.setBpname(c.getBpname());
                     cmy.setYears(c.getYears());
                     cmy.setGroupid(c.getGroupid());
+                    cmy.setBpcompany(c.getBpcompany());
                     cmyList = coststatisticsMapper.select(cmy);
                     if(cmyList.size()>0)
                     {
@@ -212,6 +213,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     cmy.setBpname(c.getBpname());
                     cmy.setYears(c.getYears());
                     cmy.setGroupid(c.getGroupid());
+                    cmy.setBpcompany(c.getBpcompany());
                     cmyList = coststatisticsMapper.select(cmy);
                     if(cmyList.size()>0)
                     {
@@ -237,6 +239,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     cmy.setBpname(c.getBpname());
                     cmy.setYears(c.getYears());
                     cmy.setGroupid(c.getGroupid());
+                    cmy.setBpcompany(c.getBpcompany());
                     cmyList = coststatisticsMapper.select(cmy);
                     if(cmyList.size()>0)
                     {
@@ -262,6 +265,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     cmy.setBpname(c.getBpname());
                     cmy.setYears(c.getYears());
                     cmy.setGroupid(c.getGroupid());
+                    cmy.setBpcompany(c.getBpcompany());
                     cmyList = coststatisticsMapper.select(cmy);
                     if(cmyList.size()>0)
                     {
@@ -287,6 +291,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     cmy.setBpname(c.getBpname());
                     cmy.setYears(c.getYears());
                     cmy.setGroupid(c.getGroupid());
+                    cmy.setBpcompany(c.getBpcompany());
                     cmyList = coststatisticsMapper.select(cmy);
                     if(cmyList.size()>0)
                     {
@@ -312,6 +317,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     cmy.setBpname(c.getBpname());
                     cmy.setYears(c.getYears());
                     cmy.setGroupid(c.getGroupid());
+                    cmy.setBpcompany(c.getBpcompany());
                     cmyList = coststatisticsMapper.select(cmy);
                     if(cmyList.size()>0)
                     {
@@ -337,6 +343,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     cmy.setBpname(c.getBpname());
                     cmy.setYears(c.getYears());
                     cmy.setGroupid(c.getGroupid());
+                    cmy.setBpcompany(c.getBpcompany());
                     cmyList = coststatisticsMapper.select(cmy);
                     if(cmyList.size()>0)
                     {
@@ -362,6 +369,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     cmy.setBpname(c.getBpname());
                     cmy.setYears(c.getYears());
                     cmy.setGroupid(c.getGroupid());
+                    cmy.setBpcompany(c.getBpcompany());
                     cmyList = coststatisticsMapper.select(cmy);
                     if(cmyList.size()>0)
                     {
@@ -387,6 +395,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     cmy.setBpname(c.getBpname());
                     cmy.setYears(c.getYears());
                     cmy.setGroupid(c.getGroupid());
+                    cmy.setBpcompany(c.getBpcompany());
                     cmyList = coststatisticsMapper.select(cmy);
                     if(cmyList.size()>0)
                     {
@@ -412,6 +421,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     cmy.setBpname(c.getBpname());
                     cmy.setYears(c.getYears());
                     cmy.setGroupid(c.getGroupid());
+                    cmy.setBpcompany(c.getBpcompany());
                     cmyList = coststatisticsMapper.select(cmy);
                     if(cmyList.size()>0)
                     {
@@ -437,6 +447,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     cmy.setBpname(c.getBpname());
                     cmy.setYears(c.getYears());
                     cmy.setGroupid(c.getGroupid());
+                    cmy.setBpcompany(c.getBpcompany());
                     cmyList = coststatisticsMapper.select(cmy);
                     if(cmyList.size()>0)
                     {
@@ -462,6 +473,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     cmy.setBpname(c.getBpname());
                     cmy.setYears(c.getYears());
                     cmy.setGroupid(c.getGroupid());
+                    cmy.setBpcompany(c.getBpcompany());
                     cmyList = coststatisticsMapper.select(cmy);
                     if(cmyList.size()>0)
                     {
@@ -537,11 +549,11 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         //expatriatesinfor.setGroup_id(groupid);
         List<Expatriatesinfor> companyList = expatriatesinforMapper.select(expatriatesinfor);
         Map<String, String> companyMap = new HashMap<String, String>();
-        for ( Expatriatesinfor ex : companyList) {
-            String key = ex.getExpatriatesinfor_id();
-            String value = ex.getSupplierinfor_id();
-            companyMap.put(key, value);
-        }
+//        for ( Expatriatesinfor ex : companyList) {
+//            String key = ex.getExpatriatesinfor_id();
+//            String value = ex.getSupplierinfor_id();
+//            companyMap.put(key, value);
+//        }
         // 获取活用情报信息
         List<Coststatistics> allCostList = coststatisticsMapper.getCoststatisticsBygroupid(Integer.valueOf(year), groupid);
         for ( Coststatistics c : allCostList ) {
@@ -592,11 +604,11 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                     totalmanhours = 0;
                 }
             }
-            //供应商名称
-            String companyName = "";
-            if ( companyMap.containsKey(c.getBpname()) ) {
-                BeanUtils.setProperty(c, "bpcompany", companyMap.get(c.getBpname()));
-            }
+//            //供应商名称
+//            String companyName = "";
+//            if ( companyMap.containsKey(c.getBpname()) ) {
+//                BeanUtils.setProperty(c, "bpcompany", companyMap.get(c.getBpname()));
+//            }
             c.setCoststatistics_id(UUID.randomUUID().toString());
             c.setSupport3("3");
             c.setSupport6("6");
