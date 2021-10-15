@@ -194,7 +194,7 @@
 
 	<select id="getCoststatisticsBygroupid" resultType="com.nt.dao_Pfans.PFANS6000.Coststatistics">
 
-		select exp.EXPATRIATESINFOR_ID as BPNAME,exp.EXPNAME as BPNAME1,
+		select exp.EXPATRIATESINFOR_ID as BPNAME,exp.EXPNAME as BPNAME1,exp.SUPPLIERINFOR_ID as BPCOMPANY,
 			sum(CONVERT(df.`JANUARY`,DECIMAL(10,2))) as MANHOUR1, sum(CONVERT(df.FEBRUARY,DECIMAL(10,2))) as MANHOUR2,
 			sum(CONVERT(df.MARCH,DECIMAL(10,2))) as MANHOUR3, sum(CONVERT(df.APRIL,DECIMAL(10,2))) as MANHOUR4, sum(CONVERT(df.MAY,DECIMAL(10,2))) as MANHOUR5, sum(CONVERT(df.JUNE,DECIMAL(10,2))) as MANHOUR6,
 			sum(CONVERT(df.`JULY`,DECIMAL(10,2))) as MANHOUR7, sum(CONVERT(df.AUGUST,DECIMAL(10,2))) as MANHOUR8, sum(CONVERT(df.SEPTEMBER,DECIMAL(10,2))) as MANHOUR9, sum(CONVERT(df.OCTOBER,DECIMAL(10,2))) as MANHOUR10,
@@ -204,14 +204,15 @@
 		,df.GROUP_ID as groupid
 		from
 		delegainformation df
-		left join expatriatesinfor exp
+		inner join expatriatesinfor exp
 		on df.ACCOUNT = exp.ACCOUNT
+		and df.SUPPLIERINFOR_ID = exp.SUPPLIERINFOR_ID
 		where df.status = '0'
 		and df.year = #{year} and df.account is not null
 		<if test="groupid!=null and groupid !=''">
 			and df.GROUP_ID =  #{groupid}
 		</if>
-		group by exp.EXPATRIATESINFOR_ID,exp.EXPNAME,df.year,df.GROUP_ID
+		group by exp.EXPATRIATESINFOR_ID,exp.EXPNAME,df.year,df.GROUP_ID,exp.SUPPLIERINFOR_ID
 	</select>
 
 	<select id="getcostMonthList" resultType="com.nt.dao_Pfans.PFANS6000.Coststatistics">
