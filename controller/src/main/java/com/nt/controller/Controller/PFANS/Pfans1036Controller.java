@@ -131,19 +131,18 @@ public class Pfans1036Controller {
      * */
     @RequestMapping(value = "/export", method = {RequestMethod.POST})
     public void export(@RequestBody List<ReportBusinessVo> businessVos, HttpServletRequest request,HttpServletResponse response) throws Exception {
-        if(businessVos == null && businessVos.size() == 0){
-//            return ApiResult.fail();
-        }
-        for (ReportBusinessVo item : businessVos) {
-            if (item.getName1() != null) {
-                Dictionary dic = new Dictionary();
-                dic.setCode(item.getName1());
-                List<Dictionary> forSelect = dictionaryService.getDictionaryList(dic);
-                if(forSelect != null && forSelect.size() > 0){
-                    item.setName1(forSelect.get(0).getValue1());
+        if(businessVos != null && businessVos.size() != 0){
+            for (ReportBusinessVo item : businessVos) {
+                if (item.getName1() != null) {
+                    Dictionary dic = new Dictionary();
+                    dic.setCode(item.getName1());
+                    List<Dictionary> forSelect = dictionaryService.getDictionaryList(dic);
+                    if(forSelect != null && forSelect.size() > 0){
+                        item.setName1(forSelect.get(0).getValue1());
+                    }
                 }
             }
+            businessplanService.export(businessVos,request,response);
         }
-        businessplanService.export(businessVos,request,response);
     }
 }

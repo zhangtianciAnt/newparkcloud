@@ -1319,12 +1319,14 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 if(i == 52){
                     cell.setCellValue("人員（名）");  cell.setCellStyle(cellStyle1);
                 }
-                if(i == 55){
-                    cell.setCellValue("工数(人月)");  cell.setCellStyle(cellStyle1);
-                }
-                if(i == 59){
-                    cell.setCellValue("稼働率（%）"); cell.setCellStyle(cellStyle1);
-                }
+                //region scc del 10/10 导出不在包含以下两项 from
+//                if(i == 55){
+//                    cell.setCellValue("工数(人月)");  cell.setCellStyle(cellStyle1);
+//                }
+//                if(i == 59){
+//                    cell.setCellValue("稼働率（%）"); cell.setCellStyle(cellStyle1);
+//                }
+                //endregion scc del 10/10 导出不在包含以下两项 to
                 if(i == 43){
                     cell.setCellValue("営業利益"); cell.setCellStyle(cellStyle);
                 }
@@ -1376,8 +1378,10 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         sheet.addMergedRegion(new CellRangeAddress(3,8,0,0));//売上
         sheet.addMergedRegion(new CellRangeAddress(9,45,0,0));//一般管理販売費
         sheet.addMergedRegion(new CellRangeAddress(55,57,0,0));//人員（名）
-        sheet.addMergedRegion(new CellRangeAddress(58,61,0,0));//工数(人月)
-        sheet.addMergedRegion(new CellRangeAddress(62,67,0,0));//稼働率（%）
+        //region scc del 10/15 导出无此项，不在合并单元格 from
+//        sheet.addMergedRegion(new CellRangeAddress(58,61,0,0));//工数(人月)
+//        sheet.addMergedRegion(new CellRangeAddress(62,67,0,0));//稼働率（%）
+        //endregion scc del 10/15 导出无此项，不在合并单元格 to
         sheet.addMergedRegion(new CellRangeAddress(46,46,0,1));//営業利益
         sheet.addMergedRegion(new CellRangeAddress(50,50,0,1));//税引前利益
         sheet.addMergedRegion(new CellRangeAddress(51,51,0,1));//税金引当金
