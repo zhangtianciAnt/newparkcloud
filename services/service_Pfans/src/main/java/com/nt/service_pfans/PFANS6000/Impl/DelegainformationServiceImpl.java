@@ -241,6 +241,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                 Delegainformation del = new Delegainformation();
                 del.setGroup_id(delegainformation.getGroup_id());
                 del.setAccount(delegainformation.getAccount());
+                del.setSupplierinfor_id(delegainformation.getSupplierinfor_id());
                 //add ccm 1224 添加年度条件 fr
                 del.setYear(delegainformation.getYear());
 //                if(Integer.valueOf(sDate) < 4)
@@ -413,6 +414,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                                     }
                                     del.setYear(vo.getYear());
                                     del.setAccount(vo.getAccount());
+                                    del.setSupplierinfor_id(vo.getSupplierinfor_id());
                                     del.setGroup_id(vo.getGroup_id());
                                     delList.add(del);
                                 }
@@ -516,6 +518,7 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                                             }
                                             del.setYear(vo.getYear());
                                             del.setAccount(vo.getAccount());
+                                            del.setSupplierinfor_id(vo.getSupplierinfor_id());
                                             del.setGroup_id(vo.getGroup_id());
                                             delList.add(del);
                                         }
