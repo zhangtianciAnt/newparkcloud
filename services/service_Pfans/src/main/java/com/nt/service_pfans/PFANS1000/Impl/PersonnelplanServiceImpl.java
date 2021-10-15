@@ -120,7 +120,7 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
             JSONObject jsonObjectTbP = JSON.parseObject(String.valueOf(businessTablePList.get(4)));
             JSONObject jsonObjectTbP9 = JSON.parseObject(String.valueOf(businessTablePList.get(9)));//构外
             JSONObject jsonObjectTbP10 = JSON.parseObject(String.valueOf(businessTablePList.get(10)));//构内
-            if(resultPlan[2] != null){
+            if(resultPlan[2] != null){//社内
                 JSONObject resultPlanJson = JSON.parseObject(resultPlan[2]);
                 jsonObjectTbP.put("money4", Integer.valueOf(resultPlanJson.getString("amount4")));
                 jsonObjectTbP.put("money5", Integer.valueOf(resultPlanJson.getString("amount5")));
@@ -136,68 +136,100 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
                 jsonObjectTbP.put("money3", Integer.valueOf(resultPlanJson.getString("amount3")));
             }
             //外驻新人
-            if (resultPlan[6] != null) {
-                int[] inside = new int[12]; //4~12~3月  构内
-                int[] outside = new int[12]; //4~12~3月 构外
-                JSONArray resultPlan6 = JSON.parseArray(resultPlan[6]);
-                List<BusinessOutBase> businessTableP6 = JSONArray.parseObject(resultPlan6.toJSONString(), new TypeReference<List<BusinessOutBase>>() {
-                });
-                for (int t = 0; t < businessTableP6.size(); t++) {
-                    int monthAnt = 0;
-                    if (businessTableP6.get(t).getString("isoutside").equals("false")) {//构内
-                        monthAnt = Integer.parseInt(businessTableP6.get(t).getString("entermouth").substring(5, 7));
-                        if (monthAnt >= 4) {
-                            inside[monthAnt - 4] = inside[monthAnt - 4] + 1;
-                        } else {
-                            inside[monthAnt + 8] = inside[monthAnt + 8] + 1;
-                        }
-                    } else {//构外
-                        monthAnt = Integer.parseInt(businessTableP6.get(t).getString("entermouth").substring(5, 7));
-                        if (monthAnt >= 4) {
-                            outside[monthAnt - 4] = inside[monthAnt - 4] + 1;
-                        } else {
-                            outside[monthAnt + 8] = inside[monthAnt + 8] + 1;
-                        }
-                    }
-                }
-                //                事业计划人件费单价 每个月份乘以人数 ztc fr
-                int inAnt = Integer.parseInt(resultPlan[4] != null ? resultPlan[4] : "0");
-                int[] insideResult = new int[12];
-                for (int ins = 0; ins < inside.length; ins++) {
-                    inAnt = inside[ins] + inAnt;
-                    insideResult[ins] = inAnt;
-                }
-                int outAnt = Integer.parseInt(resultPlan[5] != null ? resultPlan[5] : "0");
-                //                事业计划人件费单价 每个月份乘以人数 ztc to
-                int[] outsideResult = new int[12];
-                for (int outs = 0; outs < outside.length; outs++) {
-                    outAnt = outside[outs] + outAnt;
-                    outsideResult[outs] = outAnt;
-                }
-                jsonObjectTbP10.put("money4", insideResult[0]);
-                jsonObjectTbP10.put("money5", insideResult[1]);
-                jsonObjectTbP10.put("money6", insideResult[2]);
-                jsonObjectTbP10.put("money7", insideResult[3]);
-                jsonObjectTbP10.put("money8", insideResult[4]);
-                jsonObjectTbP10.put("money9", insideResult[5]);
-                jsonObjectTbP10.put("money10", insideResult[6]);
-                jsonObjectTbP10.put("money11", insideResult[7]);
-                jsonObjectTbP10.put("money12", insideResult[8]);
-                jsonObjectTbP10.put("money1", insideResult[9]);
-                jsonObjectTbP10.put("money2", insideResult[10]);
-                jsonObjectTbP10.put("money3", insideResult[11]);
-                jsonObjectTbP9.put("money4", outsideResult[0]);
-                jsonObjectTbP9.put("money5", outsideResult[1]);
-                jsonObjectTbP9.put("money6", outsideResult[2]);
-                jsonObjectTbP9.put("money7", outsideResult[3]);
-                jsonObjectTbP9.put("money8", outsideResult[4]);
-                jsonObjectTbP9.put("money9", outsideResult[5]);
-                jsonObjectTbP9.put("money10", outsideResult[6]);
-                jsonObjectTbP9.put("money11", outsideResult[7]);
-                jsonObjectTbP9.put("money12", outsideResult[8]);
-                jsonObjectTbP9.put("money1", outsideResult[9]);
-                jsonObjectTbP9.put("money2", outsideResult[10]);
-                jsonObjectTbP9.put("money3", outsideResult[11]);
+//            if (resultPlan[6] != null) {
+//                int[] inside = new int[12]; //4~12~3月  构内
+//                int[] outside = new int[12]; //4~12~3月 构外
+//                JSONArray resultPlan6 = JSON.parseArray(resultPlan[6]);
+//                List<BusinessOutBase> businessTableP6 = JSONArray.parseObject(resultPlan6.toJSONString(), new TypeReference<List<BusinessOutBase>>() {
+//                });
+//                for (int t = 0; t < businessTableP6.size(); t++) {
+//                    int monthAnt = 0;
+//                    if (businessTableP6.get(t).getString("isoutside").equals("false")) {//构内
+//                        monthAnt = Integer.parseInt(businessTableP6.get(t).getString("entermouth").substring(5, 7));
+//                        if (monthAnt >= 4) {
+//                            inside[monthAnt - 4] = inside[monthAnt - 4] + 1;
+//                        } else {
+//                            inside[monthAnt + 8] = inside[monthAnt + 8] + 1;
+//                        }
+//                    } else {//构外
+//                        monthAnt = Integer.parseInt(businessTableP6.get(t).getString("entermouth").substring(5, 7));
+//                        if (monthAnt >= 4) {
+//                            outside[monthAnt - 4] = inside[monthAnt - 4] + 1;
+//                        } else {
+//                            outside[monthAnt + 8] = inside[monthAnt + 8] + 1;
+//                        }
+//                    }
+//                }
+//                //                事业计划人件费单价 每个月份乘以人数 ztc fr
+//                int inAnt = Integer.parseInt(resultPlan[4] != null ? resultPlan[4] : "0");
+//                int[] insideResult = new int[12];
+//                for (int ins = 0; ins < inside.length; ins++) {
+//                    inAnt = inside[ins] + inAnt;
+//                    insideResult[ins] = inAnt;
+//                }
+//                int outAnt = Integer.parseInt(resultPlan[5] != null ? resultPlan[5] : "0");
+//                //                事业计划人件费单价 每个月份乘以人数 ztc to
+//                int[] outsideResult = new int[12];
+//                for (int outs = 0; outs < outside.length; outs++) {
+//                    outAnt = outside[outs] + outAnt;
+//                    outsideResult[outs] = outAnt;
+//                }
+//                jsonObjectTbP10.put("money4", insideResult[0]);
+//                jsonObjectTbP10.put("money5", insideResult[1]);
+//                jsonObjectTbP10.put("money6", insideResult[2]);
+//                jsonObjectTbP10.put("money7", insideResult[3]);
+//                jsonObjectTbP10.put("money8", insideResult[4]);
+//                jsonObjectTbP10.put("money9", insideResult[5]);
+//                jsonObjectTbP10.put("money10", insideResult[6]);
+//                jsonObjectTbP10.put("money11", insideResult[7]);
+//                jsonObjectTbP10.put("money12", insideResult[8]);
+//                jsonObjectTbP10.put("money1", insideResult[9]);
+//                jsonObjectTbP10.put("money2", insideResult[10]);
+//                jsonObjectTbP10.put("money3", insideResult[11]);
+//                jsonObjectTbP9.put("money4", outsideResult[0]);
+//                jsonObjectTbP9.put("money5", outsideResult[1]);
+//                jsonObjectTbP9.put("money6", outsideResult[2]);
+//                jsonObjectTbP9.put("money7", outsideResult[3]);
+//                jsonObjectTbP9.put("money8", outsideResult[4]);
+//                jsonObjectTbP9.put("money9", outsideResult[5]);
+//                jsonObjectTbP9.put("money10", outsideResult[6]);
+//                jsonObjectTbP9.put("money11", outsideResult[7]);
+//                jsonObjectTbP9.put("money12", outsideResult[8]);
+//                jsonObjectTbP9.put("money1", outsideResult[9]);
+//                jsonObjectTbP9.put("money2", outsideResult[10]);
+//                jsonObjectTbP9.put("money3", outsideResult[11]);
+//            }
+            if(resultPlan[4] != null){//构内
+                JSONObject insideResult = JSON.parseObject(resultPlan[4]);
+                jsonObjectTbP10.put("money4", String.valueOf(insideResult.getString("april")));
+                jsonObjectTbP10.put("money5", String.valueOf(insideResult.getString("may")));
+                jsonObjectTbP10.put("money6", String.valueOf(insideResult.getString("june")));
+                jsonObjectTbP10.put("money7", String.valueOf(insideResult.getString("july")));
+                jsonObjectTbP10.put("money8", String.valueOf(insideResult.getString("august")));
+                jsonObjectTbP10.put("money9", String.valueOf(insideResult.getString("september")));
+                jsonObjectTbP10.put("money10", String.valueOf(insideResult.getString("october")));
+                jsonObjectTbP10.put("money11", String.valueOf(insideResult.getString("november")));
+                jsonObjectTbP10.put("money12", String.valueOf(insideResult.getString("december")));
+                jsonObjectTbP10.put("money1", String.valueOf(insideResult.getString("january")));
+                jsonObjectTbP10.put("money2", String.valueOf(insideResult.getString("february")));
+                jsonObjectTbP10.put("money3", String.valueOf(insideResult.getString("march")));
+                jsonObjectTbP10.put("moneytotal", String.valueOf(insideResult.getString("moneytotal")));
+            }
+            if(resultPlan[5] != null){//构外
+                JSONObject outsideResult = JSON.parseObject(resultPlan[5]);
+                jsonObjectTbP9.put("money4", String.valueOf(outsideResult.getString("april")));
+                jsonObjectTbP9.put("money5", String.valueOf(outsideResult.getString("may")));
+                jsonObjectTbP9.put("money6", String.valueOf(outsideResult.getString("june")));
+                jsonObjectTbP9.put("money7", String.valueOf(outsideResult.getString("july")));
+                jsonObjectTbP9.put("money8", String.valueOf(outsideResult.getString("august")));
+                jsonObjectTbP9.put("money9", String.valueOf(outsideResult.getString("september")));
+                jsonObjectTbP9.put("money10", String.valueOf(outsideResult.getString("october")));
+                jsonObjectTbP9.put("money11", String.valueOf(outsideResult.getString("november")));
+                jsonObjectTbP9.put("money12", String.valueOf(outsideResult.getString("december")));
+                jsonObjectTbP9.put("money1", String.valueOf(outsideResult.getString("january")));
+                jsonObjectTbP9.put("money2", String.valueOf(outsideResult.getString("february")));
+                jsonObjectTbP9.put("money3", String.valueOf(outsideResult.getString("march")));
+                jsonObjectTbP9.put("moneytotal", String.valueOf(outsideResult.getString("moneytotal")));
             }
 
             for (int i = 0; i < businessTablePList.size(); i++) {
@@ -229,52 +261,56 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
         }
         personnelPlan.preInsert(tokenModel);
         personnelPlan.setPersonnelplanid(UUID.randomUUID().toString());
-        List<Moneyavg> moneyavgList = JSON.parseArray(personnelPlan.getEmployed(), Moneyavg.class);
-        BigDecimal moneyavgSum = new BigDecimal("0.0");
-        int perNum = 0;
-        for(Moneyavg mavg : moneyavgList){
-            perNum ++;
-            //update gbb 20210415 事业计划-外驻计划-新建时统计值用【Unitprice】 start
-            if(!StringUtils.isNullOrEmpty(mavg.getSummerplanpc())){
-                BigDecimal summerMoney = new BigDecimal(mavg.getSummerplanpc());
-                moneyavgSum = moneyavgSum.add(summerMoney);
-            }
-            else{
-                BigDecimal unitprice = new BigDecimal(mavg.getUnitprice() == null ? "0":mavg.getUnitprice());
-                moneyavgSum = moneyavgSum.add(unitprice);
-            }
-            //update gbb 20210415 事业计划-外驻计划-新建时统计值用【Unitprice】 end
-        }
-
-        List<Moneyavg> newmoneyavgList = JSON.parseArray(personnelPlan.getNewentry(), Moneyavg.class);
-        if(newmoneyavgList!=null)
-        {
-            for(Moneyavg newmavg : newmoneyavgList){
+        if(personnelPlan.getType().equals("0")){
+            List<Moneyavg> moneyavgList = JSON.parseArray(personnelPlan.getEmployed(), Moneyavg.class);
+            BigDecimal moneyavgSum = new BigDecimal("0.0");
+            int perNum = 0;
+            for(Moneyavg mavg : moneyavgList){
                 perNum ++;
-                if(!StringUtils.isNullOrEmpty(newmavg.getSummerplanpc())){
-                    BigDecimal newsummerMoney = new BigDecimal(newmavg.getSummerplanpc());
-                    moneyavgSum = moneyavgSum.add(newsummerMoney);
+                //update gbb 20210415 事业计划-外驻计划-新建时统计值用【Unitprice】 start
+                if(!StringUtils.isNullOrEmpty(mavg.getSummerplanpc())){
+                    BigDecimal summerMoney = new BigDecimal(mavg.getSummerplanpc());
+                    moneyavgSum = moneyavgSum.add(summerMoney);
                 }
-                else
-                {
-                    BigDecimal unitprice = new BigDecimal(newmavg.getUnitprice() == null ? "0":newmavg.getUnitprice());
+                else{
+                    BigDecimal unitprice = new BigDecimal(mavg.getUnitprice() == null ? "0":mavg.getUnitprice());
                     moneyavgSum = moneyavgSum.add(unitprice);
                 }
+                //update gbb 20210415 事业计划-外驻计划-新建时统计值用【Unitprice】 end
             }
-        }
 
-        BigDecimal perNumBig = new BigDecimal(String.valueOf(perNum));
-        if(personnelPlan.getType()==0)
-        {
-            moneyavgSum = moneyavgSum.divide(perNumBig.multiply(new BigDecimal(2)),2, BigDecimal.ROUND_HALF_UP);
-        }
-        else if(personnelPlan.getType()==1)
-        {
-            moneyavgSum = moneyavgSum.divide((perNumBig),2, BigDecimal.ROUND_HALF_UP);
-        }
+            List<Moneyavg> newmoneyavgList = JSON.parseArray(personnelPlan.getNewentry(), Moneyavg.class);
+            if(newmoneyavgList!=null)
+            {
+                for(Moneyavg newmavg : newmoneyavgList){
+                    perNum ++;
+                    if(!StringUtils.isNullOrEmpty(newmavg.getSummerplanpc())){
+                        BigDecimal newsummerMoney = new BigDecimal(newmavg.getSummerplanpc());
+                        moneyavgSum = moneyavgSum.add(newsummerMoney);
+                    }
+                    else
+                    {
+                        BigDecimal unitprice = new BigDecimal(newmavg.getUnitprice() == null ? "0":newmavg.getUnitprice());
+                        moneyavgSum = moneyavgSum.add(unitprice);
+                    }
+                }
+            }
 
-        personnelPlan.setMoneyavg(moneyavgSum.toString());
-        personnelplanMapper.insert(personnelPlan);
+            BigDecimal perNumBig = new BigDecimal(String.valueOf(perNum));
+            if(personnelPlan.getType()==0)
+            {
+                moneyavgSum = moneyavgSum.divide(perNumBig.multiply(new BigDecimal(2)),2, BigDecimal.ROUND_HALF_UP);
+            }
+            else if(personnelPlan.getType()==1)
+            {
+                moneyavgSum = moneyavgSum.divide((perNumBig),2, BigDecimal.ROUND_HALF_UP);
+            }
+
+            personnelPlan.setMoneyavg(moneyavgSum.toString());
+            personnelplanMapper.insert(personnelPlan);
+        }else{
+            personnelplanMapper.insert(personnelPlan);
+        }
     }
 
     @Override

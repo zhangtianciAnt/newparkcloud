@@ -1156,40 +1156,44 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             personnelwai.setYears(year);
             personnelwai.setType(1);
             List<PersonnelPlan> personwai = personnelplanMapper.select(personnelwai);  //查找所有外注人员
-            JSONArray waizhuList = new JSONArray();
+//            JSONArray waizhuList = new JSONArray();
+//            if (personwai.size() > 0) {
+//                waizhuList = JSONArray.parseArray(personwai.get(0).getEmployed()); //已经在计划中的人
+//
+//                List<String> wainameList = new ArrayList<>();
+//                List<String> newwainameList = new ArrayList<>();
+//                String wainame = "", newwainame = "";
+//                int gounei = 0, gouwai = 0, newgounei = 0, newgouwai = 0;
+//                for (Object object : waizhuList) {       //根据人员姓名去人员表匹配,拿到已经在计划中的人名字
+//                    String name = getProperty(object, "name");
+//                    if (!com.nt.utils.StringUtils.isBase64Encode(name)) {
+//                        wainame = Base64.encode(name);
+//                    }
+//                    wainameList.add(wainame);
+//                }
+//
+//                Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+//                for (int i = 0; i < wainameList.size(); i++) {
+//                    expatriatesinfor.setExpname(wainameList.get(i));
+//                    List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+//                    if (expatriatesinforList.size() > 0) {
+//                        if (expatriatesinforList.get(0).getOperationform().equals("BP024001")) {
+//                            gounei++;
+//                        } else if (expatriatesinforList.get(0).getOperationform().equals("BP024002")) {
+//                            gouwai++;
+//                        }
+//                    }
+//                }
+//                personTable[4] = String.valueOf(gounei);
+//                personTable[5] = String.valueOf(gouwai);
+//                personTable[6] = personwai.get(0).getNewentry();
+//            } else {
+//                personTable[4] = String.valueOf(0);
+//                personTable[5] = String.valueOf(0);
+//            }
             if (personwai.size() > 0) {
-                waizhuList = JSONArray.parseArray(personwai.get(0).getEmployed()); //已经在计划中的人
-
-                List<String> wainameList = new ArrayList<>();
-                List<String> newwainameList = new ArrayList<>();
-                String wainame = "", newwainame = "";
-                int gounei = 0, gouwai = 0, newgounei = 0, newgouwai = 0;
-                for (Object object : waizhuList) {       //根据人员姓名去人员表匹配,拿到已经在计划中的人名字
-                    String name = getProperty(object, "name");
-                    if (!com.nt.utils.StringUtils.isBase64Encode(name)) {
-                        wainame = Base64.encode(name);
-                    }
-                    wainameList.add(wainame);
-                }
-
-                Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
-                for (int i = 0; i < wainameList.size(); i++) {
-                    expatriatesinfor.setExpname(wainameList.get(i));
-                    List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
-                    if (expatriatesinforList.size() > 0) {
-                        if (expatriatesinforList.get(0).getOperationform().equals("BP024001")) {
-                            gounei++;
-                        } else if (expatriatesinforList.get(0).getOperationform().equals("BP024002")) {
-                            gouwai++;
-                        }
-                    }
-                }
-                personTable[4] = String.valueOf(gounei);
-                personTable[5] = String.valueOf(gouwai);
-                personTable[6] = personwai.get(0).getNewentry();
-            } else {
-                personTable[4] = String.valueOf(0);
-                personTable[5] = String.valueOf(0);
+                personTable[4] = String.valueOf(personwai.get(0).getEmployed());//构内
+                personTable[5] = String.valueOf(personwai.get(0).getNewentry());//构外
             }
             return personTable;
         }
