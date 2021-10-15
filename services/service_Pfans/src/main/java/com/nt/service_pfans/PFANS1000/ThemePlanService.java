@@ -9,10 +9,11 @@ import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ThemePlanService {
 
-    List<PersonnelPlan> getAll(String groupid, String year) throws Exception;
+    Map<String, String[]> getAll(String groupid, String year) throws Exception;
 
     //列表
     List<ThemePlan> getList(ThemePlan themePlan) throws Exception;

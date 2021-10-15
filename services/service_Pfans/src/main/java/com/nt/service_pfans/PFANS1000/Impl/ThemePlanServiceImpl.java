@@ -2,7 +2,6 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Pfans.PFANS1000.*;
@@ -19,8 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Field;
-import java.text.SimpleDateFormat;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -249,11 +247,102 @@ public class ThemePlanServiceImpl implements ThemePlanService {
     }
 
     @Override
-    public List<PersonnelPlan> getAll(String groupid, String year) throws Exception {
+    public Map<String, String[]> getAll(String groupid, String year) throws Exception {
+        Map<String, String[]> resultMap = new HashMap<>();
         PersonnelPlan personnelplan = new PersonnelPlan();
         personnelplan.setCenterid(groupid);
         personnelplan.setYears(year);
-        return personnelplanMapper.select(personnelplan);
+        List<PersonnelPlan> getPerResultList = personnelplanMapper.select(personnelplan);
+        if(getPerResultList.size() > 0){
+            int[] inCompany = new int[12]; //本社员工  4~12~3月
+            int[] outCompany = new int[12]; //社外员工  4~12~3月
+            List<PersonnelPlan> inPersonnelPlan = getPerResultList.stream().filter(ins -> 0 == ins.getType()).collect(Collectors.toList());
+            String[] getMoneyavg = inPersonnelPlan.get(0).getMoneyavg().split(",");
+            resultMap.put("Moneyavg",getMoneyavg);
+            JSONArray inEmp = new JSONArray();
+            JSONArray inEmpNew = new JSONArray();
+            if(inPersonnelPlan.size() > 0){
+                if(inPersonnelPlan.get(0).getEmployed() != null){
+                    inEmp = JSON.parseArray(inPersonnelPlan.get(0).getEmployed());
+                    Arrays.fill(inCompany, inEmp.size());
+                }
+                if(inPersonnelPlan.get(0).getNewentry() != null){
+                    inEmpNew = JSON.parseArray(inPersonnelPlan.get(0).getNewentry());
+                    List<BusinessInNewBase> businessInNewBaseList = JSONArray.parseObject(inEmpNew.toJSONString(), new TypeReference<List<BusinessInNewBase>>() {});
+                    int[] innewCompany = new int[12]; //本社员工  4~12~3月
+                    businessInNewBaseList.forEach (newPer -> {
+                        int yearAnt = Integer.parseInt(newPer.getString("entermouth").substring(0, 4));
+                        int monthAnt = Integer.parseInt(newPer.getString("entermouth").substring(5, 7));
+                        if(String.valueOf(yearAnt).equals(getPerResultList.get(0).getYears())){
+                            if (monthAnt >= 4) {
+                            innewCompany[monthAnt - 4] = innewCompany[monthAnt - 4] + 1;
+                        } else {
+                            innewCompany[monthAnt + 8] = innewCompany[monthAnt + 8] + 1;
+                        }
+                        }else if(String.valueOf(yearAnt - 1).equals(getPerResultList.get(0).getYears())){
+                            innewCompany[monthAnt - 4] = innewCompany[monthAnt - 4] + 1;
+                        }
+                    });
+                    int inAnt = 0;
+                    int[] insideResult = new int[12];
+                    for (int ins = 0; ins < innewCompany.length; ins++) {
+                        inAnt = innewCompany[ins] + inAnt;
+                        insideResult[ins] = inAnt;
+                    }
+                    for(int i = 0; i < inCompany.length; i++){
+                        inCompany[i] = inCompany[i] + insideResult[i];
+                    }
+                }
+                resultMap.put("inCompany",intArrToStringArr(inCompany));
+            }
+            JSONArray outEmp = new JSONArray();
+            JSONArray outEmpNew = new JSONArray();
+            List<PersonnelPlan> outPersonnelPlan = getPerResultList.stream().filter(ins -> 1 == ins.getType()).collect(Collectors.toList());
+            if(outPersonnelPlan.size() > 0){
+                if(outPersonnelPlan.get(0).getEmployed() != null){
+                    outEmp = JSON.parseArray("[" + outPersonnelPlan.get(0).getEmployed() + "]");
+                    List<BusinessOutBase> businessOutBase = JSONArray.parseObject(outEmp.toJSONString(), new TypeReference<List<BusinessOutBase>>() {});
+                    outCompany[0] = Integer.parseInt(businessOutBase.get(0).getString("april"));
+                    outCompany[1] = Integer.parseInt(businessOutBase.get(0).getString("may"));
+                    outCompany[2] = Integer.parseInt(businessOutBase.get(0).getString("june"));
+                    outCompany[3] = Integer.parseInt(businessOutBase.get(0).getString("july"));
+                    outCompany[4] = Integer.parseInt(businessOutBase.get(0).getString("august"));
+                    outCompany[5] = Integer.parseInt(businessOutBase.get(0).getString("september"));
+                    outCompany[6] = Integer.parseInt(businessOutBase.get(0).getString("october"));
+                    outCompany[7] = Integer.parseInt(businessOutBase.get(0).getString("november"));
+                    outCompany[8] = Integer.parseInt(businessOutBase.get(0).getString("december"));
+                    outCompany[9] = Integer.parseInt(businessOutBase.get(0).getString("january"));
+                    outCompany[10] = Integer.parseInt(businessOutBase.get(0).getString("february"));
+                    outCompany[11] = Integer.parseInt(businessOutBase.get(0).getString("march"));
+                }
+                if(outPersonnelPlan.get(0).getNewentry() != null){
+                    outEmpNew = JSON.parseArray("[" + outPersonnelPlan.get(0).getNewentry() + "]");
+                    List<BusinessOutBase> businessOutNewBase = JSONArray.parseObject(outEmpNew.toJSONString(), new TypeReference<List<BusinessOutBase>>() {});
+                    outCompany[0] += Integer.parseInt(businessOutNewBase.get(0).getString("april"));
+                    outCompany[1] += Integer.parseInt(businessOutNewBase.get(0).getString("may"));
+                    outCompany[2] += Integer.parseInt(businessOutNewBase.get(0).getString("june"));
+                    outCompany[3] += Integer.parseInt(businessOutNewBase.get(0).getString("july"));
+                    outCompany[4] += Integer.parseInt(businessOutNewBase.get(0).getString("august"));
+                    outCompany[5] += Integer.parseInt(businessOutNewBase.get(0).getString("september"));
+                    outCompany[6] += Integer.parseInt(businessOutNewBase.get(0).getString("october"));
+                    outCompany[7] += Integer.parseInt(businessOutNewBase.get(0).getString("november"));
+                    outCompany[8] += Integer.parseInt(businessOutNewBase.get(0).getString("december"));
+                    outCompany[9] += Integer.parseInt(businessOutNewBase.get(0).getString("january"));
+                    outCompany[10] += Integer.parseInt(businessOutNewBase.get(0).getString("february"));
+                    outCompany[11] += Integer.parseInt(businessOutNewBase.get(0).getString("march"));
+                }
+                resultMap.put("outCompany",intArrToStringArr(outCompany));
+            }
+        }
+        return resultMap;
+    }
+
+    public static String[] intArrToStringArr(int[] intArr) {
+        String[] strArr = new String[intArr.length];
+        for (int i = 0; i < intArr.length; i++) {
+            strArr[i] = intArr[i] + "";
+        }
+        return strArr;
     }
 
     @Override

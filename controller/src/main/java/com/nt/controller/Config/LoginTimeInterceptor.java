@@ -68,7 +68,7 @@ public class LoginTimeInterceptor extends HandlerInterceptorAdapter {
         if (!StrUtil.isEmpty(url)) {
             List<String> ownerList = getOwnerList(url, tokenModel);
 
-            if(ownerList.size() > 0 && "XXXXX".equals(ownerList.get(0)) && !"/usersFormViewByPerson".equals(url)){
+            if(ownerList.size() > 0 && "XXXXX".equals(ownerList.get(0)) && !"/usersFormViewByPerson".equals(url) && !"/PFANS1038OutFormView".equals(url)){
 
                 if(url.contains("FormView") || url.contains("ToRoleView") || url.contains("Point")|| url.contains("Export")|| url.contains("FormEdit")){
                     String Burl = url.replace("Form","").replace("ToRole","").replace("Point","").replace("Export","")
