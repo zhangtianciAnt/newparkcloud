@@ -64,4 +64,10 @@ public class PunchcardRecordbp extends BaseModel {
     @Column(name = "OUTGOINGHOURS")
     private String outgoinghours;
 
+    /**
+     * 有效时长
+     */
+    @Column(name = "VALIDOUTTIME")
+    private String validouttime;
+
 }

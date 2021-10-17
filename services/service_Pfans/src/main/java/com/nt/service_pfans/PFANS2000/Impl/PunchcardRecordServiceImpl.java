@@ -1760,8 +1760,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                                 //计算的出勤时间，只有下午
                                                                 resultworkHours = Double.valueOf(timeLength(time_start, workshiftTemporary_end, lunchbreak_start, lunchbreak_end));
                                                                 long kebuHoursLong = sdf.parse(time_end_temp).getTime() - sdf.parse(workshiftTemporary_end).getTime();
-                                                                weibuHours = Double.valueOf(String.valueOf(kebuHoursLong)) / 60 / 60 / 1000 - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()) >=0
-                                                                        ? 0 : Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()) - Double.valueOf(String.valueOf(kebuHoursLong)) / 60 / 60 / 1000;
+                                                                //计算18点到19点间真正的有效可用时间  打卡记录那边18点到19点之间的外出时长
+                                                                Double validtime = Double.valueOf(String.valueOf(kebuHoursLong)) / 60 / 60 / 1000 - Double.valueOf(PR.getValidouttime() == null ? "0" : PR.getValidouttime()) > 0
+                                                                        ? Double.valueOf(String.valueOf(kebuHoursLong)) / 60 / 60 / 1000 - Double.valueOf(PR.getValidouttime() == null ? "0" : PR.getValidouttime()) : 0;
+
+                                                                weibuHours = validtime - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()) >=0
+                                                                        ? 0 : Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()) - validtime;
                                                             }
                                                             //正常出勤显示的时间
                                                             String nomalHours = df.format(resultworkHours + Double.valueOf(nomal) - Double.valueOf(weibuHours));
@@ -1786,8 +1790,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                             {
                                                                 //打卡下班时间 >= 下午18点
                                                                 result2 = sdf.parse(time_actal_end).getTime() - sdf.parse(workshiftTemporary_end).getTime();
-                                                                leaveearlyHours = df.format(Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 - Double.valueOf(PR.getWorktime() == null
-                                                                        ? "0" : PR.getWorktime()) >= 0 ? 0 : Math.abs(Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime())));
+                                                                //计算18点到19点间真正的有效可用时间  打卡记录那边18点到19点之间的外出时长
+                                                                Double validtime = Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 - Double.valueOf(PR.getValidouttime() == null ? "0" : PR.getValidouttime()) > 0
+                                                                        ? Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 - Double.valueOf(PR.getValidouttime() == null ? "0" : PR.getValidouttime()) : 0;
+
+                                                                leaveearlyHours = String.valueOf(validtime - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()) >= 0 ? 0 : Math.abs(validtime - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime())));
                                                             }
                                                             else
                                                             {
@@ -1809,16 +1816,17 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     {
                                                         //除去申请以外的出勤时间
                                                         String shuyutime = df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime));
-
-                                                        if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) >= Double.valueOf(shuyutime)) {
+                                                        // 把18点到19点间的外出时间也减去
+                                                        if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) - Double.valueOf(PR.getValidouttime()) >= Double.valueOf(shuyutime)) {
                                                             ad.setNormal(df.format(Math.floor(Double.valueOf(shuyutime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
                                                             ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getNormal()) - Double.valueOf(leavetime)));
                                                         }
                                                         else {
-                                                            if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) > 0) {
+                                                            // 把18点到19点间的外出时间也减去
+                                                            if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) - Double.valueOf(PR.getValidouttime()) > 0) {
                                                                 //欠勤 = 8-（实际出勤(出勤 +申请因公外出异常 - 外出时间 + 申请的其他休假)）
                                                                 ad.setAbsenteeism(df.format(Double.valueOf(workinghours) -
-                                                                        (Double.valueOf(resultwork) + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) + Double.valueOf(leavetime))));
+                                                                        (Double.valueOf(resultwork) + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) - Double.valueOf(PR.getValidouttime()) + Double.valueOf(leavetime))));
                                                                 if (!(Double.valueOf(ad.getAbsenteeism()) % (Double.valueOf(lateearlyleave)) == 0)) {
                                                                     ad.setAbsenteeism(df.format(Math.floor(Double.valueOf(ad.getAbsenteeism()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
 
@@ -3683,8 +3691,12 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                                 //计算的出勤时间，只有下午
                                                                 resultworkHours = Double.valueOf(timeLength(time_start, workshiftTemporary_end, lunchbreak_start, lunchbreak_end));
                                                                 long kebuHoursLong = sdf.parse(time_end_temp).getTime() - sdf.parse(workshiftTemporary_end).getTime();
-                                                                weibuHours = Double.valueOf(String.valueOf(kebuHoursLong)) / 60 / 60 / 1000 - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()) >=0
-                                                                        ? 0 : Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()) - Double.valueOf(String.valueOf(kebuHoursLong)) / 60 / 60 / 1000;
+                                                                //计算18点到19点间真正的有效可用时间  打卡记录那边18点到19点之间的外出时长
+                                                                Double validtime = Double.valueOf(String.valueOf(kebuHoursLong)) / 60 / 60 / 1000 - Double.valueOf(PR.getValidouttime() == null ? "0" : PR.getValidouttime()) > 0
+                                                                        ? Double.valueOf(String.valueOf(kebuHoursLong)) / 60 / 60 / 1000 - Double.valueOf(PR.getValidouttime() == null ? "0" : PR.getValidouttime()) : 0;
+
+                                                                weibuHours = validtime - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()) >=0
+                                                                        ? 0 : Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()) - validtime;
                                                             }
                                                             //正常出勤显示的时间
                                                             String nomalHours = df.format(resultworkHours + Double.valueOf(nomal) - Double.valueOf(weibuHours));
@@ -3709,8 +3721,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                             {
                                                                 //打卡下班时间 >= 下午18点
                                                                 result2 = sdf.parse(time_actal_end).getTime() - sdf.parse(workshiftTemporary_end).getTime();
-                                                                leaveearlyHours = df.format(Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 - Double.valueOf(PR.getWorktime() == null
-                                                                        ? "0" : PR.getWorktime()) >= 0 ? 0 : Math.abs(Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime())));
+                                                                //计算18点到19点间真正的有效可用时间  打卡记录那边18点到19点之间的外出时长
+                                                                Double validtime = Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 - Double.valueOf(PR.getValidouttime() == null ? "0" : PR.getValidouttime()) > 0
+                                                                        ? Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 - Double.valueOf(PR.getValidouttime() == null ? "0" : PR.getValidouttime()) : 0;
+
+                                                                leaveearlyHours = String.valueOf(validtime - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime()) >= 0 ? 0 : Math.abs(validtime - Double.valueOf(PR.getWorktime() == null ? "0" : PR.getWorktime())));
                                                             }
                                                             else
                                                             {
@@ -3733,15 +3748,17 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                         //除去申请以外的出勤时间
                                                         String shuyutime = df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime));
 
-                                                        if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) >= Double.valueOf(shuyutime)) {
+                                                        // 把18点到19点间的外出时间也减去
+                                                        if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) - Double.valueOf(PR.getValidouttime()) >= Double.valueOf(shuyutime)) {
                                                             ad.setNormal(df.format(Math.floor(Double.valueOf(shuyutime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
                                                             ad.setAbsenteeism(df.format(Double.valueOf(workinghours) - Double.valueOf(ad.getNormal()) - Double.valueOf(leavetime)));
                                                         }
                                                         else {
-                                                            if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) > 0) {
+                                                            // 把18点到19点间的外出时间也减去
+                                                            if (resultwork + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) - Double.valueOf(PR.getValidouttime()) > 0) {
                                                                 //欠勤 = 8-（实际出勤(出勤 +申请因公外出异常 - 外出时间 + 申请的其他休假)）
                                                                 ad.setAbsenteeism(df.format(Double.valueOf(workinghours) -
-                                                                        (Double.valueOf(resultwork) + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) + Double.valueOf(leavetime))));
+                                                                        (Double.valueOf(resultwork) + Double.valueOf(nomal) - Double.valueOf(PR.getWorktime()) - Double.valueOf(PR.getValidouttime()) + Double.valueOf(leavetime))));
                                                                 if (!(Double.valueOf(ad.getAbsenteeism()) % (Double.valueOf(lateearlyleave)) == 0)) {
                                                                     ad.setAbsenteeism(df.format(Math.floor(Double.valueOf(ad.getAbsenteeism()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
 
@@ -4393,7 +4410,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             overtimeHours[1] = lunchbreak_end;
             overtimeHours[2] = "2";
         } else if (sdf.parse(time_start).getTime() >= sdf.parse(lunchbreak_start).getTime() && sdf.parse(time_end).getTime() >= sdf.parse(lunchbreak_end).getTime()) {
-            //午休包括在内一部分（打卡结束时间在午休内）
+            //午休包括在内一部分（打卡开始时间在午休内）
             //打卡开始-午休开始时间
             overtimeHours[0] = lunchbreak_start;
             overtimeHours[1] = time_end;

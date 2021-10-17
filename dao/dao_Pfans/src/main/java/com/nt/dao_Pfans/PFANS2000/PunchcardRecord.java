@@ -72,4 +72,10 @@ public class PunchcardRecord extends BaseModel {
     private String effectiveduration;
     //add-ws-No.57-追加导出文件内容：有效时长
 
+    /**
+     * 有效时长
+     */
+    @Column(name = "VALIDOUTTIME")
+    private String validouttime;
+
 }
