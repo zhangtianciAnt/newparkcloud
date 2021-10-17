@@ -35,6 +35,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -457,13 +458,15 @@ public class AssetsServiceImpl implements AssetsService {
                         //endregion scc add 9/7 启用日期必填 from
                     }
                     //region scc add 9/7 原值必填 from
+//                    导入资产bug ztc fr
                     if(!StringUtils.isEmpty(value.get(13))) {
-                        int originalCost = Integer.parseInt(value.get(13).toString());
-                        if(originalCost < 0){
+                        //int originalCost = Integer.parseInt(value.get(13).toString());
+                        if(new BigDecimal(value.get(13).toString()).compareTo(BigDecimal.ZERO) == -1){
                             error++;
                             Result.add("模板第" + lineNo + "行的原值不能为负数，导入失败");
                             continue;
                         }
+//                        导入资产bug ztc to
                     }else{
                         error++;
                         Result.add("模板第" + lineNo + "行的原值不能为空，导入失败");

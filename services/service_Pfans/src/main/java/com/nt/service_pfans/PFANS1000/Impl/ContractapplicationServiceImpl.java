@@ -528,6 +528,24 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 }
             }
         }
+//        解决纳品回数删除功能bug ztc fr
+        List<Contractnumbercount> contractnumberList = contractapplication.getContractnumbercount();
+        if (cnList != null) {
+            int rowindex = 0;
+            if (contractnumberList != null) {
+                Contractnumbercount Cn = new Contractnumbercount();
+                Cn.setContractnumber(cnList.get(cnList.size() - 1).getContractnumber());
+                contractnumbercountMapper.delete(Cn);
+                for (Contractnumbercount cnumb : contractnumberList) {
+                    rowindex = rowindex + 1;
+                    cnumb.setRowindex(rowindex);
+                    cnumb.preInsert(tokenModel);
+                    cnumb.setContractnumber(cnList.get(cnList.size() - 1).getContractnumber());
+                    cnumb.setContractnumbercount_id(UUID.randomUUID().toString());
+                    contractnumbercountMapper.insert(cnumb);
+                }
+            }
+        }
         //复合合同金额分配
         List<Contractcompound> compoundList = contractapplication.getContractcompound();
         if (cnList != null) {

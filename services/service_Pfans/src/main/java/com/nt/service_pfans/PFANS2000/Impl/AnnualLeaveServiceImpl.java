@@ -3525,7 +3525,8 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
             }
         }
         endDate = sfymd.format(end.getTime());
-        workDayYearT = workDayYears(startDate,endDate,year,userid);
+//        workDayYearT = workDayYears(startDate,endDate,year,userid);
+        workDayYearT = this.naturalDay(startDate,endDate);
 
         //当前年度已经审批通过的年休
         Double finishAnnuel = 0d;
@@ -3545,16 +3546,26 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         if(annualLeaveList.size() > 0)
         {
              // 平均每天的年休数
-                Double avgannual = 0d;
-                avgannual = annualLeaveList.get(0).getAnnual_leave_thisyear().doubleValue() / Double.valueOf(workDayYear) * Double.valueOf(workDayYearT);
-                if(avgannual==null)
+            Double avgannual = 0d;
+//          avgannual = annualLeaveList.get(0).getAnnual_leave_thisyear().doubleValue() / Double.valueOf(workDayYear) * Double.valueOf(workDayYearT);
+            //region scc upd 离职年休计算变化 from
+            //离职年休计算 = 当年度在本单位工作日历天数(自然日)/365天 * 当前年度法定年休天数
+            avgannual = Double.valueOf(workDayYearT) / Double.valueOf(365) * annualLeaveList.get(0).getAnnual_leave_thisyear().doubleValue();
+            if(avgannual==null)
                 {
                     avgannual = 0d;
                 }
-                ra = String.valueOf(avgannual - finishAnnuel);
+            String avgannual1 = String.valueOf(avgannual);
+            if(avgannual1.contains(".")){//小数点
+                avgannual1 = avgannual1.substring(0,avgannual1.indexOf("."));
+            }
+            ra = String.valueOf(Double.valueOf(avgannual1) - finishAnnuel);
                 //DecimalFormat df = new DecimalFormat("######0.0");
                 //ra = df.format(df.parse(ra));
+            if(ra.contains(".")){//小数点
                 ra = ra.substring(0,ra.indexOf("."));
+            }
+            //endregion scc upd 离职年休计算变化 to
         }
         if(Double.valueOf(ra) < 0)
         {
@@ -3562,6 +3573,30 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         }
         return ra;
     }
+
+    //region scc add 10/13 根据日期获取自然日 from
+    private String naturalDay(String startDate,String endDate) throws Exception{
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date start = sdf.parse(startDate);
+        Date end = sdf.parse(endDate);
+
+        // 将时间转换成时间戳
+        Long startTimestamp = sdf.parse(startDate).getTime();
+        Long endTimestamp = sdf.parse(endDate).getTime();
+
+        Set timeSet = new TreeSet();
+        //定义一个一天的时间戳时长
+        Long oneDay = 1000 * 60 * 60 * 24L;
+        Long time = startTimestamp;
+        //循环得出
+        while (time <= endTimestamp) {
+            timeSet.add(new SimpleDateFormat("yyyy-MM-dd").format(new Date(time)));
+            time += oneDay;
+        }
+        return String.valueOf(timeSet.size());
+    }
+    //endregion scc add 10/13 根据日期获取自然日 to
+
     //当前年度工作天数
     public String workDayYears(String startDate,String endDate,String year,String userid) throws Exception {
         String workDayYear = "0";

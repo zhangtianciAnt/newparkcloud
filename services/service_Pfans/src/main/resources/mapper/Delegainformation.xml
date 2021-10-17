@@ -8,6 +8,7 @@
             #{year} as year,
             log.group_id,
             ex.account,
+            ex.SUPPLIERINFOR_ID,
             ex.suppliername,
             expname,
             op.value1 as operationform,
@@ -93,25 +94,28 @@
                  when round(march/8/ #{march} ,4) >= 1.6 then 1.3
                  else round(march/8/ #{march} ,2) end march
             from
-            (select logmanagement.createby,group_id,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'04') THEN TIME_START ELSE 0 END) AS april,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'05') THEN TIME_START ELSE 0 END) AS may,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'06') THEN TIME_START ELSE 0 END) AS june,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'07') THEN TIME_START ELSE 0 END) AS july,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'08') THEN TIME_START ELSE 0 END) AS august,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'09') THEN TIME_START ELSE 0 END) AS september,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'10') THEN TIME_START ELSE 0 END) AS october,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'11') THEN TIME_START ELSE 0 END) AS november,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'12') THEN TIME_START ELSE 0 END) AS december,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year} + 1,'01') THEN TIME_START ELSE 0 END) AS january,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year} + 1,'02') THEN TIME_START ELSE 0 END) AS february,
-            SUM(CASE DATE_FORMAT(LOG_DATE, '%Y%m') WHEN CONCAT(#{year} + 1,'03') THEN TIME_START ELSE 0 END) AS march
-            from logmanagement
-            where (DATE_FORMAT(LOG_DATE, '%Y') = #{year} OR DATE_FORMAT(LOG_DATE, '%Y') = #{year} + 1)
+            (select l.createby,l.group_id,e.SUPPLIERINFOR_ID,
+            SUM(CASE DATE_FORMAT(l.LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'04') THEN TIME_START ELSE 0 END) AS april,
+            SUM(CASE DATE_FORMAT(l.LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'05') THEN TIME_START ELSE 0 END) AS may,
+            SUM(CASE DATE_FORMAT(l.LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'06') THEN TIME_START ELSE 0 END) AS june,
+            SUM(CASE DATE_FORMAT(l.LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'07') THEN TIME_START ELSE 0 END) AS july,
+            SUM(CASE DATE_FORMAT(l.LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'08') THEN TIME_START ELSE 0 END) AS august,
+            SUM(CASE DATE_FORMAT(l.LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'09') THEN TIME_START ELSE 0 END) AS september,
+            SUM(CASE DATE_FORMAT(l.LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'10') THEN TIME_START ELSE 0 END) AS october,
+            SUM(CASE DATE_FORMAT(l.LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'11') THEN TIME_START ELSE 0 END) AS november,
+            SUM(CASE DATE_FORMAT(l.LOG_DATE, '%Y%m') WHEN CONCAT(#{year},'12') THEN TIME_START ELSE 0 END) AS december,
+            SUM(CASE DATE_FORMAT(l.LOG_DATE, '%Y%m') WHEN CONCAT(#{year} + 1,'01') THEN TIME_START ELSE 0 END) AS january,
+            SUM(CASE DATE_FORMAT(l.LOG_DATE, '%Y%m') WHEN CONCAT(#{year} + 1,'02') THEN TIME_START ELSE 0 END) AS february,
+            SUM(CASE DATE_FORMAT(l.LOG_DATE, '%Y%m') WHEN CONCAT(#{year} + 1,'03') THEN TIME_START ELSE 0 END) AS march
+            from logmanagement l
+            INNER JOIN expatriatesinfor e
+            ON l.CREATEBY = e.ACCOUNT
+            AND l.TENANTID = e.SUPPLIERINFOR_ID
+            where (DATE_FORMAT(l.LOG_DATE, '%Y') = #{year} OR DATE_FORMAT(l.LOG_DATE, '%Y') = #{year} + 1)
             <if test="group_id != null and group_id != ''" >
-                and group_id = #{group_id}
+                and l.group_id = #{group_id}
             </if>
-            group by createby,group_id) ment
+            group by l.createby,l.group_id,e.SUPPLIERINFOR_ID) ment
             ) log
         left join expatriatesinfor ex
         on ex.account = log.createby
@@ -119,6 +123,7 @@
         on ex.account = de.account
         and de.group_id = log.group_id
         and de.year = #{year}
+        and de.SUPPLIERINFOR_ID = ex.SUPPLIERINFOR_ID
         left join dictionary jo
         on jo.code = ex.jobclassification
         left join dictionary op
@@ -145,6 +150,7 @@
         #{year} as year,
         ex.group_id,
         ex.account,
+        ex.SUPPLIERINFOR_ID,
         ex.suppliername,
         ex.expname,
         op.value1 as operationform,
@@ -173,6 +179,7 @@
         on ex.account = de.account
         and de.group_id = ex.group_id
         and de.year = #{year}
+        and de.SUPPLIERINFOR_ID = ex.SUPPLIERINFOR_ID
         left join dictionary jo
         on jo.code = ex.jobclassification
         left join dictionary op

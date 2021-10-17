@@ -27,6 +27,12 @@ import com.nt.utils.LogicalException;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -42,6 +48,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -1156,40 +1163,44 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             personnelwai.setYears(year);
             personnelwai.setType(1);
             List<PersonnelPlan> personwai = personnelplanMapper.select(personnelwai);  //查找所有外注人员
-            JSONArray waizhuList = new JSONArray();
+//            JSONArray waizhuList = new JSONArray();
+//            if (personwai.size() > 0) {
+//                waizhuList = JSONArray.parseArray(personwai.get(0).getEmployed()); //已经在计划中的人
+//
+//                List<String> wainameList = new ArrayList<>();
+//                List<String> newwainameList = new ArrayList<>();
+//                String wainame = "", newwainame = "";
+//                int gounei = 0, gouwai = 0, newgounei = 0, newgouwai = 0;
+//                for (Object object : waizhuList) {       //根据人员姓名去人员表匹配,拿到已经在计划中的人名字
+//                    String name = getProperty(object, "name");
+//                    if (!com.nt.utils.StringUtils.isBase64Encode(name)) {
+//                        wainame = Base64.encode(name);
+//                    }
+//                    wainameList.add(wainame);
+//                }
+//
+//                Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+//                for (int i = 0; i < wainameList.size(); i++) {
+//                    expatriatesinfor.setExpname(wainameList.get(i));
+//                    List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
+//                    if (expatriatesinforList.size() > 0) {
+//                        if (expatriatesinforList.get(0).getOperationform().equals("BP024001")) {
+//                            gounei++;
+//                        } else if (expatriatesinforList.get(0).getOperationform().equals("BP024002")) {
+//                            gouwai++;
+//                        }
+//                    }
+//                }
+//                personTable[4] = String.valueOf(gounei);
+//                personTable[5] = String.valueOf(gouwai);
+//                personTable[6] = personwai.get(0).getNewentry();
+//            } else {
+//                personTable[4] = String.valueOf(0);
+//                personTable[5] = String.valueOf(0);
+//            }
             if (personwai.size() > 0) {
-                waizhuList = JSONArray.parseArray(personwai.get(0).getEmployed()); //已经在计划中的人
-
-                List<String> wainameList = new ArrayList<>();
-                List<String> newwainameList = new ArrayList<>();
-                String wainame = "", newwainame = "";
-                int gounei = 0, gouwai = 0, newgounei = 0, newgouwai = 0;
-                for (Object object : waizhuList) {       //根据人员姓名去人员表匹配,拿到已经在计划中的人名字
-                    String name = getProperty(object, "name");
-                    if (!com.nt.utils.StringUtils.isBase64Encode(name)) {
-                        wainame = Base64.encode(name);
-                    }
-                    wainameList.add(wainame);
-                }
-
-                Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
-                for (int i = 0; i < wainameList.size(); i++) {
-                    expatriatesinfor.setExpname(wainameList.get(i));
-                    List<Expatriatesinfor> expatriatesinforList = expatriatesinforMapper.select(expatriatesinfor);
-                    if (expatriatesinforList.size() > 0) {
-                        if (expatriatesinforList.get(0).getOperationform().equals("BP024001")) {
-                            gounei++;
-                        } else if (expatriatesinforList.get(0).getOperationform().equals("BP024002")) {
-                            gouwai++;
-                        }
-                    }
-                }
-                personTable[4] = String.valueOf(gounei);
-                personTable[5] = String.valueOf(gouwai);
-                personTable[6] = personwai.get(0).getNewentry();
-            } else {
-                personTable[4] = String.valueOf(0);
-                personTable[5] = String.valueOf(0);
+                personTable[4] = String.valueOf(personwai.get(0).getEmployed());//构内
+                personTable[5] = String.valueOf(personwai.get(0).getNewentry());//构外
             }
             return personTable;
         }
@@ -1231,6 +1242,165 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             return false;
     }
     //endregion scc add 9/28 根据审批状态，人员计划，受托theme,委托theme编辑按钮状态 to
+
+    //region scc add 事业计划PL导出 from
+    @Override
+    public void export(List<ReportBusinessVo> reportBusinessVos, HttpServletRequest request, HttpServletResponse resp) throws Exception {
+        XSSFWorkbook businessPlan = new XSSFWorkbook();//内存中创建Excle
+        XSSFCellStyle cellStyle = businessPlan.createCellStyle();
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);//水平居中
+        XSSFCellStyle cellStyle1 = businessPlan.createCellStyle();
+        cellStyle1.setVerticalAlignment(VerticalAlignment.CENTER);//垂直居中
+        XSSFSheet sheet = businessPlan.createSheet("PL");
+        // region 表头
+        for(int i = 0; i < 3 ; i++){
+            XSSFRow row = sheet.createRow(i);//创建行
+            for(int j = 0; j < 26; j++){
+                XSSFCell cell = row.createCell(j);//创建列
+                if(j == 0){
+                    sheet.setColumnWidth(j,3500);//第一列宽
+                }
+                if(j == 1){
+                    sheet.setColumnWidth(j,6000);//第二列宽
+                }
+                if(i == 0){
+                    switch (j) {//表头第一行
+                        case 0 : cell.setCellValue(""); cell.setCellStyle(cellStyle); break;
+                        case 1 : cell.setCellValue("内容"); cell.setCellStyle(cellStyle); cell.setCellStyle(cellStyle1);  break;
+                        case 2 : cell.setCellValue("上期"); cell.setCellStyle(cellStyle); break;
+                        case 14 : cell.setCellValue("下期"); cell.setCellStyle(cellStyle); break;
+                    }
+                }
+                if(i == 1){
+                    switch (j) {//表头月份行
+                        case 2 : cell.setCellValue("4月"); cell.setCellStyle(cellStyle); break;
+                        case 4 : cell.setCellValue("5月"); cell.setCellStyle(cellStyle); break;
+                        case 6 : cell.setCellValue("6月"); cell.setCellStyle(cellStyle); break;
+                        case 8 : cell.setCellValue("7月"); cell.setCellStyle(cellStyle); break;
+                        case 10 : cell.setCellValue("8月"); cell.setCellStyle(cellStyle); break;
+                        case 12 : cell.setCellValue("9月"); cell.setCellStyle(cellStyle); break;
+                        case 14 : cell.setCellValue("10月"); cell.setCellStyle(cellStyle); break;
+                        case 16 : cell.setCellValue("11月"); cell.setCellStyle(cellStyle); break;
+                        case 18 : cell.setCellValue("12月"); cell.setCellStyle(cellStyle); break;
+                        case 20 : cell.setCellValue("1月"); cell.setCellStyle(cellStyle); break;
+                        case 22 : cell.setCellValue("2月"); cell.setCellStyle(cellStyle); break;
+                        case 24 : cell.setCellValue("3月"); cell.setCellStyle(cellStyle); break;
+                    }
+                }
+                if(i == 2){//表头計画，实际行
+                    int count = j + 2;
+                    if(count%2 == 0){
+                        cell.setCellValue("計画"); cell.setCellStyle(cellStyle);
+                    }else{
+                        cell.setCellValue("实际"); cell.setCellStyle(cellStyle);
+                    }
+                }
+            }
+            if(i == 0){//表头 上，下期列合并
+                sheet.addMergedRegion(new CellRangeAddress(0,0,2,13));
+                sheet.addMergedRegion(new CellRangeAddress(0,0,14,25));
+            }
+            if(i == 1){//表头月份列合并
+                for(int k = 2; k < 26; k+=2){
+                    sheet.addMergedRegion(new CellRangeAddress(1,1,k,k+1));
+                }
+            }
+        }
+        sheet.addMergedRegion(new CellRangeAddress(0,2,0,0));//表头空白行合并
+        sheet.addMergedRegion(new CellRangeAddress(0,2,1,1));//表头内容行合并
+        // endregion 表头
+        //表头占三行，row从第四行开始
+        for(int i = 0; i < reportBusinessVos.size(); i++){
+            XSSFRow row = sheet.createRow(i + 3);//创建行
+            for(int j = 0; j < 26; j++){
+                XSSFCell cell = row.createCell(j);//创建列
+                if(i == 0){
+                    cell.setCellValue("売上");  cell.setCellStyle(cellStyle1);
+                }
+                if(i == 6){
+                    cell.setCellValue("一般管理販売費");  cell.setCellStyle(cellStyle1);
+                }
+                if(i == 52){
+                    cell.setCellValue("人員（名）");  cell.setCellStyle(cellStyle1);
+                }
+                //region scc del 10/10 导出不在包含以下两项 from
+//                if(i == 55){
+//                    cell.setCellValue("工数(人月)");  cell.setCellStyle(cellStyle1);
+//                }
+//                if(i == 59){
+//                    cell.setCellValue("稼働率（%）"); cell.setCellStyle(cellStyle1);
+//                }
+                //endregion scc del 10/10 导出不在包含以下两项 to
+                if(i == 43){
+                    cell.setCellValue("営業利益"); cell.setCellStyle(cellStyle);
+                }
+                if(i == 47){
+                    cell.setCellValue("税引前利益"); cell.setCellStyle(cellStyle);
+                }
+                if(i == 48){
+                    cell.setCellValue("税金引当金"); cell.setCellStyle(cellStyle);
+                }
+                if(i == 49){
+                    cell.setCellValue("税引後利益"); cell.setCellStyle(cellStyle);
+                }
+                if(i == 50){
+                    cell.setCellValue("営業利益率"); cell.setCellStyle(cellStyle);
+                }
+                if(i == 51){
+                    cell.setCellValue("界限利益率"); cell.setCellStyle(cellStyle);
+                }
+
+                    switch (j) {
+                        case 1 : cell.setCellValue(reportBusinessVos.get(i).getName1()); cell.setCellStyle(cellStyle); break;
+                        case 2 : cell.setCellValue(reportBusinessVos.get(i).getMoney4()); cell.setCellStyle(cellStyle); break;
+                        case 3 : cell.setCellValue((reportBusinessVos.get(i).getActual4() != null && reportBusinessVos.get(i).getActual4().equals("NaN")) ? null : reportBusinessVos.get(i).getActual4()); cell.setCellStyle(cellStyle); break;
+                        case 4 : cell.setCellValue(reportBusinessVos.get(i).getMoney5()); cell.setCellStyle(cellStyle); break;
+                        case 5 : cell.setCellValue((reportBusinessVos.get(i).getActual5() != null && reportBusinessVos.get(i).getActual5().equals("NaN")) ? null : reportBusinessVos.get(i).getActual5()); cell.setCellStyle(cellStyle); break;
+                        case 6 : cell.setCellValue(reportBusinessVos.get(i).getMoney6()); cell.setCellStyle(cellStyle); break;
+                        case 7 : cell.setCellValue((reportBusinessVos.get(i).getActual6() != null && reportBusinessVos.get(i).getActual6().equals("NaN")) ? null : reportBusinessVos.get(i).getActual6()); cell.setCellStyle(cellStyle); break;
+                        case 8 : cell.setCellValue(reportBusinessVos.get(i).getMoney7()); cell.setCellStyle(cellStyle); break;
+                        case 9 : cell.setCellValue((reportBusinessVos.get(i).getActual7() != null && reportBusinessVos.get(i).getActual7().equals("NaN")) ? null : reportBusinessVos.get(i).getActual7()); cell.setCellStyle(cellStyle); break;
+                        case 10 : cell.setCellValue(reportBusinessVos.get(i).getMoney8()); cell.setCellStyle(cellStyle); break;
+                        case 11 : cell.setCellValue((reportBusinessVos.get(i).getActual8() != null && reportBusinessVos.get(i).getActual8().equals("NaN")) ? null : reportBusinessVos.get(i).getActual8()); cell.setCellStyle(cellStyle); break;
+                        case 12 : cell.setCellValue(reportBusinessVos.get(i).getMoney9()); cell.setCellStyle(cellStyle); break;
+                        case 13 : cell.setCellValue((reportBusinessVos.get(i).getActual9() != null && reportBusinessVos.get(i).getActual9().equals("NaN")) ? null : reportBusinessVos.get(i).getActual9()); cell.setCellStyle(cellStyle); break;
+                        case 14 : cell.setCellValue(reportBusinessVos.get(i).getMoney10()); cell.setCellStyle(cellStyle); break;
+                        case 15 : cell.setCellValue((reportBusinessVos.get(i).getActual10() != null && reportBusinessVos.get(i).getActual10().equals("NaN")) ? null : reportBusinessVos.get(i).getActual10()); cell.setCellStyle(cellStyle); break;
+                        case 16 : cell.setCellValue(reportBusinessVos.get(i).getMoney11()); cell.setCellStyle(cellStyle); break;
+                        case 17 : cell.setCellValue((reportBusinessVos.get(i).getActual11() != null && reportBusinessVos.get(i).getActual11().equals("NaN")) ? null : reportBusinessVos.get(i).getActual11()); cell.setCellStyle(cellStyle); break;
+                        case 18 : cell.setCellValue(reportBusinessVos.get(i).getMoney12()); cell.setCellStyle(cellStyle); break;
+                        case 19 : cell.setCellValue((reportBusinessVos.get(i).getActual12() != null && reportBusinessVos.get(i).getActual12().equals("NaN")) ? null : reportBusinessVos.get(i).getActual12()); cell.setCellStyle(cellStyle); break;
+                        case 20 : cell.setCellValue(reportBusinessVos.get(i).getMoney1()); cell.setCellStyle(cellStyle); break;
+                        case 21 : cell.setCellValue((reportBusinessVos.get(i).getActual1() != null && reportBusinessVos.get(i).getActual1().equals("NaN")) ? null : reportBusinessVos.get(i).getActual1()); cell.setCellStyle(cellStyle); break;
+                        case 22 : cell.setCellValue(reportBusinessVos.get(i).getMoney2()); cell.setCellStyle(cellStyle); break;
+                        case 23 : cell.setCellValue((reportBusinessVos.get(i).getActual2() != null && reportBusinessVos.get(i).getActual2().equals("NaN")) ? null : reportBusinessVos.get(i).getActual2()); cell.setCellStyle(cellStyle); break;
+                        case 24 : cell.setCellValue(reportBusinessVos.get(i).getMoney3()); cell.setCellStyle(cellStyle); break;
+                        case 25 : cell.setCellValue((reportBusinessVos.get(i).getActual3() != null && reportBusinessVos.get(i).getActual3().equals("NaN")) ? null : reportBusinessVos.get(i).getActual3()); cell.setCellStyle(cellStyle); break;
+                    }
+            }
+        }
+        sheet.addMergedRegion(new CellRangeAddress(3,8,0,0));//売上
+        sheet.addMergedRegion(new CellRangeAddress(9,45,0,0));//一般管理販売費
+        sheet.addMergedRegion(new CellRangeAddress(55,57,0,0));//人員（名）
+        //region scc del 10/15 导出无此项，不在合并单元格 from
+//        sheet.addMergedRegion(new CellRangeAddress(58,61,0,0));//工数(人月)
+//        sheet.addMergedRegion(new CellRangeAddress(62,67,0,0));//稼働率（%）
+        //endregion scc del 10/15 导出无此项，不在合并单元格 to
+        sheet.addMergedRegion(new CellRangeAddress(46,46,0,1));//営業利益
+        sheet.addMergedRegion(new CellRangeAddress(50,50,0,1));//税引前利益
+        sheet.addMergedRegion(new CellRangeAddress(51,51,0,1));//税金引当金
+        sheet.addMergedRegion(new CellRangeAddress(52,52,0,1));//税引後利益
+        sheet.addMergedRegion(new CellRangeAddress(53,53,0,1));//営業利益率
+        sheet.addMergedRegion(new CellRangeAddress(54,54,0,1));//界限利益率
+        OutputStream os = resp.getOutputStream();// 取得输出流
+        String fileName = "事业计划PL";
+        resp.setContentType("application/vnd.ms-excel;charset=utf-8");
+        resp.setHeader("Content-Disposition", "attachment;filename="
+                + new String((fileName + ".xlsx").getBytes(), "iso-8859-1"));
+        businessPlan.write(os);
+        businessPlan.close();
+    }
+    //region scc add 事业计划PL导出 to
 
     //现时点人员统计 //                事业计划人件费单价 每个月份乘以人数 ztc fr
     private List<PersonPlanTable> getNowPersonTable(PersonnelPlan personnelPlan, List<PersonPlanTable> personPlanTables, Map<String,PeoplewareFee> rankResultMap) throws Exception {

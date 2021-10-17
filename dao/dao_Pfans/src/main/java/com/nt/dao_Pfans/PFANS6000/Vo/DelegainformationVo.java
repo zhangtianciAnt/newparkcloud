@@ -140,6 +140,12 @@ public class DelegainformationVo {
     private String year;
 
     /**
+     * 协力公司主键
+     */
+    @Column(name = "SUPPLIERINFOR_ID")
+    private String supplierinfor_id;
+
+    /**
      * 协力公司
      */
     @Column(name = "SUPPLIERNAME")

@@ -96,11 +96,11 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
         List<Expatriatesinfor> companyList = expatriatesinforMapper.select(expatriatesinfor);
         Map<String, String> user2CompanyMap = new HashMap<String, String>();
-        for (Expatriatesinfor ex : companyList) {
-            String key = ex.getExpatriatesinfor_id();
-            String value = ex.getSupplierinfor_id();
-            user2CompanyMap.put(key, value);
-        }
+//        for (Expatriatesinfor ex : companyList) {
+//            String key = ex.getExpatriatesinfor_id();
+//            String value = ex.getSupplierinfor_id();
+//            user2CompanyMap.put(key, value);
+//        }
         List<Coststatistics> allCostList = coststatisticsMapper.getCoststatisticsBygroupid(Integer.valueOf(years), groupid);
         // add gbb 210914 BP社统计添加添加费用列 start
         // 查询费用的作业工数和外注费用
@@ -113,7 +113,8 @@ public class CompanyStatisticsServiceImpl implements CompanyStatisticsService {
         DecimalFormat dlf = new DecimalFormat("#0.00");
         for (Coststatistics c : allCostList) {
 
-            String bpcompany = user2CompanyMap.getOrDefault(c.getBpname(), "");
+//            String bpcompany = user2CompanyMap.getOrDefault(c.getBpname(), "");
+            String bpcompany = c.getBpcompany();
             CompanyStatistics company = companyMap.getOrDefault(bpcompany, new CompanyStatistics());
             company.setBpcompany(bpcompany);
 
