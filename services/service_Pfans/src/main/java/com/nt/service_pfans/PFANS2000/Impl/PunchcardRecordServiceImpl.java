@@ -717,7 +717,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             if (attendancelist.size() > 0) {
                 for (Attendance ad : attendancelist) {
                     try {
-//                        if(ad.getUser_id().equals("5eb5199b29b7371e7c8bffc7") || ad.getUser_id().equals("5eb8ee1d29b7371b2840ba58"))
+//                        if(ad.getUser_id().equals("60e504d8093af31090f7de47"))
 //                        {
                         token.setUserId(ad.getUser_id());
                         token.setExpireDate(new Date());
@@ -1802,9 +1802,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                                 result2 = sdf.parse(workshiftTemporary_end).getTime() - sdf.parse(time_actal_end).getTime();
                                                                 leaveearlyHours = df.format(Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 + Double.valueOf(PR.getWorktime()));
                                                             }
-                                                            //迟到+早退 - 申请的因公外出
-                                                            String allHours = df.format(Double.valueOf(String.valueOf(lateHours)) + Double.valueOf(String.valueOf(leaveearlyHours)) - Double.valueOf(nomal) > 0
-                                                                    ? Double.valueOf(String.valueOf(lateHours)) + Double.valueOf(String.valueOf(leaveearlyHours)) - Double.valueOf(nomal) : 0);
+                                                            //迟到+早退 - 申请的因公外出 - 申请的假期
+                                                            String allHours = df.format(Double.valueOf(String.valueOf(lateHours)) + Double.valueOf(String.valueOf(leaveearlyHours)) - Double.valueOf(nomal) - Double.valueOf(leavetime) > 0
+                                                                    ? Double.valueOf(String.valueOf(lateHours)) + Double.valueOf(String.valueOf(leaveearlyHours)) - Double.valueOf(nomal) - Double.valueOf(leavetime) : 0);
 
                                                             ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(allHours)));
                                                             ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
@@ -3733,9 +3733,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                                 result2 = sdf.parse(workshiftTemporary_end).getTime() - sdf.parse(time_actal_end).getTime();
                                                                 leaveearlyHours = df.format(Double.valueOf(String.valueOf(result2)) / 60 / 60 / 1000 + Double.valueOf(PR.getWorktime()));
                                                             }
-                                                            //迟到+早退 - 申请的因公外出
-                                                            String allHours = df.format(Double.valueOf(String.valueOf(lateHours)) + Double.valueOf(String.valueOf(leaveearlyHours)) - Double.valueOf(nomal) > 0
-                                                                    ? Double.valueOf(String.valueOf(lateHours)) + Double.valueOf(String.valueOf(leaveearlyHours)) - Double.valueOf(nomal) : 0);
+                                                            //迟到+早退 - 申请的因公外出 - 申请的假期
+                                                            String allHours = df.format(Double.valueOf(String.valueOf(lateHours)) + Double.valueOf(String.valueOf(leaveearlyHours)) - Double.valueOf(nomal) - Double.valueOf(leavetime) > 0
+                                                                    ? Double.valueOf(String.valueOf(lateHours)) + Double.valueOf(String.valueOf(leaveearlyHours)) - Double.valueOf(nomal) - Double.valueOf(leavetime): 0);
 
                                                             ad.setNormal(df.format(Double.valueOf(workinghours) - Double.valueOf(leavetime) - Double.valueOf(allHours)));
                                                             ad.setNormal(df.format(Math.floor(Double.valueOf(ad.getNormal()) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave)));
