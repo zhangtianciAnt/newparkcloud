@@ -1372,9 +1372,9 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             {
                                 //18点到19点之间只有一次进门记录，外出时间则是18点到进门的时间
                                 //出门时间
-                                long from = sf.parse(recordTime + " 18:00:00").getTime();
+                                long from = sf.parse(sfymd.format(count.getDates()) + " 18:00:00").getTime();
                                 //进门时间
-                                long to = sf.parse(sf.format(punfinishoutListin.get(0).getPunchcardrecord_date())).getTime();
+                                long to = sf.parse(sdhm.format(punfinishoutListin.get(0).getPunchcardrecord_date())).getTime();
                                 //时间出门到进门的相差分钟数
                                 Double minutes = Double.valueOf(String.valueOf(to - from))/ 60 / 60 / 1000;
                                 //累计外出时间
@@ -1388,7 +1388,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                     //出门时间
                                     long from = sf.parse(sf.format(punfinishoutListout.get(0).getPunchcardrecord_date())).getTime();
                                     //进门时间
-                                    long to = sf.parse(recordTime + " 19:00:00").getTime();
+                                    long to = sf.parse(sfymd.format(count.getDates()) + " 19:00:00").getTime();
                                     //时间出门到进门的相差分钟数
                                     Double minutes = Double.valueOf(String.valueOf(to - from))/ 60 / 60 / 1000;
                                     //累计外出时间
@@ -1420,7 +1420,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                             {
                                                 //如果该条出门是18点到19点最后一条出门记录
                                                 //进门时间
-                                                to = sf.parse(recordTime + " 19:00:00").getTime();
+                                                to = sf.parse(sfymd.format(count.getDates()) + " 19:00:00").getTime();
                                             }
                                             else
                                             {
@@ -1488,7 +1488,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                             {
                                                 //如果该条出门是18点到19点最后一条出门记录
                                                 //进门时间
-                                                to = sf.parse(recordTime + " 19:00:00").getTime();
+                                                to = sf.parse(sfymd.format(count.getDates()) + " 19:00:00").getTime();
                                             }
                                             else
                                             {
@@ -1965,7 +1965,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                             {
                                 //18点到19点之间只有一次进门记录，外出时间则是18点到进门的时间
                                 //出门时间
-                                long from = sf.parse(recordTime + " 18:00:00").getTime();
+                                long from = sf.parse(sfymd.format(count.getDates()) + " 18:00:00").getTime();
                                 //进门时间
                                 long to = sf.parse(sf.format(punfinishoutListin.get(0).getPunchcardrecord_date())).getTime();
                                 //时间出门到进门的相差分钟数
@@ -1981,7 +1981,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                     //出门时间
                                     long from = sf.parse(sf.format(punfinishoutListout.get(0).getPunchcardrecord_date())).getTime();
                                     //进门时间
-                                    long to = sf.parse(recordTime + " 19:00:00").getTime();
+                                    long to = sf.parse(sfymd.format(count.getDates()) + " 19:00:00").getTime();
                                     //时间出门到进门的相差分钟数
                                     Double minutes = Double.valueOf(String.valueOf(to - from))/ 60 / 60 / 1000;
                                     //累计外出时间
@@ -2013,7 +2013,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                             {
                                                 //如果该条出门是18点到19点最后一条出门记录
                                                 //进门时间
-                                                to = sf.parse(recordTime + " 19:00:00").getTime();
+                                                to = sf.parse(sfymd.format(count.getDates()) + " 19:00:00").getTime();
                                             }
                                             else
                                             {
@@ -2081,7 +2081,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                             {
                                                 //如果该条出门是18点到19点最后一条出门记录
                                                 //进门时间
-                                                to = sf.parse(recordTime + " 19:00:00").getTime();
+                                                to = sf.parse(sfymd.format(count.getDates()) + " 19:00:00").getTime();
                                             }
                                             else
                                             {
@@ -2356,7 +2356,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     //上班开始时间
                     workshift_start = attendancesettinglist.get(0).getWorkshift_start().replace(":", "");
                     //下班结束时间
-                    closingtime_end = attendancesettinglist.get(0).getClosingtime_end().replace(":", "");;
+                    closingtime_end = "1800";
                     //午休时间开始
                     lunchbreak_start = attendancesettinglist.get(0).getLunchbreak_start().replace(":", "");
                     //午休时间结束
@@ -2603,6 +2603,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         punchcardrecord.setOutgoinghours("0");
                         punchcardrecord.setTime_start(Time_start);
                         punchcardrecord.setTime_end(Time_end);
+                        punchcardrecord.setValidouttime("0.0");
                         punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
                         punchcardrecord.preInsert(tokenModel);
                         punchcardrecordMapper.insert(punchcardrecord);
@@ -2695,7 +2696,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                 //上班开始时间
                 workshift_start = attendancesettinglist.get(0).getWorkshift_start().replace(":", "");
                 //下班结束时间
-                closingtime_end = attendancesettinglist.get(0).getClosingtime_end().replace(":", "");;
+                closingtime_end = "1800";
                 //午休时间开始
                 lunchbreak_start = attendancesettinglist.get(0).getLunchbreak_start().replace(":", "");
                 //午休时间结束
@@ -2942,6 +2943,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     punchcardrecord.setTime_start(Time_start);
                     punchcardrecord.setTime_end(Time_end);
                     punchcardrecord.setPunchcardrecordbp_id(UUID.randomUUID().toString());
+                    punchcardrecord.setValidouttime("0.0");
                     punchcardrecord.preInsert(tokenModel);
                     punchcardrecordbpMapper.insert(punchcardrecord);
                 }
@@ -3326,6 +3328,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     punchcardrecord.setOutgoinghours(minutelogs.toString());
                     punchcardrecord.setTime_start(Time_start);
                     punchcardrecord.setTime_end(Time_end);
+                    punchcardrecord.setValidouttime("0.0");
                     punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
                     punchcardrecord.preInsert(tokenModel);
                     punchcardrecordMapper.insert(punchcardrecord);
@@ -4268,7 +4271,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         //上班开始时间
                         workshift_start = attendancesettinglist.get(0).getWorkshift_start().replace(":", "");
                         //下班结束时间
-                        closingtime_end = attendancesettinglist.get(0).getClosingtime_end().replace(":", "");;
+                        closingtime_end = "1800";
                         //午休时间开始
                         lunchbreak_start = attendancesettinglist.get(0).getLunchbreak_start().replace(":", "");
                         //午休时间结束
@@ -4574,6 +4577,178 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                 punchcardrecord.setTime_start(Time_start);
                                 punchcardrecord.setTime_end(Time_end);
                                 punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
+
+                                //region 18点到19点的外出时间
+                                //add ccm 计算18点到19点间的外出时间 fr
+                                //18点到19点间的打卡记录
+                                List<PunchcardRecordDetail> punfinishoutList = new ArrayList<PunchcardRecordDetail>();
+                                //18点到19点间的打卡记录-进门的记录
+                                List<PunchcardRecordDetail> punfinishoutListin = new ArrayList<PunchcardRecordDetail>();
+                                //18点到19点间的打卡记录-出门的记录
+                                List<PunchcardRecordDetail> punfinishoutListout = new ArrayList<PunchcardRecordDetail>();
+                                //18点到19点间的外出时间
+                                Double validouttime = 0d;
+                                //外出时间计算
+                                punfinishoutList = punDetaillistx.stream().filter(item->(Double.valueOf(sdhm.format(item.getPunchcardrecord_date())) >= 1800
+                                        && Double.valueOf(sdhm.format(item.getPunchcardrecord_date())) <= 1900)).collect(Collectors.toList());
+                                if(punfinishoutList.size()>0)
+                                {
+                                    //筛选18点到19点间，进的数据 升序排列
+                                    punfinishoutListin = punfinishoutList.stream().filter(item->(item.getEventno().equals("1"))).collect(Collectors.toList());
+                                    if(punfinishoutListin.size()>1)
+                                    {
+                                        punfinishoutListin = punfinishoutListin.stream().sorted(Comparator.comparing(PunchcardRecordDetail::getPunchcardrecord_date)).collect(Collectors.toList());
+                                    }
+                                    //筛选18点到19点间，出的数据 升序排列
+                                    punfinishoutListout = punfinishoutList.stream().filter(item->(item.getEventno().equals("2"))).collect(Collectors.toList());
+                                    if(punfinishoutListout.size()>1)
+                                    {
+                                        punfinishoutListout = punfinishoutListout.stream().sorted(Comparator.comparing(PunchcardRecordDetail::getPunchcardrecord_date)).collect(Collectors.toList());
+                                    }
+                                    //升序排列
+                                    punfinishoutList = punfinishoutList.stream().sorted(Comparator.comparing(PunchcardRecordDetail::getPunchcardrecord_date)).collect(Collectors.toList());
+
+                                    if(punfinishoutListin.size()>0 && punfinishoutListout.size()==0)
+                                    {
+                                        //18点到19点之间只有一次进门记录，外出时间则是18点到进门的时间
+                                        //出门时间
+                                        long from = sf.parse(sfymd.format(count.getDates()) + " 18:00:00").getTime();
+                                        //进门时间
+                                        long to = sf.parse(sf.format(punfinishoutListin.get(0).getPunchcardrecord_date())).getTime();
+                                        //时间出门到进门的相差分钟数
+                                        Double minutes = Double.valueOf(String.valueOf(to - from))/ 60 / 60 / 1000;
+                                        //累计外出时间
+                                        validouttime = validouttime + minutes;
+                                    }
+                                    else if(punfinishoutListin.size()==0 && punfinishoutListout.size()>0)
+                                    {
+                                        //18点到19点之间只有一次出门记录，情况1：该条记录是最后一条出门记录，则外出时间为0，情况2：该条记录不是最后一条记录，则外出时间为19点-出门记录。
+                                        if(punfinishoutListout.get(0).getPunchcardrecord_date().getTime() != punfinishoutList.get(punfinishoutList.size()-1).getPunchcardrecord_date().getTime())
+                                        {
+                                            //出门时间
+                                            long from = sf.parse(sf.format(punfinishoutListout.get(0).getPunchcardrecord_date())).getTime();
+                                            //进门时间
+                                            long to = sf.parse(sfymd.format(count.getDates()) + " 19:00:00").getTime();
+                                            //时间出门到进门的相差分钟数
+                                            Double minutes = Double.valueOf(String.valueOf(to - from))/ 60 / 60 / 1000;
+                                            //累计外出时间
+                                            validouttime = validouttime + minutes;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //18点到19点之间多条记录
+                                        if(punfinishoutList.get(0).getEventno().equals("1"))
+                                        {
+                                            //第一条记录是进门记录
+                                            if(punfinishoutListout.size() == punfinishoutListin.size())
+                                            {
+                                                //进门记录和出门记录条数相等
+                                                for(int i = 0;i <= punfinishoutListout.size()-1;i++)
+                                                {
+                                                    //出门时间
+                                                    long from = sf.parse(sf.format(punfinishoutListout.get(i).getPunchcardrecord_date())).getTime();
+                                                    //进门时间
+                                                    long to = 0;
+                                                    if(punfinishoutListout.get(i).getPunchcardrecord_date().getTime() == punfinishoutList.get(punfinishoutList.size()-1).getPunchcardrecord_date().getTime())
+                                                    {
+                                                        //如果该条出门是最后一条出门记录
+                                                        //进门时间
+                                                        to = sf.parse(sf.format(punfinishoutListout.get(i).getPunchcardrecord_date())).getTime();
+                                                    }
+                                                    else if(i == punfinishoutListout.size()-1)
+                                                    {
+                                                        //如果该条出门是18点到19点最后一条出门记录
+                                                        //进门时间
+                                                        to = sf.parse(sfymd.format(count.getDates()) + " 19:00:00").getTime();
+                                                    }
+                                                    else
+                                                    {
+                                                        //进门时间
+                                                        to = sf.parse(sf.format(punfinishoutListin.get(i+1).getPunchcardrecord_date())).getTime();
+                                                    }
+
+                                                    //时间出门到进门的相差分钟数
+                                                    Double minutes = Double.valueOf(String.valueOf(to - from))/ 60 / 60 / 1000;
+                                                    //累计外出时间
+                                                    validouttime = validouttime + minutes;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                //进门记录和出门记录条数不相等
+                                                for(int i = 0;i <= punfinishoutListout.size()-1;i++)
+                                                {
+                                                    //出门时间
+                                                    long from = sf.parse(sf.format(punfinishoutListout.get(i).getPunchcardrecord_date())).getTime();
+                                                    //进门时间
+                                                    long to = sf.parse(sf.format(punfinishoutListin.get(i+1).getPunchcardrecord_date())).getTime();
+                                                    //时间出门到进门的相差分钟数
+                                                    Double minutes = Double.valueOf(String.valueOf(to - from))/ 60 / 60 / 1000;
+                                                    //累计外出时间
+                                                    validouttime = validouttime + minutes;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            //第一条记录是出门记录
+                                            if(punfinishoutListout.size() == punfinishoutListin.size())
+                                            {
+                                                //进门记录和出门记录条数相等
+                                                for(int i = 0;i <= punfinishoutListout.size()-1;i++)
+                                                {
+                                                    //出门时间
+                                                    long from = sf.parse(sf.format(punfinishoutListout.get(i).getPunchcardrecord_date())).getTime();
+                                                    //进门时间
+                                                    long to = sf.parse(sf.format(punfinishoutListin.get(i).getPunchcardrecord_date())).getTime();
+                                                    //时间出门到进门的相差分钟数
+                                                    Double minutes = Double.valueOf(String.valueOf(to - from))/ 60 / 60 / 1000;
+                                                    //累计外出时间
+                                                    validouttime = validouttime + minutes;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                //进门记录和出门记录条数不相等
+                                                for(int i = 0;i <= punfinishoutListout.size()-1;i++)
+                                                {
+                                                    //出门时间
+                                                    long from = sf.parse(sf.format(punfinishoutListout.get(i).getPunchcardrecord_date())).getTime();
+                                                    //进门时间
+                                                    long to = 0;
+
+                                                    if(punfinishoutListout.get(i).getPunchcardrecord_date().getTime() == punfinishoutList.get(punfinishoutList.size()-1).getPunchcardrecord_date().getTime())
+                                                    {
+                                                        //如果该条出门是最后一条出门记录
+                                                        //进门时间
+                                                        to = sf.parse(sf.format(punfinishoutListout.get(i).getPunchcardrecord_date())).getTime();
+                                                    }
+                                                    else if(i == punfinishoutListout.size()-1)
+                                                    {
+                                                        //如果该条出门是18点到19点最后一条出门记录
+                                                        //进门时间
+                                                        to = sf.parse(sfymd.format(count.getDates()) + " 19:00:00").getTime();
+                                                    }
+                                                    else
+                                                    {
+                                                        //进门时间
+                                                        to = sf.parse(sf.format(punfinishoutListin.get(i).getPunchcardrecord_date())).getTime();
+                                                    }
+
+                                                    //时间出门到进门的相差分钟数
+                                                    Double minutes = Double.valueOf(String.valueOf(to - from))/ 60 / 60 / 1000;
+                                                    //累计外出时间
+                                                    validouttime = validouttime + minutes;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                punchcardrecord.setValidouttime(String.valueOf(df.format(validouttime)));
+                                //add ccm 计算18点到19点间的外出时间 to
+                                //endregion
+
                                 punchcardrecord.preInsert(tokenModel);
                                 punchcardrecordMapper.insert(punchcardrecord);
                             }
