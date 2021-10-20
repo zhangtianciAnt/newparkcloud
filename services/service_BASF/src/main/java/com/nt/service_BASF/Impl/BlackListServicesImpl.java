@@ -1,10 +1,10 @@
 package com.nt.service_BASF.Impl;
 
 import com.nt.dao_BASF.BlackList;
+import com.nt.dao_BASF.VO.BlackListApiVo;
 import com.nt.dao_BASF.VO.BlackListVo;
 import com.nt.service_BASF.BlackListServices;
 import com.nt.service_BASF.mapper.BlackListMapper;
-import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,4 +103,23 @@ public class BlackListServicesImpl implements BlackListServices {
         return blackListMapper.getBlackList();
     }
 
+    /**
+     * @Method getBlackListApi
+     * @Author myt
+     * @Version 1.0
+     * @Description 获取黑名单列表(车牌号&违规类型)
+     * @Return java.util.List<BlackListApiVo>
+     * @Date 2021/10/20 15:05
+     */
+    @Override
+    public List<BlackListApiVo> getBlackListApi() throws Exception {
+        for(BlackListApiVo blackListApiVo : blackListMapper.getBlackListApi()){
+            if (blackListApiVo.getViolationtype().equals("1")) {
+                blackListApiVo.setViolationtype("超速");
+            } else {
+                blackListApiVo.setViolationtype("偏离");
+            }
+        }
+        return blackListMapper.getBlackListApi();
+    }
 }

@@ -61,6 +61,19 @@ public class BASF10702Controller {
     }
 
     /**
+     * @Method blacklist
+     * @Author myt
+     * @Version 1.0
+     * @Description 获取黑名单列表(车牌号&违规类型)
+     * @Return com.nt.utils.ApiResult
+     * @Date 2021/10/20 15:05
+     */
+    @RequestMapping(value = "/blacklist", method = {RequestMethod.GET})
+    public ApiResult blacklist() throws Exception {
+        return ApiResult.success(blackListServices.getBlackListApi());
+    }
+
+    /**
      * @param driverIdNo
      * @Method list
      * @Author Wxz

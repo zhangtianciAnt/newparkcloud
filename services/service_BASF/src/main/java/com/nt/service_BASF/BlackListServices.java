@@ -1,6 +1,7 @@
 package com.nt.service_BASF;
 
 import com.nt.dao_BASF.BlackList;
+import com.nt.dao_BASF.VO.BlackListApiVo;
 import com.nt.dao_BASF.VO.BlackListVo;
 import com.nt.utils.dao.TokenModel;
 
@@ -30,4 +31,7 @@ public interface BlackListServices {
     void createBlack(BlackList blackList) throws Exception;
     //获取黑名单列表
     List<BlackListVo> getBlackList() throws Exception;
+
+    //获取黑名单列表（车牌号&违规类型）
+    List<BlackListApiVo> getBlackListApi() throws Exception;
 }

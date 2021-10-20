@@ -1,6 +1,7 @@
 package com.nt.service_BASF.mapper;
 
 import com.nt.dao_BASF.BlackList;
+import com.nt.dao_BASF.VO.BlackListApiVo;
 import com.nt.dao_BASF.VO.BlackListVo;
 import com.nt.utils.MyMapper;
 
@@ -17,4 +18,6 @@ import java.util.List;
  */
 public interface BlackListMapper extends MyMapper<BlackList> {
     List<BlackListVo> getBlackList() throws Exception;
+
+    List<BlackListApiVo> getBlackListApi() throws Exception;
 }
