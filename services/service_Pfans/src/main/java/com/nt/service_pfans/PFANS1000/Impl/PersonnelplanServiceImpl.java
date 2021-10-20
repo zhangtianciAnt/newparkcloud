@@ -255,29 +255,29 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
         if(resultPlan[5] != null){//构外
             JSONObject outsideResult = JSON.parseObject(resultPlan[5]);
             jsonObjectTbP9.put("money4", String.valueOf(outsideResult.getString("april")));
-            num4 += Integer.parseInt(outsideResult.getString("april"));
+            //num4 += Integer.parseInt(outsideResult.getString("april"));
             jsonObjectTbP9.put("money5", String.valueOf(outsideResult.getString("may")));
-            num5 += Integer.parseInt(outsideResult.getString("may"));
+            //num5 += Integer.parseInt(outsideResult.getString("may"));
             jsonObjectTbP9.put("money6", String.valueOf(outsideResult.getString("june")));
-            num6 += Integer.parseInt(outsideResult.getString("june"));
+            //num6 += Integer.parseInt(outsideResult.getString("june"));
             jsonObjectTbP9.put("money7", String.valueOf(outsideResult.getString("july")));
-            num7 += Integer.parseInt(outsideResult.getString("july"));
+            //num7 += Integer.parseInt(outsideResult.getString("july"));
             jsonObjectTbP9.put("money8", String.valueOf(outsideResult.getString("august")));
-            num8 += Integer.parseInt(outsideResult.getString("august"));
+            //num8 += Integer.parseInt(outsideResult.getString("august"));
             jsonObjectTbP9.put("money9", String.valueOf(outsideResult.getString("september")));
-            num9 += Integer.parseInt(outsideResult.getString("september"));
+            //num9 += Integer.parseInt(outsideResult.getString("september"));
             jsonObjectTbP9.put("money10", String.valueOf(outsideResult.getString("october")));
-            num10 += Integer.parseInt(outsideResult.getString("october"));
+            //num10 += Integer.parseInt(outsideResult.getString("october"));
             jsonObjectTbP9.put("money11", String.valueOf(outsideResult.getString("november")));
-            num11 += Integer.parseInt(outsideResult.getString("november"));
+            //num11 += Integer.parseInt(outsideResult.getString("november"));
             jsonObjectTbP9.put("money12", String.valueOf(outsideResult.getString("december")));
-            num12 += Integer.parseInt(outsideResult.getString("december"));
+            //num12 += Integer.parseInt(outsideResult.getString("december"));
             jsonObjectTbP9.put("money1", String.valueOf(outsideResult.getString("january")));
-            num1 += Integer.parseInt(outsideResult.getString("january"));
+            //num1 += Integer.parseInt(outsideResult.getString("january"));
             jsonObjectTbP9.put("money2", String.valueOf(outsideResult.getString("february")));
-            num2 += Integer.parseInt(outsideResult.getString("february"));
+            //num2 += Integer.parseInt(outsideResult.getString("february"));
             jsonObjectTbP9.put("money3", String.valueOf(outsideResult.getString("march")));
-            num3 += Integer.parseInt(outsideResult.getString("march"));
+            //num3 += Integer.parseInt(outsideResult.getString("march"));
             jsonObjectTbP9.put("moneytotal", String.valueOf(outsideResult.getString("moneytotal")));
         }
         for (int i = 0; i < businessTablePList.size(); i++) {
@@ -294,170 +294,175 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
         //各种经费——各种经费 TABLEO
         JSONArray tableOList = JSON.parseArray(busplanList.get(0).getTableO());
         List<BusinessTableOBase> businessTableOList = JSONArray.parseObject(tableOList.toJSONString(), new TypeReference<List<BusinessTableOBase>>() {});
-        JSONObject jsonObjectTbFZ = JSON.parseObject(String.valueOf(businessTableOList.get(0)));
-        jsonObjectTbFZ.put("number4",num4+numRc4);
-        jsonObjectTbFZ.put("number5",num5+numRc5);
-        jsonObjectTbFZ.put("number6",num6+numRc6);
-        jsonObjectTbFZ.put("number7",num7+numRc7);
-        jsonObjectTbFZ.put("number8",num8+numRc8);
-        jsonObjectTbFZ.put("number9",num9+numRc9);
-        jsonObjectTbFZ.put("numberfirst",new BigDecimal(jsonObjectTbFZ.get("number4").toString())
-                .add(new BigDecimal(jsonObjectTbFZ.get("number5").toString())
-                        .add(new BigDecimal(jsonObjectTbFZ.get("number6").toString())
-                                .add(new BigDecimal(jsonObjectTbFZ.get("number7").toString())
-                                        .add(new BigDecimal(jsonObjectTbFZ.get("number8").toString())
-                                                .add(new BigDecimal(jsonObjectTbFZ.get("number9").toString())))))).toString());
-        jsonObjectTbFZ.put("number10",num10+numRc10);
-        jsonObjectTbFZ.put("number11",num11+numRc11);
-        jsonObjectTbFZ.put("number12",num12+numRc12);
-        jsonObjectTbFZ.put("number1",num1+numRc1);
-        jsonObjectTbFZ.put("number2",num2+numRc2);
-        jsonObjectTbFZ.put("number3",num3+numRc3);
-        jsonObjectTbFZ.put("numbersecond",new BigDecimal(jsonObjectTbFZ.get("number10").toString())
-                .add(new BigDecimal(jsonObjectTbFZ.get("number11").toString())
-                        .add(new BigDecimal(jsonObjectTbFZ.get("number12").toString())
-                                .add(new BigDecimal(jsonObjectTbFZ.get("number1").toString())
-                                        .add(new BigDecimal(jsonObjectTbFZ.get("number2").toString())
-                                                .add(new BigDecimal(jsonObjectTbFZ.get("number3").toString())))))).toString());
-        jsonObjectTbFZ.put("numbertotal",new BigDecimal(jsonObjectTbFZ.get("numberfirst").toString())
-                .add(new BigDecimal(jsonObjectTbFZ.get("numbersecond").toString())).toString());
+        JSONObject jsonObjectTbFZ = new JSONObject();
+        JSONObject jsonObjectTbDQ = new JSONObject();
+        JSONObject jsonObjectTbRC = new JSONObject();
+        for(BusinessTableOBase bobse : businessTableOList) {
+            if (bobse.get("sprogramme") != null && bobse.get("sprogramme").equals("PJ148001")) {
+                jsonObjectTbFZ = JSON.parseObject(String.valueOf(bobse));
+                jsonObjectTbFZ.put("number4", num4 + numRc4);
+                jsonObjectTbFZ.put("number5", num5 + numRc5);
+                jsonObjectTbFZ.put("number6", num6 + numRc6);
+                jsonObjectTbFZ.put("number7", num7 + numRc7);
+                jsonObjectTbFZ.put("number8", num8 + numRc8);
+                jsonObjectTbFZ.put("number9", num9 + numRc9);
+                jsonObjectTbFZ.put("numberfirst", new BigDecimal(jsonObjectTbFZ.get("number4").toString())
+                        .add(new BigDecimal(jsonObjectTbFZ.get("number5").toString())
+                                .add(new BigDecimal(jsonObjectTbFZ.get("number6").toString())
+                                        .add(new BigDecimal(jsonObjectTbFZ.get("number7").toString())
+                                                .add(new BigDecimal(jsonObjectTbFZ.get("number8").toString())
+                                                        .add(new BigDecimal(jsonObjectTbFZ.get("number9").toString())))))).toString());
+                jsonObjectTbFZ.put("number10", num10 + numRc10);
+                jsonObjectTbFZ.put("number11", num11 + numRc11);
+                jsonObjectTbFZ.put("number12", num12 + numRc12);
+                jsonObjectTbFZ.put("number1", num1 + numRc1);
+                jsonObjectTbFZ.put("number2", num2 + numRc2);
+                jsonObjectTbFZ.put("number3", num3 + numRc3);
+                jsonObjectTbFZ.put("numbersecond", new BigDecimal(jsonObjectTbFZ.get("number10").toString())
+                        .add(new BigDecimal(jsonObjectTbFZ.get("number11").toString())
+                                .add(new BigDecimal(jsonObjectTbFZ.get("number12").toString())
+                                        .add(new BigDecimal(jsonObjectTbFZ.get("number1").toString())
+                                                .add(new BigDecimal(jsonObjectTbFZ.get("number2").toString())
+                                                        .add(new BigDecimal(jsonObjectTbFZ.get("number3").toString())))))).toString());
+                jsonObjectTbFZ.put("numbertotal", new BigDecimal(jsonObjectTbFZ.get("numberfirst").toString())
+                        .add(new BigDecimal(jsonObjectTbFZ.get("numbersecond").toString())).toString());
 
-        jsonObjectTbFZ.put("money4",new BigDecimal(String.valueOf(num4+numRc4)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbFZ.put("money5",new BigDecimal(String.valueOf(num5+numRc5)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbFZ.put("money6",new BigDecimal(String.valueOf(num6+numRc6)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbFZ.put("money7",new BigDecimal(String.valueOf(num7+numRc7)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbFZ.put("money8",new BigDecimal(String.valueOf(num8+numRc8)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbFZ.put("money9",new BigDecimal(String.valueOf(num9+numRc9)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbFZ.put("moneyfirst",new BigDecimal(jsonObjectTbFZ.get("money4").toString())
-                .add(new BigDecimal(jsonObjectTbFZ.get("money5").toString())
-                        .add(new BigDecimal(jsonObjectTbFZ.get("money6").toString())
-                                .add(new BigDecimal(jsonObjectTbFZ.get("money7").toString())
-                                        .add(new BigDecimal(jsonObjectTbFZ.get("money8").toString())
-                                                .add(new BigDecimal(jsonObjectTbFZ.get("money9").toString())))))).toString());
-        jsonObjectTbFZ.put("money10",new BigDecimal(String.valueOf(num10+numRc10)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbFZ.put("money11",new BigDecimal(String.valueOf(num11+numRc11)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbFZ.put("money12",new BigDecimal(String.valueOf(num12+numRc12)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbFZ.put("money1",new BigDecimal(String.valueOf(num1+numRc1)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbFZ.put("money2",new BigDecimal(String.valueOf(num2+numRc2)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbFZ.put("money3",new BigDecimal(String.valueOf(num3+numRc3)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbFZ.put("moneysecond",new BigDecimal(jsonObjectTbFZ.get("money10").toString())
-                .add(new BigDecimal(jsonObjectTbFZ.get("money11").toString())
-                        .add(new BigDecimal(jsonObjectTbFZ.get("money12").toString())
-                                .add(new BigDecimal(jsonObjectTbFZ.get("money1").toString())
-                                        .add(new BigDecimal(jsonObjectTbFZ.get("money2").toString())
-                                                .add(new BigDecimal(jsonObjectTbFZ.get("money3").toString())))))).toString());
-        jsonObjectTbFZ.put("moneytotal",new BigDecimal(jsonObjectTbFZ.get("moneyfirst").toString())
-                .add(new BigDecimal(jsonObjectTbFZ.get("moneysecond").toString())).toString());
-
-        JSONObject jsonObjectTbDQ = JSON.parseObject(String.valueOf(businessTableOList.get(1)));
-        jsonObjectTbDQ.put("number4",num4+numRc4);
-        jsonObjectTbDQ.put("number5",num5+numRc5);
-        jsonObjectTbDQ.put("number6",num6+numRc6);
-        jsonObjectTbDQ.put("number7",num7+numRc7);
-        jsonObjectTbDQ.put("number8",num8+numRc8);
-        jsonObjectTbDQ.put("number9",num9+numRc9);
-        jsonObjectTbDQ.put("numberfirst",new BigDecimal(jsonObjectTbDQ.get("number4").toString())
-                .add(new BigDecimal(jsonObjectTbDQ.get("number5").toString())
-                        .add(new BigDecimal(jsonObjectTbDQ.get("number6").toString())
-                                .add(new BigDecimal(jsonObjectTbDQ.get("number7").toString())
-                                        .add(new BigDecimal(jsonObjectTbDQ.get("number8").toString())
-                                                .add(new BigDecimal(jsonObjectTbDQ.get("number9").toString())))))).toString());
-        jsonObjectTbDQ.put("number10",num10+numRc10);
-        jsonObjectTbDQ.put("number11",num11+numRc11);
-        jsonObjectTbDQ.put("number12",num12+numRc12);
-        jsonObjectTbDQ.put("number1",num1+numRc1);
-        jsonObjectTbDQ.put("number2",num2+numRc2);
-        jsonObjectTbDQ.put("number3",num3+numRc3);
-        jsonObjectTbDQ.put("numbersecond",new BigDecimal(jsonObjectTbDQ.get("number10").toString())
-                .add(new BigDecimal(jsonObjectTbDQ.get("number11").toString())
-                        .add(new BigDecimal(jsonObjectTbDQ.get("number12").toString())
-                                .add(new BigDecimal(jsonObjectTbDQ.get("number1").toString())
-                                        .add(new BigDecimal(jsonObjectTbDQ.get("number2").toString())
-                                                .add(new BigDecimal(jsonObjectTbDQ.get("number3").toString())))))).toString());
-        jsonObjectTbDQ.put("numbertotal",new BigDecimal(jsonObjectTbDQ.get("moneyfirst").toString())
-                .add(new BigDecimal(jsonObjectTbDQ.get("moneysecond").toString())).toString());
-        jsonObjectTbDQ.put("money4",new BigDecimal(String.valueOf(num4+numRc4)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbDQ.put("money5",new BigDecimal(String.valueOf(num5+numRc5)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbDQ.put("money6",new BigDecimal(String.valueOf(num6+numRc6)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbDQ.put("money7",new BigDecimal(String.valueOf(num7+numRc7)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbDQ.put("money8",new BigDecimal(String.valueOf(num8+numRc8)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbDQ.put("money9",new BigDecimal(String.valueOf(num9+numRc9)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbDQ.put("moneyfirst",new BigDecimal(jsonObjectTbDQ.get("money4").toString())
-                .add(new BigDecimal(jsonObjectTbDQ.get("money5").toString())
-                        .add(new BigDecimal(jsonObjectTbDQ.get("money6").toString())
-                                .add(new BigDecimal(jsonObjectTbDQ.get("money7").toString())
-                                        .add(new BigDecimal(jsonObjectTbDQ.get("money8").toString())
-                                                .add(new BigDecimal(jsonObjectTbDQ.get("money9").toString())))))).toString());
-        jsonObjectTbDQ.put("money10",new BigDecimal(String.valueOf(num10+numRc10)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbDQ.put("money11",new BigDecimal(String.valueOf(num11+numRc11)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbDQ.put("money12",new BigDecimal(String.valueOf(num12+numRc12)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbDQ.put("money1",new BigDecimal(String.valueOf(num1+numRc1)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbDQ.put("money2",new BigDecimal(String.valueOf(num2+numRc2)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbDQ.put("money3",new BigDecimal(String.valueOf(num3+numRc3)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbDQ.put("moneysecond",new BigDecimal(jsonObjectTbDQ.get("money10").toString())
-                .add(new BigDecimal(jsonObjectTbDQ.get("money11").toString())
-                        .add(new BigDecimal(jsonObjectTbDQ.get("money12").toString())
-                                .add(new BigDecimal(jsonObjectTbDQ.get("money1").toString())
-                                        .add(new BigDecimal(jsonObjectTbDQ.get("money2").toString())
-                                                .add(new BigDecimal(jsonObjectTbDQ.get("money3").toString())))))).toString());
-        jsonObjectTbDQ.put("moneytotal",new BigDecimal(jsonObjectTbDQ.get("moneyfirst").toString())
-                .add(new BigDecimal(jsonObjectTbDQ.get("moneysecond").toString())).toString());
-
-
-        JSONObject jsonObjectTbRC = JSON.parseObject(String.valueOf(businessTableOList.get(2)));//本社
-        jsonObjectTbRC.put("number4",numRc4);
-        jsonObjectTbRC.put("number5",numRc5);
-        jsonObjectTbRC.put("number6",numRc6);
-        jsonObjectTbRC.put("number7",numRc7);
-        jsonObjectTbRC.put("number8",numRc8);
-        jsonObjectTbRC.put("number9",numRc9);
-        jsonObjectTbRC.put("numberfirst",new BigDecimal(jsonObjectTbRC.get("number4").toString())
-                .add(new BigDecimal(jsonObjectTbRC.get("number5").toString())
-                        .add(new BigDecimal(jsonObjectTbRC.get("number6").toString())
-                                .add(new BigDecimal(jsonObjectTbRC.get("number7").toString())
-                                        .add(new BigDecimal(jsonObjectTbRC.get("number8").toString())
-                                                .add(new BigDecimal(jsonObjectTbRC.get("number9").toString())))))).toString());
-        jsonObjectTbRC.put("number10",numRc10);
-        jsonObjectTbRC.put("number11",numRc11);
-        jsonObjectTbRC.put("number12",numRc12);
-        jsonObjectTbRC.put("number1",numRc1);
-        jsonObjectTbRC.put("number2",numRc2);
-        jsonObjectTbRC.put("number3",numRc3);
-        jsonObjectTbRC.put("numbersecond",new BigDecimal(jsonObjectTbRC.get("number10").toString())
-                .add(new BigDecimal(jsonObjectTbRC.get("number11").toString())
-                        .add(new BigDecimal(jsonObjectTbRC.get("number12").toString())
-                                .add(new BigDecimal(jsonObjectTbRC.get("number1").toString())
-                                        .add(new BigDecimal(jsonObjectTbRC.get("number2").toString())
-                                                .add(new BigDecimal(jsonObjectTbRC.get("number3").toString())))))).toString());
-        jsonObjectTbRC.put("numbertotal",new BigDecimal(jsonObjectTbRC.get("moneyfirst").toString())
-                .add(new BigDecimal(jsonObjectTbRC.get("moneysecond").toString())).toString());
-        jsonObjectTbRC.put("money4",new BigDecimal(String.valueOf(num4+numRc4)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbRC.put("money5",new BigDecimal(String.valueOf(num5+numRc5)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbRC.put("money6",new BigDecimal(String.valueOf(num6+numRc6)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbRC.put("money7",new BigDecimal(String.valueOf(num7+numRc7)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbRC.put("money8",new BigDecimal(String.valueOf(num8+numRc8)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbRC.put("money9",new BigDecimal(String.valueOf(num9+numRc9)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbRC.put("moneyfirst",new BigDecimal(jsonObjectTbRC.get("money4").toString())
-                .add(new BigDecimal(jsonObjectTbRC.get("money5").toString())
-                        .add(new BigDecimal(jsonObjectTbRC.get("money6").toString())
-                                .add(new BigDecimal(jsonObjectTbRC.get("money7").toString())
-                                        .add(new BigDecimal(jsonObjectTbRC.get("money8").toString())
-                                                .add(new BigDecimal(jsonObjectTbRC.get("money9").toString())))))).toString());
-        jsonObjectTbRC.put("money10",new BigDecimal(String.valueOf(num10+numRc10)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbRC.put("money11",new BigDecimal(String.valueOf(num11+numRc11)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbRC.put("money12",new BigDecimal(String.valueOf(num12+numRc12)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbRC.put("money1",new BigDecimal(String.valueOf(num1+numRc1)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbRC.put("money2",new BigDecimal(String.valueOf(num2+numRc2)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbRC.put("money3",new BigDecimal(String.valueOf(num3+numRc3)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
-        jsonObjectTbRC.put("moneysecond",new BigDecimal(jsonObjectTbRC.get("money10").toString())
-                .add(new BigDecimal(jsonObjectTbRC.get("money11").toString())
-                        .add(new BigDecimal(jsonObjectTbRC.get("money12").toString())
-                                .add(new BigDecimal(jsonObjectTbRC.get("money1").toString())
-                                        .add(new BigDecimal(jsonObjectTbRC.get("money2").toString())
-                                                .add(new BigDecimal(jsonObjectTbRC.get("money3").toString())))))).toString());
-        jsonObjectTbRC.put("moneytotal",new BigDecimal(jsonObjectTbRC.get("moneyfirst").toString())
-                .add(new BigDecimal(jsonObjectTbRC.get("moneysecond").toString())).toString());
-
+                jsonObjectTbFZ.put("money4", new BigDecimal(String.valueOf(num4 + numRc4)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbFZ.put("money5", new BigDecimal(String.valueOf(num5 + numRc5)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbFZ.put("money6", new BigDecimal(String.valueOf(num6 + numRc6)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbFZ.put("money7", new BigDecimal(String.valueOf(num7 + numRc7)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbFZ.put("money8", new BigDecimal(String.valueOf(num8 + numRc8)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbFZ.put("money9", new BigDecimal(String.valueOf(num9 + numRc9)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbFZ.put("moneyfirst", new BigDecimal(jsonObjectTbFZ.get("money4").toString())
+                        .add(new BigDecimal(jsonObjectTbFZ.get("money5").toString())
+                                .add(new BigDecimal(jsonObjectTbFZ.get("money6").toString())
+                                        .add(new BigDecimal(jsonObjectTbFZ.get("money7").toString())
+                                                .add(new BigDecimal(jsonObjectTbFZ.get("money8").toString())
+                                                        .add(new BigDecimal(jsonObjectTbFZ.get("money9").toString())))))).toString());
+                jsonObjectTbFZ.put("money10", new BigDecimal(String.valueOf(num10 + numRc10)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbFZ.put("money11", new BigDecimal(String.valueOf(num11 + numRc11)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbFZ.put("money12", new BigDecimal(String.valueOf(num12 + numRc12)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbFZ.put("money1", new BigDecimal(String.valueOf(num1 + numRc1)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbFZ.put("money2", new BigDecimal(String.valueOf(num2 + numRc2)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbFZ.put("money3", new BigDecimal(String.valueOf(num3 + numRc3)).multiply(new BigDecimal(String.valueOf(jsonObjectTbFZ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbFZ.put("moneysecond", new BigDecimal(jsonObjectTbFZ.get("money10").toString())
+                        .add(new BigDecimal(jsonObjectTbFZ.get("money11").toString())
+                                .add(new BigDecimal(jsonObjectTbFZ.get("money12").toString())
+                                        .add(new BigDecimal(jsonObjectTbFZ.get("money1").toString())
+                                                .add(new BigDecimal(jsonObjectTbFZ.get("money2").toString())
+                                                        .add(new BigDecimal(jsonObjectTbFZ.get("money3").toString())))))).toString());
+                jsonObjectTbFZ.put("moneytotal", new BigDecimal(jsonObjectTbFZ.get("moneyfirst").toString())
+                        .add(new BigDecimal(jsonObjectTbFZ.get("moneysecond").toString())).toString());
+            } else if (bobse.get("sprogramme") != null && bobse.get("sprogramme").equals("PJ148002")) {
+                jsonObjectTbDQ = JSON.parseObject(String.valueOf(bobse));
+                jsonObjectTbDQ.put("number4", num4 + numRc4);
+                jsonObjectTbDQ.put("number5", num5 + numRc5);
+                jsonObjectTbDQ.put("number6", num6 + numRc6);
+                jsonObjectTbDQ.put("number7", num7 + numRc7);
+                jsonObjectTbDQ.put("number8", num8 + numRc8);
+                jsonObjectTbDQ.put("number9", num9 + numRc9);
+                jsonObjectTbDQ.put("numberfirst", new BigDecimal(jsonObjectTbDQ.get("number4").toString())
+                        .add(new BigDecimal(jsonObjectTbDQ.get("number5").toString())
+                                .add(new BigDecimal(jsonObjectTbDQ.get("number6").toString())
+                                        .add(new BigDecimal(jsonObjectTbDQ.get("number7").toString())
+                                                .add(new BigDecimal(jsonObjectTbDQ.get("number8").toString())
+                                                        .add(new BigDecimal(jsonObjectTbDQ.get("number9").toString())))))).toString());
+                jsonObjectTbDQ.put("number10", num10 + numRc10);
+                jsonObjectTbDQ.put("number11", num11 + numRc11);
+                jsonObjectTbDQ.put("number12", num12 + numRc12);
+                jsonObjectTbDQ.put("number1", num1 + numRc1);
+                jsonObjectTbDQ.put("number2", num2 + numRc2);
+                jsonObjectTbDQ.put("number3", num3 + numRc3);
+                jsonObjectTbDQ.put("numbersecond", new BigDecimal(jsonObjectTbDQ.get("number10").toString())
+                        .add(new BigDecimal(jsonObjectTbDQ.get("number11").toString())
+                                .add(new BigDecimal(jsonObjectTbDQ.get("number12").toString())
+                                        .add(new BigDecimal(jsonObjectTbDQ.get("number1").toString())
+                                                .add(new BigDecimal(jsonObjectTbDQ.get("number2").toString())
+                                                        .add(new BigDecimal(jsonObjectTbDQ.get("number3").toString())))))).toString());
+                jsonObjectTbDQ.put("numbertotal", new BigDecimal(jsonObjectTbDQ.get("moneyfirst").toString())
+                        .add(new BigDecimal(jsonObjectTbDQ.get("moneysecond").toString())).toString());
+                jsonObjectTbDQ.put("money4", new BigDecimal(String.valueOf(num4 + numRc4)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbDQ.put("money5", new BigDecimal(String.valueOf(num5 + numRc5)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbDQ.put("money6", new BigDecimal(String.valueOf(num6 + numRc6)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbDQ.put("money7", new BigDecimal(String.valueOf(num7 + numRc7)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbDQ.put("money8", new BigDecimal(String.valueOf(num8 + numRc8)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbDQ.put("money9", new BigDecimal(String.valueOf(num9 + numRc9)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbDQ.put("moneyfirst", new BigDecimal(jsonObjectTbDQ.get("money4").toString())
+                        .add(new BigDecimal(jsonObjectTbDQ.get("money5").toString())
+                                .add(new BigDecimal(jsonObjectTbDQ.get("money6").toString())
+                                        .add(new BigDecimal(jsonObjectTbDQ.get("money7").toString())
+                                                .add(new BigDecimal(jsonObjectTbDQ.get("money8").toString())
+                                                        .add(new BigDecimal(jsonObjectTbDQ.get("money9").toString())))))).toString());
+                jsonObjectTbDQ.put("money10", new BigDecimal(String.valueOf(num10 + numRc10)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbDQ.put("money11", new BigDecimal(String.valueOf(num11 + numRc11)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbDQ.put("money12", new BigDecimal(String.valueOf(num12 + numRc12)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbDQ.put("money1", new BigDecimal(String.valueOf(num1 + numRc1)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbDQ.put("money2", new BigDecimal(String.valueOf(num2 + numRc2)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbDQ.put("money3", new BigDecimal(String.valueOf(num3 + numRc3)).multiply(new BigDecimal(String.valueOf(jsonObjectTbDQ.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbDQ.put("moneysecond", new BigDecimal(jsonObjectTbDQ.get("money10").toString())
+                        .add(new BigDecimal(jsonObjectTbDQ.get("money11").toString())
+                                .add(new BigDecimal(jsonObjectTbDQ.get("money12").toString())
+                                        .add(new BigDecimal(jsonObjectTbDQ.get("money1").toString())
+                                                .add(new BigDecimal(jsonObjectTbDQ.get("money2").toString())
+                                                        .add(new BigDecimal(jsonObjectTbDQ.get("money3").toString())))))).toString());
+                jsonObjectTbDQ.put("moneytotal", new BigDecimal(jsonObjectTbDQ.get("moneyfirst").toString())
+                        .add(new BigDecimal(jsonObjectTbDQ.get("moneysecond").toString())).toString());
+            } else if (bobse.get("sprogramme") != null && bobse.get("sprogramme").equals("PJ148003")) {
+                jsonObjectTbRC = JSON.parseObject(String.valueOf(bobse));//本社
+                jsonObjectTbRC.put("number4", numRc4);
+                jsonObjectTbRC.put("number5", numRc5);
+                jsonObjectTbRC.put("number6", numRc6);
+                jsonObjectTbRC.put("number7", numRc7);
+                jsonObjectTbRC.put("number8", numRc8);
+                jsonObjectTbRC.put("number9", numRc9);
+                jsonObjectTbRC.put("numberfirst", new BigDecimal(jsonObjectTbRC.get("number4").toString())
+                        .add(new BigDecimal(jsonObjectTbRC.get("number5").toString())
+                                .add(new BigDecimal(jsonObjectTbRC.get("number6").toString())
+                                        .add(new BigDecimal(jsonObjectTbRC.get("number7").toString())
+                                                .add(new BigDecimal(jsonObjectTbRC.get("number8").toString())
+                                                        .add(new BigDecimal(jsonObjectTbRC.get("number9").toString())))))).toString());
+                jsonObjectTbRC.put("number10", numRc10);
+                jsonObjectTbRC.put("number11", numRc11);
+                jsonObjectTbRC.put("number12", numRc12);
+                jsonObjectTbRC.put("number1", numRc1);
+                jsonObjectTbRC.put("number2", numRc2);
+                jsonObjectTbRC.put("number3", numRc3);
+                jsonObjectTbRC.put("numbersecond", new BigDecimal(jsonObjectTbRC.get("number10").toString())
+                        .add(new BigDecimal(jsonObjectTbRC.get("number11").toString())
+                                .add(new BigDecimal(jsonObjectTbRC.get("number12").toString())
+                                        .add(new BigDecimal(jsonObjectTbRC.get("number1").toString())
+                                                .add(new BigDecimal(jsonObjectTbRC.get("number2").toString())
+                                                        .add(new BigDecimal(jsonObjectTbRC.get("number3").toString())))))).toString());
+                jsonObjectTbRC.put("numbertotal", new BigDecimal(jsonObjectTbRC.get("moneyfirst").toString())
+                        .add(new BigDecimal(jsonObjectTbRC.get("moneysecond").toString())).toString());
+                jsonObjectTbRC.put("money4", new BigDecimal(String.valueOf(num4 + numRc4)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbRC.put("money5", new BigDecimal(String.valueOf(num5 + numRc5)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbRC.put("money6", new BigDecimal(String.valueOf(num6 + numRc6)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbRC.put("money7", new BigDecimal(String.valueOf(num7 + numRc7)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbRC.put("money8", new BigDecimal(String.valueOf(num8 + numRc8)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbRC.put("money9", new BigDecimal(String.valueOf(num9 + numRc9)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbRC.put("moneyfirst", new BigDecimal(jsonObjectTbRC.get("money4").toString())
+                        .add(new BigDecimal(jsonObjectTbRC.get("money5").toString())
+                                .add(new BigDecimal(jsonObjectTbRC.get("money6").toString())
+                                        .add(new BigDecimal(jsonObjectTbRC.get("money7").toString())
+                                                .add(new BigDecimal(jsonObjectTbRC.get("money8").toString())
+                                                        .add(new BigDecimal(jsonObjectTbRC.get("money9").toString())))))).toString());
+                jsonObjectTbRC.put("money10", new BigDecimal(String.valueOf(num10 + numRc10)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbRC.put("money11", new BigDecimal(String.valueOf(num11 + numRc11)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbRC.put("money12", new BigDecimal(String.valueOf(num12 + numRc12)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbRC.put("money1", new BigDecimal(String.valueOf(num1 + numRc1)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbRC.put("money2", new BigDecimal(String.valueOf(num2 + numRc2)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbRC.put("money3", new BigDecimal(String.valueOf(num3 + numRc3)).multiply(new BigDecimal(String.valueOf(jsonObjectTbRC.get("price")))).divide(new BigDecimal("1000")).setScale(3, BigDecimal.ROUND_HALF_UP).toString());
+                jsonObjectTbRC.put("moneysecond", new BigDecimal(jsonObjectTbRC.get("money10").toString())
+                        .add(new BigDecimal(jsonObjectTbRC.get("money11").toString())
+                                .add(new BigDecimal(jsonObjectTbRC.get("money12").toString())
+                                        .add(new BigDecimal(jsonObjectTbRC.get("money1").toString())
+                                                .add(new BigDecimal(jsonObjectTbRC.get("money2").toString())
+                                                        .add(new BigDecimal(jsonObjectTbRC.get("money3").toString())))))).toString());
+                jsonObjectTbRC.put("moneytotal", new BigDecimal(jsonObjectTbRC.get("moneyfirst").toString())
+                        .add(new BigDecimal(jsonObjectTbRC.get("moneysecond").toString())).toString());
+            }
+        }
         for (int i = 0; i < businessTableOList.size(); i++) {
             if (i == 0) {
                 resultTableO.add(jsonObjectTbFZ);

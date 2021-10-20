@@ -542,6 +542,7 @@ public class BusinessServiceImpl implements BusinessService {
         punchcardrecord.setAbsenteeismam("0.0");
         punchcardrecord.setOutgoinghours("0.0");
         punchcardrecord.setEffectiveduration("8.0");
+        punchcardrecord.setValidouttime("0.0");
         punchcardrecord.setPunchcardrecord_id(UUID.randomUUID().toString());
         punchcardrecord.setTime_start(date1);
         punchcardrecord.setTime_end(date2);
