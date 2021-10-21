@@ -1374,7 +1374,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                 //出门时间
                                 long from = sf.parse(sfymd.format(count.getDates()) + " 18:00:00").getTime();
                                 //进门时间
-                                long to = sf.parse(sdhm.format(punfinishoutListin.get(0).getPunchcardrecord_date())).getTime();
+                                long to = sf.parse(sf.format(punfinishoutListin.get(0).getPunchcardrecord_date())).getTime();
                                 //时间出门到进门的相差分钟数
                                 Double minutes = Double.valueOf(String.valueOf(to - from))/ 60 / 60 / 1000;
                                 //累计外出时间
