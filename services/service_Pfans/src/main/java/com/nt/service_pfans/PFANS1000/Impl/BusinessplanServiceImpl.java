@@ -1423,7 +1423,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             ruling.setRuling_id(UUID.randomUUID().toString());
             ruling.setYears(item.getYear());
             ruling.setDepart(item.getCenter_id());
-            ruling.setCode(item.getName1());
+            ruling.setCode(mapping.get(item.getName1()));
             ruling.setPlantoconsume(item.getMoneytotal());
             ruling.setActualconsumption("0.00");
             ruling.setActualresidual(item.getMoneytotal());
