@@ -513,7 +513,9 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
         }
         personnelPlan.preInsert(tokenModel);
         personnelPlan.setPersonnelplanid(UUID.randomUUID().toString());
-        if(personnelPlan.getType().equals("0")){
+        //region scc 10/22 创建theme报异常,原因moneyavg为空，type为integer不能用eqaul from
+        if(personnelPlan.getType() == 0){
+            //endregion scc 10/22 创建theme报异常 to
             List<Moneyavg> moneyavgList = JSON.parseArray(personnelPlan.getEmployed(), Moneyavg.class);
             BigDecimal moneyavgSum = new BigDecimal("0.0");
             int perNum = 0;
