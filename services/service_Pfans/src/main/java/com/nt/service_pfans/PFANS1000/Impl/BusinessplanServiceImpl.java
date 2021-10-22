@@ -81,6 +81,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     private ExpatriatesinforMapper expatriatesinforMapper;
     @Autowired
     private PeoplewareFeeMapper peoplewareFeeMapper;
+    @Autowired
+    private RulingMapper rulingMapper;
 
     DecimalFormat df = new DecimalFormat("#0.00");
     //@Autowired
@@ -1405,6 +1407,34 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         businessPlan.close();
     }
     //endregion scc add 事业计划PL导出 to
+
+    //region scc add 保存部分PL from
+    @Override
+    public void PlRelated(List<ReportBusinessVo> reportBusinessVos, TokenModel tokenModel) throws Exception {
+        List<Dictionary> neverCut = dictionaryService.getForSelect("PJ078");
+        Map<String, String> mapping = new HashMap<>();
+        neverCut.forEach(item -> {
+            mapping.put(item.getValue2(), item.getValue3());
+        });
+        reportBusinessVos = reportBusinessVos.stream().filter(item -> mapping.containsKey(item.getName1())).collect(Collectors.toList());
+        List<Ruling> res = new ArrayList<>();
+        reportBusinessVos.forEach(item -> {
+            Ruling ruling = new Ruling();
+            ruling.setRuling_id(UUID.randomUUID().toString());
+            ruling.setYears(item.getYear());
+            ruling.setDepart(item.getCenter_id());
+            ruling.setCode(item.getName1());
+            ruling.setPlantoconsume(item.getMoneytotal());
+            ruling.setActualconsumption("0.00");
+            ruling.setActualresidual(item.getMoneytotal());
+            ruling.setVersion(0);
+            ruling.preInsert(tokenModel);
+            res.add(ruling);
+        });
+        rulingMapper.insetList(res);
+    }
+//endregion scc add 保存部分PL to
+
 
     //现时点人员统计 //                事业计划人件费单价 每个月份乘以人数 ztc fr
     private List<PersonPlanTable> getNowPersonTable(PersonnelPlan personnelPlan, List<PersonPlanTable> personPlanTables, Map<String,PeoplewareFee> rankResultMap) throws Exception {
