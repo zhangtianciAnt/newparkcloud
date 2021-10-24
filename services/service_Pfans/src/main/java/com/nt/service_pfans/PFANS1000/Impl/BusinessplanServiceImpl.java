@@ -1423,10 +1423,12 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             ruling.setRuling_id(UUID.randomUUID().toString());
             ruling.setYears(item.getYear());
             ruling.setDepart(item.getCenter_id());
-            ruling.setCode(item.getName1());
-            ruling.setPlantoconsume(item.getMoneytotal());
+            ruling.setCode(mapping.get(item.getName1()));
+            BigDecimal oneThousandYuanMeasurement = new BigDecimal(item.getMoneytotal());//千元计量
+            BigDecimal yuanMeasurement = oneThousandYuanMeasurement.multiply(new BigDecimal("1000"));//元计量
+            ruling.setPlantoconsume(yuanMeasurement.toString());
             ruling.setActualconsumption("0.00");
-            ruling.setActualresidual(item.getMoneytotal());
+            ruling.setActualresidual(yuanMeasurement.toString());
             ruling.setVersion(0);
             ruling.preInsert(tokenModel);
             res.add(ruling);
