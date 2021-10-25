@@ -770,7 +770,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 BigDecimal moneyfirst = new BigDecimal(gettwo.get(0).getMoneyfirst());
                 BigDecimal moneysecond = new BigDecimal(gettwo.get(0).getMoneysecond());
                 BigDecimal moneytotal = new BigDecimal(gettwo.get(0).getMoneytotal());
-                if (businessgroupa1vo1.getName2().equals("0")) {
+                //region scc upd 项目计划中収入－外部受託（A1）中，金额不再 * 委托rate from
+//                if (businessgroupa1vo1.getName2().equals("0")) {
                     BigDecimal moneys1 = money1.divide(new BigDecimal("1000"));
                     BigDecimal moneys2 = money2.divide(new BigDecimal("1000"));
                     BigDecimal moneys3 = money3.divide(new BigDecimal("1000"));
@@ -801,41 +802,42 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                     businessgroupa1vo1.setMoneyfirst(String.valueOf(moneyfirsts));
                     businessgroupa1vo1.setMoneysecond(String.valueOf(moneyseconds));
                     businessgroupa1vo1.setMoneytotal(String.valueOf(moneytotals));
-                } else {
-                    BigDecimal bd = new BigDecimal(businessgroupa1vo1.getName2());
-                    BigDecimal bd1 = new BigDecimal("1");
-                    BigDecimal bd2 = bd1.add(bd);
-                    BigDecimal moneys1 = money1.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys2 = money2.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys3 = money3.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys4 = money4.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys5 = money5.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys6 = money6.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys7 = money7.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys8 = money8.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys9 = money9.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys10 = money10.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys11 = money11.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys12 = money12.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneyfirsts = moneyfirst.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneyseconds = moneysecond.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneytotals = moneytotal.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    businessgroupa1vo1.setMoney1(String.valueOf(moneys1));
-                    businessgroupa1vo1.setMoney2(String.valueOf(moneys2));
-                    businessgroupa1vo1.setMoney3(String.valueOf(moneys3));
-                    businessgroupa1vo1.setMoney4(String.valueOf(moneys4));
-                    businessgroupa1vo1.setMoney5(String.valueOf(moneys5));
-                    businessgroupa1vo1.setMoney6(String.valueOf(moneys6));
-                    businessgroupa1vo1.setMoney7(String.valueOf(moneys7));
-                    businessgroupa1vo1.setMoney8(String.valueOf(moneys8));
-                    businessgroupa1vo1.setMoney9(String.valueOf(moneys9));
-                    businessgroupa1vo1.setMoney10(String.valueOf(moneys10));
-                    businessgroupa1vo1.setMoney11(String.valueOf(moneys11));
-                    businessgroupa1vo1.setMoney12(String.valueOf(moneys12));
-                    businessgroupa1vo1.setMoneyfirst(String.valueOf(moneyfirsts));
-                    businessgroupa1vo1.setMoneysecond(String.valueOf(moneyseconds));
-                    businessgroupa1vo1.setMoneytotal(String.valueOf(moneytotals));
-                }
+//                } else {
+//                    BigDecimal bd = new BigDecimal(businessgroupa1vo1.getName2());
+//                    BigDecimal bd1 = new BigDecimal("1");
+//                    BigDecimal bd2 = bd1.add(bd);
+//                    BigDecimal moneys1 = money1.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys2 = money2.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys3 = money3.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys4 = money4.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys5 = money5.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys6 = money6.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys7 = money7.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys8 = money8.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys9 = money9.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys10 = money10.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys11 = money11.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys12 = money12.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneyfirsts = moneyfirst.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneyseconds = moneysecond.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneytotals = moneytotal.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    businessgroupa1vo1.setMoney1(String.valueOf(moneys1));
+//                    businessgroupa1vo1.setMoney2(String.valueOf(moneys2));
+//                    businessgroupa1vo1.setMoney3(String.valueOf(moneys3));
+//                    businessgroupa1vo1.setMoney4(String.valueOf(moneys4));
+//                    businessgroupa1vo1.setMoney5(String.valueOf(moneys5));
+//                    businessgroupa1vo1.setMoney6(String.valueOf(moneys6));
+//                    businessgroupa1vo1.setMoney7(String.valueOf(moneys7));
+//                    businessgroupa1vo1.setMoney8(String.valueOf(moneys8));
+//                    businessgroupa1vo1.setMoney9(String.valueOf(moneys9));
+//                    businessgroupa1vo1.setMoney10(String.valueOf(moneys10));
+//                    businessgroupa1vo1.setMoney11(String.valueOf(moneys11));
+//                    businessgroupa1vo1.setMoney12(String.valueOf(moneys12));
+//                    businessgroupa1vo1.setMoneyfirst(String.valueOf(moneyfirsts));
+//                    businessgroupa1vo1.setMoneysecond(String.valueOf(moneyseconds));
+//                    businessgroupa1vo1.setMoneytotal(String.valueOf(moneytotals));
+//                }
+                //endregion scc upd 项目计划中収入－外部受託（A1）中，金额不再 * 委托rate to
                 VoList.add(businessgroupa1vo1);
             }
         }
@@ -896,7 +898,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                 BigDecimal moneyfirst = new BigDecimal(getthree.get(0).getMoneyfirst());
                 BigDecimal moneysecond = new BigDecimal(getthree.get(0).getMoneysecond());
                 BigDecimal moneytotal = new BigDecimal(getthree.get(0).getMoneytotal());
-                if (businessgroupa1vo1.getName2().equals("0")) {
+                //region scc upd 项目计划中収入－外部受託（A1）中，金额不再 * 委托rate from
+//                if (businessgroupa1vo1.getName2().equals("0")) {
                     BigDecimal moneys1 = money1.divide(new BigDecimal("1000"));
                     BigDecimal moneys2 = money2.divide(new BigDecimal("1000"));
                     BigDecimal moneys3 = money3.divide(new BigDecimal("1000"));
@@ -927,41 +930,42 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                     businessgroupa1vo1.setMoneyfirst(String.valueOf(moneyfirsts));
                     businessgroupa1vo1.setMoneysecond(String.valueOf(moneyseconds));
                     businessgroupa1vo1.setMoneytotal(String.valueOf(moneytotals));
-                } else {
-                    BigDecimal bd = new BigDecimal(businessgroupa1vo1.getName2());
-                    BigDecimal bd1 = new BigDecimal("1");
-                    BigDecimal bd2 = bd1.add(bd);
-                    BigDecimal moneys1 = money1.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys2 = money2.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys3 = money3.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys4 = money4.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys5 = money5.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys6 = money6.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys7 = money7.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys8 = money8.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys9 = money9.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys10 = money10.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys11 = money11.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneys12 = money12.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneyfirsts = moneyfirst.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneyseconds = moneysecond.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    BigDecimal moneytotals = moneytotal.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
-                    businessgroupa1vo1.setMoney1(String.valueOf(moneys1));
-                    businessgroupa1vo1.setMoney2(String.valueOf(moneys2));
-                    businessgroupa1vo1.setMoney3(String.valueOf(moneys3));
-                    businessgroupa1vo1.setMoney4(String.valueOf(moneys4));
-                    businessgroupa1vo1.setMoney5(String.valueOf(moneys5));
-                    businessgroupa1vo1.setMoney6(String.valueOf(moneys6));
-                    businessgroupa1vo1.setMoney7(String.valueOf(moneys7));
-                    businessgroupa1vo1.setMoney8(String.valueOf(moneys8));
-                    businessgroupa1vo1.setMoney9(String.valueOf(moneys9));
-                    businessgroupa1vo1.setMoney10(String.valueOf(moneys10));
-                    businessgroupa1vo1.setMoney11(String.valueOf(moneys11));
-                    businessgroupa1vo1.setMoney12(String.valueOf(moneys12));
-                    businessgroupa1vo1.setMoneyfirst(String.valueOf(moneyfirsts));
-                    businessgroupa1vo1.setMoneysecond(String.valueOf(moneyseconds));
-                    businessgroupa1vo1.setMoneytotal(String.valueOf(moneytotals));
-                }
+//                } else {
+//                    BigDecimal bd = new BigDecimal(businessgroupa1vo1.getName2());
+//                    BigDecimal bd1 = new BigDecimal("1");
+//                    BigDecimal bd2 = bd1.add(bd);
+//                    BigDecimal moneys1 = money1.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys2 = money2.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys3 = money3.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys4 = money4.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys5 = money5.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys6 = money6.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys7 = money7.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys8 = money8.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys9 = money9.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys10 = money10.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys11 = money11.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneys12 = money12.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneyfirsts = moneyfirst.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneyseconds = moneysecond.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    BigDecimal moneytotals = moneytotal.divide(bd2, scale, roundingMode).multiply(bd).divide(new BigDecimal("1000"));
+//                    businessgroupa1vo1.setMoney1(String.valueOf(moneys1));
+//                    businessgroupa1vo1.setMoney2(String.valueOf(moneys2));
+//                    businessgroupa1vo1.setMoney3(String.valueOf(moneys3));
+//                    businessgroupa1vo1.setMoney4(String.valueOf(moneys4));
+//                    businessgroupa1vo1.setMoney5(String.valueOf(moneys5));
+//                    businessgroupa1vo1.setMoney6(String.valueOf(moneys6));
+//                    businessgroupa1vo1.setMoney7(String.valueOf(moneys7));
+//                    businessgroupa1vo1.setMoney8(String.valueOf(moneys8));
+//                    businessgroupa1vo1.setMoney9(String.valueOf(moneys9));
+//                    businessgroupa1vo1.setMoney10(String.valueOf(moneys10));
+//                    businessgroupa1vo1.setMoney11(String.valueOf(moneys11));
+//                    businessgroupa1vo1.setMoney12(String.valueOf(moneys12));
+//                    businessgroupa1vo1.setMoneyfirst(String.valueOf(moneyfirsts));
+//                    businessgroupa1vo1.setMoneysecond(String.valueOf(moneyseconds));
+//                    businessgroupa1vo1.setMoneytotal(String.valueOf(moneytotals));
+//                }
+                //endregion scc upd 项目计划中収入－外部受託（A1）中，金额不再 * 委托rate to
                 VoList.add(businessgroupa1vo1);
             }
         }

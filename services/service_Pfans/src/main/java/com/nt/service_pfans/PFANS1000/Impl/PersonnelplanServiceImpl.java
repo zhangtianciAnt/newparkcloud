@@ -353,7 +353,8 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
                                                         .add(new BigDecimal(jsonObjectTbFZ.get("money3").toString())))))).toString());
                 jsonObjectTbFZ.put("moneytotal", new BigDecimal(jsonObjectTbFZ.get("moneyfirst").toString())
                         .add(new BigDecimal(jsonObjectTbFZ.get("moneysecond").toString())).toString());
-            } else if (bobse.get("sprogramme") != null && bobse.get("sprogramme").equals("PJ148002")) {
+            }
+            else if (bobse.get("sprogramme") != null && bobse.get("sprogramme").equals("PJ148002")) {
                 jsonObjectTbDQ = JSON.parseObject(String.valueOf(bobse));
                 jsonObjectTbDQ.put("number4", num4 + numRc4);
                 jsonObjectTbDQ.put("number5", num5 + numRc5);
@@ -407,7 +408,8 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
                                                         .add(new BigDecimal(jsonObjectTbDQ.get("money3").toString())))))).toString());
                 jsonObjectTbDQ.put("moneytotal", new BigDecimal(jsonObjectTbDQ.get("moneyfirst").toString())
                         .add(new BigDecimal(jsonObjectTbDQ.get("moneysecond").toString())).toString());
-            } else if (bobse.get("sprogramme") != null && bobse.get("sprogramme").equals("PJ148003")) {
+            }
+            else if (bobse.get("sprogramme") != null && bobse.get("sprogramme").equals("PJ148003")) {
                 jsonObjectTbRC = JSON.parseObject(String.valueOf(bobse));//本社
                 jsonObjectTbRC.put("number4", numRc4);
                 jsonObjectTbRC.put("number5", numRc5);
@@ -463,14 +465,16 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
                         .add(new BigDecimal(jsonObjectTbRC.get("moneysecond").toString())).toString());
             }
         }
+
+
         for (int i = 0; i < businessTableOList.size(); i++) {
-            if (i == 0) {
+            if(businessTableOList.get(i).get("sprogramme") != null && businessTableOList.get(i).get("sprogramme").equals("PJ148001")) {
                 resultTableO.add(jsonObjectTbFZ);
-            } else if (i == 1) {
+            } else if(businessTableOList.get(i).get("sprogramme") != null && businessTableOList.get(i).get("sprogramme").equals("PJ148002")) {
                 resultTableO.add(jsonObjectTbDQ);
-            } else if (i == 2) {
+            } else if(businessTableOList.get(i).get("sprogramme") != null && businessTableOList.get(i).get("sprogramme").equals("PJ148003")) {
                 resultTableO.add(jsonObjectTbRC);
-            } else {
+            } else{
                 resultTableO.add(JSONObject.parseObject(String.valueOf(businessTableOList.get(i))));
             }
         }
@@ -513,7 +517,9 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
         }
         personnelPlan.preInsert(tokenModel);
         personnelPlan.setPersonnelplanid(UUID.randomUUID().toString());
-        if(personnelPlan.getType().equals("0")){
+        //region scc 10/22 创建theme报异常,原因moneyavg为空，type为integer不能用eqaul from
+        if(personnelPlan.getType() == 0){
+            //endregion scc 10/22 创建theme报异常 to
             List<Moneyavg> moneyavgList = JSON.parseArray(personnelPlan.getEmployed(), Moneyavg.class);
             BigDecimal moneyavgSum = new BigDecimal("0.0");
             int perNum = 0;
