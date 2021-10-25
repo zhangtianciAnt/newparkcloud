@@ -95,6 +95,7 @@
             REPLACE(GROUP_CONCAT( pro.NUMBERS, ',' ),',,',',') projectnumber
         FROM
             ( SELECT DISTINCT CONTRACT, NUMBERS FROM projectcontract p, CompanyProjects c WHERE p.COMPANYPROJECTS_ID = c.COMPANYPROJECTS_ID ) pro
+        WHERE pro.CONTRACT != ''
         GROUP BY
             pro.CONTRACT,pro.NUMBERS
     </select>
