@@ -200,4 +200,26 @@ public class Award extends BaseModel {
     @Column(name = "REGINDIFF")
     private String regindiff;
     //add-ws-8/13-禅道任务432
+
+    //add ccm 20211026 受托决裁添加外注信息 fr
+    //构内工数
+    @Column(name = "INHOURS")
+    private String inhours;
+    //构内单价
+    @Column(name = "INPRICE")
+    private String inprice;
+    //构内费用合计
+    @Column(name = "INAMOUNT")
+    private String inamount;
+    //构外工数
+    @Column(name = "OUTHOURS")
+    private String outhours;
+    //构外单价
+    @Column(name = "OUTPRICE")
+    private String outprice;
+    //构外费用合计
+    @Column(name = "OUTAMOUNT")
+    private String outamount;
+    //add ccm 20211026 受托决裁添加外注信息 to
+
 }
