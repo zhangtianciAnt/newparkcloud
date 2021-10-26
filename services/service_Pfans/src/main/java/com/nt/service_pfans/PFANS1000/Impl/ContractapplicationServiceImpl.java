@@ -533,16 +533,30 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         if (cnList != null) {
             int rowindex = 0;
             if (contractnumberList != null) {
-                Contractnumbercount Cn = new Contractnumbercount();
-                Cn.setContractnumber(cnList.get(cnList.size() - 1).getContractnumber());
-                contractnumbercountMapper.delete(Cn);
+                List<Contractnumbercount> saveContList = new ArrayList<>();
                 for (Contractnumbercount cnumb : contractnumberList) {
+                    Contractnumbercount Cn = new Contractnumbercount();
+                    Cn.setContractnumber(cnumb.getContractnumber());
+                    contractnumbercountMapper.delete(Cn);
+                    List<ProjectContract> pjList = new ArrayList<>();
+                    ProjectContract pj = new ProjectContract();
+                    pj.setContractnumbercount_id(cnumb.getContractnumbercount_id());
+                    pjList = projectContractMapper.select(pj);
                     rowindex = rowindex + 1;
-                    cnumb.setRowindex(rowindex);
-                    cnumb.preInsert(tokenModel);
-                    cnumb.setContractnumber(cnList.get(cnList.size() - 1).getContractnumber());
-                    cnumb.setContractnumbercount_id(UUID.randomUUID().toString());
-                    contractnumbercountMapper.insert(cnumb);
+                    if(pjList.size() > 0){
+                        cnumb.setRowindex(rowindex);
+                    }else{
+                        cnumb.setRowindex(rowindex);
+                        cnumb.preInsert(tokenModel);
+                        cnumb.setContractnumber(cnList.get(cnList.size() - 1).getContractnumber());
+                        cnumb.setContractnumbercount_id(UUID.randomUUID().toString());
+                    }
+                    saveContList.add(cnumb);
+                }
+                if(saveContList.size() > 0){
+                    for(Contractnumbercount cnt : saveContList){
+                        contractnumbercountMapper.insert(cnt);
+                    }
                 }
             }
         }
