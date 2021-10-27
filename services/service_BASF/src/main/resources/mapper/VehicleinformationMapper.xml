@@ -153,11 +153,11 @@ ORDER BY
         <set>
             `MODIFYON` =#{modifyon},
             `speed`=#{speed},
-            <if test="speed gt 15">
+            <if test="speed gt 18">
                 `errorgps` = CONCAT( IFNULL(`errorgps`,''), IFNULL(#{gps},'') ),
             </if>
 
-            <if test="speed lt 15">
+            <if test="speed lt 18">
                 `gps` = CONCAT( IFNULL(`gps`,''), IFNULL(#{gps},'') ),
             </if>
         </set>
