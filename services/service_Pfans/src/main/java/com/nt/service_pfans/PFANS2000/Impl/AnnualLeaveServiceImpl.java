@@ -2193,6 +2193,50 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 
     }
 
+    //更新某个人的指定日期段的考勤计算  日期格式为：XXXX-XX-XX
+    @Override
+    public void updateAttByuseridAndDay(String userid,String startDate,String endDate) throws Exception {
+        //处理异常和加班数据
+        SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
+        //开始日期
+        Calendar calStart = Calendar.getInstance();
+        calStart.setTime(sfymd.parse(startDate));
+
+        //结束日期
+        Calendar calend = Calendar.getInstance();
+        calend.setTime(sfymd.parse(endDate));
+
+        for(Calendar item = calStart;item.compareTo(calend) <= 0;item.add(Calendar.DAY_OF_MONTH,1)){
+                punchcardRecordService.methodAttendance_b(item,userid);
+        }
+    }
+
+    //更新所有人的指定日期段的考勤计算  日期格式为：XXXX-XX-XX
+    @Override
+    public void updateAttByDay(String startDate,String endDate) throws Exception {
+        //处理异常和加班数据
+        SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
+        //开始日期
+        Calendar calStart = Calendar.getInstance();
+        calStart.setTime(sfymd.parse(startDate));
+
+        //结束日期
+        Calendar calend = Calendar.getInstance();
+        calend.setTime(sfymd.parse(endDate));
+
+        for(Calendar item = calStart;item.compareTo(calend) <= 0;item.add(Calendar.DAY_OF_MONTH,1)){
+            //add ccm 20200708 异常实时反应
+            Query query_userid = new Query();
+            List<CustomerInfo> customerInfoList = mongoTemplate.findAll(CustomerInfo.class);
+            for (CustomerInfo customerInfo : customerInfoList)
+            {
+                punchcardRecordService.methodAttendance_b(item,customerInfo.getUserid());
+            }
+            //add ccm 20200708 异常实时反应
+        }
+    }
+
+
     //系统服务--获取指定人和日期的打卡记录
     @Override
     public void insertHistoricalCard(String strStartDate,String strendDate,String strFlg,String staffNo) throws Exception {
