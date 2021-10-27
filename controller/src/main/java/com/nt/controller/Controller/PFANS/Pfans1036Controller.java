@@ -145,4 +145,17 @@ public class Pfans1036Controller {
             businessplanService.export(businessVos,request,response);
         }
     }
+
+    /**
+     * scc Pl相关保存
+     * */
+    @RequestMapping(value = "/Pl", method = {RequestMethod.POST})
+    public ApiResult Pl(@RequestBody List<ReportBusinessVo> businessVos, HttpServletRequest request) throws Exception {
+        if(businessVos == null && businessVos.size() == 0){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        businessplanService.PlRelated(businessVos,tokenModel);
+        return ApiResult.success();
+    }
 }

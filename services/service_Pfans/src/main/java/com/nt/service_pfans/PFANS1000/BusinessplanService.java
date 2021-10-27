@@ -40,4 +40,8 @@ public interface BusinessplanService {
     //region scc add 事业计划PL导出 from
     void export(List<ReportBusinessVo> reportBusinessVos, HttpServletRequest request, HttpServletResponse resp) throws Exception;
     //region scc add 事业计划PL导出 to
+
+    //region scc add 保存部分PL from
+    void PlRelated(List<ReportBusinessVo> reportBusinessVos,TokenModel tokenModel) throws Exception;
+    //endregion scc add 保存部分PL to
 }

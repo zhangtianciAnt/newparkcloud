@@ -80,7 +80,9 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     @Autowired
     private ExpatriatesinforMapper expatriatesinforMapper;
     @Autowired
-    PeoplewareFeeMapper peoplewareFeeMapper;
+    private PeoplewareFeeMapper peoplewareFeeMapper;
+    @Autowired
+    private RulingMapper rulingMapper;
 
     DecimalFormat df = new DecimalFormat("#0.00");
     //@Autowired
@@ -1404,7 +1406,37 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         businessPlan.write(os);
         businessPlan.close();
     }
-    //region scc add 事业计划PL导出 to
+    //endregion scc add 事业计划PL导出 to
+
+    //region scc add 保存部分PL from
+    @Override
+    public void PlRelated(List<ReportBusinessVo> reportBusinessVos, TokenModel tokenModel) throws Exception {
+        List<Dictionary> neverCut = dictionaryService.getForSelect("PJ078");
+        Map<String, String> mapping = new HashMap<>();
+        neverCut.forEach(item -> {
+            mapping.put(item.getValue2(), item.getValue3());
+        });
+        reportBusinessVos = reportBusinessVos.stream().filter(item -> mapping.containsKey(item.getName1())).collect(Collectors.toList());
+        List<Ruling> res = new ArrayList<>();
+        reportBusinessVos.forEach(item -> {
+            Ruling ruling = new Ruling();
+            ruling.setRuling_id(UUID.randomUUID().toString());
+            ruling.setYears(item.getYear());
+            ruling.setDepart(item.getCenter_id());
+            ruling.setCode(mapping.get(item.getName1()));
+            BigDecimal oneThousandYuanMeasurement = new BigDecimal(item.getMoneytotal());//千元计量
+            BigDecimal yuanMeasurement = oneThousandYuanMeasurement.multiply(new BigDecimal("1000"));//元计量
+            ruling.setPlantoconsume(yuanMeasurement.toString());
+            ruling.setActualconsumption("0.00");
+            ruling.setActualresidual(yuanMeasurement.toString());
+            ruling.setVersion(0);
+            ruling.preInsert(tokenModel);
+            res.add(ruling);
+        });
+        rulingMapper.insetList(res);
+    }
+//endregion scc add 保存部分PL to
+
 
     //现时点人员统计 //                事业计划人件费单价 每个月份乘以人数 ztc fr
     private List<PersonPlanTable> getNowPersonTable(PersonnelPlan personnelPlan, List<PersonPlanTable> personPlanTables, Map<String,PeoplewareFee> rankResultMap) throws Exception {

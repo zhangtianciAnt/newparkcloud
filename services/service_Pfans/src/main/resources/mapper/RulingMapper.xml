@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.RulingMapper">
+    <insert id="insetList" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
+        insert into ruling (RULING_ID,YEARS,DEPART,CODE,PLANTOCONSUME,ACTUALCONSUMPTION,ACTUALRESIDUAL,VERSION,
+                            STATUS,CREATEBY,CREATEON,MODIFYBY,MODIFYON,OWNER,TENANTID) values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.ruling_id},#{item.years},#{item.depart},#{item.code},#{item.plantoconsume},#{item.actualconsumption},#{item.actualresidual},
+            #{item.version},#{item.status},#{item.createby},#{item.createon},#{item.modifyby},#{item.modifyon},
+            #{item.owner},#{item.tenantid})
+        </foreach>
+    </insert>
+</mapper>
