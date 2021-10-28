@@ -23,8 +23,7 @@ import com.nt.service_pfans.PFANS1000.mapper.*;
 //import com.nt.service_pfans.PFANS1000.mapper.BusinessplandetMapper;
 import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
-import com.nt.utils.LogicalException;
-import com.nt.utils.StringUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -1427,9 +1426,10 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             BigDecimal oneThousandYuanMeasurement = new BigDecimal(item.getMoneytotal());//千元计量
             BigDecimal yuanMeasurement = oneThousandYuanMeasurement.multiply(new BigDecimal("1000"));//元计量
             ruling.setPlantoconsume(yuanMeasurement.toString());
-            ruling.setActualconsumption("0.00");
-            ruling.setActualresidual(yuanMeasurement.toString());
-            ruling.setVersion(0);
+            ruling.setActualconsumption(new BigDecimal("0.00"));
+            ruling.setApplioccution(new BigDecimal("0.00"));
+            ruling.setActualresidual(yuanMeasurement);
+            ruling.setVersion(Long.valueOf("0"));
             ruling.preInsert(tokenModel);
             res.add(ruling);
         });
@@ -1596,5 +1596,66 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             orgTreeList.addAll(org.getOrgs());
         }
         return orgTreeList;
+    }
+
+    @Override
+    public BusinessPlanMoneyBaseVo getBusBalns(String yearInfo, String getOrgIdInfo, String classInfo) throws Exception {
+        BusinessPlanMoneyBaseVo businVo = new BusinessPlanMoneyBaseVo();
+        Long resultBals = 0L;
+        Ruling ruling = new Ruling();
+        ruling.setYears(yearInfo);
+        ruling.setDepart(getOrgIdInfo);
+        Dictionary dicInfo = new Dictionary();
+        dicInfo.setCode(classInfo);
+        List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dicInfo);
+        if(dictionaryList.size() == 0){
+            businVo.setSurplsu(String.valueOf(resultBals));
+        }
+        ruling.setCode(dictionaryList.get(0).getValue3());
+        List<Ruling> rulings = rulingMapper.select(ruling);
+        if(rulings.size() > 0){
+            resultBals =  rulings.get(0).getActualresidual().subtract(rulings.get(0).getApplioccution()).longValue();
+            businVo.setRulingid(rulings.get(0).getRuling_id());
+            businVo.setSurplsu(String.valueOf(resultBals));
+            return businVo;
+        }else{
+            return businVo;
+        }
+    }
+
+    @Override
+    public void upRulingInfo(String rulingid,String useMoney,TokenModel tokenModel) throws Exception{
+        Ruling ruling = new Ruling();
+        ruling.setRuling_id(rulingid);
+        Long oldVersion = rulingMapper.select(ruling).get(0).getVersion();
+        boolean successas = rulingMapper.updateRulingInfo(rulingid, useMoney, oldVersion) > 0;
+        if(!successas){
+            Long nextVersion = rulingMapper.select(ruling).get(0).getVersion();
+            rulingMapper.updateRulingInfo(rulingid, useMoney, nextVersion);
+        }
+    }
+
+    @Override
+    public void cgTpReRulingInfo(String rulingid,String renMoney,TokenModel tokenModel) throws Exception{
+        Ruling ruling = new Ruling();
+        ruling.setRuling_id(rulingid);
+        Long oldVersion = rulingMapper.select(ruling).get(0).getVersion();
+        boolean successas = rulingMapper.cgTpReRulingInfo(rulingid, renMoney, oldVersion) > 0;
+        if(!successas){
+            Long nextVersion = rulingMapper.select(ruling).get(0).getVersion();
+            rulingMapper.cgTpReRulingInfo(rulingid, renMoney, nextVersion);
+        }
+    }
+
+    @Override
+    public void woffRulingInfo(String rulingid,String offMoney,TokenModel tokenModel) throws Exception{
+        Ruling ruling = new Ruling();
+        ruling.setRuling_id(rulingid);
+        Long oldVersion = rulingMapper.select(ruling).get(0).getVersion();
+        boolean successas = rulingMapper.woffRulingInfo(rulingid, offMoney, oldVersion) > 0;
+        if(!successas){
+            Long nextVersion = rulingMapper.select(ruling).get(0).getVersion();
+            rulingMapper.woffRulingInfo(rulingid, offMoney, nextVersion);
+        }
     }
 }

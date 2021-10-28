@@ -134,6 +134,22 @@ public class Communication  extends BaseModel {
     //余额
     @Column(name = "BALANCEJUDE")
     private String balancejude;
+
+    //事业计划区分
+    @Column(name = "PLAN")
+    private String plan;
+
+    //事业计划分类
+    @Column(name = "CLASSIFICATIONTYPE")
+    private String classificationtype;
+
+    //事业计划余额
+    @Column(name = "BALANCE")
+    private String balance;
+
+    @Column(name = "RULINGID")
+    private String rulingid;
+
     //add_fjl_0813
     //add_fjl_0824
     //关联决裁的扣除顺序

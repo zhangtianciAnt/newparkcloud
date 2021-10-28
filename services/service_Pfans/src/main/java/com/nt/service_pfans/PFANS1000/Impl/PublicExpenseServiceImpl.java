@@ -15,6 +15,7 @@ import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.mapper.TodoNoticeMapper;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
@@ -107,6 +108,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 
     @Autowired
     private ComProjectMapper comprojectMapper;
+
+    @Autowired
+    private BusinessplanService businessplanService;
 
     //add-ws-7/9-禅道任务248
     @Override
@@ -1290,6 +1294,62 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 }
             }
         }
+
+        if (publicExpense.getStatus().equals("4")) {
+            PublicExpense publEe = publicExpenseMapper.selectByPrimaryKey(publicExpense.getPublicexpenseid());
+            if(!publEe.getStatus().equals("4")){
+                this.writeOff(publicExpense,tokenModel);
+            }
+        }
+    }
+
+    public void writeOff(PublicExpense publicExpense,TokenModel tokenModel) throws Exception {
+        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpense.getJudgement_name())){
+            if(publicExpense.getJudgement_name().substring(0, 2).equals("CG")){//采购
+                Purchase purchase = purchaseMapper.selectByPrimaryKey(publicExpense.getJudgement());
+                if(purchase != null && !purchase.getRulingid().equals("")){
+                    businessplanService.woffRulingInfo(purchase.getRulingid(),publicExpense.getRmbexpenditure(),tokenModel);
+                    if(!publicExpense.getRmbexpenditure().equals(purchase.getTotalamount())){
+                        String diff = new BigDecimal(purchase.getTotalamount()).subtract(new BigDecimal(publicExpense.getRmbexpenditure())).toString();
+                        businessplanService.cgTpReRulingInfo(purchase.getRulingid(),diff,tokenModel);
+
+                    }
+                }
+            } else if (publicExpense.getJudgement_name().substring(0, 3).equals("JJF")){//交际费
+                Communication communication = communicationMapper.selectByPrimaryKey(publicExpense.getJudgement());
+                if(communication != null && !communication.getRulingid().equals("")){
+                    businessplanService.woffRulingInfo(communication.getRulingid(),publicExpense.getRmbexpenditure(),tokenModel);
+                    if(!publicExpense.getRmbexpenditure().equals(communication.getMoneys())){
+                        String diff = new BigDecimal(communication.getMoneys()).subtract(new BigDecimal(publicExpense.getRmbexpenditure())).toString();
+                        businessplanService.cgTpReRulingInfo(communication.getRulingid(),diff,tokenModel);
+
+                    }
+                }
+            } else if (publicExpense.getJudgement_name().substring(0, 2).equals("JC")){//其他业务决裁
+                Judgement judgement = judgementMapper.selectByPrimaryKey(publicExpense.getJudgement());
+                if(judgement != null && !judgement.getRulingid().equals("")){
+                    businessplanService.woffRulingInfo(judgement.getRulingid(),publicExpense.getRmbexpenditure(),tokenModel);
+                    if(!publicExpense.getRmbexpenditure().equals(judgement.getMoney())){
+                        String diff = new BigDecimal(judgement.getMoney()).subtract(new BigDecimal(publicExpense.getRmbexpenditure())).toString();
+                        businessplanService.cgTpReRulingInfo(judgement.getRulingid(),diff,tokenModel);
+
+                    }
+                }
+            } else if (publicExpense.getJudgement_name().substring(0, 2).equals("QY")){//千元以下
+                PurchaseApply purchaseApply = purchaseapplyMapper.selectByPrimaryKey(publicExpense.getJudgement());
+                if(purchaseApply != null && !purchaseApply.getRulingid().equals("")){
+                    businessplanService.woffRulingInfo(purchaseApply.getRulingid(),publicExpense.getRmbexpenditure(),tokenModel);
+                    if(!publicExpense.getRmbexpenditure().equals(purchaseApply.getSummoney())){
+                        String diff = new BigDecimal(purchaseApply.getSummoney()).subtract(new BigDecimal(publicExpense.getRmbexpenditure())).toString();
+                        businessplanService.cgTpReRulingInfo(purchaseApply.getRulingid(),diff,tokenModel);
+
+                    }
+                }
+            } else if (publicExpense.getJudgement_name().substring(0, 1).equals("C")){//境内外出差
+
+            }
+        }
+
     }
 
     //按id查询

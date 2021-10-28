@@ -105,6 +105,14 @@ public class Award extends BaseModel {
     @Column(name = "PLAN")
     private String plan;
 
+    //事业计划分类
+    @Column(name = "CLASSIFICATIONTYPE")
+    private String classificationtype;
+
+    //事业计划余额
+    @Column(name = "BALANCE")
+    private String balance;
+
 
     @Column(name = "TOTAL")
     private String total;

@@ -10,4 +10,11 @@ public interface RulingMapper extends MyMapper<Ruling> {
 
     void insetList(@Param("list") List<Ruling> rulings);
 
+    Integer updateRulingInfo(@Param("ruling_id") String rulingid, @Param("useMoney") String useMoney, @Param("oldVersion") Long oldVersion);
+
+    Integer cgTpReRulingInfo(@Param("ruling_id") String rulingid, @Param("renMoney") String renMoney, @Param("oldVersion") Long oldVersion);
+
+    Integer woffRulingInfo(@Param("ruling_id") String rulingid, @Param("offMoney") String offMoney, @Param("oldVersion") Long oldVersion);
+
+
 }

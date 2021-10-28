@@ -4,15 +4,13 @@ import com.nt.dao_Auth.Role;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Org.UserAccount;
-import com.nt.dao_Pfans.PFANS1000.Award;
-import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
-import com.nt.dao_Pfans.PFANS1000.LoanApplication;
-import com.nt.dao_Pfans.PFANS1000.PublicExpense;
+import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS2000.Staffexitproce;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.mapper.TodoNoticeMapper;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
 import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
@@ -30,6 +28,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -67,6 +66,9 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Autowired
     private PublicExpenseMapper publicExpenseMapper;
+
+    @Autowired
+    private BusinessplanService businessplanService;
 
     @Override
     public List<Purchase> getPurchase(Purchase purchase, TokenModel tokenModel) {
@@ -219,6 +221,20 @@ public class PurchaseServiceImpl implements PurchaseService {
             purchase.preUpdate(tokenModel);
             purchaseMapper.updateByPrimaryKey(purchase);
         }
+
+        Purchase purse = purchaseMapper.selectByPrimaryKey(purchase.getPurchase_id());
+        if(purse.getCareerplan().equals("1") && !purse.getTotalamount().equals(purchase.getTotalamount())){
+            //金额不统一 旧：purse 新：purchaseApply
+            BigDecimal diffMoney = new BigDecimal(purchase.getTotalamount()).subtract(new BigDecimal(purse.getTotalamount()));
+            if(purchase.getCareerplan().equals("0") || !purse.getRulingid().equals(purchase.getRulingid())){
+                businessplanService.cgTpReRulingInfo(purse.getRulingid(), purse.getTotalamount(), tokenModel);
+                if(purchase.getCareerplan().equals("1")){
+                    businessplanService.upRulingInfo(purchase.getRulingid(), purchase.getTotalamount(), tokenModel);
+                }
+            }else {
+                businessplanService.upRulingInfo(purchase.getRulingid(), diffMoney.toString(), tokenModel);
+            }
+        }
     }
 
     @Override
@@ -256,6 +272,11 @@ public class PurchaseServiceImpl implements PurchaseService {
         purchase.setPurchase_id(UUID.randomUUID().toString());
         //purchase.setSurloappmoney(purchase.getTotalamount());
         purchaseMapper.insert(purchase);
+
+        //事业计划余额计算
+        if(purchase.getCareerplan().equals("1")){
+            businessplanService.upRulingInfo(purchase.getRulingid(), purchase.getTotalamount(), tokenModel);
+        }
     }
 
     //采购业务数据流程查看详情

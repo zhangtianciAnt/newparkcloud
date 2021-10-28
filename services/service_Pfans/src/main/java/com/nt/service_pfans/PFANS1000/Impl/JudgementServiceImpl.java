@@ -4,6 +4,8 @@ import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.Judgementdetail;
 import com.nt.dao_Pfans.PFANS1000.Unusedevice;
 import com.nt.dao_Pfans.PFANS1000.Vo.JudgementVo;
+import com.nt.dao_Pfans.PFANS3000.Purchase;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.JudgementService;
 import com.nt.service_pfans.PFANS1000.mapper.JudgementMapper;
 import com.nt.service_pfans.PFANS1000.mapper.JudgementdetailMapper;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -35,6 +38,9 @@ public class JudgementServiceImpl implements JudgementService {
 
     @Autowired
     private JudgementdetailMapper judgementdetailMapper;
+
+    @Autowired
+    private BusinessplanService businessplanService;
 
     @Override
     public List<Judgement> getJudgement(Judgement judgement) {
@@ -119,6 +125,19 @@ public class JudgementServiceImpl implements JudgementService {
                     unu.setRowindex(rowindex);
                     unusedeviceMapper.insertSelective(unu);
                 }
+            }
+        }
+        Judgement jude = judgementMapper.selectByPrimaryKey(judgement.getJudgementid());
+        if(jude.getCareerplan().equals("1") && !jude.getMoney().equals(judgement.getMoney())){
+            //金额不统一 旧：jude 新：judgement
+            BigDecimal diffMoney = new BigDecimal(judgement.getMoney()).subtract(new BigDecimal(jude.getMoney()));
+            if(judgement.getCareerplan().equals("0") || !jude.getRulingid().equals(judgement.getRulingid())){
+                businessplanService.cgTpReRulingInfo(jude.getRulingid(), jude.getMoney(), tokenModel);
+                if(judgement.getCareerplan().equals("1")){
+                    businessplanService.upRulingInfo(judgement.getRulingid(), judgement.getMoney(), tokenModel);
+                }
+            }else {
+                businessplanService.upRulingInfo(judgement.getRulingid(), diffMoney.toString(), tokenModel);
             }
         }
     }
@@ -263,6 +282,10 @@ public class JudgementServiceImpl implements JudgementService {
                     unusedeviceMapper.insertSelective(unu);
                 }
             }
+        }
+        //事业计划余额计算
+        if(judgementVo.getJudgement().getCareerplan().equals("1")){
+            businessplanService.upRulingInfo(judgementVo.getJudgement().getRulingid(), judgementVo.getJudgement().getMoney(), tokenModel);
         }
     }
 

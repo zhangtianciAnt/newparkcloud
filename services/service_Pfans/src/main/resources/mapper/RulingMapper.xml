@@ -10,4 +10,31 @@
             #{item.owner},#{item.tenantid})
         </foreach>
     </insert>
+
+    <update id="updateRulingInfo" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
+        update RULING
+        set APPLIOCCUTION = APPLIOCCUTION + #{useMoney,jdbcType=DECIMAL}
+          ,VERSION = VERSION + 1
+        WHERE RULING_ID = #{ruling_id}
+          AND VERSION = #{oldVersion};
+    </update>
+
+    <update id="cgTpReRulingInfo" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
+        update RULING
+        set APPLIOCCUTION = APPLIOCCUTION - #{renMoney,jdbcType=DECIMAL}
+          ,VERSION = VERSION + 1
+        WHERE RULING_ID = #{ruling_id}
+          AND VERSION = #{oldVersion};
+    </update>
+
+    <update id="woffRulingInfo" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
+        update RULING
+        set APPLIOCCUTION = APPLIOCCUTION - #{offMoney,jdbcType=DECIMAL}
+          ,ACTUALRESIDUAL = ACTUALRESIDUAL - #{offMoney,jdbcType=DECIMAL}
+          ,ACTUALCONSUMPTION = ACTUALCONSUMPTION + #{offMoney,jdbcType=DECIMAL}
+          ,VERSION = VERSION + 1
+        WHERE RULING_ID = #{ruling_id}
+          AND VERSION = #{oldVersion};
+    </update>
+
 </mapper>

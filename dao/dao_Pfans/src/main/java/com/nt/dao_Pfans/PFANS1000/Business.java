@@ -399,4 +399,7 @@ public class Business extends BaseModel {
     @Column(name = "BALANCEJUDE")
     private String balancejude;
     //add_fjl_0813
+
+    @Column(name = "RULINGID")
+    private String rulingid;
 }

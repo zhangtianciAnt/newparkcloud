@@ -2,8 +2,10 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Businessplan;
+import com.nt.dao_Pfans.PFANS1000.Ruling;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessplanVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ReportBusinessVo;
+import com.nt.dao_Pfans.PFANS6000.PricesetGroup;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.utils.*;
@@ -157,5 +159,13 @@ public class Pfans1036Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         businessplanService.PlRelated(businessVos,tokenModel);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/getBusBalns", method = {RequestMethod.GET})
+    public ApiResult getBusBalns(String yearInfo, String getOrgIdInfo, String classInfo, HttpServletRequest request) throws Exception {
+        if (yearInfo == null || getOrgIdInfo == null || classInfo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(ApiResult.success(businessplanService.getBusBalns(yearInfo,getOrgIdInfo,classInfo)));
     }
 }

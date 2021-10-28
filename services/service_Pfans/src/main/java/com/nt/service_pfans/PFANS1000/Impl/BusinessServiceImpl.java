@@ -25,6 +25,7 @@ import com.nt.service_Org.mapper.TodoNoticeMapper;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.BusinessService;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper;
 import com.nt.service_pfans.PFANS2000.mapper.PunchcardRecordDetailMapper;
@@ -97,6 +98,10 @@ public class BusinessServiceImpl implements BusinessService {
     private LoanApplicationMapper loanApplicationMapper;
     @Autowired
     private CommunicationMapper communicationMapper;
+    @Autowired
+    private BusinessplanService businessplanService;
+
+
     @Override
     public List<Business> get(Business business) throws Exception {
         return businessMapper.select(business);
@@ -474,6 +479,9 @@ public class BusinessServiceImpl implements BusinessService {
                 travelcontent.setRowindex(rowindex);
                 travelcontentMapper.insertSelective(travelcontent);
             }
+        }
+        if(business.getPlan().equals("1")){
+            businessplanService.upRulingInfo(business.getRulingid(), business.getMoneys(), tokenModel);
         }
     }
 

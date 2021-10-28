@@ -44,4 +44,13 @@ public interface BusinessplanService {
     //region scc add 保存部分PL from
     void PlRelated(List<ReportBusinessVo> reportBusinessVos,TokenModel tokenModel) throws Exception;
     //endregion scc add 保存部分PL to
+
+    public BusinessPlanMoneyBaseVo getBusBalns(String yearInfo, String getOrgIdInfo, String classInfo) throws Exception;
+
+    public void upRulingInfo(String rulingid,String useMoney,TokenModel tokenModel) throws Exception;
+
+    public void cgTpReRulingInfo(String rulingid,String renMoney,TokenModel tokenModel) throws Exception;
+
+    public void woffRulingInfo(String rulingid,String offMoney,TokenModel tokenModel) throws Exception;
+
 }
