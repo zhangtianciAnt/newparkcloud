@@ -123,4 +123,19 @@ public class Pfans3005Controller {
         purchaseService.change(purchase, tokenModel);
         return ApiResult.success();
     }
+
+    /**
+     * 购买决裁逻辑删除，更改数据状态为1，若事业内，涉及还钱
+     */
+    @RequestMapping(value = "/purchdelete", method = {RequestMethod.POST})
+    public ApiResult purchdelete(@RequestBody Purchase purchase, HttpServletRequest request) throws Exception {
+        if (purchase == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        purchaseService.purchdelete(purchase, tokenModel);
+        return ApiResult.success();
+
+    }
+
 }

@@ -401,4 +401,19 @@ public class PurchaseServiceImpl implements PurchaseService {
         purchaseMapper.updateByPrimaryKey(pur);
     }
 
+    //region scc add 10/28 交际费事前决裁逻辑删除 from
+    @Override
+    public void purchdelete(Purchase purchase, TokenModel tokenModel) throws Exception {
+        Purchase updateStatus = new Purchase();
+        updateStatus.setPurchase_id(purchase.getPurchase_id());
+        updateStatus.setStatus("1");
+        purchaseMapper.updateByPrimaryKeySelective(updateStatus);
+        if("内".equals(purchase.getCareerplan())){
+            businessplanService.cgTpReRulingInfo(purchase.getRulingid(),purchase.getTotalamount(),tokenModel);
+        }else{
+            return;
+        }
+    }
+    //endregion scc add 10/28 交际费事前决裁逻辑删除 to
+
 }
