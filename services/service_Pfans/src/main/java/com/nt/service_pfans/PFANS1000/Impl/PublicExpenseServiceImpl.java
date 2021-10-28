@@ -1101,6 +1101,12 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 }
             }
         }
+        if (publicExpense.getStatus().equals("4")) {
+            PublicExpense publEe = publicExpenseMapper.selectByPrimaryKey(publicExpense.getPublicexpenseid());
+            if(!publEe.getStatus().equals("4")){
+                this.writeOff(publicExpense,tokenModel);
+            }
+        }
         //upd-8/20-ws-禅道468任务
         publicExpenseMapper.updateByPrimaryKey(publicExpense);
 
@@ -1292,13 +1298,6 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         }
                     }
                 }
-            }
-        }
-
-        if (publicExpense.getStatus().equals("4")) {
-            PublicExpense publEe = publicExpenseMapper.selectByPrimaryKey(publicExpense.getPublicexpenseid());
-            if(!publEe.getStatus().equals("4")){
-                this.writeOff(publicExpense,tokenModel);
             }
         }
     }
