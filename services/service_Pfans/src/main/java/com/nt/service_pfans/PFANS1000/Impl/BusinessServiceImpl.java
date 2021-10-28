@@ -46,6 +46,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -364,6 +365,19 @@ public class BusinessServiceImpl implements BusinessService {
             }
         }
         //endregion gbb 20201029 禅道601 审批通过时将出差期间工作日的考勤设为因公外出 end
+        Business busin = businessMapper.selectByPrimaryKey(business.getBusiness_id());
+        if(busin.getPlan().equals("1") && !busin.getMoneys().equals(business.getMoneys())){
+            //金额不统一 旧：busin 新：business
+            BigDecimal diffMoney = new BigDecimal(business.getMoneys()).subtract(new BigDecimal(busin.getMoneys()));
+            if(business.getPlan().equals("0") || !busin.getRulingid().equals(business.getRulingid())){
+                businessplanService.cgTpReRulingInfo(busin.getRulingid(), busin.getMoneys(), tokenModel);
+                if(business.getPlan().equals("1")){
+                    businessplanService.upRulingInfo(business.getRulingid(), business.getMoneys(), tokenModel);
+                }
+            }else {
+                businessplanService.upRulingInfo(business.getRulingid(), diffMoney.toString(), tokenModel);
+            }
+        }
     }
 
     //【每天凌晨0点1分】
