@@ -12,6 +12,7 @@ import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS1000.AwardService;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS2000.PersonalCostService;
 import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
@@ -68,6 +69,8 @@ public class AwardServiceImpl implements AwardService {
 
     @Autowired
     private ContractcompoundMapper contractcompoundMapper;
+    @Autowired
+    private BusinessplanService businessplanService;
 
     @Override
     public List<Award> get(Award award) throws Exception {
@@ -375,4 +378,21 @@ public class AwardServiceImpl implements AwardService {
         return awardDetails;
     }
     //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc to
+
+    //region scc add 10/28 委托决裁根据事业计划，进行逻辑删除 from
+    @Override
+    public void awddelete(Award award, TokenModel tokenModel) throws Exception {
+        Award updateStatus = new Award();
+        updateStatus.setAward_id(award.getAward_id());
+        Award result = awardMapper.selectByPrimaryKey(updateStatus);
+        result.setStatus("1");
+        awardMapper.updateByPrimaryKey(result);
+        if("0".equals(result.getPlan())){
+//            businessplanService.cgTpReRulingInfo(award.getRulingid(),award.getClaimamount(),tokenModel);
+        }else{
+            return;
+        }
+    }
+    //endregion scc add 10/28 委托决裁根据事业计划，进行逻辑删除 to
+
 }

@@ -29,4 +29,8 @@ public interface AwardService {
       //region scc add 21/8/20 受托合同，详情，部门下拉框数据源 from
       List<AwardDetail> getAwardEntr(List<String> awardIdList) throws Exception;
       //region scc add 21/8/20 受托合同，详情，部门下拉框数据源 to
+
+      //region scc add 10/28 委托决裁根据事业计划，进行逻辑删除 from
+      void awddelete(Award award, TokenModel tokenModel) throws Exception;
+      //endregion scc add 10/28 委托决裁根据事业计划，进行逻辑删除 to
 }

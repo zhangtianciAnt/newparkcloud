@@ -863,4 +863,19 @@ public class Pfans1025Controller {
         return ApiResult.success(awardService.getAwardEntr(awardIdList));
     }
     //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc to
+
+    /**
+     * 委托决裁逻辑删除，更改数据状态为1，若事业内，涉及还钱
+     */
+    @RequestMapping(value = "/awddelete", method = {RequestMethod.POST})
+    public ApiResult awddelete(@RequestBody Award award, HttpServletRequest request) throws Exception {
+        if (award == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        awardService.awddelete(award, tokenModel);
+        return ApiResult.success();
+
+    }
+
 }
