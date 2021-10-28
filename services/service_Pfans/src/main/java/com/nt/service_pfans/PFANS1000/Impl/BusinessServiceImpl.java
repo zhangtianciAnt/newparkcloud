@@ -347,6 +347,24 @@ public class BusinessServiceImpl implements BusinessService {
         Business business = new Business();
         BeanUtils.copyProperties(businessVo.getBusiness(), business);
         business.preUpdate(tokenModel);
+        Business busin = businessMapper.selectByPrimaryKey(business.getBusiness_id());
+        if(!busin.getPlan().equals(business.getPlan())){//新旧事业计划不相同
+            if(busin.getPlan().equals("1")){//旧内新外 还旧的钱
+                businessplanService.cgTpReRulingInfo(busin.getRulingid(), busin.getMoneys(), tokenModel);
+            }else{//旧外新内 扣新的钱
+                businessplanService.upRulingInfo(business.getRulingid(), business.getMoneys(), tokenModel);
+            }
+        } else{//新旧事业计划相同 都是外不用考虑
+            if(busin.getPlan().equals("1")){//新旧都是内
+                if(busin.getClassificationtype().equals(business.getClassificationtype())){ //同类别
+                    BigDecimal diffMoney = new BigDecimal(business.getMoneys()).subtract(new BigDecimal(busin.getMoneys()));
+                    businessplanService.upRulingInfo(business.getRulingid(), diffMoney.toString(), tokenModel);
+                }else{ //不同类别 还旧扣新
+                    businessplanService.cgTpReRulingInfo(busin.getRulingid(), busin.getMoneys(), tokenModel);
+                    businessplanService.upRulingInfo(business.getRulingid(), business.getMoneys(), tokenModel);
+                }
+            }
+        }
         businessMapper.updateByPrimaryKey(business);
         String businessid = business.getBusiness_id();
         TravelContent travel = new TravelContent();
@@ -365,19 +383,6 @@ public class BusinessServiceImpl implements BusinessService {
             }
         }
         //endregion gbb 20201029 禅道601 审批通过时将出差期间工作日的考勤设为因公外出 end
-        Business busin = businessMapper.selectByPrimaryKey(business.getBusiness_id());
-        if(busin.getPlan().equals("1") && !busin.getMoneys().equals(business.getMoneys())){
-            //金额不统一 旧：busin 新：business
-            BigDecimal diffMoney = new BigDecimal(business.getMoneys()).subtract(new BigDecimal(busin.getMoneys()));
-            if(business.getPlan().equals("0") || !busin.getRulingid().equals(business.getRulingid())){
-                businessplanService.cgTpReRulingInfo(busin.getRulingid(), busin.getMoneys(), tokenModel);
-                if(business.getPlan().equals("1")){
-                    businessplanService.upRulingInfo(business.getRulingid(), business.getMoneys(), tokenModel);
-                }
-            }else {
-                businessplanService.upRulingInfo(business.getRulingid(), diffMoney.toString(), tokenModel);
-            }
-        }
     }
 
     //【每天凌晨0点1分】
