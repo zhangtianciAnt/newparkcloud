@@ -225,4 +225,34 @@ public class Tickets extends BaseModel {
     @Column(name = "BUSINESSNAME")
     private String businessname;
     //add-ws-7/7-禅道247
+
+    /**
+     * 机票订单号
+     * */
+    @Column(name = "TICKETORDERNUMBER")
+    private String ticketordernumber;
+
+    /**
+     * 机票供应商
+     * */
+    @Column(name = "TICKETVENDORS")
+    private String ticketvendors;
+
+    /**
+     * 第一次变更后金额
+     * */
+    @Column(name = "CHANGEAMOUNTFORFIRST")
+    private String changeamountforfirst;
+
+    /**
+     * 第二次变更后金额
+     * */
+    @Column(name = "CHANGEAMOUNTFORSECOND")
+    private String changeamountforsecond;
+
+    /**
+     * 出票金额
+     * */
+    @Column(name = "TICKETAMOUNT")
+    private String ticketamount;
 }
