@@ -253,6 +253,18 @@ public class BusinessServiceImpl implements BusinessService {
         business2.setCheckch("1");
         business2.preUpdate(tokenModel);
         businessMapper.updateByPrimaryKey(business2);
+        //region scc add 取消机票，更改事业计划，还钱 from
+        Business cancelTicket = new Business();
+        BeanUtils.copyProperties(businessVo.getBusiness(), cancelTicket);
+        if("1".equals(cancelTicket.getPlan())){
+            businessplanService.cgTpReRulingInfo(business.getRulingid(),business.getMoneys(),tokenModel);
+            cancelTicket.setPlantype("");
+            cancelTicket.setClassificationtype("");
+            cancelTicket.setBalance("");
+            cancelTicket.setRulingid("");
+            businessMapper.updateByPrimaryKeySelective(cancelTicket);
+        }
+        //endregion scc add 取消机票，更改事业计划，还钱 to
         String businessid = business2.getBusiness_id();
         TravelContent travel = new TravelContent();
         travel.setBusinessid(businessid);
