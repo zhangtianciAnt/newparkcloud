@@ -4,6 +4,7 @@ package com.nt.service_pfans.PFANS1000;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS1000.Businessplan;
 import com.nt.dao_Pfans.PFANS1000.PersonPlanTable;
+import com.nt.dao_Pfans.PFANS1000.Ruling;
 import com.nt.dao_Pfans.PFANS1000.Vo.*;
 import com.nt.utils.dao.TokenModel;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -58,5 +59,9 @@ public interface BusinessplanService {
     public void cgTpReRulingInfoAnt(String renMoney, String code, String years, String depart, TokenModel tokenModel) throws Exception;
 
     public void woffRulingInfoAnt(String offMoney, String code, String years, String depart, TokenModel tokenModel) throws Exception;
+
+    //region scc add 事业计划消耗 from
+    List<Ruling> consumption(String centerId,TokenModel tokenModel)throws Exception;
+    //region scc add 事业计划消耗 to
 
 }

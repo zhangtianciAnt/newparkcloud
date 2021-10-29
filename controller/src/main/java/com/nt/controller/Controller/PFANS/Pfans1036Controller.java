@@ -168,4 +168,16 @@ public class Pfans1036Controller {
         }
         return ApiResult.success(ApiResult.success(businessplanService.getBusBalns(yearInfo,getOrgIdInfo,classInfo)));
     }
+
+    /**
+     * 事业计划消耗
+     * */
+    @RequestMapping(value = "/consumption", method = {RequestMethod.GET})
+    public ApiResult consumption(@RequestParam String centerId, HttpServletRequest request) throws Exception {
+        if (centerId == null || centerId == "") {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(ApiResult.success(businessplanService.consumption(centerId,tokenModel)));
+    }
 }

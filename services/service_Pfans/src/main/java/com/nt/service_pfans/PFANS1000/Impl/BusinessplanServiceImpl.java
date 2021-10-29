@@ -1699,4 +1699,23 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             rulingMapper.woffRulingInfoAnt(offMoney, code, years, depart, nextVersion);
         }
     }
+
+    //region scc add 事业计划消耗 from
+    @Override
+    public List<Ruling> consumption(String centerId,TokenModel tokenModel) throws Exception{
+        List<Dictionary> neverCut = dictionaryService.getForSelect("PJ078");
+        Map<String, String> mapping = new HashMap<>();
+        neverCut.forEach(item -> {
+            mapping.put(item.getValue3(), item.getValue2());
+        });
+        Ruling ruling = new Ruling();
+        ruling.setDepart(centerId);
+        List<Ruling> res = rulingMapper.select(ruling);
+        res.forEach(item -> {
+            item.setCode(mapping.get(item.getCode()));
+        });
+        return res;
+    }
+    //endregion scc add 事业计划消耗 to
+
 }
