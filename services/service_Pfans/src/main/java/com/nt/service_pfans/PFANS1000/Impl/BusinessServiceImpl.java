@@ -257,7 +257,8 @@ public class BusinessServiceImpl implements BusinessService {
         Business cancelTicket = new Business();
         BeanUtils.copyProperties(businessVo.getBusiness(), cancelTicket);
         if("1".equals(cancelTicket.getPlan())){
-            businessplanService.cgTpReRulingInfo(business.getRulingid(),business.getMoneys(),tokenModel);
+            businessplanService.cgTpReRulingInfo(cancelTicket.getRulingid(),cancelTicket.getMoneys(),tokenModel);
+            cancelTicket.setPlan("0");
             cancelTicket.setPlantype("");
             cancelTicket.setClassificationtype("");
             cancelTicket.setBalance("");
