@@ -230,4 +230,7 @@ public class Award extends BaseModel {
     private String outamount;
     //add ccm 20211026 受托决裁添加外注信息 to
 
+    @Column(name = "RULINGID")
+    private String rulingid;
+
 }

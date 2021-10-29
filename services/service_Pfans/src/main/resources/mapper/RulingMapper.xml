@@ -11,6 +11,7 @@
         </foreach>
     </insert>
 
+    <!--    决裁保存-->
     <update id="updateRulingInfo" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
         update RULING
         set APPLIOCCUTION = APPLIOCCUTION + #{useMoney,jdbcType=DECIMAL}
@@ -19,6 +20,7 @@
           AND VERSION = #{oldVersion};
     </update>
 
+    <!--    决裁删除-->
     <update id="cgTpReRulingInfo" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
         update RULING
         set APPLIOCCUTION = APPLIOCCUTION - #{renMoney,jdbcType=DECIMAL}
@@ -27,6 +29,7 @@
           AND VERSION = #{oldVersion};
     </update>
 
+    <!--    精算审批完成 old-->
     <update id="woffRulingInfo" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
         update RULING
         set APPLIOCCUTION = APPLIOCCUTION - #{offMoney,jdbcType=DECIMAL}
@@ -34,6 +37,38 @@
           ,ACTUALCONSUMPTION = ACTUALCONSUMPTION + #{offMoney,jdbcType=DECIMAL}
           ,VERSION = VERSION + 1
         WHERE RULING_ID = #{ruling_id}
+          AND VERSION = #{oldVersion};
+    </update>
+
+    <update id="updateRulingInfoAnt" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
+        update RULING
+        set APPLIOCCUTION = APPLIOCCUTION + #{useMoney,jdbcType=DECIMAL}
+          ,VERSION = VERSION + 1
+        WHERE CODE = #{code}
+          AND YEARS = #{years}
+          AND DEPART = #{depart}
+          AND VERSION = #{oldVersion};
+    </update>
+
+    <update id="cgTpReRulingInfoAnt" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
+        update RULING
+        set APPLIOCCUTION = APPLIOCCUTION - #{renMoney,jdbcType=DECIMAL}
+          ,VERSION = VERSION + 1
+        WHERE CODE = #{code}
+          AND YEARS = #{years}
+          AND DEPART = #{depart}
+          AND VERSION = #{oldVersion};
+    </update>
+
+    <!--    精算审批完成 new-->
+    <update id="woffRulingInfoAnt" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
+        update RULING
+        set ACTUALRESIDUAL = ACTUALRESIDUAL - #{offMoney,jdbcType=DECIMAL}
+          ,ACTUALCONSUMPTION = ACTUALCONSUMPTION + #{offMoney,jdbcType=DECIMAL}
+          ,VERSION = VERSION + 1
+        WHERE CODE = #{code}
+          AND YEARS = #{years}
+          AND DEPART = #{depart}
           AND VERSION = #{oldVersion};
     </update>
 

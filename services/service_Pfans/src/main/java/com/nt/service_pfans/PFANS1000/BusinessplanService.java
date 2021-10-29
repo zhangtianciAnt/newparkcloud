@@ -53,4 +53,10 @@ public interface BusinessplanService {
 
     public void woffRulingInfo(String rulingid,String offMoney,TokenModel tokenModel) throws Exception;
 
+    public void upRulingInfoAnt(String useMoney, String code, String years, String depart, TokenModel tokenModel) throws Exception;
+
+    public void cgTpReRulingInfoAnt(String renMoney, String code, String years, String depart, TokenModel tokenModel) throws Exception;
+
+    public void woffRulingInfoAnt(String offMoney, String code, String years, String depart, TokenModel tokenModel) throws Exception;
+
 }

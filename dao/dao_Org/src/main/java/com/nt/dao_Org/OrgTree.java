@@ -36,6 +36,14 @@ public class OrgTree extends BaseModel {
     @JSONField(name="_id")
     private String _id;
     /**
+     * 父节点
+     */
+    private String parent_id;
+    /**
+     * 是否为有效部门
+     */
+    private Boolean effective;
+    /**
      * 组织ID	ORGID
      */
     private String orgid;

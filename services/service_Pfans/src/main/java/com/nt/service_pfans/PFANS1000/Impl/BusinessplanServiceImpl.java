@@ -1658,4 +1658,45 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             rulingMapper.woffRulingInfo(rulingid, offMoney, nextVersion);
         }
     }
+    @Override
+    public void upRulingInfoAnt(String useMoney, String code, String years, String depart, TokenModel tokenModel) throws Exception{
+        Ruling ruling = new Ruling();
+        ruling.setCode(code);
+        ruling.setYears(years);
+        ruling.setDepart(depart);
+        Long oldVersion = rulingMapper.select(ruling).get(0).getVersion();
+        boolean successas = rulingMapper.updateRulingInfoAnt(useMoney, code, years, depart, oldVersion) > 0;
+        if(!successas){
+            Long nextVersion = rulingMapper.select(ruling).get(0).getVersion();
+            rulingMapper.updateRulingInfoAnt(useMoney, code, years, depart, nextVersion);
+        }
+    }
+
+    @Override
+    public void cgTpReRulingInfoAnt(String renMoney, String code, String years, String depart, TokenModel tokenModel) throws Exception{
+        Ruling ruling = new Ruling();
+        ruling.setCode(code);
+        ruling.setYears(years);
+        ruling.setDepart(depart);
+        Long oldVersion = rulingMapper.select(ruling).get(0).getVersion();
+        boolean successas = rulingMapper.cgTpReRulingInfoAnt(renMoney, code, years, depart, oldVersion) > 0;
+        if(!successas){
+            Long nextVersion = rulingMapper.select(ruling).get(0).getVersion();
+            rulingMapper.cgTpReRulingInfoAnt(renMoney, code, years, depart, nextVersion);
+        }
+    }
+
+    @Override
+    public void woffRulingInfoAnt(String offMoney, String code, String years, String depart, TokenModel tokenModel) throws Exception{
+        Ruling ruling = new Ruling();
+        ruling.setCode(code);
+        ruling.setYears(years);
+        ruling.setDepart(depart);
+        Long oldVersion = rulingMapper.select(ruling).get(0).getVersion();
+        boolean successas = rulingMapper.woffRulingInfoAnt(offMoney, code, years, depart, oldVersion) > 0;
+        if(!successas){
+            Long nextVersion = rulingMapper.select(ruling).get(0).getVersion();
+            rulingMapper.woffRulingInfoAnt(offMoney, code, years, depart, nextVersion);
+        }
+    }
 }

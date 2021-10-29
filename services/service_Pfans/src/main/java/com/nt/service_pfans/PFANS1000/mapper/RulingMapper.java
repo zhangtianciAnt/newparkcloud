@@ -16,5 +16,14 @@ public interface RulingMapper extends MyMapper<Ruling> {
 
     Integer woffRulingInfo(@Param("ruling_id") String rulingid, @Param("offMoney") String offMoney, @Param("oldVersion") Long oldVersion);
 
+    Integer updateRulingInfoAnt(@Param("useMoney") String useMoney, @Param("code") String code, @Param("years") String years,
+                                @Param("depart") String depart, @Param("oldVersion") Long oldVersion);
+
+    Integer cgTpReRulingInfoAnt(@Param("renMoney") String renMoney, @Param("code") String code, @Param("years") String years,
+                                @Param("depart") String depart, @Param("oldVersion") Long oldVersion);
+
+    Integer woffRulingInfoAnt(@Param("offMoney") String offMoney, @Param("code") String code, @Param("years") String years,
+                              @Param("depart") String depart, @Param("oldVersion") Long oldVersion);
+
 
 }
