@@ -1433,25 +1433,25 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 if(publicExpense.getJudgement_name().substring(0, 2).equals("CG")){//采购
                     Purchase purchase = purchaseMapper.selectByPrimaryKey(judge);
                     if(purchase != null && !purchase.getRulingid().equals("")){
-                        businessplanService.cgTpReRulingInfo(purchase.getRulingid(),publicExpense.getRmbexpenditure(),tokenModel);
+                        businessplanService.cgTpReRulingInfo(purchase.getRulingid(),purchase.getTotalamount(),tokenModel);
                     }
                 }
                 else if (publicExpense.getJudgement_name().substring(0, 3).equals("JJF")){//交际费
                     Communication communication = communicationMapper.selectByPrimaryKey(judge);
                     if(communication != null && !communication.getRulingid().equals("")){
-                        businessplanService.cgTpReRulingInfo(communication.getRulingid(),publicExpense.getRmbexpenditure(),tokenModel);
+                        businessplanService.cgTpReRulingInfo(communication.getRulingid(),communication.getMoneys(),tokenModel);
                     }
                 }
                 else if (publicExpense.getJudgement_name().substring(0, 2).equals("JC")){//其他业务决裁
                     Judgement judgement = judgementMapper.selectByPrimaryKey(judge);
                     if(judgement != null && !judgement.getRulingid().equals("")){
-                        businessplanService.cgTpReRulingInfo(judgement.getRulingid(),publicExpense.getRmbexpenditure(),tokenModel);
+                        businessplanService.cgTpReRulingInfo(judgement.getRulingid(),judgement.getMoney(),tokenModel);
                     }
                 }
                 else if (publicExpense.getJudgement_name().substring(0, 2).equals("QY")){//千元以下
                     PurchaseApply purchaseApply = purchaseapplyMapper.selectByPrimaryKey(judge);
                     if(purchaseApply != null && !purchaseApply.getRulingid().equals("")){
-                        businessplanService.cgTpReRulingInfo(purchaseApply.getRulingid(),publicExpense.getRmbexpenditure(),tokenModel);
+                        businessplanService.cgTpReRulingInfo(purchaseApply.getRulingid(),purchaseApply.getSummoney(),tokenModel);
                     }
                 }
                 else if (publicExpenseVo.getPublicexpense().getJudgement_name().substring(0, 1).equals("C")){//境内外出差

@@ -387,8 +387,8 @@ public class AwardServiceImpl implements AwardService {
         Award result = awardMapper.selectByPrimaryKey(updateStatus);
         result.setStatus("1");
         awardMapper.updateByPrimaryKey(result);
-        if("0".equals(result.getPlan())){
-//            businessplanService.cgTpReRulingInfo(award.getRulingid(),award.getClaimamount(),tokenModel);
+        if("1".equals(result.getPlan())){
+            businessplanService.cgTpReRulingInfo(award.getRulingid(),award.getClaimamount(),tokenModel);
         }else{
             return;
         }
