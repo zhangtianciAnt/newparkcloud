@@ -408,7 +408,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         updateStatus.setPurchase_id(purchase.getPurchase_id());
         updateStatus.setStatus("1");
         purchaseMapper.updateByPrimaryKeySelective(updateStatus);
-        if("内".equals(purchase.getCareerplan())){
+        if("1".equals(purchase.getCareerplan())){
             businessplanService.cgTpReRulingInfo(purchase.getRulingid(),purchase.getTotalamount(),tokenModel);
         }else{
             return;
