@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import com.nt.dao_Pfans.PFANS1000.Communication;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.CommunicationService;
@@ -105,4 +106,20 @@ public class CommunicationServiceImpl implements CommunicationService {
             businessplanService.upRulingInfo(communication.getRulingid(), communication.getMoneys(), tokenModel);
         }
     }
+
+    //region scc add 10/28 交际费事前决裁逻辑删除 from
+    @Override
+    public void comdelete(Communication communication, TokenModel tokenModel) throws Exception {
+        Communication updateStatus = new Communication();
+        updateStatus.setCommunication_id(communication.getCommunication_id());
+        updateStatus.setStatus("1");
+        communicationMapper.updateByPrimaryKeySelective(updateStatus);
+        if("1".equals(communication.getPlan())){
+            businessplanService.cgTpReRulingInfo(communication.getRulingid(),communication.getMoneys(),tokenModel);
+        }else{
+            return;
+        }
+    }
+    //endregion scc add 10/28 交际费事前决裁逻辑删除 to
+
 }

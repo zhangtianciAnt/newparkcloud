@@ -40,6 +40,21 @@ public class PurchaseApplyServiceImpl implements PurchaseApplyService {
         return purchaseApplyMapper.select(purchaseApply);
     }
 
+    //region scc add 10/28 千元以下费用决裁逻辑删除 from
+    @Override
+    public void purdelete(PurchaseApply purchaseApply,TokenModel tokenModel) throws Exception {
+        PurchaseApply updateStatus = new PurchaseApply();
+        updateStatus.setPurchaseapply_id(purchaseApply.getPurchaseapply_id());
+        updateStatus.setStatus("1");
+        purchaseApplyMapper.updateByPrimaryKeySelective(updateStatus);
+        if("1".equals(purchaseApply.getPlan())){
+            businessplanService.cgTpReRulingInfo(purchaseApply.getRulingid(),purchaseApply.getSummoney(),tokenModel);
+        }else{
+            return;
+        }
+    }
+    //endregion scc add 10/28 千元以下费用决裁逻辑删除 to
+
     @Override
     public List<PurchaseApply> selectPurchaseApply() throws Exception {
         return purchaseApplyMapper.selectPurchaseApply();

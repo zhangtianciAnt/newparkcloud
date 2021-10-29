@@ -83,4 +83,18 @@ public class Pfans1005Controller {
         return ApiResult.success();
 
     }
+
+    /**
+     * 千元以下费用决裁逻辑删除，更改数据状态为1，若事业内，涉及还钱
+     */
+    @RequestMapping(value = "/purdelete", method = {RequestMethod.POST})
+    public ApiResult purdelete(@RequestBody PurchaseApply purchaseApply, HttpServletRequest request) throws Exception {
+        if (purchaseApply == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        purchaseApplyService.purdelete(purchaseApply, tokenModel);
+        return ApiResult.success();
+
+    }
 }

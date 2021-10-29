@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Pfans.PFANS1000.Business;
 import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.Judgementdetail;
 import com.nt.dao_Pfans.PFANS1000.Unusedevice;
@@ -368,4 +369,20 @@ public class JudgementServiceImpl implements JudgementService {
     public List<Judgement> getJudgementList(Judgement judgement, HttpServletRequest request) throws Exception {
         return judgementMapper.select(judgement);
     }
+
+    //region scc add 10/28 其他业务决裁逻辑删除 from
+    @Override
+    public void juddelete(Judgement judgement, TokenModel tokenModel) throws Exception {
+        Judgement updateStatus = new Judgement();
+        updateStatus.setJudgementid(judgement.getJudgementid());
+        updateStatus.setStatus("1");
+        judgementMapper.updateByPrimaryKeySelective(updateStatus);
+        if("1".equals(judgement.getCareerplan())){
+            businessplanService.cgTpReRulingInfo(judgement.getRulingid(),judgement.getMoney(),tokenModel);
+        }else{
+            return;
+        }
+    }
+    //endregion scc add 10/28 其他业务决裁逻辑删除 to
+
 }

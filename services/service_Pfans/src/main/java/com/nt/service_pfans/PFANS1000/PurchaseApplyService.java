@@ -20,4 +20,8 @@ public interface PurchaseApplyService {
     PurchaseApplyVo selectById(String purchaseApplyid) throws Exception;
 
     List<PurchaseApply> get(PurchaseApply purchaseApply) throws Exception;
+
+    //region scc add 10/28 千元以下费用决裁逻辑删除 from
+    void purdelete(PurchaseApply purchaseApply,TokenModel tokenModel) throws Exception;
+    //endregion scc add 10/28 千元以下费用决裁逻辑删除 to
 }

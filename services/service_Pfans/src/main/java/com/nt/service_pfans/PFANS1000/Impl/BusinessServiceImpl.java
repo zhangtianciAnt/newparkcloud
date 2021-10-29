@@ -642,4 +642,19 @@ public class BusinessServiceImpl implements BusinessService {
             communicationMapper.updateByPrimaryKey(communication);
         }
     }
+
+    //region scc add 10/28 境内外决裁逻辑删除 from
+    @Override
+    public void busdelete(Business business, TokenModel tokenModel) throws Exception {
+        Business updateStatus = new Business();
+        updateStatus.setBusiness_id(business.getBusiness_id());
+        updateStatus.setStatus("1");
+        businessMapper.updateByPrimaryKeySelective(updateStatus);
+        if("1".equals(business.getPlan())){
+            businessplanService.cgTpReRulingInfo(business.getRulingid(),business.getMoneys(),tokenModel);
+        }else{
+            return;
+        }
+    }
+    //endregion scc add 10/28 境内外决裁逻辑删除 to
 }
