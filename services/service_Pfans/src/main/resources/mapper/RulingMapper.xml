@@ -62,14 +62,24 @@
 
     <!--    精算审批完成 new-->
     <update id="woffRulingInfoAnt" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
-        update RULING
-        set ACTUALRESIDUAL = ACTUALRESIDUAL - #{offMoney,jdbcType=DECIMAL}
-          ,ACTUALCONSUMPTION = ACTUALCONSUMPTION + #{offMoney,jdbcType=DECIMAL}
-          ,VERSION = VERSION + 1
-        WHERE CODE = #{code}
-          AND YEARS = #{years}
-          AND DEPART = #{depart}
-          AND VERSION = #{oldVersion};
+        UPDATE ruling AS rua
+            INNER JOIN (
+                SELECT
+                    RULING_ID,
+                CASE
+                    WHEN ( rub.actualresidual - rub.applioccution ) > #{offMoney,jdbcType=DECIMAL} THEN
+                        #{offMoney,jdbcType=DECIMAL} ELSE ( rub.actualresidual - rub.applioccution )
+                    END AS RESULTA
+                FROM
+                    ruling rub
+            WHERE CODE = #{code}
+                AND YEARS = #{years}
+                AND DEPART = #{depart}
+                AND VERSION = #{oldVersion}
+                ) AS ur ON ur.RULING_ID = rua.RULING_ID
+            SET ACTUALRESIDUAL = ACTUALRESIDUAL - ur.RESULTA,
+                ACTUALCONSUMPTION = ACTUALCONSUMPTION + ur.RESULTA,
+                VERSION = VERSION + 1
     </update>
 
 </mapper>
