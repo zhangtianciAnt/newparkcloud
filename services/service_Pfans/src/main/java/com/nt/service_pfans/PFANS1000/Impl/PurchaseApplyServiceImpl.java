@@ -79,9 +79,27 @@ public class PurchaseApplyServiceImpl implements PurchaseApplyService {
     public void update(PurchaseApplyVo purchaseApplyVo, TokenModel tokenModel) throws Exception {
         PurchaseApply purchaseApply = new PurchaseApply();
         BeanUtils.copyProperties(purchaseApplyVo.getPurchaseApply(), purchaseApply);
+        String spurchaseApplyid = purchaseApply.getPurchaseapply_id();
+        PurchaseApply purly = purchaseApplyMapper.selectByPrimaryKey(spurchaseApplyid);
+        if(!purly.getPlan().equals(purchaseApply.getPlan())){//新旧事业计划不相同
+            if(purly.getPlan().equals("1")){//旧内新外 还旧的钱
+                businessplanService.cgTpReRulingInfo(purly.getRulingid(), purly.getSummoney(), tokenModel);
+            }else{//旧外新内 扣新的钱
+                businessplanService.upRulingInfo(purchaseApply.getRulingid(), purchaseApply.getSummoney(), tokenModel);
+            }
+        } else{//新旧事业计划相同 都是外不用考虑
+            if(purly.getPlan().equals("1")){//新旧都是内
+                if(purly.getClassificationtype().equals(purchaseApply.getClassificationtype())){ //同类别
+                    BigDecimal diffMoney = new BigDecimal(purchaseApply.getSummoney()).subtract(new BigDecimal(purly.getSummoney()));
+                    businessplanService.upRulingInfo(purchaseApply.getRulingid(), diffMoney.toString(), tokenModel);
+                }else{ //不同类别 还旧扣新
+                    businessplanService.cgTpReRulingInfo(purly.getRulingid(), purly.getSummoney(), tokenModel);
+                    businessplanService.upRulingInfo(purchaseApply.getRulingid(), purchaseApply.getSummoney(), tokenModel);
+                }
+            }
+        }
         purchaseApply.preUpdate(tokenModel);
         purchaseApplyMapper.updateByPrimaryKey(purchaseApply);
-        String spurchaseApplyid = purchaseApply.getPurchaseapply_id();
         ShoppingDetailed spd = new ShoppingDetailed();
         spd.setPurchaseapply_id(spurchaseApplyid);
         shoppingDetailedMapper.delete(spd);
@@ -148,6 +166,19 @@ public class PurchaseApplyServiceImpl implements PurchaseApplyService {
                 shoppingDetailed.setRowindex(rowindex);
                 shoppingDetailedMapper.insertSelective(shoppingDetailed);
             }
+        }
+        Calendar calendar = Calendar.getInstance();
+        //当前年度
+        int yearAnt = 0;
+        int monthAnt = calendar.get(Calendar.MONTH) + 1;
+        if(monthAnt >= 1 && monthAnt <= 3) {
+            yearAnt = calendar.get(Calendar.YEAR) - 1;
+        }else {
+            yearAnt = calendar.get(Calendar.YEAR);
+        }
+        //事业计划余额计算
+        if(purchaseApply.getPlan().equals("1")){
+            businessplanService.upRulingInfo(purchaseApply.getRulingid(), purchaseApply.getSummoney(), tokenModel);
         }
     }
 }

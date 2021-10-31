@@ -88,6 +88,19 @@ public class JudgementServiceImpl implements JudgementService {
         Judgement judgement = new Judgement();
         BeanUtils.copyProperties(judgementVo.getJudgement(), judgement);
         judgement.preUpdate(tokenModel);
+        Judgement jude = judgementMapper.selectByPrimaryKey(judgement.getJudgementid());
+        if(jude.getCareerplan().equals("1") && !jude.getMoney().equals(judgement.getMoney())){
+            //金额不统一 旧：jude 新：judgement
+            BigDecimal diffMoney = new BigDecimal(judgement.getMoney()).subtract(new BigDecimal(jude.getMoney()));
+            if(judgement.getCareerplan().equals("0") || !jude.getRulingid().equals(judgement.getRulingid())){
+                businessplanService.cgTpReRulingInfo(jude.getRulingid(), jude.getMoney(), tokenModel);
+                if(judgement.getCareerplan().equals("1")){
+                    businessplanService.upRulingInfo(judgement.getRulingid(), judgement.getMoney(), tokenModel);
+                }
+            }else {
+                businessplanService.upRulingInfo(judgement.getRulingid(), diffMoney.toString(), tokenModel);
+            }
+        }
         if (judgement.getStatus().equals("4") && judgement.getJudgnumbers().contains("_")) {
 //            原决裁号
             String oldNumAnt = "";
@@ -128,6 +141,7 @@ public class JudgementServiceImpl implements JudgementService {
                 }
             }
         }
+
     }
 
     @Override
@@ -135,6 +149,24 @@ public class JudgementServiceImpl implements JudgementService {
         Judgement judgement = new Judgement();
         BeanUtils.copyProperties(judgementVo.getJudgement(), judgement);
         judgement.preUpdate(tokenModel);
+        if(judgementVo.getJudgementdetail().size() > 0){
+            for(Judgementdetail jud : judgementVo.getJudgementdetail()){
+                Judgementdetail jud_old = judgementdetailMapper.selectByPrimaryKey(jud.getJudgementdetail_id());
+                if(jud_old.getCareerplanM().equals("1") && !jud_old.getAmounttobegivenM().equals(jud.getAmounttobegivenM())){
+                    //金额不统一 旧：jud_old 新：jud
+                    BigDecimal diffMoney = new BigDecimal(jud.getAmounttobegivenM()).subtract(new BigDecimal(jud_old.getAmounttobegivenM()));
+                    if(jud.getCareerplanM().equals("0") || !jud_old.getRulingid().equals(jud.getRulingid())){
+                        businessplanService.cgTpReRulingInfo(jud_old.getRulingid(), jud_old.getAmounttobegivenM(), tokenModel);
+                        if(jud.getCareerplanM().equals("1")){
+                            businessplanService.upRulingInfo(jud.getRulingid(), jud.getAmounttobegivenM(), tokenModel);
+                        }
+                    }else {
+                        businessplanService.upRulingInfo(jud.getRulingid(), diffMoney.toString(), tokenModel);
+                    }
+                }
+            }
+        }
+
         if (judgement.getStatus().equals("4") && judgement.getJudgnumbers().contains("_")) {
 //            原决裁号
             String oldNumAnt = "";
@@ -271,6 +303,10 @@ public class JudgementServiceImpl implements JudgementService {
                 }
             }
         }
+        //事业计划余额计算
+        if(judgementVo.getJudgement().getCareerplan().equals("1")){
+            businessplanService.upRulingInfo(judgementVo.getJudgement().getRulingid(), judgementVo.getJudgement().getMoney(), tokenModel);
+        }
     }
 
 
@@ -343,6 +379,9 @@ public class JudgementServiceImpl implements JudgementService {
                     judge.setJudgementid(judgementid);
                     judge.setRowindex(rowundex);
                     judgementdetailMapper.insertSelective(judge);
+                    if(judge.getCareerplanM().equals("1")){
+                        businessplanService.upRulingInfo(judge.getRulingid(), judge.getAmounttobegivenM(), tokenModel);
+                    }
                 }
             }
         }
@@ -361,7 +400,19 @@ public class JudgementServiceImpl implements JudgementService {
         updateStatus.setStatus("1");
         judgementMapper.updateByPrimaryKeySelective(updateStatus);
         if("1".equals(judgement.getCareerplan())){
-            businessplanService.cgTpReRulingInfo(judgement.getRulingid(),judgement.getMoney(),tokenModel);
+            if(!judgement.getRulingid().equals("") && judgement.getMusectosion().equals("0")){
+                businessplanService.cgTpReRulingInfo(judgement.getRulingid(),judgement.getMoney(),tokenModel);
+            }else if(judgement != null &&  judgement.getMusectosion().equals("1")){
+                Judgementdetail judgementdetail = new Judgementdetail();
+                judgementdetail.setJudgementid(judgement.getJudgementid());
+                List<Judgementdetail> judgementdetails = judgementdetailMapper.select(judgementdetail);
+                if(judgementdetails.size() > 0){
+                    for(Judgementdetail jud : judgementdetails){
+                        businessplanService.cgTpReRulingInfo(jud.getRulingid(),jud.getAmounttobegivenM(),tokenModel);
+                    }
+                }
+            }
+            //businessplanService.cgTpReRulingInfo(judgement.getRulingid(),judgement.getMoney(),tokenModel);
         }else{
             return;
         }

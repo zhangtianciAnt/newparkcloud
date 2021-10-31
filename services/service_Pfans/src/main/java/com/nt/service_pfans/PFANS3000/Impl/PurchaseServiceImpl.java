@@ -122,6 +122,24 @@ public class PurchaseServiceImpl implements PurchaseService {
             purchase.preUpdate(tokenModel);
             purchaseMapper.updateByPrimaryKey(purchase);
         }
+        Purchase purse = purchaseMapper.selectByPrimaryKey(purchase.getPurchase_id());
+        if(!purse.getCareerplan().equals(purchase.getCareerplan())){//新旧事业计划不相同
+            if(purse.getCareerplan().equals("1")){//旧内新外 还旧的钱
+                businessplanService.cgTpReRulingInfo(purse.getRulingid(), purse.getTotalamount(), tokenModel);
+            }else{//旧外新内 扣新的钱
+                businessplanService.upRulingInfo(purchase.getRulingid(), purchase.getTotalamount(), tokenModel);
+            }
+        } else{//新旧事业计划相同 都是外不用考虑
+            if(purse.getCareerplan().equals("1")){//新旧都是内
+                if(purse.getClassificationtype().equals(purchase.getClassificationtype())){ //同类别
+                    BigDecimal diffMoney = new BigDecimal(purchase.getTotalamount()).subtract(new BigDecimal(purse.getTotalamount()));
+                    businessplanService.upRulingInfo(purchase.getRulingid(), diffMoney.toString(), tokenModel);
+                }else{ //不同类别 还旧扣新
+                    businessplanService.cgTpReRulingInfo(purse.getRulingid(), purse.getTotalamount(), tokenModel);
+                    businessplanService.upRulingInfo(purchase.getRulingid(), purchase.getTotalamount(), tokenModel);
+                }
+            }
+        }
         if(purchase.getStatus().equals("4")
                 && (purchase.getYusuanbuzu() ==null || purchase.getYusuanbuzu().equals(""))
                 && purchase.getStoragedate() == null
@@ -258,6 +276,11 @@ public class PurchaseServiceImpl implements PurchaseService {
         purchase.setPurchase_id(UUID.randomUUID().toString());
         //purchase.setSurloappmoney(purchase.getTotalamount());
         purchaseMapper.insert(purchase);
+
+        //事业计划余额计算
+        if(purchase.getCareerplan().equals("1")){
+            businessplanService.upRulingInfo(purchase.getRulingid(), purchase.getTotalamount(), tokenModel);
+        }
     }
 
     //采购业务数据流程查看详情

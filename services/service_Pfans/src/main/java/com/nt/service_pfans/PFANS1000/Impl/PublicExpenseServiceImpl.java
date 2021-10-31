@@ -3,18 +3,22 @@ package com.nt.service_pfans.PFANS1000.Impl;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TotalCostVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
+import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.Comproject;
 import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.mapper.TodoNoticeMapper;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.PublicExpenseService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
@@ -107,6 +111,15 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 
     @Autowired
     private ComProjectMapper comprojectMapper;
+
+    @Autowired
+    private BusinessplanService businessplanService;
+
+    @Autowired
+    private OrgTreeService orgTreeService;
+
+    @Autowired
+    private JudgementdetailMapper judgementdetailMapper;
 
     //add-ws-7/9-禅道任务248
     @Override
@@ -1097,6 +1110,12 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 }
             }
         }
+        if (publicExpenseVo.getPublicexpense().getStatus().equals("4") && publicExpenseVo.getPublicexpense().getBusiness_type()){
+            PublicExpense publEe = publicExpenseMapper.selectByPrimaryKey(publicExpense.getPublicexpenseid());
+            if(!publEe.getStatus().equals("4")){
+                this.writeOff(publicExpenseVo,tokenModel);
+            }
+        }
         //upd-8/20-ws-禅道468任务
         publicExpenseMapper.updateByPrimaryKey(publicExpense);
 
@@ -1290,6 +1309,169 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 }
             }
         }
+    }
+
+    public void writeOff(PublicExpenseVo publicExpenseVo,TokenModel tokenModel) throws Exception {
+        Calendar cal = Calendar.getInstance();
+        String this_year = String.valueOf(cal.get(cal.YEAR));
+        String month = String.valueOf(cal.get(cal.MONTH) + 1);
+        if(Integer.parseInt(month) < 4)
+        {
+            this_year = String.valueOf(Integer.parseInt(this_year)-1);
+        }
+        OrgTree newOrgInfo = orgTreeService.get(new OrgTree());
+        List<TrafficDetails> trafficdetails = publicExpenseVo.getTrafficdetails().stream()
+                .filter(traff -> !traff.getRmb().equals("")
+                || !traff.getTormb().equals("")).collect(Collectors.toList());
+        List<PurchaseDetails> purchaseDetails = publicExpenseVo.getPurchasedetails().stream()
+                .filter(purs -> !purs.getRmb().equals("")
+                        || !purs.getTormb().equals("")).collect(Collectors.toList());
+        List<OtherDetails> otherDetails = publicExpenseVo.getOtherdetails().stream()
+                .filter(oter -> !oter.getRmb().equals("")
+                        || !oter.getTormb().equals("")).collect(Collectors.toList());
+        if(trafficdetails.size() > 0){
+            String finalThis_year2 = this_year;
+            trafficdetails.forEach(traf ->{
+                //组织变更后需要确认
+                OrgTree orginfo = null;
+                String depart = "";
+                try {
+                    orginfo = orgTreeService.getOrgInfo(newOrgInfo, traf.getDepartmentname());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (orginfo != null) {
+                    if(orginfo.getEffective()){
+                        depart = orginfo.get_id();
+                    }else{
+                        depart = orginfo.getParent_id();
+                    }
+                }
+                if(!traf.getRmb().equals("")){
+                    try {
+                        businessplanService.woffRulingInfoAnt(traf.getRmb(), traf.getPlsummary(), finalThis_year2, depart, tokenModel);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    try {
+                        businessplanService.woffRulingInfoAnt(traf.getTormb(), traf.getPlsummary(), finalThis_year2, depart, tokenModel);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        if(purchaseDetails.size() > 0){
+            String finalThis_year1 = this_year;
+            purchaseDetails.forEach(purch ->{
+                //组织变更后需要确认
+                OrgTree orginfo = null;
+                String depart = "";
+                try {
+                    orginfo = orgTreeService.getOrgInfo(newOrgInfo, purch.getDepartmentname());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (orginfo != null) {
+                    if(orginfo.getEffective()){
+                        depart = orginfo.get_id();
+                    }else{
+                        depart = orginfo.getParent_id();
+                    }
+                }
+                if(!purch.getRmb().equals("")){
+                    try {
+                        businessplanService.woffRulingInfoAnt(purch.getRmb(), purch.getPlsummary(), finalThis_year1, depart, tokenModel);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    try {
+                        businessplanService.woffRulingInfoAnt(purch.getTormb(), purch.getPlsummary(), finalThis_year1, depart, tokenModel);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        if(otherDetails.size() > 0){
+            String finalThis_year = this_year;
+            otherDetails.forEach(oter ->{
+                //组织变更后需要确认
+                OrgTree orginfo = null;
+                String depart = "";
+                try {
+                    orginfo = orgTreeService.getOrgInfo(newOrgInfo, oter.getDepartmentname());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (orginfo != null) {
+                    if(orginfo.getEffective()){
+                        depart = orginfo.get_id();
+                    }else{
+                        depart = orginfo.getParent_id();
+                    }
+                }
+                if(!oter.getRmb().equals("")){
+                    try {
+                        businessplanService.woffRulingInfoAnt(oter.getRmb(), oter.getPlsummary(), finalThis_year, depart, tokenModel);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    try {
+                        businessplanService.woffRulingInfoAnt(oter.getTormb(), oter.getPlsummary(), finalThis_year, depart,tokenModel);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(publicExpenseVo.getPublicexpense().getJudgement())){
+            String judge_id[] = publicExpenseVo.getPublicexpense().getJudgement().split(",");
+            PublicExpense publicExpense = new PublicExpense();
+            BeanUtils.copyProperties(publicExpenseVo.getPublicexpense(), publicExpense);
+            for (String judge : judge_id) {
+                if(publicExpense.getJudgement_name().substring(0, 2).equals("CG")){//采购
+                    Purchase purchase = purchaseMapper.selectByPrimaryKey(judge);
+                    if(purchase != null && !purchase.getRulingid().equals("")){
+                        businessplanService.cgTpReRulingInfo(purchase.getRulingid(),purchase.getTotalamount(),tokenModel);
+                    }
+                }
+                else if (publicExpense.getJudgement_name().substring(0, 3).equals("JJF")){//交际费
+                    Communication communication = communicationMapper.selectByPrimaryKey(judge);
+                    if(communication != null && !communication.getRulingid().equals("")){
+                        businessplanService.cgTpReRulingInfo(communication.getRulingid(),communication.getMoneys(),tokenModel);
+                    }
+                }
+                else if (publicExpense.getJudgement_name().substring(0, 2).equals("JC")){//其他业务决裁
+                    Judgement judgement = judgementMapper.selectByPrimaryKey(judge);
+                    if(judgement != null && !judgement.getRulingid().equals("") && judgement.getMusectosion().equals("0")){
+                        businessplanService.cgTpReRulingInfo(judgement.getRulingid(),judgement.getMoney(),tokenModel);
+                    }else if(judgement != null &&  judgement.getMusectosion().equals("1")){
+                        Judgementdetail judgementdetail = new Judgementdetail();
+                        judgementdetail.setJudgementid(judgement.getJudgementid());
+                        List<Judgementdetail> judgementdetails = judgementdetailMapper.select(judgementdetail);
+                        if(judgementdetails.size() > 0){
+                            for(Judgementdetail jud : judgementdetails){
+                                businessplanService.cgTpReRulingInfo(jud.getRulingid(),jud.getAmounttobegivenM(),tokenModel);
+                            }
+                        }
+                    }
+                }
+                else if (publicExpense.getJudgement_name().substring(0, 2).equals("QY")){//千元以下
+                    PurchaseApply purchaseApply = purchaseapplyMapper.selectByPrimaryKey(judge);
+                    if(purchaseApply != null && !purchaseApply.getRulingid().equals("")){
+                        businessplanService.cgTpReRulingInfo(purchaseApply.getRulingid(),purchaseApply.getSummoney(),tokenModel);
+                    }
+                }
+            }
+        }
+
+
+
+
     }
 
     //按id查询
