@@ -2,6 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.Communication;
 
+import com.nt.dao_Pfans.PFANS1000.PurchaseApply;
 import com.nt.service_pfans.PFANS1000.CommunicationService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
@@ -78,7 +79,19 @@ public class Pfans1010Controller {
     }
 
 
+    /**
+     * 交际费事前决裁逻辑删除，更改数据状态为1，若事业内，涉及还钱
+     */
+    @RequestMapping(value = "/comdelete", method = {RequestMethod.POST})
+    public ApiResult comdelete(@RequestBody Communication communication, HttpServletRequest request) throws Exception {
+        if (communication == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        communicationService.comdelete(communication, tokenModel);
+        return ApiResult.success();
 
+    }
 
 
 

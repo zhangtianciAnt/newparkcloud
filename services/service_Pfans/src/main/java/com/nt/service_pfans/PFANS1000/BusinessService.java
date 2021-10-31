@@ -30,4 +30,8 @@ public interface BusinessService {
 
     void change(String center_id,String group_id,String team_id,String budgetunit,String change_id,String flag, TokenModel tokenModel)throws Exception;
 
+    //region scc add 10/28 境内外决裁逻辑删除 from
+    void busdelete(Business business, TokenModel tokenModel) throws Exception;
+    //endregion scc add 10/28 境内外决裁逻辑删除 to
+
 }

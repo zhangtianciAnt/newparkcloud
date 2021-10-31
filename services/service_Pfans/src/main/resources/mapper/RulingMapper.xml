@@ -2,12 +2,84 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_pfans.PFANS1000.mapper.RulingMapper">
     <insert id="insetList" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
-        insert into ruling (RULING_ID,YEARS,DEPART,CODE,PLANTOCONSUME,ACTUALCONSUMPTION,ACTUALRESIDUAL,VERSION,
+        insert into ruling (RULING_ID,YEARS,DEPART,CODE,PLANTOCONSUME,APPLIOCCUTION,ACTUALCONSUMPTION,ACTUALRESIDUAL,VERSION,
                             STATUS,CREATEBY,CREATEON,MODIFYBY,MODIFYON,OWNER,TENANTID) values
         <foreach collection="list" index="index" item="item" separator=",">
-            (#{item.ruling_id},#{item.years},#{item.depart},#{item.code},#{item.plantoconsume},#{item.actualconsumption},#{item.actualresidual},
+            (#{item.ruling_id},#{item.years},#{item.depart},#{item.code},#{item.plantoconsume},#{item.actualconsumption},#{item.applioccution},#{item.actualresidual},
             #{item.version},#{item.status},#{item.createby},#{item.createon},#{item.modifyby},#{item.modifyon},
             #{item.owner},#{item.tenantid})
         </foreach>
     </insert>
+
+    <!--    决裁保存-->
+    <update id="updateRulingInfo" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
+        update RULING
+        set APPLIOCCUTION = APPLIOCCUTION + #{useMoney,jdbcType=DECIMAL}
+          ,VERSION = VERSION + 1
+        WHERE RULING_ID = #{ruling_id}
+          AND VERSION = #{oldVersion};
+    </update>
+
+    <!--    决裁删除-->
+    <update id="cgTpReRulingInfo" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
+        update RULING
+        set APPLIOCCUTION = APPLIOCCUTION - #{renMoney,jdbcType=DECIMAL}
+          ,VERSION = VERSION + 1
+        WHERE RULING_ID = #{ruling_id}
+          AND VERSION = #{oldVersion};
+    </update>
+
+    <!--    精算审批完成 old-->
+    <update id="woffRulingInfo" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
+        update RULING
+        set APPLIOCCUTION = APPLIOCCUTION - #{offMoney,jdbcType=DECIMAL}
+          ,ACTUALRESIDUAL = ACTUALRESIDUAL - #{offMoney,jdbcType=DECIMAL}
+          ,ACTUALCONSUMPTION = ACTUALCONSUMPTION + #{offMoney,jdbcType=DECIMAL}
+          ,VERSION = VERSION + 1
+        WHERE RULING_ID = #{ruling_id}
+          AND VERSION = #{oldVersion};
+    </update>
+
+    <update id="updateRulingInfoAnt" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
+        update RULING
+        set APPLIOCCUTION = APPLIOCCUTION + #{useMoney,jdbcType=DECIMAL}
+          ,VERSION = VERSION + 1
+        WHERE CODE = #{code}
+          AND YEARS = #{years}
+          AND DEPART = #{depart}
+          AND VERSION = #{oldVersion};
+    </update>
+
+    <update id="cgTpReRulingInfoAnt" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
+        update RULING
+        set APPLIOCCUTION = APPLIOCCUTION - #{renMoney,jdbcType=DECIMAL}
+          ,VERSION = VERSION + 1
+        WHERE CODE = #{code}
+          AND YEARS = #{years}
+          AND DEPART = #{depart}
+          AND VERSION = #{oldVersion};
+    </update>
+
+    <!--    精算审批完成 new-->
+    <update id="woffRulingInfoAnt" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
+        UPDATE ruling AS rua
+            INNER JOIN (
+                SELECT
+                    RULING_ID,
+                CASE
+                    WHEN ( rub.actualresidual - rub.applioccution ) > #{offMoney,jdbcType=DECIMAL} THEN
+                        #{offMoney,jdbcType=DECIMAL} ELSE ( rub.actualresidual - rub.applioccution )
+                    END AS RESULTA
+                FROM
+                    ruling rub
+            WHERE CODE = #{code}
+                AND YEARS = #{years}
+                AND DEPART = #{depart}
+                AND VERSION = #{oldVersion}
+                ) AS ur ON ur.RULING_ID = rua.RULING_ID
+            SET ACTUALRESIDUAL = ACTUALRESIDUAL - ur.RESULTA,
+                ACTUALCONSUMPTION = ACTUALCONSUMPTION + ur.RESULTA,
+                VERSION = VERSION + 1
+    </update>
+
 </mapper>

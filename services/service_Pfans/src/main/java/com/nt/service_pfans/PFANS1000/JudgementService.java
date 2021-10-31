@@ -24,4 +24,8 @@ public interface JudgementService {
 
     public List<Judgement> getJudgementList(Judgement judgement, HttpServletRequest request) throws Exception;
 
+    //region scc add 10/28 其他业务决裁逻辑删除 from
+    void juddelete(Judgement judgement, TokenModel tokenModel) throws Exception;
+    //endregion scc add 10/28 其他业务决裁逻辑删除 to
+
 }

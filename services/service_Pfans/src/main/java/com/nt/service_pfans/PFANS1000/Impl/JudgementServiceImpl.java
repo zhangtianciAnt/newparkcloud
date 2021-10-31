@@ -1,9 +1,12 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Pfans.PFANS1000.Business;
 import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.Judgementdetail;
 import com.nt.dao_Pfans.PFANS1000.Unusedevice;
 import com.nt.dao_Pfans.PFANS1000.Vo.JudgementVo;
+import com.nt.dao_Pfans.PFANS3000.Purchase;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.JudgementService;
 import com.nt.service_pfans.PFANS1000.mapper.JudgementMapper;
 import com.nt.service_pfans.PFANS1000.mapper.JudgementdetailMapper;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -35,6 +39,9 @@ public class JudgementServiceImpl implements JudgementService {
 
     @Autowired
     private JudgementdetailMapper judgementdetailMapper;
+
+    @Autowired
+    private BusinessplanService businessplanService;
 
     @Override
     public List<Judgement> getJudgement(Judgement judgement) {
@@ -345,4 +352,20 @@ public class JudgementServiceImpl implements JudgementService {
     public List<Judgement> getJudgementList(Judgement judgement, HttpServletRequest request) throws Exception {
         return judgementMapper.select(judgement);
     }
+
+    //region scc add 10/28 其他业务决裁逻辑删除 from
+    @Override
+    public void juddelete(Judgement judgement, TokenModel tokenModel) throws Exception {
+        Judgement updateStatus = new Judgement();
+        updateStatus.setJudgementid(judgement.getJudgementid());
+        updateStatus.setStatus("1");
+        judgementMapper.updateByPrimaryKeySelective(updateStatus);
+        if("1".equals(judgement.getCareerplan())){
+            businessplanService.cgTpReRulingInfo(judgement.getRulingid(),judgement.getMoney(),tokenModel);
+        }else{
+            return;
+        }
+    }
+    //endregion scc add 10/28 其他业务决裁逻辑删除 to
+
 }

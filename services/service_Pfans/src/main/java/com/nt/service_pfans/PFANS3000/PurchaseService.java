@@ -24,4 +24,8 @@ public interface PurchaseService {
     //采购业务数据流程查看详情
 
     void change(Purchase purchase, TokenModel tokenModel) throws Exception;
+
+    //region scc add 10/28 购买决裁决裁逻辑删除 from
+    void purchdelete(Purchase purchase, TokenModel tokenModel) throws Exception;
+    //endregion scc add 10/28 购买决裁决裁逻辑删除 to
 }

@@ -120,4 +120,18 @@ public class Pfans1002Controller {
         return ApiResult.success();
     }
 
+    /**
+     * 境内外出差决裁逻辑删除，更改数据状态为1，若事业内，涉及还钱
+     */
+    @RequestMapping(value = "/busdelete", method = {RequestMethod.POST})
+    public ApiResult busdelete(@RequestBody Business business, HttpServletRequest request) throws Exception {
+        if (business == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        businessService.busdelete(business, tokenModel);
+        return ApiResult.success();
+
+    }
+
 }

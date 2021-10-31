@@ -1,6 +1,10 @@
 package com.nt.service_pfans.PFANS1000.Impl;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import com.nt.dao_Pfans.PFANS1000.Communication;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
+import com.nt.dao_Pfans.PFANS1000.Judgement;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.CommunicationService;
 import com.nt.service_pfans.PFANS1000.mapper.CommunicationMapper;
 import com.nt.utils.dao.TokenModel;
@@ -19,6 +23,9 @@ public class CommunicationServiceImpl implements CommunicationService {
 
     @Autowired
     private CommunicationMapper communicationMapper;
+
+    @Autowired
+    private BusinessplanService businessplanService;
 
     @Override
     public List<Communication> selectCommunication() throws Exception {
@@ -76,4 +83,20 @@ public class CommunicationServiceImpl implements CommunicationService {
         communication.setCommunication_id(UUID.randomUUID().toString()) ;
         communicationMapper.insert(communication);
     }
+
+    //region scc add 10/28 交际费事前决裁逻辑删除 from
+    @Override
+    public void comdelete(Communication communication, TokenModel tokenModel) throws Exception {
+        Communication updateStatus = new Communication();
+        updateStatus.setCommunication_id(communication.getCommunication_id());
+        updateStatus.setStatus("1");
+        communicationMapper.updateByPrimaryKeySelective(updateStatus);
+        if("1".equals(communication.getPlan())){
+            businessplanService.cgTpReRulingInfo(communication.getRulingid(),communication.getMoneys(),tokenModel);
+        }else{
+            return;
+        }
+    }
+    //endregion scc add 10/28 交际费事前决裁逻辑删除 to
+
 }

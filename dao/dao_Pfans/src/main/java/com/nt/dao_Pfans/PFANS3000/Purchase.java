@@ -299,4 +299,7 @@ public class Purchase  extends BaseModel {
     //是否可多次申请暂借款
     @Column(name = "ENABLEDUPLICATELOAN")
     private String enableduplicateloan;
+
+    @Column(name = "RULINGID")
+    private String rulingid;
 }

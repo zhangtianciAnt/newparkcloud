@@ -100,4 +100,19 @@ public class Pfans1004Controller {
         }
         return ApiResult.success(judgementService.getJudgementList(judgement, request));
     }
+
+    /**
+     * 其他业务决裁逻辑删除，更改数据状态为1，若事业内，涉及还钱
+     */
+    @RequestMapping(value = "/juddelete", method = {RequestMethod.POST})
+    public ApiResult juddelete(@RequestBody Judgement judgement, HttpServletRequest request) throws Exception {
+        if (judgement == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        judgementService.juddelete(judgement, tokenModel);
+        return ApiResult.success();
+
+    }
+
 }

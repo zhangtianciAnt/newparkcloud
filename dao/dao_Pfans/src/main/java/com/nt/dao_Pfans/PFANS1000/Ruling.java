@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -48,20 +49,26 @@ public class Ruling extends BaseModel {
     private String plantoconsume;
 
     /**
+     * 申请中金额
+     * */
+    @Column(name = "APPLIOCCUTION")
+    private BigDecimal applioccution;
+
+    /**
      * 实际消耗
      * */
     @Column(name = "ACTUALCONSUMPTION")
-    private String actualconsumption;
+    private BigDecimal actualconsumption;
 
     /**
      * 实际剩余
      * */
     @Column(name = "ACTUALRESIDUAL")
-    private String actualresidual;
+    private BigDecimal actualresidual;
 
     /**
      * 版本-锁
      * */
     @Column(name = "VERSION")
-    private int version;
+    private Long version;
 }

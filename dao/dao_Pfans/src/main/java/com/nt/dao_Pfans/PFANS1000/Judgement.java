@@ -274,5 +274,6 @@ public class Judgement extends BaseModel {
     @Column(name = "ENABLEDUPLICATELOAN")
     private String enableduplicateloan;
 
-
+    @Column(name = "RULINGID")
+    private String rulingid;
 }
