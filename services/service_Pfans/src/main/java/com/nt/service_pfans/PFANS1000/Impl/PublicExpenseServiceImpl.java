@@ -118,6 +118,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
     @Autowired
     private OrgTreeService orgTreeService;
 
+    @Autowired
+    private JudgementdetailMapper judgementdetailMapper;
+
     //add-ws-7/9-禅道任务248
     @Override
     public Map<String, Object> exportjs(String publicexpenseid, HttpServletRequest request) throws Exception {
@@ -1444,8 +1447,17 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 }
                 else if (publicExpense.getJudgement_name().substring(0, 2).equals("JC")){//其他业务决裁
                     Judgement judgement = judgementMapper.selectByPrimaryKey(judge);
-                    if(judgement != null && !judgement.getRulingid().equals("")){
+                    if(judgement != null && !judgement.getRulingid().equals("") && judgement.getMusectosion().equals("0")){
                         businessplanService.cgTpReRulingInfo(judgement.getRulingid(),judgement.getMoney(),tokenModel);
+                    }else if(judgement != null &&  judgement.getMusectosion().equals("1")){
+                        Judgementdetail judgementdetail = new Judgementdetail();
+                        judgementdetail.setJudgementid(judgement.getJudgementid());
+                        List<Judgementdetail> judgementdetails = judgementdetailMapper.select(judgementdetail);
+                        if(judgementdetails.size() > 0){
+                            for(Judgementdetail jud : judgementdetails){
+                                businessplanService.cgTpReRulingInfo(jud.getRulingid(),jud.getAmounttobegivenM(),tokenModel);
+                            }
+                        }
                     }
                 }
                 else if (publicExpense.getJudgement_name().substring(0, 2).equals("QY")){//千元以下
@@ -1453,9 +1465,6 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     if(purchaseApply != null && !purchaseApply.getRulingid().equals("")){
                         businessplanService.cgTpReRulingInfo(purchaseApply.getRulingid(),purchaseApply.getSummoney(),tokenModel);
                     }
-                }
-                else if (publicExpenseVo.getPublicexpense().getJudgement_name().substring(0, 1).equals("C")){//境内外出差
-
                 }
             }
         }
