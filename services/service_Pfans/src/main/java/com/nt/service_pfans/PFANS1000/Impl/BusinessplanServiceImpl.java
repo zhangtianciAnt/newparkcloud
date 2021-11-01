@@ -1411,9 +1411,13 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     @Override
     public void PlRelated(List<ReportBusinessVo> reportBusinessVos, TokenModel tokenModel) throws Exception {
         List<Dictionary> neverCut = dictionaryService.getForSelect("PJ078");
+        List<Dictionary> pj086 = dictionaryService.getForSelect("PJ086");
         Map<String, String> mapping = new HashMap<>();
         neverCut.forEach(item -> {
             mapping.put(item.getValue2(), item.getValue3());
+        });
+        pj086.forEach(item -> {
+            mapping.put(item.getCode(), item.getCode());
         });
         reportBusinessVos = reportBusinessVos.stream().filter(item -> mapping.containsKey(item.getName1())).collect(Collectors.toList());
         List<Ruling> res = new ArrayList<>();
@@ -1704,9 +1708,13 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     @Override
     public List<Ruling> consumption(String centerId,TokenModel tokenModel) throws Exception{
         List<Dictionary> neverCut = dictionaryService.getForSelect("PJ078");
+        List<Dictionary> pj086 = dictionaryService.getForSelect("PJ086");
         Map<String, String> mapping = new HashMap<>();
         neverCut.forEach(item -> {
             mapping.put(item.getValue3(), item.getValue2());
+        });
+        pj086.forEach(item -> {
+            mapping.put(item.getCode(), item.getCode());
         });
         Ruling ruling = new Ruling();
         ruling.setDepart(centerId);
