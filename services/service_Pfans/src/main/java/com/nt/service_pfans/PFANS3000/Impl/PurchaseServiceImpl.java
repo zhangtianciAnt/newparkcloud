@@ -117,11 +117,6 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public void updatePurchase(Purchase purchase, TokenModel tokenModel) throws Exception {
-        if(purchase.getStatus().equals("0") || purchase.getStatus().equals("1") || purchase.getStatus().equals("2") || purchase.getStatus().equals("3"))
-        {
-            purchase.preUpdate(tokenModel);
-            purchaseMapper.updateByPrimaryKey(purchase);
-        }
         Purchase purse = purchaseMapper.selectByPrimaryKey(purchase.getPurchase_id());
         if(!purse.getCareerplan().equals(purchase.getCareerplan())){//新旧事业计划不相同
             if(purse.getCareerplan().equals("1")){//旧内新外 还旧的钱
@@ -139,6 +134,11 @@ public class PurchaseServiceImpl implements PurchaseService {
                     businessplanService.upRulingInfo(purchase.getRulingid(), purchase.getTotalamount(), tokenModel);
                 }
             }
+        }
+        if(purchase.getStatus().equals("0") || purchase.getStatus().equals("1") || purchase.getStatus().equals("2") || purchase.getStatus().equals("3"))
+        {
+            purchase.preUpdate(tokenModel);
+            purchaseMapper.updateByPrimaryKey(purchase);
         }
         if(purchase.getStatus().equals("4")
                 && (purchase.getYusuanbuzu() ==null || purchase.getYusuanbuzu().equals(""))
