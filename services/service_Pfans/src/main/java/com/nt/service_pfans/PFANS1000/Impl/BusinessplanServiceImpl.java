@@ -23,8 +23,7 @@ import com.nt.service_pfans.PFANS1000.mapper.*;
 //import com.nt.service_pfans.PFANS1000.mapper.BusinessplandetMapper;
 import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
-import com.nt.utils.LogicalException;
-import com.nt.utils.StringUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -80,7 +79,9 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     @Autowired
     private ExpatriatesinforMapper expatriatesinforMapper;
     @Autowired
-    PeoplewareFeeMapper peoplewareFeeMapper;
+    private PeoplewareFeeMapper peoplewareFeeMapper;
+    @Autowired
+    private RulingMapper rulingMapper;
 
     DecimalFormat df = new DecimalFormat("#0.00");
     //@Autowired
@@ -1404,7 +1405,38 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         businessPlan.write(os);
         businessPlan.close();
     }
-    //region scc add 事业计划PL导出 to
+    //endregion scc add 事业计划PL导出 to
+
+    //region scc add 保存部分PL from
+    @Override
+    public void PlRelated(List<ReportBusinessVo> reportBusinessVos, TokenModel tokenModel) throws Exception {
+        List<Dictionary> neverCut = dictionaryService.getForSelect("PJ078");
+        Map<String, String> mapping = new HashMap<>();
+        neverCut.forEach(item -> {
+            mapping.put(item.getValue2(), item.getValue3());
+        });
+        reportBusinessVos = reportBusinessVos.stream().filter(item -> mapping.containsKey(item.getName1())).collect(Collectors.toList());
+        List<Ruling> res = new ArrayList<>();
+        reportBusinessVos.forEach(item -> {
+            Ruling ruling = new Ruling();
+            ruling.setRuling_id(UUID.randomUUID().toString());
+            ruling.setYears(item.getYear());
+            ruling.setDepart(item.getCenter_id());
+            ruling.setCode(mapping.get(item.getName1()));
+            BigDecimal oneThousandYuanMeasurement = new BigDecimal(item.getMoneytotal());//千元计量
+            BigDecimal yuanMeasurement = oneThousandYuanMeasurement.multiply(new BigDecimal("1000"));//元计量
+            ruling.setPlantoconsume(yuanMeasurement.toString());
+            ruling.setActualconsumption(new BigDecimal("0.00"));
+            ruling.setApplioccution(new BigDecimal("0.00"));
+            ruling.setActualresidual(yuanMeasurement);
+            ruling.setVersion(Long.valueOf("0"));
+            ruling.preInsert(tokenModel);
+            res.add(ruling);
+        });
+        rulingMapper.insetList(res);
+    }
+//endregion scc add 保存部分PL to
+
 
     //现时点人员统计 //                事业计划人件费单价 每个月份乘以人数 ztc fr
     private List<PersonPlanTable> getNowPersonTable(PersonnelPlan personnelPlan, List<PersonPlanTable> personPlanTables, Map<String,PeoplewareFee> rankResultMap) throws Exception {
@@ -1565,4 +1597,125 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         }
         return orgTreeList;
     }
+
+    @Override
+    public BusinessPlanMoneyBaseVo getBusBalns(String yearInfo, String getOrgIdInfo, String classInfo) throws Exception {
+        BusinessPlanMoneyBaseVo businVo = new BusinessPlanMoneyBaseVo();
+        Long resultBals = 0L;
+        Ruling ruling = new Ruling();
+        ruling.setYears(yearInfo);
+        ruling.setDepart(getOrgIdInfo);
+        Dictionary dicInfo = new Dictionary();
+        dicInfo.setCode(classInfo);
+        List<Dictionary> dictionaryList = dictionaryService.getDictionaryList(dicInfo);
+        if(dictionaryList.size() == 0){
+            businVo.setSurplsu(String.valueOf(resultBals));
+        }
+        ruling.setCode(dictionaryList.get(0).getValue3());
+        List<Ruling> rulings = rulingMapper.select(ruling);
+        if(rulings.size() > 0){
+            resultBals =  rulings.get(0).getActualresidual().subtract(rulings.get(0).getApplioccution()).longValue();
+            businVo.setRulingid(rulings.get(0).getRuling_id());
+            businVo.setSurplsu(String.valueOf(resultBals));
+            return businVo;
+        }else{
+            return businVo;
+        }
+    }
+
+    @Override
+    public void upRulingInfo(String rulingid,String useMoney,TokenModel tokenModel) throws Exception{
+        Ruling ruling = new Ruling();
+        ruling.setRuling_id(rulingid);
+        Long oldVersion = rulingMapper.select(ruling).get(0).getVersion();
+        boolean successas = rulingMapper.updateRulingInfo(rulingid, useMoney, oldVersion) > 0;
+        if(!successas){
+            Long nextVersion = rulingMapper.select(ruling).get(0).getVersion();
+            rulingMapper.updateRulingInfo(rulingid, useMoney, nextVersion);
+        }
+    }
+
+    @Override
+    public void cgTpReRulingInfo(String rulingid,String renMoney,TokenModel tokenModel) throws Exception{
+        Ruling ruling = new Ruling();
+        ruling.setRuling_id(rulingid);
+        Long oldVersion = rulingMapper.select(ruling).get(0).getVersion();
+        boolean successas = rulingMapper.cgTpReRulingInfo(rulingid, renMoney, oldVersion) > 0;
+        if(!successas){
+            Long nextVersion = rulingMapper.select(ruling).get(0).getVersion();
+            rulingMapper.cgTpReRulingInfo(rulingid, renMoney, nextVersion);
+        }
+    }
+
+    @Override
+    public void woffRulingInfo(String rulingid,String offMoney,TokenModel tokenModel) throws Exception{
+        Ruling ruling = new Ruling();
+        ruling.setRuling_id(rulingid);
+        Long oldVersion = rulingMapper.select(ruling).get(0).getVersion();
+        boolean successas = rulingMapper.woffRulingInfo(rulingid, offMoney, oldVersion) > 0;
+        if(!successas){
+            Long nextVersion = rulingMapper.select(ruling).get(0).getVersion();
+            rulingMapper.woffRulingInfo(rulingid, offMoney, nextVersion);
+        }
+    }
+    @Override
+    public void upRulingInfoAnt(String useMoney, String code, String years, String depart, TokenModel tokenModel) throws Exception{
+        Ruling ruling = new Ruling();
+        ruling.setCode(code);
+        ruling.setYears(years);
+        ruling.setDepart(depart);
+        Long oldVersion = rulingMapper.select(ruling).get(0).getVersion();
+        boolean successas = rulingMapper.updateRulingInfoAnt(useMoney, code, years, depart, oldVersion) > 0;
+        if(!successas){
+            Long nextVersion = rulingMapper.select(ruling).get(0).getVersion();
+            rulingMapper.updateRulingInfoAnt(useMoney, code, years, depart, nextVersion);
+        }
+    }
+
+    @Override
+    public void cgTpReRulingInfoAnt(String renMoney, String code, String years, String depart, TokenModel tokenModel) throws Exception{
+        Ruling ruling = new Ruling();
+        ruling.setCode(code);
+        ruling.setYears(years);
+        ruling.setDepart(depart);
+        Long oldVersion = rulingMapper.select(ruling).get(0).getVersion();
+        boolean successas = rulingMapper.cgTpReRulingInfoAnt(renMoney, code, years, depart, oldVersion) > 0;
+        if(!successas){
+            Long nextVersion = rulingMapper.select(ruling).get(0).getVersion();
+            rulingMapper.cgTpReRulingInfoAnt(renMoney, code, years, depart, nextVersion);
+        }
+    }
+
+    @Override
+    public void woffRulingInfoAnt(String offMoney, String code, String years, String depart, TokenModel tokenModel) throws Exception{
+        Ruling ruling = new Ruling();
+        ruling.setCode(code);
+        ruling.setYears(years);
+        ruling.setDepart(depart);
+        Long oldVersion = rulingMapper.select(ruling).get(0).getVersion();
+        boolean successas = rulingMapper.woffRulingInfoAnt(offMoney, code, years, depart, oldVersion) > 0;
+        if(!successas){
+            Long nextVersion = rulingMapper.select(ruling).get(0).getVersion();
+            rulingMapper.woffRulingInfoAnt(offMoney, code, years, depart, nextVersion);
+        }
+    }
+
+    //region scc add 事业计划消耗 from
+    @Override
+    public List<Ruling> consumption(String centerId,TokenModel tokenModel) throws Exception{
+        List<Dictionary> neverCut = dictionaryService.getForSelect("PJ078");
+        Map<String, String> mapping = new HashMap<>();
+        neverCut.forEach(item -> {
+            mapping.put(item.getValue3(), item.getValue2());
+        });
+        Ruling ruling = new Ruling();
+        ruling.setDepart(centerId);
+        List<Ruling> res = rulingMapper.select(ruling);
+        res.forEach(item -> {
+            item.setCode(mapping.get(item.getCode()));
+        });
+        return res;
+    }
+    //endregion scc add 事业计划消耗 to
+
 }

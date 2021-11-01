@@ -4,6 +4,7 @@ package com.nt.service_pfans.PFANS1000;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Pfans.PFANS1000.Businessplan;
 import com.nt.dao_Pfans.PFANS1000.PersonPlanTable;
+import com.nt.dao_Pfans.PFANS1000.Ruling;
 import com.nt.dao_Pfans.PFANS1000.Vo.*;
 import com.nt.utils.dao.TokenModel;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -40,4 +41,27 @@ public interface BusinessplanService {
     //region scc add 事业计划PL导出 from
     void export(List<ReportBusinessVo> reportBusinessVos, HttpServletRequest request, HttpServletResponse resp) throws Exception;
     //region scc add 事业计划PL导出 to
+
+    //region scc add 保存部分PL from
+    void PlRelated(List<ReportBusinessVo> reportBusinessVos,TokenModel tokenModel) throws Exception;
+    //endregion scc add 保存部分PL to
+
+    public BusinessPlanMoneyBaseVo getBusBalns(String yearInfo, String getOrgIdInfo, String classInfo) throws Exception;
+
+    public void upRulingInfo(String rulingid,String useMoney,TokenModel tokenModel) throws Exception;
+
+    public void cgTpReRulingInfo(String rulingid,String renMoney,TokenModel tokenModel) throws Exception;
+
+    public void woffRulingInfo(String rulingid,String offMoney,TokenModel tokenModel) throws Exception;
+
+    public void upRulingInfoAnt(String useMoney, String code, String years, String depart, TokenModel tokenModel) throws Exception;
+
+    public void cgTpReRulingInfoAnt(String renMoney, String code, String years, String depart, TokenModel tokenModel) throws Exception;
+
+    public void woffRulingInfoAnt(String offMoney, String code, String years, String depart, TokenModel tokenModel) throws Exception;
+
+    //region scc add 事业计划消耗 from
+    List<Ruling> consumption(String centerId,TokenModel tokenModel)throws Exception;
+    //region scc add 事业计划消耗 to
+
 }

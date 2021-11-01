@@ -126,6 +126,21 @@ public class AuthController {
         return ApiResult.success();
     }
 
+    //add ccm 20211027 添加随时调用更新考勤数据的接口 fr
+    //更新某个人的指定日期段的考勤计算  日期格式为：XXXX-XX-XX
+    @RequestMapping(value = "/updateAttByuseridAndDay",method={RequestMethod.GET})
+    public ApiResult updateAttByuseridAndDay(String userid,String startDate,String endDate,HttpServletRequest request) throws Exception {
+        annualLeaveService.updateAttByuseridAndDay(userid,startDate,endDate);
+        return ApiResult.success();
+    }
+    //更新所有人的指定日期段的考勤计算  日期格式为：XXXX-XX-XX
+    @RequestMapping(value = "/updateAttByDay",method={RequestMethod.GET})
+    public ApiResult updateAttByDay(String startDate,String endDate,HttpServletRequest request) throws Exception {
+        annualLeaveService.updateAttByDay(startDate,endDate);
+        return ApiResult.success();
+    }
+    //add ccm 20211027 添加随时调用更新考勤数据的接口 to
+
     @RequestMapping(value = "/insertHistoricalCard",method={RequestMethod.GET})
     public ApiResult insertHistoricalCard(String strStartDate,String strendDate,String strFlg,String staffNo,HttpServletRequest request) throws Exception {
         annualLeaveService.insertHistoricalCard(strStartDate,strendDate,strFlg,staffNo);

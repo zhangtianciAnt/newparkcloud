@@ -25,6 +25,7 @@ import com.nt.service_Org.mapper.TodoNoticeMapper;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_pfans.PFANS1000.BusinessService;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper;
 import com.nt.service_pfans.PFANS2000.mapper.PunchcardRecordDetailMapper;
@@ -45,6 +46,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -97,6 +99,10 @@ public class BusinessServiceImpl implements BusinessService {
     private LoanApplicationMapper loanApplicationMapper;
     @Autowired
     private CommunicationMapper communicationMapper;
+    @Autowired
+    private BusinessplanService businessplanService;
+
+
     @Override
     public List<Business> get(Business business) throws Exception {
         return businessMapper.select(business);
@@ -247,6 +253,19 @@ public class BusinessServiceImpl implements BusinessService {
         business2.setCheckch("1");
         business2.preUpdate(tokenModel);
         businessMapper.updateByPrimaryKey(business2);
+        //region scc add 取消机票，更改事业计划，还钱 from
+        Business cancelTicket = new Business();
+        BeanUtils.copyProperties(businessVo.getBusiness(), cancelTicket);
+        if("1".equals(cancelTicket.getPlan())){
+            businessplanService.cgTpReRulingInfo(cancelTicket.getRulingid(),cancelTicket.getMoneys(),tokenModel);
+            cancelTicket.setPlan("0");
+            cancelTicket.setPlantype("");
+            cancelTicket.setClassificationtype("");
+            cancelTicket.setBalance("");
+            cancelTicket.setRulingid("");
+            businessMapper.updateByPrimaryKeySelective(cancelTicket);
+        }
+        //endregion scc add 取消机票，更改事业计划，还钱 to
         String businessid = business2.getBusiness_id();
         TravelContent travel = new TravelContent();
         travel.setBusinessid(businessid);
@@ -341,6 +360,24 @@ public class BusinessServiceImpl implements BusinessService {
         Business business = new Business();
         BeanUtils.copyProperties(businessVo.getBusiness(), business);
         business.preUpdate(tokenModel);
+        Business busin = businessMapper.selectByPrimaryKey(business.getBusiness_id());
+        if(!busin.getPlan().equals(business.getPlan())){//新旧事业计划不相同
+            if(busin.getPlan().equals("1")){//旧内新外 还旧的钱
+                businessplanService.cgTpReRulingInfo(busin.getRulingid(), busin.getMoneys(), tokenModel);
+            }else{//旧外新内 扣新的钱
+                businessplanService.upRulingInfo(business.getRulingid(), business.getMoneys(), tokenModel);
+            }
+        } else{//新旧事业计划相同 都是外不用考虑
+            if(busin.getPlan().equals("1")){//新旧都是内
+                if(busin.getClassificationtype().equals(business.getClassificationtype())){ //同类别
+                    BigDecimal diffMoney = new BigDecimal(business.getMoneys()).subtract(new BigDecimal(busin.getMoneys()));
+                    businessplanService.upRulingInfo(business.getRulingid(), diffMoney.toString(), tokenModel);
+                }else{ //不同类别 还旧扣新
+                    businessplanService.cgTpReRulingInfo(busin.getRulingid(), busin.getMoneys(), tokenModel);
+                    businessplanService.upRulingInfo(business.getRulingid(), business.getMoneys(), tokenModel);
+                }
+            }
+        }
         businessMapper.updateByPrimaryKey(business);
         String businessid = business.getBusiness_id();
         TravelContent travel = new TravelContent();
@@ -474,6 +511,9 @@ public class BusinessServiceImpl implements BusinessService {
                 travelcontent.setRowindex(rowindex);
                 travelcontentMapper.insertSelective(travelcontent);
             }
+        }
+        if(business.getPlan().equals("1")){
+            businessplanService.upRulingInfo(business.getRulingid(), business.getMoneys(), tokenModel);
         }
     }
 
@@ -615,4 +655,19 @@ public class BusinessServiceImpl implements BusinessService {
             communicationMapper.updateByPrimaryKey(communication);
         }
     }
+
+    //region scc add 10/28 境内外决裁逻辑删除 from
+    @Override
+    public void busdelete(Business business, TokenModel tokenModel) throws Exception {
+        Business updateStatus = new Business();
+        updateStatus.setBusiness_id(business.getBusiness_id());
+        updateStatus.setStatus("1");
+        businessMapper.updateByPrimaryKeySelective(updateStatus);
+        if("1".equals(business.getPlan())){
+            businessplanService.cgTpReRulingInfo(business.getRulingid(),business.getMoneys(),tokenModel);
+        }else{
+            return;
+        }
+    }
+    //endregion scc add 10/28 境内外决裁逻辑删除 to
 }

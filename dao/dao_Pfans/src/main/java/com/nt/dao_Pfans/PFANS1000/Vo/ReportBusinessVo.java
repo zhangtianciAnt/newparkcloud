@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReportBusinessVo {
 
+    private String center_id;
+    private String year;
     private String name1;
     private String money1;
     private String money2;
@@ -37,4 +39,5 @@ public class ReportBusinessVo {
     private String actual12;
     private String type;
     private String Ledger;
+    private String moneytotal;
 }

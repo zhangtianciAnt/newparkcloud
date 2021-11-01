@@ -28,6 +28,15 @@ public interface AnnualLeaveService {
 
     void insertpunchcard(int diffday) throws Exception;
 
+    //add ccm 20211027 添加随时调用更新考勤数据的接口 fr
+
+    //更新某个人的指定日期段的考勤计算  日期格式为：XXXX-XX-XX
+    void updateAttByuseridAndDay(String userid,String startDate,String endDate) throws Exception;
+    //更新所有人的指定日期段的考勤计算  日期格式为：XXXX-XX-XX
+    void updateAttByDay(String startDate,String endDate) throws Exception;
+
+    //add ccm 20211027 添加随时调用更新考勤数据的接口 to
+
     void insertHistoricalCard(String strStartDate,String strendDate,String strFlg,String staffNo) throws Exception;
 
     void getattendanceByuser(String userid) throws Exception;

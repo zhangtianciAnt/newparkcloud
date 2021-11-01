@@ -214,4 +214,7 @@ public class PublicExpense extends BaseModel {
     @Column(name = "JZMONTH")
     private Date jzmonth;
     //endregion add_qhr_20210830 添加外注费用check和记账月份
+
+    @Column(name = "BUSINESS_TYPE")
+    private Boolean business_type;
 }

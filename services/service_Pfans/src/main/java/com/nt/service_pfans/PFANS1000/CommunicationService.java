@@ -19,4 +19,8 @@ public interface CommunicationService {
     //修改
     public void updateCommunication(Communication communication,TokenModel tokenModel)throws  Exception;
 
+    //region scc add 10/28 交际费事前决裁逻辑删除 from
+    void comdelete(Communication communication, TokenModel tokenModel) throws Exception;
+    //endregion scc add 10/28 交际费事前决裁逻辑删除 to
+
 }

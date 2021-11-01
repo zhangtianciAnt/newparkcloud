@@ -72,6 +72,13 @@ public class Judgementdetail extends BaseModel {
     @Column(name = "AMOUNTTOBEGIVENM")
     private String amounttobegivenM;
 
+
+    /**
+     * 事业计划金额主键
+     */
+    @Column(name = "RULINGID")
+    private String rulingid;
+
     /**
      * 索引
      */
