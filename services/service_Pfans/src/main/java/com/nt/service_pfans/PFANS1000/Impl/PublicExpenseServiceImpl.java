@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
@@ -1110,7 +1111,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 }
             }
         }
-        if (publicExpenseVo.getPublicexpense().getStatus().equals("4") && publicExpenseVo.getPublicexpense().getBusiness_type()){
+        //解决旧数据审批结束操作异常问题 ztc fr
+        if (publicExpenseVo.getPublicexpense().getStatus().equals("4") && publicExpenseVo.getPublicexpense().getBusiness_type() != null && publicExpenseVo.getPublicexpense().getBusiness_type()){
+            //解决旧数据审批结束操作异常问题 ztc to
             PublicExpense publEe = publicExpenseMapper.selectByPrimaryKey(publicExpense.getPublicexpenseid());
             if(!publEe.getStatus().equals("4")){
                 this.writeOff(publicExpenseVo,tokenModel);
