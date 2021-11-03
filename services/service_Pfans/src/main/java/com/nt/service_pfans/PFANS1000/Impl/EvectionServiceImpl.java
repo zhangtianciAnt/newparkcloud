@@ -844,6 +844,13 @@ public class EvectionServiceImpl implements EvectionService {
         //upd-8/20-ws-禅道468任务
         evectionMapper.updateByPrimaryKey(evection);
 
+        //region scc add 出差过程中可能发生规定外费用,在精算时应该允许编辑修改 from
+        Business business = new Business();
+        business.setBusiness_id(evection.getBusiness_id());
+        business.setExternal(evection.getExternal());
+        businessMapper.updateByPrimaryKeySelective(business);
+        //endregion scc add 出差过程中可能发生规定外费用,在精算时应该允许编辑修改 to
+
         String evectionid = evection.getEvectionid();
         String invoiceNo = evection.getInvoiceno();
         TrafficDetails traffic = new TrafficDetails();
