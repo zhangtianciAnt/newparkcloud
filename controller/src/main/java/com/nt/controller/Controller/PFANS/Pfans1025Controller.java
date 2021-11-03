@@ -432,8 +432,14 @@ public class Pfans1025Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        awardService.updateAwardVo(awardVo, tokenModel);
-        return ApiResult.success();
+        //修改决裁书保存 返回接口类型 1103 fr
+        boolean flag = awardService.updateAwardVo(awardVo, tokenModel);
+        if(flag){
+            return ApiResult.success("该决裁中部门存在事业计划内金额不够，自动转成事业计划外！");
+        }else{
+            return ApiResult.success("");
+        }
+        //修改决裁书保存 返回接口类型 1103 to
     }
 
     @RequestMapping(value = "/getList", method = {RequestMethod.POST})
@@ -864,18 +870,6 @@ public class Pfans1025Controller {
     }
     //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc to
 
-    /**
-     * 委托决裁逻辑删除，更改数据状态为1，若事业内，涉及还钱
-     */
-    @RequestMapping(value = "/awddelete", method = {RequestMethod.POST})
-    public ApiResult awddelete(@RequestBody Award award, HttpServletRequest request) throws Exception {
-        if (award == null) {
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
-        }
-        TokenModel tokenModel = tokenService.getToken(request);
-        awardService.awddelete(award, tokenModel);
-        return ApiResult.success();
 
-    }
 
 }

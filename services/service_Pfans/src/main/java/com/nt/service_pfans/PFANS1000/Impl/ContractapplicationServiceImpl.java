@@ -20,6 +20,7 @@ import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
@@ -106,9 +107,12 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private AwardDetailMapper awardDetailMapper;
     @Autowired
     private OrgTreeService orgtreeService;
-
+    @Autowired
+    private AwardMapper awardMapper;
     @Autowired
     private MonthlyRateMapper monthlyRateMapper;
+    @Autowired
+    private BusinessplanService businessplanService;
 
     //add-ws-7/22-禅道341任务
     @Override
@@ -302,6 +306,29 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         StringBuffer strBuffer = new StringBuffer();
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
+            //决裁书废弃事业计划金额还回 1103 ztc fr
+            if(cnList.get(0).getEntrycondition().equals("HT004001") && cnList.get(0).getState().equals("无效")){
+                Award award = new Award();
+                award.setContractnumber(cnList.get(0).getContractnumber());
+                List<Award> awardList = awardMapper.select(award);
+                if(awardList.size() > 0 && awardList.get(0).getPlan().equals("0")){
+                    AwardDetail awardDetail = new AwardDetail();
+                    awardDetail.setAward_id(awardList.get(0).getAward_id());
+                    List<AwardDetail> awardDetails = awardDetailMapper.select(awardDetail);
+                    if(awardDetails.size() > 0){
+                        awardDetails.forEach(awd->{
+                            if(!StringUtils.isNullOrEmpty(awd.getRulingid())){
+                                try {
+                                    businessplanService.cgTpReRulingInfo(awd.getRulingid(), awd.getAwardmoney(), tokenModel);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+            //决裁书废弃事业计划金额还回 1103 ztc to
             //标记点，被copy的原始合同也可能是"NF210250102402-覚3"这种形式，用来判断是否是被copy的原始合同 scc to
             int flag = 0;
             // scc to
@@ -572,17 +599,17 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 List<Contractnumbercount> saveContList = new ArrayList<>();
                 for (Contractnumbercount cnumb : contractnumberList) {
                     Contractnumbercount Cn = new Contractnumbercount();
-                    Cn.setContractnumber(cnumb.getContractnumber());
-                    contractnumbercountMapper.delete(Cn);
-                    List<ProjectContract> pjList = new ArrayList<>();
-                    ProjectContract pj = new ProjectContract();
-                    pj.setContractnumbercount_id(cnumb.getContractnumbercount_id());
-                    pjList = projectContractMapper.select(pj);
+                     Cn.setContractnumber(cnumb.getContractnumber());
+                     contractnumbercountMapper.delete(Cn);
+                     List<ProjectContract> pjList = new ArrayList<>();
+                     ProjectContract pj = new ProjectContract();
+                     pj.setContractnumbercount_id(cnumb.getContractnumbercount_id());
+                     pjList = projectContractMapper.select(pj);
                     rowindex = rowindex + 1;
                     if(pjList.size() > 0){
                         cnumb.setRowindex(rowindex);
                     }else{
-                        cnumb.setRowindex(rowindex);
+                         cnumb.setRowindex(rowindex);
                         cnumb.preInsert(tokenModel);
                         cnumb.setContractnumber(cnList.get(cnList.size() - 1).getContractnumber());
                         cnumb.setContractnumbercount_id(UUID.randomUUID().toString());

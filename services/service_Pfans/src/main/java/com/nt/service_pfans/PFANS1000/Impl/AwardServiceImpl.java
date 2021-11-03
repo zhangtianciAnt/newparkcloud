@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.*;
@@ -22,6 +23,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -71,6 +73,8 @@ public class AwardServiceImpl implements AwardService {
     private ContractcompoundMapper contractcompoundMapper;
     @Autowired
     private BusinessplanService businessplanService;
+    @Autowired
+    private RulingMapper rulingMapper;
 
     @Override
     public List<Award> get(Award award) throws Exception {
@@ -220,10 +224,104 @@ public class AwardServiceImpl implements AwardService {
         return awavo;
     }
 
+    //合同决裁书增加事业计划金额功能 1103 ztc fr
     @Override
-    public void updateAwardVo(AwardVo awardVo, TokenModel tokenModel) throws Exception {
+    public boolean updateAwardVo(AwardVo awardVo, TokenModel tokenModel) throws Exception {
+        boolean businorout = false;
         Award award = new Award();
         BeanUtils.copyProperties(awardVo.getAward(), award);
+        AwardDetail awardDetail = new AwardDetail();
+        awardDetail.setAward_id(award.getAward_id());
+        List<AwardDetail> awardDetail_Old = awardDetailMapper.select(awardDetail)
+                .stream().filter(oldtail ->!StringUtils.isEmpty(oldtail.getRulingid())).collect(Collectors.toList());
+        if(awardDetail_Old.size() > 0){
+            awardDetail_Old.forEach(oldList ->{
+                AwardDetail awardDe = awardDetailMapper.selectByPrimaryKey(oldList.getAwarddetail_id());
+                if(awardDe != null && !StringUtils.isEmpty(awardDe.getRulingid())){
+                    try {
+                        businessplanService.cgTpReRulingInfo(awardDe.getRulingid(),awardDe.getAwardmoney(),tokenModel);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        };
+        List<AwardDetail> awardDetails = awardVo.getAwardDetail();
+        awardDetails = awardDetails.stream().filter(filt ->!StringUtils.isEmpty(filt.getRulingid())).collect(Collectors.toList());
+        OrgTree newOrgInfo = orgTreeService.get(new OrgTree());
+        Map<String,BigDecimal> decimalHashMap = new HashMap<>();
+        if(awardDetails.size() > 0){
+            if(award.getContracttype().contains("HT014") && award.getPlan().equals("0") && !StringUtils.isEmpty(award.getClassificationtype())){
+                //委托
+                awardDetails.forEach(adls ->{
+                    if(decimalHashMap.get(adls.getRulingid()) != null){
+                        BigDecimal resultAnt = decimalHashMap.get(adls.getRulingid()).add(new BigDecimal(adls.getAwardmoney()));
+                        decimalHashMap.put(adls.getRulingid(),resultAnt);
+                    }else{
+                        decimalHashMap.put(adls.getRulingid(),new BigDecimal(adls.getAwardmoney()));
+                    }
+                });
+                if(decimalHashMap.size() > 0){
+                    for (Map.Entry<String, BigDecimal> entry : decimalHashMap.entrySet()) {
+                        String ruid = entry.getKey();
+                        BigDecimal useMy = entry.getValue();
+                        Ruling ruling = rulingMapper.selectByPrimaryKey(ruid);
+                        if (ruling.getActualresidual().subtract(ruling.getApplioccution()).compareTo(useMy) == -1) {
+                            businorout = true;
+                        }
+                    }
+                }
+            }
+            else if(award.getContracttype().contains("HT008") && award.getPlan().equals("0")){
+                //受托
+                if(!award.getStatus().equals("4")){
+                    awardDetails.forEach(adls ->{
+                        if(decimalHashMap.get(adls.getRulingid()) != null){
+                            BigDecimal resultAnt = decimalHashMap.get(adls.getRulingid()).add(new BigDecimal(adls.getAwardmoney()));
+                            decimalHashMap.put(adls.getRulingid(),resultAnt);
+                        }else{
+                            decimalHashMap.put(adls.getRulingid(),new BigDecimal(adls.getAwardmoney()));
+                        }
+                    });
+                    if(decimalHashMap.size() > 0){
+                        for (Map.Entry<String, BigDecimal> entry : decimalHashMap.entrySet()) {
+                            String ruid = entry.getKey();
+                            BigDecimal useMy = entry.getValue();
+                            Ruling ruling = rulingMapper.selectByPrimaryKey(ruid);
+                            if (ruling.getActualresidual().subtract(ruling.getApplioccution()).compareTo(useMy) == -1) {
+                                businorout = true;
+                            }
+                        }
+                    }
+                }
+                else if(award.getStatus().equals("4")){
+                    awardDetails.forEach(adls ->{
+                        try {
+                            businessplanService.woffRulingInfo(adls.getRulingid(), adls.getAwardmoney(), tokenModel);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
+            }
+            if(businorout){//余额不够
+                award.setPlan("1");
+                award.setClassificationtype("");
+                awardDetails.forEach(awwd ->{
+                    awwd.setRulingid("");
+                    awwd.setBusinessplanbalance("");
+                });
+            }
+            else{
+                awardDetails.forEach(awrd ->{
+                    try {
+                        businessplanService.upRulingInfo(awrd.getRulingid(), awrd.getAwardmoney(), tokenModel);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        }
         award.preUpdate(tokenModel);
         awardMapper.updateByPrimaryKey(award);
         String awardid = award.getAward_id();
@@ -232,7 +330,7 @@ public class AwardServiceImpl implements AwardService {
         String status = award.getStatus();
         if (status.equals("4")) {
             //upd-ws-9/17-禅道任务530提交
-            if (award.getPolicycontract_id() != "" && award.getPolicycontract_id() != null) {
+            if (!award.getPolicycontract_id().equals("") && award.getPolicycontract_id() != null) {
                 int scale = 2;//设置位数
                 int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
                 PolicyContract po = new PolicyContract();
@@ -303,18 +401,19 @@ public class AwardServiceImpl implements AwardService {
         AwardDetail award2 = new AwardDetail();
         award2.setAward_id(awardid);
         awardDetailMapper.delete(award2);
-        List<AwardDetail> awardDetails = awardVo.getAwardDetail();
+
 
 
         StaffDetail sta = new StaffDetail();
         sta.setAward_id(awardid);
         staffDetailMapper.delete(sta);
         List<StaffDetail> stalist = awardVo.getStaffDetail();
+        List<AwardDetail> awardDetailList = awardVo.getAwardDetail();
 
 
-        if (awardDetails != null) {
+        if (awardDetailList != null) {
             int rowindex = 0;
-            for (AwardDetail awarddetail : awardDetails) {
+            for (AwardDetail awarddetail : awardDetailList) {
                 rowindex = rowindex + 1;
                 awarddetail.preInsert(tokenModel);
                 awarddetail.setAwarddetail_id(UUID.randomUUID().toString());
@@ -352,8 +451,9 @@ public class AwardServiceImpl implements AwardService {
                 awardReuniteMapper.updateByPrimaryKey(awardReunite);
             }
         }
-
+        return businorout;
     }
+    //合同决裁书增加事业计划金额功能 1103 ztc to
 
     @Override
     public void dataCarryover(Award award,TokenModel tokenModel) throws Exception {
@@ -379,20 +479,6 @@ public class AwardServiceImpl implements AwardService {
     }
     //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc to
 
-    //region scc add 10/28 委托决裁根据事业计划，进行逻辑删除 from
-    @Override
-    public void awddelete(Award award, TokenModel tokenModel) throws Exception {
-        Award updateStatus = new Award();
-        updateStatus.setAward_id(award.getAward_id());
-        Award result = awardMapper.selectByPrimaryKey(updateStatus);
-        result.setStatus("1");
-        awardMapper.updateByPrimaryKey(result);
-        if("1".equals(result.getPlan())){
-            businessplanService.cgTpReRulingInfo(award.getRulingid(),award.getClaimamount(),tokenModel);
-        }else{
-            return;
-        }
-    }
-    //endregion scc add 10/28 委托决裁根据事业计划，进行逻辑删除 to
+
 
 }
