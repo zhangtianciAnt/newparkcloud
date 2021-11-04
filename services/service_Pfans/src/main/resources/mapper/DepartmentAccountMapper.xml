@@ -574,23 +574,23 @@ temp. themeid
 	</select>
 	<select id="selectTotalByYearAndDep" resultType="com.nt.dao_Pfans.PFANS1000.Vo.DepartmentTotalVo">
 		SELECT
-			CASE WHEN ROUND(a.TIME_START/my_WorkingDays(a.LOG_DATE), 4) between 1 and 1.1999 then 1
-        		 WHEN ROUND(a.TIME_START/my_WorkingDays(a.LOG_DATE), 4) between 1.2 and 1.3999 then 1.1
-        		 WHEN ROUND(a.TIME_START/my_WorkingDays(a.LOG_DATE), 4) between 1.4 and 1.5999 then 1.15
-        		 WHEN ROUND(a.TIME_START/my_WorkingDays(a.LOG_DATE), 4) >= 1.6 then 1.3
-        		 ELSE ROUND(a.TIME_START/my_WorkingDays(a.LOG_DATE), 2) END MOUNT,
-         a.LDATE LOGDATE
+			ROUND(sum(a. MOUNT),2),
+         	a.LOG_DATE LOGDATE
         FROM
         (
-
-        	SELECT SUM(TIME_START) TIME_START, DATE_FORMAT(LOG_DATE,'%Y%m') LOG_DATE,DATE_FORMAT(LOG_DATE,'%m') LDATE
+        	SELECT ROUND(SUM(b.TIME_START)/my_WorkingDays(b.LOG_DATE), 4) MOUNT, b.LOG_DATE LOG_DATE
+        	FROM
+        	(
+        	SELECT  `CREATEBY` AS userid,TIME_START TIME_START, DATE_FORMAT(LOG_DATE,'%Y%m') LOG_DATE
 			FROM logmanagement lg
 
             WHERE date_format(lg.LOG_DATE,'%Y-%m') BETWEEN date_format( CONCAT( #{years}, '-04-01' ) ,'%Y-%m')
                                 				   AND  date_format( concat(  CONVERT(#{years}, SIGNED) + 1 , '-03-31' ),'%Y-%m')
                                 				   AND lg.GROUP_ID =  #{department}
-            GROUP BY DATE_FORMAT(LOG_DATE,'%Y%m')
+            ) b
+            GROUP BY b.LOG_DATE,b.userid
         ) a
+        GROUP BY a.LOG_DATE
 	</select>
 
 	<select id="selectPJMount" resultType="com.nt.dao_Pfans.PFANS1000.DepartmentAccountTotal">

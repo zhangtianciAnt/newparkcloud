@@ -66,7 +66,7 @@
             FROM
                 logpersonstatistics lg
             WHERE
-                date_format( concat( LOG_DATE, '-01' ), '%Y%m', '%Y-%m' ) = #{LOG_DATE}
+            DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y-%m' ) = #{LOG_DATE}
             AND PROJECT_ID != 'PP024001'
             AND PROJECT_ID IN
             <foreach collection="projectList" index="index" item="projectid" open="("
@@ -74,6 +74,7 @@
                 #{projectid}
             </foreach>
             GROUP BY
+               LOG_DATE,
                USER_ID,
                ADJUST,
                GROUP_ID,
