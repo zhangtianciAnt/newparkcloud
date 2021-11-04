@@ -121,6 +121,10 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 
     @Autowired
     private JudgementdetailMapper judgementdetailMapper;
+    @Autowired
+    private ContractnumbercountMapper contractnumbercountMapper;
+    @Autowired
+    private AwardDetailMapper awardDetailMapper;
 
     //add-ws-7/9-禅道任务248
     @Override
@@ -1467,6 +1471,44 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                     PurchaseApply purchaseApply = purchaseapplyMapper.selectByPrimaryKey(judge);
                     if(purchaseApply != null && !purchaseApply.getRulingid().equals("")){
                         businessplanService.cgTpReRulingInfo(purchaseApply.getRulingid(),purchaseApply.getSummoney(),tokenModel);
+                    }
+                }
+            }
+            if(publicExpense.getJudgement_name().substring(0,2).equals("WF") ||
+                    publicExpense.getJudgement_name().substring(0,2).equals("FG") ||
+                    publicExpense.getJudgement_name().substring(0,2).equals("NF") ||
+                    publicExpense.getJudgement_name().substring(0,2).equals("NH")
+            ){//委托合同
+                String juStr[] = publicExpense.getJudgement().split(",");
+                List<String> judList = new ArrayList<String>();
+                for (int i = 0; i < juStr.length; i++) {
+                    if (!judList.contains(juStr[i])) {
+                        judList.add(juStr[i]);
+                    }
+                }
+                if(judList.size() > 0){
+                    for(String aware : judList){
+                        Award award = new Award();
+                        award.setAward_id(aware);
+                        List<Award> awardList = awardMapper.select(award);
+                        if(awardList.size() > 0){
+                            String awrStr[] = awardList.get(0).getStatuspublic().split(",");
+                            Contractnumbercount contnub = new Contractnumbercount();
+                            contnub.setContractnumber(awardList.get(0).getContractnumber());
+                            List<Contractnumbercount> cnbList = contractnumbercountMapper.select(contnub);
+                            if(awrStr.length == cnbList.size()){
+                                AwardDetail awardDetail = new AwardDetail();
+                                awardDetail.setAward_id(aware);
+                                List<AwardDetail> awardDetails = awardDetailMapper.select(awardDetail);
+                                if(awardDetails.size() > 0){
+                                    for(AwardDetail aDetail : awardDetails){
+                                        if(!aDetail.getRulingid().equals("")){
+                                            businessplanService.cgTpReRulingInfo(aDetail.getRulingid(),aDetail.getAwardmoney(),tokenModel);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

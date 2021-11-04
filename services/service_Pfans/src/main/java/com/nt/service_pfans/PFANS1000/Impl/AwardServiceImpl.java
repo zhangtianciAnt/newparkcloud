@@ -330,7 +330,7 @@ public class AwardServiceImpl implements AwardService {
         String status = award.getStatus();
         if (status.equals("4")) {
             //upd-ws-9/17-禅道任务530提交
-            if (!award.getPolicycontract_id().equals("") && award.getPolicycontract_id() != null) {
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(award.getPolicycontract_id())) {
                 int scale = 2;//设置位数
                 int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
                 PolicyContract po = new PolicyContract();
