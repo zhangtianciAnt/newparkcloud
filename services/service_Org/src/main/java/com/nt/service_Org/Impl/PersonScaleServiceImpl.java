@@ -157,7 +157,8 @@ public class PersonScaleServiceImpl implements PersonScaleService {
         }
 
         if(saveResult.size() > 0){
-            personScaleMapper.insetList(saveResult);
+            List resultList = saveResult.stream().filter(result -> !result.getProportions().equals("0.00")).collect(Collectors.toList());
+            personScaleMapper.insetList(resultList);
         }
         if(diffMap.size() > 0){
             diffMap.forEach((userid,dif) ->{
