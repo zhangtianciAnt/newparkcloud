@@ -47,20 +47,22 @@ public class CommunicationServiceImpl implements CommunicationService {
     public void updateCommunication(Communication communication, TokenModel tokenModel) throws Exception {
         communication.preUpdate(tokenModel);
         Communication comm = communicationMapper.selectByPrimaryKey(communication.getCommunication_id());
-        if(!comm.getPlan().equals(communication.getPlan())){//新旧事业计划不相同
-            if(comm.getPlan().equals("1")){//旧内新外 还旧的钱
-                businessplanService.cgTpReRulingInfo(comm.getRulingid(), comm.getMoneys(), tokenModel);
-            }else{//旧外新内 扣新的钱
-                businessplanService.upRulingInfo(communication.getRulingid(), communication.getMoneys(), tokenModel);
-            }
-        } else{//新旧事业计划相同 都是外不用考虑
-            if(comm.getPlan().equals("1")){//新旧都是内
-                if(comm.getClassificationtype().equals(communication.getClassificationtype())){ //同类别
-                    BigDecimal diffMoney = new BigDecimal(communication.getMoneys()).subtract(new BigDecimal(comm.getMoneys()));
-                    businessplanService.upRulingInfo(communication.getRulingid(), diffMoney.toString(), tokenModel);
-                }else{ //不同类别 还旧扣新
+        if(!comm.getStatus().equals("4")){
+            if(!comm.getPlan().equals(communication.getPlan())){//新旧事业计划不相同
+                if(comm.getPlan().equals("1")){//旧内新外 还旧的钱
                     businessplanService.cgTpReRulingInfo(comm.getRulingid(), comm.getMoneys(), tokenModel);
+                }else{//旧外新内 扣新的钱
                     businessplanService.upRulingInfo(communication.getRulingid(), communication.getMoneys(), tokenModel);
+                }
+            } else{//新旧事业计划相同 都是外不用考虑
+                if(comm.getPlan().equals("1")){//新旧都是内
+                    if(comm.getClassificationtype().equals(communication.getClassificationtype())){ //同类别
+                        BigDecimal diffMoney = new BigDecimal(communication.getMoneys()).subtract(new BigDecimal(comm.getMoneys()));
+                        businessplanService.upRulingInfo(communication.getRulingid(), diffMoney.toString(), tokenModel);
+                    }else{ //不同类别 还旧扣新
+                        businessplanService.cgTpReRulingInfo(comm.getRulingid(), comm.getMoneys(), tokenModel);
+                        businessplanService.upRulingInfo(communication.getRulingid(), communication.getMoneys(), tokenModel);
+                    }
                 }
             }
         }
