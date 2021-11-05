@@ -32,8 +32,7 @@
     <!--    精算审批完成 old-->
     <update id="woffRulingInfo" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">
         update RULING
-        set APPLIOCCUTION = APPLIOCCUTION - #{offMoney,jdbcType=DECIMAL}
-          ,ACTUALRESIDUAL = ACTUALRESIDUAL - #{offMoney,jdbcType=DECIMAL}
+        set ACTUALRESIDUAL = ACTUALRESIDUAL - #{offMoney,jdbcType=DECIMAL}
           ,ACTUALCONSUMPTION = ACTUALCONSUMPTION + #{offMoney,jdbcType=DECIMAL}
           ,VERSION = VERSION + 1
         WHERE RULING_ID = #{ruling_id}
