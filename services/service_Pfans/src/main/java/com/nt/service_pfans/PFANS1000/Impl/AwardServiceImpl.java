@@ -701,7 +701,7 @@ public class AwardServiceImpl implements AwardService {
                 if (rolelist.size() > 0) {
                     for (MembersVo rt : rolelist) {
                         ToDoNotice toDoNotice3 = new ToDoNotice();
-                        toDoNotice3.setTitle("【" + award.getContractnumber() + "】决裁流程结束，请前往请负委托一览进行状态处理！");
+                        toDoNotice3.setTitle("【" + award.getContractnumber() + "】决裁流程结束，请在请求月的外注费用审批前到请负委托一览进行状态处理！");
                         toDoNotice3.setInitiator(award.getUser_id());
                         toDoNotice3.setDataid(award.getContractnumber());
                         toDoNotice3.setUrl("/PFANS6012View");
