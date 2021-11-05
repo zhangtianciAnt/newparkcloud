@@ -242,4 +242,8 @@ public class Evection extends BaseModel {
     @Column(name = "PROCESSINGSTATUS")
     private String processingstatus;
     // add-ws-8/12-禅道任务446
+
+    //region scc add 规定外费用
+    @Column(name = "EXTERNAL")
+    private String external;
 }
