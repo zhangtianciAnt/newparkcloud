@@ -41,6 +41,8 @@ public interface OrgTreeService {
     //根据部门id获取当前部门信息
     OrgTreeVo getDepartmentinfo(String departid) throws  Exception;
 
+    OrgTree getOrgInfoByComName(OrgTree org, String compn) throws  Exception;
+
     OrgTree getOrgInfo(OrgTree org, String compn) throws  Exception;
 
     //add ccm 20210819 获取所有有效部门的信息 fr
