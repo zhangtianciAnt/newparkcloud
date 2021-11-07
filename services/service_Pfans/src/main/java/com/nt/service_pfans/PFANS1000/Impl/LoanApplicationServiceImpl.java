@@ -89,7 +89,10 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
             loanapplication.setStatus("4");
             List<LoanApplication> LoanApplicationlist = loanapplicationMapper.select(loanapplication);
             for (LoanApplication loan : LoanApplicationlist) {
-                loaList.add(loan);
+                if(!loaList.contains(loan))
+                {
+                    loaList.add(loan);
+                }
             }
         }
         //add-ws-8/24-禅道任务544

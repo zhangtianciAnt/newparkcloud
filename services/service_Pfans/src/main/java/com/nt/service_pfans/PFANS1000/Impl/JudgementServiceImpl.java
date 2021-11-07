@@ -400,7 +400,7 @@ public class JudgementServiceImpl implements JudgementService {
         updateStatus.setStatus("1");
         judgementMapper.updateByPrimaryKeySelective(updateStatus);
         if("1".equals(judgement.getCareerplan())){
-            if(!judgement.getRulingid().equals("") && judgement.getMusectosion().equals("0")){
+            if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(judgement.getRulingid()) && judgement.getMusectosion().equals("0")){
                 businessplanService.cgTpReRulingInfo(judgement.getRulingid(),judgement.getMoney(),tokenModel);
             }else if(judgement != null &&  judgement.getMusectosion().equals("1")){
                 Judgementdetail judgementdetail = new Judgementdetail();

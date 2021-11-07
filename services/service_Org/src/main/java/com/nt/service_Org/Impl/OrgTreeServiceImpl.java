@@ -262,6 +262,28 @@ public class OrgTreeServiceImpl implements OrgTreeService {
         return new OrgTree();
     }
 
+    //根据部门id获取部门组织信息
+    @Override
+    public OrgTree getOrgInfoByComName(OrgTree org, String compn) throws Exception {
+        OrgTree returnorg = new OrgTree();
+        if (org.getCompanyname().equals(compn)) {
+            return org;
+        } else {
+            if (org.getOrgs() != null) {
+                for (OrgTree item : org.getOrgs()) {
+                    returnorg = getOrgInfoByComName(item, compn);
+                    if(returnorg.getCompanyname() != null){
+                        if (returnorg.getCompanyname().equals(compn)) {
+                            return returnorg;
+                        }
+                    }
+                }
+            }
+
+        }
+        return new OrgTree();
+    }
+
     //add ccm 20210819 获取所有有效部门的信息 fr
     //获取所有有效部门，从center查找预算编码，存在则作为部门，不存在则获取center下group作为部门
     @Override

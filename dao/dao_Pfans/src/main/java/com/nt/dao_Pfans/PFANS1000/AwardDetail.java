@@ -45,11 +45,21 @@ public class AwardDetail extends BaseModel {
     @Column(name = "WORKNUMBER")
     private String worknumber;
 
+    //合同决裁书添加字段 1103 ztc fr
+    @Column(name = "BUSINESSPLANBALANCE")
+    private String businessplanbalance;
+    //合同决裁书添加字段 1103 ztc to
+
     @Column(name = "AWARDMONEY")
     private String awardmoney;
 
     @Column(name = "PROJECTS")
     private String projects;
+
+    //合同决裁书添加字段 1103 ztc fr
+    @Column(name = "RULINGID")
+    private String rulingid;
+    //合同决裁书添加字段 1103 ztc to
 
     @Column(name = "ROWINDEX")
     private Integer rowindex;
