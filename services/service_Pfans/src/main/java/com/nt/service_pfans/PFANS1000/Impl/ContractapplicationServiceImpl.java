@@ -964,6 +964,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         award.setRemarks(contractapp.getRemarks());
                         award.setMaketype(rowindex);
                         award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                        award.setTenantid("first");
                         //region acc add 9/16 在觉书做成时生成汇率和売上(RMB) from
                         String startDate = contractapp.getClaimdatetime().split("~")[0].trim();
                         String exchangeRateMonthly = startDate.substring(0, startDate.length() - 3);
