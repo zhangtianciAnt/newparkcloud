@@ -26,4 +26,7 @@ public class AwardVo {
 //    PSDCD_PFANS_20210525_XQ_054 复合合同决裁书分配金额可修改 ztc fr
     private List<AwardReunite> awardReunites;
 //    PSDCD_PFANS_20210525_XQ_054 复合合同决裁书分配金额可修改 ztc to
+    //region scc add 10/18 多部门审批 from
+    private List<Contractcompound> contractcompound;
+    //endregion scc add 10/18 多部门审批 from
 }

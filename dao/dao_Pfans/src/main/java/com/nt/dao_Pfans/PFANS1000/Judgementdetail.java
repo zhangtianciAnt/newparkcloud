@@ -74,7 +74,7 @@ public class Judgementdetail extends BaseModel {
 
 
     /**
-     * 事业计划金额主键
+     * 多部门决裁-实施计划金额
      */
     @Column(name = "RULINGID")
     private String rulingid;

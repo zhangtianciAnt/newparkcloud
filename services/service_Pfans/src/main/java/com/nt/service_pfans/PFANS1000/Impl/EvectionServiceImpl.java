@@ -13,6 +13,7 @@ import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.Comproject;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.mapper.DictionaryMapper;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.EvectionService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS5000.mapper.ComProjectMapper;
@@ -91,6 +92,8 @@ public class EvectionServiceImpl implements EvectionService {
     private CompanyProjectsMapper companyProjectsMapper;
     @Autowired
     private ComProjectMapper comprojectMapper;
+    @Autowired
+    private BusinessplanService businessplanService;
 
     @Override
     public Map<String, Object> exportjs(String evectionid, HttpServletRequest request) throws Exception {
@@ -826,7 +829,9 @@ public class EvectionServiceImpl implements EvectionService {
 
     @Override
     public void updateEvectionVo(EvectionVo evectionVo, TokenModel tokenModel) throws Exception {
-
+        if(evectionVo.getEvection().getStatus().equals("4")){
+            this.writeOff(evectionVo,tokenModel);
+        }
         Evection evection = new Evection();
         BeanUtils.copyProperties(evectionVo.getEvection(), evection);
         //upd-8/20-ws-禅道468任务
@@ -843,6 +848,13 @@ public class EvectionServiceImpl implements EvectionService {
         }
         //upd-8/20-ws-禅道468任务
         evectionMapper.updateByPrimaryKey(evection);
+
+        //region scc add 出差过程中可能发生规定外费用,在精算时应该允许编辑修改 from
+        Business business = new Business();
+        business.setBusiness_id(evection.getBusiness_id());
+        business.setExternal(evection.getExternal());
+        businessMapper.updateByPrimaryKeySelective(business);
+        //endregion scc add 出差过程中可能发生规定外费用,在精算时应该允许编辑修改 to
 
         String evectionid = evection.getEvectionid();
         String invoiceNo = evection.getInvoiceno();
@@ -1126,6 +1138,14 @@ public class EvectionServiceImpl implements EvectionService {
 
         saveTravelCostList(invoiceNo, trafficdetailslist, accommodationdetailslist, otherdetailslist, invoicelist, currencyexchangeList, evectionVo, tokenModel, evectionid);
 
+    }
+
+    public void writeOff(EvectionVo evectionVo,TokenModel tokenModel) throws Exception {
+        Business business = businessMapper.selectByPrimaryKey(evectionVo.getEvection().getBusiness_id());
+        if(business != null && !StringUtils.isNullOrEmpty(business.getPlan()) && business.getPlan().equals("1")){
+            businessplanService.cgTpReRulingInfo(business.getRulingid(),business.getMoneys(),tokenModel);
+            businessplanService.woffRulingInfo(business.getRulingid(),evectionVo.getEvection().getTotalpay(),tokenModel);
+        }
     }
 
 }

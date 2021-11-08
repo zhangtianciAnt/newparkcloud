@@ -154,12 +154,22 @@ public class Pfans6009Controller {
                 // 审批人
                 List<WorkflowLogDetailVo> wfList = workflowServices.ViewWorkflow2(startWorkflowVo, tokenModel.getLocale());
                 if (wfList.size() > 0) {
+                    //月度费用总览pdf增加发起者 1104 ztc fr
+                    query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(wfList.get(1).getUserId()));
+                    CustomerInfo customerInfoOne = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfoOne != null) {
+                        // 发起人图片
+                        String strUser = sign.startGraphics2D(customerInfoOne.getUserinfo().getCustomername());
+                        data.put(depVo.getDepartmentEn() + "UserOne", strUser);
+                    }
+                    //月度费用总览pdf增加发起者 1104 ztc to
                     query = new Query();
                     query.addCriteria(Criteria.where("userid").is(wfList.get(0).getUserId()));
-                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                    if (customerInfo != null) {
+                    CustomerInfo customerInfoTwo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    if (customerInfoTwo != null) {
                         // 审批人图片
-                        String strUser = sign.startGraphics2D(customerInfo.getUserinfo().getCustomername());
+                        String strUser = sign.startGraphics2D(customerInfoTwo.getUserinfo().getCustomername());
                         data.put(depVo.getDepartmentEn() + "User", strUser);
                     }
                 }

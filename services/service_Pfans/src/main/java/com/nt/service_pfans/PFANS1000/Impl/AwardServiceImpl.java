@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.*;
@@ -12,6 +13,7 @@ import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_pfans.PFANS1000.AwardService;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS2000.PersonalCostService;
 import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
@@ -21,6 +23,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -66,6 +69,13 @@ public class AwardServiceImpl implements AwardService {
     @Autowired
     private DictionaryService dictionaryService;
 
+    @Autowired
+    private ContractcompoundMapper contractcompoundMapper;
+    @Autowired
+    private BusinessplanService businessplanService;
+    @Autowired
+    private RulingMapper rulingMapper;
+
     @Override
     public List<Award> get(Award award) throws Exception {
         List<Award> awardlist = awardMapper.select(award);
@@ -98,6 +108,9 @@ public class AwardServiceImpl implements AwardService {
         staffdetail.setAward_id(award_id);
         List<AwardDetail> awalist = awardDetailMapper.select(awadetail);
         List<StaffDetail> stafflist = staffDetailMapper.select(staffdetail);
+        //region scc add 对应合同号 from
+        Award compoundContractNo = awardMapper.selectByPrimaryKey(award_id);
+        //endregion scc add 对应合同号 to
         awalist = awalist.stream().sorted(Comparator.comparing(AwardDetail::getRowindex)).collect(Collectors.toList());
         stafflist = stafflist.stream().sorted(Comparator.comparing(StaffDetail::getRowindex)).collect(Collectors.toList());
         Award awa = awardMapper.selectByPrimaryKey(award_id);
@@ -151,6 +164,39 @@ public class AwardServiceImpl implements AwardService {
 //            }
 //        }
 //        award.setPjnamechinese(name);
+        //region scc 判断合同是否是复合合同 from
+        List<Dictionary> composites = new ArrayList<>();
+        Dictionary WSM = new Dictionary();//海外複合受託 技術開発
+        WSM.setCode("HT008002");
+        composites.add(WSM);
+        Dictionary WGM = new Dictionary();//海外複合受託 役務
+        WGM.setCode("HT008004");
+        composites.add(WGM);
+        Dictionary NSM = new Dictionary();//国内複合受託 技術開発
+        NSM.setCode("HT008006");
+        composites.add(NSM);
+        Dictionary NGM = new Dictionary();//国内複合受託 役務
+        NGM.setCode("HT008008");
+        composites.add(NGM);
+        List<String> composite = new ArrayList<>();
+        for(Dictionary dic : composites){
+            composite.add(dictionaryService.getDictionaryList(dic).get(0).getValue2());
+        }
+        boolean flag = false;
+        List<Contractcompound> isACompound = null;
+        for(String item : composite) {
+            if(compoundContractNo.getContractnumber().substring(0,3).equals(item)){
+                flag = true;
+                Contractcompound contractcompound = new Contractcompound();
+                contractcompound.setContractnumber(compoundContractNo.getContractnumber());
+                isACompound = contractcompoundMapper.select(contractcompound);
+                isACompound = isACompound.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(Contractcompound::getGroup_id))), ArrayList::new));
+            }
+        }
+        if(flag && isACompound.size() > 0 && isACompound != null){
+            awavo.setContractcompound(isACompound);
+        }
+        //endregion scc 判断合同是否是复合合同 to
         awavo.setAward(awa);
         awavo.setAwardDetail(awalist);
         awavo.setStaffDetail(stafflist);

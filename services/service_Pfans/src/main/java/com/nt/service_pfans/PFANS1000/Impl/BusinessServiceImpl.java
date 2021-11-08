@@ -361,20 +361,22 @@ public class BusinessServiceImpl implements BusinessService {
         BeanUtils.copyProperties(businessVo.getBusiness(), business);
         business.preUpdate(tokenModel);
         Business busin = businessMapper.selectByPrimaryKey(business.getBusiness_id());
-        if(!busin.getPlan().equals(business.getPlan())){//新旧事业计划不相同
-            if(busin.getPlan().equals("1")){//旧内新外 还旧的钱
-                businessplanService.cgTpReRulingInfo(busin.getRulingid(), busin.getMoneys(), tokenModel);
-            }else{//旧外新内 扣新的钱
-                businessplanService.upRulingInfo(business.getRulingid(), business.getMoneys(), tokenModel);
-            }
-        } else{//新旧事业计划相同 都是外不用考虑
-            if(busin.getPlan().equals("1")){//新旧都是内
-                if(busin.getClassificationtype().equals(business.getClassificationtype())){ //同类别
-                    BigDecimal diffMoney = new BigDecimal(business.getMoneys()).subtract(new BigDecimal(busin.getMoneys()));
-                    businessplanService.upRulingInfo(business.getRulingid(), diffMoney.toString(), tokenModel);
-                }else{ //不同类别 还旧扣新
+        if(!busin.getStatus().equals("4")){
+            if(!busin.getPlan().equals(business.getPlan())){//新旧事业计划不相同
+                if(busin.getPlan().equals("1")){//旧内新外 还旧的钱
                     businessplanService.cgTpReRulingInfo(busin.getRulingid(), busin.getMoneys(), tokenModel);
+                }else{//旧外新内 扣新的钱
                     businessplanService.upRulingInfo(business.getRulingid(), business.getMoneys(), tokenModel);
+                }
+            } else{//新旧事业计划相同 都是外不用考虑
+                if(busin.getPlan().equals("1")){//新旧都是内
+                    if(busin.getClassificationtype().equals(business.getClassificationtype())){ //同类别
+                        BigDecimal diffMoney = new BigDecimal(business.getMoneys()).subtract(new BigDecimal(busin.getMoneys()));
+                        businessplanService.upRulingInfo(business.getRulingid(), diffMoney.toString(), tokenModel);
+                    }else{ //不同类别 还旧扣新
+                        businessplanService.cgTpReRulingInfo(busin.getRulingid(), busin.getMoneys(), tokenModel);
+                        businessplanService.upRulingInfo(business.getRulingid(), business.getMoneys(), tokenModel);
+                    }
                 }
             }
         }

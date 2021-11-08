@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
@@ -120,6 +121,10 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
 
     @Autowired
     private JudgementdetailMapper judgementdetailMapper;
+    @Autowired
+    private ContractnumbercountMapper contractnumbercountMapper;
+    @Autowired
+    private AwardDetailMapper awardDetailMapper;
 
     //add-ws-7/9-禅道任务248
     @Override
@@ -1110,7 +1115,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 }
             }
         }
-        if (publicExpenseVo.getPublicexpense().getStatus().equals("4") && publicExpenseVo.getPublicexpense().getBusiness_type()){
+        //解决旧数据审批结束操作异常问题 ztc fr
+        if (publicExpenseVo.getPublicexpense().getStatus().equals("4") && publicExpenseVo.getPublicexpense().getBusiness_type() != null && publicExpenseVo.getPublicexpense().getBusiness_type()){
+            //解决旧数据审批结束操作异常问题 ztc to
             PublicExpense publEe = publicExpenseMapper.selectByPrimaryKey(publicExpense.getPublicexpenseid());
             if(!publEe.getStatus().equals("4")){
                 this.writeOff(publicExpenseVo,tokenModel);
@@ -1317,7 +1324,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         String month = String.valueOf(cal.get(cal.MONTH) + 1);
         if(Integer.parseInt(month) < 4)
         {
-            this_year = String.valueOf(Integer.parseInt(this_year)-1);
+            this_year = String.valueOf(Integer.parseInt(this_year) - 1);
         }
         OrgTree newOrgInfo = orgTreeService.get(new OrgTree());
         List<TrafficDetails> trafficdetails = publicExpenseVo.getTrafficdetails().stream()
@@ -1435,19 +1442,19 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             for (String judge : judge_id) {
                 if(publicExpense.getJudgement_name().substring(0, 2).equals("CG")){//采购
                     Purchase purchase = purchaseMapper.selectByPrimaryKey(judge);
-                    if(purchase != null && !purchase.getRulingid().equals("")){
+                    if(purchase != null && !com.mysql.jdbc.StringUtils.isNullOrEmpty(purchase.getRulingid())){
                         businessplanService.cgTpReRulingInfo(purchase.getRulingid(),purchase.getTotalamount(),tokenModel);
                     }
                 }
                 else if (publicExpense.getJudgement_name().substring(0, 3).equals("JJF")){//交际费
                     Communication communication = communicationMapper.selectByPrimaryKey(judge);
-                    if(communication != null && !communication.getRulingid().equals("")){
+                    if(communication != null && !com.mysql.jdbc.StringUtils.isNullOrEmpty(communication.getRulingid())){
                         businessplanService.cgTpReRulingInfo(communication.getRulingid(),communication.getMoneys(),tokenModel);
                     }
                 }
                 else if (publicExpense.getJudgement_name().substring(0, 2).equals("JC")){//其他业务决裁
                     Judgement judgement = judgementMapper.selectByPrimaryKey(judge);
-                    if(judgement != null && !judgement.getRulingid().equals("") && judgement.getMusectosion().equals("0")){
+                    if(judgement != null && !com.mysql.jdbc.StringUtils.isNullOrEmpty(judgement.getRulingid()) && judgement.getMusectosion().equals("0")){
                         businessplanService.cgTpReRulingInfo(judgement.getRulingid(),judgement.getMoney(),tokenModel);
                     }else if(judgement != null &&  judgement.getMusectosion().equals("1")){
                         Judgementdetail judgementdetail = new Judgementdetail();
@@ -1462,7 +1469,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 }
                 else if (publicExpense.getJudgement_name().substring(0, 2).equals("QY")){//千元以下
                     PurchaseApply purchaseApply = purchaseapplyMapper.selectByPrimaryKey(judge);
-                    if(purchaseApply != null && !purchaseApply.getRulingid().equals("")){
+                    if(purchaseApply != null && !com.mysql.jdbc.StringUtils.isNullOrEmpty(purchaseApply.getRulingid())){
                         businessplanService.cgTpReRulingInfo(purchaseApply.getRulingid(),purchaseApply.getSummoney(),tokenModel);
                     }
                 }
