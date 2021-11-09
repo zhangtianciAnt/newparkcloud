@@ -405,7 +405,7 @@ public class AwardServiceImpl implements AwardService {
                         List<Ruling> rulingMList = rulingMapper.select(rulingM);
                         if (rulingMList.size() > 0) {
                             BigDecimal surMoney = rulingMList.get(0).getActualresidual().subtract(rulingMList.get(0).getApplioccution());
-                            if (new BigDecimal(award.getSarmb()).compareTo(surMoney) == -1) { //a < b 返回-1
+                            if (surMoney.compareTo(new BigDecimal(award.getSarmb())) == -1) { //a < b 返回-1
                                 businorout = true;
                             }
                         }
@@ -418,6 +418,11 @@ public class AwardServiceImpl implements AwardService {
                             });
                         }
                         else{
+                            if(!award.getTenantid().equals("first")){ //旧数据
+                                businessplanService.cgTpReRulingInfoAnt(award.getSarmb()
+                                        ,dirwMap.get(award.getContracttype()),String.valueOf(yearM)
+                                        ,award.getGroup_id(),tokenModel);
+                            }
                             businessplanService.upRulingInfoAnt(award.getSarmb()
                                     ,dirwMap.get(award.getContracttype()),String.valueOf(yearM)
                                     ,award.getGroup_id(),tokenModel);
@@ -462,6 +467,9 @@ public class AwardServiceImpl implements AwardService {
                         if (Integer.parseInt(sf.format(cnntList.get(0).getDeliverydate()).substring(5, 7)) < 4) {
                             yearM = yearM - 1;
                         }
+                        businessplanService.cgTpReRulingInfoAnt(award.getSarmb()
+                                ,dirwMap.get(award.getContracttype()),String.valueOf(yearM)
+                                ,award.getGroup_id(),tokenModel);
                         businessplanService.woffRulingInfoAnt(award.getSarmb()
                                 ,dirwMap.get(award.getContracttype()),String.valueOf(yearM)
                                 ,award.getGroup_id(),tokenModel);
