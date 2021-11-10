@@ -20,6 +20,7 @@ import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
+import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
@@ -106,9 +107,12 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private AwardDetailMapper awardDetailMapper;
     @Autowired
     private OrgTreeService orgtreeService;
-
+    @Autowired
+    private AwardMapper awardMapper;
     @Autowired
     private MonthlyRateMapper monthlyRateMapper;
+    @Autowired
+    private BusinessplanService businessplanService;
 
     //add-ws-7/22-禅道341任务
     @Override
@@ -266,6 +270,84 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         StringBuffer strBuffer = new StringBuffer();
         List<Contractnumbercount> numberList = contractapplication.getContractnumbercount();
         if (cnList != null) {
+            boolean isconM = false;
+            Dictionary dictionary = new Dictionary();
+            dictionary.setCode(cnList.get(0).getContracttype());
+            List<Dictionary> dicList = dictionaryMapper.select(dictionary);
+            if(dicList.size() > 0){
+                if(dicList.get(0).getValue2().contains("M")){
+                    isconM = true;
+                }
+            }
+            //决裁书废弃事业计划金额还回 1103 ztc fr
+            if(cnList.get(0).getEntrycondition().equals("HT004001") && cnList.get(0).getState().equals("无效")){
+                Map<String,String> dirwMap = new HashMap<>();
+                dictionary.setCode("HT008");
+                List<Dictionary> dirw = dictionaryMapper.select(dictionary);
+                if(dirw.size() > 0){
+                    dirw.forEach(diw ->{
+                        dirwMap.put(diw.getCode(),diw.getValue5());
+                    });
+                }
+                if(contractapplication.getContractapplication().get(0).getContractnumber().contains("HT008")) {
+                    if(isconM){//复合合同
+                        AwardReunite awardReunite = new AwardReunite();
+                        awardReunite.setContractnumber(contractapplication.getContractapplication().get(0).getContractnumber());
+                        List<AwardReunite> awardReuniteList = awardReuniteMapper.select(awardReunite);
+                        if(awardReuniteList.size() > 0){
+                            for (AwardReunite arrent : awardReuniteList) {
+                                String dateM = String.valueOf(arrent.getDeliverydate());
+                                int yearM = Integer.parseInt(dateM.substring(0, 4));
+                                if (Integer.parseInt(String.valueOf(arrent).substring(5, 7)) < 4) {
+                                    yearM = yearM - 1;
+                                }
+                                businessplanService.cgTpReRulingInfoAnt(arrent.getDistriamount()
+                                        ,dirwMap.get(contractapplication.getContractapplication().get(0).getContracttype()),String.valueOf(yearM)
+                                        ,arrent.getDepartment(),tokenModel);
+                            }
+                        }
+                    }
+                    else{
+                        if(contractapplication.getContractnumbercount().size() > 0){
+                            String dateM = String.valueOf(contractapplication.getContractnumbercount().get(0).getDeliverydate());
+                            int yearM = Integer.parseInt(dateM.substring(0, 4));
+                            if (Integer.parseInt(String.valueOf(contractapplication.getContractnumbercount().get(0).getDeliverydate()).substring(5, 7)) < 4) {
+                                yearM = yearM - 1;
+                            }
+                            Award award = new Award();
+                            award.setContractnumber(contractapplication.getContractnumbercount().get(0).getContractnumber());
+                            List<Award> awardList = awardMapper.select(award);
+                            if(awardList.size() > 0){
+                                businessplanService.cgTpReRulingInfoAnt(awardList.get(0).getSarmb()
+                                        ,dirwMap.get(awardList.get(0).getContracttype()),String.valueOf(yearM)
+                                        ,awardList.get(0).getGroup_id() ,tokenModel);
+                            }
+                        }
+                    }
+                }
+                else {
+                    Award award = new Award();
+                    award.setContractnumber(cnList.get(0).getContractnumber());
+                    List<Award> awardList = awardMapper.select(award);
+                    if (awardList.size() > 0 && awardList.get(0).getPlan().equals("0")) {
+                        AwardDetail awardDetail = new AwardDetail();
+                        awardDetail.setAward_id(awardList.get(0).getAward_id());
+                        List<AwardDetail> awardDetails = awardDetailMapper.select(awardDetail);
+                        if (awardDetails.size() > 0) {
+                            awardDetails.forEach(awd -> {
+                                if (!StringUtils.isNullOrEmpty(awd.getRulingid())) {
+                                    try {
+                                        businessplanService.cgTpReRulingInfo(awd.getRulingid(), awd.getAwardmoney(), tokenModel);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+            //决裁书废弃事业计划金额还回 1103 ztc to
             //标记点，被copy的原始合同也可能是"NF210250102402-覚3"这种形式，用来判断是否是被copy的原始合同 scc to
             int flag = 0;
             // scc to
@@ -842,6 +924,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                         award.setRemarks(contractapp.getRemarks());
                         award.setMaketype(rowindex);
                         award.setConjapanese(contractapp.getConjapanese());//契約概要（/開発タイトル）和文
+                        award.setTenantid("first");
                         //region acc add 9/16 在觉书做成时生成汇率和売上(RMB) from
                         String startDate = contractapp.getClaimdatetime().split("~")[0].trim();
                         String exchangeRateMonthly = startDate.substring(0, startDate.length() - 3);

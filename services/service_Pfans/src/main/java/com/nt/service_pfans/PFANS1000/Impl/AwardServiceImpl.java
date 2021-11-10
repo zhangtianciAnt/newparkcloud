@@ -12,6 +12,7 @@ import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
+import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS1000.AwardService;
 import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.mapper.*;
@@ -75,6 +76,12 @@ public class AwardServiceImpl implements AwardService {
     private BusinessplanService businessplanService;
     @Autowired
     private RulingMapper rulingMapper;
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
+    @Autowired
+    private ContractapplicationMapper contractapplicationMapper;
+    @Autowired
+    private OrgTreeService orgtreeService;
 
     @Override
     public List<Award> get(Award award) throws Exception {
@@ -224,11 +231,254 @@ public class AwardServiceImpl implements AwardService {
         return awavo;
     }
 
+    //合同决裁书增加事业计划金额功能 1103 ztc fr
     @Override
-    public void updateAwardVo(AwardVo awardVo, TokenModel tokenModel) throws Exception {
+    public boolean updateAwardVo(AwardVo awardVo, TokenModel tokenModel) throws Exception {
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        boolean businorout = false;
         Award award = new Award();
         BeanUtils.copyProperties(awardVo.getAward(), award);
+        AwardDetail awardDetail = new AwardDetail();
+        awardDetail.setAward_id(award.getAward_id());
+        List<AwardDetail> awardDetail_Old = awardDetailMapper.select(awardDetail)
+                .stream().filter(oldtail ->!com.mysql.jdbc.StringUtils.isNullOrEmpty(oldtail.getRulingid())).collect(Collectors.toList());
+        if(awardDetail_Old.size() > 0){
+            awardDetail_Old.forEach(oldList ->{
+                AwardDetail awardDe = awardDetailMapper.selectByPrimaryKey(oldList.getAwarddetail_id());
+                if(awardDe != null && !com.mysql.jdbc.StringUtils.isNullOrEmpty(awardDe.getRulingid())){
+                    try {
+                        businessplanService.cgTpReRulingInfo(awardDe.getRulingid(),awardDe.getAwardmoney(),tokenModel);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        };
+        List<AwardDetail> awardDetails = awardVo.getAwardDetail();
+        awardDetails = awardDetails.stream().filter(filt ->!com.mysql.jdbc.StringUtils.isNullOrEmpty(filt.getRulingid())).collect(Collectors.toList());
+        OrgTree newOrgInfo = orgTreeService.get(new OrgTree());
+        Map<String,BigDecimal> decimalHashMap = new HashMap<>();
+        if(awardDetails.size() > 0){
+            if(award.getContracttype().contains("HT014") && award.getPlan().equals("0") && !com.mysql.jdbc.StringUtils.isNullOrEmpty(award.getClassificationtype())){
+                //委托
+                awardDetails.forEach(adls ->{
+                    if(decimalHashMap.get(adls.getRulingid()) != null){
+                        BigDecimal resultAnt = decimalHashMap.get(adls.getRulingid()).add(new BigDecimal(adls.getAwardmoney()));
+                        decimalHashMap.put(adls.getRulingid(),resultAnt);
+                    }else{
+                        decimalHashMap.put(adls.getRulingid(),new BigDecimal(adls.getAwardmoney()));
+                    }
+                });
+                if(decimalHashMap.size() > 0){
+                    for (Map.Entry<String, BigDecimal> entry : decimalHashMap.entrySet()) {
+                        String ruid = entry.getKey();
+                        BigDecimal useMy = entry.getValue();
+                        Ruling ruling = rulingMapper.selectByPrimaryKey(ruid);
+                        if (ruling.getActualresidual().subtract(ruling.getApplioccution()).compareTo(useMy) == -1) {
+                            businorout = true;
+                        }
+                    }
+                }
+                if(businorout){//余额不够
+                    award.setPlan("1");
+                    award.setClassificationtype("");
+                    awardDetails.forEach(awwd ->{
+                        awwd.setRulingid("");
+                        awwd.setBusinessplanbalance("");
+                    });
+                }
+                else{
+                    awardDetails.forEach(awrd ->{
+                        try {
+                            businessplanService.upRulingInfo(awrd.getRulingid(), awrd.getAwardmoney(), tokenModel);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
+            }
+        }
+        if(award.getContracttype().contains("HT008") && award.getPlan().equals("0")){
+            boolean isconM = false;
+            Dictionary dictionary = new Dictionary();
+            dictionary.setCode(award.getContracttype());
+            List<Dictionary> dicList = dictionaryMapper.select(dictionary);
+            if(dicList.size() > 0){
+                if(dicList.get(0).getValue2().contains("M")){
+                    isconM = true;
+                }
+            }
+            Map<String,String> dirwMap = new HashMap<>();
+            Dictionary dicAnt = new Dictionary();
+            dicAnt.setPcode("HT008");
+            List<Dictionary> dirw = dictionaryService.getDictionaryList(dicAnt);
+            if(dirw.size() > 0){
+                dirw.forEach(diw ->{
+                    dirwMap.put(diw.getCode(),diw.getValue5());
+                });
+            }
+            //受托
+            if(!award.getStatus().equals("4")){
+                if(isconM){
+//                        AwardReunite awardReunite = new AwardReunite();
+//                        awardReunite.setContractnumber(award.getContractnumber());
+                    List<AwardReunite> awardReuniteList = awardVo.getAwardReunites();
+                    if(awardReuniteList.size() > 0)
+                    {
+                        for (AwardReunite art : awardReuniteList) {
+                            String dateM = sf.format(art.getDeliverydate());
+                            int yearM = Integer.parseInt(dateM.substring(0, 4));
+                            if (Integer.parseInt(dateM.substring(5, 7)) < 4) {
+                                yearM = yearM - 1;
+                            }
+                            String eff_idRunt= "";
+                            OrgTree orginfoRunt = orgtreeService.getOrgInfoByComName(newOrgInfo, art.getDepartment());
+                            if(orginfoRunt.getEffective()){//有效部门
+                                eff_idRunt = orginfoRunt.get_id();
+                            }else{
+                                eff_idRunt = orginfoRunt.getParent_id();
+                            }
+                            Ruling rulingM = new Ruling();
+                            rulingM.setYears(String.valueOf(yearM));
+                            rulingM.setDepart(eff_idRunt);
+                            rulingM.setCode(dirwMap.get(award.getContracttype()));
+                            List<Ruling> rulingMList = rulingMapper.select(rulingM);
+                            if (rulingMList.size() > 0) {
+                                BigDecimal surMoney = rulingMList.get(0).getActualresidual().subtract(rulingMList.get(0).getApplioccution());
+                                if (surMoney.compareTo(new BigDecimal(art.getDistriamount())) == -1) { //a < b 返回-1
+                                    businorout = true;
+                                }
+                            }
+                        }
+                        if(businorout){//余额不够
+                            award.setPlan("1");
+                            award.setClassificationtype("");
+                            awardDetails.forEach(awwd ->{
+                                awwd.setRulingid("");
+                                awwd.setBusinessplanbalance("");
+                            });
+                        }
+                        else{
+                            awardReuniteList.forEach(awrdre ->{
+                                String dateM = sf.format(awrdre.getDeliverydate());
+                                int yearM = Integer.parseInt(dateM.substring(0, 4));
+                                if (Integer.parseInt(sf.format(awrdre.getDeliverydate()).substring(5, 7)) < 4) {
+                                    yearM = yearM - 1;
+                                }
+                                try {
+                                    AwardReunite awdd = awardReuniteMapper.selectByPrimaryKey(awrdre.getAwardreunite_id());
+                                    String eff_id = "";
+                                    OrgTree orginfo = orgtreeService.getOrgInfoByComName(newOrgInfo, awdd.getDepartment());
+                                    if(orginfo.getEffective()){//有效部门
+                                        eff_id = orginfo.get_id();
+                                    }else{
+                                        eff_id = orginfo.getParent_id();
+                                    }
+                                    if(awdd != null && !award.getTenantid().equals("first")){ //旧数据
+                                        businessplanService.cgTpReRulingInfoAnt(awdd.getDistriamount()
+                                                ,dirwMap.get(award.getContracttype()),String.valueOf(yearM)
+                                                ,eff_id,tokenModel);
+                                    }
+                                    businessplanService.upRulingInfoAnt(awrdre.getDistriamount()
+                                            ,dirwMap.get(award.getContracttype()),String.valueOf(yearM)
+                                            ,eff_id,tokenModel);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                        }
+                    }
+                }else{
+                    Contractnumbercount cnnt = new Contractnumbercount();
+                    cnnt.setContractnumber(award.getContractnumber());
+                    List<Contractnumbercount> cnntList = contractnumbercountMapper.select(cnnt);
+                    if(cnntList.size() > 0){
+                        String dateM = sf.format(cnntList.get(0).getDeliverydate());
+                        int yearM = Integer.parseInt(dateM.substring(0, 4));
+                        if (Integer.parseInt(sf.format(cnntList.get(0).getDeliverydate()).substring(5, 7)) < 4) {
+                            yearM = yearM - 1;
+                        }
+                        Ruling rulingM = new Ruling();
+                        rulingM.setYears(String.valueOf(yearM));
+                        rulingM.setDepart(award.getGroup_id());
+                        rulingM.setCode(dirwMap.get(award.getContracttype()));
+                        List<Ruling> rulingMList = rulingMapper.select(rulingM);
+                        if (rulingMList.size() > 0) {
+                            BigDecimal surMoney = rulingMList.get(0).getActualresidual().subtract(rulingMList.get(0).getApplioccution());
+                            if (surMoney.compareTo(new BigDecimal(award.getSarmb())) == -1) { //a < b 返回-1
+                                businorout = true;
+                            }
+                        }
+                        if(businorout){//余额不够
+                            award.setPlan("1");
+                            award.setClassificationtype("");
+                            awardDetails.forEach(awwd ->{
+                                awwd.setRulingid("");
+                                awwd.setBusinessplanbalance("");
+                            });
+                        }
+                        else{
+                            if(!award.getTenantid().equals("first")){ //旧数据
+                                businessplanService.cgTpReRulingInfoAnt(award.getSarmb()
+                                        ,dirwMap.get(award.getContracttype()),String.valueOf(yearM)
+                                        ,award.getGroup_id(),tokenModel);
+                            }
+                            businessplanService.upRulingInfoAnt(award.getSarmb()
+                                    ,dirwMap.get(award.getContracttype()),String.valueOf(yearM)
+                                    ,award.getGroup_id(),tokenModel);
+                        }
+                    }
+                }
+            }
+            else if(award.getStatus().equals("4")){
+                if(isconM){//复合合同
+                    AwardReunite awardReunite = new AwardReunite();
+                    awardReunite.setContractnumber(award.getContractnumber());
+                    List<AwardReunite> awardReuniteList = awardReuniteMapper.select(awardReunite);
+                    if(awardReuniteList.size() > 0){
+                        for (AwardReunite arrent : awardReuniteList) {
+                            String dateM = sf.format(arrent.getDeliverydate());
+                            int yearM = Integer.parseInt(dateM.substring(0, 4));
+                            if (Integer.parseInt(sf.format(arrent.getDeliverydate()).substring(5, 7)) < 4) {
+                                yearM = yearM - 1;
+                            }
+                            String eff_id = "";
+                            OrgTree orginfo = orgtreeService.getOrgInfoByComName(newOrgInfo, arrent.getDepartment());
+                            if(orginfo.getEffective()){//有效部门
+                                eff_id = orginfo.get_id();
+                            }else{
+                                eff_id = orginfo.getParent_id();
+                            }
+                            businessplanService.cgTpReRulingInfoAnt(arrent.getDistriamount()
+                                    ,dirwMap.get(award.getContracttype()),String.valueOf(yearM)
+                                    ,eff_id,tokenModel);
+                            businessplanService.woffRulingInfoAnt(arrent.getDistriamount()
+                                    ,dirwMap.get(award.getContracttype()),String.valueOf(yearM)
+                                    ,eff_id,tokenModel);
+                        }
+                    }
+                }else{
+                    Contractnumbercount cnnt = new Contractnumbercount();
+                    cnnt.setContractnumber(award.getContractnumber());
+                    List<Contractnumbercount> cnntList = contractnumbercountMapper.select(cnnt);
+                    if(cnntList.size() > 0) {
+                        String dateM = sf.format(cnntList.get(0).getDeliverydate());
+                        int yearM = Integer.parseInt(dateM.substring(0, 4));
+                        if (Integer.parseInt(sf.format(cnntList.get(0).getDeliverydate()).substring(5, 7)) < 4) {
+                            yearM = yearM - 1;
+                        }
+                        businessplanService.cgTpReRulingInfoAnt(award.getSarmb()
+                                ,dirwMap.get(award.getContracttype()),String.valueOf(yearM)
+                                ,award.getGroup_id(),tokenModel);
+                        businessplanService.woffRulingInfoAnt(award.getSarmb()
+                                ,dirwMap.get(award.getContracttype()),String.valueOf(yearM)
+                                ,award.getGroup_id(),tokenModel);
+                    }
+                }
+            }
+        }
         award.preUpdate(tokenModel);
+        award.setTenantid("second");
         awardMapper.updateByPrimaryKey(award);
         String awardid = award.getAward_id();
         //add-ws-7/21-禅道任务341
@@ -236,7 +486,7 @@ public class AwardServiceImpl implements AwardService {
         String status = award.getStatus();
         if (status.equals("4")) {
             //upd-ws-9/17-禅道任务530提交
-            if (award.getPolicycontract_id() != "" && award.getPolicycontract_id() != null) {
+            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(award.getPolicycontract_id())) {
                 int scale = 2;//设置位数
                 int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
                 PolicyContract po = new PolicyContract();
@@ -307,18 +557,19 @@ public class AwardServiceImpl implements AwardService {
         AwardDetail award2 = new AwardDetail();
         award2.setAward_id(awardid);
         awardDetailMapper.delete(award2);
-        List<AwardDetail> awardDetails = awardVo.getAwardDetail();
+
 
 
         StaffDetail sta = new StaffDetail();
         sta.setAward_id(awardid);
         staffDetailMapper.delete(sta);
         List<StaffDetail> stalist = awardVo.getStaffDetail();
+        List<AwardDetail> awardDetailList = awardVo.getAwardDetail();
 
 
-        if (awardDetails != null) {
+        if (awardDetailList != null) {
             int rowindex = 0;
-            for (AwardDetail awarddetail : awardDetails) {
+            for (AwardDetail awarddetail : awardDetailList) {
                 rowindex = rowindex + 1;
                 awarddetail.preInsert(tokenModel);
                 awarddetail.setAwarddetail_id(UUID.randomUUID().toString());
@@ -356,8 +607,9 @@ public class AwardServiceImpl implements AwardService {
                 awardReuniteMapper.updateByPrimaryKey(awardReunite);
             }
         }
-
+        return businorout;
     }
+    //合同决裁书增加事业计划金额功能 1103 ztc to
 
     @Override
     public void dataCarryover(Award award,TokenModel tokenModel) throws Exception {
@@ -382,4 +634,7 @@ public class AwardServiceImpl implements AwardService {
         return awardDetails;
     }
     //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc to
+
+
+
 }
