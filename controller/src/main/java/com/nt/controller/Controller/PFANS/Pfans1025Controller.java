@@ -430,8 +430,14 @@ public class Pfans1025Controller {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        awardService.updateAwardVo(awardVo, tokenModel);
-        return ApiResult.success();
+        //修改决裁书保存 返回接口类型 1103 fr
+        boolean flag = awardService.updateAwardVo(awardVo, tokenModel);
+        if(flag){
+            return ApiResult.success("该决裁中部门存在事业计划内金额不够，自动转成事业计划外！");
+        }else{
+            return ApiResult.success("");
+        }
+        //修改决裁书保存 返回接口类型 1103 to
     }
 
     @RequestMapping(value = "/getList", method = {RequestMethod.POST})
