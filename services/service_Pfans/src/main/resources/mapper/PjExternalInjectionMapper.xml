@@ -17,7 +17,7 @@
         WHEN ROUND(TIME_START/my_WorkingDays(#{year}), 4) >= 1.6 then 1.3
         ELSE ROUND(TIME_START/my_WorkingDays(#{year}), 2) END WORKRATE,
         GROUP_ID GROUP_ID,
-        DATE_FORMAT(LOG_DATE,'%Y-%m') LOG_DATE,
+        DATE_FORMAT(concat( LOG_DATE,'-01'), '%Y-%m' ) LOG_DATE,
         PROJECT_ID PROJECT_ID
                 FROM
                 (SELECT
@@ -29,7 +29,7 @@
             FROM
             logpersonstatistics
             WHERE
-            DATE_FORMAT( LOG_DATE, '%Y%m' ) = #{year}
+            DATE_FORMAT( concat(LOG_DATE,'-01'), '%Y-%m' ) = #{yearAnt}
             GROUP BY
             USER_ID,
             PROJECT_ID,
