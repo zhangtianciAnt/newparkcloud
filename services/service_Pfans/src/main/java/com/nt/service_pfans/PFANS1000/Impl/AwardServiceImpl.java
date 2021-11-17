@@ -86,9 +86,6 @@ public class AwardServiceImpl implements AwardService {
     private OrgTreeService orgtreeService;
 
     @Autowired
-    private ContractapplicationMapper contractapplicationMapper;
-
-    @Autowired
     private EntrustSupportMapper entrustSupportMapper;
 
     @Override
