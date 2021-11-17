@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.nt.controller.Config.BASF.MultiThreadScheduleTask;
 import com.nt.controller.Controller.WebSocket.WebSocket;
 import com.nt.dao_BASF.BlackList;
+import com.nt.dao_BASF.CarInfoList;
 import com.nt.dao_BASF.VO.InsideVehicleTypeVo;
 import com.nt.dao_BASF.VO.InsideVehicleinformationVo;
 import com.nt.dao_BASF.VO.VehicleAccessStatisticsVo;
@@ -71,6 +72,23 @@ public class BASF10702Controller {
     @RequestMapping(value = "/blacklist", method = {RequestMethod.GET})
     public ApiResult blacklist() throws Exception {
         return ApiResult.success(blackListServices.getBlackListApi());
+    }
+
+    /**
+     * @Method setCarInfoList
+     * @Author myt
+     * @Version 1.0
+     * @Description 设置预约车辆信息
+     * @Return com.nt.utils.ApiResult
+     * @Date 2021/11/13 15:05
+     */
+    @RequestMapping(value = "/setCarInfoList", method = {RequestMethod.POST})
+    public ApiResult getCarInfoList(@RequestBody List<CarInfoList> carInfoList, HttpServletRequest request) throws Exception {
+        if (carInfoList == null || carInfoList.size() == 0) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        vehicleinformationServices.setCarInfoList(carInfoList);
+        return ApiResult.success();
     }
 
     /**

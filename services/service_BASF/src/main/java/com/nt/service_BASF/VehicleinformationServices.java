@@ -1,5 +1,6 @@
 package com.nt.service_BASF;
 
+import com.nt.dao_BASF.CarInfoList;
 import com.nt.dao_BASF.VO.*;
 import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.utils.dao.TokenModel;
@@ -53,7 +54,7 @@ public interface VehicleinformationServices {
 
     //定时查询车辆信息表（出场时间为空的数据）
     List<VehicleinformationGpsArrVo> getQueryVehiclesRegularlyInfo() throws Exception;
-	
+
 	void checkVehicle(Vehicleinformation vehicleinformation) throws Exception;
 
     //更新车辆gps信息
@@ -61,4 +62,7 @@ public interface VehicleinformationServices {
 
     //更新车辆出场时间
     void updateouttime(Vehicleinformation vehicleinformation)throws Exception;
+
+    //调用道闸系统接口，传递车辆信息
+    void setCarInfoList(List<CarInfoList> carInfoList)throws Exception;
 }

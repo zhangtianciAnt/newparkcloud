@@ -2,6 +2,7 @@ package com.nt.service_BASF.Impl;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.nt.dao_BASF.CarInfoList;
 import com.nt.dao_BASF.VO.*;
 import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.service_BASF.VehicleinformationServices;
@@ -11,10 +12,7 @@ import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
@@ -23,6 +21,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -412,5 +412,55 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         vehicleinformation.setModifyon(new Date());
         vehicleinformation.setOuttime(new Date());
         vehicleinformationMapper.updateByPrimaryKeySelective(vehicleinformation);
+    }
+
+    /**
+     * @param carInfoList
+     * @Method setCarInfoList
+     * @Author myt
+     * @Version 1.0
+     * @Description 调用道闸接口插入数据
+     * @Return void
+     * @Date 2021/11/13 13：39
+     */
+    @Override
+    public void setCarInfoList(List<CarInfoList> carInfoList) throws Exception {
+        // 获取当前系统时间
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String startdate = sdf.format(new Date(System.currentTimeMillis()));
+        Date dt = sdf.parse(startdate);
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(dt);
+        // 系统当前时间加1天
+        ca.add(Calendar.DATE,1);
+        String enddate = sdf.format(ca.getTime());
+        // 道闸系统接口地址
+        String urlCarInfo = "http://192.168.150.200:9090/api/park/addmonthlycar";
+        HttpHeaders httpHeaders = new HttpHeaders();
+        // 设置请求类型
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        log.info("道闸接口调用开始！");
+        for (CarInfoList item : carInfoList) {
+            // 封装参数
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("startdate", startdate);//月租车开始日期
+            jsonObject.put("enddate", enddate);//月租车结束日期
+            jsonObject.put("name", item.getDrivername());//人员姓名
+            jsonObject.put("phone", item.getPhone());//手机号
+            jsonObject.put("carplate", item.getTruckNo());//车牌号
+            jsonObject.put("cardtype", "A");//月租车类型
+            jsonObject.put("controllers", "1,2");//开通控制机号权限
+            // 封装参数和头信息
+            HttpEntity<JSONObject> httpEntity = new HttpEntity<>(jsonObject, httpHeaders);
+            ResponseEntity<String> rst = restTemplate.exchange(urlCarInfo, HttpMethod.POST, httpEntity, String.class);
+            JSONObject result = JSONUtil.parseObj(rst.getBody());
+            // 插入失败数据，记入错误日志
+            if (!Boolean.parseBoolean(String.valueOf(result.get("success")))) {
+                log.error("【道闸系统数据插入失败】：" + "车牌号：" + item.getTruckNo() + "；人员姓名：" + item.getDrivername()+ "；手机号码：" + item.getPhone());
+            } else {
+                log.info("【道闸系统数据插入成功】：" + "车牌号：" + item.getTruckNo() + "；人员姓名：" + item.getDrivername()+ "；手机号码：" + item.getPhone());
+            }
+        }
+        log.info("道闸接口调用结束！");
     }
 }
