@@ -118,20 +118,22 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public void updatePurchase(Purchase purchase, TokenModel tokenModel) throws Exception {
         Purchase purse = purchaseMapper.selectByPrimaryKey(purchase.getPurchase_id());
-        if(!purse.getCareerplan().equals(purchase.getCareerplan())){//新旧事业计划不相同
-            if(purse.getCareerplan().equals("1")){//旧内新外 还旧的钱
-                businessplanService.cgTpReRulingInfo(purse.getRulingid(), purse.getTotalamount(), tokenModel);
-            }else{//旧外新内 扣新的钱
-                businessplanService.upRulingInfo(purchase.getRulingid(), purchase.getTotalamount(), tokenModel);
-            }
-        } else{//新旧事业计划相同 都是外不用考虑
-            if(purse.getCareerplan().equals("1")){//新旧都是内
-                if(purse.getClassificationtype().equals(purchase.getClassificationtype())){ //同类别
-                    BigDecimal diffMoney = new BigDecimal(purchase.getTotalamount()).subtract(new BigDecimal(purse.getTotalamount()));
-                    businessplanService.upRulingInfo(purchase.getRulingid(), diffMoney.toString(), tokenModel);
-                }else{ //不同类别 还旧扣新
+        if(!purse.getStatus().equals("4")){
+            if(!purse.getCareerplan().equals(purchase.getCareerplan())){//新旧事业计划不相同
+                if(purse.getCareerplan().equals("1")){//旧内新外 还旧的钱
                     businessplanService.cgTpReRulingInfo(purse.getRulingid(), purse.getTotalamount(), tokenModel);
+                }else{//旧外新内 扣新的钱
                     businessplanService.upRulingInfo(purchase.getRulingid(), purchase.getTotalamount(), tokenModel);
+                }
+            } else{//新旧事业计划相同 都是外不用考虑
+                if(purse.getCareerplan().equals("1")){//新旧都是内
+                    if(purse.getClassificationtype().equals(purchase.getClassificationtype())){ //同类别
+                        BigDecimal diffMoney = new BigDecimal(purchase.getTotalamount()).subtract(new BigDecimal(purse.getTotalamount()));
+                        businessplanService.upRulingInfo(purchase.getRulingid(), diffMoney.toString(), tokenModel);
+                    }else{ //不同类别 还旧扣新
+                        businessplanService.cgTpReRulingInfo(purse.getRulingid(), purse.getTotalamount(), tokenModel);
+                        businessplanService.upRulingInfo(purchase.getRulingid(), purchase.getTotalamount(), tokenModel);
+                    }
                 }
             }
         }
