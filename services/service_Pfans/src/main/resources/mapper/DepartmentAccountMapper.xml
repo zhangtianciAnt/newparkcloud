@@ -574,8 +574,8 @@ temp. themeid
 	</select>
 	<select id="selectTotalByYearAndDep" resultType="com.nt.dao_Pfans.PFANS1000.Vo.DepartmentTotalVo">
 		SELECT
-			ROUND(sum(a. MOUNT),2) MOUNT,
-			DATE_FORMAT(CONCAT(a.LOG_DATE,'01'),'%m') LOGDATE
+			ROUND(sum(a. MOUNT),2),
+         	a.LOG_DATE LOGDATE
         FROM
         (
         	SELECT ROUND(SUM(b.TIME_START)/my_WorkingDays(b.LOG_DATE), 4) MOUNT, b.LOG_DATE LOG_DATE

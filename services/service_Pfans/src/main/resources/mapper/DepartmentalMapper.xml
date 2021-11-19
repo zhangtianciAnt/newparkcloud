@@ -263,7 +263,7 @@
             WHERE
             logment.USER_ID = prosys.NAME
             AND DATE_FORMAT( concat( logment.LOG_DATE, '-01' ), '%Y-%m' ) = #{logdate}
-            GROUP BY prosys.NAME) as staffwork
+            GROUP BY prosys.NAME,logment.ADJUST,logment.LOG_DATE) as staffwork
     </select>
 
     <insert id="saveStaffList" parameterType="java.util.List" >
