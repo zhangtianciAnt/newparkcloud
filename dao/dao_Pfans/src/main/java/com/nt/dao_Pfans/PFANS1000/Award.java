@@ -233,4 +233,20 @@ public class Award extends BaseModel {
     @Column(name = "RULINGID")
     private String rulingid;
 
+    //region scc add 11/17 委托合同委任与请负区分相关 from
+    @Column(name = "DISTINGUISHBETWEEN")//区分(1.请负 0.委任)
+    private String distinguishbetween;
+
+    @Column(name = "MADOGUCHI")//窓口
+    private String madoguchi;
+
+    @Column(name = "UNITPRICE")//单价
+    private String unitprice;
+
+    @Column(name = "NUMBEROFWORKERS")//工数
+    private String numberofworkers;
+
+    @Column(name = "AMOUNTOF")//金额
+    private String amountof;
+    //endregion scc add 11/17 委托合同委任与请负区分相关 to
 }
