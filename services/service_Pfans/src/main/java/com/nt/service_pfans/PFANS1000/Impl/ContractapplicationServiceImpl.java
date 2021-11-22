@@ -718,7 +718,18 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     arte.setAwardreunite_id(UUID.randomUUID().toString());
                     arte.setClaimtype(compound.getClaimtype());
                     OrgTree orginfo = orgtreeService.getOrgInfo(newOrgInfo, compound.getGroup_id());
-                    arte.setDepartment(orginfo.getCompanyname());
+                    if(orginfo != null){
+                        arte.setDepartment(orginfo.getCompanyname());
+                        //复合合同决裁书增加 有效部门字段 1122ztc fr
+                        if(orginfo.getEffective()){
+                            arte.setRealdepartment(orginfo.get_id());
+                        }else{
+                            if(("2").equals(orginfo.getType())){
+                                arte.setRealdepartment(orginfo.getParent_id());
+                            }
+                        }
+                        //复合合同决裁书增加 有效部门字段 1122ztc to
+                    }
                     arte.setDistriamount(compound.getContractrequestamount());
                     awardReuniteMapper.insert(arte);
                 }
@@ -1747,7 +1758,18 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     arte.setAwardreunite_id(UUID.randomUUID().toString());
                     arte.setClaimtype(compound.getClaimtype());
                     OrgTree orginfo = orgtreeService.getOrgInfo(newOrgInfo, compound.getGroup_id());
-                    arte.setDepartment(orginfo.getCompanyname());
+                    if(orginfo != null){
+                        arte.setDepartment(orginfo.getCompanyname());
+                        //复合合同决裁书增加 有效部门字段 1122ztc fr
+                        if(orginfo.getEffective()){
+                            arte.setRealdepartment(orginfo.get_id());
+                        }else{
+                            if(("2").equals(orginfo.getType())){
+                                arte.setRealdepartment(orginfo.getParent_id());
+                            }
+                        }
+                        //复合合同决裁书增加 有效部门字段 1122ztc to
+                    }
                     arte.setDistriamount(compound.getContractrequestamount());
                     awardReuniteMapper.insert(arte);
                 }
