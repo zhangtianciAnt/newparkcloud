@@ -57,10 +57,14 @@ public class DepartmentAccountServiceImpl implements DepartmentAccountService {
     @Autowired
     private DepartmentAccountTotalMapper departmentAccountTotalMapper;
 
+    @Autowired
+    private OrgTreeService orgtreeService;
+
 //update_qhr_20210813 后台返回数据类型变化
     @Override
     public List<DepartmentAccountVo> selectBygroupid(String year, String department) throws Exception {
         List<DepartmentAccount> departmentAccountList = new ArrayList<>();
+        OrgTree org = orgTreeService.get(new OrgTree());
         departmentAccountList = departmentAccountMapper.selectALL(year,department);
         List<DepartmentAccountVo> departmentAccountVoList = new ArrayList<>();
         //按照theme分组
@@ -72,6 +76,11 @@ public class DepartmentAccountServiceImpl implements DepartmentAccountService {
                 departmentAccountVo.setThemename(value.get(0).getThemename());
                 departmentAccountVo.setContract(value.get(0).getContract());
                 departmentAccountVo.setToolsorgs(value.get(0).getToolsorgs());
+                if(value.get(0).getContract().equals("社内"))
+                {
+                    OrgTree orginfo = orgTreeService.getOrgInfo(org, value.get(0).getToolsorgs());
+                    departmentAccountVo.setToolsorgs(orginfo.getCompanyname());
+                }
                 departmentAccountVo.setDepartmentAccountList(value);
                 departmentAccountVoList.add(departmentAccountVo);
             }
@@ -2339,6 +2348,7 @@ public class DepartmentAccountServiceImpl implements DepartmentAccountService {
     @Override
     public Object getTable1051infoReport(String year, String department) throws Exception {
         List<DepartmentAccount> departmentReturnList = new ArrayList<>();
+        OrgTree org = orgTreeService.get(new OrgTree());
         DepartmentAccount departmentAccount = new DepartmentAccount();
         departmentAccount.setYears(year);
         departmentAccount.setDepartment(department);
@@ -2360,6 +2370,16 @@ public class DepartmentAccountServiceImpl implements DepartmentAccountService {
                 copydep.setThemename(depList.get(0).getThemename());
                 copydep.setContract(depList.get(0).getContract());
                 copydep.setToolsorgs(depList.get(0).getToolsorgs());
+                if(depList.get(0).getContract().equals("社内"))
+                {
+                    OrgTree orginfo = null;
+                    try {
+                        orginfo = orgTreeService.getOrgInfo(org, depList.get(0).getToolsorgs());
+                        copydep.setToolsorgs(orginfo.getCompanyname());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 departmentReturnList.add(copydep);
             });
         });

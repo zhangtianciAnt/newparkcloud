@@ -329,7 +329,8 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     Award award = new Award();
                     award.setContractnumber(cnList.get(0).getContractnumber());
                     List<Award> awardList = awardMapper.select(award);
-                    if (awardList.size() > 0 && awardList.get(0).getPlan().equals("0")) {
+                    //region scc upd 判空方式更改 from
+                    if (awardList.size() > 0 && "0".equals(awardList.get(0).getPlan())) {
                         AwardDetail awardDetail = new AwardDetail();
                         awardDetail.setAward_id(awardList.get(0).getAward_id());
                         List<AwardDetail> awardDetails = awardDetailMapper.select(awardDetail);

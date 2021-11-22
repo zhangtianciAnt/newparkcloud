@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface PjExternalInjectionMapper extends MyMapper<PjExternalInjection> {
-    List<PjExternalInjectionVo> getThemeCompany(@Param("year") String year, @Param("department_id") String department_id);
+    List<PjExternalInjectionVo> getThemeCompany(@Param("yearAnt") String yearAnt,@Param("year") String year, @Param("department_id") String department_id);
     int updatepj(@Param("list") List<PjExternalInjection> updatepjExternal);
     int insertpj(@Param("list") List<PjExternalInjection> insertpjExternal);
 }
