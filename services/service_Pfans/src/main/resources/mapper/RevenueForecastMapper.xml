@@ -107,6 +107,24 @@
         TENANTID = values(TENANTID)
     </insert>
 
+    <select id="getThemeOutDepth" resultType="com.nt.dao_Pfans.PFANS1000.RevenueForecast">
+        SELECT theme.THEMEINFOR_ID  themeinforId,
+        theme.THEMENAME      themeName
+        FROM themeinfor theme
+        LEFT JOIN themeplandetail detail
+        ON theme.THEMEINFOR_ID = detail.THEMEINFOR_ID
+        <if test="deptId != null and deptId != ''" >
+            AND detail.CENTER_ID = #{deptId}
+        </if>
+        <if test="year != null and year != ''" >
+            AND detail.YEAR = #{year}
+        </if>
+        <where>
+            detail.THEMEPLANDETAIL_ID IS NULL
+        </where>
+        GROUP BY theme.THEMEINFOR_ID
+    </select>
+
     <select id="selectRevenueForecastListFirst" resultType="com.nt.dao_Pfans.PFANS1000.RevenueForecast">
         SELECT theme.THEMEINFOR_ID  themeinforId,
         theme.THEMENAME      themeName,

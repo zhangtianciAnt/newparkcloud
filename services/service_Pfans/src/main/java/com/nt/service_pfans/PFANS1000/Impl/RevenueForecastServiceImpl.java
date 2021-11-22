@@ -149,4 +149,26 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
 
         return listForReturn;
     }
+
+
+    @Override
+    public List<RevenueForecast> getThemeOutDepth(RevenueForecast revenueForecast){
+        List<RevenueForecast> listForReturn = new ArrayList<RevenueForecast>();
+        //获取参数
+        Date saveDate = revenueForecast.getSaveDate();
+        //部门ID
+        String deptId = revenueForecast.getDeptId();
+        LocalDate localDate = saveDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        //根据月份判断获取年份
+        int month = localDate.getMonthValue();
+        int year = localDate.getYear();
+        if(month < 4){
+            year = year - 1;
+        }
+
+        //从theme表里获取
+        listForReturn = revenueForecastMapper.getThemeOutDepth(deptId,year,saveDate);
+
+        return listForReturn;
+    }
 }

@@ -31,4 +31,12 @@ public interface RevenueForecastService {
      */
     List<RevenueForecast> selectInfo(RevenueForecast revenueForecast);
 
+
+    /**
+     * 获取剩余theme（部门条件筛选以外的theme）
+     *
+     * @return {@link List}<{@link RevenueForecast}>
+     */
+    List<RevenueForecast> getThemeOutDepth(RevenueForecast revenueForecast);
+
 }

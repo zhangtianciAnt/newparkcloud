@@ -9,6 +9,7 @@ import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Theme别收入见通(RevenueForecast)表控制层
@@ -56,8 +57,25 @@ public class Pfans1053Controller {
     public ApiResult getInfo(@RequestBody RevenueForecast revenueForecast, HttpServletRequest request) throws Exception {
 
         TokenModel tokenModel = tokenService.getToken(request);
-        revenueForecastService.selectInfo(revenueForecast);
-        return ApiResult.success();
+        List<RevenueForecast> revenueForecastList =  revenueForecastService.selectInfo(revenueForecast);
+        return ApiResult.success(revenueForecastList);
     }
+
+
+    /**
+     * 获取剩余theme（部门条件筛选以外的theme）
+     *
+     * @param request 请求
+     * @return {@link ApiResult}
+     * @throws Exception 异常
+     */
+    @RequestMapping(value = "/getThemeOutDepth",method={RequestMethod.POST})
+    public ApiResult getThemeOutDepth(@RequestBody RevenueForecast revenueForecast, HttpServletRequest request) throws Exception {
+
+        TokenModel tokenModel = tokenService.getToken(request);
+        List<RevenueForecast> revenueForecastList =  revenueForecastService.getThemeOutDepth(revenueForecast);
+        return ApiResult.success(revenueForecastList);
+    }
+
 }
 
