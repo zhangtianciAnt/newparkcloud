@@ -79,6 +79,12 @@ public class AwardReunite extends BaseModel {
     private String distriamount;
 
     /**
+     * 真实部门 用于计算
+     */
+    @Column(name = "REALDEPARTMENT")
+    private String realdepartment;
+
+    /**
      * 顺序
      */
     @Column(name = "ROWINDEX")
