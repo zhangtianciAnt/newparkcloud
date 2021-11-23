@@ -15,7 +15,7 @@ public class ApiResult {
 
     @JsonInclude(Include.NON_NULL)
     private Object data;    // 返回数据
-
+    private int totalSize;    // 列表数据-数据数量
     public ApiResult() {
         this.setCode(0);
     }
@@ -24,6 +24,14 @@ public class ApiResult {
         this.code = code;
         this.message = message;
         this.data = data;
+    }
+
+    public int getTotalSize() {
+        return totalSize;
+    }
+
+    public void setTotalSize(int totalSize) {
+        this.totalSize = totalSize;
     }
 
     public String getMessage() {

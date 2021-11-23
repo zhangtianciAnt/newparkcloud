@@ -8,6 +8,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.nt.controller.Start;
 import com.nt.utils.AES;
 import com.nt.utils.ApiResult;
+import com.nt.utils.AuthConstants;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.slf4j.Logger;
@@ -51,6 +52,29 @@ public class GlobalAop {
     public void doAfterReturning(Object ret) throws Throwable {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
+
+        String pageNoStr = request.getHeader("pageNo");
+        String pageSizeStr = request.getHeader("pageSize");
+
+        if(StrUtil.isNotBlank(pageNoStr) && StrUtil.isNotBlank(pageSizeStr)){
+            if(((ApiResult) ret).getData() instanceof ArrayList){
+
+                int pageNo = Integer.parseInt(pageNoStr);
+                int pageSize = Integer.parseInt(pageSizeStr);
+
+                ArrayList<Object> rst = ((ArrayList<Object>)((ApiResult) ret).getData());
+                int total = rst.size();
+                int end = rst.size();
+                if(end > ((pageNo -1 )* pageSize + pageSize)){
+                    end = ((pageNo -1 )* pageSize + pageSize);
+                }
+                ((ApiResult) ret).setData(rst.subList((pageNo -1 )* pageSize,end));
+
+                ((ApiResult) ret).setTotalSize(total);
+            }
+        }
+
+
         List<String> reqAwarList = new ArrayList<>();//不加密List
         reqAwarList.add("assets/scanList");//资产盘点
         reqAwarList.add("pjExternalInjection/getTableinfoReport");//PJ别外注费统计
