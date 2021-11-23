@@ -121,6 +121,9 @@
         </if>
         <where>
             detail.THEMEPLANDETAIL_ID IS NULL
+            <if test="year != null and year != ''" >
+                AND theme.YEAR = #{year}
+            </if>
         </where>
         GROUP BY theme.THEMEINFOR_ID
     </select>
@@ -201,47 +204,59 @@
 
     <select id="selectRevenueForecastList" resultType="com.nt.dao_Pfans.PFANS1000.RevenueForecast">
         SELECT reve.id         id,
-               reve.themeinfor_id,
+               reve.themeinfor_id themeinforId,
                theme.THEMENAME themeName,
                theme.TOOLSORGS customerName,
-               reve.save_date,
-               reve.dept_id,
-               reve.april_plan,
-               reve.april_forecast,
-               (SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 4) + (SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 4) aprilActual,
-               reve.may_plan,
-               reve.may_forecast,
-               (SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 5) + (SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 5) mayActual,
-               reve.june_plan,
-               reve.june_forecast,
-               (SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 6) + (SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 6) juneActual,
-               reve.july_plan,
-               reve.july_forecast,
-               (SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 7) + (SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 7) julyActual,
-               reve.august_plan,
-               reve.august_forecast,
-               (SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 8) + (SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 8) augustActual,
-               reve.september_plan,
-               reve.september_forecast,
-               (SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 9) + (SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 9) septemberActual,
-               reve.october_plan,
-               reve.october_forecast,
-               (SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 10) + (SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 10) octoberActual,
-               reve.november_plan,
-               reve.november_forecast,
-               (SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 11) + (SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 11) novemberActual,
-               reve.december_plan,
-               reve.december_forecast,
-               (SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 12) + (SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 12) decemberActual,
-               reve.january_plan,
-               reve.january_forecast,
-               (SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} + 1 AND temp.month = 1) + (SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} + 1 AND unit.month = 1) januaryActual,
-               reve.february_plan,
-               reve.february_forecast,
-               (SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} + 1 AND temp.month = 2) + (SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} + 1 AND unit.month = 2) februaryActual,
-               reve.march_plan,
-               reve.march_forecast,
-               (SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} + 1 AND temp.month = 3) + (SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} + 1 AND unit.month = 3) marchActual,
+               reve.save_date saveDate,
+               reve.dept_id deptId,
+               reve.april_plan aprilPlan,
+               reve.april_forecast aprilForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 4),0) +
+               IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 4),0) aprilActual,
+               reve.may_plan mayPlan,
+               reve.may_forecast mayForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 5),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 5),0) mayActual,
+               reve.june_plan junePlan,
+               reve.june_forecast juneForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 6),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 6),0) juneActual,
+               reve.july_plan julyPlan,
+               reve.july_forecast julyForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 7),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 7),0) julyActual,
+               reve.august_plan augustPlan,
+               reve.august_forecast augustForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 8),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 8),0) augustActual,
+               reve.september_plan septemberPlan,
+               reve.september_forecast septemberForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 9),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 9),0) septemberActual,
+               reve.october_plan octoberPlan,
+               reve.october_forecast octoberForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 10),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 10),0) octoberActual,
+               reve.november_plan novemberPlan,
+               reve.november_forecast novemberForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 11),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 11),0) novemberActual,
+               reve.december_plan decemberPlan,
+               reve.december_forecast decemberForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 12),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 12),0) decemberActual,
+               reve.january_plan januaryPlan,
+               reve.january_forecast januaryForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} + 1 AND temp.month = 1),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} + 1 AND unit.month = 1),0) januaryActual,
+               reve.february_plan februaryPlan,
+               reve.february_forecast februaryForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} + 1 AND temp.month = 2),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} + 1 AND unit.month = 2),0) februaryActual,
+               reve.march_plan marchPlan,
+               reve.march_forecast marchForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} + 1 AND temp.month = 3),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} + 1 AND unit.month = 3),0) marchActual,
                reve.CREATEBY   createby,
                reve.CREATEON   createon,
                reve.MODIFYBY   modifyby,
@@ -254,6 +269,70 @@
         ON reve.themeinfor_id = theme.THEMEINFOR_ID
         <where>
             DATE_FORMAT(reve.save_date, '%Y%M') = (<include refid="getMaxSavedate"></include>)
+            <if test="deptId != null and deptId != ''" >
+                AND reve.dept_id = #{deptId}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectOldRevenueForecastList" resultType="com.nt.dao_Pfans.PFANS1000.RevenueForecast">
+        SELECT reve.id         id,
+        reve.themeinfor_id themeinforId,
+        theme.THEMENAME themeName,
+        theme.TOOLSORGS customerName,
+        reve.save_date saveDate,
+        reve.dept_id deptId,
+        reve.april_plan aprilPlan,
+        reve.april_forecast aprilForecast,
+        reve.april_actual aprilActual,
+        reve.may_plan mayPlan,
+        reve.may_forecast mayForecast,
+        reve.may_actual mayActual,
+        reve.june_plan junePlan,
+        reve.june_forecast juneForecast,
+        reve.june_actual juneActual,
+        reve.july_plan julyPlan,
+        reve.july_forecast julyForecast,
+        reve.july_actual julyActual,
+        reve.august_plan augustPlan,
+        reve.august_forecast augustForecast,
+        reve.august_actual augustActual,
+        reve.september_plan septemberPlan,
+        reve.september_forecast septemberForecast,
+        reve.september_actual septemberActual,
+        reve.october_plan octoberPlan,
+        reve.october_forecast octoberForecast,
+        reve.october_actual octoberActual,
+        reve.november_plan novemberPlan,
+        reve.november_forecast novemberForecast,
+        reve.november_actual novemberActual,
+        reve.december_plan decemberPlan,
+        reve.december_forecast decemberForecast,
+        reve.december_actual decemberActual,
+        reve.january_plan januaryPlan,
+        reve.january_forecast januaryForecast,
+        reve.january_actual januaryActual,
+        reve.february_plan februaryPlan,
+        reve.february_forecast februaryForecast,
+        reve.february_actual februaryActual,
+        reve.march_plan marchPlan,
+        reve.march_forecast marchForecast,
+        reve.march_actual marchActual,
+        reve.CREATEBY   createby,
+        reve.CREATEON   createon,
+        reve.MODIFYBY   modifyby,
+        reve.MODIFYON   modifyon,
+        reve.OWNER      owner,
+        reve.STATUS     status,
+        reve.TENANTID   tenantid
+        FROM revenue_forecast reve
+        LEFT JOIN themeinfor theme
+        ON reve.themeinfor_id = theme.THEMEINFOR_ID
+        <where>
+            <if test="saveDate != null" >
+                AND DATE_FORMAT(reve.save_date, '%Y%M') = DATE_FORMAT(#{saveDate}, '%Y%M')
+            </if>
             <if test="deptId != null and deptId != ''" >
                 AND reve.dept_id = #{deptId}
             </if>

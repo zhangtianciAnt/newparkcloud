@@ -12,7 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RevenueForecastVo {
-    //新添加的theme数据（theme表中没有需要创建）
-    private List<ThemeInfor> themeInforList;
+    private RevenueForecast revenueForecast;
     private List<RevenueForecast> revenueForecastList;
 }

@@ -4,6 +4,7 @@ import com.nt.dao_Pfans.PFANS1000.RevenueForecast;
 import com.nt.dao_Pfans.PFANS1000.Vo.RevenueForecastVo;
 import com.nt.utils.dao.TokenModel;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ public interface RevenueForecastService {
      * @param revenueForecast 收入预测
      * @return {@link List}<{@link RevenueForecast}>
      */
-    List<RevenueForecast> selectInfo(RevenueForecast revenueForecast);
+    List<RevenueForecast> selectInfo(RevenueForecast revenueForecast) throws ParseException;
 
 
     /**

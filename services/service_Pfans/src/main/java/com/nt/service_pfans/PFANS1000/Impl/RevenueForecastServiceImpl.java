@@ -15,8 +15,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -52,37 +55,45 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
      */
     @Override
     public void saveInfo(RevenueForecastVo revenueForecastVo, TokenModel tokenModel) throws Exception{
-        //有新添加的theme数据 进行创建
-        List<ThemeInfor> themeInforlist = revenueForecastVo.getThemeInforList();
-        if(themeInforlist.size() > 0){
-            for(ThemeInfor themeInfor : themeInforlist){
-                themeInfor.preInsert(tokenModel);
-                themeInfor.setThemeinfor_id(UUID.randomUUID().toString());
-            }
-            themeInforMapper.insertListAllCols(themeInforlist);
-        }
+        RevenueForecast revenueForecastInfo = revenueForecastVo.getRevenueForecast();
+        //获取参数
+        Date saveDate = revenueForecastInfo.getSaveDate();
+        LocalDate localDate = saveDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        //年份
+        int year = localDate.getYear();
+        //部门ID
+        String deptId = revenueForecastInfo.getDeptId();
 
         List<RevenueForecast> revenueForecastList = revenueForecastVo.getRevenueForecastList();
         if(revenueForecastList.size() > 0){
             for (RevenueForecast revenueForecast : revenueForecastList){
+                //有新添加的theme数据 进行创建
+                if(StringUtils.isEmpty(revenueForecast.getThemeinforId()) || revenueForecast.getThemeinforId().equals(revenueForecast.getThemeName())){
+                    ThemeInfor themeInfor = new ThemeInfor();
+                    themeInfor.preInsert(tokenModel);
+                    themeInfor.setThemeinfor_id(UUID.randomUUID().toString());
+                    themeInfor.setThemename(revenueForecast.getThemeName());
+                    themeInfor.setToolsorgs(revenueForecast.getCustomerName());
+                    themeInfor.setYear(String.valueOf(year));
+                    themeInforMapper.insert(themeInfor);
+
+                    revenueForecast.setThemeinforId(themeInfor.getThemeinfor_id());
+                }
+
                 if(StringUtils.isEmpty(revenueForecast.getId())){
                     revenueForecast.preInsert(tokenModel);
                     revenueForecast.setId(UUID.randomUUID().toString());
+                    revenueForecast.setSaveDate(saveDate);
+                    revenueForecast.setDeptId(deptId);
                 }else{
                     revenueForecast.preUpdate(tokenModel);
                 }
 
                 //theme别合同收支分析表更新
                 //先检索 判断是否有相关数据
-                //获取参数
-                Date saveDate = revenueForecast.getSaveDate();
-                LocalDate localDate = saveDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                //年份
-                int year = localDate.getYear();
-
                 DepartmentAccount departmentAccount = new DepartmentAccount();
                 departmentAccount.setTheme_id(revenueForecast.getThemeinforId());
-                departmentAccount.setDepartment(revenueForecast.getDeptId());
+                departmentAccount.setDepartment(deptId);
                 departmentAccount.setYears(String.valueOf(year));
 
                 List<DepartmentAccount> departmentAccountlist =  departmentAccountMapper.select(departmentAccount);
@@ -114,7 +125,7 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
     }
 
     @Override
-    public List<RevenueForecast> selectInfo(RevenueForecast revenueForecast){
+    public List<RevenueForecast> selectInfo(RevenueForecast revenueForecast) throws ParseException {
         List<RevenueForecast> listForReturn = new ArrayList<RevenueForecast>();
         //获取参数
         Date saveDate = revenueForecast.getSaveDate();
@@ -128,9 +139,11 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
             year = year - 1;
         }
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        revenueForecast.setSaveDate(sdf.parse(sdf.format(revenueForecast.getSaveDate())));
         //判断是否为第一次填写
-        List<RevenueForecast> RevenueForecastlist = revenueForecastMapper.selectAll();
-        if(RevenueForecastlist.size() == 0){
+        List<RevenueForecast> revenueForecastlist = revenueForecastMapper.selectOldRevenueForecastList(deptId,year,saveDate);
+        if(revenueForecastlist.size() == 0){
             //从theme表里获取
             listForReturn = revenueForecastMapper.selectRevenueForecastListFirst(deptId,year,saveDate);
         }else{
@@ -138,9 +151,10 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
             //判断查询月份是否为之前月份
             LocalDate localNow = LocalDate.now();
             int monthNow = localNow.getMonthValue();
+            int yearNow = localNow.getYear();
             //获取之前的数据
-            if(localDate.isBefore(localNow) && month < monthNow){
-                listForReturn = revenueForecastMapper.select(revenueForecast);
+            if(year <= yearNow  && month <= monthNow){
+                listForReturn = revenueForecastlist;
             }else{
                 //获取实际数据
                 listForReturn = revenueForecastMapper.selectRevenueForecastList(deptId,year,saveDate);
