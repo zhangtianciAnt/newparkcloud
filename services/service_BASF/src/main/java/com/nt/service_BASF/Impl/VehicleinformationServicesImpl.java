@@ -439,7 +439,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         HttpHeaders httpHeaders = new HttpHeaders();
         // 设置请求类型
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        log.info("道闸接口调用开始！");
+        log.info("Interface Start！");
         for (CarInfoList item : carInfoList) {
             // 封装参数
             JSONObject jsonObject = new JSONObject();
@@ -456,11 +456,11 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
             JSONObject result = JSONUtil.parseObj(rst.getBody());
             // 插入失败数据，记入错误日志
             if (!Boolean.parseBoolean(String.valueOf(result.get("success")))) {
-                log.error("【道闸系统数据插入失败】：" + "车牌号：" + item.getTruckNo() + "；人员姓名：" + item.getDrivername()+ "；手机号码：" + item.getPhone());
+                log.error("【Road Gate Data Import Error】：" + "Plate：" + item.getTruckNo() + "；Name：" + item.getDrivername()+ "；Phone：" + item.getPhone());
             } else {
-                log.info("【道闸系统数据插入成功】：" + "车牌号：" + item.getTruckNo() + "；人员姓名：" + item.getDrivername()+ "；手机号码：" + item.getPhone());
+                log.info("【Road Gate Data Import Success】：" + "Plate：" + item.getTruckNo() + "；Name：" + item.getDrivername()+ "；Phone：" + item.getPhone());
             }
         }
-        log.info("道闸接口调用结束！");
+        log.info("Interface End！");
     }
 }
