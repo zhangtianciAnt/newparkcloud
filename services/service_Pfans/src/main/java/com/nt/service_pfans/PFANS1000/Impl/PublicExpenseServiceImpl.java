@@ -1116,9 +1116,9 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             }
         }
         //解决旧数据审批结束操作异常问题 ztc fr
+        PublicExpense publEe = publicExpenseMapper.selectByPrimaryKey(publicExpense.getPublicexpenseid());
         if (publicExpenseVo.getPublicexpense().getStatus().equals("4") && publicExpenseVo.getPublicexpense().getBusiness_type() != null && publicExpenseVo.getPublicexpense().getBusiness_type()){
             //解决旧数据审批结束操作异常问题 ztc to
-            PublicExpense publEe = publicExpenseMapper.selectByPrimaryKey(publicExpense.getPublicexpenseid());
             if(!publEe.getStatus().equals("4")){
                 this.writeOff(publicExpenseVo,tokenModel);
             }
@@ -1126,7 +1126,7 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         //upd-8/20-ws-禅道468任务
         publicExpenseMapper.updateByPrimaryKey(publicExpense);
 
-        if (publicExpense.getStatus().equals("4")) {
+        if (publicExpense.getStatus().equals("4") && !publEe.getStatus().equals("4")) {
             String[] loa = publicExpense.getLoan().split(",");
             if (loa.length > 0) {
                 for (int i = 0; i < loa.length; i++) {
