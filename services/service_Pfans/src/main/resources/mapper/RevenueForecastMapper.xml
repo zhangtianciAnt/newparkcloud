@@ -109,7 +109,8 @@
 
     <select id="getThemeOutDepth" resultType="com.nt.dao_Pfans.PFANS1000.RevenueForecast">
         SELECT theme.THEMEINFOR_ID  themeinforId,
-        theme.THEMENAME      themeName
+        theme.THEMENAME      themeName,
+        theme.TOOLSORGS      customerName
         FROM themeinfor theme
         LEFT JOIN themeplandetail detail
         ON theme.THEMEINFOR_ID = detail.THEMEINFOR_ID
@@ -132,6 +133,30 @@
         SELECT theme.THEMEINFOR_ID  themeinforId,
         theme.THEMENAME      themeName,
         theme.TOOLSORGS      customerName,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 4),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 4),0) aprilActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 5),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 5),0) mayActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 6),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 6),0) juneActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 7),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 7),0) julyActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 8),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 8),0) augustActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 9),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 9),0) septemberActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 10),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 10),0) octoberActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 11),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 11),0) novemberActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 12),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 12),0) decemberActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} + 1 AND temp.month = 1),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} + 1 AND unit.month = 1),0) januaryActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} + 1 AND temp.month = 2),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} + 1 AND unit.month = 2),0) februaryActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} + 1 AND temp.month = 3),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} + 1 AND unit.month = 3),0) marchActual,
         SUM(detail.AMOUNT4)  aprilPlan,
         SUM(detail.AMOUNT5)  mayPlan,
         SUM(detail.AMOUNT6)  junePlan,
@@ -160,6 +185,7 @@
 
     <sql id="nomalContract">
         SELECT SUM(count.CLAIMAMOUNT)                     amount,
+               conapp.THEMEINFOR_ID themeId,
                DATE_FORMAT(count.DELIVERYDATE, '%Y') year,
                DATE_FORMAT(count.DELIVERYDATE, '%c') month
         FROM contractapplication conapp
@@ -172,11 +198,12 @@
             AND conapp.GROUP_ID = #{deptId}
         </if>
           AND conapp.CONTRACTTYPE not in ('HT008002', 'HT008004', 'HT008006', 'HT008008')
-        GROUP BY DATE_FORMAT(count.DELIVERYDATE, '%Y'),DATE_FORMAT(count.DELIVERYDATE, '%c')
+        GROUP BY conapp.THEMEINFOR_ID,DATE_FORMAT(count.DELIVERYDATE, '%Y'),DATE_FORMAT(count.DELIVERYDATE, '%c')
     </sql>
 
     <sql id="reunitContract">
         SELECT SUM(reunite.DISTRIAMOUNT)                     amount,
+        conapp.THEMEINFOR_ID themeId,
         DATE_FORMAT(reunite.DELIVERYDATE, '%Y') year,
         DATE_FORMAT(reunite.DELIVERYDATE, '%c') month
         FROM contractapplication conapp
@@ -189,7 +216,7 @@
             AND reunite.REALDEPARTMENT = #{deptId}
         </if>
         AND conapp.CONTRACTTYPE in ('HT008002', 'HT008004', 'HT008006', 'HT008008')
-        GROUP BY DATE_FORMAT(reunite.DELIVERYDATE, '%Y'),DATE_FORMAT(reunite.DELIVERYDATE, '%c')
+        GROUP BY conapp.THEMEINFOR_ID,DATE_FORMAT(reunite.DELIVERYDATE, '%Y'),DATE_FORMAT(reunite.DELIVERYDATE, '%c')
     </sql>
 
     <sql id="getMaxSavedate">
@@ -211,52 +238,52 @@
                reve.dept_id deptId,
                reve.april_plan aprilPlan,
                reve.april_forecast aprilForecast,
-               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 4),0) +
-               IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 4),0) aprilActual,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 4),0) +
+               IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 4),0) aprilActual,
                reve.may_plan mayPlan,
                reve.may_forecast mayForecast,
-               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 5),0)
-                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 5),0) mayActual,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 5),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 5),0) mayActual,
                reve.june_plan junePlan,
                reve.june_forecast juneForecast,
-               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 6),0)
-                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 6),0) juneActual,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 6),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 6),0) juneActual,
                reve.july_plan julyPlan,
                reve.july_forecast julyForecast,
-               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 7),0)
-                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 7),0) julyActual,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 7),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 7),0) julyActual,
                reve.august_plan augustPlan,
                reve.august_forecast augustForecast,
-               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 8),0)
-                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 8),0) augustActual,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 8),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 8),0) augustActual,
                reve.september_plan septemberPlan,
                reve.september_forecast septemberForecast,
-               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 9),0)
-                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 9),0) septemberActual,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 9),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 9),0) septemberActual,
                reve.october_plan octoberPlan,
                reve.october_forecast octoberForecast,
-               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 10),0)
-                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 10),0) octoberActual,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 10),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 10),0) octoberActual,
                reve.november_plan novemberPlan,
                reve.november_forecast novemberForecast,
-               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 11),0)
-                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 11),0) novemberActual,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 11),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 11),0) novemberActual,
                reve.december_plan decemberPlan,
                reve.december_forecast decemberForecast,
-               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} AND temp.month = 12),0)
-                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} AND unit.month = 12),0) decemberActual,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 12),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 12),0) decemberActual,
                reve.january_plan januaryPlan,
                reve.january_forecast januaryForecast,
-               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} + 1 AND temp.month = 1),0)
-                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} + 1 AND unit.month = 1),0) januaryActual,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} + 1 AND temp.month = 1),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} + 1 AND unit.month = 1),0) januaryActual,
                reve.february_plan februaryPlan,
                reve.february_forecast februaryForecast,
-               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} + 1 AND temp.month = 2),0)
-                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} + 1 AND unit.month = 2),0) februaryActual,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} + 1 AND temp.month = 2),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} + 1 AND unit.month = 2),0) februaryActual,
                reve.march_plan marchPlan,
                reve.march_forecast marchForecast,
-               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.year = #{year} + 1 AND temp.month = 3),0)
-                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.year = #{year} + 1 AND unit.month = 3),0) marchActual,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} + 1 AND temp.month = 3),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} + 1 AND unit.month = 3),0) marchActual,
                reve.CREATEBY   createby,
                reve.CREATEON   createon,
                reve.MODIFYBY   modifyby,
@@ -274,7 +301,6 @@
             </if>
         </where>
     </select>
-
 
     <select id="selectOldRevenueForecastList" resultType="com.nt.dao_Pfans.PFANS1000.RevenueForecast">
         SELECT reve.id         id,
