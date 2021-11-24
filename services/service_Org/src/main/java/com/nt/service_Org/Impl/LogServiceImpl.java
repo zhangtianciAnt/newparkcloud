@@ -2,12 +2,16 @@ package com.nt.service_Org.Impl;
 
 import com.nt.dao_Org.Log;
 import com.nt.service_Org.LogService;
+import org.apache.http.client.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -29,5 +33,14 @@ public class LogServiceImpl implements LogService {
             mongoTemplate.save(log);
         //}
         //upd gbb 20210209 PSDCD_PFANS_20210209_BUG_014 登录log保存数据修改 to
+    }
+
+    //定时任务 每月最后一天清理前两个月的mango log记录 1124 ztc
+    @Scheduled(cron="0 0 22 28-31 * ?")
+    public void remMgoLog() throws Exception {
+        LocalDate today = LocalDate.now().minus(2, ChronoUnit.MONTHS);
+        Query query = new Query();
+        query.addCriteria(Criteria.where("createon").lte(today));
+        mongoTemplate.remove(query, Log.class);
     }
 }

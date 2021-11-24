@@ -410,6 +410,13 @@ public class UserController {
             return ApiResult.success("0");
         }
     }
+
+    //定时任务清除log
+    @RequestMapping(value = "/remMgoLog", method = {RequestMethod.POST})
+    public ApiResult remMgoLog() throws Exception {
+        logService.remMgoLog();
+        return ApiResult.success();
+    }
 }
 
 
