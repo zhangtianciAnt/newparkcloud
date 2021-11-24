@@ -64,12 +64,18 @@ public class GlobalAop {
 
                 ArrayList<Object> rst = ((ArrayList<Object>)((ApiResult) ret).getData());
                 int total = rst.size();
+                int start = (pageNo -1 )* pageSize;
                 int end = rst.size();
+                if(start > total){
+                    start = 0;
+                    pageNo = 1;
+                }
                 if(end > ((pageNo -1 )* pageSize + pageSize)){
                     end = ((pageNo -1 )* pageSize + pageSize);
                 }
-                ((ApiResult) ret).setData(rst.subList((pageNo -1 )* pageSize,end));
-
+                ((ApiResult) ret).setData(rst.subList(start,end));
+                ((ApiResult) ret).setPageNo(pageNo);
+                ((ApiResult) ret).setPageSize(pageSize);
                 ((ApiResult) ret).setTotalSize(total);
             }
         }
