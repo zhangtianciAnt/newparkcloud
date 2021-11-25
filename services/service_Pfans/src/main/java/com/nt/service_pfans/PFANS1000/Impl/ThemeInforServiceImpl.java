@@ -42,11 +42,13 @@ public class ThemeInforServiceImpl implements ThemeInforService {
         ThemeInfor theme = new ThemeInfor();
         theme.setYear(year);
         List<ThemeInfor> themeinforlist = themeinformapper.select(theme);
-        if (contract.equals("0")) {
-            themeinforlist = themeinforlist.stream().filter(item -> (item.getContract().equals("PJ142001")) || (item.getContract().equals("PJ142002")) || (item.getContract().equals("PJ142003")) || (item.getContract().equals("PJ142004")) || (item.getContract().equals("PJ142005"))).collect(Collectors.toList());
-        } else if (contract.equals("1")) {
-            themeinforlist = themeinforlist.stream().filter(item -> (item.getContract().equals("PJ142006")) || (item.getContract().equals("PJ142007")) || (item.getContract().equals("PJ142008")) || (item.getContract().equals("PJ142009"))).collect(Collectors.toList());
-        }
+        //region scc add 受托委托theme页面获取theme不在区分，获取所有 from
+//        if (contract.equals("0")) {
+//            themeinforlist = themeinforlist.stream().filter(item -> (item.getContract().equals("PJ142001")) || (item.getContract().equals("PJ142002")) || (item.getContract().equals("PJ142003")) || (item.getContract().equals("PJ142004")) || (item.getContract().equals("PJ142005"))).collect(Collectors.toList());
+//        } else if (contract.equals("1")) {
+//            themeinforlist = themeinforlist.stream().filter(item -> (item.getContract().equals("PJ142006")) || (item.getContract().equals("PJ142007")) || (item.getContract().equals("PJ142008")) || (item.getContract().equals("PJ142009"))).collect(Collectors.toList());
+//        }
+        //endregion scc add 受托委托theme页面获取theme不在区分，获取所有 to
         return themeinforlist;
     }
 
