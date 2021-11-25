@@ -64,4 +64,38 @@
                 　　</foreach>
         </if>
     </select>
+
+    <select id="listByCondition" parameterType="com.nt.dao_Assets.Assets" resultType="com.nt.dao_Assets.Assets">
+        SELECT
+        *
+        FROM
+        assets
+        <where>
+            <if test="filename != null and filename != ''">
+                and filename like CONCAT('%',#{filename},'%')
+            </if>
+            <if test="barcode != null and barcode != ''">
+                and barcode like CONCAT('%',#{barcode},'%')
+            </if>
+            <if test="storagelocation != null and storagelocation != ''">
+                and storagelocation like CONCAT('%',#{storagelocation},'%')
+            </if>
+            <if test="pcno != null and pcno != ''">
+                and pcno like CONCAT('%',#{pcno},'%')
+            </if>
+            <if test="typeassets != null and typeassets != ''">
+                and typeassets = #{typeassets}
+            </if>
+            <if test="usedepartment != null">
+                and usedepartment = #{usedepartment}
+            </if>
+            <if test="principal != null and principal != ''">
+                and principal = #{principal}
+            </if>
+            <if test="stockstatus != null and stockstatus != ''">
+                and stockstatus = #{stockstatus}
+            </if>
+        </where>
+    </select>
+
 </mapper>

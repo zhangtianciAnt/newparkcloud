@@ -13,4 +13,8 @@ public interface AssetsMapper extends MyMapper<Assets> {
     List<Assets> selectList4Show(Assets assets);
 
     List<String> getDepartment();
+
+    //region scc add 条件检索 from
+    List<Assets> listByCondition(Assets assets);
+    //endregion scc add 条件检索 to
 }
