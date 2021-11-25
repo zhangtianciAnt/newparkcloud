@@ -152,8 +152,10 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             String plsummary = getProperty(o, "plsummary");
             String currency = getProperty(o, "currency");
             String subjectnumber = getProperty(o, "subjectnumber");
-            float rmb = getPropertyFloat(o, "rmb");
-            float foreigncurrency = getPropertyFloat(o, "foreigncurrency");
+            // 精度损失修改 ztc 1125 fr
+            String rmb = getProperty(o, "rmb");
+            String foreigncurrency = getProperty(o, "foreigncurrency");
+            // 精度损失修改 ztc 1125 to
             DecimalFormat df = new DecimalFormat("#0.00");
             int scale = 2;//设置位数
             int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
