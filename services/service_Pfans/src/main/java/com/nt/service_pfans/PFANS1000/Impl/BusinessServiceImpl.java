@@ -580,7 +580,7 @@ public class BusinessServiceImpl implements BusinessService {
         punchcardrecord.setCenter_id(customerInfo.getUserinfo().getCentername());
         punchcardrecord.setUser_id(userid);
         //考勤导出 1125 ztc fr
-        punchcardrecord.setUser_id(customerInfo.getUserinfo().getCustomername());
+        punchcardrecord.setUser_name(customerInfo.getUserinfo().getCustomername());
         //考勤导出 1125 ztc to
         punchcardrecord.setJobnumber(jobnumber);
         punchcardrecord.setWorktime("0.0");

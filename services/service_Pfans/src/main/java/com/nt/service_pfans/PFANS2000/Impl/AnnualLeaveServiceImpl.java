@@ -1325,7 +1325,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         punchcardrecord.setPunchcardrecord_date(sfymd.parse(recordTime));
                         punchcardrecord.setUser_id(customerInfo.getUserid());
                         //考勤导出 1125 ztc fr
-                        punchcardrecord.setUser_id(customerInfo.getUserinfo().getCustomername());
+                        punchcardrecord.setUser_name(customerInfo.getUserinfo().getCustomername());
                         //考勤导出 1125 ztc to
                         punchcardrecord.setJobnumber(count.getJobnumber());
                         punchcardrecord.setCenter_id(customerInfo.getUserinfo().getCentername());
@@ -2640,7 +2640,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                         punchcardrecord.setPunchcardrecord_date(sfymd.parse(recordTime));
                         punchcardrecord.setUser_id(customerInfo.getUserid());
                         //考勤导出 1125 ztc fr
-                        punchcardrecord.setUser_id(customerInfo.getUserinfo().getCustomername());
+                        punchcardrecord.setUser_name(customerInfo.getUserinfo().getCustomername());
                         //考勤导出 1125 ztc to
                         punchcardrecord.setJobnumber(count.getJobnumber());
                         punchcardrecord.setCenter_id(customerInfo.getUserinfo().getCentername());
@@ -3368,7 +3368,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                     punchcardrecord.setPunchcardrecord_date(sfymd.parse(recordTime));
                     punchcardrecord.setUser_id(customerInfo.getUserid());
                     //考勤导出 1125 ztc fr
-                    punchcardrecord.setUser_id(customerInfo.getUserinfo().getCustomername());
+                    punchcardrecord.setUser_name(customerInfo.getUserinfo().getCustomername());
                     //考勤导出 1125 ztc to
                     punchcardrecord.setJobnumber(count.getJobnumber());
                     punchcardrecord.setCenter_id(customerInfo.getUserinfo().getCentername());
@@ -4616,7 +4616,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
                                 PunchcardRecord punchcardrecord = new PunchcardRecord();
                                 tokenModel.setUserId(customerInfo.getUserid());
                                 //考勤导出 1125 ztc fr
-                                punchcardrecord.setUser_id(customerInfo.getUserinfo().getCustomername());
+                                punchcardrecord.setUser_name(customerInfo.getUserinfo().getCustomername());
                                 //考勤导出 1125 ztc to
                                 tokenModel.setExpireDate(new Date());
                                 punchcardrecord.setPunchcardrecord_date(sfymd.parse(recordTime));

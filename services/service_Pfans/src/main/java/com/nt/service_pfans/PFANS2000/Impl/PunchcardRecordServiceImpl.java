@@ -195,7 +195,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 query.addCriteria(Criteria.where("userid").is(punchcard.getUser_id()));
                 CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
                 if (customerInfo != null) {
-                    punchcardrecord.setUser_id(customerInfo.getUserinfo().getCustomername());
+                    punchcardrecord.setUser_name(customerInfo.getUserinfo().getCustomername());
                 }
                 //考勤导出 1125 ztc to
                 punchcardrecord.setJobnumber(punchcard.getJobnumber());
@@ -4965,4 +4965,19 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         }
         return shijiworkHours;
     }
+
+    //临时接口 打卡记录历史数据 姓名补充 ztc 1125 fr
+    @Override
+    public void insertUserName() throws Exception{
+        List<PunchcardRecord> punchcardRecords = punchcardrecordMapper.selectAll();
+        punchcardRecords.stream().forEach(pun ->{
+            Query query = new Query();
+            query.addCriteria(Criteria.where("userid").is(pun.getUser_id()));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            if (customerInfo != null) {
+                pun.setUser_name(customerInfo.getUserinfo().getCustomername());
+            }
+        });
+    }
+    //临时接口 打卡记录历史数据 姓名补充 ztc 1125 to
 }
