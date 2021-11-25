@@ -190,6 +190,14 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 punchcardrecord.setGroup_id(punchcard.getGroup_id());
                 punchcardrecord.setCenter_id(punchcard.getCenter_id());
                 punchcardrecord.setUser_id(punchcard.getUser_id());
+                //考勤导出 1125 ztc fr
+                Query query = new Query();
+                query.addCriteria(Criteria.where("userid").is(punchcard.getUser_id()));
+                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    punchcardrecord.setUser_id(customerInfo.getUserinfo().getCustomername());
+                }
+                //考勤导出 1125 ztc to
                 punchcardrecord.setJobnumber(punchcard.getJobnumber());
                 punchcardrecord.setWorktime("0.08");
                 punchcardrecord.setAbsenteeismam("0.08");

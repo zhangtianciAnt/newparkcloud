@@ -39,4 +39,7 @@ public interface AttendanceService {
     //add ccm 0812 考情管理查看当天的异常申请数据
     List<AbNormal> getabnormalByuseridandDate(Attendance attendance) throws Exception;
     //add ccm 0812 考情管理查看当天的异常申请数据
+    //考勤导出 1125 ztc fr
+    Object getTable2010infoReported(String year,String month) throws Exception;
+    //考勤导出 1125 ztc to
 }
