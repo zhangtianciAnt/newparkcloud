@@ -63,7 +63,7 @@ public class departmentalServiceImpl implements DepartmentalService {
         String nowMonth = nowDate.substring(5,7);
         String nowY_Month = nowDate.substring(0,7);
         String nowDay = nowDate.substring(8,10);
-        if(Integer.parseInt(nowDay) != Integer.parseInt(dictionaryL.get(0).getValue1()) + 1) return;
+        //if(Integer.parseInt(nowDay) != Integer.parseInt(dictionaryL.get(0).getValue1()) + 1) return;
         String setYears = (Integer.parseInt(nowMonth) < 4 ? String.valueOf(Integer.parseInt(nowYear) - 1) : nowYear);
         List<DepartmentalVo> departmentalVoList = departmentalMapper.getProConInfo(nowY_Month);
         List<String> departGroupFilter = new ArrayList<>();
