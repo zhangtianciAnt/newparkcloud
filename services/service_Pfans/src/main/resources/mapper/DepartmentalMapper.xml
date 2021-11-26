@@ -276,7 +276,7 @@
         staffcust06, staffcust07, staffcust08,
         staffcust09, staffcust10, staffcust11,
         staffcust12, staffcust01, staffcust02,
-        staffcust03)
+        staffcust03,entrycondition)
         VALUES
         <foreach collection="departmentalList" item="item" separator=",">
             (#{item.departmental_id},#{item.years}, #{item.department}, #{item.themeinfor_id},
@@ -287,7 +287,7 @@
              #{item.staffcust06}, #{item.staffcust07},#{item.staffcust08},
              #{item.staffcust09}, #{item.staffcust10}, #{item.staffcust11},
              #{item.staffcust12}, #{item.staffcust01},#{item.staffcust02},
-             #{item.staffcust03})
+             #{item.staffcust03},#{item.entrycondition})
         </foreach>
         on duplicate key
         update
