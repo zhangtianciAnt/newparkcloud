@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS2000.mapper;
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.dao_Pfans.PFANS2000.Attendance;
 import com.nt.dao_Pfans.PFANS2000.Base;
+import com.nt.dao_Pfans.PFANS2000.Vo.AttendanceReport;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -44,4 +45,8 @@ public interface AttendanceMapper extends MyMapper<Attendance> {
     @Select("select * from attendance where user_id = #{userid} and dates between  #{re_occurrence_date} and  #{re_finish_date}")
     List<Attendance> twoTime(@Param("userid") String userid, @Param("re_occurrence_date") Date re_occurrence_date, @Param("re_finish_date") Date re_finish_date);
     //add   被承认过的日期不可申请考勤异常  to
+
+    //考勤导出 1125 ztc fr
+    List<AttendanceReport> getAttInfo(@Param("year")String year, @Param("month")String month);
+    //考勤导出 1125 ztc to
 }

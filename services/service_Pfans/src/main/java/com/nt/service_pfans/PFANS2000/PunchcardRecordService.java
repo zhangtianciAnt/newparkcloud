@@ -24,4 +24,8 @@ public interface PunchcardRecordService {
     List<PunchcardRecordDetail> getPunDetail(PunchcardRecordDetail detail)throws Exception;
 
     List<PunchcardRecordDetail> getTodayPunDetaillist(PunchcardRecord punchcardrecord,TokenModel tokenModel) throws Exception;
+
+    //临时接口 打卡记录历史数据 姓名补充 ztc 1125 fr
+    void insertUserName() throws Exception ;
+    //临时接口 打卡记录历史数据 姓名补充 ztc 1125 to
 }
