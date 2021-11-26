@@ -1330,14 +1330,14 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         }
         OrgTree newOrgInfo = orgTreeService.get(new OrgTree());
         List<TrafficDetails> trafficdetails = publicExpenseVo.getTrafficdetails().stream()
-                .filter(traff -> !traff.getRmb().equals("")
-                || !traff.getTormb().equals("")).collect(Collectors.toList());
+                .filter(traff -> !("").equals(traff.getDepartmentname()) && (!("0.00").equals(traff.getRmb())
+                || !("0.00").equals(traff.getTormb())) ).collect(Collectors.toList());
         List<PurchaseDetails> purchaseDetails = publicExpenseVo.getPurchasedetails().stream()
-                .filter(purs -> !purs.getRmb().equals("")
-                        || !purs.getTormb().equals("")).collect(Collectors.toList());
+                .filter(purs -> !("").equals(purs.getDepartmentname()) && (!("0.00").equals(purs.getRmb())
+                        || !("0.00").equals(purs.getTormb()))).collect(Collectors.toList());
         List<OtherDetails> otherDetails = publicExpenseVo.getOtherdetails().stream()
-                .filter(oter -> !oter.getRmb().equals("")
-                        || !oter.getTormb().equals("")).collect(Collectors.toList());
+                .filter(oter -> !("").equals(oter.getDepartmentname()) && (!("0.00").equals(oter.getRmb())
+                        || !("0.00").equals(oter.getTormb()))).collect(Collectors.toList());
         if(trafficdetails.size() > 0){
             String finalThis_year2 = this_year;
             trafficdetails.forEach(traf ->{
@@ -1349,20 +1349,20 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if (orginfo != null) {
+                if (orginfo.getEffective() != null) {
                     if(orginfo.getEffective()){
                         depart = orginfo.get_id();
                     }else{
                         depart = orginfo.getParent_id();
                     }
                 }
-                if(!traf.getRmb().equals("")){
+                if(!("0.00").equals(traf.getRmb())){
                     try {
                         businessplanService.woffRulingInfoAnt(traf.getRmb(), traf.getPlsummary(), finalThis_year2, depart, tokenModel);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }else{
+                }else if(!("0.00").equals(traf.getTormb())){
                     try {
                         businessplanService.woffRulingInfoAnt(traf.getTormb(), traf.getPlsummary(), finalThis_year2, depart, tokenModel);
                     } catch (Exception e) {
@@ -1382,20 +1382,20 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if (orginfo != null) {
+                if (orginfo.getEffective() != null) {
                     if(orginfo.getEffective()){
                         depart = orginfo.get_id();
                     }else{
                         depart = orginfo.getParent_id();
                     }
                 }
-                if(!purch.getRmb().equals("")){
+                if(!("0.00").equals(purch.getRmb())){
                     try {
                         businessplanService.woffRulingInfoAnt(purch.getRmb(), purch.getPlsummary(), finalThis_year1, depart, tokenModel);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }else{
+                }else if(!("0.00").equals(purch.getTormb())){
                     try {
                         businessplanService.woffRulingInfoAnt(purch.getTormb(), purch.getPlsummary(), finalThis_year1, depart, tokenModel);
                     } catch (Exception e) {
@@ -1415,20 +1415,20 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if (orginfo != null) {
+                if (orginfo.getEffective() != null) {
                     if(orginfo.getEffective()){
                         depart = orginfo.get_id();
                     }else{
                         depart = orginfo.getParent_id();
                     }
                 }
-                if(!oter.getRmb().equals("")){
+                if(!("0.00").equals(oter.getRmb())){
                     try {
                         businessplanService.woffRulingInfoAnt(oter.getRmb(), oter.getPlsummary(), finalThis_year, depart, tokenModel);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }else{
+                }else if(!("0.00").equals(oter.getTormb())){
                     try {
                         businessplanService.woffRulingInfoAnt(oter.getTormb(), oter.getPlsummary(), finalThis_year, depart,tokenModel);
                     } catch (Exception e) {
