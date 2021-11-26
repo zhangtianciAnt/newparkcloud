@@ -12,6 +12,7 @@ import com.nt.service_Org.PersonScaleService;
 import com.nt.service_Org.mapper.ExpartinforMapper;
 import com.nt.service_Org.mapper.PersonScaleMapper;
 import com.nt.service_Org.mapper.PersonScaleMeeMapper;
+import com.nt.utils.BigDecimalUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -110,8 +111,33 @@ public class PersonScaleServiceImpl implements PersonScaleService {
                 }
             }
         });
+
+        Map<String,BigDecimal> diffMap = new HashMap<>();
+        Map<String,List<PersonScale>> checkSummary = saveResult.stream().collect(Collectors.groupingBy(PersonScale :: getReportpeople));
+        for(Map.Entry<String, List<PersonScale>> entry : checkSummary.entrySet()){
+            String totalQuantity = entry.getValue().stream().map(PersonScale::getProportions).reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum);
+            if(new BigDecimal(totalQuantity).compareTo(new BigDecimal("1.00")) == 1){//a大于b
+                BigDecimal diff = new BigDecimal(totalQuantity).subtract(new BigDecimal("1.00"));
+                diffMap.put(entry.getKey(),diff);
+            }
+        }
         if(saveResult.size() > 0){
             personScaleMapper.insetList(saveResult);
+        }
+        if(diffMap.size() > 0){
+            diffMap.forEach((userid,dif) ->{
+                PersonScale personScale = new PersonScale();
+                personScale.setReportpeople(userid);
+                personScale.setYearmonth(nowY_Month);
+                List<PersonScale> personScaleList = personScaleMapper.select(personScale);
+                if(personScaleList.size() > 0){
+                    Comparator<PersonScale> comparator = Comparator.comparing(PersonScale::getProportions);
+                    PersonScale maxPersonScale = personScaleList.stream().max(comparator).get();
+                    String difRes = new BigDecimal(maxPersonScale.getProportions()).subtract(dif).toString();
+                    maxPersonScale.setProportions(difRes);
+                    personScaleMapper.updateByPrimaryKeySelective(maxPersonScale);
+                }
+            });
         }
     }
 
@@ -151,7 +177,9 @@ public class PersonScaleServiceImpl implements PersonScaleService {
 
     @Override
     public List<PersonScaleMee> getList(PersonScaleMee personScaleMee) throws Exception {
-        return personScaleMeeMapper.select(personScaleMee);
+        List<PersonScaleMee> personScaleMees = personScaleMeeMapper.select(personScaleMee);
+        personScaleMees = personScaleMees.stream().sorted(Comparator.comparing(PersonScaleMee::getMangernumber).reversed()).collect(Collectors.toList());
+        return personScaleMees;
     }
 
     @Override
@@ -168,6 +196,9 @@ public class PersonScaleServiceImpl implements PersonScaleService {
                     Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(
                             o -> o.getReportpeople() + ";" + o.getProject_id()))), ArrayList::new));
         }
+        personScaleList = personScaleList.stream().sorted(Comparator.comparing(PersonScale::getType)
+                .thenComparing(PersonScale::getReportpeople)
+                .thenComparing(PersonScale::getProportions).reversed()).collect(Collectors.toList());
         personScaleVo.setPersonScaleList(personScaleList);
         return personScaleVo;
     }
