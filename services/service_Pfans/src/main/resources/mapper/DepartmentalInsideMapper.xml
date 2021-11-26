@@ -23,7 +23,7 @@
             tr.THEMEINFOR_ID,
             tr.THEMENAME,
             tr.DIVIDE,
-            tr.TOOLSORGS,
+            thd.ASSIGNOR AS TOOLSORGS,
             cp.GROUP_ID,
             cp.CONTRACTNUMBER,
             cp.CLAIMAMOUNT,
@@ -31,6 +31,8 @@
             ct.CONTRACTNUMBERCOUNT_ID
             FROM
             themeinfor tr
+            LEFT JOIN themeplandetail thd
+            ON thd.THEMEINFOR_ID = tr.THEMEINFOR_ID
             INNER JOIN contractapplication cp ON tr.THEMEINFOR_ID = cp.THEMEINFOR_ID
             INNER JOIN contractnumbercount ct ON cp.CONTRACTNUMBER = ct.CONTRACTNUMBER
             WHERE

@@ -49,7 +49,7 @@ select
 			,ifnull(thr.themename,'部门共通')
 			,case when cr.THECOMPANY IS NOT NULL then cr.THECOMPANY
 				ELSE '社内' END contract
-			,thr.toolsorgs
+			,thd.assignor
 			,dt.amount
 			,dt.indextype
 			,dt.moneyplan4
@@ -84,6 +84,8 @@ select
 		FROM departmentaccounttotal dt
 		LEFT JOIN themeinfor thr
 		ON dt.THEME_ID = thr.THEMEINFOR_ID
+		LEFT JOIN themeplandetail thd
+        ON thd.THEMEINFOR_ID = thr.THEMEINFOR_ID
 		LEFT JOIN customerinfor cr
 		ON cr.CUSTOMERINFOR_ID = thr.CUSTOMERINFOR_ID
 		where dt.department = #{department}
@@ -236,7 +238,7 @@ FROM
 	,thr.THEMENAME
 	,case when cr.THECOMPANY IS NOT NULL then cr.THECOMPANY
 		ELSE '社内' END CONTRACT
-	,thr.TOOLSORGS
+	,td.ASSIGNOR AS TOOLSORGS
 	,thr.YEAR
 	,SUM(AMOUNT4) AS AMOUNT4
 	,SUM(AMOUNT5) AS AMOUNT5
@@ -251,14 +253,14 @@ FROM
 	,SUM(AMOUNT2) AS AMOUNT2
 	,SUM(AMOUNT3) AS AMOUNT3
 	FROM themeinfor thr
-	INNER JOIN themeplandetail td
+	LEFT JOIN themeplandetail td
 	ON td.THEMEINFOR_ID = thr.THEMEINFOR_ID
 	AND td.`TYPE` = '0'
 	LEFT JOIN customerinfor cr
 	ON cr.CUSTOMERINFOR_ID = thr.CUSTOMERINFOR_ID
 	WHERE td.CENTER_ID = #{department} OR td.GROUP_ID = #{department} AND thr.YEAR = #{years}
 
-	GROUP BY thr.THEMEINFOR_ID,thr.THEMENAME,cr.THECOMPANY,thr.TOOLSORGS,thr.YEAR
+	GROUP BY thr.THEMEINFOR_ID,thr.THEMENAME,cr.THECOMPANY,td.ASSIGNOR,thr.YEAR
 ) thr
 INNER  JOIN contractapplication ct
 ON ct.THEMEINFOR_ID = thr.THEMEINFOR_ID
