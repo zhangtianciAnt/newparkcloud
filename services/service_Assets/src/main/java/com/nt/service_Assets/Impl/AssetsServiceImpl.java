@@ -120,7 +120,7 @@ public class AssetsServiceImpl implements AssetsService {
 
     @Override
     public List<Assets> list(Assets assets) throws Exception {
-        return assetsMapper.select(assets);
+        return assetsMapper.listByCondition(assets);//scc upd 条件检索
     }
 
 

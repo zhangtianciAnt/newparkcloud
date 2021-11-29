@@ -10,6 +10,7 @@ import com.nt.service_Auth.RoleService;
 import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS1000.DepartmentAccountService;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
+import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
 import com.nt.service_pfans.PFANS6000.DeleginformationService;
 import com.nt.service_pfans.PFANS6000.PjExternalInjectionService;
@@ -19,10 +20,7 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -72,6 +70,9 @@ public class AuthController {
 
     @Autowired
     private DepartmentAccountService departmentAccountService;
+
+    @Autowired
+    private PunchcardRecordService punchcardRecordService;
 
     /**
      * @方法名：getActionsAuth
@@ -254,4 +255,12 @@ public class AuthController {
         departmentAccountService.insert();
         return ApiResult.success();
     }
+
+    //临时接口 打卡记录历史数据 姓名补充 ztc 1125 fr
+    @PostMapping(value = "/insertUserName")
+    public ApiResult insertUserName() throws Exception {
+        punchcardRecordService.insertUserName();
+        return ApiResult.success();
+    }
+    //临时接口 打卡记录历史数据 姓名补充 ztc 1125 to
 }

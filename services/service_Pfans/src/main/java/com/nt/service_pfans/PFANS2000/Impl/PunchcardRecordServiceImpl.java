@@ -190,6 +190,14 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 punchcardrecord.setGroup_id(punchcard.getGroup_id());
                 punchcardrecord.setCenter_id(punchcard.getCenter_id());
                 punchcardrecord.setUser_id(punchcard.getUser_id());
+                // 1125 ztc fr
+                Query query = new Query();
+                query.addCriteria(Criteria.where("userid").is(punchcard.getUser_id()));
+                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    punchcardrecord.setUser_name(customerInfo.getUserinfo().getCustomername());
+                }
+                //考勤导出 1125 ztc to
                 punchcardrecord.setJobnumber(punchcard.getJobnumber());
                 punchcardrecord.setWorktime("0.08");
                 punchcardrecord.setAbsenteeismam("0.08");
@@ -4957,4 +4965,20 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
         }
         return shijiworkHours;
     }
+
+    //临时接口 打卡记录历史数据 姓名补充 ztc 1125 fr
+    @Override
+    public void insertUserName() throws Exception{
+        List<PunchcardRecord> punchcardRecords = punchcardrecordMapper.selectAll();
+        punchcardRecords.stream().forEach(pun ->{
+            Query query = new Query();
+            query.addCriteria(Criteria.where("userid").is(pun.getUser_id()));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            if (customerInfo != null) {
+                pun.setUser_name(customerInfo.getUserinfo().getCustomername());
+            }
+            punchcardrecordMapper.updateByPrimaryKey(pun);
+        });
+    }
+    //临时接口 打卡记录历史数据 姓名补充 ztc 1125 to
 }

@@ -7,10 +7,7 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -132,4 +129,10 @@ public class Pfans2010Controller {
     }
     //add ccm 0812 考情管理查看当天的异常申请数据
 
+    //考勤导出 1125 ztc fr
+    @RequestMapping(value = "/getTable2010infoReported", method = {RequestMethod.GET})
+    public ApiResult getTable2010infoReported(String year,String month) throws Exception {
+        return ApiResult.success("getTable2010infoReported",attendanceService.getTable2010infoReported(year,month));
+    }
+    //考勤导出 1125 ztc to
 }

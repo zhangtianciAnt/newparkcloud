@@ -1,8 +1,12 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.dao_Pfans.PFANS2000.Attendance;
 import com.nt.dao_Pfans.PFANS2000.Overtime;
+import com.nt.dao_Pfans.PFANS2000.PunchcardRecord;
+import com.nt.dao_Pfans.PFANS2000.Vo.AttendanceReport;
 import com.nt.dao_Pfans.PFANS2000.Vo.AttendanceVo;
 import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
@@ -12,9 +16,14 @@ import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
 import com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper;
 import com.nt.service_pfans.PFANS2000.mapper.AttendanceMapper;
 import com.nt.service_pfans.PFANS2000.mapper.OvertimeMapper;
+import com.nt.service_pfans.PFANS2000.mapper.PunchcardRecordMapper;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
+import com.nt.utils.sign;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,6 +55,12 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Autowired
     private OvertimeMapper overtimeMapper;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private PunchcardRecordMapper punchcardRecordMapper;
 
     @Override
     public List<Attendance> getlist(Attendance attendance) throws Exception {
@@ -318,4 +333,11 @@ public class AttendanceServiceImpl implements AttendanceService {
         return abNormals;
     }
     //add ccm 0812 考情管理查看当天的异常申请数据
+
+    //考勤导出 1125 ztc fr
+    public Object getTable2010infoReported(String year,String month) throws Exception {
+        List<AttendanceReport> attendanceReports = attendanceMapper.getAttInfo(year,month);
+        return JSONObject.toJSON(attendanceReports);
+    }
+    //考勤导出 1125 ztc to
 }

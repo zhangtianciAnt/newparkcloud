@@ -28,6 +28,11 @@ public class PunchcardRecord extends BaseModel {
     @Column(name = "USER_ID")
     private String user_id;
 
+    //考勤导出 1125 ztc fr
+    @Column(name = "USER_NAME")
+    private String user_name;
+    //考勤导出 1125 ztc to
+
     @Column(name = "CENTER_ID")
     private String center_id;
 

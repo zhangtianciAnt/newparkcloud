@@ -31,6 +31,7 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
                 .excludePathPatterns("/departmentaccount/getTable1051infoReport")
                 .excludePathPatterns("/departmentalinside/getTableinfoReport")
                 .excludePathPatterns("/departmental/getTable1050infoReport")
+                .excludePathPatterns("/attendance/getTable2010infoReported")
         ;
     }
 
