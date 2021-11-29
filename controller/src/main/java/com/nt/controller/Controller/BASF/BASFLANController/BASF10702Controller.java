@@ -83,7 +83,7 @@ public class BASF10702Controller {
      * @Date 2021/11/13 15:05
      */
     @RequestMapping(value = "/setCarInfoList", method = {RequestMethod.POST})
-    public ApiResult getCarInfoList(@RequestBody List<CarInfoList> carInfoList, HttpServletRequest request) throws Exception {
+    public ApiResult setCarInfoList(@RequestBody List<CarInfoList> carInfoList, HttpServletRequest request) throws Exception {
         if (carInfoList == null || carInfoList.size() == 0) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }

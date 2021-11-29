@@ -456,9 +456,9 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
             JSONObject result = JSONUtil.parseObj(rst.getBody());
             // 插入失败数据，记入错误日志
             if (!Boolean.parseBoolean(String.valueOf(result.get("success")))) {
-                log.error("【Road Gate Data Import Error】：" + "Plate：" + item.getTruckNo() + "；Name：" + item.getDrivername()+ "；Phone：" + item.getPhone());
+                log.error("[Road Gate Data Import Error]：" + "Plate：" + item.getTruckNo() + "；Name：" + item.getDrivername()+ "；Phone：" + item.getPhone());
             } else {
-                log.info("【Road Gate Data Import Success】：" + "Plate：" + item.getTruckNo() + "；Name：" + item.getDrivername()+ "；Phone：" + item.getPhone());
+                log.info("[Road Gate Data Import Success]：" + "Plate：" + item.getTruckNo() + "；Name：" + item.getDrivername()+ "；Phone：" + item.getPhone());
             }
         }
         log.info("Interface End！");
