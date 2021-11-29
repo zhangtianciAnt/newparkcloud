@@ -30,6 +30,14 @@ public class Pfans6004Controller {
     @Autowired
     private TokenService tokenService;
 
+    //增加分页 ztc fr
+    @RequestMapping(value = "/getexpatrFliter", method = {RequestMethod.GET})
+    public ApiResult getexpatrFliter(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Expatriatesinfor expatriatesinfor = new Expatriatesinfor();
+        //expatriatesinfor.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(expatriatesinforService.getexpatrFliter(expatriatesinfor));
+    }
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult getexpatriatesinfor(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
@@ -37,6 +45,7 @@ public class Pfans6004Controller {
         //expatriatesinfor.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(expatriatesinforService.getexpatriatesinfor(expatriatesinfor));
     }
+    //增加分页 ztc to
 
     @RequestMapping(value = "/getWithoutAuth", method = {RequestMethod.GET})
     public ApiResult getWithoutAuth(HttpServletRequest request) throws Exception {

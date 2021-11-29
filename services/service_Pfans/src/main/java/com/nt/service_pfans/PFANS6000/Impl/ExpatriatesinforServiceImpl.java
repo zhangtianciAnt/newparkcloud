@@ -140,6 +140,17 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
         //ceshi
         return expatriatesinforMapper.select(expatriatesinfor);
     }
+
+    //增加分页 ztc fr
+    @Override
+    public List<Expatriatesinfor> getexpatrFliter(Expatriatesinfor expatriatesinfor) throws Exception {
+        List<Expatriatesinfor> exList = expatriatesinforMapper.select(expatriatesinfor);
+        exList = exList.stream().filter(ex -> ("BP006001").equals(ex.getWhetherentry())).collect(Collectors.toList());
+        return exList;
+    }
+    //增加分页 ztc to
+
+
     //    dialog优化分页 ztc fr
     @Override
     public TableDataInfo getforSysDiaLog(int currentPage, int pageSize) throws Exception {

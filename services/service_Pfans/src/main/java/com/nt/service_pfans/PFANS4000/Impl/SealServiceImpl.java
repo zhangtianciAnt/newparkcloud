@@ -89,6 +89,18 @@ public class SealServiceImpl implements SealService {
         return sealvo;
     }
 
+    //增加分页 ztc fr
+    @Override
+    public List<Seal> sealList(Seal seal) throws Exception {
+        return sealMapper.select(seal);
+    }
+
+    @Override
+    public List<SealDetail> sealDetailList() throws Exception {
+        return sealdetailmapper.selectAll();
+    }
+    //增加分页 ztc to
+
     @Override
     public void insert(Seal seal, TokenModel tokenModel) throws Exception {
         seal.preInsert(tokenModel);

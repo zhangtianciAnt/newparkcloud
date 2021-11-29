@@ -17,6 +17,12 @@ public interface SealService {
     //获取异常申请列表信息
     SealVo list(Seal seal) throws Exception;
 
+    //增加分页 ztc fr
+    List<Seal> sealList(Seal seal) throws Exception;
+
+    List<SealDetail> sealDetailList() throws Exception;
+    //增加分页 ztc to
+
     void upd(Seal seal, TokenModel tokenModel) throws Exception;
     //add-ws-12/21-印章盖印
     void insertnamedialog(String sealdetailname, String sealdetaildate, TokenModel tokenModel) throws Exception;

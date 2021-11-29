@@ -12,6 +12,10 @@ public interface ExpatriatesinforService {
 
     List<Expatriatesinfor> getexpatriatesinfor(Expatriatesinfor expatriatesinfor) throws Exception;
 
+    //增加分页 ztc fr
+    List<Expatriatesinfor> getexpatrFliter(Expatriatesinfor expatriatesinfor) throws Exception;
+    //增加分页 ztc to
+
 //    dialog优化分页 ztc fr
     TableDataInfo getforSysDiaLog(int currentPage, int pageSize) throws Exception;
     //    dialog优化分页 ztc to

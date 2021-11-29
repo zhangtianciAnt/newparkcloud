@@ -193,7 +193,6 @@ public class Pfans4001Controller {
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-
         Seal seal = new Seal();
         List<SealDetail> sealdetaillist = sealdetailmapper.selectAll();
         if (sealdetaillist.size() > 0) {
@@ -205,6 +204,28 @@ public class Pfans4001Controller {
         }
         return ApiResult.success(sealService.list(seal));
     }
+
+    //增加分页 ztc fr
+    @RequestMapping(value = "/sealList", method = {RequestMethod.POST})
+    public ApiResult sealList(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Seal seal = new Seal();
+        List<SealDetail> sealdetaillist = sealdetailmapper.selectAll();
+        if (sealdetaillist.size() > 0) {
+            if (!tokenModel.getUserId().equals(sealdetaillist.get(0).getSealdetailname())) {
+                seal.setOwners(tokenModel.getOwnerList());
+            }
+        }else{
+            seal.setOwners(tokenModel.getOwnerList());
+        }
+        return ApiResult.success(sealService.sealList(seal));
+    }
+
+    @RequestMapping(value = "/sealDetailList", method = {RequestMethod.POST})
+    public ApiResult sealDetailList(HttpServletRequest request) throws Exception {
+        return ApiResult.success(sealService.sealDetailList());
+    }
+    //增加分页 ztc to
 
     @RequestMapping(value = "/insertInfo", method = {RequestMethod.POST})
     public ApiResult create(@RequestBody Seal seal, HttpServletRequest request) throws Exception {
