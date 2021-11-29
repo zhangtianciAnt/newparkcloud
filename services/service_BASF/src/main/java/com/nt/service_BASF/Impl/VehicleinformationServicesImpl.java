@@ -7,6 +7,7 @@ import com.nt.dao_BASF.VO.*;
 import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.service_BASF.VehicleinformationServices;
 import com.nt.service_BASF.mapper.VehicleinformationMapper;
+import com.nt.utils.ApiResult;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
@@ -439,7 +440,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         HttpHeaders httpHeaders = new HttpHeaders();
         // 设置请求类型
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        log.info("Interface Start！");
+        log.info("Interface Start!");
         for (CarInfoList item : carInfoList) {
             // 封装参数
             JSONObject jsonObject = new JSONObject();
@@ -456,11 +457,11 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
             JSONObject result = JSONUtil.parseObj(rst.getBody());
             // 插入失败数据，记入错误日志
             if (!Boolean.parseBoolean(String.valueOf(result.get("success")))) {
-                log.error("[Road Gate Data Import Error]：" + "Plate：" + item.getTruckNo() + "；Name：" + item.getDrivername()+ "；Phone：" + item.getPhone());
+                log.error("[Road Gate Data Import Error]:" + "Plate:" + item.getTruckNo() + ";Name:" + item.getDrivername()+ ";Phone:" + item.getPhone() + ";Reason:" + result.get("message").toString());
             } else {
-                log.info("[Road Gate Data Import Success]：" + "Plate：" + item.getTruckNo() + "；Name：" + item.getDrivername()+ "；Phone：" + item.getPhone());
+                log.info("[Road Gate Data Import Success]:" + "Plate:" + item.getTruckNo() + ";Name:" + item.getDrivername()+ ";Phone:" + item.getPhone());
             }
         }
-        log.info("Interface End！");
+        log.info("Interface End!");
     }
 }
