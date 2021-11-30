@@ -34,6 +34,13 @@ public class ThemeInforServiceImpl implements ThemeInforService {
     public List<ThemeInfor> list(ThemeInfor themeinfor) throws Exception {
         List<ThemeInfor> themeinforlist = themeinformapper.select(themeinfor);
         themeinforlist = themeinforlist.stream().sorted(Comparator.comparing(ThemeInfor::getCreateon)).collect(Collectors.toList());
+        //theme分页修改 序号功能 1130 ztc fr
+        int num = 1;
+        for (ThemeInfor them : themeinforlist) {
+            them.setNumber(String.valueOf(num));
+            num++;
+        }
+        //theme分页修改 序号功能 1130 ztc to
         return themeinforlist;
     }
 

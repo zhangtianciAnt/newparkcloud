@@ -9,6 +9,7 @@ import org.opencv.xfeatures2d.DAISY;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 
@@ -84,4 +85,9 @@ public class ThemeInfor extends BaseModel {
 
     @Column(name = "CUSTOMERINFOR_ID")
     private String customerinfor_id;
+
+    //theme分页修改 序号功能 1130 ztc fr
+    @Transient
+    private String number;
+    //theme分页修改 序号功能 1130 ztc to
 }
