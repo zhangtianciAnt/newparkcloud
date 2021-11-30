@@ -47,17 +47,10 @@
     </select>
 
     <select id="getBlackListApi" resultType="com.nt.dao_BASF.VO.BlackListApiVo">
-        SELECT b.vehiclenumber,
+        SELECT a.drivername,
+               a.driveridnumber,
                a.violationtype
-        FROM blacklist a,
-             vehicleinformation b
-                 INNER JOIN (
-                 SELECT MAX(intime) intime
-                 from vehicleinformation
-                 group by driverid
-             ) c on b.intime = c.intime
-        WHERE IFNULL(a.driveridnumber, '') = IFNULL(b.driverid, '')
-          AND a.`STATUS` = 0
-          AND b.`STATUS` = 0
+        FROM blacklist a
+        WHERE a.`STATUS` = 0
     </select>
 </mapper>

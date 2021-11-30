@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
  * @ProjectName: BASF应急平台
  * @Package: com.nt.dao_BASF
  * @ClassName: BlackListVo
- * @Author: Wxz
+ * @Author: MYT
  * @Description: BlackListVo
- * @Date: 2019/11/22 14:54
+ * @Date: 2021/11/30 14:54
  * @Version: 1.0
  */
 @Data
@@ -24,8 +24,13 @@ public class BlackListApiVo {
     private String violationtype;
 
     /**
-     *车牌号
+     *驾驶员名字
      */
-    private String vehiclenumber;
+    private String drivername;
+
+    /**
+     *身份证号码
+     */
+    private String driveridnumber;
 
 }
