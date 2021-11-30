@@ -34,6 +34,19 @@ public class Pfans2010Controller {
         return ApiResult.success(attendanceService.getlist(attendance));
     }
 
+    //view添加分页 ztc 1130 fr
+    @RequestMapping(value = "/getlistFilter", method = {RequestMethod.POST})
+    public ApiResult getlistFilter(@RequestBody Attendance attendance, HttpServletRequest request) throws Exception {
+        if (attendance == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        //attendance.setOwner(tokenModel.getUserId());
+        attendance.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(attendanceService.getlistFilter(attendance));
+    }
+    //view添加分页 ztc 1130 to
+
     //日志使用
     @RequestMapping(value = "/getAttendancelist", method = {RequestMethod.POST})
     public ApiResult getAttendancelist(@RequestBody Attendance attendance, HttpServletRequest request) throws Exception {

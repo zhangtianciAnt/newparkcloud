@@ -52,7 +52,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     private WorkflowServices workflowServices;
 
     @Override
-    public List<Attendance> getlist(Attendance attendance) throws Exception {
+    public List<Attendance> getlistFilter(Attendance attendance) throws Exception {
         //分页功能 本功能移至后台 1125 ztc fr
         List<Workflowinstance> workList = workflowServices.allWorkFlowIns("/PFANS2010View");
         List<Attendance> attendances = attendanceMapper.getAttendance(attendance);
@@ -68,6 +68,11 @@ public class AttendanceServiceImpl implements AttendanceService {
         });
         return attendances;
         //分页功能 本功能移至后台 1125 ztc to
+    }
+
+    @Override
+    public List<Attendance> getlist(Attendance attendance) throws Exception {
+        return attendanceMapper.getAttendance(attendance);
     }
 
     //日志使用

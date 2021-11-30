@@ -67,6 +67,16 @@ public class pfans1038Controller {
         personnelplan.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(personnelplanService.getAll(personnelplan));
     }
+    //view添加分页 ztc 1130 fr
+    @RequestMapping(value = "/getListforType", method = {RequestMethod.POST})
+    public ApiResult getListforType(@RequestParam String type, HttpServletRequest request) throws Exception {
+        PersonnelPlan personnelplan = new PersonnelPlan();
+        TokenModel tokenModel = tokenService.getToken(request);
+        personnelplan.setOwners(tokenModel.getOwnerList());
+        personnelplan.setType(Integer.parseInt(type));
+        return ApiResult.success(personnelplanService.getListforType(personnelplan));
+    }
+    //view添加分页 ztc 1130 to
     //获取选中
     @RequestMapping(value = "/getone", method = {RequestMethod.GET})
     public ApiResult getOne(HttpServletRequest request ,@RequestParam String id) throws Exception {

@@ -12,6 +12,10 @@ public interface AttendanceService {
 
     List<Attendance> getlist(Attendance attendance) throws Exception;
 
+    //view添加分页 ztc 1130 fr
+    List<Attendance> getlistFilter(Attendance attendance) throws Exception;
+    //view添加分页 ztc 1130 to
+
     //日志使用
     List<Attendance> getAttendancelist(Attendance attendance) throws Exception;
 
