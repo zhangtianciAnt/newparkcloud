@@ -5,10 +5,13 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserVo;
+import com.nt.dao_Pfans.PFANS1000.Award;
+import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.Vo.ProjectIncomeVo4;
 import com.nt.dao_Pfans.PFANS5000.*;
@@ -17,9 +20,12 @@ import com.nt.dao_Pfans.PFANS6000.Delegainformation;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_Auth.RoleService;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.UserService;
+import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
+import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
@@ -32,7 +38,6 @@ import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TimePair;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.impl.IsOverLapImpl;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -44,10 +49,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.NumberFormat;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 
@@ -101,6 +106,15 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     @Autowired
     private WorkingDayMapper workingDayMapper;
     //zy end 报表追加 2021/06/13
+
+    @Autowired
+    private AwardMapper awardMapper;
+
+    @Autowired
+    private ContractapplicationMapper contractapplicationMapper;
+
+    @Autowired
+    private DictionaryService dictionaryService;
 
     @Override
     public List<CompanyProjects> getCompanyProjectList(CompanyProjects companyprojects, HttpServletRequest request) throws Exception {
@@ -284,7 +298,32 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     @Override
     public void update(CompanyProjectsVo companyProjectsVo, TokenModel tokenModel) throws Exception {
         //可以进行重复选择，只需要做进组退组时间不重复的check ztc
-        this.checkDupSystem(companyProjectsVo.getProjectsystem());
+        //region scc add 同委托元多条构外人月数之和与总人月数check from
+        List<Projectsystem> projectsystemallList = companyProjectsVo.getProjectsystem();//获取项目体制
+        Map<String, List<Projectsystem>> check = projectsystemallList.stream().filter(item -> "2".equals(item.getType())).collect(Collectors.groupingBy(Projectsystem::getContractno));//构外
+        Iterator<Map.Entry<String, List<Projectsystem>>> it = check.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, List<Projectsystem>> entry = it.next();
+            BigDecimal all = new BigDecimal(BigInteger.ZERO);
+            if(entry.getValue().get(0).getTotalnumber() == null || entry.getValue().get(0).getTotalnumber() == ""){
+                continue;
+            }else{
+                all = new BigDecimal(entry.getValue().get(0).getTotalnumber());//一个委托元对应总人月数
+            }
+            BigDecimal temp = new BigDecimal(BigInteger.ZERO);
+            for (Projectsystem item : entry.getValue()) {
+                temp = temp.add(new BigDecimal(item.getNumberofmonths())).setScale(2, BigDecimal.ROUND_HALF_UP);//同委托元多条构外人月数之和
+            }
+            if(temp.compareTo(all) == 1){//如果每条之和大于总人月数check
+                throw new LogicalException("人月数总和不能超过合同人月数，请重新输入");
+            }else{
+                continue;
+            }
+        }
+        //endregion scc add 同委托元多条构外人月数之和与总人月数check to
+        projectsystemallList = projectsystemallList.stream().filter(item -> !"2".equals(item.getType())).collect(Collectors.toList());//构外不做进出场时间check
+//        this.checkDupSystem(companyProjectsVo.getProjectsystem());
+        this.checkDupSystem(projectsystemallList);
         CompanyProjects companyProjects = new CompanyProjects();
         BeanUtils.copyProperties(companyProjectsVo.getCompanyprojects(), companyProjects);
         companyProjects.preUpdate(tokenModel);
@@ -447,6 +486,16 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                         //add_fjl_07/03 end  PL权限相关
                     }
                 }
+                //region scc add 插入构外 from
+                else if ("2".equals(pro.getType())) {
+                    rowundex = rowundex + 1;
+                    pro.preInsert(tokenModel);
+                    pro.setProjectsystem_id(UUID.randomUUID().toString());
+                    pro.setCompanyprojects_id(companyprojectsid);
+                    pro.setRowindex(rowundex);
+                    projectsystemMapper.insertSelective(pro);
+                }
+                //endregion scc add 插入构外 to
                 //add-ws-4/23-体制表社内根据name_id有无进行判断，社外根据name判断
 
                 //活用情报
@@ -1740,6 +1789,9 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
      * @return 返回是否重叠 true重叠 false不重叠
      */
     public void checkDupSystem(List<Projectsystem> checkDepSystem) throws Exception {
+        //region scc add 构外开始事件和结束事件，存为表字段开始时间和结束时间，不参与进出场时间check from
+        checkDepSystem = checkDepSystem.stream().filter(item -> !"2".equals(item.getType())).collect(Collectors.toList());
+        //endregion scc add 构外开始事件和结束事件，存为表字段开始时间和结束时间，不参与进出场时间check to
         Map<String,List<Projectsystem>> groupSyeMap = checkDepSystem.stream()
                 .collect(Collectors.groupingBy(Projectsystem::getName));
         for(Map.Entry<String,List<Projectsystem>> entryName : groupSyeMap.entrySet()){
@@ -2168,6 +2220,44 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         personalCostExpVoList.addAll(this.selectProInfo(companypIdO));
         return personalCostExpVoList;
     }
+
+    //region scc add 根据合同号获取相应决裁信息，返回到项目构外tab页使用 from
+    @Override
+    public Map<String, String> forDetail(String contractNo) throws Exception {
+        Contractapplication contra = new Contractapplication();
+        contra.setContractnumber(contractNo);
+        Contractapplication contractapplication = contractapplicationMapper.selectOne(contra);
+        String time = "";
+        if(contractapplication.getExtensiondate() == null){
+            time = contractapplication.getContractdate();
+        }else {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String enddate = sdf.format(contractapplication.getExtensiondate());
+            time = contractapplication.getContractdate().split("~")[0].trim() + "~" + enddate.trim();
+        }
+        List<Dictionary> typeOfList = dictionaryService.getForSelect("HT014");
+        AtomicReference<Boolean> flag = new AtomicReference<>(false);
+        typeOfList.forEach(item -> {
+            if (item.getCode().equals(contractapplication.getContracttype())) {
+                flag.set(true);
+            }
+        });
+        Map<String, String> result = new HashMap<>();
+        if (flag.get() == true) {
+            Award award = new Award();
+            award.setContractnumber(contractNo);
+            Award find = awardMapper.selectOne(award);
+            if ("4".equals(find.getStatus())) {
+                result.put("ContractNo", contractNo);
+                result.put("Custojapanese", find.getCustojapanese());
+                result.put("Madoguchi", find.getMadoguchi());
+                result.put("Numberofworkers", find.getNumberofworkers());
+                result.put("Interval", time);
+            }
+        }
+        return result;
+    }
+    //endregion scc add 根据合同号获取相应决裁信息，返回到项目构外tab页使用 to
 
     public List<CompanyProjectsReportCheckVo> selectProInfo(List<String> companypId) throws Exception {
 

@@ -243,7 +243,7 @@ public class Award extends BaseModel {
     @Column(name = "UNITPRICE")//单价
     private String unitprice;
 
-    @Column(name = "NUMBEROFWORKERS")//工数
+    @Column(name = "NUMBEROFWORKERS")//人月数
     private String numberofworkers;
 
     @Column(name = "AMOUNTOF")//金额

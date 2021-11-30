@@ -8,6 +8,7 @@ import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS2000.Vo.PersonalCostExpVo;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
+import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsReportCheckVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
@@ -459,6 +460,23 @@ public class Pfans5001Controller {
     }
     //根据合同号查合同区间 scc
 //zy end 报表追加 2021/06/13
+
+    /**
+     * @方法名：forDetail
+     * @描述：根据合同号获取相应决裁信息，返回到项目构外tab页使用
+     * @创建日期：2021/11/26
+     * @作者：scc
+     * @参数：“contractNo”合同号
+     * @返回值：Map<String,String>
+     */
+    @RequestMapping(value = "/forDetail", method = { RequestMethod.GET})
+    public ApiResult forDetail(String contractNo, HttpServletRequest request) throws Exception{
+        if (contractNo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel=tokenService.getToken(request);
+        return ApiResult.success(companyProjectsService.forDetail(contractNo));
+    }
 
     /**
      * @方法名：reportCheck
