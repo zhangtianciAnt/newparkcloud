@@ -47,7 +47,8 @@
     </select>
 
     <select id="getBlackListApi" resultType="com.nt.dao_BASF.VO.BlackListApiVo">
-        SELECT a.drivername,
+        SELECT distinct
+			   a.drivername,
                a.driveridnumber,
                a.violationtype
         FROM blacklist a
