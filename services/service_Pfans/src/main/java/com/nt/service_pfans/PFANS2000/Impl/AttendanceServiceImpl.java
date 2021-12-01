@@ -5,6 +5,7 @@ import com.nt.dao_Pfans.PFANS2000.Attendance;
 import com.nt.dao_Pfans.PFANS2000.Overtime;
 import com.nt.dao_Pfans.PFANS2000.Vo.AttendanceVo;
 import com.nt.dao_Workflow.Workflowinstance;
+import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.service_WorkFlow.mapper.WorkflownodeinstanceMapper;
 import com.nt.service_pfans.PFANS2000.AttendanceService;
@@ -46,6 +47,28 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Autowired
     private OvertimeMapper overtimeMapper;
+
+    @Autowired
+    private WorkflowServices workflowServices;
+
+    @Override
+    public List<Attendance> getlistFilter(Attendance attendance) throws Exception {
+        //分页功能 本功能移至后台 1125 ztc fr
+        List<Workflowinstance> workList = workflowServices.allWorkFlowIns("/PFANS2010View");
+        List<Attendance> attendances = attendanceMapper.getAttendance(attendance);
+        attendances.forEach(att ->{
+            String dataid = att.getUser_id() + "," + att.getYears() + "," + att.getMonths();
+            List<Workflowinstance> wfList = workList.stream()
+                    .filter(wf -> wf.getDataid().equals(dataid)).collect(Collectors.toList());
+            if(wfList.size() > 0){
+                att.setStatus("4");
+            }else{
+                att.setStatus("0");
+            }
+        });
+        return attendances;
+        //分页功能 本功能移至后台 1125 ztc to
+    }
 
     @Override
     public List<Attendance> getlist(Attendance attendance) throws Exception {

@@ -90,6 +90,13 @@ public class PersonnelplanServiceImpl implements PersonnelplanService {
         return personnelplanMapper.select(personnelplan);
     }
 
+    //view添加分页 ztc 1130 fr
+    @Override
+    public List<PersonnelPlan> getListforType(PersonnelPlan personnelplan) throws Exception {
+        return personnelplanMapper.select(personnelplan);
+    }
+    //view添加分页 ztc 1130 to
+
     @Override
     public PersonnelPlan getOne(String id) {
         PersonnelPlan personnelPlan =  personnelplanMapper.selectByPrimaryKey(id);

@@ -16,6 +16,9 @@ public interface PersonnelplanService {
     List<Supplierinfor> getExternal();
     List<ExternalVo> getExpatriatesinfor(String groupid);
     List<PersonnelPlan> getAll(PersonnelPlan personnelplan) throws Exception;
+    //view添加分页 ztc 1130 fr
+    List<PersonnelPlan> getListforType(PersonnelPlan personnelplan) throws Exception;
+    //view添加分页 ztc 1130 to
     PersonnelPlan getOne(String id);
     void update(PersonnelPlan personnelPlan, TokenModel tokenModel);
     void insert(PersonnelPlan personnelPlan, TokenModel tokenModel)throws LogicalException;
