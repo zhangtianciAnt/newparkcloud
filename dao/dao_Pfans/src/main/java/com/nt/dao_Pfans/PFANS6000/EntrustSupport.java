@@ -120,5 +120,10 @@ public class EntrustSupport extends BaseModel {
     @Column(name = "PROJECTNUMBER")
     private String projectnumber;
 
+    /**
+     * themeID
+     * */
+    @Column(name = "THEMEINFOR_ID")
+    private String themeinfor_id;
 
 }

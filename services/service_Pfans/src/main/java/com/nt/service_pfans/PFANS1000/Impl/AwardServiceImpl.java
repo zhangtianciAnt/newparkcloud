@@ -31,6 +31,7 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -652,6 +653,16 @@ public class AwardServiceImpl implements AwardService {
             if("1".equals(recordOne.getCheckindivdual())){//去除月度费用总览创建的合同
                 return;
             }
+            List<Dictionary> typeOfList = dictionaryService.getForSelect("HT014");//判断是否是委托合同
+            AtomicReference<Boolean> flag = new AtomicReference<>(false);
+            typeOfList.forEach(item -> {
+                if (item.getCode().equals(recordOne.getContracttype())) {
+                    flag.set(true);
+                }
+            });
+            if(!flag.get()){
+                return;
+            }
             Contractnumbercount backToNumberOf = new Contractnumbercount();
             backToNumberOf.setContractnumber(award.getContractnumber());
             List<Contractnumbercount> backToNumberOfList = contractnumbercountMapper.select(backToNumberOf);//合同号对应回数
@@ -666,6 +677,7 @@ public class AwardServiceImpl implements AwardService {
                     temp.setDeployment(recordOne.getDeployment());//部门名称
                     temp.setConjapanese(recordOne.getConjapanese());//项目名
                     temp.setCustojapanese(recordOne.getCustojapanese());//外注公司
+                    temp.setThemeinfor_id(recordOne.getThemeinfor_id());//themeID
                     temp.setClaimamount(item.getClaimamount());//请求金额
                     temp.setClaimdate(item.getClaimdate());//请求日期
                     temp.setDeliverydate(item.getDeliverydate());//纳品日期
@@ -682,25 +694,25 @@ public class AwardServiceImpl implements AwardService {
                     res.add(temp);
                 });
             }
-            if(res != null && res.size() > 0){
+            if(res != null && res.size() > 0) {
                 entrustSupportMapper.insetList(res);//插入请负委托一览
-            }
-            //region 合同担当发送代办 from
-            List<MembersVo> rolelist = roleService.getMembers("5e7862618f43163084351135");//合同担当
-            if (rolelist.size() > 0) {
-                for (MembersVo rt : rolelist) {
-                    ToDoNotice toDoNotice3 = new ToDoNotice();
-                    toDoNotice3.setTitle("【" + award.getContractnumber() + "】决裁流程结束，请前往请负委托一览进行状态处理！");
-                    toDoNotice3.setInitiator(award.getUser_id());
-                    toDoNotice3.setDataid(award.getContractnumber());
-                    toDoNotice3.setUrl("/PFANS6012View");
-                    toDoNotice3.setWorkflowurl("/PFANS6012View");
-                    toDoNotice3.preInsert(tokenModel);
-                    toDoNotice3.setOwner(rt.getUserid());
-                    toDoNoticeService.save(toDoNotice3);
+                //region 合同担当发送代办 from
+                List<MembersVo> rolelist = roleService.getMembers("5e7862618f43163084351135");//合同担当
+                if (rolelist.size() > 0) {
+                    for (MembersVo rt : rolelist) {
+                        ToDoNotice toDoNotice3 = new ToDoNotice();
+                        toDoNotice3.setTitle("【" + award.getContractnumber() + "】决裁流程结束，请前往请负委托一览进行状态处理！");
+                        toDoNotice3.setInitiator(award.getUser_id());
+                        toDoNotice3.setDataid(award.getContractnumber());
+                        toDoNotice3.setUrl("/PFANS6012View");
+                        toDoNotice3.setWorkflowurl("/PFANS6012View");
+                        toDoNotice3.preInsert(tokenModel);
+                        toDoNotice3.setOwner(rt.getUserid());
+                        toDoNoticeService.save(toDoNotice3);
+                    }
                 }
+                //endregion 合同担当发送代办 to
             }
-            //endregion 合同担当发送代办 to
         }
     }
     //endregion scc add 委托决裁在流程结束时，更新请负委托一览 to
