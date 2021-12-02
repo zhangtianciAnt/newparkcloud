@@ -116,8 +116,8 @@ public class BlackListServicesImpl implements BlackListServices {
     public void sendDelBlack(BlackList blackList) {
         log.info("Door Inspection Interface Start!");
         // 道闸系统接口地址
-        String urlToken = "http://basf-gatecheck-v3-t-api.dowann.com/api/auth/login?username=bach&password=123456&deviceInfo=pc";
-        String urlDelBalck = "http://basf-gatecheck-v3-t-api.dowann.com/api/out/removebacklist";
+        String urlToken = "https://e-gate-mp.basf.com/api/auth/login?username=bachA&password=66776321&deviceInfo=pc";
+        String urlDelBalck = "https://e-gate-mp.basf.com/api/out/removebacklist";
         // 获取token
         ResponseEntity<String> rst = restTemplate.exchange(urlToken, HttpMethod.GET, null, String.class);
         String value = rst.getBody();
