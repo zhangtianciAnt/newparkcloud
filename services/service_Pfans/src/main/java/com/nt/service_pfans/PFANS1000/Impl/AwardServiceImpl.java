@@ -8,6 +8,7 @@ import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
 import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS6000.EntrustSupport;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
@@ -27,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import tk.mybatis.mapper.util.StringUtil;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -88,6 +90,9 @@ public class AwardServiceImpl implements AwardService {
     @Autowired
     private EntrustSupportMapper entrustSupportMapper;
 
+    @Autowired
+    private CompanyProjectsMapper companyprojectsMapper;
+
     @Override
     public List<Award> get(Award award) throws Exception {
         List<Award> awardlist = awardMapper.select(award);
@@ -96,6 +101,133 @@ public class AwardServiceImpl implements AwardService {
         }
         return awardlist;
     }
+
+    //  add  ml   211201  决裁书分页  from
+    @Override
+    public List<Award> getVerdict(Award award) throws Exception {
+        Contractapplication contract = new Contractapplication();
+        contract.setType("2");
+        List<Contractapplication> coList = contractapplicationMapper.select(contract);
+        List<Map<String, String>> checkdata = new ArrayList<>();
+        List<Contractapplication> pjCodeList = contractapplicationMapper.getPjCode();
+        for (Contractapplication con : coList) {
+            List<Contractapplication> newpjCodeList = pjCodeList.stream().filter(str -> (str.getContractnumber().equals(con.getContractnumber()))).collect(Collectors.toList());
+            if (newpjCodeList.size() > 0) {
+                String strProjectnumber = newpjCodeList.get(0).getProjectnumber();
+                con.setProjectnumber(strProjectnumber.substring(0, strProjectnumber.length() - 1));
+            }
+            if ("1".equals(con.getState()) || "有效".equals(con.getState())) {
+                Map<String, String> map = new HashMap<>();
+                map.put("contractnumber", con.getContractnumber());
+                checkdata.add(map);
+            }
+        }
+
+        List<Award> awardlist = awardMapper.select(award);
+        if (awardlist.size() > 0) {
+            awardlist = awardlist.stream().sorted(Comparator.comparing(Award::getCreateon).reversed()).collect(Collectors.toList());
+        }
+
+        List<Award> awardList = new ArrayList<>();
+        for (Map<String, String> check : checkdata) {
+            for (Award aw : awardlist) {
+                if (check.get("contractnumber").equals(aw.getContractnumber())) {
+                    awardList.add(aw);
+                }
+            }
+        }
+
+        List<Award> awardLists = new ArrayList<>();
+        for (Award awar : awardlist) {
+            for (Award awars : awardList) {
+                if (awar.getContractnumber().equals(awars.getContractnumber())) {
+                    awardLists.add(awar);
+                }
+            }
+        }
+
+        return awardLists;
+    }
+    //  add  ml   211201  决裁书分页  to
+
+    //  add  ml  211130  分页  from
+    @Override
+    public List<Award> getPage(Award award) throws Exception {
+        Contractapplication contract = new Contractapplication();
+        contract.setType("1");
+        List<Contractapplication> coList = contractapplicationMapper.select(contract);
+        List<Map<String, String>> checkdata = new ArrayList<>();
+        List<Contractapplication> pjCodeList = contractapplicationMapper.getPjCode();
+        for (Contractapplication con : coList) {
+            List<Contractapplication> newpjCodeList = pjCodeList.stream().filter(str -> (str.getContractnumber().equals(con.getContractnumber()))).collect(Collectors.toList());
+            if (newpjCodeList.size() > 0) {
+                String strProjectnumber = newpjCodeList.get(0).getProjectnumber();
+                con.setProjectnumber(strProjectnumber.substring(0, strProjectnumber.length() - 1));
+            }
+            if ("1".equals(con.getState()) || "有效".equals(con.getState())) {
+                Map<String, String> map = new HashMap<>();
+                map.put("contractnumber", con.getContractnumber());
+                checkdata.add(map);
+            }
+        }
+
+        CompanyProjects pjnameSearch = new CompanyProjects();
+        List<Map<String, String>> pjnameflg = new ArrayList<>();
+        List<CompanyProjects> pjList = companyprojectsMapper.select(pjnameSearch);
+        for (CompanyProjects pj : pjList) {
+            Map<String, String> map = new HashMap<>();
+            map.put("pjcode", pj.getCompanyprojects_id());
+            map.put("pjname", pj.getProject_name());
+            pjnameflg.add(map);
+        }
+
+        List<Award> awardlist = awardMapper.select(award);
+        if (awardlist.size() > 0) {
+            awardlist = awardlist.stream().sorted(Comparator.comparing(Award::getCreateon).reversed()).collect(Collectors.toList());
+        }
+
+        List<Award> awardList = new ArrayList<>();
+        for (Map<String, String> check : checkdata) {
+            for (Award aw : awardlist) {
+                if (check.get("contractnumber").equals(aw.getContractnumber())) {
+                    if (!StringUtil.isEmpty(aw.getPjnamechinese())) {
+                        String numcount[] = aw.getPjnamechinese().split(",");
+                        if (numcount.length > 1) {
+                            String bb = "";
+                            for (int i = 1; i < numcount.length; i++) {
+                                for (int j = 1; j < pjnameflg.size(); j++) {
+                                    if (numcount[i].equals(pjnameflg.get(j).get("pjcode"))) {
+                                        bb = bb + pjnameflg.get(j).get("pjname") + ',';
+                                    }
+                                }
+                            }
+                            if (!StringUtil.isEmpty(bb)) {
+                                aw.setPjnamechinese(bb.substring(0, bb.length() - 1));
+                            }
+                        } else {
+                            for (int i = 1; i < pjnameflg.size(); i++) {
+                                if (pjnameflg.get(i).get("pjcode").equals(aw.getPjnamechinese())) {
+                                    aw.setPjnamechinese(pjnameflg.get(i).get("pjname"));
+                                }
+                            }
+                        }
+                    }
+                    awardList.add(aw);
+                }
+            }
+        }
+
+        List<Award> awardLists = new ArrayList<>();
+        for (Award awar : awardlist) {
+            for (Award awars : awardList) {
+                if (awar.getContractnumber().equals(awars.getContractnumber())) {
+                    awardLists.add(awar);
+                }
+            }
+        }
+        return awardLists;
+    }
+    //  add  ml  211130  分页  to
 
     // 禅道任务152
     @Override
