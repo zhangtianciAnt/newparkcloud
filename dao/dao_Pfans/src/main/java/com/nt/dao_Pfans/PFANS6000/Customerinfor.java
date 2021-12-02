@@ -97,7 +97,6 @@ public class Customerinfor extends BaseModel {
     /**
      * 客户信息主表id
      */
-    @Id
     @Column(name = "CUSTOMERINFORPRIMARY_ID")
     private String customerinforprimary_id;
 

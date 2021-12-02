@@ -4,6 +4,7 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.nt.dao_Pfans.PFANS6000.CompanyStatistics;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.dao_Pfans.PFANS6000.Customerinfor;
@@ -15,6 +16,12 @@ import com.nt.service_pfans.PFANS6000.mapper.CustomerinforPrimaryMapper;
 import com.nt.utils.LogicalException;
 //import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -24,11 +31,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -419,5 +427,74 @@ public class CustomerinforServiceImpl implements CustomerinforService {
     }
 
 
+    //region scc add 人员信息导出 from
+    @Override
+    public void downloadExcel(List<String> ids, HttpServletRequest request, HttpServletResponse resp) throws LogicalException {
+        InputStream in = null;
+        //集合判空
+        try {
+            //表格操作
+            in = getClass().getClassLoader().getResourceAsStream("jxls_templates/renyuanxinxidaochu.xlsx");
+            XSSFWorkbook workbook = new XSSFWorkbook(in);
+            this.getReportWork1(workbook.getSheetAt(0), ids);
+            OutputStream os = resp.getOutputStream();// 取得输出流
+            String fileName = "人员信息";
+            resp.setContentType("application/vnd.ms-excel;charset=utf-8");
+            resp.setHeader("Content-Disposition", "attachment;filename="
+                    + new String((fileName + ".xlsx").getBytes(), "iso-8859-1"));
+            workbook.write(os);
+            workbook.close();
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+    }
+
+    private void getReportWork1(XSSFSheet sheet1, List<String> ids) throws LogicalException {
+        try {
+            if (ids != null && ids.size() > 0) {
+                List<Customerinfor> customerinforList = customerinforMapper.export(ids);
+                //将数据放入Excel
+                if (customerinforList != null && customerinforList.size() > 0) {
+                    int i = 0;
+                    for (Customerinfor c : customerinforList) {
+                        //创建工作表的行
+                        XSSFRow row = sheet1.createRow(i + 1);
+                        for (int j = 0; j < 23; j++) {
+                            switch (j) {
+                                case 0: row.createCell(j).setCellValue(c.getCustchinese());break;
+                                case 1: row.createCell(j).setCellValue(c.getCustjapanese());break;
+                                case 2: row.createCell(j).setCellValue(c.getCustenglish());break;
+                                case 3: row.createCell(j).setCellValue(c.getAbbreviation());break;
+                                case 4: row.createCell(j).setCellValue(c.getLiableperson());break;
+                                case 5: row.createCell(j).setCellValue(c.getThecompany());break;
+                                case 6: row.createCell(j).setCellValue(c.getCausecode());break;
+                                case 7: row.createCell(j).setCellValue(c.getRegindiff());break;
+                                case 8: row.createCell(j).setCellValue(c.getThedepC());break;
+                                case 9: row.createCell(j).setCellValue(c.getThedepJ());break;
+                                case 10: row.createCell(j).setCellValue(c.getThedepE());break;
+                                case 11: row.createCell(j).setCellValue(c.getProchinese());break;
+                                case 12: row.createCell(j).setCellValue(c.getProjapanese());break;
+                                case 13: row.createCell(j).setCellValue(c.getProenglish());break;
+                                case 14: row.createCell(j).setCellValue(c.getProtelephone());break;
+                                case 15: row.createCell(j).setCellValue(c.getProtemail());break;
+                                case 16: row.createCell(j).setCellValue(c.getAddchinese());break;
+                                case 17: row.createCell(j).setCellValue(c.getAddjapanese());break;
+                                case 18: row.createCell(j).setCellValue(c.getAddenglish());break;
+                                case 19: row.createCell(j).setCellValue(c.getPerscale());break;
+                                case 20: row.createCell(j).setCellValue(c.getWebsite());break;
+                                case 21: row.createCell(j).setCellValue(c.getRemarks());break;
+                            }
+                        }
+                        i += 1;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
+        }
+    }
+    //endregion scc add 人员信息导出 to
 
 }

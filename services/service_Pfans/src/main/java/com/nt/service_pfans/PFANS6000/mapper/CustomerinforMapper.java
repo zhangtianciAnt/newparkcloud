@@ -9,4 +9,7 @@ import java.util.List;
 
 public interface CustomerinforMapper extends MyMapper<Customerinfor> {
     void updateCustAll(@Param("list") List<Customerinfor> customerinforList);
+
+    List<Customerinfor> export(@Param("list") List<String> ids);
+
 }

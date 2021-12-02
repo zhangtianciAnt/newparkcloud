@@ -40,4 +40,17 @@
 		</foreach>
 	</update>
 
+	<select id="export" parameterType="java.util.List" resultType="com.nt.dao_Pfans.PFANS6000.Customerinfor">
+		<if test="list != null">
+			select * from customerinfor c
+			<where>
+				and c.CUSTOMERINFORPRIMARY_ID in
+				<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</where>
+			order by c.CUSTCHINESE,c.THEDEPC,c.PROCHINESE
+		</if>
+	</select>
+
 </mapper>

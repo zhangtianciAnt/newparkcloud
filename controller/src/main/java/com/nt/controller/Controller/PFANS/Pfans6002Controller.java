@@ -6,14 +6,14 @@ import com.nt.service_pfans.PFANS6000.CustomerinforService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -89,7 +89,18 @@ public class Pfans6002Controller {
         ExcelOutPutUtil.OutPut("客户信息","kehuxinxi.xlsx",data,response);
     }
 
-
+    /**
+     * 导出人员信息Excel
+     *  scc add 21/12/2
+     */
+    @RequestMapping(value = "/downloadExcel", method = { RequestMethod.POST},produces = "text/html;charset=UTF-8")
+    public void downloadExcel(@RequestBody List<String> ids,HttpServletRequest request, HttpServletResponse resp) {
+        try {
+            customerinforService.downloadExcel(ids,request,resp);
+        } catch (LogicalException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }
