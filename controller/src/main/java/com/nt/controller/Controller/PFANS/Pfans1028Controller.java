@@ -34,6 +34,16 @@ public class Pfans1028Controller {
         return ApiResult.success(nonJudgmentService.get(nonJudgment));
     }
 
+    //   add  ml  211130  分页  from
+    @RequestMapping(value = "/getPage", method = {RequestMethod.GET})
+    public ApiResult getPage(HttpServletRequest request)throws Exception{
+        TokenModel tokenModel=tokenService.getToken(request);
+        NonJudgment nonJudgment =new NonJudgment();
+        nonJudgment.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(nonJudgmentService.getPage(nonJudgment));
+    }
+    //   add  ml  211130  分页  to
+
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult one(@RequestBody NonJudgment nonJudgment, HttpServletRequest request) throws Exception{
         if(nonJudgment==null){
