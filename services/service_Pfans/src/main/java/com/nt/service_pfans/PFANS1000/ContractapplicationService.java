@@ -13,6 +13,12 @@ import java.util.Map;
 public interface ContractapplicationService {
 
     ContractapplicationVo get(Contractapplication contractapplication) throws Exception;
+    // add   ml   211126  分页   from
+    List<Contractapplication> getPage(Contractapplication contractapplication) throws Exception;
+    // add   ml   211126  分页   to
+    // add   ml   211129  决裁书分页   from
+    List<Award> getPages(Award ward) throws Exception;
+    // add   ml   211129  决裁书分页   to
     //    dialog优化分页 ztc fr
     TableDataInfo getforContDiaLog(int currentPage, int pageSize) throws Exception;
     //    dialog优化分页 ztc to
@@ -27,6 +33,10 @@ public interface ContractapplicationService {
     //add-ws-7/22-禅道341任务
     List<Individual> getindividual(Individual individual ) throws Exception;
     //add-ws-7/22-禅道341任务
+
+    //  add  ml  211130  个别合同分页  from
+    List<Individual> getindividualPage(Individual individual ) throws Exception;
+    //  add  ml  211130  个别合同分页  to
     List<ContractapplicationVo> getList(List<Contractapplication> contractapplicationlist) throws Exception;
 
     public void update(ContractapplicationVo contractapplication, TokenModel tokenModel) throws Exception;

@@ -43,6 +43,16 @@ public class Pfans1032Controller {
         return ApiResult.success(petitionService.get(petition));
     }
 
+     //  add  ml  211201  分页  from
+     @RequestMapping(value = "/getPage", method = {RequestMethod.GET})
+     public ApiResult getPage(HttpServletRequest request)throws Exception{
+         TokenModel tokenModel=tokenService.getToken(request);
+         Petition petition=new Petition();
+         petition.setOwners(tokenModel.getOwnerList());
+         return ApiResult.success(petitionService.getPage(petition));
+     }
+    //  add  ml  211201  分页  to
+
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult one(@RequestBody Petition petition,HttpServletRequest request) throws Exception{
         if(petition==null){

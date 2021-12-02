@@ -45,6 +45,16 @@ public class pfans1031Controller {
 
     }
 
+    //  add  ml  211130  分页  from
+    @RequestMapping(value="/getPage",method = {RequestMethod.GET})
+    public ApiResult getPage(HttpServletRequest request)throws  Exception{
+        TokenModel tokenModel = tokenService.getToken(request);
+        Napalm napalm = new Napalm();
+        napalm.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(napalmService.getPage(napalm));
+    }
+    //  add  ml  211130  分页  to
+
     @RequestMapping(value = "/one",method={RequestMethod.POST})
     public ApiResult one(@RequestBody Napalm napalm, HttpServletRequest request) throws Exception {
         if (napalm == null) {

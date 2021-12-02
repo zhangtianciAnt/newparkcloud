@@ -12,6 +12,12 @@ import java.util.List;
 public interface AwardService {
 
       List<Award> get(Award award) throws Exception;
+      //  add  ml  211130  分页  from
+      List<Award> getPage(Award award) throws Exception;
+      //  add  ml  211130  分页  to
+      //  add  ml   211201  决裁书分页  from
+      List<Award> getVerdict(Award award) throws Exception;
+      //  add  ml   211201  决裁书分页  to
       AwardVo selectById(String award_id) throws Exception;
       // 禅道任务152
       List<Award> One(Award award) throws Exception;

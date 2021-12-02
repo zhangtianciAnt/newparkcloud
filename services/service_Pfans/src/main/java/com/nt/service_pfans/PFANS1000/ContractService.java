@@ -8,6 +8,10 @@ import java.util.List;
 public interface ContractService {
     List<Contract> get(Contract contract)throws Exception;
 
+    //  add  ml  211130  分页  from
+    List<Contract> getPage(Contract contract)throws Exception;
+    //  add  ml  211130  分页  to
+
     public ContractVo One(String contract_id)throws  Exception;
 
     public void update(Contract contract, TokenModel tokenModel)throws  Exception;

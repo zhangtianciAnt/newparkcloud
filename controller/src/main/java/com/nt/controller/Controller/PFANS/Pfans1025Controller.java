@@ -285,6 +285,15 @@ public class Pfans1025Controller {
         return ApiResult.success(awardService.get(award));
     }
 
+    //  add  ml  211130  分页  from
+    @RequestMapping(value = "/getPage", method = {RequestMethod.GET})
+    public ApiResult getPage(Award award, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        award.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(awardService.getPage(award));
+    }
+    //  add  ml  211130  分页  to
+
     // add-ws-7/14-禅道144任务
     @RequestMapping(value = "/get2", method = {RequestMethod.GET})
     public ApiResult get2(Award award, HttpServletRequest request) throws Exception {
@@ -449,6 +458,16 @@ public class Pfans1025Controller {
         }
         return ApiResult.success(awardService.get(award));
     }
+
+    //  add  ml   211201  决裁书分页  from
+    @RequestMapping(value = "/getVerdict", method = {RequestMethod.POST})
+    public ApiResult getVerdict(@RequestBody Award award, HttpServletRequest request) throws Exception {
+        if (award == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(awardService.getVerdict(award));
+    }
+    //  add  ml   211201  决裁书分页  from
 
     /**
      * @方法名：reportContractEn

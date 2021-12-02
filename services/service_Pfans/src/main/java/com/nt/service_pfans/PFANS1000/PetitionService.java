@@ -10,6 +10,10 @@ public interface PetitionService {
 
     List<Petition> get(Petition petition) throws Exception;
 
+    //  add  ml  211201  分页  from
+    List<Petition> getPage(Petition petition) throws Exception;
+    //  add  ml  211201  分页  to
+
      Petition one(String petition_id) throws Exception;
 
      void update(Petition petition,TokenModel tokenModel) throws Exception;

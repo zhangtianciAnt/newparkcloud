@@ -57,6 +57,15 @@ public class Pfans1026Controller {
         return ApiResult.success(contractapplicationService.getindividual(individual));
     }
 
+    //  add  ml  211130  个别合同分页  from
+    @RequestMapping(value = "/getindividualPage", method = {RequestMethod.POST})
+    public ApiResult getindividualPage(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Individual individual = new Individual();
+        individual.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(contractapplicationService.getindividualPage(individual));
+    }
+    //  add  ml  211130  个别合同分页  to
     @RequestMapping(value = "/generatesta", method = {RequestMethod.GET})
     public void generateJxls(String individual_id, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Map<String, Object> data = new HashMap<>();
@@ -118,6 +127,30 @@ public class Pfans1026Controller {
         contractapplication.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(contractapplicationService.get(contractapplication));
     }
+
+    // add   ml   211126  分页   from
+    @RequestMapping(value = "/getPage", method = {RequestMethod.POST})
+    public ApiResult getPage(@RequestBody Contractapplication contractapplication, HttpServletRequest request) throws Exception {
+        if (contractapplication == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        contractapplication.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(contractapplicationService.getPage(contractapplication));
+    }
+    // add   ml   211126  分页   to
+
+    // add   ml   211129  决裁书分页   from
+    @RequestMapping(value = "/getPages", method = {RequestMethod.POST})
+    public ApiResult getPages(@RequestBody Award ward, HttpServletRequest request) throws Exception {
+        if (ward == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        ward.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(contractapplicationService.getPages(ward));
+    }
+    // add   ml   211129  决裁书分页   to
 
     //add-ccm-0610-已经纳品的回数查询 str
     @RequestMapping(value = "/getNaPpinAftercount", method = {RequestMethod.GET})

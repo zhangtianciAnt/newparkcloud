@@ -46,6 +46,16 @@ public class Pfans1027Controller {
         return ApiResult.success(quotationService.get(quotation));
     }
 
+    //  add  ml  211130  报价单分页  from
+    @RequestMapping(value = "/getQuotation", method = {RequestMethod.GET})
+    public ApiResult getQuotation(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Quotation quotation =new Quotation();
+        quotation.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(quotationService.getQuotation(quotation));
+    }
+    //  add  ml  211130  报价单分页  to
+
     @RequestMapping(value = "/selectById", method = {RequestMethod.GET})
     public ApiResult selectById(String quotationid, HttpServletRequest request) throws Exception {
         if (quotationid == null) {
