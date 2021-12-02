@@ -127,6 +127,50 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     }
     //add-ws-7/22-禅道341任务
 
+    //  add  ml  211130  个别合同分页  from
+    @Override
+    public List<Individual> getindividualPage(Individual individual) throws Exception {
+        Contractapplication contractapplication = new Contractapplication();
+        contractapplication.setType("0");
+        List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
+        // add gbb 210909 受託契約列表添加【项目编号】 start
+        //查询合同关联的所有项目编号
+        List<Contractapplication> pjCodeList = contractapplicationMapper.getPjCode();
+        List<Map<String, String>> checkdata = new ArrayList<>();
+        for (Contractapplication con : coList) {
+            List<Contractapplication> newpjCodeList = pjCodeList.stream().filter(str -> (str.getContractnumber().equals(con.getContractnumber()))).collect(Collectors.toList());
+            if (newpjCodeList.size() > 0) {
+                //项目编号
+                String strProjectnumber = newpjCodeList.get(0).getProjectnumber();
+                con.setProjectnumber(strProjectnumber.substring(0, strProjectnumber.length() - 1));
+            }
+            if ("1".equals(con.getState()) || "有效".equals(con.getState())) {
+                Map<String, String> map = new HashMap<>();
+                map.put("contractnumber", con.getContractnumber());
+                checkdata.add(map);
+            }
+        }
+        List<Individual> individualList = individualmapper.select(individual);
+        List<Individual> indivList = new ArrayList<>();
+        for (Map<String, String> data : checkdata) {
+            for (Individual indiv : individualList) {
+                if (data.get("contractnumber").equals(indiv.getContractnumber())) {
+                    indivList.add(indiv);
+                }
+            }
+        }
+        List<Individual> indivLists = new ArrayList<>();
+        for (Individual individ : individualList) {
+            for (Individual indivi : indivList) {
+                if (indivi.getContractnumber().equals(individ.getContractnumber())) {
+                    indivLists.add(individ);
+                }
+            }
+        }
+        return indivLists;
+    }
+
+    //  add  ml  211130  个别合同分页  to
     @Override
     public ContractapplicationVo get(Contractapplication contractapplication) {
         ContractapplicationVo vo = new ContractapplicationVo();
@@ -234,7 +278,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         List<Contractapplication> coList = contractapplicationMapper.select(contract);
         // add gbb 210909 受託契約列表添加【项目编号】 start
         //查询合同关联的所有项目编号
-        List<Map<String,String>> checkdata = new ArrayList<>();
+        List<Map<String, String>> checkdata = new ArrayList<>();
         List<Contractapplication> pjCodeList = contractapplicationMapper.getPjCode();
         for (Contractapplication con : coList) {
             List<Contractapplication> newpjCodeList = pjCodeList.stream().filter(str -> (str.getContractnumber().equals(con.getContractnumber()))).collect(Collectors.toList());
@@ -244,19 +288,19 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                 con.setProjectnumber(strProjectnumber.substring(0, strProjectnumber.length() - 1));
             }
             if ("1".equals(con.getState()) || "有效".equals(con.getState())) {
-                Map<String,String> map = new HashMap<>();
-                map.put("contractnumber",con.getContractnumber());
+                Map<String, String> map = new HashMap<>();
+                map.put("contractnumber", con.getContractnumber());
                 checkdata.add(map);
             }
         }
         // add gbb 210909 受託契約列表添加【项目编号】 end
         CompanyProjects pjnameSearch = new CompanyProjects();
-        List<Map<String,String>> pjnameflg = new ArrayList<>();
+        List<Map<String, String>> pjnameflg = new ArrayList<>();
         List<CompanyProjects> pjList = companyprojectsMapper.select(pjnameSearch);
         for (CompanyProjects pj : pjList) {
-            Map<String,String> map = new HashMap<>();
-            map.put("pjcode",pj.getCompanyprojects_id());
-            map.put("pjname",pj.getProject_name());
+            Map<String, String> map = new HashMap<>();
+            map.put("pjcode", pj.getCompanyprojects_id());
+            map.put("pjname", pj.getProject_name());
             pjnameflg.add(map);
         }
 
@@ -267,58 +311,65 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
             awardlist = awardlist.stream().sorted(Comparator.comparing(Award::getCreateon).reversed()).collect(Collectors.toList());
         }
         List<Award> awardLists = new ArrayList<>();
-        for (Map<String,String> check : checkdata) {
+        for (Map<String, String> check : checkdata) {
             for (Award ard : awardlist) {
                 if (check.get("contractnumber").equals(ard.getContractnumber())) {
-//                    if (!StringUtil.isEmpty(ard.getAward_id())) {
-//                        if (!StringUtil.isEmpty(ard.getContracttype())) {
-//                            Dictionary letContrscttype = dictionaryMapper.selectByPrimaryKey(ard.getContracttype());
-//                            ard.setContracttype(letContrscttype !=null ? letContrscttype.getValue1() : ard.getContracttype());
-//                        }
-//                        if (!StringUtil.isEmpty(ard.getCurrencyposition())) {
-//                            MonthlyRate month = new MonthlyRate();
-//                            month.setCurrency(ard.getCurrencyposition());
-//                            List<MonthlyRate> letCurrencyposition = monthlyRateMapper.select(month);
-//                            ard.setCurrencyposition(letCurrencyposition.size() > 0 ? letCurrencyposition.get(0).getCurrencyname() : ard.getCurrencyposition());
-//                        }
-//                        if (ard.getStatus().equals( '0')) {
-//                            ard.setModifyon(null);
-//                        }
-//                        if (!StringUtil.isEmpty(ard.getStatus())) {
-//                            ard.setStatus(ard.getStatus());
-//                        }
-//                        if (!StringUtil.isEmpty(ard.getRemarks())) {
-//                            ard.setRemarks("");
-//                        }
-//                    }
-                    if (!StringUtil.isEmpty(ard.getPjnamechinese())) {
-                        String numcount[] = ard.getPjnamechinese().split(",");
-                        if (numcount.length > 1) {
-                            String bb = "";
-                            for (int i = 1; i < numcount.length; i++) {
-                                for (int j = 1; j < pjnameflg.size();j++){
-                                    if(numcount[i].equals(pjnameflg.get(j).get("pjcode"))){
-                                        bb = bb + pjnameflg.get(j).get("pjname") + ',';
+                    if (!StringUtil.isEmpty(ard.getAward_id())) {
+                        if (!StringUtil.isEmpty(ard.getContracttype())) {
+                            Dictionary letContrscttype = dictionaryMapper.selectByPrimaryKey(ard.getContracttype());
+                            ard.setContracttype(letContrscttype != null ? letContrscttype.getValue1() : ard.getContracttype());
+                        }
+                        if (!StringUtil.isEmpty(ard.getCurrencyposition())) {
+                            MonthlyRate month = new MonthlyRate();
+                            month.setCurrency(ard.getCurrencyposition());
+                            List<MonthlyRate> letCurrencyposition = monthlyRateMapper.select(month);
+                            ard.setCurrencyposition(letCurrencyposition.size() > 0 ? letCurrencyposition.get(0).getCurrencyname() : ard.getCurrencyposition());
+                        }
+                        if (StringUtil.isEmpty(ard.getSealstatus())) {
+                            ard.setSealstatus("");
+                        } else if ("1".equals(ard.getSealstatus())) {
+                            ard.setSealstatus("暂存");
+                        } else if ("2".equals(ard.getSealstatus())) {
+                            ard.setSealstatus("进行中");
+                        } else if ("3".equals(ard.getSealstatus())) {
+                            ard.setSealstatus("已完成");
+                        }
+                        if (!StringUtil.isEmpty(ard.getPjnamechinese())) {
+                            String numcount[] = ard.getPjnamechinese().split(",");
+                            if (numcount.length > 1) {
+                                String bb = "";
+                                for (int i = 1; i < numcount.length; i++) {
+                                    for (int j = 1; j < pjnameflg.size(); j++) {
+                                        if (numcount[i].equals(pjnameflg.get(j).get("pjcode"))) {
+                                            bb = bb + pjnameflg.get(j).get("pjname") + ',';
+                                        }
+                                    }
+                                }
+                                if (!StringUtil.isEmpty(bb)) {
+                                    ard.setPjnamechinese(bb.substring(0, bb.length() - 1));
+                                }
+                            } else {
+                                for (int i = 1; i < pjnameflg.size(); i++) {
+                                    if (pjnameflg.get(i).get("pjcode").equals(ard.getPjnamechinese())) {
+                                        ard.setPjnamechinese(pjnameflg.get(i).get("pjname"));
                                     }
                                 }
                             }
-                            if (!StringUtil.isEmpty(bb)) {
-                                ard.setPjnamechinese(bb.substring(0,bb.length()-1));
-                            }
-                        } else {
-                            for (int i = 1; i < pjnameflg.size();i++){
-                                if (pjnameflg.get(i).get("pjcode").equals(ard.getPjnamechinese())) {
-                                    ard.setPjnamechinese(pjnameflg.get(i).get("pjname"));
-                                }
-                            }
                         }
+                        awardLists.add(ard);
                     }
-                    awardLists.add(ard);
                 }
             }
         }
-
-        return awardLists;
+        List<Award> ardlists = new ArrayList<>();
+        for (Award list : awardlist) {
+            for (Award lists : awardLists) {
+                if (list.getContractnumber().equals(lists.getContractnumber())) {
+                    ardlists.add(list);
+                }
+            }
+        }
+        return ardlists;
     }
     // add   ml   211129  决裁书分页   to
 

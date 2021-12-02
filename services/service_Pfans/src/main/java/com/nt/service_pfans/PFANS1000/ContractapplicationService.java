@@ -33,6 +33,10 @@ public interface ContractapplicationService {
     //add-ws-7/22-禅道341任务
     List<Individual> getindividual(Individual individual ) throws Exception;
     //add-ws-7/22-禅道341任务
+
+    //  add  ml  211130  个别合同分页  from
+    List<Individual> getindividualPage(Individual individual ) throws Exception;
+    //  add  ml  211130  个别合同分页  to
     List<ContractapplicationVo> getList(List<Contractapplication> contractapplicationlist) throws Exception;
 
     public void update(ContractapplicationVo contractapplication, TokenModel tokenModel) throws Exception;
