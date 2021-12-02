@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS6000.Customerinfor;
+import com.nt.dao_Pfans.PFANS6000.CustomerinforPrimary;
 import com.nt.service_pfans.PFANS6000.CustomerinforService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,12 +28,11 @@ public class Pfans6002Controller {
     @Autowired
     private TokenService tokenService;
 
-    @RequestMapping(value = "/get", method = {RequestMethod.GET})
-    public ApiResult getcustomerinfor(HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/getcustomerinforprimary", method = {RequestMethod.GET})
+    public ApiResult getcustomerinforprimary(HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        Customerinfor customerinfor = new Customerinfor();
-        customerinfor.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(customerinforService.getcustomerinfor(customerinfor, tokenModel));
+        CustomerinforPrimary customerinforprimary = new CustomerinforPrimary();
+        return ApiResult.success(customerinforService.getcustomerinforPrimary(customerinforprimary, tokenModel));
     }
 
     @RequestMapping(value = "/get2", method = {RequestMethod.GET})
@@ -48,26 +49,26 @@ public class Pfans6002Controller {
         }
         TokenModel tokenModel = tokenService.getToken(request);
         customerinfor.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(customerinforService.getcustomerinforApplyOne(customerinfor.getCustomerinfor_id()));
+        return ApiResult.success(customerinforService.getcustomerinforApplyOne(customerinfor));
     }
 
     @RequestMapping(value = "/update", method = {RequestMethod.POST})
-    public ApiResult updatecustomerinforApply(@RequestBody Customerinfor customerinfor, HttpServletRequest request) throws Exception {
-        if (customerinfor == null) {
+    public ApiResult updatecustomerinforApply(@RequestBody List<Customerinfor> customerinforList, HttpServletRequest request) throws Exception {
+        if (customerinforList.size() == 0) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        customerinforService.updatecustomerinforApply(customerinfor, tokenModel);
+        customerinforService.updatecustomerinforApply(customerinforList, tokenModel);
         return ApiResult.success();
     }
 
     @RequestMapping(value = "/create", method = {RequestMethod.POST})
-    public ApiResult createcustomerinforApply(@RequestBody Customerinfor customerinfor, HttpServletRequest request) throws Exception {
-        if (customerinfor == null) {
+    public ApiResult createcustomerinforApply(@RequestBody List<Customerinfor> customerinforList, HttpServletRequest request) throws Exception {
+        if (customerinforList.size() == 0) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        customerinforService.createcustomerinforApply(customerinfor, tokenModel);
+        customerinforService.createcustomerinforApply(customerinforList, tokenModel);
         return ApiResult.success();
     }
 

@@ -4,11 +4,16 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.dao_Pfans.PFANS6000.Customerinfor;
+import com.nt.dao_Pfans.PFANS6000.CustomerinforPrimary;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS6000.CustomerinforService;
 import com.nt.service_pfans.PFANS6000.mapper.CustomerinforMapper;
+import com.nt.service_pfans.PFANS6000.mapper.CustomerinforPrimaryMapper;
 import com.nt.utils.LogicalException;
+//import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,9 +26,11 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
@@ -32,26 +39,114 @@ public class CustomerinforServiceImpl implements CustomerinforService {
     @Autowired
     private CustomerinforMapper customerinforMapper;
 
+    @Autowired
+    private CustomerinforPrimaryMapper customerinforPrimaryMapper;
+
     @Override
     public List<Customerinfor> getcustomerinfor(Customerinfor customerinfor, TokenModel tokenModel) throws Exception {
         return customerinforMapper.select(customerinfor);
     }
 
     @Override
-    public Customerinfor getcustomerinforApplyOne(String customerinfor_id) throws Exception {
-        return customerinforMapper.selectByPrimaryKey(customerinfor_id);
+    public List<CustomerinforPrimary> getcustomerinforPrimary(CustomerinforPrimary customerinforprimary, TokenModel tokenModel) throws Exception {
+        List<CustomerinforPrimary> customerinforPrimaryList = customerinforPrimaryMapper.select(customerinforprimary);
+        if (customerinforPrimaryList.size() > 0) {
+            //创建时间降序排列
+            customerinforPrimaryList = customerinforPrimaryList.stream().sorted(Comparator.comparing(CustomerinforPrimary::getCreateon).reversed()).collect(Collectors.toList());
+        }
+        return customerinforPrimaryList;
     }
 
     @Override
-    public void updatecustomerinforApply(Customerinfor customerinfor, TokenModel tokenModel) throws Exception {
-        customerinforMapper.updateByPrimaryKeySelective(customerinfor);
+    public List<Customerinfor> getcustomerinforApplyOne(Customerinfor customerinfor) throws Exception {
+        List<Customerinfor> customerinforList = customerinforMapper.select(customerinfor);
+        if (customerinforList.size() > 0) {
+            //所属部门升序排列
+            customerinforList = customerinforList.stream().sorted(Comparator.comparing(Customerinfor::getThedepC)).collect(Collectors.toList());
+        }
+        return customerinforList;
     }
 
     @Override
-    public void createcustomerinforApply(Customerinfor customerinfor, TokenModel tokenModel) throws Exception {
-        customerinfor.preInsert(tokenModel);
-        customerinfor.setCustomerinfor_id(UUID.randomUUID().toString());
-        customerinforMapper.insert(customerinfor);
+    public void updatecustomerinforApply(List<Customerinfor> customerinforList, TokenModel tokenModel) throws Exception {
+        List<Customerinfor> customerinforListinsert = new ArrayList<>();
+        List<Customerinfor> customerinforListupdate = new ArrayList<>();
+
+        //更新主表
+        CustomerinforPrimary customerinforPrimary = new CustomerinforPrimary();
+        customerinforPrimary.setCustchinese(customerinforList.get(0).getCustchinese());
+        customerinforPrimary.setCustenglish(customerinforList.get(0).getCustenglish());
+        customerinforPrimary.setCustjapanese(customerinforList.get(0).getCustjapanese());
+        customerinforPrimary.setAbbreviation(customerinforList.get(0).getAbbreviation());
+        customerinforPrimary.setLiableperson(customerinforList.get(0).getLiableperson());
+        customerinforPrimary.setThecompany(customerinforList.get(0).getThecompany());
+        customerinforPrimary.setCausecode(customerinforList.get(0).getCausecode());
+        customerinforPrimary.setRegindiff(customerinforList.get(0).getRegindiff());
+        customerinforPrimary.setCustomerinforprimary_id(customerinforList.get(0).getCustomerinforprimary_id());
+        customerinforPrimary.preUpdate(tokenModel);
+        customerinforPrimaryMapper.updateByPrimaryKey(customerinforPrimary);
+
+        for(Customerinfor c : customerinforList)
+        {
+            //存在主键，说明是修改
+            //不存在主键，说明是插入
+            if(!StringUtils.isNullOrEmpty(c.getCustomerinfor_id()))
+            {
+                c.preUpdate(tokenModel);
+                customerinforListupdate.add(c);
+            }
+            else
+            {
+                c.preInsert(tokenModel);
+                c.setCustomerinfor_id(UUID.randomUUID().toString());
+                customerinforListinsert.add(c);
+            }
+        }
+        if(customerinforListinsert.size() > 0)
+        {
+            customerinforMapper.insertListAllCols(customerinforListinsert);
+        }
+        if(customerinforListupdate.size() > 0)
+        {
+            customerinforMapper.updateCustAll(customerinforListupdate);
+        }
+    }
+
+    @Override
+    public void createcustomerinforApply(List<Customerinfor> customerinforList, TokenModel tokenModel) throws Exception {
+
+        //数据查重检索，条件基本信息的8个字段
+        CustomerinforPrimary customerinforPrimary = new CustomerinforPrimary();
+        customerinforPrimary.setCustchinese(customerinforList.get(0).getCustchinese());
+        customerinforPrimary.setCustenglish(customerinforList.get(0).getCustenglish());
+        customerinforPrimary.setCustjapanese(customerinforList.get(0).getCustjapanese());
+        customerinforPrimary.setAbbreviation(customerinforList.get(0).getAbbreviation());
+        customerinforPrimary.setLiableperson(customerinforList.get(0).getLiableperson());
+        customerinforPrimary.setThecompany(customerinforList.get(0).getThecompany());
+        customerinforPrimary.setCausecode(customerinforList.get(0).getCausecode());
+        customerinforPrimary.setRegindiff(customerinforList.get(0).getRegindiff());
+        List<CustomerinforPrimary> customerinforPrimaryList = customerinforPrimaryMapper.select(customerinforPrimary);
+        if(customerinforPrimaryList.size()>0)
+        {
+            throw new LogicalException("当前公司已经存在，请重新输入！");
+        }
+        else
+        {
+            //数据不存在时，主表插入数据
+            customerinforPrimary.setCustomerinforprimary_id(UUID.randomUUID().toString());
+            customerinforPrimary.preInsert(tokenModel);
+            customerinforPrimaryMapper.insert(customerinforPrimary);
+
+            //明细表插入数据
+            List<Customerinfor> customerinforListinsert = new ArrayList<>();
+            for(Customerinfor c : customerinforList)
+            {
+                c.setCustomerinfor_id(UUID.randomUUID().toString());
+                c.setCustomerinforprimary_id(customerinforPrimary.getCustomerinforprimary_id());
+                c.preInsert(tokenModel);
+            }
+            customerinforMapper.insertListAllCols(customerinforList);
+        }
     }
 
 

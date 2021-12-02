@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS6000.mapper.CustomerinforMapper">
+
+	<update id="updateCustAll" parameterType="java.util.List">
+		<foreach item="item" collection="list" index="index">
+			UPDATE customerinfor
+			SET
+			CUSTCHINESE = #{item.custchinese},
+			CUSTJAPANESE = #{item.custjapanese},
+			CUSTENGLISH = #{item.custenglish},
+			ABBREVIATION = #{item.abbreviation},
+			LIABLEPERSON = #{item.liableperson},
+			THECOMPANY = #{item.thecompany},
+			CAUSECODE = #{item.causecode},
+			REGINDIFF = #{item.regindiff},
+			THEDEPC = #{item.thedepC},
+			THEDEPE = #{item.thedepE},
+			THEDEPJ = #{item.thedepJ},
+			CUSTOMERINFORPRIMARY_ID = #{item.customerinforprimary_id},
+			PROCHINESE = #{item.prochinese},
+			PROJAPANESE = #{item.projapanese},
+			PROENGLISH = #{item.proenglish},
+			PROTELEPHONE = #{item.protelephone},
+			PROTEMAIL = #{item.protemail},
+			ADDCHINESE = #{item.addchinese},
+			ADDJAPANESE = #{item.addjapanese},
+			ADDENGLISH = #{item.addenglish},
+			PERSCALE = #{item.perscale},
+			WEBSITE = #{item.website},
+			REMARKS = #{item.remarks},
+			CREATEBY = #{item.createby},
+			CREATEON = #{item.createon},
+			MODIFYBY = #{item.modifyby},
+			MODIFYON = #{item.modifyon},
+			OWNER = #{item.owner},
+			STATUS = #{item.status},
+			TENANTID = #{item.tenantid}
+			WHERE CUSTOMERINFOR_ID = #{item.customerinfor_id};
+		</foreach>
+	</update>
+
+</mapper>

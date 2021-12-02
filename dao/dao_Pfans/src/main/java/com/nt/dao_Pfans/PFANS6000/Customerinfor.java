@@ -53,27 +53,70 @@ public class Customerinfor extends BaseModel {
     private String abbreviation;
 
     /**
-     * 负责人
+     * 公司法人
      */
     @Column(name = "LIABLEPERSON")
     private String liableperson;
 
     /**
-     * 中文(项目联络人)
+     * 所属公司
+     */
+    @Column(name = "THECOMPANY")
+    private String thecompany;
+
+    /**
+     * 事业场编码
+     */
+    @Column(name = "CAUSECODE")
+    private String causecode;
+
+    /**
+     * 地域区分
+     */
+    @Column(name = "REGINDIFF")
+    private String regindiff;
+
+    /**
+     * 所属部门(中)
+     */
+    @Column(name = "THEDEPC")
+    private String thedepC;
+
+    /**
+     * 所属部门(英)
+     */
+    @Column(name = "THEDEPE")
+    private String thedepE;
+
+    /**
+     * 所属部门(日)
+     */
+    @Column(name = "THEDEPJ")
+    private String thedepJ;
+
+    /**
+     * 客户信息主表id
+     */
+    @Id
+    @Column(name = "CUSTOMERINFORPRIMARY_ID")
+    private String customerinforprimary_id;
+
+    /**
+     * 联络人(中文)
      */
     @Encryption
     @Column(name = "PROCHINESE")
     private String prochinese;
 
     /**
-     * 日文(项目联络人)
+     * 联络人(日文)
      */
     @Encryption
     @Column(name = "PROJAPANESE")
     private String projapanese;
 
     /**
-     * 英文(项目联络人)
+     * 联络人(英文)
      */
     @Encryption
     @Column(name = "PROENGLISH")
@@ -92,27 +135,6 @@ public class Customerinfor extends BaseModel {
     @Encryption
     @Column(name = "PROTEMAIL")
     private String protemail;
-
-    /**
-     * 共通事务联络人
-     */
-    @Encryption
-    @Column(name = "COMMONTPERSON")
-    private String commontperson;
-
-    /**
-     * 联系电话
-     */
-    @Encryption
-    @Column(name = "COMTELEPHONE")
-    private String comtelephone;
-
-    /**
-     * 电子邮箱
-     */
-    @Encryption
-    @Column(name = "COMNEMAIL")
-    private String comnemail;
 
     /**
      * 中文(地址)
@@ -154,26 +176,31 @@ public class Customerinfor extends BaseModel {
     private String remarks;
 
     /**
-     * 附件
+     * 暂时无用
      */
     @Column(name = "UPLOADFILE")
     private String uploadfile;
 
     /**
-     * 所属公司
+     * 暂时无用
      */
-    @Column(name = "THECOMPANY")
-    private String thecompany;
+    @Encryption
+    @Column(name = "COMMONTPERSON")
+    private String commontperson;
 
     /**
-     * 事业场编码
+     * 暂时无用
      */
-    @Column(name = "CAUSECODE")
-    private String causecode;
+    @Encryption
+    @Column(name = "COMTELEPHONE")
+    private String comtelephone;
 
     /**
-     * 地域区分
+     * 暂时无用
      */
-    @Column(name = "REGINDIFF")
-    private String regindiff;
+    @Encryption
+    @Column(name = "COMNEMAIL")
+    private String comnemail;
+
+
 }
