@@ -42,6 +42,7 @@ import javax.naming.directory.*;
 import javax.naming.directory.BasicAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -3046,4 +3047,200 @@ public class UserServiceImpl implements UserService {
             throw new LogicalException("0");
         }
     }
+
+    //考勤管理添加分页 ztc fr
+    @Override
+    public List<CustomerInfo> getCustomerPage(String orgid, String orgtype, String pertype, String timee, TokenModel tokenModel) throws Exception {
+        Query query = new Query();
+//        if (StrUtil.isNotBlank(orgid)) {
+//            query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
+//                    Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid)));
+//        }
+        //根据登录用户id查看人员信息
+        List<CustomerInfo> customerInfos = new ArrayList<CustomerInfo>();
+        //5e785fd38f4316308435112d
+        List<MembersVo> rolelist = roleService.getMembers("5e785fd38f4316308435112d");
+        String user_id = "";
+        if (rolelist.size() > 0) {
+            user_id = rolelist.get(0).getUserid();
+        }
+        if (!user_id.equals(tokenModel.getUserId()) && !"5e78b22c4e3b194874180f5f".equals(tokenModel.getUserId()) && !"5e78b2284e3b194874180f47".equals(tokenModel.getUserId())
+                && !"5e78b2034e3b194874180e37".equals(tokenModel.getUserId()) && !"5e78b17ef3c8d71e98a2aa30".equals(tokenModel.getUserId())) {
+            query.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
+            List<CustomerInfo> CustomerInfolist = mongoTemplate.find(query, CustomerInfo.class);
+            query = new Query();
+            if (CustomerInfolist.size() > 0) {
+                if (StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getTeamid())) {
+                    query.addCriteria(Criteria.where("userinfo.teamid").is(CustomerInfolist.get(0).getUserinfo().getTeamid()));
+                } else if (StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getGroupid())) {
+                    query.addCriteria(Criteria.where("userinfo.groupid").is(CustomerInfolist.get(0).getUserinfo().getGroupid()));
+                } else if (StrUtil.isNotBlank(CustomerInfolist.get(0).getUserinfo().getCenterid())) {
+                    query.addCriteria(Criteria.where("userinfo.centerid").is(CustomerInfolist.get(0).getUserinfo().getCenterid()));
+                }
+
+                customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+                int check = 0;
+                if (CustomerInfolist.get(0).getUserinfo().getOtherorgs() != null && CustomerInfolist.get(0).getUserinfo().getOtherorgs().size() > 0) {
+                    for (CustomerInfo.OtherOrgs itemO : CustomerInfolist.get(0).getUserinfo().getOtherorgs()) {
+                        query = new Query();
+                        if (StrUtil.isNotBlank(itemO.getTeamid())) {
+                            check = check + 1;
+                            query.addCriteria(Criteria.where("userinfo.teamid").is(itemO.getTeamid()));
+                        } else if (StrUtil.isNotBlank(itemO.getGroupid())) {
+                            check = check + 1;
+                            query.addCriteria(Criteria.where("userinfo.groupid").is(itemO.getGroupid()));
+                        } else if (StrUtil.isNotBlank(itemO.getCenterid())) {
+                            check = check + 1;
+                            query.addCriteria(Criteria.where("userinfo.centerid").is(itemO.getCenterid()));
+                        }
+                        if (check != 0) {
+                            customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+                        }
+                    }
+                }
+            }
+        } else {
+            query = new Query();
+            customerInfos.addAll(mongoTemplate.find(query, CustomerInfo.class));
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        customerInfos = this.filterPeo(customerInfos, pertype, timee);
+
+        customerInfos = customerInfos.stream().distinct().collect(Collectors.toList());
+        return customerInfos;
+    }
+
+    public List<CustomerInfo> filterPeo(List<CustomerInfo> customerInfos, String pertype, String timee) {
+        Date nowdate = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(nowdate);
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        nowdate = calendar.getTime();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        List<CustomerInfo> resFilPeoList = new ArrayList<>();
+        if (("0").equals(pertype)) {
+            List<CustomerInfo> secFilPeoListOne = new ArrayList<>();
+            for (CustomerInfo cut : customerInfos) {
+                if (StringUtils.isNullOrEmpty(cut.getUserinfo().getResignation_date())){
+                    secFilPeoListOne.add(cut);
+                }else {
+                    Date restDate = new Date();
+                    try {
+                        restDate = sf.parse(cut.getUserinfo().getResignation_date());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    calendar.setTime(restDate);
+                    calendar.add(Calendar.DAY_OF_MONTH, -1);
+                    calendar.add(Calendar.DATE, +1);
+                    restDate = calendar.getTime();
+                    if(sf.format(nowdate).compareTo(sf.format(restDate)) <= 0) {
+                        secFilPeoListOne.add(cut);
+                    }
+                }
+                resFilPeoList = secFilPeoListOne;
+            }
+            if (!StringUtils.isNullOrEmpty(timee)) {
+                List<CustomerInfo> secFilPeoListTwo = new ArrayList<>();
+                for (CustomerInfo res : secFilPeoListOne) {
+                    Date eterTime = new Date();
+                    try {
+                        String enterday = res.getUserinfo().getEnterday().substring(0, 10).replace("/", "-");
+                        eterTime = sf.parse(enterday);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    calendar.setTime(eterTime);
+                    calendar.add(Calendar.DAY_OF_MONTH, -1);
+//                    calendar.add(Calendar.DATE, +1);
+                    eterTime = calendar.getTime();
+
+                    Date starTime = new Date();
+                    Date endTime = new Date();
+                    try {
+                        starTime = sf.parse(timee.substring(0, 10));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    calendar.setTime(starTime);
+                    calendar.add(Calendar.DAY_OF_MONTH, -1);
+                    starTime = calendar.getTime();
+                    try {
+                        endTime = sf.parse(timee.substring(13, 23));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    calendar.setTime(endTime);
+                    calendar.add(Calendar.DAY_OF_MONTH, -1);
+                    endTime = calendar.getTime();
+                    if(sf.format(eterTime).compareTo(sf.format(starTime)) >= 0 && (sf.format(eterTime).compareTo(sf.format(endTime)) <= 0)) {
+                        secFilPeoListTwo.add(res);
+                    }
+                }
+                resFilPeoList = secFilPeoListTwo;
+            }
+        }
+        else if(("1").equals(pertype)){
+            List<CustomerInfo> secFilPeoListOne = new ArrayList<>();
+            for (CustomerInfo cut : customerInfos) {
+                if (!StringUtils.isNullOrEmpty(cut.getUserinfo().getResignation_date())){
+                    Date restDate = new Date();
+                    try {
+                        restDate = sf.parse(cut.getUserinfo().getResignation_date());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    calendar.setTime(restDate);
+                    calendar.add(Calendar.DAY_OF_MONTH, -1);
+                    calendar.add(Calendar.DATE, +1);
+                    restDate = calendar.getTime();
+                    if(sf.format(nowdate).compareTo(sf.format(restDate)) > 0) {
+                        secFilPeoListOne.add(cut);
+                    }
+                }
+                resFilPeoList = secFilPeoListOne;
+            }
+            if (!StringUtils.isNullOrEmpty(timee)) {
+                List<CustomerInfo> secFilPeoListTwo = new ArrayList<>();
+                for (CustomerInfo res : secFilPeoListOne) {
+                    Date leveTime = new Date();
+                    try {
+                        String leveday = res.getUserinfo().getResignation_date().substring(0, 10).replace("/", "-");
+                        leveTime = sf.parse(leveday);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    calendar.setTime(leveTime);
+                    calendar.add(Calendar.DAY_OF_MONTH, -1);
+                    calendar.add(Calendar.DATE, +1);
+                    leveTime = calendar.getTime();
+
+                    Date starTime = new Date();
+                    Date endTime = new Date();
+                    try {
+                        starTime = sf.parse(timee.substring(0, 10));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    calendar.setTime(starTime);
+                    calendar.add(Calendar.DAY_OF_MONTH, -1);
+                    starTime = calendar.getTime();
+                    try {
+                        endTime = sf.parse(timee.substring(13, 23));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    calendar.setTime(endTime);
+                    calendar.add(Calendar.DAY_OF_MONTH, -1);
+                    endTime = calendar.getTime();
+                    if(sf.format(leveTime).compareTo(sf.format(starTime)) >= 0 && (sf.format(leveTime).compareTo(sf.format(endTime)) <= 0)) {
+                        secFilPeoListTwo.add(res);
+                    }
+                }
+                resFilPeoList = secFilPeoListTwo;
+            }
+        }
+        return resFilPeoList;
+    }
+    //考勤管理添加分页 ztc TO
 }

@@ -102,4 +102,8 @@ public interface UserService {
 
     ////add-21/2/3-PSDCD_PFANS_20201124_XQ_033-人员管理添加密码校验
     void checkpassword(UserAccountVo userAccountVo) throws Exception;
+
+    //考勤管理添加分页 ztc fr
+    List<CustomerInfo> getCustomerPage(String orgid, String orgtype, String pertype, String timee, TokenModel tokenModel) throws Exception;
+    //考勤管理添加分页 ztc to
 }

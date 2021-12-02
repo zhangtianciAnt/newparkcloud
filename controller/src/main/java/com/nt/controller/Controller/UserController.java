@@ -410,6 +410,14 @@ public class UserController {
             return ApiResult.success("0");
         }
     }
+
+    //考勤管理添加分页 ztc fr
+    @RequestMapping(value = "/getCustomerPage", method = {RequestMethod.GET})
+    public ApiResult getCustomerPage(String orgid, String orgtype, String pertype, String timee, HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(userService.getCustomerPage(orgid, orgtype, pertype, timee, tokenModel));
+    }
+    //考勤管理添加分页 ztc to
 }
 
 
