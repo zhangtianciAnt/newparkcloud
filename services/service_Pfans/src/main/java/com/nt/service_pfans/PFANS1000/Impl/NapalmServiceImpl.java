@@ -1,9 +1,12 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.Award;
+import com.nt.dao_Pfans.PFANS1000.Contractapplication;
+import com.nt.dao_Pfans.PFANS1000.Individual;
 import com.nt.dao_Pfans.PFANS1000.Napalm;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.service_pfans.PFANS1000.NapalmService;
+import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
 import com.nt.service_pfans.PFANS2000.Impl.WagesServiceImpl;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
@@ -12,8 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +28,9 @@ public class NapalmServiceImpl implements NapalmService {
     @Autowired
     CompanyProjectsMapper companyProjectsMapper;
 
+    @Autowired
+    private ContractapplicationMapper contractapplicationMapper;
+
     @Override
     public List<Napalm> get(Napalm napalm) throws Exception {
         List<Napalm> napalmlist = napalmMapper.select(napalm);
@@ -34,6 +39,54 @@ public class NapalmServiceImpl implements NapalmService {
         }
         return napalmlist;
     }
+
+    //  add  ml  211130  分页  from
+    @Override
+    public List<Napalm> getPage(Napalm napalm) throws Exception {
+        Contractapplication contractapplication = new Contractapplication();
+        contractapplication.setType("1");
+        List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
+        List<Contractapplication> pjCodeList = contractapplicationMapper.getPjCode();
+        List<Map<String, String>> checkdata = new ArrayList<>();
+        for (Contractapplication con : coList) {
+            List<Contractapplication> newpjCodeList = pjCodeList.stream().filter(str -> (str.getContractnumber().equals(con.getContractnumber()))).collect(Collectors.toList());
+            if (newpjCodeList.size() > 0) {
+                String strProjectnumber = newpjCodeList.get(0).getProjectnumber();
+                con.setProjectnumber(strProjectnumber.substring(0, strProjectnumber.length() - 1));
+            }
+            if ("1".equals(con.getState()) || "有效".equals(con.getState())) {
+                Map<String, String> map = new HashMap<>();
+                map.put("contractnumber", con.getContractnumber());
+                checkdata.add(map);
+            }
+        }
+
+        List<Napalm> napalmlist = napalmMapper.select(napalm);
+        if (napalmlist.size() > 0) {
+            napalmlist = napalmlist.stream().sorted(Comparator.comparing(Napalm::getCreateon).reversed()).collect(Collectors.toList());
+        }
+
+        List<Napalm> napalmList = new ArrayList<>();
+        for (Map<String, String> data : checkdata) {
+            for (Napalm nap : napalmlist) {
+                if (data.get("contractnumber").equals(nap.getContractnumber())) {
+                    napalmList.add(nap);
+                }
+            }
+        }
+
+//        List<Napalm> napalmLists = new ArrayList<>();
+//        for (Napalm napa : napalmlist) {
+//            for (Napalm napas : napalmList) {
+//                if (napas.getContractnumber().equals(napa.getContractnumber())) {
+//                    napalmLists.add(napa);
+//                }
+//            }
+//        }
+
+        return napalmList;
+    }
+    //  add  ml  211130  分页  to
 
     @Override
     public Napalm One(String napalm_id) throws Exception {
