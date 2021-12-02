@@ -43,6 +43,9 @@ public class QuotationServiceImpl implements QuotationService {
     @Autowired
     CompanyProjectsMapper companyProjectsMapper;
 
+    @Autowired
+    private ContractapplicationMapper contractapplicationMapper;
+
     @Override
     public List<Quotation> get(Quotation quotation) throws Exception {
         List<Quotation> quotationlist = quotationMapper.select(quotation);
@@ -51,6 +54,53 @@ public class QuotationServiceImpl implements QuotationService {
         }
         return quotationlist;
     }
+
+    //  add  ml  211130  报价单分页  from
+    @Override
+    public List<Quotation> getQuotation(Quotation quotation) throws Exception {
+        Contractapplication contractapplication = new Contractapplication();
+        contractapplication.setType("1");
+        List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
+        // add gbb 210909 受託契約列表添加【项目编号】 start
+        //查询合同关联的所有项目编号
+        List<Contractapplication> pjCodeList = contractapplicationMapper.getPjCode();
+        List<Map<String, String>> checkdata = new ArrayList<>();
+        for (Contractapplication con : coList) {
+            List<Contractapplication> newpjCodeList = pjCodeList.stream().filter(str -> (str.getContractnumber().equals(con.getContractnumber()))).collect(Collectors.toList());
+            if (newpjCodeList.size() > 0) {
+                //项目编号
+                String strProjectnumber = newpjCodeList.get(0).getProjectnumber();
+                con.setProjectnumber(strProjectnumber.substring(0, strProjectnumber.length() - 1));
+            }
+            if ("1".equals(con.getState()) || "有效".equals(con.getState())) {
+                Map<String, String> map = new HashMap<>();
+                map.put("contractnumber", con.getContractnumber());
+                checkdata.add(map);
+            }
+        }
+        List<Quotation> quotationlist = quotationMapper.select(quotation);
+        if (quotationlist.size() > 0) {
+            quotationlist = quotationlist.stream().sorted(Comparator.comparing(Quotation::getCreateon).reversed()).collect(Collectors.toList());
+        }
+        List<Quotation> quoList = new ArrayList<>();
+        for (Map<String, String> data : checkdata) {
+            for (Quotation quo : quotationlist) {
+                if (data.get("contractnumber").equals(quo.getContractnumber())) {
+                    quoList.add(quo);
+                }
+            }
+        }
+        List<Quotation> quoLists = new ArrayList<>();
+        for (Quotation quotations : quotationlist) {
+            for (Quotation quotatio : quoList) {
+                if (quotations.getContractnumber().equals(quotatio.getContractnumber())) {
+                    quoLists.add(quotations);
+                }
+            }
+        }
+        return quoLists;
+    }
+    //  add  ml  211130  报价单分页  to
 
     @Override
     public QuotationVo selectById(String quotationid) throws Exception {
