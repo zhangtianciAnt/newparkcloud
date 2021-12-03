@@ -434,11 +434,11 @@ public class CustomerinforServiceImpl implements CustomerinforService {
         //集合判空
         try {
             //表格操作
-            in = getClass().getClassLoader().getResourceAsStream("jxls_templates/renyuanxinxidaochu.xlsx");
+            in = getClass().getClassLoader().getResourceAsStream("jxls_templates/kehuxinxi.xlsx");
             XSSFWorkbook workbook = new XSSFWorkbook(in);
             this.getReportWork1(workbook.getSheetAt(0), ids);
             OutputStream os = resp.getOutputStream();// 取得输出流
-            String fileName = "人员信息";
+            String fileName = "客户信息";
             resp.setContentType("application/vnd.ms-excel;charset=utf-8");
             resp.setHeader("Content-Disposition", "attachment;filename="
                     + new String((fileName + ".xlsx").getBytes(), "iso-8859-1"));
