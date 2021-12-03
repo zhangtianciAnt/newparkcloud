@@ -52,7 +52,12 @@ public class CustomerinforServiceImpl implements CustomerinforService {
 
     @Override
     public List<Customerinfor> getcustomerinfor(Customerinfor customerinfor, TokenModel tokenModel) throws Exception {
-        return customerinforMapper.select(customerinfor);
+        List<Customerinfor> customerinforList = customerinforMapper.select(customerinfor);
+        if (customerinforList.size() > 0) {
+            //创建时间降序排列
+            customerinforList = customerinforList.stream().sorted(Comparator.comparing(Customerinfor::getThedepC).reversed()).collect(Collectors.toList());
+        }
+        return customerinforList;
     }
 
     @Override
@@ -82,6 +87,7 @@ public class CustomerinforServiceImpl implements CustomerinforService {
 
         //更新主表
         CustomerinforPrimary customerinforPrimary = new CustomerinforPrimary();
+        customerinforPrimary = customerinforPrimaryMapper.selectByPrimaryKey(customerinforList.get(0).getCustomerinforprimary_id());
         customerinforPrimary.setCustchinese(customerinforList.get(0).getCustchinese());
         customerinforPrimary.setCustenglish(customerinforList.get(0).getCustenglish());
         customerinforPrimary.setCustjapanese(customerinforList.get(0).getCustjapanese());
@@ -90,7 +96,6 @@ public class CustomerinforServiceImpl implements CustomerinforService {
         customerinforPrimary.setThecompany(customerinforList.get(0).getThecompany());
         customerinforPrimary.setCausecode(customerinforList.get(0).getCausecode());
         customerinforPrimary.setRegindiff(customerinforList.get(0).getRegindiff());
-        customerinforPrimary.setCustomerinforprimary_id(customerinforList.get(0).getCustomerinforprimary_id());
         customerinforPrimary.preUpdate(tokenModel);
         customerinforPrimaryMapper.updateByPrimaryKey(customerinforPrimary);
 
