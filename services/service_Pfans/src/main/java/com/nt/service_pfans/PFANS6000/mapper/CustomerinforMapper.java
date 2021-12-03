@@ -12,4 +12,6 @@ public interface CustomerinforMapper extends MyMapper<Customerinfor> {
 
     List<Customerinfor> export(@Param("list") List<String> ids);
 
+    void insertList(@Param("list") List<Customerinfor> customerinforList);
+
 }

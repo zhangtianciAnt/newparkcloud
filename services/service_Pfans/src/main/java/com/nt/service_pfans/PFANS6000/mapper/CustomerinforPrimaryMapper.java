@@ -11,4 +11,6 @@ import java.util.List;
 
 public interface CustomerinforPrimaryMapper extends MyMapper<CustomerinforPrimary> {
 
+    void insertList(@Param("list") List<CustomerinforPrimary> customerinforPrimaryList);
+
 }

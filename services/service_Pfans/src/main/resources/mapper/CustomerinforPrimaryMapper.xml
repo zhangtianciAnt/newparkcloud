@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS6000.mapper.CustomerinforPrimaryMapper">
+    <insert id="insertList" parameterType="java.util.List">
+        insert into customerinforprimary (CUSTOMERINFORPRIMARY_ID,CUSTCHINESE,CUSTJAPANESE,CUSTENGLISH,ABBREVIATION,LIABLEPERSON,THECOMPANY,CAUSECODE,REGINDIFF,
+        STATUS,CREATEBY,CREATEON,MODIFYBY,MODIFYON,OWNER,TENANTID) values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.customerinforprimary_id},#{item.custchinese},#{item.custjapanese},#{item.custenglish},#{item.abbreviation},#{item.liableperson},#{item.thecompany},
+            #{item.causecode},#{item.regindiff},#{item.status},#{item.createby},#{item.createon},#{item.modifyby},#{item.modifyon},#{item.owner},#{item.tenantid})
+        </foreach>
+    </insert>
+</mapper>

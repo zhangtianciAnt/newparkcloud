@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -163,13 +164,18 @@ public class CustomerinforServiceImpl implements CustomerinforService {
     }
 
 
-    //导入导出
+    // region scc upd 21/12/3 导入 from
     @Override
     @Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
     public List<String> eximport(HttpServletRequest request, TokenModel tokenModel) throws Exception {
 
-//            创建listVo集合方便存储导入信息
-            List<Customerinfor> listVo = new ArrayList<Customerinfor>();
+//            创建更新子表数据集合
+            List<Customerinfor> details = new ArrayList<Customerinfor>();
+
+            //创建更新主表数据集合
+            List<CustomerinforPrimary> mainTable = new ArrayList<>();
+
+
 //            创建Result结果集的集合
             List<String> Result = new ArrayList<String>();
 //            用来接收前台传过来的文件
@@ -187,25 +193,26 @@ public class CustomerinforServiceImpl implements CustomerinforService {
 //            创建集合存入标准模板
             List<Object> model = new ArrayList<Object>();
 //            标准模板
-            model.add("客户名称(中文)");
-            model.add("客户名称(日文)");
-            model.add("客户名称(英文)");
+            model.add("客户名称(中)");
+            model.add("客户名称(日)");
+            model.add("客户名称(英)");
             model.add("简称");
-            model.add("负责人");
-            model.add("项目联络人(中文)");
-            model.add("项目联络人(日文)");
-            model.add("项目联络人(英文)");
-            model.add("联系电话");
-            model.add("邮箱地址");
-            model.add("共通事务联络人");
-            model.add("联系电话");
-            model.add("邮箱地址");
-            model.add("地址(中文)");
-            model.add("地址(日文)");
-            model.add("地址(英文)");
-            model.add("人员规模");
+            model.add("公司法人");
             model.add("所属公司");
             model.add("事业场编码");
+            model.add("地域区分");
+            model.add("所属部门(中)");
+            model.add("所属部门(日)");
+            model.add("所属部门(英)");
+            model.add("联络人(中)");
+            model.add("联络人(日)");
+            model.add("联络人(英)");
+            model.add("联系电话");
+            model.add("电子邮箱");
+            model.add("地址(中)");
+            model.add("地址(日)");
+            model.add("地址(英)");
+            model.add("人员规模");
             model.add("网址");
             model.add("备注");
             List<Object> key = list.get(0);
@@ -220,189 +227,225 @@ public class CustomerinforServiceImpl implements CustomerinforService {
             int error = 0;
             for (int i = 1; i < list.size(); i++) {
                 Customerinfor customerinfor = new Customerinfor();
+                CustomerinforPrimary customerinforPrimary = new CustomerinforPrimary();
                 List<Object> value = list.get(k);
                 k++;
 
                 if (value != null && !value.isEmpty()) {
-                    if(value.size()>0)
-                    {
-                        customerinfor.setCustchinese(Convert.toStr(value.get(0)));
-                        if(customerinfor.getCustchinese() != null && customerinfor.getCustchinese().length() > 255)
-                        {
-                            throw new LogicalException("第" + i + "行 客户名称(中文) 长度超长，最大长度为255");
-                        }
-                        if(customerinfor.getCustchinese() != null && !customerinfor.getCustchinese().isEmpty())
-                        {
-                            Customerinfor customer = new Customerinfor();
-                            customer.setCustchinese(customerinfor.getCustchinese().trim());
-                            List<Customerinfor> customerList = customerinforMapper.select(customer);
-                            if(customerList.size()>0)
-                            {
-                                throw new LogicalException("第" + i + "行 客户名称(中文) 已经存在，请确认。");
+                    if (value.size() > 0) {
+                        if (!StringUtils.isNullOrEmpty(Convert.toStr(value.get(0)))) {
+                            if (Convert.toStr(value.get(0)).length() > 255) {
+                                throw new LogicalException("第" + i + "行 客户名称(中) 长度超长，最大长度为255");
+                            } else {
+                                customerinfor.setCustchinese(Convert.toStr(value.get(0)));
+                                customerinforPrimary.setCustchinese(Convert.toStr(value.get(0)));
                             }
+                        } else {
+                            throw new LogicalException("第" + i + "行 客户名称(中) 不能为空");
                         }
                     }
-                    if(value.size()>1)
-                    {
-                        customerinfor.setCustjapanese(Convert.toStr(value.get(1)));
-                        if(customerinfor.getCustjapanese()!= null && customerinfor.getCustjapanese().length() > 255)
-                        {
-                            throw new LogicalException("第" + i + "行 客户名称(日文) 长度超长，最大长度为255");
+                    if (value.size() > 1) {
+                        if (!StringUtils.isNullOrEmpty(Convert.toStr(value.get(1)))) {
+                            if (Convert.toStr(value.get(1)).length() > 255) {
+                                throw new LogicalException("第" + i + "行 客户名称(日文) 长度超长，最大长度为255");
+                            } else {
+                                customerinfor.setCustjapanese(Convert.toStr(value.get(1)));
+                                customerinforPrimary.setCustjapanese(Convert.toStr(value.get(1)));
+                            }
+                        } else {
+                            throw new LogicalException("第" + i + "行 客户名称(日) 不能为空");
                         }
                     }
                     if(value.size()>2)
                     {
-                        customerinfor.setCustenglish(Convert.toStr(value.get(2)));
-                        if(customerinfor.getCustenglish() !=null && customerinfor.getCustenglish().length() > 255)
-                        {
-                            throw new LogicalException("第" + i + "行 客户名称(英文) 长度超长，最大长度为255");
+                        if (!StringUtils.isNullOrEmpty(Convert.toStr(value.get(2)))) {
+                            if (Convert.toStr(value.get(2)).length() > 255) {
+                                throw new LogicalException("第" + i + "行 客户名称(英) 长度超长，最大长度为255");
+                            } else {
+                                customerinfor.setCustenglish(Convert.toStr(value.get(2)));
+                                customerinforPrimary.setCustenglish(Convert.toStr(value.get(2)));
+                            }
+                        } else {
+                            throw new LogicalException("第" + i + "行 客户名称(英) 不能为空");
                         }
                     }
                     if(value.size()>3)
                     {
-                        customerinfor.setAbbreviation(Convert.toStr(value.get(3)));
-                        if(customerinfor.getAbbreviation()!=null && customerinfor.getAbbreviation().length() > 255)
-                        {
-                            throw new LogicalException("第" + i + "行 简称 长度超长，最大长度为255");
+                        if (!StringUtils.isNullOrEmpty(Convert.toStr(value.get(3)))) {
+                            if (Convert.toStr(value.get(3)).length() > 10) {
+                                throw new LogicalException("第" + i + "行 简称 长度超长，最大长度为10");
+                            } else {
+                                customerinfor.setAbbreviation(Convert.toStr(value.get(3)));
+                                customerinforPrimary.setAbbreviation(Convert.toStr(value.get(3)));
+                            }
+                        } else {
+                            throw new LogicalException("第" + i + "行 简称 不能为空");
                         }
                     }
                     if(value.size()>4)
                     {
-                        customerinfor.setLiableperson(Convert.toStr(value.get(4)));
-                        if(customerinfor.getLiableperson() !=null && customerinfor.getLiableperson().length() > 20)
-                        {
-                            throw new LogicalException("第" + i + "行 负责人 长度超长，最大长度为20");
+                        if (!StringUtils.isNullOrEmpty(Convert.toStr(value.get(4)))) {
+                            if (Convert.toStr(value.get(4)).length() > 20) {
+                                throw new LogicalException("第" + i + "行 公司法人 长度超长，最大长度为20");
+                            } else {
+                                customerinfor.setLiableperson(Convert.toStr(value.get(4)));
+                                customerinforPrimary.setLiableperson(Convert.toStr(value.get(4)));
+                            }
+                        } else {
+                            throw new LogicalException("第" + i + "行 公司法人 不能为空");
                         }
                     }
                     if(value.size()>5)
                     {
-                        customerinfor.setProchinese(Convert.toStr(value.get(5)));
-                        if(customerinfor.getProchinese() !=null && customerinfor.getProchinese().length() > 255)
-                        {
-                            throw new LogicalException("第" + i + "行 项目联络人(中文) 长度超长，最大长度为255");
+                        if (!StringUtils.isNullOrEmpty(Convert.toStr(value.get(5)))) {
+                            if (Convert.toStr(value.get(5)).length() > 50) {
+                                throw new LogicalException("第" + i + "行 所属公司 长度超长，最大长度为50");
+                            } else {
+                                customerinfor.setThecompany(Convert.toStr(value.get(5)));
+                                customerinforPrimary.setThecompany(Convert.toStr(value.get(5)));
+                            }
+                        } else {
+                            throw new LogicalException("第" + i + "行 所属公司 不能为空");
                         }
                     }
                     if(value.size()>6)
                     {
-                        customerinfor.setProjapanese(Convert.toStr(value.get(6)));
-                        if(customerinfor.getProjapanese()!=null && customerinfor.getProjapanese().length() > 255)
-                        {
-                            throw new LogicalException("第" + i + "行 项目联络人(日文) 长度超长，最大长度为255");
+                        if (!StringUtils.isNullOrEmpty(Convert.toStr(value.get(6)))) {
+                            if (Convert.toStr(value.get(6)).length() > 20) {
+                                throw new LogicalException("第" + i + "行 事业场编码 长度超长，最大长度为20");
+                            } else {
+                                customerinfor.setCausecode(Convert.toStr(value.get(6)));
+                                customerinforPrimary.setCausecode(Convert.toStr(value.get(6)));
+                            }
+                        } else {
+                            throw new LogicalException("第" + i + "行 事业场编码 不能为空");
                         }
                     }
                     if(value.size()>7)
                     {
-                        customerinfor.setProenglish(Convert.toStr(value.get(7)));
-                        if(customerinfor.getProenglish() !=null && customerinfor.getProenglish().length() > 255)
-                        {
-                            throw new LogicalException("第" + i + "行 项目联络人(英文) 长度超长，最大长度为255");
+                        if (!StringUtils.isNullOrEmpty(Convert.toStr(value.get(7)))) {
+                            if (Convert.toStr(value.get(7)).length() > 255) {
+                                throw new LogicalException("第" + i + "行 地域区分 长度超长，最大长度为255");
+                            } else {
+                                customerinfor.setRegindiff(Convert.toStr(value.get(7)));
+                                customerinforPrimary.setRegindiff(Convert.toStr(value.get(7)));
+                                List<CustomerinforPrimary> res = customerinforPrimaryMapper.select(customerinforPrimary);
+                                if(res.size() > 0){
+                                    throw new LogicalException("第" + i + "行 对应客户信息已存在");
+                                }
+                            }
+                        } else {
+                            throw new LogicalException("第" + i + "行 地域区分 不能为空");
                         }
                     }
                     if(value.size()>8)
                     {
-                        customerinfor.setProtelephone(Convert.toStr(value.get(8)));
-                        if(customerinfor.getProtelephone() !=null && customerinfor.getProtelephone().length() > 20)
-                        {
-                            throw new LogicalException("第" + i + "行 联系电话 长度超长，最大长度为20");
+                        if (Convert.toStr(value.get(7)).length() > 255) {
+                            throw new LogicalException("第" + i + "行 所属部门(中) 长度超长，最大长度为255");
+                        }else{
+                            customerinfor.setThedepC(Convert.toStr(value.get(8)));
                         }
                     }
                     if(value.size()>9)
                     {
-                        customerinfor.setProtemail(Convert.toStr(value.get(9)));
-                        if(customerinfor.getProtemail() !=null && customerinfor.getProtemail().length() > 50)
-                        {
-                            throw new LogicalException("第" + i + "行 邮箱地址 长度超长，最大长度为50");
+                        if (Convert.toStr(value.get(9)).length() > 255) {
+                            throw new LogicalException("第" + i + "行 所属部门(日) 长度超长，最大长度为255");
+                        }else{
+                            customerinfor.setThedepJ(Convert.toStr(value.get(9)));
                         }
                     }
                     if(value.size()>10)
                     {
-                        customerinfor.setCommontperson(Convert.toStr(value.get(10)));
-                        if(customerinfor.getCommontperson()!=null && customerinfor.getCommontperson().length() > 20)
-                        {
-                            throw new LogicalException("第" + i + "行 共通事务联络人 长度超长，最大长度为20");
+                        if (Convert.toStr(value.get(10)).length() > 255) {
+                            throw new LogicalException("第" + i + "行 所属部门(英) 长度超长，最大长度为255");
+                        }else{
+                            customerinfor.setThedepE(Convert.toStr(value.get(10)));
                         }
                     }
                     if(value.size()>11)
                     {
-                        customerinfor.setComtelephone(Convert.toStr(value.get(11)));
-                        if(customerinfor.getComtelephone()!=null && customerinfor.getComtelephone().length() > 20)
-                        {
-                            throw new LogicalException("第" + i + "行 联系电话 长度超长，最大长度为20");
+                        if (Convert.toStr(value.get(11)).length() > 255) {
+                            throw new LogicalException("第" + i + "行 联络人(中) 长度超长，最大长度为255");
+                        }else{
+                            customerinfor.setProchinese(Convert.toStr(value.get(11)));
                         }
                     }
                     if(value.size()>12)
                     {
-                        customerinfor.setComnemail(Convert.toStr(value.get(12)));
-                        if(customerinfor.getComnemail()!=null && customerinfor.getComnemail().length() > 50)
-                        {
-                            throw new LogicalException("第" + i + "行 邮箱地址 长度超长，最大长度为50");
+                        if (Convert.toStr(value.get(12)).length() > 255) {
+                            throw new LogicalException("第" + i + "行 联络人(日) 长度超长，最大长度为255");
+                        }else{
+                            customerinfor.setProjapanese(Convert.toStr(value.get(12)));
                         }
                     }
                     if(value.size()>13)
                     {
-                        customerinfor.setAddchinese(Convert.toStr(value.get(13)));
-                        if(customerinfor.getAddchinese()!=null && customerinfor.getAddchinese().length() > 255)
-                        {
-                            throw new LogicalException("第" + i + "行 地址(中文) 长度超长，最大长度为255");
+                        if (Convert.toStr(value.get(13)).length() > 255) {
+                            throw new LogicalException("第" + i + "行 联络人(英) 长度超长，最大长度为255");
+                        }else{
+                            customerinfor.setProenglish(Convert.toStr(value.get(13)));
                         }
                     }
                     if(value.size()>14)
                     {
-                        customerinfor.setAddjapanese(Convert.toStr(value.get(14)));
-                        if(customerinfor.getAddjapanese()!=null && customerinfor.getAddjapanese().length() > 255)
-                        {
-                            throw new LogicalException("第" + i + "行 地址(日文) 长度超长，最大长度为255");
+                        if (Convert.toStr(value.get(14)).length() > 20) {
+                            throw new LogicalException("第" + i + "行 联系电话 长度超长，最大长度为20");
+                        }else{
+                            customerinfor.setProtelephone(Convert.toStr(value.get(14)));
                         }
                     }
                     if(value.size()>15)
                     {
-                        customerinfor.setAddenglish(Convert.toStr(value.get(15)));
-                        if(customerinfor.getAddenglish()!=null && customerinfor.getAddenglish().length() > 255)
-                        {
-                            throw new LogicalException("第" + i + "行 地址(英文) 长度超长，最大长度为255");
+                        if (Convert.toStr(value.get(15)).length() > 50) {
+                            throw new LogicalException("第" + i + "行 邮箱地址 长度超长，最大长度为50");
+                        }else{
+                            customerinfor.setProtemail(Convert.toStr(value.get(15)));
+                        }
+                    }
+                    if(value.size()>16)
+                    {
+                        if (!StringUtils.isNullOrEmpty(Convert.toStr(value.get(16)))) {
+                            if (Convert.toStr(value.get(16)).length() > 255) {
+                                throw new LogicalException("第" + i + "行 地址(中) 长度超长，最大长度为255");
+                            } else {
+                                customerinfor.setAddchinese(Convert.toStr(value.get(16)));
+                            }
+                        } else {
+                            throw new LogicalException("第" + i + "行 地址(中) 不能为空");
                         }
                     }
                     if(value.size()>17)
                     {
-                        customerinfor.setThecompany(Convert.toStr(value.get(17)));
-                        if(customerinfor.getThecompany()!=null && customerinfor.getThecompany().length() > 50)
-                        {
-                            throw new LogicalException("第" + i + "行 所属公司 长度超长，最大长度为50");
+                        if (!StringUtils.isNullOrEmpty(Convert.toStr(value.get(17)))) {
+                            if (Convert.toStr(value.get(17)).length() > 255) {
+                                throw new LogicalException("第" + i + "行 地址(日) 长度超长，最大长度为255");
+                            } else {
+                                customerinfor.setAddjapanese(Convert.toStr(value.get(17)));
+                            }
+                        } else {
+                            throw new LogicalException("第" + i + "行 地址(日) 不能为空");
                         }
                     }
                     if(value.size()>18)
                     {
-                        customerinfor.setCausecode(Convert.toStr(value.get(18)));
-                        if(customerinfor.getCausecode()!=null && customerinfor.getCausecode().length() > 20)
-                        {
-                            throw new LogicalException("第" + i + "行 事业场编码 长度超长，最大长度为20");
-                        }
-                        if(customerinfor.getCustchinese() != null && !customerinfor.getCustchinese().isEmpty())
-                        {
-                            Customerinfor cust = new Customerinfor();
-                            cust.setCausecode(customerinfor.getCausecode().trim());
-                            List<Customerinfor> custList = customerinforMapper.select(cust);
-                            if(custList.size()>0)
-                            {
-                                throw new LogicalException("第" + i + "行 事业场编码 已经存在，请确认。");
+                        if (!StringUtils.isNullOrEmpty(Convert.toStr(value.get(18)))) {
+                            if (Convert.toStr(value.get(18)).length() > 255) {
+                                throw new LogicalException("第" + i + "行 地址(英) 长度超长，最大长度为255");
+                            } else {
+                                customerinfor.setAddenglish(Convert.toStr(value.get(18)));
                             }
+                        } else {
+                            throw new LogicalException("第" + i + "行 地址(英) 不能为空");
                         }
                     }
                     if(value.size()>19)
                     {
-                        customerinfor.setWebsite(Convert.toStr(value.get(19)));
-                        if(customerinfor.getWebsite()!=null && customerinfor.getWebsite().length() > 50)
-                        {
-                            throw new LogicalException("第" + i + "行 网址 长度超长，最大长度为50");
+                        String person = Convert.toStr(value.get(19));
+                        Pattern pattern = Pattern.compile("-?[0-9]+\\.?[0-9]*");
+                        Matcher isNum = pattern.matcher(person);
+                        if (!isNum.matches()) {
+                            throw new LogicalException("第" + i + "行 人员规模应为数字");
                         }
-                    }
-                    if(value.size()>20)
-                    {
-                        customerinfor.setRemarks(Convert.toStr(value.get(20)));
-                    }
-                    if(value.size()>16)
-                    {
-                        String person=Convert.toStr(value.get(16));
                         if(StrUtil.isNotBlank(person)){
                             person = person.trim().replace("<","").replace(">","").replace("≥","").replace("=","").replace("≤","").replace("-","");
                             if(Integer.parseInt(person)>0 && Integer.parseInt(person)<50){
@@ -418,19 +461,48 @@ public class CustomerinforServiceImpl implements CustomerinforService {
                             }
                         }
                     }
+
+                    if(value.size()>20)
+                    {
+                        if (Convert.toStr(value.get(20)).length() > 50) {
+                            throw new LogicalException("第" + i + "行 网址 长度超长，最大长度为50");
+                        }else{
+                            customerinfor.setWebsite(Convert.toStr(value.get(20)));
+                        }
+                    }
+                    if(value.size()>21)
+                    {
+                        if (Convert.toStr(value.get(21)).length() > 255) {
+                            throw new LogicalException("第" + i + "行 备注 长度超长，最大长度为255");
+                        }else{
+                            customerinfor.setRemarks(Convert.toStr(value.get(21)));
+                        }
+                    }
                 }
-                customerinfor.preInsert(tokenModel);
+                String id = UUID.randomUUID().toString();
+                customerinforPrimary.setCustomerinforprimary_id(id);
+                customerinforPrimary.preInsert(tokenModel);
+                mainTable.add(customerinforPrimary);
+
+
                 customerinfor.setCustomerinfor_id(UUID.randomUUID().toString());
-                customerinforMapper.insert(customerinfor);
-                listVo.add(customerinfor);
+                customerinfor.setCustomerinforprimary_id(id);
+                customerinfor.preInsert(tokenModel);
+                details.add(customerinfor);
                 accesscount = accesscount + 1;
+            }
+            if(mainTable != null && mainTable.size() > 0){
+                customerinforPrimaryMapper.insertList(mainTable);
+            }
+            if(details != null && details.size() > 0){
+                customerinforMapper.insertList(details);
             }
             Result.add("失败数：" + error);
             Result.add("成功数：" + accesscount);
             return Result;
 
     }
-
+    // endregion scc upd 21/12/3 导入 to
 
     //region scc add 人员信息导出 from
     @Override
