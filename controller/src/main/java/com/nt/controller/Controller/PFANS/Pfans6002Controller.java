@@ -42,6 +42,15 @@ public class Pfans6002Controller {
         return ApiResult.success(customerinforService.getcustomerinfor(customerinfor, tokenModel));
     }
 
+    // add  ml  211206  dialog分页  from
+    @RequestMapping(value = "/getCustomerinfor", method = {RequestMethod.GET})
+    public ApiResult getforContDiaLog(@RequestParam(defaultValue = "1") int currentPage,
+                                      @RequestParam(defaultValue = "20") int pageSize,
+                                      HttpServletRequest request) throws Exception {
+        return ApiResult.success(customerinforService.getCustomerinfor(currentPage,pageSize));
+    }
+    // add  ml  211206  dialog分页  to
+
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult getcustomerinforApplyOne(@RequestBody Customerinfor customerinfor, HttpServletRequest request) throws Exception {
         if (customerinfor == null) {

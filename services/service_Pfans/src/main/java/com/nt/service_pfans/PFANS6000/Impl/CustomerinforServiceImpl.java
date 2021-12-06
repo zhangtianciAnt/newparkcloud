@@ -4,6 +4,7 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
+import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS6000.CompanyStatistics;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Pfans.PFANS1000.Award;
@@ -15,6 +16,8 @@ import com.nt.service_pfans.PFANS6000.mapper.CustomerinforMapper;
 import com.nt.service_pfans.PFANS6000.mapper.CustomerinforPrimaryMapper;
 import com.nt.utils.LogicalException;
 //import com.nt.utils.StringUtils;
+import com.nt.utils.PageUtil;
+import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -23,6 +26,9 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -60,6 +66,24 @@ public class CustomerinforServiceImpl implements CustomerinforService {
         }
         return customerinforList;
     }
+
+    // add  ml  211206  dialog分页  from
+    @Override
+    public TableDataInfo getCustomerinfor(int currentPage, int pageSize) {
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Customerinfor customerinfor = new Customerinfor();
+        List<Customerinfor> customerinforList = customerinforMapper.select(customerinfor);
+        if (customerinforList.size() > 0) {
+            //创建时间降序排列
+            customerinforList = customerinforList.stream().sorted(Comparator.comparing(Customerinfor::getThedepC).reversed()).collect(Collectors.toList());
+        }
+        Page<Customerinfor> pageFromList = PageUtil.createPageFromList(customerinforList, pageable);
+        TableDataInfo taInfo = new TableDataInfo();
+        taInfo.setTotal(pageFromList.getTotalElements() > customerinforList.size() ? customerinforList.size() : pageFromList.getTotalElements());
+        taInfo.setResultList(pageFromList.getContent());
+        return taInfo;
+    }
+    // add  ml  211206  dialog分页  to
 
     @Override
     public List<CustomerinforPrimary> getcustomerinforPrimary(CustomerinforPrimary customerinforprimary, TokenModel tokenModel) throws Exception {
