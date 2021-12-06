@@ -4,6 +4,8 @@ import com.nt.dao_Pfans.PFANS5000.LogPersonStatistics;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogPersonReturnVo;
 import com.nt.utils.dao.TokenModel;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface LogPersonStatisticsService {
@@ -24,7 +26,7 @@ public interface LogPersonStatisticsService {
     void saveLogPersonStatistics() throws Exception;
     //endregion scc 9/24 定时任务获取日志人别数据 to
 
-    //region scc add 21/9/14 报表 from
-//    Object getTableinfoReport(String month) throws Exception;
-    //endregion scc add 21/9/14 报表 to
+    //region scc add 21/9/14 导出 from
+    void downloadExcel(String month, HttpServletRequest request, HttpServletResponse resp) throws Exception;
+    //endregion scc add 21/9/14 导出 to
 }

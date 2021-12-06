@@ -74,11 +74,11 @@ public class LogPersonStatistics extends BaseModel {
     @Column(name = "ADJUST")
     private String adjust;
 
-//    /**
-//     * 积木报表：比率
-//     * */
-//    @Transient
-//    private String ratios;
+    /**
+     * 导出：比率
+     * */
+    @Transient
+    private String ratios;
 
 
 }
