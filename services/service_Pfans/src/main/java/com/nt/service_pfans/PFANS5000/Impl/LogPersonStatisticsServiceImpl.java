@@ -340,7 +340,14 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
                     }else{
                         item.setCompany("PSDCD");
                     }
-                    item.setProject_name(item.getProject_name().trim().split("_").length == 2 ? item.getProject_name().trim().split("_")[1] : item.getProject_name().trim().split("_")[0]);
+                    //region scc upd 21/12/6 变更获取项目名 from
+                    if(item.getProject_name().contains("_")){
+                        item.setProject_name(item.getProject_name().substring(item.getProject_name().indexOf("_") + 1));
+                    }else{
+                        item.setProject_name(item.getProject_name());
+                    }
+//                    item.setProject_name(item.getProject_name().trim().split("_").length == 2 ? item.getProject_name().trim().split("_")[1] : item.getProject_name().trim().split("_")[0]);
+                    //endregion scc upd 21/12/6 变更获取项目名 to
                     item.setAdjust(item.getDuration());
                     logPersonStatisticsMapper.insert(item);
                 });
