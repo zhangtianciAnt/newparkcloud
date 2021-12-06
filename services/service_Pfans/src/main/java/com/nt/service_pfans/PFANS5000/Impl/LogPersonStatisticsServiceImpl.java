@@ -25,6 +25,8 @@ import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -212,7 +214,7 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
                 personReturnVo.setGroupname(m.getValue().get(0).getDepartment());
                 personReturnVo.setCompany(m.getValue().get(0).getCompany());
                 personReturnVo.setProject("—");
-//                personReturnVo.setAdjust(null);
+//                personReturnVo.setAdjust(null);//scc del
                 BigDecimal total = BigDecimal.ZERO;
                 BigDecimal adtotal = BigDecimal.ZERO;
                 for (LogPersonStatistics logs : m.getValue()) {
@@ -239,7 +241,7 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
                 BigDecimal percentageOf = ratio.multiply(new BigDecimal("100")).setScale(2,BigDecimal.ROUND_HALF_UP);
                 personReturnVo.setRatio(percentageOf.toString() + "%");
                 personReturnVo.setLogpersonstatistics(m.getValue());
-                personReturnVo.setAdjust(adtotal.toString());
+                personReturnVo.setAdjust(adtotal.toString());//scc add
                 logPersonReturnVos.add(personReturnVo);
             }
             //region scc add 按照公司排序 from
@@ -382,6 +384,7 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
     private void getReport(XSSFSheet sheet1, List<LogPersonReturnVo> logPerson,XSSFWorkbook workbook) throws LogicalException {
         XSSFCellStyle style = workbook.createCellStyle();//创建单元格样式
         style.setAlignment(HorizontalAlignment.CENTER);//水平居中
+        style.setVerticalAlignment(VerticalAlignment.CENTER);//垂直居中
         //部门键值对
         List<DepartmentVo> allDepartment = null;
         try {
@@ -396,8 +399,11 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
         //部门键值对
         if (logPerson != null && logPerson.size() > 0) {
             int i = 1;
+            int rowfirst = 0;//输出每人信息开始行
+            int rowlast = 0;//输出每人信息结束行
             for (LogPersonReturnVo item : logPerson) {
                 XSSFRow row = sheet1.createRow(i);
+                rowfirst = i;
                 for (int j = 0; j < 7; j++) {
                     XSSFCell cell = row.createCell(j);
                     switch (j) {
@@ -425,8 +431,13 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
                             case 6:cell.setCellValue(items.getAdjust());cell.setCellStyle(style);break;
                         }
                     }
+                    rowlast = i;
                     i++;
                 }
+                sheet1.addMergedRegion(new CellRangeAddress(rowfirst,rowlast,0,0));//姓名合并
+                sheet1.addMergedRegion(new CellRangeAddress(rowfirst,rowlast,1,1));//部门合并
+                sheet1.addMergedRegion(new CellRangeAddress(rowfirst,rowlast,2,2));//公司合并
+                sheet1.addMergedRegion(new CellRangeAddress(rowfirst,rowlast,3,3));//比率合并
             }
         }
     }
