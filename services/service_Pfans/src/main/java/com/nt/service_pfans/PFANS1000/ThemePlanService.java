@@ -6,6 +6,7 @@ import com.nt.dao_Pfans.PFANS1000.ThemePlanDetail;
 import com.nt.dao_Pfans.PFANS1000.Vo.ThemePlanVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ThemePlanDetailVo;
 import com.nt.utils.LogicalException;
+import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -26,6 +27,9 @@ public interface ThemePlanService {
 //    add_qhr_20210707 修改接口传参
     List<ThemePlanDetail> themenametype(String year) throws Exception;
     //add-ws-01/06-禅道任务710
+    //  add  ml  211203  dialog分页  from
+    TableDataInfo getDiaLogPage(int currentPage, int pageSize) throws Exception;
+    //  add  ml  211203  dialog分页  to
     //更新
     public void update(ThemePlanVo themePlan, TokenModel tokenModel) throws LogicalException;
 

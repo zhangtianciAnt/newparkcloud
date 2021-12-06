@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS1000;
 
 import com.nt.dao_Pfans.PFANS1000.ThemeInfor;
+import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,10 @@ public interface ThemeInforService {
     void upd(ThemeInfor themeinfor, TokenModel tokenModel) throws Exception;
 
     List<ThemeInfor> getlisttheme(String year,String contract) throws Exception;
+
+    //  add  ml  211203  受托theme dialog分页  from
+    TableDataInfo getlistthemePage(int currentPage, int pageSize) throws Exception;
+    //  add  ml  211203  受托theme dialog分页  to
 
     List<String> importUser(HttpServletRequest request, TokenModel tokenModel) throws Exception ;
 

@@ -4,11 +4,17 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS1000.ThemeInfor;
+import com.nt.dao_Pfans.PFANS1000.ThemePlanDetail;
 import com.nt.service_pfans.PFANS1000.ThemeInforService;
 import com.nt.service_pfans.PFANS1000.mapper.ThemeInforMapper;
 import com.nt.utils.LogicalException;
+import com.nt.utils.PageUtil;
+import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -18,10 +24,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -57,6 +60,21 @@ public class ThemeInforServiceImpl implements ThemeInforService {
         return themeinforlist;
     }
 
+    //  add  ml  211203  受托theme dialog分页  from
+    @Override
+    public TableDataInfo getlistthemePage(int currentPage, int pageSize) throws Exception {
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Calendar now = Calendar.getInstance();
+        ThemeInfor theme = new ThemeInfor();
+        theme.setYear(now.get(Calendar.MONTH) + 1 >= 4 ? now.get(Calendar.YEAR) + 1 + "" : now.get(Calendar.YEAR) + "");
+        List<ThemeInfor> themeinforlist = themeinformapper.select(theme);
+        Page<ThemeInfor> themeList = PageUtil.createPageFromList(themeinforlist, pageable);
+        TableDataInfo taInfo = new TableDataInfo();
+        taInfo.setTotal(themeList.getTotalElements() > themeinforlist.size() ? themeinforlist.size() : themeList.getTotalElements());
+        taInfo.setResultList(themeList.getContent());
+        return taInfo;
+    }
+    //  add  ml  211203  受托theme dialog分页  to
 
     @Override
     public void insert(ThemeInfor themeinfor, TokenModel tokenModel) throws Exception {

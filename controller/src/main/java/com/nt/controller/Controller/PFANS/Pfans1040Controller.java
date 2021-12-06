@@ -13,10 +13,7 @@ import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -48,6 +45,15 @@ public class Pfans1040Controller {
         return ApiResult.success(themePlanService.themenametype(year));
     }
     //add-ws-01/06-禅道任务710
+    //  add  ml  211203  dialog分页  from
+    @RequestMapping(value = "/getDiaLogPage", method = {RequestMethod.GET})
+    //add_qhr_20210707 修改编辑合同，查询theme时接口的传参
+    public ApiResult getDiaLogPage(@RequestParam(defaultValue = "1") int currentPage,
+                                   @RequestParam(defaultValue = "20") int pageSize,
+                                   HttpServletRequest request) throws Exception {
+        return ApiResult.success(themePlanService.getDiaLogPage(currentPage,pageSize));
+    }
+    //  add  ml  211203  dialog分页  to
     @RequestMapping(value = "/getList", method = {RequestMethod.POST})
     public ApiResult list(@RequestBody ThemePlan themePlan, HttpServletRequest request) throws Exception {
         if (themePlan == null) {

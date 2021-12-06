@@ -53,6 +53,15 @@ public class Pfans1043Controller {
         return ApiResult.success(themeinforservice.getlisttheme(year, contract));
     }
 
+    //  add  ml  211203  受托theme dialog分页  from
+    @RequestMapping(value = "/getlistthemePage", method = {RequestMethod.GET})
+    public ApiResult getlistthemePage(@RequestParam(defaultValue = "1") int currentPage,
+                                   @RequestParam(defaultValue = "20") int pageSize,
+                                   HttpServletRequest request) throws Exception {
+        return ApiResult.success(themeinforservice.getlistthemePage(currentPage,pageSize));
+    }
+    //  add  ml  211203  受托theme dialog分页  to
+
     @RequestMapping(value = "/importUser", method = {RequestMethod.POST})
     public ApiResult importUser(HttpServletRequest request, String flag) {
         try {

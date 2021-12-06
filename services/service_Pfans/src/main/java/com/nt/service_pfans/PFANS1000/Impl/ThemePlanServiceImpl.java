@@ -13,12 +13,18 @@ import com.nt.service_pfans.PFANS1000.mapper.PersonnelplanMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ThemePlanDetailMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ThemePlanMapper;
 import com.nt.utils.LogicalException;
+import com.nt.utils.PageUtil;
+import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -104,6 +110,27 @@ public class ThemePlanServiceImpl implements ThemePlanService {
     }
 
     //add-ws-01/06-禅道任务710
+
+    //  add  ml  211203  dialog分页  from
+    @Override
+    public TableDataInfo getDiaLogPage(int currentPage, int pageSize) throws Exception {
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Calendar now = Calendar.getInstance();
+        ThemePlanDetail theme = new ThemePlanDetail();
+        theme.setYear(now.get(Calendar.MONTH) + 1 > 4 ? now.get(Calendar.YEAR) + ""
+                 : (now.get(Calendar.DAY_OF_MONTH) >= 10 && now.get(Calendar.MONTH) + 1 == 4 ? now.get(Calendar.YEAR) + ""
+                 : now.get(Calendar.YEAR) - 1 + ""));
+        List<ThemePlanDetail> themePlanDetailList = themePlanDetailMapper.select(theme);
+        if (themePlanDetailList.size() > 0) {
+            themePlanDetailList = themePlanDetailList.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(o -> o.getThemeinfor_id()))), ArrayList::new));
+        }
+        Page<ThemePlanDetail> themeList = PageUtil.createPageFromList(themePlanDetailList, pageable);
+        TableDataInfo taInfo = new TableDataInfo();
+        taInfo.setTotal(themeList.getTotalElements() > themePlanDetailList.size() ? themePlanDetailList.size() : themeList.getTotalElements());
+        taInfo.setResultList(themeList.getContent());
+        return taInfo;
+    }
+    //  add  ml  211203  dialog分页  to
     @Override
     public List<ThemePlanDetailVo> detilList(ThemePlanDetail themePlanDetail) throws Exception {
         List<ThemePlanDetailVo> colist = new ArrayList<ThemePlanDetailVo>();
