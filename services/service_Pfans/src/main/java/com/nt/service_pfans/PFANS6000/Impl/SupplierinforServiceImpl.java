@@ -5,13 +5,19 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.nt.dao_Pfans.PFANS6000.Customerinfor;
+import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS6000.SupplierinforService;
 import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.utils.LogicalException;
+import com.nt.utils.PageUtil;
+import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -43,6 +49,20 @@ public class SupplierinforServiceImpl implements SupplierinforService {
     public List<Supplierinfor> getsupplierinfor(Supplierinfor supplierinfor) throws Exception {
         return supplierinforMapper.select(supplierinfor);
     }
+
+    //  add   ml   211207   供应商dialog分页  from
+    @Override
+    public TableDataInfo getSupplierinfor(int currentPage, int pageSize) {
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
+        Supplierinfor supplierinfor = new Supplierinfor();
+        List<Supplierinfor> effAll = supplierinforMapper.select(supplierinfor);
+        Page<Supplierinfor> pageFromList = PageUtil.createPageFromList(effAll, pageable);
+        TableDataInfo taInfo = new TableDataInfo();
+        taInfo.setTotal(pageFromList.getTotalElements() > effAll.size() ? effAll.size() : pageFromList.getTotalElements());
+        taInfo.setResultList(pageFromList.getContent());
+        return taInfo;
+    }
+    //  add   ml   211207   供应商dialog分页  to
 
     @Override
     public Supplierinfor getsupplierinforApplyOne(String supplierinfor_id) throws Exception {

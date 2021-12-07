@@ -6,10 +6,7 @@ import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,6 +36,15 @@ public class Pfans6003Controller {
         Supplierinfor supplierinfor = new Supplierinfor();
         return ApiResult.success(supplierinforService.getsupplierinfor(supplierinfor));
     }
+
+    //  add   ml   211207   供应商dialog分页  from
+    @RequestMapping(value = "/getSupplierinfor", method = {RequestMethod.GET})
+    public ApiResult getSupplierinfor(@RequestParam(defaultValue = "1") int currentPage,
+                                      @RequestParam(defaultValue = "20") int pageSize,
+                                      HttpServletRequest request) throws Exception {
+        return ApiResult.success(supplierinforService.getSupplierinfor(currentPage,pageSize));
+    }
+    //  add   ml   211207   供应商dialog分页  to
 
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
     public ApiResult getsupplierinforApplyOne(@RequestBody Supplierinfor supplierinfor, HttpServletRequest request) throws Exception {
