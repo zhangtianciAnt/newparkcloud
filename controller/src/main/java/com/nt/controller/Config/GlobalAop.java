@@ -57,6 +57,7 @@ public class GlobalAop {
         reqAwarList.add("departmentalinside/getTableinfoReport");//部门项目别年度统计
         reqAwarList.add("departmentaccount/getTable1051infoReport");//部门年度收支
         reqAwarList.add("departmental/getTable1050infoReport");//部门年度收支
+        reqAwarList.add("attendance/getTable2010infoReported");//部门年度收支
         String req = request.getRequestURL().toString();
         String reqAwar = req.substring(req.indexOf("/",req.indexOf("/") + 3) + 1);
         if(!reqAwarList.contains(reqAwar)){

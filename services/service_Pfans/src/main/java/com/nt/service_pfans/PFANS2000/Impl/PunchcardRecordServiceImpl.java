@@ -190,7 +190,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 punchcardrecord.setGroup_id(punchcard.getGroup_id());
                 punchcardrecord.setCenter_id(punchcard.getCenter_id());
                 punchcardrecord.setUser_id(punchcard.getUser_id());
-                //考勤导出 1125 ztc fr
+                // 1125 ztc fr
                 Query query = new Query();
                 query.addCriteria(Criteria.where("userid").is(punchcard.getUser_id()));
                 CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
@@ -4977,6 +4977,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             if (customerInfo != null) {
                 pun.setUser_name(customerInfo.getUserinfo().getCustomername());
             }
+            punchcardrecordMapper.updateByPrimaryKey(pun);
         });
     }
     //临时接口 打卡记录历史数据 姓名补充 ztc 1125 to

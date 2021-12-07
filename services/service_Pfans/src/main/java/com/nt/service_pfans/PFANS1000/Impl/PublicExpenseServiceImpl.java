@@ -1,6 +1,5 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
-import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
@@ -10,10 +9,8 @@ import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TotalCostVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
-import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.Comproject;
-import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
@@ -38,15 +35,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -1330,14 +1324,14 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         }
         OrgTree newOrgInfo = orgTreeService.get(new OrgTree());
         List<TrafficDetails> trafficdetails = publicExpenseVo.getTrafficdetails().stream()
-                .filter(traff -> !("").equals(traff.getDepartmentname()) && (!("0.00").equals(traff.getRmb())
-                || !("0.00").equals(traff.getTormb())) ).collect(Collectors.toList());
+                .filter(traff -> !("").equals(traff.getDepartmentname()) && (!("0").equals(traff.getRmb())
+                || !("0").equals(traff.getTormb())) ).collect(Collectors.toList());
         List<PurchaseDetails> purchaseDetails = publicExpenseVo.getPurchasedetails().stream()
-                .filter(purs -> !("").equals(purs.getDepartmentname()) && (!("0.00").equals(purs.getRmb())
-                        || !("0.00").equals(purs.getTormb()))).collect(Collectors.toList());
+                .filter(purs -> !("").equals(purs.getDepartmentname()) && (!("0").equals(purs.getRmb())
+                        || !("0").equals(purs.getTormb()))).collect(Collectors.toList());
         List<OtherDetails> otherDetails = publicExpenseVo.getOtherdetails().stream()
-                .filter(oter -> !("").equals(oter.getDepartmentname()) && (!("0.00").equals(oter.getRmb())
-                        || !("0.00").equals(oter.getTormb()))).collect(Collectors.toList());
+                .filter(oter -> !("").equals(oter.getDepartmentname()) && (!("0").equals(oter.getRmb())
+                        || !("0").equals(oter.getTormb()))).collect(Collectors.toList());
         if(trafficdetails.size() > 0){
             String finalThis_year2 = this_year;
             trafficdetails.forEach(traf ->{
@@ -1356,13 +1350,13 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         depart = orginfo.getParent_id();
                     }
                 }
-                if(!("0.00").equals(traf.getRmb())){
+                if(new BigDecimal(traf.getRmb()).compareTo(BigDecimal.ZERO) > 1){
                     try {
                         businessplanService.woffRulingInfoAnt(traf.getRmb(), traf.getPlsummary(), finalThis_year2, depart, tokenModel);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }else if(!("0.00").equals(traf.getTormb())){
+                }else if(new BigDecimal(traf.getTormb()).compareTo(BigDecimal.ZERO) > 1){
                     try {
                         businessplanService.woffRulingInfoAnt(traf.getTormb(), traf.getPlsummary(), finalThis_year2, depart, tokenModel);
                     } catch (Exception e) {
@@ -1389,13 +1383,13 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         depart = orginfo.getParent_id();
                     }
                 }
-                if(!("0.00").equals(purch.getRmb())){
+                if(new BigDecimal(purch.getRmb()).compareTo(BigDecimal.ZERO) > 1){
                     try {
                         businessplanService.woffRulingInfoAnt(purch.getRmb(), purch.getPlsummary(), finalThis_year1, depart, tokenModel);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }else if(!("0.00").equals(purch.getTormb())){
+                }else if(new BigDecimal(purch.getTormb()).compareTo(BigDecimal.ZERO) > 1){
                     try {
                         businessplanService.woffRulingInfoAnt(purch.getTormb(), purch.getPlsummary(), finalThis_year1, depart, tokenModel);
                     } catch (Exception e) {
@@ -1422,13 +1416,13 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         depart = orginfo.getParent_id();
                     }
                 }
-                if(!("0.00").equals(oter.getRmb())){
+                if(new BigDecimal(oter.getRmb()).compareTo(BigDecimal.ZERO) > 1){
                     try {
                         businessplanService.woffRulingInfoAnt(oter.getRmb(), oter.getPlsummary(), finalThis_year, depart, tokenModel);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }else if(!("0.00").equals(oter.getTormb())){
+                }else if(new BigDecimal(oter.getTormb()).compareTo(BigDecimal.ZERO) > 1){
                     try {
                         businessplanService.woffRulingInfoAnt(oter.getTormb(), oter.getPlsummary(), finalThis_year, depart,tokenModel);
                     } catch (Exception e) {
