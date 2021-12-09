@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS5000.mapper.ProjectsystemMapper">
+    <select id="getTypeTwo" parameterType="java.util.List" resultType="com.nt.dao_Pfans.PFANS5000.Projectsystem">
+        SELECT
+            monthlyscale,
+            ADMISSIONTIME,
+            EXITTIME
+        FROM
+            projectsystem
+        WHERE
+            TYPE = '2'
+          AND COMPANYPROJECTS_ID IN
+        <foreach collection="projectList" index="index" item="projectid" open="("
+                 separator="," close=")">
+            #{projectid}
+        </foreach>
+    </select>
+</mapper>

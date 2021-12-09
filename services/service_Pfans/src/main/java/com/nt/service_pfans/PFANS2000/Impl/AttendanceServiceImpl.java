@@ -1,11 +1,8 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
-import com.alibaba.fastjson.JSONObject;
-import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.dao_Pfans.PFANS2000.Attendance;
 import com.nt.dao_Pfans.PFANS2000.Overtime;
-import com.nt.dao_Pfans.PFANS2000.PunchcardRecord;
 import com.nt.dao_Pfans.PFANS2000.Vo.AttendanceReport;
 import com.nt.dao_Pfans.PFANS2000.Vo.AttendanceVo;
 import com.nt.dao_Workflow.Workflowinstance;
@@ -17,16 +14,28 @@ import com.nt.service_pfans.PFANS2000.mapper.AbNormalMapper;
 import com.nt.service_pfans.PFANS2000.mapper.AttendanceMapper;
 import com.nt.service_pfans.PFANS2000.mapper.OvertimeMapper;
 import com.nt.service_pfans.PFANS2000.mapper.PunchcardRecordMapper;
-import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
-import com.nt.utils.sign;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -334,10 +343,84 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
     //add ccm 0812 考情管理查看当天的异常申请数据
 
-    //考勤导出 1125 ztc fr
-    public Object getTable2010infoReported(String year,String month) throws Exception {
+//    //考勤导出 1125 ztc fr
+    public void exportReported(String year, String month, HttpServletRequest request, HttpServletResponse resp) throws Exception {
         List<AttendanceReport> attendanceReports = attendanceMapper.getAttInfo(year,month);
-        return JSONObject.toJSON(attendanceReports);
+        XSSFWorkbook attract = new XSSFWorkbook();//内存中创建Excle
+        XSSFCellStyle cellStyleAll = attract.createCellStyle();
+        cellStyleAll.setTopBorderColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
+        cellStyleAll.setBottomBorderColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
+        cellStyleAll.setLeftBorderColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
+        cellStyleAll.setRightBorderColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
+        XSSFCellStyle cellStyleFir = attract.createCellStyle();
+        cellStyleFir.setTopBorderColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
+        cellStyleFir.setBottomBorderColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
+        cellStyleFir.setLeftBorderColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
+        cellStyleFir.setRightBorderColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
+        cellStyleFir.setFillForegroundColor(HSSFColor.HSSFColorPredefined.GREY_25_PERCENT.getIndex());
+
+        XSSFSheet sheet = attract.createSheet(year + "-" + month + "月考勤");
+        sheet.createFreezePane(0,1,0,1);//冻结首行
+        XSSFRow row = sheet.createRow(0);//创建行
+        for(int k = 0; k < 18; k++){
+            XSSFCell cell = row.createCell(k);
+            switch (k) {
+                case 0: cell.setCellValue("人名"); cell.setCellStyle(cellStyleFir); break;
+                case 1: cell.setCellValue("日期"); cell.setCellStyle(cellStyleFir); break;
+                case 2: cell.setCellValue("事假"); cell.setCellStyle(cellStyleFir); break;
+                case 3: cell.setCellValue("试用事假"); cell.setCellStyle(cellStyleFir); break;
+                case 4: cell.setCellValue("产休/护理假"); cell.setCellStyle(cellStyleFir); break;
+                case 5: cell.setCellValue("欠勤"); cell.setCellStyle(cellStyleFir); break;
+                case 6: cell.setCellValue("试用欠勤"); cell.setCellStyle(cellStyleFir); break;
+                case 7: cell.setCellValue("短病假"); cell.setCellStyle(cellStyleFir); break;
+                case 8: cell.setCellValue("试用短病假"); cell.setCellStyle(cellStyleFir); break;
+                case 9: cell.setCellValue("长病假"); cell.setCellStyle(cellStyleFir); break;
+                case 10: cell.setCellValue("试用长病假"); cell.setCellStyle(cellStyleFir); break;
+                case 11: cell.setCellValue("平日"); cell.setCellStyle(cellStyleFir); break;
+                case 12: cell.setCellValue("休日"); cell.setCellStyle(cellStyleFir); break;
+                case 13: cell.setCellValue("祝日"); cell.setCellStyle(cellStyleFir); break;
+                case 14: cell.setCellValue("特别休日"); cell.setCellStyle(cellStyleFir); break;
+                case 15: cell.setCellValue("一齐年休"); cell.setCellStyle(cellStyleFir); break;
+                case 16: cell.setCellValue("青年节"); cell.setCellStyle(cellStyleFir); break;
+                case 17: cell.setCellValue("妇女节"); cell.setCellStyle(cellStyleFir); break;
+            }
+        }
+        if (attendanceReports != null && attendanceReports.size() > 0) {
+            for (int i = 0; i < attendanceReports.size(); i++) {
+                XSSFRow rowDetail = sheet.createRow(i + 1);
+                AttendanceReport att = attendanceReports.get(i);
+                for(int j = 0; j < 18; j++) {
+                    XSSFCell cellDetail = rowDetail.createCell(j);
+                    switch (j){
+                        case 0: cellDetail.setCellValue(att.getUser_id()); cellDetail.setCellStyle(cellStyleAll); break; // 人名
+                        case 1: cellDetail.setCellValue(att.getDates()); cellDetail.setCellStyle(cellStyleAll); break; // 日期
+                        case 2: cellDetail.setCellValue(att.getCompassionateleave()); cellDetail.setCellStyle(cellStyleAll); break; // 事假
+                        case 3: cellDetail.setCellValue(att.getTcompassionateleave()); cellDetail.setCellStyle(cellStyleAll); break; // 试用事假
+                        case 4: cellDetail.setCellValue(att.getNursingleave()); cellDetail.setCellStyle(cellStyleAll); break; // 产休/护理假
+                        case 5: cellDetail.setCellValue(att.getAbsenteeism()); cellDetail.setCellStyle(cellStyleAll); break; // 欠勤
+                        case 6: cellDetail.setCellValue(att.getTabsenteeism()); cellDetail.setCellStyle(cellStyleAll); break; // 试用欠勤
+                        case 7: cellDetail.setCellValue(att.getShortsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 短病假
+                        case 8: cellDetail.setCellValue(att.getTshortsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 试用短病假
+                        case 9: cellDetail.setCellValue(att.getLongsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 长病假
+                        case 10: cellDetail.setCellValue(att.getTlongsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 试用长病假
+                        case 11: cellDetail.setCellValue(att.getOrdinaryindustry()); cellDetail.setCellStyle(cellStyleAll); break; // 平日
+                        case 12: cellDetail.setCellValue(att.getWeekendindustry()); cellDetail.setCellStyle(cellStyleAll); break; // 休日
+                        case 13: cellDetail.setCellValue(att.getStatutoryresidue()); cellDetail.setCellStyle(cellStyleAll); break; // 祝日
+                        case 14: cellDetail.setCellValue(att.getSpecialday()); cellDetail.setCellStyle(cellStyleAll); break; // 特别休日
+                        case 15: cellDetail.setCellValue(att.getAnnualrestday()); cellDetail.setCellStyle(cellStyleAll); break; // 一齐年休
+                        case 16: cellDetail.setCellValue(att.getYouthday()); cellDetail.setCellStyle(cellStyleAll); break; // 青年节
+                        case 17: cellDetail.setCellValue(att.getWomensday()); cellDetail.setCellStyle(cellStyleAll); break; // 妇女节
+                    }
+                }
+            }
+        }
+        OutputStream os = resp.getOutputStream();// 取得输出流
+        String fileName = year + month + "月考勤信息";
+        resp.setContentType("application/x-download");//下面三行是关键代码，处理乱码问题
+        resp.setCharacterEncoding("utf-8");
+        resp.setHeader("Content-Disposition", "attachment;filename="+new String(fileName.getBytes("gbk"), "iso8859-1")+".xls");
+        attract.write(os);
+        attract.close();
     }
     //考勤导出 1125 ztc to
 }

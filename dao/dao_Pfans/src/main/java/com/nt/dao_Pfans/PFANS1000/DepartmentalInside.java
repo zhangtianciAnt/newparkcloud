@@ -4,6 +4,7 @@ import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -204,6 +205,14 @@ public class DepartmentalInside extends BaseModel {
     /*第四季度——RANK别价差*/
     @Column(name = "RANKDIFFERENTFOURTH")
     private String rankdifferentfourth;
+
+    /*年间——工数差*/
+    @Column(name = "WORKDIFFERENTOFYEAR")
+    private String workdifferentofyear;
+
+    /*年间——RANK别价差*/
+    @Column(name = "RANKDIFFERENTOFYEAR")
+    private String rankdifferentofyear;
 
 
 

@@ -1,10 +1,14 @@
 package com.nt.service_pfans.PFANS2000;
 
+import com.nt.dao_Pfans.PFANS1000.Vo.ReportBusinessVo;
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.dao_Pfans.PFANS2000.Attendance;
+import com.nt.dao_Pfans.PFANS2000.Vo.AttendanceReport;
 import com.nt.dao_Pfans.PFANS2000.Vo.AttendanceVo;
 import com.nt.utils.dao.TokenModel;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
 
@@ -40,6 +44,6 @@ public interface AttendanceService {
     List<AbNormal> getabnormalByuseridandDate(Attendance attendance) throws Exception;
     //add ccm 0812 考情管理查看当天的异常申请数据
     //考勤导出 1125 ztc fr
-    Object getTable2010infoReported(String year,String month) throws Exception;
+    void exportReported(String year, String month, HttpServletRequest request, HttpServletResponse resp) throws Exception;
     //考勤导出 1125 ztc to
 }

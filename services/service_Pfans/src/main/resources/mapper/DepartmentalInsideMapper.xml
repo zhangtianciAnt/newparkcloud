@@ -12,7 +12,7 @@
             cpt.CONTRACTNUMBER,
             cpt.CLAIMAMOUNT,
             cpt.ENTRYCONDITION,
-            pt.CONTRACTAMOUNT CONTRACATAMOUNTDETAIL,
+            pt.CONTRACTAMOUNT AS CONTRACATAMOUNTDETAIL,
             cs.COMPANYPROJECTS_ID,
             cs.NUMBERS,
             pm.`NAME`,
@@ -39,15 +39,16 @@
             cp.`STATUS` != '1'
             AND tr.YEAR = #{YEAR}
             ) cpt
-            INNER JOIN projectcontract pt ON pt.CONTRACTNUMBERCOUNT_ID = cpt.CONTRACTNUMBERCOUNT_ID
-            INNER JOIN projectsystem pm ON pm.COMPANYPROJECTS_ID = pt.COMPANYPROJECTS_ID
-            INNER JOIN companyprojects cs ON cs.COMPANYPROJECTS_ID = pm.COMPANYPROJECTS_ID
+            LEFT JOIN projectcontract pt ON pt.CONTRACTNUMBERCOUNT_ID = cpt.CONTRACTNUMBERCOUNT_ID
+            LEFT JOIN projectsystem pm ON pm.COMPANYPROJECTS_ID = pt.COMPANYPROJECTS_ID
+            LEFT JOIN companyprojects cs ON cs.COMPANYPROJECTS_ID = pm.COMPANYPROJECTS_ID
             AND cs.`STATUS` >= 4
             AND pm.type = '0' order by cpt.CONTRACTNUMBER desc
     </select>
     <select id="getWorkInfo" parameterType="list" resultType="com.nt.dao_Pfans.PFANS1000.Vo.StaffWorkMonthInfoVo">
         SELECT
             a.rank,
+            a.TYPE,
             a.group_id,
             a.project_id,
             sum( a.time_start ) time_start
@@ -55,6 +56,7 @@
             (
             SELECT
                 pm.RANK,
+                pm.TYPE,
                 cd.TIME_START,
                 cd.GROUP_ID,
                 cd.PROJECT_ID
@@ -84,13 +86,12 @@
             ) cd
         INNER JOIN projectsystem pm ON pm.`NAME` = cd.userid
         AND pm.COMPANYPROJECTS_ID = cd.PROJECT_ID
-        AND pm.`TYPE` = '0'
         INNER JOIN companyprojects cs ON cs.COMPANYPROJECTS_ID = cd.PROJECT_ID UNION ALL
         SELECT
         p.RANK,
+        p.TYPE,
         0 TIME_START,
         CASE
-
         WHEN c.CENTER_ID IN
         <foreach collection="departList" index="index" item="dep" open="("
                  separator="," close=")">
@@ -102,7 +103,6 @@
         FROM
         projectsystem p
         INNER JOIN companyprojects c ON p.COMPANYPROJECTS_ID = c.COMPANYPROJECTS_ID
-        AND p.type = '0'
         AND p.COMPANYPROJECTS_ID IN
         <foreach collection="projectList" index="index" item="projectid" open="("
                  separator="," close=")">
@@ -121,6 +121,7 @@
         </foreach> UNION ALL
         SELECT
         ade.ATTF,
+        '' AS TYPE,
         0 TIME_START,
         ade.INCONDEPARTMENT,
         pc.COMPANYPROJECTS_ID
@@ -141,6 +142,7 @@
         ) a
         GROUP BY
         a.rank,
+        a.TYPE,
         a.group_id,
         a.project_id
     </select>
@@ -194,6 +196,8 @@
         ,STAFFCUSTACTUAL03
         ,WORKDIFFERENTFOURTH
         ,RANKDIFFERENTFOURTH
+        ,WORKDIFFERENTOFYEAR
+        ,RANKDIFFERENTOFYEAR
         ,CREATEBY
         ,CREATEON
         ,MODIFYBY
@@ -252,6 +256,8 @@
             #{item.staffcustactual03},
             #{item.workdifferentfourth},
             #{item.rankdifferentfourth},
+            #{item.workdifferentofyear},
+            #{item.rankdifferentofyear},
             #{item.createby},
             #{item.createon},
             #{item.modifyby},
@@ -298,6 +304,8 @@
             STAFFCUSTACTUAL03     	= #{item.staffcustactual03},
             WORKDIFFERENTFOURTH    	= #{item.workdifferentfourth},
             RANKDIFFERENTFOURTH     = #{item.rankdifferentfourth},
+            WORKDIFFERENTOFYEAR     = #{item.workdifferentofyear},
+            RANKDIFFERENTOFYEAR     = #{item.rankdifferentofyear},
             CREATEBY            = #{item.createby},
             CREATEON            = #{item.createon},
             MODIFYBY            = #{item.modifyby},

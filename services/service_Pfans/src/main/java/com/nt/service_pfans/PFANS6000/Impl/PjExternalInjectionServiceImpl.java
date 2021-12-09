@@ -330,7 +330,7 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
             //endregion pj别外注统计定时任务
 
             //调取外注别部门支出任务
-            departmentalService.getExpatureList();
+            //departmentalService.getExpatureList();
 
             //调取部门别收支表任务
             departmentAccountService.insert();

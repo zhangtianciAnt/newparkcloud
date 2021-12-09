@@ -1,18 +1,17 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
-import cn.hutool.core.codec.Base64;
 import com.alibaba.fastjson.JSONObject;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.Dictionary;
-import com.nt.dao_Org.Vo.DepartmentVo;
-import com.nt.dao_Pfans.PFANS1000.Departmental;
 import com.nt.dao_Pfans.PFANS1000.DepartmentalInside;
 import com.nt.dao_Pfans.PFANS1000.StaffDetail;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalInsideBaseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalInsideReturnVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.StaffWorkMonthInfoVo;
 import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
-import com.nt.dao_Pfans.PFANS6000.PjExternalInjection;
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS5000.Projectsystem;
+import com.nt.dao_Pfans.PFANS5000.Vo.LogPersonReturnVo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.DepartmentalInsideService;
@@ -20,6 +19,9 @@ import com.nt.service_pfans.PFANS1000.mapper.DepartmentalInsideMapper;
 import com.nt.service_pfans.PFANS1000.mapper.StaffDetailMapper;
 import com.nt.service_pfans.PFANS2000.PersonalCostService;
 import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
+import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
+import com.nt.service_pfans.PFANS5000.mapper.ProjectsystemMapper;
+import com.nt.utils.BigDecimalUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 
@@ -51,7 +58,16 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
     private PersonalCostService personalCostService;
 
     @Autowired
+    private CompanyProjectsMapper companyProjectsMapper;
+
+    @Autowired
     private DictionaryService dictionaryService;
+
+    @Autowired
+    private ProjectsystemMapper projectsystemMapper;
+
+    private static final String PATTERN = "yyyy-MM-dd HH:mm:ss";
+
 
     @Override
     public void insert() throws Exception {
@@ -76,7 +92,39 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
         }
         Calendar calnew = Calendar.getInstance();
         List<DepartmentalInsideBaseVo> departmentalInsideBaseVoList = departmentalInsideMapper.getBaseInfo(String.valueOf(year));
-        Map<String, List<DepartmentalInsideBaseVo>> groupThemList = departmentalInsideBaseVoList.stream()
+        //没关联项目的合同
+        List<DepartmentalInsideBaseVo> unconnectedList = departmentalInsideBaseVoList.stream()
+                .filter(uncl ->(StringUtils.isNullOrEmpty(uncl.getCompanyprojects_id()))).collect(Collectors.toList());
+
+        List<DepartmentalInsideBaseVo> disUnRusltList = unconnectedList.stream()
+                .filter(distinctAnt(DepartmentalInsideBaseVo::getContractnumber))
+                .collect(Collectors.toList());
+        if(disUnRusltList.size() > 0){
+            int finalYearDis = year;
+            disUnRusltList.forEach(durl ->{
+                DepartmentalInside disDepartInside = new DepartmentalInside();
+                disDepartInside.setDepartmentalinside_id(UUID.randomUUID().toString());
+                disDepartInside.setDepartment(durl.getGroup_id());
+                disDepartInside.setThemeinfor_id(durl.getThemeinfor_id());
+                disDepartInside.setThemename(durl.getThemename());
+                disDepartInside.setDivide(durl.getDivide());
+                disDepartInside.setToolsorgs(durl.getToolsorgs());
+                disDepartInside.setContractnumber(durl.getContractnumber());
+                disDepartInside.setClaimamount(durl.getClaimamount());
+                disDepartInside.setEntrycondition(durl.getEntrycondition());
+                disDepartInside.setContracatamountdetail(durl.getContracatamountdetail());
+                disDepartInside.setYears(String.valueOf(finalYearDis));
+                disDepartInside.preInsert(tokenModel);
+                departmentalInsideListInsert.add(disDepartInside);
+            });
+        }
+
+        //关联项目的合同
+        List<DepartmentalInsideBaseVo> connectedList = departmentalInsideBaseVoList.stream()
+                .filter(uncl ->(!StringUtils.isNullOrEmpty(uncl.getCompanyprojects_id()))).collect(Collectors.toList());
+
+
+        Map<String, List<DepartmentalInsideBaseVo>> groupThemList = connectedList.stream()
                 .collect(Collectors.groupingBy(DepartmentalInsideBaseVo::getThemeinfor_id));
         String monthStr = "";
         if (monthlast < 10) {
@@ -89,13 +137,30 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
             departList = entryDep.getValue().stream().map(DepartmentalInsideBaseVo::getGroup_id).distinct().collect(Collectors.toList());
             List<String> projectList = new ArrayList<>();;
             projectList = entryDep.getValue().stream().map(DepartmentalInsideBaseVo::getCompanyprojects_id).distinct().collect(Collectors.toList());
-            String LOG_DATE = String.valueOf(year) + '-' + monthStr;
+            String LOG_DATE = String.valueOf(year) + "-" + monthStr;
             List<StaffWorkMonthInfoVo> staffWorkMonthInfoVoList = departmentalInsideMapper.getWorkInfo(LOG_DATE, departList, projectList);
+            List<StaffWorkMonthInfoVo> inSwmIList = staffWorkMonthInfoVoList.stream().filter(ins ->
+                !("1").equals(ins.getType())
+            ).collect(Collectors.toList());
+            List<StaffWorkMonthInfoVo> outSwmIList = staffWorkMonthInfoVoList.stream().filter(out ->
+                    !StringUtils.isNullOrEmpty(out.getType()) && ("1").equals(out.getType())
+            ).collect(Collectors.toList());
+            List<Projectsystem> getTypeTwoList = projectsystemMapper.getTypeTwo(projectList);
+            getTypeTwoList.forEach(tywo ->{
+                try {
+                    if(this.checkIn(tywo,LOG_DATE)){
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                ;
+            });
             PeoplewareFee peoplewareFee = new PeoplewareFee();
             peoplewareFee.setYear(String.valueOf(year));
             List<PeoplewareFee> peoplewareFeeList = peoplewarefeeMapper.select(peoplewareFee);
             Map<String, Map<String, Map<String, List<StaffWorkMonthInfoVo>>>> staffGroupMap =
-                    staffWorkMonthInfoVoList.stream()
+                    inSwmIList.stream()
                             .filter(item -> !StringUtils.isNullOrEmpty(item.getGroup_id()) && !StringUtils.isNullOrEmpty(item.getProject_id()) && !StringUtils.isNullOrEmpty(item.getRank()))
                             .collect(Collectors.groupingBy(StaffWorkMonthInfoVo::getGroup_id,
                                     Collectors.groupingBy(StaffWorkMonthInfoVo::getProject_id,
@@ -136,6 +201,11 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                 String rankSum = "0.0";
                                 rankSum = rangRankList.stream().map(i -> new BigDecimal(i.getTime_start())).reduce(BigDecimal.ZERO, BigDecimal::add).toString();
                                 StaffDetail staffDetail = new StaffDetail();
+                                try {
+                                    departInsideSelect.setNumbers(this.projectListFee().get(pro));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                                 staffDetail.setIncondepartment(departInsideSelect.getDepartment());
                                 staffDetail.setContractnumber(deBaseList.get(0).getContractnumber());
                                 staffDetail.setAttf(departInsideSelect.getStaffrank());
@@ -145,7 +215,6 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                     DepartmentalInside departmentalInside = new DepartmentalInside();
                                     BeanUtils.copyProperties(departInsideSelect, departmentalInside);
                                     departmentalInside.setDepartmentalinside_id(UUID.randomUUID().toString());
-                                    departmentalInside.setNumbers(rankList.get(0).getNumbers());
                                     departmentalInside.setThemeinfor_id(deBaseList.get(0).getThemeinfor_id());
                                     departmentalInside.setThemename(deBaseList.get(0).getThemename());
                                     departmentalInside.setDivide(deBaseList.get(0).getDivide());
@@ -303,7 +372,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                         ).setScale(2, BigDecimal.ROUND_HALF_UP)
                                                 )
                                         );
-                                    } else if (monthlast == 7 || monthlast == 8 || monthlast == 9) {
+                                    }
+                                    else if (monthlast == 7 || monthlast == 8 || monthlast == 9) {
                                         departmentalInside.setWorkdifferentsecond(
                                                 String.valueOf(
                                                         (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan07())
@@ -386,7 +456,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                         ).setScale(2, BigDecimal.ROUND_HALF_UP)
                                                 )
                                         );
-                                    } else if (monthlast == 10 || monthlast == 11 || monthlast == 12) {
+                                    }
+                                    else if (monthlast == 10 || monthlast == 11 || monthlast == 12) {
                                         departmentalInside.setWorkdifferentthird(
                                                 String.valueOf(
                                                         (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan10())
@@ -469,7 +540,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                         ).setScale(2, BigDecimal.ROUND_HALF_UP)
                                                 )
                                         );
-                                    } else if (monthlast == 1 || monthlast == 2 || monthlast == 3) {
+                                    }
+                                    else if (monthlast == 1 || monthlast == 2 || monthlast == 3) {
                                         departmentalInside.setWorkdifferentfourth(
                                                 String.valueOf(
                                                         (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustplan01())
@@ -553,9 +625,12 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                 )
                                         );
                                     }
+                                    departmentalInside.setWorkdifferentofyear(this.sumWorkAnt(departmentalInside));
+                                    departmentalInside.setRankdifferentofyear(this.sumRankAnt(departmentalInside));
                                     departmentalInside.preInsert(tokenModel);
                                     departmentalInsideListInsert.add(departmentalInside);
-                                } else {
+                                }
+                                else {
                                     switch (monthlast) {
                                         case 0:
                                             getOldRanList.get(0).setStaffcustactual12(rankSum);
@@ -958,6 +1033,8 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                 )
                                         );
                                     }
+                                    getOldRanList.get(0).setWorkdifferentofyear(this.sumWorkAnt(getOldRanList.get(0)));
+                                    getOldRanList.get(0).setRankdifferentofyear(this.sumRankAnt(getOldRanList.get(0)));
                                 }
                             }
                         });
@@ -985,16 +1062,19 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
         departmentalInside.setYears(year);
         departmentalInside.setDepartment(group_id);
         List<DepartmentalInside> departmentalInsideList = departmentalInsideMapper.select(departmentalInside);
-        Map<String, Map<String, List<DepartmentalInside>>> filterMap =
+//        Map<String, Map<String, List<DepartmentalInside>>> filterMap =
+//                departmentalInsideList.stream()
+//                        .collect(Collectors.groupingBy(DepartmentalInside::getContractnumber,
+//                                Collectors.groupingBy(DepartmentalInside::getProject_id)));
+        Map<String, List<DepartmentalInside>> filterMap =
                 departmentalInsideList.stream()
-                        .collect(Collectors.groupingBy(DepartmentalInside::getContractnumber,
-                                Collectors.groupingBy(DepartmentalInside::getProject_id)));
+                        .collect(Collectors.groupingBy(DepartmentalInside::getContractnumber));
         for(DepartmentalInside depart : departmentalInsideList){
             if(depart.getEntrycondition().equals("HT004001")){
                 depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "-废弃" + "】");
                 depart.setClaimamount("-");
             }else{
-                if(filterMap.get(depart.getContractnumber()).size() > 1){
+                if(filterMap.get(depart.getContractnumber()).size() == 1 && !StringUtils.isNullOrEmpty(depart.getProject_id())){
                     depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getContracatamountdetail() + "】");
                 }else{
                     depart.setContractnumber(depart.getContractnumber() + "-" + "【" + depart.getClaimamount() + "】");
@@ -1011,32 +1091,34 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
         BigDecimal acalHj05 = BigDecimal.ZERO;
         BigDecimal planHj06 = BigDecimal.ZERO;
         BigDecimal acalHj06 = BigDecimal.ZERO;
-        BigDecimal workHj01 = BigDecimal.ZERO;
-        BigDecimal rankHj01 = BigDecimal.ZERO;
+//        BigDecimal workHj01 = BigDecimal.ZERO;
+//        BigDecimal rankHj01 = BigDecimal.ZERO;
         BigDecimal planHj07 = BigDecimal.ZERO;
         BigDecimal acalHj07 = BigDecimal.ZERO;
         BigDecimal planHj08 = BigDecimal.ZERO;
         BigDecimal acalHj08 = BigDecimal.ZERO;
         BigDecimal planHj09 = BigDecimal.ZERO;
         BigDecimal acalHj09 = BigDecimal.ZERO;
-        BigDecimal workHj02 = BigDecimal.ZERO;
-        BigDecimal rankHj02 = BigDecimal.ZERO;
+//        BigDecimal workHj02 = BigDecimal.ZERO;
+//        BigDecimal rankHj02 = BigDecimal.ZERO;
         BigDecimal planHj10 = BigDecimal.ZERO;
         BigDecimal acalHj10 = BigDecimal.ZERO;
         BigDecimal planHj11 = BigDecimal.ZERO;
         BigDecimal acalHj11 = BigDecimal.ZERO;
         BigDecimal planHj12 = BigDecimal.ZERO;
         BigDecimal acalHj12 = BigDecimal.ZERO;
-        BigDecimal workHj03 = BigDecimal.ZERO;
-        BigDecimal rankHj03 = BigDecimal.ZERO;
+//        BigDecimal workHj03 = BigDecimal.ZERO;
+//        BigDecimal rankHj03 = BigDecimal.ZERO;
         BigDecimal planHj01 = BigDecimal.ZERO;
         BigDecimal acalHj01 = BigDecimal.ZERO;
         BigDecimal planHj02 = BigDecimal.ZERO;
         BigDecimal acalHj02 = BigDecimal.ZERO;
         BigDecimal planHj03 = BigDecimal.ZERO;
         BigDecimal acalHj03 = BigDecimal.ZERO;
-        BigDecimal workHj04 = BigDecimal.ZERO;
-        BigDecimal rankHj04 = BigDecimal.ZERO;
+//        BigDecimal workHj04 = BigDecimal.ZERO;
+//        BigDecimal rankHj04 = BigDecimal.ZERO;
+        BigDecimal workHjoy = BigDecimal.ZERO;
+        BigDecimal rankHjoy = BigDecimal.ZERO;
         if(treeDepList.size() > 0){
             for (List<DepartmentalInside> value : treeDepList.values()) {
                 DepartmentalInsideReturnVo departmentalInsideReturnVo = new DepartmentalInsideReturnVo();
@@ -1057,98 +1139,114 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                 departmentalInsideReturnVo.setStaffcustactual05("-");
                 departmentalInsideReturnVo.setStaffcustplan06("-");
                 departmentalInsideReturnVo.setStaffcustactual06("-");
-                departmentalInsideReturnVo.setWorkdifferentfirst("-");
-                departmentalInsideReturnVo.setRankdifferentfirst("-");
+//                departmentalInsideReturnVo.setWorkdifferentfirst("-");
+//                departmentalInsideReturnVo.setRankdifferentfirst("-");
                 departmentalInsideReturnVo.setStaffcustplan07("-");
                 departmentalInsideReturnVo.setStaffcustactual07("-");
                 departmentalInsideReturnVo.setStaffcustplan08("-");
                 departmentalInsideReturnVo.setStaffcustactual08("-");
                 departmentalInsideReturnVo.setStaffcustplan09("-");
                 departmentalInsideReturnVo.setStaffcustactual09("-");
-                departmentalInsideReturnVo.setWorkdifferentsecond("-");
-                departmentalInsideReturnVo.setRankdifferentsecond("-");
+//                departmentalInsideReturnVo.setWorkdifferentsecond("-");
+//                departmentalInsideReturnVo.setRankdifferentsecond("-");
                 departmentalInsideReturnVo.setStaffcustplan10("-");
                 departmentalInsideReturnVo.setStaffcustactual10("-");
                 departmentalInsideReturnVo.setStaffcustplan11("-");
                 departmentalInsideReturnVo.setStaffcustactual11("-");
                 departmentalInsideReturnVo.setStaffcustplan12("-");
                 departmentalInsideReturnVo.setStaffcustactual12("-");
-                departmentalInsideReturnVo.setWorkdifferentthird("-");
-                departmentalInsideReturnVo.setRankdifferentthird("-");
+//                departmentalInsideReturnVo.setWorkdifferentthird("-");
+//                departmentalInsideReturnVo.setRankdifferentthird("-");
                 departmentalInsideReturnVo.setStaffcustplan01("-");
                 departmentalInsideReturnVo.setStaffcustactual01("-");
                 departmentalInsideReturnVo.setStaffcustplan02("-");
                 departmentalInsideReturnVo.setStaffcustactual02("-");
                 departmentalInsideReturnVo.setStaffcustplan03("-");
                 departmentalInsideReturnVo.setStaffcustactual03("-");
-                departmentalInsideReturnVo.setWorkdifferentfourth("-");
-                departmentalInsideReturnVo.setRankdifferentfourth("-");
+//                departmentalInsideReturnVo.setWorkdifferentfourth("-");
+//                departmentalInsideReturnVo.setRankdifferentfourth("-");
+                departmentalInsideReturnVo.setWorkdifferentofyear("-");
+                departmentalInsideReturnVo.setRankdifferentofyear("-");
                 BigDecimal planXj04 = BigDecimal.ZERO;
                 BigDecimal acalXj04 = BigDecimal.ZERO;
                 BigDecimal planXj05 = BigDecimal.ZERO;
                 BigDecimal acalXj05 = BigDecimal.ZERO;
                 BigDecimal acalXj06 = BigDecimal.ZERO;
                 BigDecimal planXj06 = BigDecimal.ZERO;
-                BigDecimal workXj01 = BigDecimal.ZERO;
-                BigDecimal rankXj01 = BigDecimal.ZERO;
+//                BigDecimal workXj01 = BigDecimal.ZERO;
+//                BigDecimal rankXj01 = BigDecimal.ZERO;
                 BigDecimal planXj07 = BigDecimal.ZERO;
                 BigDecimal acalXj07 = BigDecimal.ZERO;
                 BigDecimal planXj08 = BigDecimal.ZERO;
                 BigDecimal acalXj08 = BigDecimal.ZERO;
                 BigDecimal planXj09 = BigDecimal.ZERO;
                 BigDecimal acalXj09 = BigDecimal.ZERO;
-                BigDecimal workXj02 = BigDecimal.ZERO;
-                BigDecimal rankXj02 = BigDecimal.ZERO;
+//                BigDecimal workXj02 = BigDecimal.ZERO;
+//                BigDecimal rankXj02 = BigDecimal.ZERO;
                 BigDecimal planXj10 = BigDecimal.ZERO;
                 BigDecimal acalXj10 = BigDecimal.ZERO;
                 BigDecimal planXj11 = BigDecimal.ZERO;
                 BigDecimal acalXj11 = BigDecimal.ZERO;
                 BigDecimal planXj12 = BigDecimal.ZERO;
                 BigDecimal acalXj12 = BigDecimal.ZERO;
-                BigDecimal workXj03 = BigDecimal.ZERO;
-                BigDecimal rankXj03 = BigDecimal.ZERO;
+//                BigDecimal workXj03 = BigDecimal.ZERO;
+//                BigDecimal rankXj03 = BigDecimal.ZERO;
                 BigDecimal planXj01 = BigDecimal.ZERO;
                 BigDecimal acalXj01 = BigDecimal.ZERO;
                 BigDecimal planXj02 = BigDecimal.ZERO;
                 BigDecimal acalXj02 = BigDecimal.ZERO;
                 BigDecimal planXj03 = BigDecimal.ZERO;
                 BigDecimal acalXj03 = BigDecimal.ZERO;
-                BigDecimal workXj04 = BigDecimal.ZERO;
-                BigDecimal rankXj04 = BigDecimal.ZERO;
-                value.sort(Comparator.comparing(DepartmentalInside::getClaimamount).thenComparing(DepartmentalInside::getProject_id).thenComparing(DepartmentalInside::getStaffrank));
-                for(DepartmentalInside getXj : value){
+//                BigDecimal workXj04 = BigDecimal.ZERO;
+//                BigDecimal rankXj04 = BigDecimal.ZERO;
+                BigDecimal workXjoy = BigDecimal.ZERO;
+                BigDecimal rankXjoy = BigDecimal.ZERO;
+                List<DepartmentalInside> reslutValue = new ArrayList<>();
+                List<DepartmentalInside> unValue = value.stream()
+                        .filter(unval ->(!StringUtils.isNullOrEmpty(unval.getProject_id()))).collect(Collectors.toList());
+                unValue.sort(Comparator.comparing(DepartmentalInside::getClaimamount)
+                        .thenComparing(DepartmentalInside::getProject_id).thenComparing(DepartmentalInside::getStaffrank));
+                List<DepartmentalInside> inValue = value.stream()
+                        .filter(unval ->(StringUtils.isNullOrEmpty(unval.getProject_id()))).collect(Collectors.toList());
+                reslutValue.addAll(inValue);
+                reslutValue.addAll(unValue);
+//                value.sort(Comparator.comparing(DepartmentalInside::getClaimamount)
+//                        .thenComparing(DepartmentalInside::getProject_id).thenComparing(DepartmentalInside::getStaffrank));
+                for(DepartmentalInside getXj : unValue){
                     planXj04 = planXj04.add(StringUtils.isNullOrEmpty(getXj.getStaffcustplan04()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustplan04()));
                     acalXj04 = acalXj04.add(StringUtils.isNullOrEmpty(getXj.getStaffcustactual04()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustactual04()));
                     planXj05 = planXj05.add(StringUtils.isNullOrEmpty(getXj.getStaffcustplan05()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustplan05()));
                     acalXj05 = acalXj05.add(StringUtils.isNullOrEmpty(getXj.getStaffcustactual05()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustactual05()));
                     planXj06 = planXj06.add(StringUtils.isNullOrEmpty(getXj.getStaffcustplan06()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustplan06()));
                     acalXj06 = acalXj06.add(StringUtils.isNullOrEmpty(getXj.getStaffcustactual06()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustactual06()));
-                    workXj01 = workXj01.add(StringUtils.isNullOrEmpty(getXj.getWorkdifferentfirst()) ? BigDecimal.ZERO : new BigDecimal(getXj.getWorkdifferentfirst()));
-                    rankXj01 = rankXj01.add(StringUtils.isNullOrEmpty(getXj.getRankdifferentfirst()) ? BigDecimal.ZERO : new BigDecimal(getXj.getRankdifferentfirst()));
+//                    workXj01 = workXj01.add(StringUtils.isNullOrEmpty(getXj.getWorkdifferentfirst()) ? BigDecimal.ZERO : new BigDecimal(getXj.getWorkdifferentfirst()));
+//                    rankXj01 = rankXj01.add(StringUtils.isNullOrEmpty(getXj.getRankdifferentfirst()) ? BigDecimal.ZERO : new BigDecimal(getXj.getRankdifferentfirst()));
                     planXj07 = planXj07.add(StringUtils.isNullOrEmpty(getXj.getStaffcustplan07()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustplan07()));
                     acalXj07 = acalXj07.add(StringUtils.isNullOrEmpty(getXj.getStaffcustactual07()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustactual07()));
                     planXj08 = planXj08.add(StringUtils.isNullOrEmpty(getXj.getStaffcustplan08()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustplan08()));
                     acalXj08 = acalXj08.add(StringUtils.isNullOrEmpty(getXj.getStaffcustactual08()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustactual08()));
                     planXj09 = planXj09.add(StringUtils.isNullOrEmpty(getXj.getStaffcustplan09()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustplan09()));
                     acalXj09 = acalXj09.add(StringUtils.isNullOrEmpty(getXj.getStaffcustactual09()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustactual09()));
-                    workXj02 = workXj02.add(StringUtils.isNullOrEmpty(getXj.getWorkdifferentsecond()) ? BigDecimal.ZERO : new BigDecimal(getXj.getWorkdifferentsecond()));
-                    rankXj02 = rankXj02.add(StringUtils.isNullOrEmpty(getXj.getRankdifferentsecond()) ? BigDecimal.ZERO : new BigDecimal(getXj.getRankdifferentsecond()));
+//                    workXj02 = workXj02.add(StringUtils.isNullOrEmpty(getXj.getWorkdifferentsecond()) ? BigDecimal.ZERO : new BigDecimal(getXj.getWorkdifferentsecond()));
+//                    rankXj02 = rankXj02.add(StringUtils.isNullOrEmpty(getXj.getRankdifferentsecond()) ? BigDecimal.ZERO : new BigDecimal(getXj.getRankdifferentsecond()));
                     planXj10 = planXj10.add(StringUtils.isNullOrEmpty(getXj.getStaffcustplan10()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustplan10()));
                     acalXj10 = acalXj10.add(StringUtils.isNullOrEmpty(getXj.getStaffcustactual10()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustactual10()));
                     planXj11 = planXj11.add(StringUtils.isNullOrEmpty(getXj.getStaffcustplan11()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustplan11()));
                     acalXj11 = acalXj11.add(StringUtils.isNullOrEmpty(getXj.getStaffcustactual11()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustactual11()));
                     planXj12 = planXj12.add(StringUtils.isNullOrEmpty(getXj.getStaffcustplan12()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustplan12()));
                     acalXj12 = acalXj12.add(StringUtils.isNullOrEmpty(getXj.getStaffcustactual12()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustactual12()));
-                    workXj03 = workXj03.add(StringUtils.isNullOrEmpty(getXj.getWorkdifferentthird()) ? BigDecimal.ZERO : new BigDecimal(getXj.getWorkdifferentthird()));
-                    rankXj03 = rankXj03.add(StringUtils.isNullOrEmpty(getXj.getRankdifferentthird()) ? BigDecimal.ZERO : new BigDecimal(getXj.getRankdifferentthird()));
+//                    workXj03 = workXj03.add(StringUtils.isNullOrEmpty(getXj.getWorkdifferentthird()) ? BigDecimal.ZERO : new BigDecimal(getXj.getWorkdifferentthird()));
+//                    rankXj03 = rankXj03.add(StringUtils.isNullOrEmpty(getXj.getRankdifferentthird()) ? BigDecimal.ZERO : new BigDecimal(getXj.getRankdifferentthird()));
                     planXj01 = planXj01.add(StringUtils.isNullOrEmpty(getXj.getStaffcustplan01()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustplan01()));
                     acalXj01 = acalXj01.add(StringUtils.isNullOrEmpty(getXj.getStaffcustactual01()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustactual01()));
                     planXj02 = planXj02.add(StringUtils.isNullOrEmpty(getXj.getStaffcustplan02()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustplan02()));
                     acalXj02 = acalXj02.add(StringUtils.isNullOrEmpty(getXj.getStaffcustactual02()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustactual02()));
                     planXj03 = planXj03.add(StringUtils.isNullOrEmpty(getXj.getStaffcustplan03()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustplan03()));
                     acalXj03 = acalXj03.add(StringUtils.isNullOrEmpty(getXj.getStaffcustactual03()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustactual03()));
-                    workXj04 = workXj04.add(StringUtils.isNullOrEmpty(getXj.getWorkdifferentfourth()) ? BigDecimal.ZERO : new BigDecimal(getXj.getWorkdifferentfourth()));
-                    rankXj04 = rankXj04.add(StringUtils.isNullOrEmpty(getXj.getRankdifferentfourth()) ? BigDecimal.ZERO : new BigDecimal(getXj.getRankdifferentfourth()));
+//                    workXj04 = workXj04.add(StringUtils.isNullOrEmpty(getXj.getWorkdifferentfourth()) ? BigDecimal.ZERO : new BigDecimal(getXj.getWorkdifferentfourth()));
+//                    rankXj04 = rankXj04.add(StringUtils.isNullOrEmpty(getXj.getRankdifferentfourth()) ? BigDecimal.ZERO : new BigDecimal(getXj.getRankdifferentfourth()));
+                    workXjoy = workXjoy.add(StringUtils.isNullOrEmpty(getXj.getWorkdifferentofyear()) ? BigDecimal.ZERO : new BigDecimal(getXj.getWorkdifferentofyear()));
+                    rankXjoy = rankXjoy.add(StringUtils.isNullOrEmpty(getXj.getRankdifferentofyear()) ? BigDecimal.ZERO : new BigDecimal(getXj.getRankdifferentofyear()));
                 };
                 DepartmentalInside depInsListXj = new DepartmentalInside();
                 depInsListXj.setThemename("小计");
@@ -1158,34 +1256,36 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                 depInsListXj.setStaffcustactual05((acalXj05).toString());
                 depInsListXj.setStaffcustplan06((planXj06).toString());
                 depInsListXj.setStaffcustactual06((acalXj06).toString());
-                depInsListXj.setWorkdifferentfirst((workXj01).toString());
-                depInsListXj.setRankdifferentfirst((rankXj01).toString());
+//                depInsListXj.setWorkdifferentfirst((workXj01).toString());
+//                depInsListXj.setRankdifferentfirst((rankXj01).toString());
                 depInsListXj.setStaffcustplan07((planXj07).toString());
                 depInsListXj.setStaffcustactual07((acalXj07).toString());
                 depInsListXj.setStaffcustplan08((planXj08).toString());
                 depInsListXj.setStaffcustactual08((acalXj08).toString());
                 depInsListXj.setStaffcustplan09((planXj09).toString());
                 depInsListXj.setStaffcustactual09((acalXj09).toString());
-                depInsListXj.setWorkdifferentsecond((workXj02).toString());
-                depInsListXj.setRankdifferentsecond((rankXj02).toString());
+//                depInsListXj.setWorkdifferentsecond((workXj02).toString());
+//                depInsListXj.setRankdifferentsecond((rankXj02).toString());
                 depInsListXj.setStaffcustplan10((planXj10).toString());
                 depInsListXj.setStaffcustactual10((acalXj10).toString());
                 depInsListXj.setStaffcustplan11((planXj11).toString());
                 depInsListXj.setStaffcustactual11((acalXj11).toString());
                 depInsListXj.setStaffcustplan12((planXj12).toString());
                 depInsListXj.setStaffcustactual12((acalXj12).toString());
-                depInsListXj.setWorkdifferentthird((workXj03).toString());
-                depInsListXj.setRankdifferentthird((rankXj03).toString());
+//                depInsListXj.setWorkdifferentthird((workXj03).toString());
+//                depInsListXj.setRankdifferentthird((rankXj03).toString());
                 depInsListXj.setStaffcustplan01((planXj01).toString());
                 depInsListXj.setStaffcustactual01((acalXj01).toString());
                 depInsListXj.setStaffcustplan02((planXj02).toString());
                 depInsListXj.setStaffcustactual02((acalXj02).toString());
                 depInsListXj.setStaffcustplan03((planXj03).toString());
                 depInsListXj.setStaffcustactual03((acalXj03).toString());
-                depInsListXj.setWorkdifferentfourth((workXj04).toString());
-                depInsListXj.setRankdifferentfourth((rankXj04).toString());
-                value.add(depInsListXj);
-                departmentalInsideReturnVo.setDepartmentalInsideList(value);
+//                depInsListXj.setWorkdifferentfourth((workXj04).toString());
+//                depInsListXj.setRankdifferentfourth((rankXj04).toString());
+                depInsListXj.setWorkdifferentofyear((workXjoy).toString());
+                depInsListXj.setRankdifferentofyear((rankXjoy).toString());
+                reslutValue.add(depInsListXj);
+                departmentalInsideReturnVo.setDepartmentalInsideList(reslutValue);
                 returnList.add(departmentalInsideReturnVo);
                 planHj04 = planHj04.add(planXj04);
                 acalHj04 = acalHj04.add(acalXj04);
@@ -1193,32 +1293,34 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                 acalHj05 = acalHj05.add(acalXj05);
                 planHj06 = planHj06.add(planXj06);
                 acalHj06 = acalHj06.add(acalXj06);
-                workHj01 = workHj01.add(workXj01);
-                rankHj01 = rankHj01.add(rankXj01);
+//                workHj01 = workHj01.add(workXj01);
+//                rankHj01 = rankHj01.add(rankXj01);
                 planHj07 = planHj07.add(planXj07);
                 acalHj07 = acalHj07.add(acalXj07);
                 planHj08 = planHj08.add(planXj08);
                 acalHj08 = acalHj08.add(acalXj08);
                 planHj09 = planHj09.add(planXj09);
                 acalHj09 = acalHj09.add(acalXj09);
-                workHj02 = workHj02.add(workXj02);
-                rankHj02 = rankHj02.add(rankXj02);
+//                workHj02 = workHj02.add(workXj02);
+//                rankHj02 = rankHj02.add(rankXj02);
                 planHj10 = planHj10.add(planXj10);
                 acalHj10 = acalHj10.add(acalXj10);
                 planHj11 = planHj11.add(planXj11);
                 acalHj11 = acalHj11.add(acalXj11);
                 planHj12 = planHj12.add(planXj12);
                 acalHj12 = acalHj12.add(acalXj12);
-                workHj03 = workHj03.add(workXj03);
-                rankHj03 = rankHj03.add(rankXj03);
+//                workHj03 = workHj03.add(workXj03);
+//                rankHj03 = rankHj03.add(rankXj03);
                 planHj01 = planHj01.add(planXj01);
                 acalHj01 = acalHj01.add(acalXj01);
                 planHj02 = planHj02.add(planXj02);
                 acalHj02 = acalHj02.add(acalXj02);
                 planHj03 = planHj03.add(planXj03);
                 acalHj03 = acalHj03.add(acalXj03);
-                workHj04 = workHj04.add(workXj04);
-                rankHj04 = rankHj04.add(rankXj04);
+//                workHj04 = workHj04.add(workXj04);
+//                rankHj04 = rankHj04.add(rankXj04);
+                workHjoy = workHjoy.add(workXjoy);
+                rankHjoy = rankHjoy.add(rankXjoy);
             }
             deInsideReturnHjVo.setThemename("合计");
             deInsideReturnHjVo.setStaffcustplan04((planHj04).toString());
@@ -1227,32 +1329,34 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
             deInsideReturnHjVo.setStaffcustactual05((acalHj05).toString());
             deInsideReturnHjVo.setStaffcustplan06((planHj06).toString());
             deInsideReturnHjVo.setStaffcustactual06((acalHj06).toString());
-            deInsideReturnHjVo.setWorkdifferentfirst((workHj01).toString());
-            deInsideReturnHjVo.setRankdifferentfirst((rankHj01).toString());
+//            deInsideReturnHjVo.setWorkdifferentfirst((workHj01).toString());
+//            deInsideReturnHjVo.setRankdifferentfirst((rankHj01).toString());
             deInsideReturnHjVo.setStaffcustplan07((planHj07).toString());
             deInsideReturnHjVo.setStaffcustactual07((acalHj07).toString());
             deInsideReturnHjVo.setStaffcustplan08((planHj08).toString());
             deInsideReturnHjVo.setStaffcustactual08((acalHj08).toString());
             deInsideReturnHjVo.setStaffcustplan09((planHj09).toString());
             deInsideReturnHjVo.setStaffcustactual09((acalHj09).toString());
-            deInsideReturnHjVo.setWorkdifferentsecond((workHj02).toString());
-            deInsideReturnHjVo.setRankdifferentsecond((rankHj02).toString());
+//            deInsideReturnHjVo.setWorkdifferentsecond((workHj02).toString());
+//            deInsideReturnHjVo.setRankdifferentsecond((rankHj02).toString());
             deInsideReturnHjVo.setStaffcustplan10((planHj10).toString());
             deInsideReturnHjVo.setStaffcustactual10((acalHj10).toString());
             deInsideReturnHjVo.setStaffcustplan11((planHj11).toString());
             deInsideReturnHjVo.setStaffcustactual11((acalHj11).toString());
             deInsideReturnHjVo.setStaffcustplan12((planHj12).toString());
             deInsideReturnHjVo.setStaffcustactual12((acalHj12).toString());
-            deInsideReturnHjVo.setWorkdifferentthird((workHj03).toString());
-            deInsideReturnHjVo.setRankdifferentthird((rankHj03).toString());
+//            deInsideReturnHjVo.setWorkdifferentthird((workHj03).toString());
+//            deInsideReturnHjVo.setRankdifferentthird((rankHj03).toString());
             deInsideReturnHjVo.setStaffcustplan01((planHj01).toString());
             deInsideReturnHjVo.setStaffcustactual01((acalHj01).toString());
             deInsideReturnHjVo.setStaffcustplan02((planHj02).toString());
             deInsideReturnHjVo.setStaffcustactual02((acalHj02).toString());
             deInsideReturnHjVo.setStaffcustplan03((planHj03).toString());
             deInsideReturnHjVo.setStaffcustactual03((acalHj03).toString());
-            deInsideReturnHjVo.setWorkdifferentfourth((workHj04).toString());
-            deInsideReturnHjVo.setRankdifferentfourth((rankHj04).toString());
+//            deInsideReturnHjVo.setWorkdifferentfourth((workHj04).toString());
+//            deInsideReturnHjVo.setRankdifferentfourth((rankHj04).toString());
+            deInsideReturnHjVo.setWorkdifferentofyear((workHjoy).toString());
+            deInsideReturnHjVo.setRankdifferentofyear((rankHjoy).toString());
             returnList.add(deInsideReturnHjVo);
         }
         return returnList;
@@ -1488,7 +1592,7 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                     planXj05.toString(),acalXj05.toString(),planXj06.toString(),acalXj06.toString(),workXj01.toString(),rankXj01.toString(),planXj07.toString(),acalXj07.toString(),
                     planXj08.toString(),acalXj08.toString(),planXj09.toString(),acalXj09.toString(),workXj02.toString(),rankXj02.toString(),planXj10.toString(),acalXj10.toString(),planXj11.toString(),acalXj11.toString(),
                     planXj12.toString(),acalXj12.toString(),workXj03.toString(),rankXj03.toString(),planXj01.toString(),acalXj01.toString(),planXj02.toString(),acalXj02.toString(),planXj03.toString(),acalXj03.toString(),
-                    workXj04.toString(),rankXj04.toString());
+                    workXj04.toString(),rankXj04.toString(),"","");
             temporary.add(inside);
             toplanXj04 = toplanXj04.add(planXj04);
             toacalXj04 = toacalXj04.add(acalXj04);
@@ -1527,10 +1631,61 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                 toplanXj05.toString(),toacalXj05.toString(),toplanXj06.toString(),toacalXj06.toString(),toworkXj01.toString(),torankXj01.toString(),toplanXj07.toString(),toacalXj07.toString(),
                 toplanXj08.toString(),toacalXj08.toString(),toplanXj09.toString(),toacalXj09.toString(),toworkXj02.toString(),torankXj02.toString(),toplanXj10.toString(),toacalXj10.toString(),toplanXj11.toString(),toacalXj11.toString(),
                 toplanXj12.toString(),toacalXj12.toString(),toworkXj03.toString(),torankXj03.toString(),toplanXj01.toString(),toacalXj01.toString(),toplanXj02.toString(),toacalXj02.toString(),toplanXj03.toString(),toacalXj03.toString(),
-                toworkXj04.toString(),torankXj04.toString()));
+                toworkXj04.toString(),torankXj04.toString(),"",""));
         departmentalInsideList.addAll(temporary);
         departmentalInsideList.sort(Comparator.comparing(DepartmentalInside::getThemeinfor_id).reversed());
         return JSONObject.toJSON(departmentalInsideList);
     }
     //endregion scc add 21/8/31 部门项目报表 to
+
+    public static <T> Predicate<T> distinctAnt(Function<? super T, Object> keyExtractor) {
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return object -> seen.putIfAbsent(keyExtractor.apply(object), Boolean.TRUE) == null;
+    }
+
+    public String sumWorkAnt(DepartmentalInside departmentalInside) {
+        String sumWork = BigDecimalUtils.sum(
+                departmentalInside.getWorkdifferentfirst(),departmentalInside.getWorkdifferentsecond(),
+                departmentalInside.getWorkdifferentthird(),departmentalInside.getWorkdifferentfourth()
+        );
+        return sumWork;
+    }
+    public String sumRankAnt(DepartmentalInside departmentalInside) {
+        String sumRank = BigDecimalUtils.sum(
+                departmentalInside.getRankdifferentfirst(),departmentalInside.getRankdifferentsecond(),
+                departmentalInside.getRankdifferentthird(),departmentalInside.getRankdifferentfourth()
+        );
+        return sumRank;
+    }
+
+    public Map<String,String>  projectListFee() throws Exception {
+        Map<String,String> proMap = new HashMap<>();
+        List<CompanyProjects> prList = companyProjectsMapper.selectAll();
+        prList.forEach(pro ->{
+            proMap.put(pro.getCompanyprojects_id(),pro.getNumbers());
+        });
+        return proMap;
+    }
+
+    public boolean checkIn(Projectsystem projectsystem,String dateAnt) throws Exception {
+        boolean flag = false;
+        Date regDate = this.strToDate(dateAnt);
+        if(!projectsystem.getAdmissiontime().after(regDate) && !regDate.after(projectsystem.getExittime())){
+            flag = true;
+        }
+        return flag;
+    }
+
+    public static Date strToDate(String str) {
+        if (StringUtils.isNullOrEmpty(str)) {
+            return null;
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat(PATTERN);
+        try {
+            return sdf.parse(str);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

@@ -17,4 +17,6 @@ public interface ProjectsystemMapper extends MyMapper<Projectsystem> {
     List<Projectsystem> getProsysList();
     //add_fjl_07/07 end  PL权限相关
 
+    List<Projectsystem> getTypeTwo(@Param("projectList") List<String> projectList);
+
 }
