@@ -688,7 +688,7 @@ public class AwardServiceImpl implements AwardService {
                     Calendar cal = Calendar.getInstance();
                     cal.setTime(item.getClaimdate());
                     String year = String.valueOf(cal.get(Calendar.YEAR));
-                    String month = String.valueOf(cal.get(Calendar.MONTH) + 1);
+                    String month = cal.get(Calendar.MONTH) + 1 > 10 ? String.valueOf(cal.get(Calendar.MONTH) + 1) : "0" + (cal.get(Calendar.MONTH) + 1);
                     temp.setDates(year + "-" + month);//年月
                     temp.preInsert();
                     res.add(temp);
