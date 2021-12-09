@@ -255,9 +255,6 @@ GROUP BY
             ) aee
         GROUP BY
             user_id
-        ORDER BY
-            RUSLT.USER_ID,
-            ATT.dates
     </select>
 
 </mapper>
