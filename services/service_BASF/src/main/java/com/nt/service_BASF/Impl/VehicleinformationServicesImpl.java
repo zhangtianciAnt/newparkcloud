@@ -234,10 +234,17 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
     @Override
     public List<Vehicleinformation> getDailyVehicleInfo() throws Exception {
         // 2021.05.18 门检系统升级，数据接口调整 start by nt-ma
+        // 初版门检系统接口
         // String urlToken = "http://gatecheck.dowann.cn/api/ws/token?username=bachapi&password=123456";
         // String urlDailyInfo = "http://gatecheck.dowann.cn/api/out/dailyInfo";
-        String urlToken = "https://e-gate.api.basf.com/api/ws_auth/login?username=bachapi&password=Aa123456";
-        String urlDailyInfo = "https://e-gate.api.basf.com/api/out/dailyInfo";
+        // 2021.12.13 门检系统升级，数据接口调整 start by nt-ma
+        // 新门检系统接口
+         String urlToken = "https://e-gate-mp.basf.com/api/auth/login?username=bachA&password=66776321&deviceInfo=pc";
+         String urlDailyInfo = "https://e-gate-mp.basf.com/api/out/dailyInfo";
+        // 旧门检系统接口
+        // String urlToken = "https://e-gate.api.basf.com/api/ws_auth/login?username=bachapi&password=Aa123456";
+        // String urlDailyInfo = "https://e-gate.api.basf.com/api/out/dailyInfo";
+        // 2021.12.13 门检系统升级，数据接口调整 end by nt-ma
         // 2021.05.18 门检系统升级，数据接口调整 end by nt-ma
         // 获取token
         ResponseEntity<String> rst = restTemplate.exchange(urlToken, HttpMethod.GET, null, String.class);
