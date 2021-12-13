@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 import com.alibaba.fastjson.JSONObject;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Pfans.PFANS1000.Departmental;
 import com.nt.dao_Pfans.PFANS1000.DepartmentalInside;
 import com.nt.dao_Pfans.PFANS1000.StaffDetail;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalInsideBaseVo;
@@ -12,6 +13,7 @@ import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogPersonReturnVo;
+import com.nt.dao_Pfans.PFANS6000.PjExternalInjection;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.DepartmentalInsideService;
@@ -21,6 +23,7 @@ import com.nt.service_pfans.PFANS2000.PersonalCostService;
 import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.service_pfans.PFANS5000.mapper.ProjectsystemMapper;
+import com.nt.service_pfans.PFANS6000.mapper.PjExternalInjectionMapper;
 import com.nt.utils.BigDecimalUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
@@ -65,6 +68,9 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
 
     @Autowired
     private ProjectsystemMapper projectsystemMapper;
+
+    @Autowired
+    private PjExternalInjectionMapper pjExternalInjectionMapper;
 
     private static final String PATTERN = "yyyy-MM-dd HH:mm:ss";
 
@@ -132,30 +138,17 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
         }else{
             monthStr = String.valueOf(monthlast);
         }
+        String LOG_DATE = String.valueOf(year) + "-" + monthStr;
         for (Map.Entry<String, List<DepartmentalInsideBaseVo>> entryDep : groupThemList.entrySet()) {
             List<String> departList = new ArrayList<>();
             departList = entryDep.getValue().stream().map(DepartmentalInsideBaseVo::getGroup_id).distinct().collect(Collectors.toList());
             List<String> projectList = new ArrayList<>();;
             projectList = entryDep.getValue().stream().map(DepartmentalInsideBaseVo::getCompanyprojects_id).distinct().collect(Collectors.toList());
-            String LOG_DATE = String.valueOf(year) + "-" + monthStr;
             List<StaffWorkMonthInfoVo> staffWorkMonthInfoVoList = departmentalInsideMapper.getWorkInfo(LOG_DATE, departList, projectList);
+            //社内员工 本月工数
             List<StaffWorkMonthInfoVo> inSwmIList = staffWorkMonthInfoVoList.stream().filter(ins ->
                 !("1").equals(ins.getType())
             ).collect(Collectors.toList());
-            List<StaffWorkMonthInfoVo> outSwmIList = staffWorkMonthInfoVoList.stream().filter(out ->
-                    !StringUtils.isNullOrEmpty(out.getType()) && ("1").equals(out.getType())
-            ).collect(Collectors.toList());
-            List<Projectsystem> getTypeTwoList = projectsystemMapper.getTypeTwo(projectList);
-            getTypeTwoList.forEach(tywo ->{
-                try {
-                    if(this.checkIn(tywo,LOG_DATE)){
-
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                ;
-            });
             PeoplewareFee peoplewareFee = new PeoplewareFee();
             peoplewareFee.setYear(String.valueOf(year));
             List<PeoplewareFee> peoplewareFeeList = peoplewarefeeMapper.select(peoplewareFee);
@@ -176,11 +169,6 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                 peoFeeList.forEach(poem -> {
                     peoplewareFeeMap.put(poem.getRanks(),poem);
                 });
-//                try {
-//                    peoplewareFeeMap.put(dep,peoFeeList);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
                 //人件费 获取实际成本变更 ztc to
                 DepartmentalInside departInsideSelect = new DepartmentalInside();
                 departInsideSelect.setYears(String.valueOf(finalYear));
@@ -199,7 +187,7 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                 List<StaffWorkMonthInfoVo> rangRankList = new ArrayList<>();
                                 rangRankList = rankList.stream().filter(range -> range.getTime_start() != null).collect(Collectors.toList());
                                 String rankSum = "0.0";
-                                rankSum = rangRankList.stream().map(i -> new BigDecimal(i.getTime_start())).reduce(BigDecimal.ZERO, BigDecimal::add).toString();
+                                rankSum = rangRankList.stream().map(i -> new BigDecimal(i.getTime_start())).reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                                 StaffDetail staffDetail = new StaffDetail();
                                 try {
                                     departInsideSelect.setNumbers(this.projectListFee().get(pro));
@@ -308,7 +296,7 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                                                 ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual05())))
                                                                 .subtract(
                                                                         (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual06())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual06())))
+                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual06()))).setScale(2, BigDecimal.ROUND_HALF_UP)
                                                 )
                                         );
                                         departmentalInside.setRankdifferentfirst(
@@ -392,7 +380,7 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                                                 ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual08())))
                                                                 .subtract(
                                                                         (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual09())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual09())))
+                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual09()))).setScale(2, BigDecimal.ROUND_HALF_UP)
                                                 )
                                         );
                                         departmentalInside.setRankdifferentsecond(
@@ -476,7 +464,7 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                                                 ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual11())))
                                                                 .subtract(
                                                                         (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual12())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual12())))
+                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual12()))).setScale(2, BigDecimal.ROUND_HALF_UP)
                                                 )
                                         );
                                         departmentalInside.setRankdifferentthird(
@@ -560,7 +548,7 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                                                                 ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual02())))
                                                                 .subtract(
                                                                         (StringUtils.isNullOrEmpty(departmentalInside.getStaffcustactual03())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual03())))
+                                                                                ? BigDecimal.ZERO : new BigDecimal(departmentalInside.getStaffcustactual03()))).setScale(2, BigDecimal.ROUND_HALF_UP)
                                                 )
                                         );
                                         departmentalInside.setRankdifferentfourth(
@@ -1042,18 +1030,90 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                 });
             });
         }
-        try {
+
+//        try {
             //新建数据
             if (departmentalInsideListInsert.size() > 0) {
+                List<DepartmentalInside> insideList = departmentalInsideListInsert
+                        .stream().filter(dept -> !StringUtils.isNullOrEmpty(dept.getProject_id())).collect(Collectors.toList());
+                insideList = insideList.stream()
+                        .filter(distinctAnt(DepartmentalInside::getProject_id)).collect(Collectors.toList());
+                for (DepartmentalInside inst : insideList) {
+                    DepartmentalInside depOutInsWork = new DepartmentalInside();
+                    BigDecimal outSum = BigDecimal.ZERO;
+                    outSum = StringUtils.isNullOrEmpty(projectsystemMapper.getTypeOne(inst.getProject_id(), LOG_DATE)) ?
+                            BigDecimal.ZERO : new BigDecimal(projectsystemMapper.getTypeOne(inst.getProject_id(), LOG_DATE));
+                    List<Projectsystem> getTypeTwoList = projectsystemMapper.getTypeTwo(inst.getProject_id());
+                    getTypeTwoList = this.checkIn(getTypeTwoList, LOG_DATE);
+                    outSum = outSum.add(getTypeTwoList.stream().map(i -> new BigDecimal(i.getMonthlyscale())).reduce(BigDecimal.ZERO, BigDecimal::add));
+                    depOutInsWork.setYears(String.valueOf(year));
+                    depOutInsWork.setDepartment(inst.getDepartment());
+                    depOutInsWork.setThemeinfor_id(inst.getThemeinfor_id());
+                    depOutInsWork.setThemename(inst.getThemename());
+                    depOutInsWork.setDivide(inst.getDivide());
+                    depOutInsWork.setToolsorgs(inst.getToolsorgs());
+                    depOutInsWork.setContractnumber(inst.getContractnumber());
+                    depOutInsWork.setClaimamount(inst.getClaimamount());
+                    depOutInsWork.setContracatamountdetail(inst.getContracatamountdetail());
+                    depOutInsWork.setClaimtype(inst.getClaimtype());
+                    depOutInsWork.setEntrycondition(inst.getEntrycondition());
+                    depOutInsWork.setProject_id(inst.getProject_id());
+                    depOutInsWork.setNumbers(inst.getNumbers());
+                    depOutInsWork.setStaffrank("外注工数合计值");
+                    List<DepartmentalInside> depOutWorkList = departmentalInsideMapper.select(depOutInsWork);
+                    if(depOutWorkList.size() == 0){
+                        depOutInsWork.setDepartmentalinside_id(UUID.randomUUID().toString());
+                        this.setRange(depOutInsWork,monthlast,String.valueOf(outSum));
+                        departmentalInsideMapper.insert(depOutInsWork);
+                    }else{
+                        this.setRange(depOutWorkList.get(0),monthlast,String.valueOf(outSum));
+                        departmentalInsideMapper.updateByPrimaryKey(depOutInsWork);
+                    }
+
+                    BigDecimal outMoneySum = BigDecimal.ZERO;
+                    PjExternalInjection pjection = new PjExternalInjection();
+                    pjection.setYears(String.valueOf(year));
+                    pjection.setGroup_id(inst.getDepartment());
+                    pjection.setThemeinfor_id(inst.getThemeinfor_id());
+                    pjection.setCompanyprojects_id(inst.getProject_id());
+                    List<PjExternalInjection> pjList = pjExternalInjectionMapper.select(pjection);
+                    DepartmentalInside depOutInsMoney = new DepartmentalInside();
+                    depOutInsMoney.setYears(String.valueOf(year));
+                    depOutInsMoney.setDepartment(inst.getDepartment());
+                    depOutInsMoney.setThemeinfor_id(inst.getThemeinfor_id());
+                    depOutInsMoney.setThemename(inst.getThemename());
+                    depOutInsMoney.setDivide(inst.getDivide());
+                    depOutInsMoney.setToolsorgs(inst.getToolsorgs());
+                    depOutInsMoney.setContractnumber(inst.getContractnumber());
+                    depOutInsMoney.setClaimamount(inst.getClaimamount());
+                    depOutInsMoney.setContracatamountdetail(inst.getContracatamountdetail());
+                    depOutInsMoney.setClaimtype(inst.getClaimtype());
+                    depOutInsMoney.setEntrycondition(inst.getEntrycondition());
+                    depOutInsMoney.setProject_id(inst.getProject_id());
+                    depOutInsMoney.setNumbers(inst.getNumbers());
+                    depOutInsMoney.setStaffrank("外注费用合计值");
+                    List<DepartmentalInside> depOutMoneyList = departmentalInsideMapper.select(depOutInsMoney);
+                    if(depOutMoneyList.size() == 0){
+                        depOutInsMoney.setDepartmentalinside_id(UUID.randomUUID().toString());
+                        this.getMoneySum(pjList,monthlast,depOutInsMoney);
+                        departmentalInsideMapper.insert(depOutInsMoney);
+                    }else{
+                        this.getMoneySum(pjList,monthlast,depOutInsMoney);
+                        departmentalInsideMapper.updateByPrimaryKey(depOutInsMoney);
+                    }
+
+
+
+                }
                 departmentalInsideMapper.insertDepInsAll(departmentalInsideListInsert);
             }
             //更新数据
             if (departmentalInsideListUnpdate.size() > 0) {
                 departmentalInsideMapper.updateDepInsAll(departmentalInsideListUnpdate);
             }
-        } catch (Exception e) {
-            System.out.println(month + "月数据生成异常");
-        }
+//        } catch (Exception e) {
+//            System.out.println(month + "月数据生成异常");
+//        }
     }
 
     @Override
@@ -1667,25 +1727,138 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
         return proMap;
     }
 
-    public boolean checkIn(Projectsystem projectsystem,String dateAnt) throws Exception {
-        boolean flag = false;
-        Date regDate = this.strToDate(dateAnt);
-        if(!projectsystem.getAdmissiontime().after(regDate) && !regDate.after(projectsystem.getExittime())){
-            flag = true;
-        }
-        return flag;
+    public List<Projectsystem> checkIn(List<Projectsystem> projectsystem, String dateAnt) throws Exception {
+        int dateInt = Integer.parseInt(dateAnt.substring(0,4) + dateAnt.substring(5,7));
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        List<Projectsystem> resultList = new ArrayList();
+        projectsystem.forEach(proTwo -> {
+            int stDate = Integer.parseInt(sdf.format(proTwo.getAdmissiontime()));
+            int exDate = Integer.parseInt(sdf.format(proTwo.getExittime()));
+            if(stDate <= dateInt && dateInt <= exDate){
+                resultList.add(proTwo);
+            };
+        });
+        return resultList;
     }
 
-    public static Date strToDate(String str) {
-        if (StringUtils.isNullOrEmpty(str)) {
-            return null;
+    public void setRange(DepartmentalInside departide, Integer monthlast, String outSum) throws Exception {
+        switch (monthlast) {
+            case 4:
+                departide.setStaffcustactual04(outSum);
+                departide.setStaffcustplan04("0.0");
+                break;
+            case 5:
+                departide.setStaffcustactual05(outSum);
+                departide.setStaffcustplan05("0.0");
+                break;
+            case 6:
+                departide.setStaffcustactual06(outSum);
+                departide.setStaffcustplan06("0.0");
+                break;
+            case 7:
+                departide.setStaffcustactual07(outSum);
+                departide.setStaffcustplan07("0.0");
+                break;
+            case 8:
+                departide.setStaffcustactual08(outSum);
+                departide.setStaffcustplan08("0.0");
+                break;
+            case 9:
+                departide.setStaffcustactual09(outSum);
+                departide.setStaffcustplan09("0.0");
+                break;
+            case 10:
+                departide.setStaffcustactual10(outSum);
+                departide.setStaffcustplan10("0.0");
+                break;
+            case 11:
+                departide.setStaffcustactual11(outSum);
+                departide.setStaffcustplan11("0.0");
+                break;
+            case 12:
+                departide.setStaffcustactual12(outSum);
+                departide.setStaffcustplan12("0.0");
+                break;
+            case 1:
+                departide.setStaffcustactual01(outSum);
+                departide.setStaffcustplan01("0.0");
+                break;
+            case 2:
+                departide.setStaffcustactual02(outSum);
+                departide.setStaffcustplan02("0.0");
+                break;
+            case 3:
+                departide.setStaffcustactual03(outSum);
+                departide.setStaffcustplan03("0.0");
+                break;
         }
-        SimpleDateFormat sdf = new SimpleDateFormat(PATTERN);
-        try {
-            return sdf.parse(str);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
+
+    public void getMoneySum(List<PjExternalInjection> pjList, Integer monthlast,DepartmentalInside departide) throws Exception {
+        switch (monthlast) {
+            case 4:
+                departide.setStaffcustactual04(pjList.stream().map(PjExternalInjection::getApril)
+                        .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+                departide.setStaffcustplan04("0.0");
+                break;
+            case 5:
+                departide.setStaffcustactual05(pjList.stream().map(PjExternalInjection::getMay)
+                        .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+                departide.setStaffcustplan05("0.0");
+                break;
+            case 6:
+                departide.setStaffcustactual06(pjList.stream().map(PjExternalInjection::getJune)
+                        .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+                departide.setStaffcustplan06("0.0");
+                break;
+            case 7:
+                departide.setStaffcustactual07(pjList.stream().map(PjExternalInjection::getJuly)
+                        .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+                departide.setStaffcustplan07("0.0");
+                break;
+            case 8:
+                departide.setStaffcustactual08(pjList.stream().map(PjExternalInjection::getAugust)
+                        .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+                departide.setStaffcustplan08("0.0");
+                break;
+            case 9:
+                departide.setStaffcustactual09(pjList.stream().map(PjExternalInjection::getSeptember)
+                        .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+                departide.setStaffcustplan09("0.0");
+                break;
+            case 10:
+                departide.setStaffcustactual10(pjList.stream().map(PjExternalInjection::getOctober)
+                        .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+                departide.setStaffcustplan10("0.0");
+                break;
+            case 11:
+                departide.setStaffcustactual11(pjList.stream().map(PjExternalInjection::getNovember)
+                        .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+                departide.setStaffcustplan11("0.0");
+                break;
+            case 12:
+                departide.setStaffcustactual12(pjList.stream().map(PjExternalInjection::getDecember)
+                        .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+                departide.setStaffcustplan12("0.0");
+                break;
+            case 1:
+                departide.setStaffcustactual01(pjList.stream().map(PjExternalInjection::getJanuary)
+                        .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+                departide.setStaffcustplan01("0.0");
+                break;
+            case 2:
+                departide.setStaffcustactual02(pjList.stream().map(PjExternalInjection::getFebruary)
+                        .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+                departide.setStaffcustplan02("0.0");
+                break;
+            case 3:
+                departide.setStaffcustactual03(pjList.stream().map(PjExternalInjection::getMarch)
+                        .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+                departide.setStaffcustplan03("0.0");
+                break;
+        }
+    }
+
+
+
 }
