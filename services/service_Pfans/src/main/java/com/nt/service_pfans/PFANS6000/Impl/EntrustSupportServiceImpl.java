@@ -67,39 +67,39 @@ public class EntrustSupportServiceImpl implements EntrustSupportService {
                     sum = sum.add(new BigDecimal(entrust.getClaimamount())).setScale(2, BigDecimal.ROUND_HALF_UP);
                 }
                 switch (years.trim().split("-")[1]){
-                    case "1" :
+                    case "01" :
                         temp.setCost1f(sum);
                         temp.setManhour1f(sum.divide(new BigDecimal("18500"),2,BigDecimal.ROUND_HALF_UP));
                         break;
-                    case "2" :
+                    case "02" :
                         temp.setCost2f(sum);
                         temp.setManhour2f(sum.divide(new BigDecimal("18500"),2,BigDecimal.ROUND_HALF_UP));
                         break;
-                    case "3" :
+                    case "03" :
                         temp.setCost3f(sum);
                         temp.setManhour3f(sum.divide(new BigDecimal("18500"),2,BigDecimal.ROUND_HALF_UP));
                         break;
-                    case "4" :
+                    case "04" :
                         temp.setCost4f(sum);
                         temp.setManhour4f(sum.divide(new BigDecimal("18500"),2,BigDecimal.ROUND_HALF_UP));
                         break;
-                    case "5" :
+                    case "05" :
                         temp.setCost5f(sum);
                         temp.setManhour5f(sum.divide(new BigDecimal("18500"),2,BigDecimal.ROUND_HALF_UP));
                         break;
-                    case "6" :
+                    case "06" :
                         temp.setCost6f(sum);
                         temp.setManhour6f(sum.divide(new BigDecimal("18500"),2,BigDecimal.ROUND_HALF_UP));
                         break;
-                    case "7" :
+                    case "07" :
                         temp.setCost7f(sum);
                         temp.setManhour7f(sum.divide(new BigDecimal("18500"),2,BigDecimal.ROUND_HALF_UP));
                         break;
-                    case "8" :
+                    case "08" :
                         temp.setCost8f(sum);
                         temp.setManhour8f(sum.divide(new BigDecimal("18500"),2,BigDecimal.ROUND_HALF_UP));
                         break;
-                    case "9" :
+                    case "09" :
                         temp.setCost9f(sum);
                         temp.setManhour9f(sum.divide(new BigDecimal("18500"),2,BigDecimal.ROUND_HALF_UP));
                         break;
@@ -150,7 +150,7 @@ public class EntrustSupportServiceImpl implements EntrustSupportService {
                     }
                     if(com.getCost8f() != null && com.getManhour8f() != null){//请负8月
                         aSingle.setCost8f(res.get(0).getCost8f().add(com.getCost8f()));
-                        aSingle.setManhour8f(res.get(0).getManhour7f().add(com.getManhour7f()));
+                        aSingle.setManhour8f(res.get(0).getManhour8f().add(com.getManhour8f()));
                     }
                     if(com.getCost9f() != null && com.getManhour9f() != null){//请负9月
                         aSingle.setCost9f(res.get(0).getCost9f().add(com.getCost9f()));
