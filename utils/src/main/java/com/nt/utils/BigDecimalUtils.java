@@ -14,7 +14,7 @@ public class BigDecimalUtils {
         for (int i = 0; i < in.length; i++){
             result = result.add(ifNullSet0(in[i]));
         }
-        return result.toString();
+        return result.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
     }
 
     private static BigDecimal ifNullSet0(String s) {

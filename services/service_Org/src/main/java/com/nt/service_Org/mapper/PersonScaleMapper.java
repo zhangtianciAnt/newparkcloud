@@ -3,6 +3,8 @@ package com.nt.service_Org.mapper;
 import com.nt.dao_Org.PersonScale;
 import com.nt.dao_Org.PersonScaleMee;
 import com.nt.dao_Org.Vo.ScaleComproject;
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS6000.EntrustSupport;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
@@ -29,4 +31,8 @@ public interface PersonScaleMapper extends MyMapper<PersonScale> {
 
     @Select("SELECT PROJECT_ID,REPORTPEOPLE FROM personscale where REPORTERS = #{REPORTERS} and yearmonth = #{YEARMONTH} GROUP BY PROJECT_ID,REPORTPEOPLE ")
     List<ScaleComproject> getComprojects(@Param("REPORTERS") String reporters, @Param("YEARMONTH") String yearmonth);
+
+    List<Projectsystem> getTypeTwo(@Param("contTime") String contTime);
+
+    List<CompanyProjects> getProInfo();
 }

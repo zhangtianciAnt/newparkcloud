@@ -104,4 +104,19 @@
          #{item.status},#{item.createby},#{item.createon},#{item.modifyby},#{item.modifyon},#{item.owner},#{item.tenantid})
       </foreach>
    </insert>
+
+
+   <select id="getTypeTwo" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS5000.Projectsystem">
+      SELECT
+         *
+      FROM
+         projectsystem pro
+      WHERE
+         pro.type = '2'
+        AND  #{contTime} BETWEEN date_format( pro.ADMISSIONTIME, '%Y-%m-%d' )
+         AND date_format( pro.EXITTIME, '%Y-%m-%d' )
+   </select>
+   <select id="getProInfo" resultType="com.nt.dao_Pfans.PFANS5000.CompanyProjects">
+      select COMPANYPROJECTS_ID,numbers,PROJECT_NAME from companyprojects
+   </select>
 </mapper>

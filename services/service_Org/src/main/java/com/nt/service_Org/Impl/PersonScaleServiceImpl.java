@@ -1,11 +1,14 @@
 package com.nt.service_Org.Impl;
 
+import cn.hutool.core.codec.Base64;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.PersonScale;
 import com.nt.dao_Org.PersonScaleMee;
 import com.nt.dao_Org.Vo.PersonScaleVo;
 import com.nt.dao_Org.Vo.ScaleComproject;
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.PersonScaleService;
@@ -121,6 +124,35 @@ public class PersonScaleServiceImpl implements PersonScaleService {
                 diffMap.put(entry.getKey(),diff);
             }
         }
+
+        //构外
+        List<Projectsystem> getTypeTwoList = personScaleMapper.getTypeTwo(now_Date);
+        if(getTypeTwoList.size() > 0){
+            Map<String,String> proInfoMap = new HashMap<>();
+            List<CompanyProjects> getProList = personScaleMapper.getProInfo();
+            getProList.forEach(pro ->{
+                String proname = "";
+                if(com.nt.utils.StringUtils.isBase64Encode(pro.getProject_name())){
+                    proname = pro.getNumbers() + "_" + Base64.decodeStr(pro.getProject_name());
+                }else{
+                    proname = pro.getNumbers() + "_" + pro.getProject_name();
+                }
+                proInfoMap.put(pro.getCompanyprojects_id(), proname);
+            });
+            getTypeTwoList.forEach(tyTwo ->{
+                PersonScale personScale = new PersonScale();
+                personScale.setPersonscale_id(UUID.randomUUID().toString());
+                personScale.setYearmonth(nowY_Month);
+                personScale.setReportpeople(tyTwo.getCompany());
+                personScale.setType("2");
+                personScale.setProject_id(tyTwo.getCompanyprojects_id());
+                personScale.setProject_name(proInfoMap.get(tyTwo.getCompanyprojects_id()));
+                personScale.setProportions(tyTwo.getMonthlyscale());
+                personScale.setReporters(tyTwo.getReporter());
+                saveResult.add(personScale);
+            });
+        }
+
         if(saveResult.size() > 0){
             personScaleMapper.insetList(saveResult);
         }

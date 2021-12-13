@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.nt.service_pfans.PFANS5000.mapper.ProjectsystemMapper">
-    <select id="getTypeTwo" parameterType="java.util.List" resultType="com.nt.dao_Pfans.PFANS5000.Projectsystem">
+    <select id="getTypeOne" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT
+            ROUND( sum(ADJUST / my_WorkingDays ( DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y%m' ) )), 2 )  TIME_START
+        FROM
+            logpersonstatistics lg
+        WHERE
+            DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y-%m' ) = #{logdate}
+          AND PROJECT_ID = #{pro_id}
+          AND USER_ID IN ( SELECT NAME FROM projectsystem WHERE type = '1' )
+    </select>
+
+    <select id="getTypeTwo" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS5000.Projectsystem">
         SELECT
             monthlyscale,
             ADMISSIONTIME,
@@ -10,10 +21,6 @@
             projectsystem
         WHERE
             TYPE = '2'
-          AND COMPANYPROJECTS_ID IN
-        <foreach collection="projectList" index="index" item="projectid" open="("
-                 separator="," close=")">
-            #{projectid}
-        </foreach>
+          AND COMPANYPROJECTS_ID = #{pro_id}
     </select>
 </mapper>
