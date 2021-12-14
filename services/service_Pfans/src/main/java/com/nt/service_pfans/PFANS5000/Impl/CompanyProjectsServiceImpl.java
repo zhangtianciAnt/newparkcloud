@@ -2258,39 +2258,49 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
     //region scc add 根据合同号获取相应决裁信息，返回到项目构外tab页使用 from
     @Override
-    public Map<String, String> forDetail(String contractNo) throws Exception {
-        Contractapplication contra = new Contractapplication();
-        contra.setContractnumber(contractNo);
-        Contractapplication contractapplication = contractapplicationMapper.selectOne(contra);
-        String time = "";
-        if(contractapplication.getExtensiondate() == null){
-            time = contractapplication.getContractdate();
-        }else {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            String enddate = sdf.format(contractapplication.getExtensiondate());
-            time = contractapplication.getContractdate().split("~")[0].trim() + "~" + enddate.trim();
-        }
+    public List<Map<String,String>> forDetail(String contractNo, String centerId, String groupId) throws Exception {
+        List<Map<String,String>> resultList = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         List<Dictionary> typeOfList = dictionaryService.getForSelect("HT014");
-        AtomicReference<Boolean> flag = new AtomicReference<>(false);
-        typeOfList.forEach(item -> {
-            if (item.getCode().equals(contractapplication.getContracttype())) {
-                flag.set(true);
-            }
-        });
-        Map<String, String> result = new HashMap<>();
-        if (flag.get() == true) {
-            Award award = new Award();
-            award.setContractnumber(contractNo);
-            Award find = awardMapper.selectOne(award);
-            if ("4".equals(find.getStatus())) {
-                result.put("ContractNo", contractNo);
-                result.put("Custojapanese", find.getCustojapanese());
-                result.put("Madoguchi", find.getMadoguchi());
-                result.put("Numberofworkers", find.getNumberofworkers());
-                result.put("Interval", time);
-            }
+//        Contractapplication contra = new Contractapplication();
+//        contra.setContractnumber(contractNo);
+//        Contractapplication contractapplication = contractapplicationMapper.selectOne(contra);
+        //项目选择受托合同，找出关联的委托合同
+        List<Contractapplication> entrList = companyprojectsMapper.selectCont(contractNo,centerId,groupId);
+        if(entrList.size() > 0){
+            entrList.forEach(ent -> {
+                AtomicReference<Boolean> flag = new AtomicReference<>(false);
+                typeOfList.forEach(item -> {
+                    if (item.getCode().equals(ent.getContracttype())) {
+                        flag.set(true);
+                    }
+                });
+                if (flag.get()) {
+                    Map<String, String> maptt = new HashMap<>();
+                    String time = "";
+                    if(ent.getExtensiondate() == null){
+                        time = ent.getContractdate();
+                    }else {
+                        String enddate = sdf.format(ent.getExtensiondate());
+                        time = ent.getContractdate().split("~")[0].trim() + "~" + enddate.trim();
+                    }
+                    Award award = new Award();
+                    //委托合同号
+                    award.setContractnumber(ent.getContractnumber());
+                    Award find = awardMapper.selectOne(award);
+                    if (find != null && "4".equals(find.getStatus())) {
+                        maptt.put("ContractNo", contractNo);
+                        maptt.put("Custojapanese", find.getCustojapanese());
+                        maptt.put("Madoguchi", find.getMadoguchi());
+                        maptt.put("Numberofworkers", find.getNumberofworkers());
+                        maptt.put("Interval", time);
+                        maptt.put("Amountof", find.getAmountof());
+                        resultList.add(maptt);
+                    }
+                }
+            });
         }
-        return result;
+        return resultList;
     }
     //endregion scc add 根据合同号获取相应决裁信息，返回到项目构外tab页使用 to
 
@@ -2364,4 +2374,20 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         }
         return resultInfoList;
     }
+
+    @Override
+    public Boolean getReport(String user_id,String reporter) throws Exception {
+        //取user_id的所有上级
+        List<String> toGetRList = new ArrayList<>();
+        toGetRList.add(user_id);
+        //List<String>
+
+        return true;
+    }
+    public List<String> getAllHiger(List<String> userList) throws Exception {
+        List<String> resList = new ArrayList<>();
+
+        return resList;
+    }
+
 }

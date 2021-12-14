@@ -48,10 +48,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
@@ -470,13 +467,22 @@ public class Pfans5001Controller {
      * @返回值：Map<String,String>
      */
     @RequestMapping(value = "/forDetail", method = { RequestMethod.GET})
-    public ApiResult forDetail(String contractNo, HttpServletRequest request) throws Exception{
-        if (contractNo == null) {
+    public ApiResult forDetail(@RequestParam String contractNo, String centerId, String groupId, HttpServletRequest request) throws Exception{
+        if (contractNo == null && (centerId == null || groupId == null)) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel=tokenService.getToken(request);
-        return ApiResult.success(companyProjectsService.forDetail(contractNo));
+        return ApiResult.success(companyProjectsService.forDetail(contractNo,centerId,groupId));
     }
+
+    @RequestMapping(value = "/getReport", method = {RequestMethod.GET})
+    public ApiResult getReport(String user_id, String reporter, HttpServletRequest request) throws Exception {
+        if(user_id == null && reporter == null){
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(companyProjectsService.getReport(user_id,reporter));
+    }
+
 
     /**
      * @方法名：reportCheck

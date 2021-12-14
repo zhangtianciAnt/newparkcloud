@@ -21,9 +21,9 @@ public interface PersonScaleMapper extends MyMapper<PersonScale> {
     @Select("select my_WorkingDays(#{nowYmonth})")
     String getWorktimeger(@Param("nowYmonth") String nowYmonth);
 
-    String getMangernum(@Param("peo_id") String peo_id, @Param("nowY_Month") String nowY_Month) ;
-
-    String getPronum(@Param("peo_id") String peo_id, @Param("nowY_Month") String nowY_Month) ;
+//    String getMangernum(@Param("peo_id") String peo_id, @Param("nowY_Month") String nowY_Month) ;
+//
+//    String getPronum(@Param("peo_id") String peo_id, @Param("nowY_Month") String nowY_Month) ;
 
     void insetList(@Param("list") List<PersonScale> entrusts);
 

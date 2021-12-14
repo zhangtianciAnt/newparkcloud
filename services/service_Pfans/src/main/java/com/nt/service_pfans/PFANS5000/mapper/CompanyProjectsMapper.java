@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS5000.mapper;
 
+import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsReport;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
@@ -46,4 +47,8 @@ public interface CompanyProjectsMapper extends MyMapper<CompanyProjects> {
 
     @Select("SELECT value1 from dictionary where code = #{code}")
     String getDicInfo(@Param("code") String code);
+
+    List<Contractapplication> selectCont(@Param("contractNo") String contractNo,
+                                         @Param("centerId") String centerId,
+                                         @Param("groupId") String groupId);
 }

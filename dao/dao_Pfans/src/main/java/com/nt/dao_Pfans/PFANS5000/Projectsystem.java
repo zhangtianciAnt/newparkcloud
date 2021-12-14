@@ -130,4 +130,8 @@ public class Projectsystem extends BaseModel {
     @Column(name = "TOTALNUMBER")
     private String totalnumber;
     //endregion scc add 添加构外tab页字段
+
+    //委托合同平均金额
+    @Column(name = "AMOUNTOF")
+    private String amountof;
 }
