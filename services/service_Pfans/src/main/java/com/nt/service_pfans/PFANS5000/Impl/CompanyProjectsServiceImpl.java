@@ -1828,7 +1828,32 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     @Override
     public void insert(CompanyProjectsVo companyProjectsVo, TokenModel tokenModel) throws Exception {
         //可以进行重复选择，只需要做进组退组时间不重复的check ztc
-        this.checkDupSystem(companyProjectsVo.getProjectsystem());
+        //region scc add 同委托元多条构外人月数之和与总人月数check from
+        List<Projectsystem> projectsystemallList = companyProjectsVo.getProjectsystem();//获取项目体制
+        Map<String, List<Projectsystem>> check = projectsystemallList.stream().filter(item -> "2".equals(item.getType())).collect(Collectors.groupingBy(Projectsystem::getContractno));//构外
+        Iterator<Map.Entry<String, List<Projectsystem>>> it = check.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, List<Projectsystem>> entry = it.next();
+            BigDecimal all = new BigDecimal(BigInteger.ZERO);
+            if(entry.getValue().get(0).getTotalnumber() == null || entry.getValue().get(0).getTotalnumber() == ""){
+                continue;
+            }else{
+                all = new BigDecimal(entry.getValue().get(0).getTotalnumber());//一个委托元对应总人月数
+            }
+            BigDecimal temp = new BigDecimal(BigInteger.ZERO);
+            for (Projectsystem item : entry.getValue()) {
+                temp = temp.add(new BigDecimal(item.getNumberofmonths())).setScale(2, BigDecimal.ROUND_HALF_UP);//同委托元多条构外人月数之和
+            }
+            if(temp.compareTo(all) == 1){//如果每条之和大于总人月数check
+                throw new LogicalException("人月数总和不能超过合同人月数，请重新输入");
+            }else{
+                continue;
+            }
+        }
+        //endregion scc add 同委托元多条构外人月数之和与总人月数check to
+        projectsystemallList = projectsystemallList.stream().filter(item -> !"2".equals(item.getType())).collect(Collectors.toList());//构外不做进出场时间check
+//        this.checkDupSystem(companyProjectsVo.getProjectsystem());
+        this.checkDupSystem(projectsystemallList);
         String companyprojectsid = UUID.randomUUID().toString();
         CompanyProjects companyProjects = new CompanyProjects();
         BeanUtils.copyProperties(companyProjectsVo.getCompanyprojects(), companyProjects);
@@ -1922,6 +1947,16 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
                         projectsystemMapper.insertSelective(projectsystem);
                     }
                 }
+                //region scc add 插入构外 from
+                else if ("2".equals(projectsystem.getType())) {
+                    rowundex = rowundex + 1;
+                    projectsystem.preInsert(tokenModel);
+                    projectsystem.setProjectsystem_id(UUID.randomUUID().toString());
+                    projectsystem.setCompanyprojects_id(companyprojectsid);
+                    projectsystem.setRowindex(rowundex);
+                    projectsystemMapper.insertSelective(projectsystem);
+                }
+                //endregion scc add 插入构外 to
                 //add-ws-4/23-体制表社内根据name_id有无进行判断，社外根据name判断
                 //活用情报
                 if (projectsystem.getAdmissiontime() != null && projectsystem.getType().equals("1")) {
