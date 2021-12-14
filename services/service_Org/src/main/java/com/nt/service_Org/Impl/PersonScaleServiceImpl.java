@@ -28,6 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -63,25 +66,25 @@ public class PersonScaleServiceImpl implements PersonScaleService {
         String nowY_Month = now_Date.substring(0,7);
         String nowYMonth = nowDate.substring(0,6);
         //if(Integer.parseInt(nowDay) != Integer.parseInt(dictionaryL.get(0).getValue1()) + 1) return;
-        List<PersonScaleMee> getMeeInfoList = personScaleMapper.getMeeInfo(nowY_Month);
-        if(getMeeInfoList.size() > 0){
-            getMeeInfoList.forEach(mee -> {
-                mee.setPersonscalemee_id(UUID.randomUUID().toString());
-                mee.setYearmonth(nowY_Month);
-                Query query = new Query();
-                query.addCriteria(Criteria.where("userid").is(mee.getUser_id()));
-                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-                if (customerInfo != null) {
-                    mee.setCenter_id(customerInfo.getUserinfo().getCenterid());
-                    mee.setGroup_id(customerInfo.getUserinfo().getGroupid());
-                    mee.setRanks(customerInfo.getUserinfo().getRank());
-                }
-                mee.setMangernumber(personScaleMapper.getMangernum(mee.getUser_id(),nowY_Month));
-                mee.setManagesorce(personScaleMapper.getPronum(mee.getUser_id(),nowY_Month));
-                mee.setCreateon(new Date());
-            });
-            personScaleMapper.insetMeeList(getMeeInfoList);
-        }
+//        List<PersonScaleMee> getMeeInfoList = personScaleMapper.getMeeInfo(nowY_Month);
+//        if(getMeeInfoList.size() > 0){
+//            getMeeInfoList.forEach(mee -> {
+//                mee.setPersonscalemee_id(UUID.randomUUID().toString());
+//                mee.setYearmonth(nowY_Month);
+//                Query query = new Query();
+//                query.addCriteria(Criteria.where("userid").is(mee.getUser_id()));
+//                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+//                if (customerInfo != null) {
+//                    mee.setCenter_id(customerInfo.getUserinfo().getCenterid());
+//                    mee.setGroup_id(customerInfo.getUserinfo().getGroupid());
+//                    mee.setRanks(customerInfo.getUserinfo().getRank());
+//                }
+//                mee.setMangernumber(personScaleMapper.getMangernum(mee.getUser_id(),nowY_Month));
+//                mee.setManagesorce(personScaleMapper.getPronum(mee.getUser_id(),nowY_Month));
+//                mee.setCreateon(new Date());
+//            });
+//            personScaleMapper.insetMeeList(getMeeInfoList);
+//        }
 
         List<PersonScale> getLogPerInfoList = personScaleMapper.getLogInfo(nowY_Month);
         BigDecimal workingHB = new BigDecimal(personScaleMapper.getWorktimeger(nowYMonth));
@@ -171,6 +174,30 @@ public class PersonScaleServiceImpl implements PersonScaleService {
                 }
             });
         }
+        List<PersonScaleMee> getMeeInfoList = personScaleMapper.getMeeInfo(nowY_Month);
+        if(getMeeInfoList.size() > 0){
+            for (PersonScaleMee mee : getMeeInfoList) {
+                mee.setPersonscalemee_id(UUID.randomUUID().toString());
+                mee.setYearmonth(nowY_Month);
+                Query query = new Query();
+                query.addCriteria(Criteria.where("userid").is(mee.getUser_id()));
+                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                if (customerInfo != null) {
+                    mee.setCenter_id(customerInfo.getUserinfo().getCenterid());
+                    mee.setGroup_id(customerInfo.getUserinfo().getGroupid());
+                    mee.setRanks(customerInfo.getUserinfo().getRank());
+                }
+                List<PersonScale> saveMeeList = this.saveMee(mee.getUser_id(), nowY_Month);
+                mee.setMangernumber(saveMeeList.stream().map(PersonScale::getProportions)
+                        .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum));
+                List<PersonScale> sizeResult = saveMeeList.stream()
+                        .filter(distinctAnt(PersonScale::getProject_id))
+                        .collect(Collectors.toList());
+                mee.setManagesorce(String.valueOf(sizeResult.size()));
+                mee.setCreateon(new Date());
+            }
+            personScaleMapper.insetMeeList(getMeeInfoList);
+        }
     }
 
     private void setGroList(String nowY_Month, BigDecimal workingHB, List<PersonScale> saveResult, List<PersonScale> groList, TokenModel tokenModel) {
@@ -220,6 +247,7 @@ public class PersonScaleServiceImpl implements PersonScaleService {
         PersonScaleMee personScaleMee = personScaleMeeMapper.selectByPrimaryKey(personScaleMee_id);
         personScaleVo.setPersonScaleMee(personScaleMee);
         PersonScale personScale = new PersonScale();
+        personScale.setYearmonth(yearMonth);
         personScale.setReporters(personScaleMee.getUser_id());
         List<PersonScale> personScaleList = personScaleMapper.select(personScale);
         if(personScaleList.size() > 0){
@@ -275,4 +303,26 @@ public class PersonScaleServiceImpl implements PersonScaleService {
             this.getRecursion(personScales, personScaleList, yearMonth);
         }
     }
+
+    public List<PersonScale> saveMee(String user_id,String yearMonth) throws Exception {
+        PersonScale personScale = new PersonScale();
+        personScale.setReporters(user_id);
+        List<PersonScale> personScaleList = personScaleMapper.select(personScale);
+        if(personScaleList.size() > 0){
+            personScaleList = this.getRecursion(personScaleList,personScaleList,yearMonth);
+            personScaleList = personScaleList.stream().collect(
+                    Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(
+                            o -> o.getReportpeople() + ";" + o.getProject_id()))), ArrayList::new));
+        }
+        personScaleList = personScaleList.stream().sorted(Comparator.comparing(PersonScale::getType)
+                .thenComparing(PersonScale::getReportpeople)
+                .thenComparing(PersonScale::getProportions).reversed()).collect(Collectors.toList());
+        return personScaleList;
+    }
+
+    public static <T> Predicate<T> distinctAnt(Function<? super T, Object> keyExtractor) {
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return object -> seen.putIfAbsent(keyExtractor.apply(object), Boolean.TRUE) == null;
+    }
+
 }

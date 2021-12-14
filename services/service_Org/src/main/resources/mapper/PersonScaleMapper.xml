@@ -40,7 +40,7 @@
                `OWNER`
          ) lgt
             INNER JOIN projectsystem psm ON lgt.PROJECT_ID = psm.COMPANYPROJECTS_ID
-            AND lgt.`OWNER` = psm.NAME
+            AND lgt.`OWNER` = psm.NAME AND psm.REPORTER != ''
       ORDER BY lgt.`OWNER`
    </select>
    <select id="getMangernum" resultType="java.lang.String">

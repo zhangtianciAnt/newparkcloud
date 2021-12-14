@@ -238,7 +238,7 @@
             CLAIMTYPE,
             outcompany
     </select>
-    <select id="getStaffInfo" resultType="String">
+    <select id="getStaffInfo" resultType="java.lang.String">
             SELECT
             sum(WORKRATE) as staffnum
             FROM(
