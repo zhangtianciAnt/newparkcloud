@@ -14,7 +14,7 @@
     <update id="updateList" parameterType="java.util.List">
         <foreach item="item" collection="list" index="index" >
             UPDATE entrustsupport
-            SET PROCESSING = #{item.processing},UNDERTAKER = #{item.undertaker}
+            SET PROCESSING = #{item.processing},UNDERTAKER = #{item.undertaker},MODIFYON = #{item.modifyon}
             WHERE GROUP_ID = #{item.group_id} and DATES = #{item.dates} and ENTRUSTSUPPORT_ID = #{item.entrustsupport_id};
         </foreach>
     </update>
