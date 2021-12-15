@@ -38,8 +38,15 @@ public class EntrustSupportServiceImpl implements EntrustSupportService {
 
     @Override
     public void updList(List<EntrustSupport> entrustSupport, TokenModel tokenModel) throws Exception {
-        //region 跟新请负一览 from
-        String years = entrustSupport.get(0).getDates();//本次数据的年月
+        //region 更新请负一览 from
+        String ym = entrustSupport.get(0).getDates();//本次数据的年月
+        String years = ym.trim().split("-")[0];//本次数据的年月
+        if(Integer.valueOf(ym.trim().split("-")[1]) < 4)
+        {
+            years = String.valueOf(Integer.valueOf(ym.trim().split("-")[0]) - 1);
+        }
+        years = years + "-" + ym.trim().split("-")[1];
+
         ArrayList<EntrustSupport> listOfBp = new ArrayList<>();//要更新到BP社的请负
         entrustSupport.forEach(item ->{
             if("true".equals(item.getProcessing())){
@@ -176,7 +183,7 @@ public class EntrustSupportServiceImpl implements EntrustSupportService {
                         aSingle.setCost2f(res.get(0).getCost2f().add(com.getCost2f()));
                         aSingle.setManhour2f(res.get(0).getManhour2f().add(com.getManhour2f()));
                     }
-                    if(com.getCost3f() != null && com.getManhour3f() != null){//请负5月
+                    if(com.getCost3f() != null && com.getManhour3f() != null){//请负3月
                         aSingle.setCost3f(res.get(0).getCost3f().add(com.getCost3f()));
                         aSingle.setManhour3f(res.get(0).getManhour3f().add(com.getManhour3f()));
                     }
@@ -190,7 +197,8 @@ public class EntrustSupportServiceImpl implements EntrustSupportService {
                     aSingle.setTotalmanhourf(sumMan);
                     aSingle.preUpdate(tokenModel);
                     companyStatisticsMapper.updateByPrimaryKeySelective(aSingle);
-                }else{
+                }
+                else{
                     Supplierinfor supplierinfor = new Supplierinfor();//供应商信息
                     supplierinfor.setSupchinese(com.getBpcompany());//公司名
                     List<Supplierinfor> companynameWithId = supplierinforMapper.select(supplierinfor);//公司供应商信息

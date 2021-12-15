@@ -279,90 +279,77 @@
 	</select>
 
 	<select id="getcostMonth" parameterType="java.lang.String" resultType="java.util.HashMap">
-		SELECT
-			co1.bpcompany,
-			case when co1.ex1manhour = '0.00' then '' else round(co1.ex1manhour,2) end ex1manhour0,
-			case when co1.ex1cost = '0.00' then '' else round(co1.ex1cost,2) end ex1cost0,
-			case when co1.ex1usercount = '0' then '' else co1.ex1usercount end ex1usercount0,
-			case when co2.ex2manhour = '0.00' then '' else round(co2.ex2manhour,2) end ex2manhour0,
-			case when co2.ex2cost = '0.00' then '' else round(co2.ex2cost,2) end ex2cost0,
-			case when co2.ex2usercount = '0' then '' else co2.ex2usercount end ex2usercount0,
-			'' as ex3manhour0,
-			'' as ex3cost0,
-			@manhourcount0 := round( co1.ex1manhour + co2.ex2manhour, 2 ) as manhourcount0,
-			@manhourcount0 as bpmanhourcount,
-			@costcount0 := round( co1.ex1cost + co2.ex2cost, 2 ) as  costcount0,
-			@costcount0 as bpcostcount,
-		    '0' as ex3costcount
-		FROM
+			SELECT
+				co1.bpcompany,
+				case when co1.ex1manhour = '0.00' then '' else round(co1.ex1manhour,2) end ex1manhour0,
+				case when co1.ex1cost = '0.00' then '' else round(co1.ex1cost,2) end ex1cost0,
+				case when co1.ex1usercount = '0' then '' else co1.ex1usercount end ex1usercount0,
+				case when co1.ex2manhour = '0.00' then '' else round(co1.ex2manhour,2) end ex2manhour0,
+				case when co1.ex2cost = '0.00' then '' else round(co1.ex2cost,2) end ex2cost0,
+				case when co1.ex2usercount = '0' then '' else co1.ex2usercount end ex2usercount0,
+				'' as ex3manhour0,
+				'' as ex3cost0,
+				@manhourcount0 := round( co1.ex1manhour, 2 ) as manhourcount0,
+				@manhourcount0 as bpmanhourcount,
+				@costcount0 := round( co1.ex1cost, 2 ) as costcount0,
+				@costcount0 as bpcostcount,
+				'0' as ex3costcount,
+				@costcount := round( co1.ex1cost + co1.ex2cost + co1.ex1manhour + co1.ex2manhour, 2 ) as costcount,
+				@costcount as bpcount
+			FROM
+				(
+					SELECT
+						coststatistics.bpcompany,
+						SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${manhour} ELSE 0 END ) AS ex1manhour,
+						SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL )
+							THEN
+								(
+									${cost} + ${expensesolo}
+								)
+							ELSE 0 END ) AS ex1cost,
+						SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL
+			AND (
 			(
-				SELECT
-					coststatistics.bpcompany,
-					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${manhour} ELSE 0 END ) AS ex1manhour,
-					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL )
-						THEN
-							(
-								${cost} + ${expensesolo}
-							)
-						ELSE 0 END ) AS ex1cost,
-					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex1.EXPATRIATESINFOR_ID IS NOT NULL
-		AND (
-		(
-			${cost} + ${expensesolo}
-		) > 0
-		OR
-		(
-			ex1.EXITS = 1
-			AND ex1.GROUP_ID = #{groupid}
-		)
-		OR
-		(
-			ex1.EXITS = 0
-			AND DATE_FORMAT(ex1.EXITIME, '%Y-%m') >= DATE_FORMAT(concat( #{years},'-01' ), '%Y-%m')
-			AND ex1.GROUP_ID = #{groupid}
-		)
-		)
-		) THEN 1 ELSE 0 END ) AS ex1usercount
-				FROM
-					coststatistics
-					LEFT JOIN expatriatesinfor ex1 ON coststatistics.bpname = ex1.expatriatesinfor_id
-					AND ex1.jobclassification IN ('BP025001','BP025002','BP025005' )
-				WHERE coststatistics.years = substring(#{years},1,4)
-				GROUP BY bpcompany
-			) co1
-			LEFT JOIN (
-				SELECT
-					coststatistics.bpcompany,
-					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL ) THEN ${manhour} ELSE 0 END ) AS ex2manhour,
-					SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL )
-						THEN
-							(
-								${cost} + ${expensesolo}
-							)
-		ELSE 0 END ) AS ex2cost,
-		SUM( CASE WHEN ( coststatistics.GROUP_ID = #{groupid} AND ex2.EXPATRIATESINFOR_ID IS NOT NULL
-		AND (
-		(${cost} + ${expensesolo}) > 0
-		OR
-		(
-			ex2.EXITS = 1
-			AND ex2.GROUP_ID = #{groupid}
-		)
-		OR (
-			ex2.EXITS = 0
-			AND DATE_FORMAT(ex2.EXITIME, '%Y-%m') >= DATE_FORMAT(concat( #{years},'-01' ), '%Y-%m')
-			AND ex2.GROUP_ID = #{groupid}
-		)
-		)
-		) THEN 1 ELSE 0 END ) AS ex2usercount
-		FROM
-		coststatistics
-		LEFT JOIN expatriatesinfor ex2 ON coststatistics.bpname = ex2.expatriatesinfor_id
-		AND ex2.jobclassification IN ('BP025003','BP025004' )
-		WHERE coststatistics.years = substring(#{years},1,4)
-		GROUP BY bpcompany
-		) co2 ON co1.bpcompany = co2.bpcompany
-		order by co1.bpcompany
+				${cost} + ${expensesolo}
+			) > 0
+			OR
+			(
+				ex1.EXITS = 1
+				AND ex1.GROUP_ID = #{groupid}
+			)
+			OR
+			(
+				ex1.EXITS = 0
+				AND DATE_FORMAT(ex1.EXITIME, '%Y-%m') >= DATE_FORMAT(concat( #{years},'-01' ), '%Y-%m')
+				AND ex1.GROUP_ID = #{groupid}
+			)
+			)
+			) THEN 1 ELSE 0 END ) AS ex1usercount,
+						0 AS ex2manhour,
+						0 AS ex2cost,
+						0 AS ex2usercount
+					FROM
+						coststatistics
+						LEFT JOIN expatriatesinfor ex1 ON coststatistics.bpname = ex1.expatriatesinfor_id
+						AND ex1.jobclassification IN ('BP025001','BP025002','BP025005','BP025003','BP025004' )
+					WHERE coststatistics.years = substring(#{years},1,4)
+					GROUP BY bpcompany
+
+					union all
+
+					SELECT
+						cs.BPCOMPANYID as bpcompany,
+						0 AS ex1manhour,
+						0 AS ex1cost,
+						0 AS ex1usercount,
+						CASE WHEN cs.GROUP_ID = #{groupid} THEN ${manhourf} ELSE 0 END AS ex2manhour,
+						CASE WHEN cs.GROUP_ID = #{groupid} THEN ${costf} ELSE 0 END AS ex2cost,
+						0 AS ex2usercount
+			FROM
+			companystatistics cs
+			WHERE cs.`YEAR` = substring(#{years},1,4) AND (cs.${manhourf} !=0 or cs.${costf} !=0)
+				) co1
+			order by co1.bpcompany
 	</select>
 
 	<select id="getworkflowinstance" resultType="com.nt.dao_Workflow.Workflowinstance">
