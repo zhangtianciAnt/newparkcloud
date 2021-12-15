@@ -499,6 +499,20 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             citation.setState("无效");
                             citation.setEntrycondition("HT004001");
                             contractapplicationMapper.updateByPrimaryKey(citation);
+                            //add ccm 20211213 合同废弃后，项目合同表有关该合同的数据状态修改为1，物理删除 fr
+                            ProjectContract projectContract = new ProjectContract();
+                            projectContract.setContract(citation.getContractnumber());
+                            List<ProjectContract> projectList = projectContractMapper.select(projectContract);
+                            if(projectList.size()>0)
+                            {
+                                for(ProjectContract pC : projectList)
+                                {
+                                    pC.setStatus("1");
+                                    pC.preUpdate(tokenModel);
+                                    projectContractMapper.updateByPrimaryKey(pC);
+                                }
+                            }
+                            //add ccm 20211213 合同废弃后，项目合同表有关该合同的数据状态修改为1，物理删除 fr
                         }
                     }
                 }
