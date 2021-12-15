@@ -31,7 +31,7 @@ public class Projectsystem extends BaseModel {
     private String companyprojects_id;
 
     /**
-     * 社内外协区分(0为社内1为外协)
+     * 社内外协区分(0为社内1为外协2为构外)
      */
     @Column(name = "TYPE")
     private String type;
@@ -43,7 +43,7 @@ public class Projectsystem extends BaseModel {
     private String number;
 
     /**
-     * 协力公司
+     * 协力公司,构外时为外注公司
      */
     @Column(name = "COMPANY")
     private String company;
@@ -69,13 +69,13 @@ public class Projectsystem extends BaseModel {
     private String position;
 
     /**
-     * 入场时间
+     * 入场时间,构外时为开始时间
      */
     @Column(name = "ADMISSIONTIME")
     private Date admissiontime;
 
     /**
-     * 退场时间
+     * 退场时间,构外时为结束时间
      */
     @Column(name = "EXITTIME")
     private Date exittime;
@@ -99,4 +99,39 @@ public class Projectsystem extends BaseModel {
     private String reporter;
     //endregion add_qhr_20210810 添加rank、报告者字段
 
+    //region scc add 添加构外tab页字段
+    /**
+     * 人月数，构外
+     */
+    @Column(name = "NUMBEROFMONTHS")
+    private String numberofmonths;
+
+    /**
+     * 每月管理规模，构外
+     */
+    @Column(name = "MONTHLYSCALE")
+    private String monthlyscale;
+
+    /**
+     * 窗口，构外
+     */
+    @Column(name = "MADOGUCHI")
+    private String madoguchi;
+
+    /**
+     * 构外记录对应合同号，构外
+     */
+    @Column(name = "CONTRACTNO")
+    private String contractno;
+
+    /**
+     * 对应合同人月数，构外
+     */
+    @Column(name = "TOTALNUMBER")
+    private String totalnumber;
+    //endregion scc add 添加构外tab页字段
+
+    //委托合同平均金额
+    @Column(name = "AMOUNTOF")
+    private String amountof;
 }
