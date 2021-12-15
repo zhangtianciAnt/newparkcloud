@@ -62,30 +62,8 @@ public class PersonScaleServiceImpl implements PersonScaleService {
         lastMonthDate.add(Calendar.MONTH, -1);
         String now_Date = f_t.format(lastMonthDate.getTime());
         String nowDate = ft.format(lastMonthDate.getTime());
-        String now_Day = now_Date.substring(8,10);
         String nowY_Month = now_Date.substring(0,7);
         String nowYMonth = nowDate.substring(0,6);
-        //if(Integer.parseInt(nowDay) != Integer.parseInt(dictionaryL.get(0).getValue1()) + 1) return;
-//        List<PersonScaleMee> getMeeInfoList = personScaleMapper.getMeeInfo(nowY_Month);
-//        if(getMeeInfoList.size() > 0){
-//            getMeeInfoList.forEach(mee -> {
-//                mee.setPersonscalemee_id(UUID.randomUUID().toString());
-//                mee.setYearmonth(nowY_Month);
-//                Query query = new Query();
-//                query.addCriteria(Criteria.where("userid").is(mee.getUser_id()));
-//                CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
-//                if (customerInfo != null) {
-//                    mee.setCenter_id(customerInfo.getUserinfo().getCenterid());
-//                    mee.setGroup_id(customerInfo.getUserinfo().getGroupid());
-//                    mee.setRanks(customerInfo.getUserinfo().getRank());
-//                }
-//                mee.setMangernumber(personScaleMapper.getMangernum(mee.getUser_id(),nowY_Month));
-//                mee.setManagesorce(personScaleMapper.getPronum(mee.getUser_id(),nowY_Month));
-//                mee.setCreateon(new Date());
-//            });
-//            personScaleMapper.insetMeeList(getMeeInfoList);
-//        }
-
         List<PersonScale> getLogPerInfoList = personScaleMapper.getLogInfo(nowY_Month);
         BigDecimal workingHB = new BigDecimal(personScaleMapper.getWorktimeger(nowYMonth));
         Map<String, List<PersonScale>> groupByPeoples = getLogPerInfoList.stream().collect(Collectors.groupingBy(PersonScale::getReportpeople));
