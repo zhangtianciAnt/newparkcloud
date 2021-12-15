@@ -298,7 +298,11 @@ public class PersonScaleServiceImpl implements PersonScaleService {
                 PersonScale pss = new PersonScale();
                 pss.setProject_id(sot.getProject_id());
                 pss.setReportpeople(sot.getReportpeople());
-                personScales.add(pss);
+                List<PersonScale> scaleList = personScaleMapper.select(pss);
+                if(scaleList.size() > 0){
+                    personScales.add(scaleList.get(0));
+                    personScaleList.add(scaleList.get(0));
+                }
             });
             this.getRecursion(personScales, personScaleList, yearMonth);
         }
