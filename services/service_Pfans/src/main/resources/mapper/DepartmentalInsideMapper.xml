@@ -37,10 +37,10 @@
             AND tr.YEAR = #{YEAR}
             ) cpt
             LEFT JOIN projectcontract pt ON pt.CONTRACTNUMBERCOUNT_ID = cpt.CONTRACTNUMBERCOUNT_ID
-            LEFT JOIN projectsystem pm ON pm.COMPANYPROJECTS_ID = pt.COMPANYPROJECTS_ID
+            LEFT JOIN projectsystem pm ON pm.COMPANYPROJECTS_ID = pt.COMPANYPROJECTS_ID AND pm.type = '0'
             LEFT JOIN companyprojects cs ON cs.COMPANYPROJECTS_ID = pm.COMPANYPROJECTS_ID
             AND cs.`STATUS` >= 4
-            AND pm.type = '0' order by cpt.CONTRACTNUMBER desc
+            order by cpt.CONTRACTNUMBER desc
     </select>
     <select id="getWorkInfo" parameterType="list" resultType="com.nt.dao_Pfans.PFANS1000.Vo.StaffWorkMonthInfoVo">
         SELECT
@@ -83,7 +83,9 @@
             ) cd
         INNER JOIN projectsystem pm ON pm.`NAME` = cd.userid
         AND pm.COMPANYPROJECTS_ID = cd.PROJECT_ID
-        INNER JOIN companyprojects cs ON cs.COMPANYPROJECTS_ID = cd.PROJECT_ID UNION ALL
+        AND pm.type = '0'
+        INNER JOIN companyprojects cs ON cs.COMPANYPROJECTS_ID = cd.PROJECT_ID
+            UNION ALL
         SELECT
         p.RANK,
         p.TYPE,
@@ -100,6 +102,7 @@
         FROM
         projectsystem p
         INNER JOIN companyprojects c ON p.COMPANYPROJECTS_ID = c.COMPANYPROJECTS_ID
+        AND p.type = '0'
         AND p.COMPANYPROJECTS_ID IN
         <foreach collection="projectList" index="index" item="projectid" open="("
                  separator="," close=")">
@@ -115,7 +118,8 @@
         <foreach collection="departList" index="index" item="dep" open="("
                  separator="," close=")">
             #{dep}
-        </foreach> UNION ALL
+        </foreach>
+            UNION ALL
         SELECT
         ade.ATTF,
         '' AS TYPE,
@@ -131,11 +135,6 @@
             #{projectid}
         </foreach>
         INNER JOIN staffdetail ade ON ade.AWARD_ID = ad.AWARD_ID
-        AND ade.INCONDEPARTMENT IN
-        <foreach collection="departList" index="index" item="dep" open="("
-                 separator="," close=")">
-            #{dep}
-        </foreach>
         ) a
         GROUP BY
         a.rank,
