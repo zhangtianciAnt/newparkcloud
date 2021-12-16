@@ -2292,4 +2292,19 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         return resultList;
     }
     //endregion scc add 根据合同号获取相应决裁信息，返回到项目构外tab页使用 to
+    @Override
+    public Boolean getReport(String user_id,String reporter) throws Exception {
+        //取user_id的所有上级
+        List<String> toGetRList = new ArrayList<>();
+        toGetRList.add(user_id);
+        //List<String>
+
+        return true;
+    }
+    public List<String> getAllHiger(List<String> userList) throws Exception {
+        List<String> resList = new ArrayList<>();
+
+        return resList;
+    }
+
 }
