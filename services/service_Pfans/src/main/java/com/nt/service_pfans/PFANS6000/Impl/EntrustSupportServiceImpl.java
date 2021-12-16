@@ -270,6 +270,8 @@ public class EntrustSupportServiceImpl implements EntrustSupportService {
                     aSingle.setTotalcost(new BigDecimal("0").setScale(2, BigDecimal.ROUND_HALF_UP));
                     for(int i =1;i<=12;i++)
                     {
+                        BeanUtils.setProperty(aSingle,"cost"+ i, new BigDecimal("0").setScale(2, BigDecimal.ROUND_HALF_UP));
+                        BeanUtils.setProperty(aSingle,"manhour"+ i, new BigDecimal("0").setScale(2, BigDecimal.ROUND_HALF_UP));
                         BeanUtils.setProperty(aSingle,"cost"+ i +"f", new BigDecimal("0").setScale(2, BigDecimal.ROUND_HALF_UP));
                         BeanUtils.setProperty(aSingle,"manhour"+ i +"f", new BigDecimal("0").setScale(2, BigDecimal.ROUND_HALF_UP));
                         if(Integer.valueOf(years.trim().split("-")[1]) == i)
