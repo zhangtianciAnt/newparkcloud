@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS6000.mapper.EntrustSupportMapper">
+    <insert id="insetList" parameterType="java.util.List">
+        insert into entrustsupport (ENTRUSTSUPPORT_ID,GROUP_ID,DEPARTMENT,DEPLOYMENT,DATES,CONTRACTNUMBER,CONJAPANESE,CUSTOJAPANESE,CLAIMAMOUNT,DELIVERYDATE,
+        COMPLETIONDATE,CLAIMDATE,SUPPORTDATE,PROCESSING,UNDERTAKER,PROJECTNUMBER,THEMEINFOR_ID,
+        STATUS,CREATEBY,CREATEON,MODIFYBY,MODIFYON,OWNER,TENANTID) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.entrustsupport_id},#{item.group_id},#{item.department},#{item.deployment},#{item.dates},#{item.contractnumber},#{item.conjapanese},#{item.custojapanese},
+            #{item.claimamount},#{item.deliverydate},#{item.completiondate},#{item.claimdate},#{item.supportdate},#{item.processing},#{item.undertaker},#{item.projectnumber},
+            #{item.themeinfor_id},#{item.status},#{item.createby},#{item.createon},#{item.modifyby},#{item.modifyon},#{item.owner},#{item.tenantid})
+        </foreach>
+    </insert>
+    <update id="updateList" parameterType="java.util.List">
+        <foreach item="item" collection="list" index="index" >
+            UPDATE entrustsupport
+            SET PROCESSING = #{item.processing},UNDERTAKER = #{item.undertaker},MODIFYON = #{item.modifyon}
+            WHERE GROUP_ID = #{item.group_id} and DATES = #{item.dates} and ENTRUSTSUPPORT_ID = #{item.entrustsupport_id};
+        </foreach>
+    </update>
+</mapper>
