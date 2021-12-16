@@ -700,4 +700,18 @@ GROUP BY
         group by  month
     </select>
     <!--zy end ???? 2021/06/13-->
+
+    <select id="selectCont" resultType="com.nt.dao_Pfans.PFANS1000.Contractapplication">
+        SELECT
+            *
+        FROM
+            `contractapplication`
+        WHERE
+            ENTRUSTEDNUMBER = #{contractNo}
+            AND CHECKINDIVDUAL != '1'
+            AND STATE != '??'
+            AND ENTRYCONDITION != 'HT004001'
+          AND (GROUP_ID = #{centerId}
+            OR GROUP_ID = #{groupId})
+    </select>
 </mapper>
