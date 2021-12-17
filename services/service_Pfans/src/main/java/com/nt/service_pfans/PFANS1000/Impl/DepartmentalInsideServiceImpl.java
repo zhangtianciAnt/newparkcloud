@@ -172,18 +172,18 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                     peoplewareFeeMap.put(poem.getRanks(),poem);
                 });
                 //人件费 获取实际成本变更 ztc to
-                DepartmentalInside departInsideSelect = new DepartmentalInside();
-                departInsideSelect.setYears(String.valueOf(finalYear));
-                departInsideSelect.setDepartment(dep);
                 Map<String, PeoplewareFee> finalPeoplewareFeeMap = peoplewareFeeMap;
                 depList.forEach((pro, proList) -> {//项目
-                    departInsideSelect.setProject_id(pro);
                     List<DepartmentalInsideBaseVo> deBaseList = entryDep.getValue().stream()
                             .filter(filItem -> filItem.getCompanyprojects_id().equals(pro)).collect(Collectors.toList());
                     if(deBaseList.size() != 0) {
                         proList.forEach((rank, rankList) -> {//rank
                             PeoplewareFee peoCost = finalPeoplewareFeeMap.get(ranksMap.get(rank).getValue1());
                             if (peoCost != null) {
+                                DepartmentalInside departInsideSelect = new DepartmentalInside();
+                                departInsideSelect.setYears(String.valueOf(finalYear));
+                                departInsideSelect.setDepartment(dep);
+                                departInsideSelect.setProject_id(pro);
                                 departInsideSelect.setStaffrank(rank);
                                 List<DepartmentalInside> getOldRanList = departmentalInsideMapper.select(departInsideSelect);
                                 List<StaffWorkMonthInfoVo> rangRankList = new ArrayList<>();
@@ -200,7 +200,414 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                 staffDetail.setContractnumber(deBaseList.get(0).getContractnumber());
                                 staffDetail.setAttf(departInsideSelect.getStaffrank());
                                 List<StaffDetail> staffDetailList = staffDetailMapper.select(staffDetail);
-                                if (getOldRanList.size() == 0) {
+                                if (getOldRanList.size() > 0) {
+                                    switch (monthlast) {
+                                        case 0:
+                                            getOldRanList.get(0).setStaffcustactual12(rankSum);
+                                            getOldRanList.get(0).setStaffcustplan12(staffDetailList.size() > 0 ?
+                                                    staffDetailList.get(0).getInwork12() : "0.00");
+                                            break;
+                                        case 1:
+                                            getOldRanList.get(0).setStaffcustactual01(rankSum);
+                                            getOldRanList.get(0).setStaffcustplan01(staffDetailList.size() > 0 ?
+                                                    staffDetailList.get(0).getInwork01() : "0.00");
+                                            break;
+                                        case 2:
+                                            getOldRanList.get(0).setStaffcustactual02(rankSum);
+                                            getOldRanList.get(0).setStaffcustplan02(staffDetailList.size() > 0 ?
+                                                    staffDetailList.get(0).getInwork02() : "0.00");
+                                            break;
+                                        case 3:
+                                            getOldRanList.get(0).setStaffcustactual03(rankSum);
+                                            getOldRanList.get(0).setStaffcustplan03(staffDetailList.size() > 0 ?
+                                                    staffDetailList.get(0).getInwork03() : "0.00");
+                                            break;
+                                        case 4:
+                                            getOldRanList.get(0).setStaffcustactual04(rankSum);
+                                            getOldRanList.get(0).setStaffcustplan04(staffDetailList.size() > 0 ?
+                                                    staffDetailList.get(0).getInwork04() : "0.00");
+                                            break;
+                                        case 5:
+                                            getOldRanList.get(0).setStaffcustactual05(rankSum);
+                                            getOldRanList.get(0).setStaffcustplan05(staffDetailList.size() > 0 ?
+                                                    staffDetailList.get(0).getInwork05() : "0.00");
+                                            break;
+                                        case 6:
+                                            getOldRanList.get(0).setStaffcustactual06(rankSum);
+                                            getOldRanList.get(0).setStaffcustplan06(staffDetailList.size() > 0 ?
+                                                    staffDetailList.get(0).getInwork06() : "0.00");
+                                            break;
+                                        case 7:
+                                            getOldRanList.get(0).setStaffcustactual07(rankSum);
+                                            getOldRanList.get(0).setStaffcustplan07(staffDetailList.size() > 0 ?
+                                                    staffDetailList.get(0).getInwork07() : "0.00");
+                                            break;
+                                        case 8:
+                                            getOldRanList.get(0).setStaffcustactual08(rankSum);
+                                            getOldRanList.get(0).setStaffcustplan08(staffDetailList.size() > 0 ?
+                                                    staffDetailList.get(0).getInwork08() : "0.00");
+                                            break;
+                                        case 9:
+                                            getOldRanList.get(0).setStaffcustactual09(rankSum);
+                                            getOldRanList.get(0).setStaffcustplan09(staffDetailList.size() > 0 ?
+                                                    staffDetailList.get(0).getInwork09() : "0.00");
+                                            break;
+                                        case 10:
+                                            getOldRanList.get(0).setStaffcustactual10(rankSum);
+                                            getOldRanList.get(0).setStaffcustplan10(staffDetailList.size() > 0 ?
+                                                    staffDetailList.get(0).getInwork10() : "0.00");
+                                            break;
+                                        case 11:
+                                            getOldRanList.get(0).setStaffcustactual11(rankSum);
+                                            getOldRanList.get(0).setStaffcustplan11(staffDetailList.size() > 0 ?
+                                                    staffDetailList.get(0).getInwork11() : "0.00");
+                                            break;
+                                    }
+                                    List<PeoplewareFee> peoFilterListUpdate = peoplewareFeeList.stream().filter(peoplewareFee1 ->
+                                            peoplewareFee1.getGroupid().equals(getOldRanList.get(0).getDepartment())
+                                                    && peoplewareFee1.getRanks().equals(getOldRanList.get(0).getStaffrank())
+                                    ).collect(Collectors.toList());
+                                    if (monthlast == 3 || monthlast == 4 || monthlast == 5) {
+                                        getOldRanList.get(0).setWorkdifferentfirst(
+                                                String.valueOf(
+                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan04())
+                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan04()))
+                                                                .add(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan05())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan05())))
+                                                                .add(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan06())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan06())))
+                                                                .subtract(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual04())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual04())))
+                                                                .subtract(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual05())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual05())))
+                                                                .subtract(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual06())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual06())))
+                                                )
+                                        );
+                                        getOldRanList.get(0).setRankdifferentfirst(
+                                                String.valueOf(
+                                                        (
+                                                                (
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan04())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan04()))
+                                                                                .multiply(
+                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                ? new BigDecimal(peoCost.getMonth4()) : BigDecimal.ZERO)
+                                                                                )
+                                                                )
+                                                                        .add(
+                                                                                (
+                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan05())
+                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan05()))
+                                                                                                .multiply(
+                                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                                ? new BigDecimal(peoCost.getMonth5()) : BigDecimal.ZERO)
+                                                                                                )
+                                                                                )
+                                                                        ).add(
+                                                                        (
+                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan06())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan06()))
+                                                                                        .multiply(
+                                                                                                (peoFilterListUpdate.size() > 0
+                                                                                                        ? new BigDecimal(peoCost.getMonth6()) : BigDecimal.ZERO)
+                                                                                        )
+                                                                        )
+                                                                )
+                                                        ).subtract(
+                                                                (
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual04())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual04()))
+                                                                                .multiply(
+                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth4()) : BigDecimal.ZERO)
+                                                                                )
+                                                                )
+                                                                        .add(
+                                                                                (
+                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual05())
+                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual05()))
+                                                                                                .multiply(
+                                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth5()) : BigDecimal.ZERO)
+                                                                                                )
+                                                                                )
+                                                                        ).add(
+                                                                        (
+                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual06())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual06()))
+                                                                                        .multiply(
+                                                                                                (peoFilterListUpdate.size() > 0
+                                                                                                        ? new BigDecimal(peoFilterListUpdate.get(0).getMonth6()) : BigDecimal.ZERO)
+                                                                                        )
+                                                                        )
+                                                                )
+                                                        )
+                                                )
+                                        );
+                                    }
+                                    else if (monthlast == 6 || monthlast == 7 || monthlast == 8) {
+                                        getOldRanList.get(0).setWorkdifferentsecond(
+                                                String.valueOf(
+                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan07())
+                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan07()))
+                                                                .add(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan08())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan08())))
+                                                                .add(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan09())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan09())))
+                                                                .subtract(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual07())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual07())))
+                                                                .subtract(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual08())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual08())))
+                                                                .subtract(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual09())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual09())))
+                                                )
+                                        );
+                                        getOldRanList.get(0).setRankdifferentsecond(
+                                                String.valueOf(
+                                                        (
+                                                                (
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan07())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan07()))
+                                                                                .multiply(
+                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
+                                                                                )
+                                                                )
+                                                                        .add(
+                                                                                (
+                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan08())
+                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan08()))
+                                                                                                .multiply(
+                                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                                ? new BigDecimal(peoCost.getMonth8()) : BigDecimal.ZERO)
+                                                                                                )
+                                                                                )
+                                                                        ).add(
+                                                                        (
+                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan09())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan09()))
+                                                                                        .multiply(
+                                                                                                (peoFilterListUpdate.size() > 0
+                                                                                                        ? new BigDecimal(peoCost.getMonth9()) : BigDecimal.ZERO)
+                                                                                        )
+                                                                        )
+                                                                )
+                                                        ).subtract(
+                                                                (
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual07())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual07()))
+                                                                                .multiply(
+                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth7()) : BigDecimal.ZERO)
+                                                                                )
+                                                                )
+                                                                        .add(
+                                                                                (
+                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual08())
+                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual08()))
+                                                                                                .multiply(
+                                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth8()) : BigDecimal.ZERO)
+                                                                                                )
+                                                                                )
+                                                                        ).add(
+                                                                        (
+                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual09())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual09()))
+                                                                                        .multiply(
+                                                                                                (peoFilterListUpdate.size() > 0
+                                                                                                        ? new BigDecimal(peoFilterListUpdate.get(0).getMonth9()) : BigDecimal.ZERO)
+                                                                                        )
+                                                                        )
+                                                                )
+                                                        )
+                                                )
+                                        );
+                                    }
+                                    else if (monthlast == 9 || monthlast == 10 || monthlast == 11) {
+                                        getOldRanList.get(0).setWorkdifferentthird(
+                                                String.valueOf(
+                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan10())
+                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan10()))
+                                                                .add(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan11())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan11())))
+                                                                .add(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan12())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan12())))
+                                                                .subtract(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual10())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual10())))
+                                                                .subtract(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual11())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual11())))
+                                                                .subtract(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual12())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual12())))
+                                                )
+                                        );
+                                        getOldRanList.get(0).setRankdifferentthird(
+                                                String.valueOf(
+                                                        (
+                                                                (
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan10())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan10()))
+                                                                                .multiply(
+                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                ? new BigDecimal(peoCost.getMonth10()) : BigDecimal.ZERO)
+                                                                                )
+                                                                )
+                                                                        .add(
+                                                                                (
+                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan11())
+                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan11()))
+                                                                                                .multiply(
+                                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                                ? new BigDecimal(peoCost.getMonth11()) : BigDecimal.ZERO)
+                                                                                                )
+                                                                                )
+                                                                        ).add(
+                                                                        (
+                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan12())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan12()))
+                                                                                        .multiply(
+                                                                                                (peoFilterListUpdate.size() > 0
+                                                                                                        ? new BigDecimal(peoCost.getMonth12()) : BigDecimal.ZERO)
+                                                                                        )
+                                                                        )
+                                                                )
+                                                        ).subtract(
+                                                                (
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual10())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual10()))
+                                                                                .multiply(
+                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth10()) : BigDecimal.ZERO)
+                                                                                )
+                                                                )
+                                                                        .add(
+                                                                                (
+                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual11())
+                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual11()))
+                                                                                                .multiply(
+                                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth11()) : BigDecimal.ZERO)
+                                                                                                )
+                                                                                )
+                                                                        ).add(
+                                                                        (
+                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual12())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual12()))
+                                                                                        .multiply(
+                                                                                                (peoFilterListUpdate.size() > 0
+                                                                                                        ? new BigDecimal(peoFilterListUpdate.get(0).getMonth12()) : BigDecimal.ZERO)
+                                                                                        )
+                                                                        )
+                                                                )
+                                                        )
+                                                )
+                                        );
+                                    }
+                                    else if (monthlast == 0 || monthlast == 1 || monthlast == 2) {
+                                        getOldRanList.get(0).setWorkdifferentfourth(
+                                                String.valueOf(
+                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan01())
+                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan01()))
+                                                                .add(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan02())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan02())))
+                                                                .add(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan03())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan03())))
+                                                                .subtract(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual01())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual01())))
+                                                                .subtract(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual02())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual02())))
+                                                                .subtract(
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual03())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual03())))
+                                                )
+                                        );
+                                        getOldRanList.get(0).setRankdifferentthird(
+                                                String.valueOf(
+                                                        (
+                                                                (
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan01())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan01()))
+                                                                                .multiply(
+                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                ? new BigDecimal(peoCost.getMonth1()) : BigDecimal.ZERO)
+                                                                                )
+                                                                )
+                                                                        .add(
+                                                                                (
+                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan02())
+                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan02()))
+                                                                                                .multiply(
+                                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                                ? new BigDecimal(peoCost.getMonth2()) : BigDecimal.ZERO)
+                                                                                                )
+                                                                                )
+                                                                        ).add(
+                                                                        (
+                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan03())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan03()))
+                                                                                        .multiply(
+                                                                                                (peoFilterListUpdate.size() > 0
+                                                                                                        ? new BigDecimal(peoCost.getMonth3()) : BigDecimal.ZERO)
+                                                                                        )
+                                                                        )
+                                                                )
+                                                        ).subtract(
+                                                                (
+                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual01())
+                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual01()))
+                                                                                .multiply(
+                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth1()) : BigDecimal.ZERO)
+                                                                                )
+                                                                )
+                                                                        .add(
+                                                                                (
+                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual02())
+                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual02()))
+                                                                                                .multiply(
+                                                                                                        (peoFilterListUpdate.size() > 0
+                                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth2()) : BigDecimal.ZERO)
+                                                                                                )
+                                                                                )
+                                                                        ).add(
+                                                                        (
+                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual03())
+                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual03()))
+                                                                                        .multiply(
+                                                                                                (peoFilterListUpdate.size() > 0
+                                                                                                        ? new BigDecimal(peoFilterListUpdate.get(0).getMonth3()) : BigDecimal.ZERO)
+                                                                                        )
+                                                                        )
+                                                                )
+                                                        )
+                                                )
+                                        );
+                                    }
+                                    getOldRanList.get(0).setWorkdifferentofyear(this.sumWorkAnt(getOldRanList.get(0)));
+                                    getOldRanList.get(0).setRankdifferentofyear(this.sumRankAnt(getOldRanList.get(0)));
+                                    departmentalInsideListUnpdate.add(getOldRanList.get(0));
+                                }
+                                else {
                                     //新增
                                     DepartmentalInside departmentalInside = new DepartmentalInside();
                                     BeanUtils.copyProperties(departInsideSelect, departmentalInside);
@@ -217,62 +624,62 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                         case 4:
                                             departmentalInside.setStaffcustactual04(rankSum);
                                             departmentalInside.setStaffcustplan04(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork04() : "0");
+                                                    staffDetailList.get(0).getInwork04() : "0.00");
                                             break;
                                         case 5:
                                             departmentalInside.setStaffcustactual05(rankSum);
                                             departmentalInside.setStaffcustplan05(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork05() : "0");
+                                                    staffDetailList.get(0).getInwork05() : "0.00");
                                             break;
                                         case 6:
                                             departmentalInside.setStaffcustactual06(rankSum);
                                             departmentalInside.setStaffcustplan06(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork06() : "0");
+                                                    staffDetailList.get(0).getInwork06() : "0.00");
                                             break;
                                         case 7:
                                             departmentalInside.setStaffcustactual07(rankSum);
                                             departmentalInside.setStaffcustplan07(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork07() : "0");
+                                                    staffDetailList.get(0).getInwork07() : "0.00");
                                             break;
                                         case 8:
                                             departmentalInside.setStaffcustactual08(rankSum);
                                             departmentalInside.setStaffcustplan08(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork08() : "0");
+                                                    staffDetailList.get(0).getInwork08() : "0.00");
                                             break;
                                         case 9:
                                             departmentalInside.setStaffcustactual09(rankSum);
                                             departmentalInside.setStaffcustplan09(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork09() : "0");
+                                                    staffDetailList.get(0).getInwork09() : "0.00");
                                             break;
                                         case 10:
                                             departmentalInside.setStaffcustactual10(rankSum);
                                             departmentalInside.setStaffcustplan10(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork10() : "0");
+                                                    staffDetailList.get(0).getInwork10() : "0.00");
                                             break;
                                         case 11:
                                             departmentalInside.setStaffcustactual11(rankSum);
                                             departmentalInside.setStaffcustplan11(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork11() : "0");
+                                                    staffDetailList.get(0).getInwork11() : "0.00");
                                             break;
                                         case 12:
                                             departmentalInside.setStaffcustactual12(rankSum);
                                             departmentalInside.setStaffcustplan12(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork12() : "0");
+                                                    staffDetailList.get(0).getInwork12() : "0.00");
                                             break;
                                         case 1:
                                             departmentalInside.setStaffcustactual01(rankSum);
                                             departmentalInside.setStaffcustplan01(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork01() : "0");
+                                                    staffDetailList.get(0).getInwork01() : "0.00");
                                             break;
                                         case 2:
                                             departmentalInside.setStaffcustactual02(rankSum);
                                             departmentalInside.setStaffcustplan02(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork02() : "0");
+                                                    staffDetailList.get(0).getInwork02() : "0.00");
                                             break;
                                         case 3:
                                             departmentalInside.setStaffcustactual03(rankSum);
                                             departmentalInside.setStaffcustplan03(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork03() : "0");
+                                                    staffDetailList.get(0).getInwork03() : "0.00");
                                             break;
                                     }
                                     List<PeoplewareFee> peoFilterList = peoplewareFeeList.stream().filter(peoplewareFee1 ->
@@ -620,412 +1027,6 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                                     departmentalInside.preInsert(tokenModel);
                                     departmentalInsideListInsert.add(departmentalInside);
                                 }
-                                else {
-                                    switch (monthlast) {
-                                        case 0:
-                                            getOldRanList.get(0).setStaffcustactual12(rankSum);
-                                            getOldRanList.get(0).setStaffcustplan12(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork12() : "0");
-                                            break;
-                                        case 1:
-                                            getOldRanList.get(0).setStaffcustactual01(rankSum);
-                                            getOldRanList.get(0).setStaffcustplan01(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork01() : "0");
-                                            break;
-                                        case 2:
-                                            getOldRanList.get(0).setStaffcustactual02(rankSum);
-                                            getOldRanList.get(0).setStaffcustplan02(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork02() : "0");
-                                            break;
-                                        case 3:
-                                            getOldRanList.get(0).setStaffcustactual03(rankSum);
-                                            getOldRanList.get(0).setStaffcustplan03(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork03() : "0");
-                                            break;
-                                        case 4:
-                                            getOldRanList.get(0).setStaffcustactual04(rankSum);
-                                            getOldRanList.get(0).setStaffcustplan04(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork04() : "0");
-                                            break;
-                                        case 5:
-                                            getOldRanList.get(0).setStaffcustactual05(rankSum);
-                                            getOldRanList.get(0).setStaffcustplan05(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork05() : "0");
-                                            break;
-                                        case 6:
-                                            getOldRanList.get(0).setStaffcustactual06(rankSum);
-                                            getOldRanList.get(0).setStaffcustplan06(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork06() : "0");
-                                            break;
-                                        case 7:
-                                            getOldRanList.get(0).setStaffcustactual07(rankSum);
-                                            getOldRanList.get(0).setStaffcustplan07(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork07() : "0");
-                                            break;
-                                        case 8:
-                                            getOldRanList.get(0).setStaffcustactual08(rankSum);
-                                            getOldRanList.get(0).setStaffcustplan08(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork08() : "0");
-                                            break;
-                                        case 9:
-                                            getOldRanList.get(0).setStaffcustactual09(rankSum);
-                                            getOldRanList.get(0).setStaffcustplan09(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork09() : "0");
-                                            break;
-                                        case 10:
-                                            getOldRanList.get(0).setStaffcustactual10(rankSum);
-                                            getOldRanList.get(0).setStaffcustplan10(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork10() : "0");
-                                            break;
-                                        case 11:
-                                            getOldRanList.get(0).setStaffcustactual11(rankSum);
-                                            getOldRanList.get(0).setStaffcustplan11(staffDetailList.size() > 0 ?
-                                                    staffDetailList.get(0).getInwork11() : "0");
-                                            break;
-                                    }
-                                    List<PeoplewareFee> peoFilterListUpdate = peoplewareFeeList.stream().filter(peoplewareFee1 ->
-                                            peoplewareFee1.getGroupid().equals(getOldRanList.get(0).getDepartment())
-                                                    && peoplewareFee1.getRanks().equals(getOldRanList.get(0).getStaffrank())
-                                    ).collect(Collectors.toList());
-                                    if (monthlast == 3 || monthlast == 4 || monthlast == 5) {
-                                        getOldRanList.get(0).setWorkdifferentfirst(
-                                                String.valueOf(
-                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan04())
-                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan04()))
-                                                                .add(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan05())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan05())))
-                                                                .add(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan06())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan06())))
-                                                                .subtract(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual04())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual04())))
-                                                                .subtract(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual05())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual05())))
-                                                                .subtract(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual06())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual06())))
-                                                )
-                                        );
-                                        getOldRanList.get(0).setRankdifferentfirst(
-                                                String.valueOf(
-                                                        (
-                                                                (
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan04())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan04()))
-                                                                                .multiply(
-                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                ? new BigDecimal(peoCost.getMonth4()) : BigDecimal.ZERO)
-                                                                                )
-                                                                )
-                                                                        .add(
-                                                                                (
-                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan05())
-                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan05()))
-                                                                                                .multiply(
-                                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                                ? new BigDecimal(peoCost.getMonth5()) : BigDecimal.ZERO)
-                                                                                                )
-                                                                                )
-                                                                        ).add(
-                                                                        (
-                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan06())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan06()))
-                                                                                        .multiply(
-                                                                                                (peoFilterListUpdate.size() > 0
-                                                                                                        ? new BigDecimal(peoCost.getMonth6()) : BigDecimal.ZERO)
-                                                                                        )
-                                                                        )
-                                                                )
-                                                        ).subtract(
-                                                                (
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual04())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual04()))
-                                                                                .multiply(
-                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth4()) : BigDecimal.ZERO)
-                                                                                )
-                                                                )
-                                                                        .add(
-                                                                                (
-                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual05())
-                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual05()))
-                                                                                                .multiply(
-                                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth5()) : BigDecimal.ZERO)
-                                                                                                )
-                                                                                )
-                                                                        ).add(
-                                                                        (
-                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual06())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual06()))
-                                                                                        .multiply(
-                                                                                                (peoFilterListUpdate.size() > 0
-                                                                                                        ? new BigDecimal(peoFilterListUpdate.get(0).getMonth6()) : BigDecimal.ZERO)
-                                                                                        )
-                                                                        )
-                                                                )
-                                                        )
-                                                )
-                                        );
-                                    }
-                                    else if (monthlast == 6 || monthlast == 7 || monthlast == 8) {
-                                        getOldRanList.get(0).setWorkdifferentsecond(
-                                                String.valueOf(
-                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan07())
-                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan07()))
-                                                                .add(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan08())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan08())))
-                                                                .add(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan09())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan09())))
-                                                                .subtract(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual07())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual07())))
-                                                                .subtract(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual08())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual08())))
-                                                                .subtract(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual09())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual09())))
-                                                )
-                                        );
-                                        getOldRanList.get(0).setRankdifferentsecond(
-                                                String.valueOf(
-                                                        (
-                                                                (
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan07())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan07()))
-                                                                                .multiply(
-                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                ? new BigDecimal(peoCost.getMonth7()) : BigDecimal.ZERO)
-                                                                                )
-                                                                )
-                                                                        .add(
-                                                                                (
-                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan08())
-                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan08()))
-                                                                                                .multiply(
-                                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                                ? new BigDecimal(peoCost.getMonth8()) : BigDecimal.ZERO)
-                                                                                                )
-                                                                                )
-                                                                        ).add(
-                                                                        (
-                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan09())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan09()))
-                                                                                        .multiply(
-                                                                                                (peoFilterListUpdate.size() > 0
-                                                                                                        ? new BigDecimal(peoCost.getMonth9()) : BigDecimal.ZERO)
-                                                                                        )
-                                                                        )
-                                                                )
-                                                        ).subtract(
-                                                                (
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual07())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual07()))
-                                                                                .multiply(
-                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth7()) : BigDecimal.ZERO)
-                                                                                )
-                                                                )
-                                                                        .add(
-                                                                                (
-                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual08())
-                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual08()))
-                                                                                                .multiply(
-                                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth8()) : BigDecimal.ZERO)
-                                                                                                )
-                                                                                )
-                                                                        ).add(
-                                                                        (
-                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual09())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual09()))
-                                                                                        .multiply(
-                                                                                                (peoFilterListUpdate.size() > 0
-                                                                                                        ? new BigDecimal(peoFilterListUpdate.get(0).getMonth9()) : BigDecimal.ZERO)
-                                                                                        )
-                                                                        )
-                                                                )
-                                                        )
-                                                )
-                                        );
-                                    }
-                                    else if (monthlast == 9 || monthlast == 10 || monthlast == 11) {
-                                        getOldRanList.get(0).setWorkdifferentthird(
-                                                String.valueOf(
-                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan10())
-                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan10()))
-                                                                .add(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan11())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan11())))
-                                                                .add(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan12())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan12())))
-                                                                .subtract(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual10())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual10())))
-                                                                .subtract(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual11())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual11())))
-                                                                .subtract(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual12())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual12())))
-                                                )
-                                        );
-                                        getOldRanList.get(0).setRankdifferentthird(
-                                                String.valueOf(
-                                                        (
-                                                                (
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan10())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan10()))
-                                                                                .multiply(
-                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                ? new BigDecimal(peoCost.getMonth10()) : BigDecimal.ZERO)
-                                                                                )
-                                                                )
-                                                                        .add(
-                                                                                (
-                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan11())
-                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan11()))
-                                                                                                .multiply(
-                                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                                ? new BigDecimal(peoCost.getMonth11()) : BigDecimal.ZERO)
-                                                                                                )
-                                                                                )
-                                                                        ).add(
-                                                                        (
-                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan12())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan12()))
-                                                                                        .multiply(
-                                                                                                (peoFilterListUpdate.size() > 0
-                                                                                                        ? new BigDecimal(peoCost.getMonth12()) : BigDecimal.ZERO)
-                                                                                        )
-                                                                        )
-                                                                )
-                                                        ).subtract(
-                                                                (
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual10())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual10()))
-                                                                                .multiply(
-                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth10()) : BigDecimal.ZERO)
-                                                                                )
-                                                                )
-                                                                        .add(
-                                                                                (
-                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual11())
-                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual11()))
-                                                                                                .multiply(
-                                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth11()) : BigDecimal.ZERO)
-                                                                                                )
-                                                                                )
-                                                                        ).add(
-                                                                        (
-                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual12())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual12()))
-                                                                                        .multiply(
-                                                                                                (peoFilterListUpdate.size() > 0
-                                                                                                        ? new BigDecimal(peoFilterListUpdate.get(0).getMonth12()) : BigDecimal.ZERO)
-                                                                                        )
-                                                                        )
-                                                                )
-                                                        )
-                                                )
-                                        );
-                                    }
-                                    else if (monthlast == 0 || monthlast == 1 || monthlast == 2) {
-                                        getOldRanList.get(0).setWorkdifferentfourth(
-                                                String.valueOf(
-                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan01())
-                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan01()))
-                                                                .add(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan02())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan02())))
-                                                                .add(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan03())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan03())))
-                                                                .subtract(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual01())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual01())))
-                                                                .subtract(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual02())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual02())))
-                                                                .subtract(
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual03())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual03())))
-                                                )
-                                        );
-                                        getOldRanList.get(0).setRankdifferentthird(
-                                                String.valueOf(
-                                                        (
-                                                                (
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan01())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan01()))
-                                                                                .multiply(
-                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                ? new BigDecimal(peoCost.getMonth1()) : BigDecimal.ZERO)
-                                                                                )
-                                                                )
-                                                                        .add(
-                                                                                (
-                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan02())
-                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan02()))
-                                                                                                .multiply(
-                                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                                ? new BigDecimal(peoCost.getMonth2()) : BigDecimal.ZERO)
-                                                                                                )
-                                                                                )
-                                                                        ).add(
-                                                                        (
-                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustplan03())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustplan03()))
-                                                                                        .multiply(
-                                                                                                (peoFilterListUpdate.size() > 0
-                                                                                                        ? new BigDecimal(peoCost.getMonth3()) : BigDecimal.ZERO)
-                                                                                        )
-                                                                        )
-                                                                )
-                                                        ).subtract(
-                                                                (
-                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual01())
-                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual01()))
-                                                                                .multiply(
-                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth1()) : BigDecimal.ZERO)
-                                                                                )
-                                                                )
-                                                                        .add(
-                                                                                (
-                                                                                        (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual02())
-                                                                                                ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual02()))
-                                                                                                .multiply(
-                                                                                                        (peoFilterListUpdate.size() > 0
-                                                                                                                ? new BigDecimal(peoFilterListUpdate.get(0).getMonth2()) : BigDecimal.ZERO)
-                                                                                                )
-                                                                                )
-                                                                        ).add(
-                                                                        (
-                                                                                (StringUtils.isNullOrEmpty(getOldRanList.get(0).getStaffcustactual03())
-                                                                                        ? BigDecimal.ZERO : new BigDecimal(getOldRanList.get(0).getStaffcustactual03()))
-                                                                                        .multiply(
-                                                                                                (peoFilterListUpdate.size() > 0
-                                                                                                        ? new BigDecimal(peoFilterListUpdate.get(0).getMonth3()) : BigDecimal.ZERO)
-                                                                                        )
-                                                                        )
-                                                                )
-                                                        )
-                                                )
-                                        );
-                                    }
-                                    getOldRanList.get(0).setWorkdifferentofyear(this.sumWorkAnt(getOldRanList.get(0)));
-                                    getOldRanList.get(0).setRankdifferentofyear(this.sumRankAnt(getOldRanList.get(0)));
-                                }
                             }
                         });
                     }
@@ -1034,22 +1035,27 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
         }
 //        try {
             //新建数据
-            if (departmentalInsideListInsert.size() > 0) {
-                List<DepartmentalInside> insideList = departmentalInsideListInsert
+            if (departmentalInsideListInsert.size() > 0 || departmentalInsideListUnpdate.size() > 0) {
+                List<DepartmentalInside> inupAllDeideList = new ArrayList<>();
+                inupAllDeideList.addAll(departmentalInsideListInsert);
+                inupAllDeideList.addAll(departmentalInsideListUnpdate);
+                List<DepartmentalInside> allList = inupAllDeideList
                         .stream().filter(dept -> !StringUtils.isNullOrEmpty(dept.getProject_id())).collect(Collectors.toList());
 //                insideList = insideList.stream()
 //                        .filter(distinctAnt(DepartmentalInside::getProject_id)).collect(Collectors.toList());
-                insideList = insideList.stream().collect(
+                allList = allList.stream().collect(
                         Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(
                                 o -> o.getDepartment() + ";" + o.getProject_id()))), ArrayList::new));
-                for (DepartmentalInside inst : insideList) {
+                for (DepartmentalInside inst : allList) {
                     DepartmentalInside depOutInsWork = new DepartmentalInside();
                     BigDecimal outSum;
                     outSum = StringUtils.isNullOrEmpty(projectsystemMapper.getTypeOne(inst.getProject_id(), LOG_DATE)) ?
                             BigDecimal.ZERO : new BigDecimal(projectsystemMapper.getTypeOne(inst.getProject_id(), LOG_DATE));
                     List<Projectsystem> getTypeTwoList = projectsystemMapper.getTypeTwo(inst.getProject_id());
                     getTypeTwoList = this.checkIn(getTypeTwoList, LOG_DATE);
-                    outSum = outSum.add(getTypeTwoList.stream().map(i -> new BigDecimal(i.getMonthlyscale())).reduce(BigDecimal.ZERO, BigDecimal::add));
+                    outSum = outSum.add(getTypeTwoList.stream()
+                            .map(i -> new BigDecimal(i.getMonthlyscale())).reduce(BigDecimal.ZERO, BigDecimal::add))
+                            .setScale(2, BigDecimal.ROUND_HALF_UP);
                     depOutInsWork.setYears(String.valueOf(year));
                     depOutInsWork.setDepartment(inst.getDepartment());
                     depOutInsWork.setThemeinfor_id(inst.getThemeinfor_id());
@@ -1081,7 +1087,7 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                         if(awardList.size() > 0) {
                             this.setRange(depOutWorkList.get(0), monthlast, String.valueOf(outSum));
                         }
-                        departmentalInsideMapper.updateByPrimaryKey(depOutInsWork);
+                        departmentalInsideMapper.updateByPrimaryKey(depOutWorkList.get(0));
                     }
                     PjExternalInjection pjection = new PjExternalInjection();
                     pjection.setYears(String.valueOf(year));
@@ -1124,16 +1130,14 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                     }else{
                         depOutInsWork.preInsert(tokenModel);
                         if(awardList.size() > 0) {
-                            this.getMoneySum(pjList, monthlast, depOutInsMoney, outMoney);
+                            this.getMoneySum(pjList, monthlast, depOutMoneyList.get(0), outMoney);
                         }
-                        departmentalInsideMapper.updateByPrimaryKey(depOutInsMoney);
+                        departmentalInsideMapper.updateByPrimaryKey(depOutMoneyList.get(0));
                     }
                 }
                 Map<String,Map<String,List<DepartmentalInside>>> typeeList = departmentalInsideListInsert
                         .stream().collect(Collectors.groupingBy(DepartmentalInside ::getDepartment
                                 ,Collectors.groupingBy(DepartmentalInside ::getThemeinfor_id)));
-
-
                 int finalYear1 = year;
                 String[] str = {"员工工数","外注工数","外注费用"};
                 typeeList.forEach((depp , depart) ->{
@@ -1505,100 +1509,100 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                 depart.setDivide(divideMap.get(depart.getDivide()).getValue1());
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustplan04())){
-                depart.setStaffcustplan04("0");
+                depart.setStaffcustplan04("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustplan05())){
-                depart.setStaffcustplan05("0");
+                depart.setStaffcustplan05("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustplan06())){
-                depart.setStaffcustplan06("0");
+                depart.setStaffcustplan06("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustplan07())){
-                depart.setStaffcustplan07("0");
+                depart.setStaffcustplan07("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustplan08())){
-                depart.setStaffcustplan08("0");
+                depart.setStaffcustplan08("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustplan09())){
-                depart.setStaffcustplan09("0");
+                depart.setStaffcustplan09("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustplan10())){
-                depart.setStaffcustplan10("0");
+                depart.setStaffcustplan10("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustplan11())){
-                depart.setStaffcustplan11("0");
+                depart.setStaffcustplan11("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustplan12())){
-                depart.setStaffcustplan12("0");
+                depart.setStaffcustplan12("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustplan01())){
-                depart.setStaffcustplan01("0");
+                depart.setStaffcustplan01("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustplan02())){
-                depart.setStaffcustplan02("0");
+                depart.setStaffcustplan02("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustplan03())){
-                depart.setStaffcustplan03("0");
+                depart.setStaffcustplan03("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustactual04())){
-                depart.setStaffcustactual04("0");
+                depart.setStaffcustactual04("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustactual05())){
-                depart.setStaffcustactual05("0");
+                depart.setStaffcustactual05("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustactual06())){
-                depart.setStaffcustactual06("0");
+                depart.setStaffcustactual06("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustactual07())){
-                depart.setStaffcustactual07("0");
+                depart.setStaffcustactual07("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustactual08())){
-                depart.setStaffcustactual08("0");
+                depart.setStaffcustactual08("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustactual09())){
-                depart.setStaffcustactual09("0");
+                depart.setStaffcustactual09("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustactual10())){
-                depart.setStaffcustactual10("0");
+                depart.setStaffcustactual10("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustactual11())){
-                depart.setStaffcustactual11("0");
+                depart.setStaffcustactual11("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustactual12())){
-                depart.setStaffcustactual12("0");
+                depart.setStaffcustactual12("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustactual01())){
-                depart.setStaffcustactual01("0");
+                depart.setStaffcustactual01("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustactual02())){
-                depart.setStaffcustactual02("0");
+                depart.setStaffcustactual02("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getStaffcustactual03())){
-                depart.setStaffcustactual03("0");
+                depart.setStaffcustactual03("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getWorkdifferentfirst())){
-                depart.setWorkdifferentfirst("0");
+                depart.setWorkdifferentfirst("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getRankdifferentfirst())){
-                depart.setRankdifferentfirst("0");
+                depart.setRankdifferentfirst("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getWorkdifferentsecond())){
-                depart.setWorkdifferentsecond("0");
+                depart.setWorkdifferentsecond("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getRankdifferentsecond())){
-                depart.setRankdifferentsecond("0");
+                depart.setRankdifferentsecond("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getWorkdifferentthird())){
-                depart.setWorkdifferentthird("0");
+                depart.setWorkdifferentthird("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getRankdifferentthird())){
-                depart.setRankdifferentthird("0");
+                depart.setRankdifferentthird("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getWorkdifferentfourth())){
-                depart.setWorkdifferentfourth("0");
+                depart.setWorkdifferentfourth("0.00");
             }
             if(StringUtils.isNullOrEmpty(depart.getRankdifferentfourth())){
-                depart.setRankdifferentfourth("0");
+                depart.setRankdifferentfourth("0.00");
             }
         }
         HashMap<String,List<DepartmentalInside>> DepList =  departmentalInsideList.stream()
@@ -1802,51 +1806,51 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
         switch (monthlast) {
             case 4:
                 departide.setStaffcustactual04(outSum);
-                departide.setStaffcustplan04("0");
+                departide.setStaffcustplan04("0.00");
                 break;
             case 5:
                 departide.setStaffcustactual05(outSum);
-                departide.setStaffcustplan05("0");
+                departide.setStaffcustplan05("0.00");
                 break;
             case 6:
                 departide.setStaffcustactual06(outSum);
-                departide.setStaffcustplan06("0");
+                departide.setStaffcustplan06("0.00");
                 break;
             case 7:
                 departide.setStaffcustactual07(outSum);
-                departide.setStaffcustplan07("0");
+                departide.setStaffcustplan07("0.00");
                 break;
             case 8:
                 departide.setStaffcustactual08(outSum);
-                departide.setStaffcustplan08("0");
+                departide.setStaffcustplan08("0.00");
                 break;
             case 9:
                 departide.setStaffcustactual09(outSum);
-                departide.setStaffcustplan09("0");
+                departide.setStaffcustplan09("0.00");
                 break;
             case 10:
                 departide.setStaffcustactual10(outSum);
-                departide.setStaffcustplan10("0");
+                departide.setStaffcustplan10("0.00");
                 break;
             case 11:
                 departide.setStaffcustactual11(outSum);
-                departide.setStaffcustplan11("0");
+                departide.setStaffcustplan11("0.00");
                 break;
             case 12:
                 departide.setStaffcustactual12(outSum);
-                departide.setStaffcustplan12("0");
+                departide.setStaffcustplan12("0.00");
                 break;
             case 1:
                 departide.setStaffcustactual01(outSum);
-                departide.setStaffcustplan01("0");
+                departide.setStaffcustplan01("0.00");
                 break;
             case 2:
                 departide.setStaffcustactual02(outSum);
-                departide.setStaffcustplan02("0");
+                departide.setStaffcustplan02("0.00");
                 break;
             case 3:
                 departide.setStaffcustactual03(outSum);
-                departide.setStaffcustplan03("0");
+                departide.setStaffcustplan03("0.00");
                 break;
         }
 //        String sumWork = BigDecimalUtils.sum(
@@ -1865,84 +1869,84 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                         .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum)).add(outMoney)
                         .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                 departide.setStaffcustactual04(tual);
-                departide.setStaffcustplan04("0");
+                departide.setStaffcustplan04("0.00");
                 break;
             case 5:
                 tual = new BigDecimal(pjList.stream().map(PjExternalInjection::getMay)
                         .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum)).add(outMoney)
                         .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                 departide.setStaffcustactual05(tual);
-                departide.setStaffcustplan05("0");
+                departide.setStaffcustplan05("0.00");
                 break;
             case 6:
                 tual = new BigDecimal(pjList.stream().map(PjExternalInjection::getJune)
                         .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum)).add(outMoney)
                         .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                 departide.setStaffcustactual06(tual);
-                departide.setStaffcustplan06("0");
+                departide.setStaffcustplan06("0.00");
                 break;
             case 7:
                 tual = new BigDecimal(pjList.stream().map(PjExternalInjection::getJuly)
                         .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum)).add(outMoney)
                         .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                 departide.setStaffcustactual07(tual);
-                departide.setStaffcustplan07("0");
+                departide.setStaffcustplan07("0.00");
                 break;
             case 8:
                 tual = new BigDecimal(pjList.stream().map(PjExternalInjection::getAugust)
                         .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum)).add(outMoney)
                         .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                 departide.setStaffcustactual08(tual);
-                departide.setStaffcustplan08("0");
+                departide.setStaffcustplan08("0.00");
                 break;
             case 9:
                 tual = new BigDecimal(pjList.stream().map(PjExternalInjection::getSeptember)
                         .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum)).add(outMoney)
                         .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                 departide.setStaffcustactual09(tual);
-                departide.setStaffcustplan09("0");
+                departide.setStaffcustplan09("0.00");
                 break;
             case 10:
                 tual = new BigDecimal(pjList.stream().map(PjExternalInjection::getOctober)
                         .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum)).add(outMoney)
                         .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                 departide.setStaffcustactual10(tual);
-                departide.setStaffcustplan10("0");
+                departide.setStaffcustplan10("0.00");
                 break;
             case 11:
                 tual = new BigDecimal(pjList.stream().map(PjExternalInjection::getNovember)
                         .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum)).add(outMoney)
                         .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                 departide.setStaffcustactual11(tual);
-                departide.setStaffcustplan11("0");
+                departide.setStaffcustplan11("0.00");
                 break;
             case 12:
                 tual = new BigDecimal(pjList.stream().map(PjExternalInjection::getDecember)
                         .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum)).add(outMoney)
                         .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                 departide.setStaffcustactual12(tual);
-                departide.setStaffcustplan12("0");
+                departide.setStaffcustplan12("0.00");
                 break;
             case 1:
                 tual = new BigDecimal(pjList.stream().map(PjExternalInjection::getJanuary)
                         .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum)).add(outMoney)
                         .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                 departide.setStaffcustactual01(tual);
-                departide.setStaffcustplan01("0");
+                departide.setStaffcustplan01("0.00");
                 break;
             case 2:
                 tual = new BigDecimal(pjList.stream().map(PjExternalInjection::getFebruary)
                         .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum)).add(outMoney)
                         .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                 departide.setStaffcustactual02(tual);
-                departide.setStaffcustplan02("0");
+                departide.setStaffcustplan02("0.00");
                 break;
             case 3:
                 tual = new BigDecimal(pjList.stream().map(PjExternalInjection::getMarch)
                         .reduce(String.valueOf(BigDecimal.ZERO), BigDecimalUtils::sum)).add(outMoney)
                         .setScale(2, BigDecimal.ROUND_HALF_UP).toString();
                 departide.setStaffcustactual03(tual);
-                departide.setStaffcustplan03("0");
+                departide.setStaffcustplan03("0.00");
                 break;
         }
 //        String sumRank = BigDecimalUtils.sum(
