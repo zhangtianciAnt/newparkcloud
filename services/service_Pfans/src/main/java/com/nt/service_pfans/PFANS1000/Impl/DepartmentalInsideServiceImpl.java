@@ -113,20 +113,40 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
         if(disUnRusltList.size() > 0){
             int finalYearDis = year;
             disUnRusltList.forEach(durl ->{
-                DepartmentalInside disDepartInside = new DepartmentalInside();
-                disDepartInside.setDepartmentalinside_id(UUID.randomUUID().toString());
-                disDepartInside.setDepartment(durl.getGroup_id());
-                disDepartInside.setThemeinfor_id(durl.getThemeinfor_id());
-                disDepartInside.setThemename(durl.getThemename());
-                disDepartInside.setDivide(durl.getDivide());
-                disDepartInside.setToolsorgs(durl.getToolsorgs());
-                disDepartInside.setContractnumber(durl.getContractnumber());
-                disDepartInside.setClaimamount(durl.getClaimamount());
-                disDepartInside.setEntrycondition(durl.getEntrycondition());
-                disDepartInside.setContracatamountdetail(durl.getContracatamountdetail());
-                disDepartInside.setYears(String.valueOf(finalYearDis));
-                disDepartInside.preInsert(tokenModel);
-                departmentalInsideListInsert.add(disDepartInside);
+                DepartmentalInside depOutInsWork = new DepartmentalInside();
+                depOutInsWork.setDepartment(durl.getGroup_id());
+                depOutInsWork.setThemeinfor_id(durl.getThemeinfor_id());
+                depOutInsWork.setThemename(durl.getThemename());
+                depOutInsWork.setDivide(durl.getDivide());
+                depOutInsWork.setToolsorgs(durl.getToolsorgs());
+                depOutInsWork.setContractnumber(durl.getContractnumber());
+                depOutInsWork.setClaimamount(durl.getClaimamount());
+                depOutInsWork.setEntrycondition(durl.getEntrycondition());
+                depOutInsWork.setContracatamountdetail(durl.getContracatamountdetail());
+                depOutInsWork.setYears(String.valueOf(finalYearDis));
+                List<DepartmentalInside> depOutWorkList = departmentalInsideMapper.select(depOutInsWork);
+                if(depOutWorkList.size() == 0){
+                    depOutInsWork.setDepartmentalinside_id(UUID.randomUUID().toString());
+                    depOutInsWork.preInsert(tokenModel);
+                    departmentalInsideListInsert.add(depOutInsWork);
+                }else{
+                    depOutInsWork.preInsert(tokenModel);
+                    departmentalInsideListUnpdate.add(depOutWorkList.get(0));
+                }
+//                DepartmentalInside disDepartInside = new DepartmentalInside();
+//                disDepartInside.setDepartmentalinside_id(UUID.randomUUID().toString());
+//                disDepartInside.setDepartment(durl.getGroup_id());
+//                disDepartInside.setThemeinfor_id(durl.getThemeinfor_id());
+//                disDepartInside.setThemename(durl.getThemename());
+//                disDepartInside.setDivide(durl.getDivide());
+//                disDepartInside.setToolsorgs(durl.getToolsorgs());
+//                disDepartInside.setContractnumber(durl.getContractnumber());
+//                disDepartInside.setClaimamount(durl.getClaimamount());
+//                disDepartInside.setEntrycondition(durl.getEntrycondition());
+//                disDepartInside.setContracatamountdetail(durl.getContracatamountdetail());
+//                disDepartInside.setYears(String.valueOf(finalYearDis));
+//                disDepartInside.preInsert(tokenModel);
+//                departmentalInsideListInsert.add(disDepartInside);
             });
         }
         //关联项目的合同
