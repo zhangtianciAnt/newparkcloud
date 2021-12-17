@@ -256,8 +256,7 @@ GROUP BY
         GROUP BY
             user_id
         ORDER BY
-            RUSLT.USER_ID,
-            ATT.dates
+            user_id
     </select>
 
 </mapper>

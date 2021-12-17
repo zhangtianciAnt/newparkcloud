@@ -105,5 +105,9 @@ public class DepartmentalInsideReturnVo {
     private String workdifferentfourth;
     /*第四季度——RANK别价差*/
     private String rankdifferentfourth;
+    /*第四季度——工数差*/
+    private String workdifferentofyear;
+    /*第四季度——RANK别价差*/
+    private String rankdifferentofyear;
     List<DepartmentalInside> departmentalInsideList;
 }

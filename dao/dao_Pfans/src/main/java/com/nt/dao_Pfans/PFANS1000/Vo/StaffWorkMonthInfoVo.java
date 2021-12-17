@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StaffWorkMonthInfoVo {
     private String rank;
+    private String type;
     private String userid;
     private String time_start;
     private String group_id;
