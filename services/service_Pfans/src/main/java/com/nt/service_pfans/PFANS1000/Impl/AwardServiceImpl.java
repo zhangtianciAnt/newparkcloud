@@ -8,6 +8,7 @@ import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.AwardVo;
 import com.nt.dao_Pfans.PFANS4000.PeoplewareFee;
+import com.nt.dao_Pfans.PFANS6000.EntrustSupport;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
@@ -19,16 +20,17 @@ import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS2000.PersonalCostService;
 import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
+import com.nt.service_pfans.PFANS6000.mapper.EntrustSupportMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -82,6 +84,9 @@ public class AwardServiceImpl implements AwardService {
     private ContractapplicationMapper contractapplicationMapper;
     @Autowired
     private OrgTreeService orgtreeService;
+
+    @Autowired
+    private EntrustSupportMapper entrustSupportMapper;
 
     @Override
     public List<Award> get(Award award) throws Exception {
@@ -240,6 +245,9 @@ public class AwardServiceImpl implements AwardService {
         BeanUtils.copyProperties(awardVo.getAward(), award);
         AwardDetail awardDetail = new AwardDetail();
         awardDetail.setAward_id(award.getAward_id());
+        //region scc add 11/11 更新请负委托 from
+        this.CommissionedByNegative(award,tokenModel);
+        //endregion scc add 11/11 更新请负委托 to
         List<AwardDetail> awardDetail_Old = awardDetailMapper.select(awardDetail)
                 .stream().filter(oldtail ->!com.mysql.jdbc.StringUtils.isNullOrEmpty(oldtail.getRulingid())).collect(Collectors.toList());
         if(awardDetail_Old.size() > 0){
@@ -635,6 +643,77 @@ public class AwardServiceImpl implements AwardService {
     }
     //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc to
 
-
+    //region scc add 委托决裁在流程结束时，更新请负委托一览 from
+    private void CommissionedByNegative(Award award,TokenModel tokenModel) throws Exception {
+        if ("4".equals(award.getStatus()) && award != null) {//审批结束
+            Contractapplication record = new Contractapplication();
+            record.setContractnumber(award.getContractnumber());
+            Contractapplication recordOne = contractapplicationMapper.selectOne(record);//根据合同号查询合同
+            if("1".equals(recordOne.getCheckindivdual())){//去除月度费用总览创建的合同
+                return;
+            }
+            List<Dictionary> typeOfList = dictionaryService.getForSelect("HT014");//判断是否是委托合同
+            AtomicReference<Boolean> flag = new AtomicReference<>(false);
+            typeOfList.forEach(item -> {
+                if (item.getCode().equals(recordOne.getContracttype())) {
+                    flag.set(true);
+                }
+            });
+            if(!flag.get()){
+                return;
+            }
+            Contractnumbercount backToNumberOf = new Contractnumbercount();
+            backToNumberOf.setContractnumber(award.getContractnumber());
+            List<Contractnumbercount> backToNumberOfList = contractnumbercountMapper.select(backToNumberOf);//合同号对应回数
+            List<EntrustSupport> res = new ArrayList<>();//请负委托数据
+            if(backToNumberOfList != null && backToNumberOfList.size() > 0){
+                backToNumberOfList.forEach(item -> {
+                    EntrustSupport temp = new EntrustSupport();
+                    temp.setEntrustsupport_id(UUID.randomUUID().toString());//id
+                    temp.setContractnumber(recordOne.getContractnumber());//合同号
+                    temp.setGroup_id(recordOne.getGroup_id());//部门id
+                    temp.setDepartment(recordOne.getDepartment());//部门简称
+                    temp.setDeployment(recordOne.getDeployment());//部门名称
+                    temp.setConjapanese(recordOne.getConjapanese());//项目名
+                    temp.setCustojapanese(recordOne.getCustojapanese());//外注公司
+                    temp.setThemeinfor_id(recordOne.getThemeinfor_id());//themeID
+                    temp.setClaimamount(item.getClaimamount());//请求金额
+                    temp.setClaimdate(item.getClaimdate());//请求日期
+                    temp.setDeliverydate(item.getDeliverydate());//纳品日期
+                    temp.setCompletiondate(item.getCompletiondate());//验收日期
+                    temp.setSupportdate(item.getSupportdate());//支付日期
+                    temp.setProcessing("false");//处理状态
+                    temp.setUndertaker(null);//担当着
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(item.getClaimdate());
+                    String year = String.valueOf(cal.get(Calendar.YEAR));
+                    String month = cal.get(Calendar.MONTH) + 1 > 10 ? String.valueOf(cal.get(Calendar.MONTH) + 1) : "0" + (cal.get(Calendar.MONTH) + 1);
+                    temp.setDates(year + "-" + month);//年月
+                    temp.preInsert();
+                    res.add(temp);
+                });
+            }
+            if(res != null && res.size() > 0) {
+                entrustSupportMapper.insetList(res);//插入请负委托一览
+                //region 合同担当发送代办 from
+                List<MembersVo> rolelist = roleService.getMembers("5e7862618f43163084351135");//合同担当
+                if (rolelist.size() > 0) {
+                    for (MembersVo rt : rolelist) {
+                        ToDoNotice toDoNotice3 = new ToDoNotice();
+                        toDoNotice3.setTitle("【" + award.getContractnumber() + "】决裁流程结束，请在请求月的外注费用审批前到请负委托一览进行状态处理！");
+                        toDoNotice3.setInitiator(award.getUser_id());
+                        toDoNotice3.setDataid(award.getContractnumber());
+                        toDoNotice3.setUrl("/PFANS6012View");
+                        toDoNotice3.setWorkflowurl("/PFANS6012View");
+                        toDoNotice3.preInsert(tokenModel);
+                        toDoNotice3.setOwner(rt.getUserid());
+                        toDoNoticeService.save(toDoNotice3);
+                    }
+                }
+                //endregion 合同担当发送代办 to
+            }
+        }
+    }
+    //endregion scc add 委托决裁在流程结束时，更新请负委托一览 to
 
 }

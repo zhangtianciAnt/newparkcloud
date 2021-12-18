@@ -11,6 +11,7 @@ import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ReportContractEnVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
+import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.dao_Pfans.PFANS8000.MonthlyRate;
@@ -27,6 +28,7 @@ import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
 import com.nt.service_pfans.PFANS4000.mapper.SealMapper;
 import com.nt.service_pfans.PFANS5000.mapper.ProjectContractMapper;
+import com.nt.service_pfans.PFANS5000.mapper.ProjectsystemMapper;
 import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
 import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.service_pfans.PFANS8000.mapper.MonthlyRateMapper;
@@ -113,6 +115,10 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     private MonthlyRateMapper monthlyRateMapper;
     @Autowired
     private BusinessplanService businessplanService;
+
+    @Autowired
+    private ProjectsystemMapper projectsystemMapper;
+
 
     //add-ws-7/22-禅道341任务
     @Override
@@ -499,6 +505,33 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                             citation.setState("无效");
                             citation.setEntrycondition("HT004001");
                             contractapplicationMapper.updateByPrimaryKey(citation);
+                            //add ccm 20211213 合同废弃后，项目合同表有关该合同的数据状态修改为1，物理删除 fr
+                            ProjectContract projectContract = new ProjectContract();
+                            projectContract.setContract(citation.getContractnumber());
+                            List<ProjectContract> projectList = projectContractMapper.select(projectContract);
+                            if(projectList.size()>0)
+                            {
+                                for(ProjectContract pC : projectList)
+                                {
+                                    pC.setStatus("1");
+                                    pC.preUpdate(tokenModel);
+                                    projectContractMapper.updateByPrimaryKey(pC);
+                                }
+                            }
+                            //region add  ml  211216  合同废弃后，项目合同表有关该合同的构外数据状态修改为1，物理删除 fr
+                            Projectsystem projectsystem = new Projectsystem();
+                            projectsystem.setContractno(citation.getContractnumber());
+                            projectsystem.setType("2");
+                            List<Projectsystem> projectsystemList = projectsystemMapper.select(projectsystem);
+                            if (projectsystemList.size() > 0) {
+                                for (Projectsystem pro : projectsystemList) {
+                                    pro.setStatus("1");
+                                    pro.preUpdate(tokenModel);
+                                    projectsystemMapper.updateByPrimaryKey(pro);
+                                }
+                            }
+                            //endregion add  ml  211216  合同废弃后，项目合同表有关该合同的构外数据状态修改为1，物理删除 to
+                            //add ccm 20211213 合同废弃后，项目合同表有关该合同的数据状态修改为1，物理删除 fr
                         }
                     }
                 }

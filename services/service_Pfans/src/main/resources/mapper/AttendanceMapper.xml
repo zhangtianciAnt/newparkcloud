@@ -255,6 +255,8 @@ GROUP BY
             ) aee
         GROUP BY
             user_id
+        ORDER BY
+            user_id
     </select>
 
 </mapper>

@@ -17,4 +17,8 @@ public interface ProjectsystemMapper extends MyMapper<Projectsystem> {
     List<Projectsystem> getProsysList();
     //add_fjl_07/07 end  PL权限相关
 
+    String getTypeOne(@Param("pro_id") String pro_id, @Param("logdate") String logdate);
+
+    List<Projectsystem> getTypeTwo(@Param("pro_id") String pro_id);
+
 }

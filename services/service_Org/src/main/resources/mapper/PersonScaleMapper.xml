@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_Org.mapper.PersonScaleMapper">
+   <select id="getMeeInfo" parameterType="com.nt.dao_Org.PersonScaleMee" resultType="com.nt.dao_Org.PersonScaleMee">
+      SELECT
+         lgt.`OWNER` AS USER_ID
+      FROM
+         ( SELECT PROJECT_ID, `OWNER` FROM logmanagement WHERE DATE_FORMAT( LOG_DATE, '%Y-%m' ) = #{nowY_Month}
+            GROUP BY PROJECT_ID, `OWNER` ) lgt
+            INNER JOIN projectsystem psm ON lgt.PROJECT_ID = psm.COMPANYPROJECTS_ID
+            AND lgt.`OWNER` = psm.NAME
+            AND psm.TYPE = '0'
+      GROUP BY
+         psm.NAME
+      ORDER BY
+         lgt.`OWNER`
+   </select>
+   <select id="getLogInfo" parameterType="com.nt.dao_Org.PersonScale" resultType="com.nt.dao_Org.PersonScale">
+      SELECT
+         lgt.PROJECT_ID,
+         lgt.PROJECT_NAME,
+         lgt.WORKTIME,
+         lgt.`OWNER` AS REPORTPEOPLE,
+         psm.TYPE,
+         psm.REPORTER AS REPORTERS
+      FROM
+         (
+            SELECT
+               PROJECT_ID,
+               PROJECT_NAME,
+               ROUND( SUM( TIME_START ), 2 ) AS worktime,
+               `OWNER`
+            FROM
+               logmanagement
+            WHERE
+               DATE_FORMAT( LOG_DATE, '%Y-%m' ) =  #{nowY_Month}
+            GROUP BY
+               PROJECT_ID,
+               PROJECT_NAME,
+               `OWNER`
+         ) lgt
+            INNER JOIN projectsystem psm ON lgt.PROJECT_ID = psm.COMPANYPROJECTS_ID
+            AND lgt.`OWNER` = psm.NAME AND psm.REPORTER != ''
+      ORDER BY lgt.`OWNER`
+   </select>
+   <select id="getMangernum" resultType="java.lang.String">
+      SELECT
+         count(distinct lgt.`OWNER`)
+      FROM
+         (
+            SELECT
+               PROJECT_ID,
+               `OWNER`
+            FROM
+               logmanagement
+            WHERE
+               DATE_FORMAT( LOG_DATE, '%Y-%m' ) =  #{nowY_Month}
+            GROUP BY
+               PROJECT_ID,
+               `OWNER`
+         ) lgt
+            INNER JOIN projectsystem psm ON lgt.PROJECT_ID = psm.COMPANYPROJECTS_ID
+            AND lgt.`OWNER` = psm.NAME
+      where REPORTER = #{peo_id}
+      ORDER BY lgt.`OWNER`
+   </select>
+   <select id="getPronum" resultType="java.lang.String">
+      SELECT
+         count(distinct lgt.`PROJECT_ID`)
+      FROM
+         (
+            SELECT
+               PROJECT_ID,
+               `OWNER`
+            FROM
+               logmanagement
+            WHERE
+               DATE_FORMAT( LOG_DATE, '%Y-%m' ) =  #{nowY_Month}
+            GROUP BY
+               PROJECT_ID,
+               `OWNER`
+         ) lgt
+            INNER JOIN projectsystem psm ON lgt.PROJECT_ID = psm.COMPANYPROJECTS_ID
+            AND lgt.`OWNER` = psm.NAME
+      where REPORTER = #{peo_id}
+      ORDER BY lgt.`OWNER`
+   </select>
+
+   <insert id="insetList" parameterType="java.util.List">
+      insert into personscale (PERSONSCALE_ID,YEARMONTH,REPORTPEOPLE,TYPE,CENTER_ID,GROUP_ID,RANKS,PROJECT_ID,
+      PROJECT_NAME,WORKTIME,PROPORTIONS,REPORTERS,
+      STATUS,CREATEBY,CREATEON,MODIFYBY,MODIFYON,OWNER,TENANTID) values
+      <foreach item="item" collection="list" separator=",">
+         (#{item.personscale_id},#{item.yearmonth},#{item.reportpeople},#{item.type},#{item.center_id},#{item.group_id},#{item.ranks},#{item.project_id},#{item.project_name},#{item.worktime},#{item.proportions},#{item.reporters},
+         #{item.status},#{item.createby},#{item.createon},#{item.modifyby},#{item.modifyon},#{item.owner},#{item.tenantid})
+      </foreach>
+   </insert>
+
+   <insert id="insetMeeList" parameterType="java.util.List">
+      insert into personscalemee (PERSONSCALEMEE_ID,YEARMONTH,CENTER_ID,GROUP_ID,RANKS,MANGERNUMBER,MANAGESORCE,USER_ID,
+      STATUS,CREATEBY,CREATEON,MODIFYBY,MODIFYON,OWNER,TENANTID) values
+      <foreach item="item" collection="list" separator=",">
+         (#{item.personscalemee_id},#{item.yearmonth},#{item.center_id},#{item.group_id},#{item.ranks},#{item.mangernumber},#{item.managesorce},#{item.user_id},
+         #{item.status},#{item.createby},#{item.createon},#{item.modifyby},#{item.modifyon},#{item.owner},#{item.tenantid})
+      </foreach>
+   </insert>
+
+
+   <select id="getTypeTwo" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS5000.Projectsystem">
+      SELECT
+         *
+      FROM
+         projectsystem pro
+      WHERE
+         pro.type = '2'
+        AND  #{contTime} BETWEEN date_format( pro.ADMISSIONTIME, '%Y-%m-%d' )
+         AND date_format( pro.EXITTIME, '%Y-%m-%d' )
+   </select>
+   <select id="getProInfo" resultType="com.nt.dao_Pfans.PFANS5000.CompanyProjects">
+      select COMPANYPROJECTS_ID,numbers,PROJECT_NAME from companyprojects
+   </select>
+</mapper>

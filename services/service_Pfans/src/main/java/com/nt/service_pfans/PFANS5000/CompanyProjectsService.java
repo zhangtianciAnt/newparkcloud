@@ -8,6 +8,7 @@ import com.nt.utils.dao.TokenModel;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 public interface CompanyProjectsService {
@@ -59,4 +60,9 @@ public interface CompanyProjectsService {
 
     //pj起案数据结转
     void update1(CompanyProjects companyprojects, TokenModel tokenModel) throws Exception;
+
+    //region scc add 根据合同号获取相应决裁信息，返回到项目构外tab页使用 from
+    List<Map<String,String>> forDetail(String contractNo, String centerId, String groupId) throws Exception;
+    //endregion scc add 根据合同号获取相应决裁信息，返回到项目构外tab页使用 to
+
 }

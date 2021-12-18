@@ -98,21 +98,17 @@ select
 		SELECT
 	temp. themeid as theme_id
 	,temp. themename as themename
-	,temp. contract as contract
-	,temp. toolsorgs as toolsorgs
+	,cr.THECOMPANY as contract
+	,cr.CUSTCHINESE as toolsorgs
 	,temp. contractapplication_id as contractapplication_id
 	,temp. contractnumber as contractnumber
 	,temp. claimamounttotal as claimamounttotal
 	,temp. entrycondition as entrycondition
 	,temp. state as state
-	,temp. companyprojects_id as companyprojects_id
-	,temp. numbers as numbers
 	,temp. year as years
 
 	,CASE WHEN temp.STATE = '无效' and temp.ENTRYCONDITION = 'HT004001' THEN CONCAT(temp.CONTRACTNUMBER ,' -' ,'【',SUM(temp.claimamountSum),'-','废弃】')
 		ELSE CONCAT(temp.CONTRACTNUMBER ,' -' ,'【',SUM(temp.claimamountSum),'】') END AS claimamountSum
-	,CASE WHEN temp.STATE = '无效' and temp.ENTRYCONDITION = 'HT004001' THEN CONCAT(temp.CONTRACTNUMBER ,' -' ,'【',SUM(temp.contractamountSum),'-','废弃】')
-		ELSE CONCAT(temp.CONTRACTNUMBER ,' -' ,'【',SUM(temp.contractamountSum),'】') END AS contractamountSum
 
 	,SUM(temp.claimamountSum4) as claimamountSum4
 	,SUM(temp.claimamountSum5) as claimamountSum5
@@ -126,48 +122,19 @@ select
 	,SUM(temp.claimamountSum1) as claimamountSum1
 	,SUM(temp.claimamountSum2) as claimamountSum2
 	,SUM(temp.claimamountSum3) as claimamountSum3
-
-	,SUM(temp.contractamountSum4) as contractamountSum4
-	,SUM(temp.contractamountSum5) as contractamountSum5
-	,SUM(temp.contractamountSum6) as contractamountSum6
-	,SUM(temp.contractamountSum7) as contractamountSum7
-	,SUM(temp.contractamountSum8) as contractamountSum8
-	,SUM(temp.contractamountSum9) as contractamountSum9
-	,SUM(temp.contractamountSum10) as contractamountSum10
-	,SUM(temp.contractamountSum11) as contractamountSum11
-	,SUM(temp.contractamountSum12) as contractamountSum12
-	,SUM(temp.contractamountSum1) as contractamountSum1
-	,SUM(temp.contractamountSum2) as contractamountSum2
-	,SUM(temp.contractamountSum3) as contractamountSum3
-	,SUM(temp.AMOUNT4) AS moneyplan4
-	,SUM(temp.AMOUNT5) AS moneyplan5
-	,SUM(temp.AMOUNT6) AS moneyplan6
-	,SUM(temp.AMOUNT7) AS moneyplan7
-	,SUM(temp.AMOUNT8) AS moneyplan8
-	,SUM(temp.AMOUNT9) AS moneyplan9
-	,SUM(temp.AMOUNT10) AS moneyplan10
-	,SUM(temp.AMOUNT11) AS moneyplan11
-	,SUM(temp.AMOUNT12) AS moneyplan12
-	,SUM(temp.AMOUNT1) AS moneyplan1
-	,SUM(temp.AMOUNT2) AS moneyplan2
-	,SUM(temp.AMOUNT3) AS moneyplan3
 FROM (
 SELECT
 	 thr.THEMEINFOR_ID AS themeid
 	,thr.THEMENAME AS themename
-	,thr.CONTRACT AS contract
 	,thr.TOOLSORGS AS toolsorgs
 	,ct.CONTRACTAPPLICATION_ID AS contractapplication_id
 	,ct.CONTRACTNUMBER AS contractnumber
 	,ct.CLAIMAMOUNT AS claimamounttotal
 	,ct.entrycondition AS entrycondition
 	,ct.state AS state
-	,pr.COMPANYPROJECTS_ID AS companyprojects_id
-	,pr.NUMBERS AS numbers
 	,thr.YEAR AS year
 	,DATE_FORMAT(cn.DELIVERYDATE, '%m') DELIVERYDATE
 	,SUM(cn.CLAIMAMOUNT) AS claimamountSum
-	,SUM(pr.CONTRACTAMOUNT)  AS contractamountSum
 
 
 	,CASE WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
@@ -194,43 +161,124 @@ SELECT
 		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '02' THEN cn.CLAIMAMOUNT ELSE 0 END AS claimamountSum2
 	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
 		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '03' THEN cn.CLAIMAMOUNT ELSE 0 END AS claimamountSum3
+FROM
+(
+	SELECT
+	 thr.THEMEINFOR_ID
+	,thr.THEMENAME
+	,thr.CUSTOMERINFOR_ID AS TOOLSORGS
+	,thr.YEAR
+	FROM themeinfor thr
+	LEFT JOIN themeplandetail td
+	ON td.THEMEINFOR_ID = thr.THEMEINFOR_ID
+	AND td.`TYPE` = '0'
+	WHERE td.CENTER_ID = #{department} OR td.GROUP_ID = #{department} AND thr.YEAR = #{years}
+
+	GROUP BY thr.THEMEINFOR_ID,thr.THEMENAME,thr.CUSTOMERINFOR_ID,thr.YEAR
+) thr
+INNER  JOIN contractapplication ct
+ON ct.THEMEINFOR_ID = thr.THEMEINFOR_ID
+AND ct.CONTRACTTYPE in( 'HT008001','HT008003','HT008005','HT008007')
+AND ct.TYPE = '1'
+INNER JOIN contractnumbercount cn
+ON ct.CONTRACTNUMBER = cn.CONTRACTNUMBER
+GROUP BY
+thr.THEMEINFOR_ID
+	,thr.THEMENAME
+	,thr.TOOLSORGS
+	,ct.CONTRACTAPPLICATION_ID
+	,ct.CONTRACTNUMBER
+	,ct.CLAIMAMOUNT
+	,ct.entrycondition
+	,ct.state
+	,thr.YEAR
+	,cn.DELIVERYDATE
+	,cn.CLAIMAMOUNT
+) temp
+left join customerinfor cr
+on cr.CUSTOMERINFOR_ID = temp.TOOLSORGS
+GROUP BY
+temp. themeid
+	,temp. themename
+	,cr.CUSTCHINESE
+	,cr.THECOMPANY
+	,temp. contractapplication_id
+	,temp. contractnumber
+	,temp. claimamounttotal
+	,temp. entrycondition
+	,temp. state
+	,temp. year
+
+	union
+
+			SELECT
+	temp. themeid as theme_id
+	,temp. themename as themename
+	,cr.THECOMPANY as contract
+	,cr.CUSTCHINESE as  toolsorgs
+	,temp. contractapplication_id as contractapplication_id
+	,temp. contractnumber as contractnumber
+	,temp. claimamounttotal as claimamounttotal
+	,temp. entrycondition as entrycondition
+	,temp. state as state
+	,temp. year as years
+
+	,CASE WHEN temp.STATE = '无效' and temp.ENTRYCONDITION = 'HT004001' THEN CONCAT(temp.CONTRACTNUMBER ,' -' ,'【',SUM(temp.claimamountSum),'-','废弃】')
+		ELSE CONCAT(temp.CONTRACTNUMBER ,' -' ,'【',SUM(temp.claimamountSum),'】') END AS claimamountSum
+
+	,SUM(temp.claimamountSum4) as claimamountSum4
+	,SUM(temp.claimamountSum5) as claimamountSum5
+	,SUM(temp.claimamountSum6) as claimamountSum6
+	,SUM(temp.claimamountSum7) as claimamountSum7
+	,SUM(temp.claimamountSum8) as claimamountSum8
+	,SUM(temp.claimamountSum9) as claimamountSum9
+	,SUM(temp.claimamountSum10) as claimamountSum10
+	,SUM(temp.claimamountSum11) as claimamountSum11
+	,SUM(temp.claimamountSum12) as claimamountSum12
+	,SUM(temp.claimamountSum1) as claimamountSum1
+	,SUM(temp.claimamountSum2) as claimamountSum2
+	,SUM(temp.claimamountSum3) as claimamountSum3
+
+FROM (
+SELECT
+	 thr.THEMEINFOR_ID AS themeid
+	,thr.THEMENAME AS themename
+	,thr.TOOLSORGS AS toolsorgs
+	,ct.CONTRACTAPPLICATION_ID AS contractapplication_id
+	,ct.CONTRACTNUMBER AS contractnumber
+	,ct.CLAIMAMOUNT AS claimamounttotal
+	,ct.entrycondition AS entrycondition
+	,ct.state AS state
+	,thr.YEAR AS year
+	,DATE_FORMAT(ar.DELIVERYDATE, '%m') DELIVERYDATE
+	,SUM(ar.CLAIMAMOUNT) AS claimamountSum
+
 
 	,CASE WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
-		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '04' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum4
+		   WHEN DATE_FORMAT(ar.DELIVERYDATE, '%m') = '04' THEN ar.CLAIMAMOUNT ELSE 0 END AS claimamountSum4
 	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
-		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '05' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum5
+		   WHEN DATE_FORMAT(ar.DELIVERYDATE, '%m') = '05' THEN ar.CLAIMAMOUNT ELSE 0 END AS claimamountSum5
 	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
-		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '06' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum6
+		   WHEN DATE_FORMAT(ar.DELIVERYDATE, '%m') = '06' THEN ar.CLAIMAMOUNT ELSE 0 END AS claimamountSum6
 	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
-		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '07' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum7
+		   WHEN DATE_FORMAT(ar.DELIVERYDATE, '%m') = '07' THEN ar.CLAIMAMOUNT ELSE 0 END AS claimamountSum7
 	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
-		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '08' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum8
+		   WHEN DATE_FORMAT(ar.DELIVERYDATE, '%m') = '08' THEN ar.CLAIMAMOUNT ELSE 0 END AS claimamountSum8
 	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
-		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '09' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum9
+		   WHEN DATE_FORMAT(ar.DELIVERYDATE, '%m') = '09' THEN ar.CLAIMAMOUNT ELSE 0 END AS claimamountSum9
 	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
-		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '10' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum10
+		   WHEN DATE_FORMAT(ar.DELIVERYDATE, '%m') = '10' THEN ar.CLAIMAMOUNT ELSE 0 END AS claimamountSum10
 	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
-		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '11' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum11
+		   WHEN DATE_FORMAT(ar.DELIVERYDATE, '%m') = '11' THEN ar.CLAIMAMOUNT ELSE 0 END AS claimamountSum11
 	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
-		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '12' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum12
+		   WHEN DATE_FORMAT(ar.DELIVERYDATE, '%m') = '12' THEN ar.CLAIMAMOUNT ELSE 0 END AS claimamountSum12
 	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
-		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '01' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum1
+		   WHEN DATE_FORMAT(ar.DELIVERYDATE, '%m') = '01' THEN ar.CLAIMAMOUNT ELSE 0 END AS claimamountSum1
 	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
-		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '02' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum2
+		   WHEN DATE_FORMAT(ar.DELIVERYDATE, '%m') = '02' THEN ar.CLAIMAMOUNT ELSE 0 END AS claimamountSum2
 	,CASE	WHEN ct.STATE = '无效' and ct.ENTRYCONDITION = 'HT004001' THEN 0
-		   WHEN DATE_FORMAT(cn.DELIVERYDATE, '%m') = '03' THEN SUM(pr.CONTRACTAMOUNT) ELSE 0 END AS contractamountSum3
-	,SUM(thr.AMOUNT4) AS amount4
-	,SUM(thr.AMOUNT5) AS amount5
-	,SUM(thr.AMOUNT6) AS amount6
-	,SUM(thr.AMOUNT7) AS amount7
-	,SUM(thr.AMOUNT8) AS amount8
-	,SUM(thr.AMOUNT9) AS amount9
-	,SUM(thr.AMOUNT10) AS amount10
-	,SUM(thr.AMOUNT11) AS amount11
-	,SUM(thr.AMOUNT12) AS amount12
-	,SUM(thr.AMOUNT1) AS amount1
-	,SUM(thr.AMOUNT2) AS amount2
-	,SUM(thr.AMOUNT3) AS amount3
+		   WHEN DATE_FORMAT(ar.DELIVERYDATE, '%m') = '03' THEN ar.CLAIMAMOUNT ELSE 0 END AS claimamountSum3
+
 FROM
 (
 	SELECT
@@ -240,18 +288,6 @@ FROM
 		ELSE '社内' END CONTRACT
 	,td.ASSIGNOR AS TOOLSORGS
 	,thr.YEAR
-	,SUM(AMOUNT4) AS AMOUNT4
-	,SUM(AMOUNT5) AS AMOUNT5
-	,SUM(AMOUNT6) AS AMOUNT6
-	,SUM(AMOUNT7) AS AMOUNT7
-	,SUM(AMOUNT8) AS AMOUNT8
-	,SUM(AMOUNT9) AS AMOUNT9
-	,SUM(AMOUNT10) AS AMOUNT10
-	,SUM(AMOUNT11) AS AMOUNT11
-	,SUM(AMOUNT12) AS AMOUNT12
-	,SUM(AMOUNT1) AS AMOUNT1
-	,SUM(AMOUNT2) AS AMOUNT2
-	,SUM(AMOUNT3) AS AMOUNT3
 	FROM themeinfor thr
 	LEFT JOIN themeplandetail td
 	ON td.THEMEINFOR_ID = thr.THEMEINFOR_ID
@@ -264,26 +300,11 @@ FROM
 ) thr
 INNER  JOIN contractapplication ct
 ON ct.THEMEINFOR_ID = thr.THEMEINFOR_ID
-INNER JOIN contractnumbercount cn
-ON ct.CONTRACTNUMBER = cn.CONTRACTNUMBER
-INNER JOIN
-(
-	SELECT
-		 cp.NUMBERS AS NUMBERS
-		,pc.COMPANYPROJECTS_ID AS COMPANYPROJECTS_ID
-		,pc.CONTRACTNUMBERCOUNT_ID AS CONTRACTNUMBERCOUNT_ID
-		,pc.CONTRACT AS contract
-		,pc.THEMEINFOR_ID AS THEMEINFOR_ID
-		,pc.THEME AS THEMENAME
-		,pc.CONTRACTAMOUNT AS CONTRACTAMOUNT
-	FROM projectcontract pc
-	INNER JOIN companyprojects cp
-	ON pc.COMPANYPROJECTS_ID = cp.COMPANYPROJECTS_ID
-	AND cp.`STATUS` >= 4
-	WHERE  pc.`STATUS`!='1'
-	AND cp.CENTER_ID =  #{department} OR cp.GROUP_ID =  #{department}
-) AS pr
-ON pr.CONTRACTNUMBERCOUNT_ID = cn.CONTRACTNUMBERCOUNT_ID
+AND ct.CONTRACTTYPE in( 'HT008001','HT008003','HT008005','HT008007')
+AND ct.TYPE = '1'
+INNER JOIN awardreunite ar
+ON ct.CONTRACTNUMBER = ar.CONTRACTNUMBER
+AND ar.REALDEPARTMENT = #{department}
 GROUP BY
 thr.THEMEINFOR_ID
 	,thr.THEMENAME
@@ -294,24 +315,22 @@ thr.THEMEINFOR_ID
 	,ct.CLAIMAMOUNT
 	,ct.entrycondition
 	,ct.state
-	,pr.COMPANYPROJECTS_ID
-	,pr.NUMBERS
 	,thr.YEAR
-	,cn.DELIVERYDATE
-	,cn.CLAIMAMOUNT
+	,ar.DELIVERYDATE
+	,ar.CLAIMAMOUNT
 ) temp
+left join customerinfor cr
+on cr.CUSTOMERINFOR_ID = temp.TOOLSORGS
 GROUP BY
 temp. themeid
 	,temp. themename
-	,temp. contract
-	,temp. toolsorgs
+	,cr.THECOMPANY
+	,cr.CUSTCHINESE
 	,temp. contractapplication_id
 	,temp. contractnumber
 	,temp. claimamounttotal
 	,temp. entrycondition
 	,temp. state
-	,temp. companyprojects_id
-	,temp. numbers
 	,temp. year
 	</select>
 	<insert id="insertDepAll" parameterType="java.util.List">

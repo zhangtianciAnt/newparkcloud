@@ -863,6 +863,12 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         String manhour = "manhour" + months;
         //费用
         String cost = "cost" + months;
+        //add ccm 20211213 月度费用详情请负列获取BP社统计请负列数据，实时变化 fr
+        //请负工数
+        String manhourf = "manhour" + months + "f";
+        //请负费用
+        String costf = "cost" + months + "f";
+        //add ccm 20211213 月度费用详情请负列获取BP社统计请负列数据，实时变化 to
         //经费（3,6,9,12月有数据）
         String expensesolo = "expensesolo" + months;
         Integer groupIdListcount = groupIdList.size();
@@ -925,7 +931,7 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                 }
                 //endregion 事业计划费用
 
-                List<Map<String, String>> data = coststatisticsMapper.getcostMonth(dates.substring(0,7),manhour,cost,expensesolo,months,groupIdList.get(i));
+                List<Map<String, String>> data = coststatisticsMapper.getcostMonth(dates.substring(0,7),manhour,cost,expensesolo,months,groupIdList.get(i),manhourf,costf);
                 if(data.size() > 0){
                     if(i == 0){
                         dataList = data;
@@ -985,9 +991,15 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
                                 BigDecimal bddatacostcount = BigDecimal.valueOf(Double.valueOf(String.valueOf(data.get(j).get("costcount0"))));
                                 //会社总费用
                                 dataList.get(j).put("bpcostcount", String.valueOf(dataListcostcount.add(bddatacostcount)));
+
+                                //会社委任费用
+                                BigDecimal dataListcostcount1 = BigDecimal.valueOf(Double.valueOf(String.valueOf(dataList.get(j).get("bpcount"))));
+                                BigDecimal bddatacostcount1 = BigDecimal.valueOf(Double.valueOf(String.valueOf(data.get(j).get("costcount"))));
+                                //会社总费用
+                                dataList.get(j).put("bpcount", String.valueOf(dataListcostcount1.add(bddatacostcount1)));
                             }
 
-                            //region 事业计划费用
+                            //region    事业计划费用
                             if(databuList.size() > 0){
                                 for (Map<String, String> m : databuList){
                                     if(m.get("bpcompany").equals(dataList.get(j).get("bpcompany"))){
@@ -1020,8 +1032,8 @@ public class CoststatisticsServiceImpl implements CoststatisticsService {
         }
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         for(int x=0;x<dataList.size();x++ ){
-            if(!String.valueOf(dataList.get(x).get("bpcostcount")).equals("0.0")){
-                if(!String.valueOf(dataList.get(x).get("bpcostcount")).equals("0")){
+            if(!String.valueOf(dataList.get(x).get("bpcount")).equals("0.0")){
+                if(!String.valueOf(dataList.get(x).get("bpcount")).equals("0")){
                     Map<String,String> map = dataList.get(x);
                     list.add(map);
                 }

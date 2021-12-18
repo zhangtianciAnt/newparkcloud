@@ -1342,193 +1342,45 @@
 		(
 			SELECT
 				`tmp`.`GROUP_ID` AS `GROUP_ID`,
-				`e`.`SUPPLIERNAME` AS `SUPPLIERNAME`,
-				`tmp`.`YEAR` AS `YEAR`,(
-				CASE
+				`tmp`.`BPCOMPANY` AS `SUPPLIERNAME`,
+				`tmp`.`YEAR` AS `YEAR`,
+				cast(sum( `tmp`.`MANHOUR4` ) AS DECIMAL ( 15, 2 ))  AS `APRILGN`,
+				cast(sum( `tmp`.`MANHOUR5` ) AS DECIMAL ( 15, 2 ))  AS `MAYGN`,
+				cast(sum( `tmp`.`MANHOUR6` ) AS DECIMAL ( 15, 2 ))  AS `JUNEGN`,
+				cast(sum( `tmp`.`MANHOUR7` ) AS DECIMAL ( 15, 2 ))  AS `JULYGN`,
+				cast(sum( `tmp`.`MANHOUR8` ) AS DECIMAL ( 15, 2 ))  AS `AUGUSTGN`,
+				cast(sum( `tmp`.`MANHOUR9` ) AS DECIMAL ( 15, 2 ))  AS `SEPTEMBERGN`,
+				cast(sum( `tmp`.`MANHOUR10` ) AS DECIMAL ( 15, 2 ))  AS `OCTOBERGN`,
+				cast(sum( `tmp`.`MANHOUR11` ) AS DECIMAL ( 15, 2 ))  AS `NOVEMBERGN`,
+				cast(sum( `tmp`.`MANHOUR12` ) AS DECIMAL ( 15, 2 ))  AS `DECEMBERGN`,
+				cast(sum( `tmp`.`MANHOUR1` ) AS DECIMAL ( 15, 2 ))  AS `JANUARYGN`,
+				cast(sum( `tmp`.`MANHOUR2` ) AS DECIMAL ( 15, 2 ))  AS `FEBRUARYGN`,
+				cast(sum( `tmp`.`MANHOUR3` ) AS DECIMAL ( 15, 2 ))  AS `MARCHGN`,
 
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
-				cast(
-				sum( `tmp`.`APRIL` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `APRILGN`,(
-				CASE
+				cast(sum( `tmp`.`MANHOUR4F` ) AS DECIMAL ( 15, 2 ))  AS `APRILGW`,
+				cast(sum( `tmp`.`MANHOUR5F` ) AS DECIMAL ( 15, 2 ))  AS `MAYGW`,
+				cast(sum( `tmp`.`MANHOUR6F` ) AS DECIMAL ( 15, 2 ))  AS `JUNEGW`,
+				cast(sum( `tmp`.`MANHOUR7F` ) AS DECIMAL ( 15, 2 ))  AS `JULYGW`,
+				cast(sum( `tmp`.`MANHOUR8F` ) AS DECIMAL ( 15, 2 ))  AS `AUGUSTGW`,
+				cast(sum( `tmp`.`MANHOUR9F` ) AS DECIMAL ( 15, 2 ))  AS `SEPTEMBERGW`,
+				cast(sum( `tmp`.`MANHOUR10F`) AS DECIMAL ( 15, 2 ))  AS  `OCTOBERGW`,
+				cast(sum( `tmp`.`MANHOUR11F`) AS DECIMAL ( 15, 2 ))  AS  `NOVEMBERGW`,
+				cast(sum( `tmp`.`MANHOUR12F`) AS DECIMAL ( 15, 2 ))  AS  `DECEMBERGW`,
+				cast(sum( `tmp`.`MANHOUR1F` ) AS DECIMAL ( 15, 2 ))  AS `JANUARYGW`,
+				cast(sum( `tmp`.`MANHOUR2F` ) AS DECIMAL ( 15, 2 ))  AS `FEBRUARYGW`,
+				cast(sum( `tmp`.`MANHOUR3F` ) AS DECIMAL ( 15, 2 ))  AS `MARCHGW`
 
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
-				cast(
-				sum( `tmp`.`APRIL` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `APRILGW`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
-				cast(
-				sum( `tmp`.`MAY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `MAYGN`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
-				cast(
-				sum( `tmp`.`MAY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `MAYGW`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
-				cast(
-				sum( `tmp`.`JUNE` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `JUNEGN`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
-				cast(
-				sum( `tmp`.`JUNE` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `JUNEGW`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
-				cast(
-				sum( `tmp`.`JULY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `JULYGN`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
-				cast(
-				sum( `tmp`.`JULY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `JULYGW`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
-				cast(
-				sum( `tmp`.`AUGUST` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `AUGUSTGN`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
-				cast(
-				sum( `tmp`.`AUGUST` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `AUGUSTGW`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
-				cast(
-				sum( `tmp`.`SEPTEMBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `SEPTEMBERGN`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
-				cast(
-				sum( `tmp`.`SEPTEMBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `SEPTEMBERGW`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
-				cast(
-				sum( `tmp`.`OCTOBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `OCTOBERGN`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
-				cast(
-				sum( `tmp`.`OCTOBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `OCTOBERGW`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
-				cast(
-				sum( `tmp`.`NOVEMBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `NOVEMBERGN`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
-				cast(
-				sum( `tmp`.`NOVEMBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `NOVEMBERGW`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
-				cast(
-				sum( `tmp`.`DECEMBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `DECEMBERGN`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
-				cast(
-				sum( `tmp`.`DECEMBER` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `DECEMBERGW`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
-				cast(
-				sum( `tmp`.`JANUARY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `JANUARYGN`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
-				cast(
-				sum( `tmp`.`JANUARY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `JANUARYGW`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
-				cast(
-				sum( `tmp`.`FEBRUARY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `FEBRUARYGN`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
-				cast(
-				sum( `tmp`.`FEBRUARY` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `FEBRUARYGW`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024001' ) THEN
-				cast(
-				sum( `tmp`.`MARCH` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `MARCHGN`,(
-				CASE
-
-				WHEN ( `e`.`OPERATIONFORM` = 'BP024002' ) THEN
-				cast(
-				sum( `tmp`.`MARCH` ) AS DECIMAL ( 15, 2 )) ELSE 0.00
-				END
-				) AS `MARCHGW`
 			FROM
-				(
-				`delegainformation` `tmp`
-				LEFT JOIN `expatriatesinfor` `e` ON ((
-				`e`.`ACCOUNT` = `tmp`.`ACCOUNT`
-				)))
+				companystatistics tmp
 			WHERE
-				(`e`.`OPERATIONFORM` IN ( 'BP024001', 'BP024002' ))
-				and `tmp`.year = #{years}
+				`tmp`.year = #{years}
 				<if test="groupid!=null and groupid !=''">
 					and `tmp`.GROUP_ID= #{groupid}
 				</if>
 			GROUP BY
 				`tmp`.`YEAR`,
 				`tmp`.`GROUP_ID`,
-				`e`.`SUPPLIERNAME`,
-				`e`.`OPERATIONFORM`
+				`tmp`.`BPCOMPANY`
 		)
 		bpsum2
 		where

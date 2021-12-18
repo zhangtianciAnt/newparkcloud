@@ -1,10 +1,10 @@
 package com.nt.dao_Pfans.PFANS1000;
 
+
 import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -13,14 +13,14 @@ import javax.persistence.Table;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "departmentalinside")
-public class DepartmentalInside extends BaseModel {
+@Table(name = "departmentalinsidetail")
+public class DepartmentalinsiDetail extends BaseModel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "DEPARTMENTALINSIDE_ID")
-    private String departmentalinside_id;
+    @Column(name = "DEPARTMENTALINSIDETAIL_ID")
+    private String departmentalinsidetail_id;
 
     /*年度*/
     @Column(name = "YEARS")
@@ -34,49 +34,15 @@ public class DepartmentalInside extends BaseModel {
     @Column(name = "THEMEINFOR_ID")
     private String themeinfor_id;
 
-    /*THEMENAME*/
-    @Column(name = "THEMENAME")
-    private String themename;
-
-    /*委托元分类*/
-    @Column(name = "DIVIDE")
-    private String divide;
-
-    /*委托元*/
-    @Column(name = "TOOLSORGS")
-    private String toolsorgs;
-
-    /*合同号*/
+    /*分类名*/
     @Column(name = "CONTRACTNUMBER")
     private String contractnumber;
 
-    /*合同金额*/
-    @Column(name = "CLAIMAMOUNT")
-    private String claimamount;
-
-    /*合同金额-请求金额*/
-    @Column(name = "CONTRACATAMOUNTDETAIL")
-    private String contracatamountdetail;
-
-    /*合同回数*/
-    @Column(name = "CLAIMTYPE")
-    private String claimtype;
-
-    /*合同状态*/
-    @Column(name = "ENTRYCONDITION")
-    private String entrycondition;
-
-    /*PJNUMBER*/
-    @Column(name = "PROJECT_ID")
-    private String project_id;
-
-    /*PJNUMBER*/
-    @Column(name = "NUMBERS")
-    private String numbers;
-
-    /*员工rank*/
-    @Column(name = "STAFFRANK")
-    private String staffrank;
+    /*分类
+    * (1-员工工数；2-外注工数；3-外注费用）
+    * */
+    @Column(name = "TYPEE")
+    private String typee;
 
     /*四月计划*/
     @Column(name = "STAFFCUSTPLAN04")
@@ -102,14 +68,6 @@ public class DepartmentalInside extends BaseModel {
     @Column(name = "STAFFCUSTACTUAL06")
     private String staffcustactual06;
 
-    /*第一季度——工数差*/
-    @Column(name = "WORKDIFFERENTFIRST")
-    private String workdifferentfirst;
-
-    /*第一季度——RANK别价差*/
-    @Column(name = "RANKDIFFERENTFIRST")
-    private String rankdifferentfirst;
-
     /*七月计划*/
     @Column(name = "STAFFCUSTPLAN07")
     private String staffcustplan07;
@@ -133,14 +91,6 @@ public class DepartmentalInside extends BaseModel {
     /*九月实际*/
     @Column(name = "STAFFCUSTACTUAL09")
     private String staffcustactual09;
-
-    /*第二季度——工数差*/
-    @Column(name = "WORKDIFFERENTSECOND")
-    private String workdifferentsecond;
-
-    /*第二季度——RANK别价差*/
-    @Column(name = "RANKDIFFERENTSECOND")
-    private String rankdifferentsecond;
 
     /*十月计划*/
     @Column(name = "STAFFCUSTPLAN10")
@@ -166,14 +116,6 @@ public class DepartmentalInside extends BaseModel {
     @Column(name = "STAFFCUSTACTUAL12")
     private String staffcustactual12;
 
-    /*第三季度——工数差*/
-    @Column(name = "WORKDIFFERENTTHIRD")
-    private String workdifferentthird;
-
-    /*第三季度——RANK别价差*/
-    @Column(name = "RANKDIFFERENTTHIRD")
-    private String rankdifferentthird;
-
     /*一月计划*/
     @Column(name = "STAFFCUSTPLAN01")
     private String staffcustplan01;
@@ -198,14 +140,6 @@ public class DepartmentalInside extends BaseModel {
     @Column(name = "STAFFCUSTACTUAL03")
     private String staffcustactual03;
 
-    /*第四季度——工数差*/
-    @Column(name = "WORKDIFFERENTFOURTH")
-    private String workdifferentfourth;
-
-    /*第四季度——RANK别价差*/
-    @Column(name = "RANKDIFFERENTFOURTH")
-    private String rankdifferentfourth;
-
     /*年间——工数差*/
     @Column(name = "WORKDIFFERENTOFYEAR")
     private String workdifferentofyear;
@@ -213,7 +147,4 @@ public class DepartmentalInside extends BaseModel {
     /*年间——RANK别价差*/
     @Column(name = "RANKDIFFERENTOFYEAR")
     private String rankdifferentofyear;
-
-
-
 }
