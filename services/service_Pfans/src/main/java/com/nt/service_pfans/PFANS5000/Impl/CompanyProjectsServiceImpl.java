@@ -13,6 +13,7 @@ import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.Departmental;
 import com.nt.dao_Pfans.PFANS1000.Vo.ProjectIncomeVo4;
+import com.nt.dao_Pfans.PFANS2000.PunchcardRecord;
 import com.nt.dao_Pfans.PFANS5000.*;
 import com.nt.dao_Pfans.PFANS5000.Vo.*;
 import com.nt.dao_Pfans.PFANS6000.Delegainformation;
@@ -23,6 +24,7 @@ import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.UserService;
+import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractapplicationMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ContractnumbercountMapper;
@@ -38,6 +40,7 @@ import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TimePair;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.impl.IsOverLapImpl;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -112,6 +115,9 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
     @Autowired
     private ContractapplicationMapper contractapplicationMapper;
+
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
 
     @Autowired
     private DictionaryService dictionaryService;
@@ -1650,5 +1656,27 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
         }
         return resultInfoList;
     }
+    //临时接口 修改项目体制rank fr
+    @Override
+    public void updatePRORank() throws Exception{
+        List<Projectsystem> projectsystemList = new ArrayList<>();
+        projectsystemList = projectsystemMapper.selectAll();
+        projectsystemList = projectsystemList.stream().filter(item->(!item.getType().equals("2") && (item.getRank() == null || item.getRank().equals("")))).collect(Collectors.toList());
+        projectsystemList.stream().forEach(item->{
+            Query query = new Query();
+            query.addCriteria(Criteria.where("userid").is(item.getName()));
+            CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+            if(customerInfo!=null)
+            {
+                Dictionary st = dictionaryMapper.getDictionaryOne(customerInfo.getUserinfo().getRank());
+                if(st!=null)
+                {
+                    item.setRank(st.getValue1());
+                    projectsystemMapper.updateByPrimaryKeySelective(item);
+                }
+            }
+        });
+    }
+    //临时接口 修改项目体制rank to
 
 }
