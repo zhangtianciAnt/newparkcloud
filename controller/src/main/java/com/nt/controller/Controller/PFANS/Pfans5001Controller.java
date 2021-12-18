@@ -475,14 +475,6 @@ public class Pfans5001Controller {
         return ApiResult.success(companyProjectsService.forDetail(contractNo,centerId,groupId));
     }
 
-    @RequestMapping(value = "/getReport", method = {RequestMethod.GET})
-    public ApiResult getReport(String user_id, String reporter, HttpServletRequest request) throws Exception {
-        if(user_id == null && reporter == null){
-            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03,RequestUtils.CurrentLocale(request)));
-        }
-        return ApiResult.success(companyProjectsService.getReport(user_id,reporter));
-    }
-
 
     /**
      * @方法名：reportCheck
