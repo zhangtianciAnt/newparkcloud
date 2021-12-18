@@ -263,4 +263,12 @@ public class AuthController {
         return ApiResult.success();
     }
     //临时接口 打卡记录历史数据 姓名补充 ztc 1125 to
+
+    //临时接口 修改项目体制rank fr
+    @PostMapping(value = "/updatePRORank")
+    public ApiResult updatePRORank() throws Exception {
+        companyProjectsService.updatePRORank();
+        return ApiResult.success();
+    }
+    //临时接口 修改项目体制rank to
 }
