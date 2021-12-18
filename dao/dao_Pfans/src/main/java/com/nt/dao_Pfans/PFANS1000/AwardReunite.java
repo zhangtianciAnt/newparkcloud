@@ -43,12 +43,6 @@ public class AwardReunite extends BaseModel {
     private String department;
 
     /**
-     * 真实部门（用于计算）
-     */
-    @Column(name = "REALDEPARTMENT")
-    private String realdepartment;
-
-    /**
      * 纳品预定日
      */
     @Column(name = "DELIVERYDATE")
@@ -83,6 +77,12 @@ public class AwardReunite extends BaseModel {
      */
     @Column(name = "DISTRIAMOUNT")
     private String distriamount;
+
+    /**
+     * 真实部门 用于计算
+     */
+    @Column(name = "REALDEPARTMENT")
+    private String realdepartment;
 
     /**
      * 顺序

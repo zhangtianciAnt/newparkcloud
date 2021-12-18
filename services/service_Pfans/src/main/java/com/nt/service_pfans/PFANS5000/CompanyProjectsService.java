@@ -65,5 +65,4 @@ public interface CompanyProjectsService {
     List<Map<String,String>> forDetail(String contractNo, String centerId, String groupId) throws Exception;
     //endregion scc add 根据合同号获取相应决裁信息，返回到项目构外tab页使用 to
 
-    Boolean getReport(String user_id,String reporter) throws Exception;
 }

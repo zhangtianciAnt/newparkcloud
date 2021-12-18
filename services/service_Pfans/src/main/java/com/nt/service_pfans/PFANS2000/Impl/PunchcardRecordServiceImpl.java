@@ -190,7 +190,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                 punchcardrecord.setGroup_id(punchcard.getGroup_id());
                 punchcardrecord.setCenter_id(punchcard.getCenter_id());
                 punchcardrecord.setUser_id(punchcard.getUser_id());
-                // 1125 ztc fr
+                //考勤导出 1125 ztc fr
                 Query query = new Query();
                 query.addCriteria(Criteria.where("userid").is(punchcard.getUser_id()));
                 CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
