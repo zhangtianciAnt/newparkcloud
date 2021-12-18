@@ -465,14 +465,7 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
                 pjExternalVo1.setThemeinfor_id(value.get(0).getThemeinfor_id());
                 pjExternalVo1.setThemename(value.get(0).getThemename());
                 pjExternalVo1.setDivide(value.get(0).getDivide());
-//                pjExternalVo1.setToolsorgs(value.get(0).getToolsorgs());
-                if(value.get(0).getToolsorgs() !="" && value.get(0).getToolsorgs() !=null){
-                    Customerinfor c = customerinforMapper.selectByPrimaryKey(value.get(0).getToolsorgs());
-                    if(c!=null)
-                    {
-                        pjExternalVo1.setToolsorgs(c.getCustchinese());
-                    }
-                }
+                pjExternalVo1.setToolsorgs(value.get(0).getToolsorgs());
                 pjExternalVo1.setCompanyprojects_id("-");
                 pjExternalVo1.setProject_name("-");
                 pjExternalVo1.setCompany("-");
