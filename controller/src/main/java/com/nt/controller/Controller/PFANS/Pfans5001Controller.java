@@ -29,10 +29,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Array;
@@ -440,4 +437,21 @@ public class Pfans5001Controller {
     }
     //根据合同号查合同区间 scc
 //zy end 报表追加 2021/06/13
+
+    /**
+     * @方法名：forDetail
+     * @描述：根据合同号获取相应决裁信息，返回到项目构外tab页使用
+     * @创建日期：2021/11/26
+     * @作者：scc
+     * @参数：“contractNo”合同号
+     * @返回值：Map<String,String>
+     */
+    @RequestMapping(value = "/forDetail", method = { RequestMethod.GET})
+    public ApiResult forDetail(@RequestParam String contractNo, String centerId, String groupId, HttpServletRequest request) throws Exception{
+        if (contractNo == null && (centerId == null || groupId == null)) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel=tokenService.getToken(request);
+        return ApiResult.success(companyProjectsService.forDetail(contractNo,centerId,groupId));
+    }
 }

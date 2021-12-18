@@ -94,13 +94,32 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
         int monthlast = calendar.get(Calendar.MONTH);
         int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        if (month >= 1 && month <= 4) {
-            if (day >= 10) {
+//        if (month >= 1 && month <= 4) {
+//            if (day >= 10) {
+//                year = calendar.get(Calendar.YEAR);
+//            } else {
+//                year = calendar.get(Calendar.YEAR) - 1;
+//            }
+//        } else {
+//            year = calendar.get(Calendar.YEAR);
+//        }
+        if(month >= 1 && month < 4) {
+            year = calendar.get(Calendar.YEAR) - 1;
+        }
+        else if(month == 4)
+        {
+            //时间大于4月10日的，属于新年度，小于10日，属于旧年度
+            if(day >=10)
+            {
                 year = calendar.get(Calendar.YEAR);
-            } else {
+            }
+            else
+            {
                 year = calendar.get(Calendar.YEAR) - 1;
             }
-        } else {
+        }
+        else
+        {
             year = calendar.get(Calendar.YEAR);
         }
         List<DepartmentalInsideBaseVo> departmentalInsideBaseVoList = departmentalInsideMapper.getBaseInfo(String.valueOf(year));
