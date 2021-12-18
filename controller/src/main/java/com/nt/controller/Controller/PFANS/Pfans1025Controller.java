@@ -802,7 +802,11 @@ public class Pfans1025Controller {
             int now_year = 0;
             int month = calendar.get(Calendar.MONTH)+1;
             int day = calendar.get(Calendar.DAY_OF_MONTH);
-            if(month >= 1 && month <= 4) {
+            if(month >= 1 && month < 4) {
+                now_year = calendar.get(Calendar.YEAR) - 1;
+            }
+            else if(month == 4)
+            {
                 //时间大于4月10日的，属于新年度，小于10日，属于旧年度
                 if(day >=10)
                 {

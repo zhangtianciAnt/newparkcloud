@@ -100,7 +100,26 @@ public class DepartmentAccountServiceImpl implements DepartmentAccountService {
         int monthlast = calendar.get(Calendar.MONTH);
         int month = calendar.get(Calendar.MONTH)+1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        if(month >= 1 && month <= 4) {
+//        if(month >= 1 && month <= 4) {
+//            //时间大于4月10日的，属于新年度，小于10日，属于旧年度
+//            if(day >=10)
+//            {
+//                year = calendar.get(Calendar.YEAR);
+//            }
+//            else
+//            {
+//                year = calendar.get(Calendar.YEAR) - 1;
+//            }
+//        }
+//        else
+//        {
+//            year = calendar.get(Calendar.YEAR);
+//        }
+        if(month >= 1 && month < 4) {
+            year = calendar.get(Calendar.YEAR) - 1;
+        }
+        else if(month == 4)
+        {
             //时间大于4月10日的，属于新年度，小于10日，属于旧年度
             if(day >=10)
             {
@@ -115,7 +134,6 @@ public class DepartmentAccountServiceImpl implements DepartmentAccountService {
         {
             year = calendar.get(Calendar.YEAR);
         }
-
         //当前年
         Calendar calnew = Calendar.getInstance();
         int yearnow = calnew.get(Calendar.YEAR);
@@ -2697,7 +2715,26 @@ public class DepartmentAccountServiceImpl implements DepartmentAccountService {
         int monthlast = calendar.get(Calendar.MONTH);
         int month = calendar.get(Calendar.MONTH)+1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        if(month >= 1 && month <= 4) {
+//        if(month >= 1 && month <= 4) {
+//            //时间大于4月10日的，属于新年度，小于10日，属于旧年度
+//            if(day >=10)
+//            {
+//                year = calendar.get(Calendar.YEAR);
+//            }
+//            else
+//            {
+//                year = calendar.get(Calendar.YEAR) - 1;
+//            }
+//        }
+//        else
+//        {
+//            year = calendar.get(Calendar.YEAR);
+//        }
+        if(month >= 1 && month < 4) {
+            year = calendar.get(Calendar.YEAR) - 1;
+        }
+        else if(month == 4)
+        {
             //时间大于4月10日的，属于新年度，小于10日，属于旧年度
             if(day >=10)
             {
@@ -2712,7 +2749,6 @@ public class DepartmentAccountServiceImpl implements DepartmentAccountService {
         {
             year = calendar.get(Calendar.YEAR);
         }
-
         //当前年
         Calendar calnew = Calendar.getInstance();
         int yearnow = calnew.get(Calendar.YEAR);
