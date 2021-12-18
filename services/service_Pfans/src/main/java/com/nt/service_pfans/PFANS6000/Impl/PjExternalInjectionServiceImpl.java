@@ -3,11 +3,11 @@ package com.nt.service_pfans.PFANS6000.Impl;
 import cn.hutool.core.codec.Base64;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS6000.Customerinfor;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS6000.PjExternalInjection;
 import com.nt.dao_Pfans.PFANS6000.Variousfunds;
@@ -21,10 +21,8 @@ import com.nt.service_pfans.PFANS1000.DepartmentalService;
 import com.nt.service_pfans.PFANS2000.PersonalCostService;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.service_pfans.PFANS6000.PjExternalInjectionService;
-import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsMapper;
-import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
-import com.nt.service_pfans.PFANS6000.mapper.PjExternalInjectionMapper;
-import com.nt.service_pfans.PFANS6000.mapper.VariousfundsMapper;
+import com.nt.service_pfans.PFANS6000.mapper.*;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -73,6 +71,9 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
 
     @Autowired
     private DictionaryService dictionaryService;
+
+    @Autowired
+    private CustomerinforMapper customerinforMapper;
 
 
     //pj别外注费统计定时任务
@@ -362,7 +363,14 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
                 pjExternalVo.setThemeinfor_id(value.get(0).getThemeinfor_id());
                 pjExternalVo.setThemename(value.get(0).getThemename());
                 pjExternalVo.setDivide(value.get(0).getDivide());
-                pjExternalVo.setToolsorgs(value.get(0).getToolsorgs());
+//                pjExternalVo.setToolsorgs(value.get(0).getToolsorgs());
+                if(value.get(0).getToolsorgs() !="" && value.get(0).getToolsorgs() !=null){
+                    Customerinfor c = customerinforMapper.selectByPrimaryKey(value.get(0).getToolsorgs());
+                    if(c!=null)
+                    {
+                        pjExternalVo.setToolsorgs(c.getCustchinese());
+                    }
+                }
                 pjExternalVo.setCompanyprojects_id(value.get(0).getCompanyprojects_id());
                 pjExternalVo.setProject_name(value.get(0).getProject_name());
                 pjExternalVo.setCompany("-");
@@ -457,7 +465,14 @@ public class PjExternalInjectionServiceImpl implements PjExternalInjectionServic
                 pjExternalVo1.setThemeinfor_id(value.get(0).getThemeinfor_id());
                 pjExternalVo1.setThemename(value.get(0).getThemename());
                 pjExternalVo1.setDivide(value.get(0).getDivide());
-                pjExternalVo1.setToolsorgs(value.get(0).getToolsorgs());
+//                pjExternalVo1.setToolsorgs(value.get(0).getToolsorgs());
+                if(value.get(0).getToolsorgs() !="" && value.get(0).getToolsorgs() !=null){
+                    Customerinfor c = customerinforMapper.selectByPrimaryKey(value.get(0).getToolsorgs());
+                    if(c!=null)
+                    {
+                        pjExternalVo1.setToolsorgs(c.getCustchinese());
+                    }
+                }
                 pjExternalVo1.setCompanyprojects_id("-");
                 pjExternalVo1.setProject_name("-");
                 pjExternalVo1.setCompany("-");
