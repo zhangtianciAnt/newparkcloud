@@ -357,7 +357,9 @@ public class ThemePlanServiceImpl implements ThemePlanService {
             ThemePlan ct = new ThemePlan();
             //add_qhr_20210707  增加themeinfor_id字段
             ct.setCenter_id(themePlanDetailVo.get(0).getCenter_id());
-            ct.setGroup_id(themePlanDetailVo.get(0).getGroup_id());
+            //del 20211221 删除条件，所有部门有效信息保存在center里 fr
+//            ct.setGroup_id(themePlanDetailVo.get(0).getGroup_id());
+            //del 20211221 删除条件，所有部门有效信息保存在center里 to
             ct.setYear(themePlanDetailVo.get(0).getYear());
             ct.setType(themePlanDetailVo.get(0).getType());
             if (StringUtils.isNullOrEmpty(themePlanDetailVo.get(0).getThemeplan_id())) {
