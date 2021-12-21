@@ -16,6 +16,7 @@ import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_BASF.ApplicationServices;
 import com.nt.service_BASF.mapper.ApplicationMapper;
 import com.nt.service_BASF.mapper.DeviceinformationMapper;
+import com.nt.service_Org.mapper.DictionaryMapper;
 import com.nt.service_WorkFlow.mapper.WorkflowinstanceMapper;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
@@ -36,6 +37,9 @@ public class ApplicationServiceImpl implements ApplicationServices {
     private ApplicationMapper applicationMapper;
 
     @Autowired
+    private DictionaryMapper dictionaryMapper;
+
+    @Autowired
     private DeviceinformationMapper deviceinformationMapper;
 
     @Autowired
@@ -43,7 +47,18 @@ public class ApplicationServiceImpl implements ApplicationServices {
 
     @Override
     public List<Application> get(Application application) throws Exception {
-        return applicationMapper.getAllInfo(application.getApplicationtype());
+        List<Application> applicationList = applicationMapper.getAllInfo(application.getApplicationtype());
+        for (Application model : applicationList) {
+            // 如果是多设备情况，需要单独获取设备状态
+            if (model.getDeviceinformationid().contains(DEVICE_ID_DELIMITER)) {
+                String[] deviceInformationIds = model.getDeviceinformationid().split(DEVICE_ID_DELIMITER);
+                // 重新设置设备状态
+                Deviceinformation deviceinformation = deviceinformationMapper.selectByPrimaryKey(deviceInformationIds[0]);
+                String value = dictionaryMapper.getCodeValue(deviceinformation.getDevicestatus());
+                model.setDevicestatus(value);
+            }
+        }
+        return applicationList;
     }
 
     public ApplicationVo getone(Application application) throws Exception {
