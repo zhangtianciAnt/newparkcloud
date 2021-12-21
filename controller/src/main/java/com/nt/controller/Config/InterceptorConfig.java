@@ -35,6 +35,7 @@ public class InterceptorConfig extends WebMvcConfigurerAdapter {
                 .excludePathPatterns("/BASF10204/list")
                 .excludePathPatterns("/BASF10702/blacklist")
                 .excludePathPatterns("/BASF10702/setCarInfoList")
+                .excludePathPatterns("/BASF10702/getDailyInfoToken")
         ;
     }
 

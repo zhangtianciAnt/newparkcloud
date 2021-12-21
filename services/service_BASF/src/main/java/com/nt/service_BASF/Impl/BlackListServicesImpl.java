@@ -167,7 +167,7 @@ public class BlackListServicesImpl implements BlackListServices {
      */
     @Override
     public List<BlackListApiVo> getBlackListApi() throws Exception {
-        for(BlackListApiVo blackListApiVo : blackListMapper.getBlackListApi()){
+        for (BlackListApiVo blackListApiVo : blackListMapper.getBlackListApi()) {
             if (blackListApiVo.getViolationtype().equals("1")) {
                 blackListApiVo.setViolationtype("超速");
             } else {

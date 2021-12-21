@@ -293,6 +293,15 @@ public class MultiThreadScheduleTask {
         WebSocket.sendMessageToAll(new TextMessage(JSONObject.toJSONString(webSocketVo)));
     }
 
+    /**
+     * 获取门检系统token，每天凌晨1点执行一次
+     **/
+    @Async
+    @Scheduled(cron = "0 0 1 * * ?")
+    public void getToken() throws Exception {
+        vehicleinformationServices.getToken();
+    }
+
     // region BASF90600 ERC-车辆定位
 
 //    /**

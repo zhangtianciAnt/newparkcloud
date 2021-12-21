@@ -65,4 +65,10 @@ public interface VehicleinformationServices {
 
     //调用道闸系统接口，传递车辆信息
     void setCarInfoList(List<CarInfoList> carInfoList)throws Exception;
+
+    //调用门检系统接口，获取token信息
+    void getToken() throws Exception;
+
+    //获取token信息
+    SecuritydoortokenVo getDailyInfoToken() throws Exception;
 }

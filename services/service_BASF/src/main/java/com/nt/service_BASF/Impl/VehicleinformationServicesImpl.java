@@ -3,11 +3,12 @@ package com.nt.service_BASF.Impl;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.nt.dao_BASF.CarInfoList;
+import com.nt.dao_BASF.Securitydoortoken;
 import com.nt.dao_BASF.VO.*;
 import com.nt.dao_BASF.Vehicleinformation;
 import com.nt.service_BASF.VehicleinformationServices;
+import com.nt.service_BASF.mapper.SecuritydoortokenMapper;
 import com.nt.service_BASF.mapper.VehicleinformationMapper;
-import com.nt.utils.ApiResult;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.slf4j.Logger;
@@ -22,7 +23,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -43,6 +43,9 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
 
     @Autowired
     private VehicleinformationMapper vehicleinformationMapper;
+
+    @Autowired
+    private SecuritydoortokenMapper securitydoortokenMapper;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -238,23 +241,27 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         // String urlToken = "http://gatecheck.dowann.cn/api/ws/token?username=bachapi&password=123456";
         // String urlDailyInfo = "http://gatecheck.dowann.cn/api/out/dailyInfo";
         // 2021.12.13 门检系统升级，数据接口调整 start by nt-ma
-        // 新门检系统接口
-         String urlToken = "https://e-gate-mp.basf.com/api/auth/login?username=bachA&password=66776321&deviceInfo=pc";
-         String urlDailyInfo = "https://e-gate-mp.basf.com/api/out/dailyInfo";
+
+
         // 旧门检系统接口
         // String urlToken = "https://e-gate.api.basf.com/api/ws_auth/login?username=bachapi&password=Aa123456";
         // String urlDailyInfo = "https://e-gate.api.basf.com/api/out/dailyInfo";
         // 2021.12.13 门检系统升级，数据接口调整 end by nt-ma
         // 2021.05.18 门检系统升级，数据接口调整 end by nt-ma
         // 获取token
-        ResponseEntity<String> rst = restTemplate.exchange(urlToken, HttpMethod.GET, null, String.class);
-        String value = rst.getBody();
+        // ResponseEntity<String> rst = restTemplate.exchange(urlToken, HttpMethod.GET, null, String.class);
+        // String value = rst.getBody();
         // 2021.05.18 门检系统升级，数据结构变化对应 start by nt-ma
         // JSONObject string_to_json = JSONUtil.parseObj(value);
-        JSONObject string_to_json = JSONUtil.parseObj(value).getJSONObject("data");
+        // JSONObject string_to_json = JSONUtil.parseObj(value).getJSONObject("data");
         // 2021.05.18 门检系统升级，数据结构变化对应 end by nt-ma
-        String token = string_to_json.get("access_token").toString();
+        // String token = string_to_json.get("access_token").toString();
 
+        // 新门检系统接口
+        // String urlToken = "https://e-gate-mp.basf.com/api/auth/login?username=bachA&password=66776321&deviceInfo=pc";
+        String urlDailyInfo = "https://e-gate-mp.basf.com/api/out/dailyInfo";
+        SecuritydoortokenVo securitydoortokenVo = securitydoortokenMapper.getDailyInfoToken("1");
+        String token = securitydoortokenVo.getToken();
         // 通过token获取实时车辆信息
         List<HttpMessageConverter<?>> httpMessageConverters = restTemplate.getMessageConverters();
         httpMessageConverters.forEach(httpMessageConverter -> {
@@ -267,9 +274,9 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", String.format("Bearer %s", token));
         HttpEntity<String> requestEntity = new HttpEntity<String>(json, headers);
-        rst = restTemplate.exchange(urlDailyInfo, HttpMethod.GET, requestEntity, String.class);
-        value = rst.getBody();
-        string_to_json = JSONUtil.parseObj(value);
+        ResponseEntity<String> rst = restTemplate.exchange(urlDailyInfo, HttpMethod.GET, requestEntity, String.class);
+        String value = rst.getBody();
+        JSONObject string_to_json = JSONUtil.parseObj(value);
         List<VehicleinfoForDowann> vehicleinfoForDowannList = JSONUtil.toList(JSONUtil.parseArray(string_to_json.get("data")), VehicleinfoForDowann.class);
         List<Vehicleinformation> vehicleinformationList = new ArrayList<>();
         vehicleinfoForDowannList.forEach(item -> {
@@ -470,5 +477,42 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
             }
         }
         log.info("Interface End!");
+    }
+
+    /**
+     * @Method getToken
+     * @Author myt
+     * @Version 1.0
+     * @Description 调用门检系统接口，获取token信息，并保存至数据库
+     * @Return void
+     * @Date 2021/12/18 13：39
+     */
+    @Override
+    public void getToken() throws Exception {
+        // 新门检系统接口
+        String urlToken = "https://e-gate-mp.basf.com/api/auth/login?username=daozha&password=66776321&deviceInfo=pc";
+        ResponseEntity<String> rst = restTemplate.exchange(urlToken, HttpMethod.GET, null, String.class);
+        String value = rst.getBody();
+        JSONObject string_to_json = JSONUtil.parseObj(value).getJSONObject("data");
+        String token = string_to_json.get("access_token").toString();
+        Securitydoortoken securitydoortoken = new Securitydoortoken();
+        securitydoortoken.setId(1);
+        securitydoortoken.setToken(token);
+        securitydoortoken.setModifyon(new Date());
+        securitydoortokenMapper.updateByPrimaryKey(securitydoortoken);
+    }
+
+    /**
+     * @Method getToken
+     * @Author myt
+     * @Version 1.0
+     * @Description 调用门检系统接口，获取token信息，并保存至数据库
+     * @Return void
+     * @Date 2021/12/18 13：39
+     */
+    @Override
+    public SecuritydoortokenVo getDailyInfoToken() throws Exception {
+        SecuritydoortokenVo securitydoortokenVo = securitydoortokenMapper.getDailyInfoToken("1");
+        return securitydoortokenVo;
     }
 }

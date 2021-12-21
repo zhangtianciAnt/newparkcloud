@@ -92,6 +92,19 @@ public class BASF10702Controller {
     }
 
     /**
+     * @Method getDailyInfoToken
+     * @Author myt
+     * @Version 1.0
+     * @Description 获取门检车辆信息用token
+     * @Return com.nt.utils.ApiResult
+     * @Date 2021/12/19 15:05
+     */
+    @RequestMapping(value = "/getDailyInfoToken", method = {RequestMethod.GET})
+    public ApiResult getDailyInfoToken() throws Exception {
+        return ApiResult.success(vehicleinformationServices.getDailyInfoToken());
+    }
+
+    /**
      * @param driverIdNo
      * @Method list
      * @Author Wxz
