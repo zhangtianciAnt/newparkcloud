@@ -496,7 +496,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         JSONObject string_to_json = JSONUtil.parseObj(value).getJSONObject("data");
         String token = string_to_json.get("access_token").toString();
         Securitydoortoken securitydoortoken = new Securitydoortoken();
-        securitydoortoken.setId(1);
+        securitydoortoken.setId("1");
         securitydoortoken.setToken(token);
         securitydoortoken.setModifyon(new Date());
         securitydoortokenMapper.updateByPrimaryKey(securitydoortoken);

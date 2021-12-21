@@ -15,7 +15,7 @@ import javax.persistence.Table;
 public class Securitydoortoken extends BaseModel {
 
     @Id
-    private int id;
+    private String id;
 
     /*
      * 门检token
