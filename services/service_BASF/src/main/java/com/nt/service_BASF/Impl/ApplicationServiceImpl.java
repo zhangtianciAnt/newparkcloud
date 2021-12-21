@@ -29,6 +29,9 @@ import java.util.stream.Collectors;
 @Service
 public class ApplicationServiceImpl implements ApplicationServices {
 
+    // 设备id分割符
+    public static final String DEVICE_ID_DELIMITER = ",";
+
     @Autowired
     private ApplicationMapper applicationMapper;
 
@@ -70,11 +73,16 @@ public class ApplicationServiceImpl implements ApplicationServices {
 
         applicationMapper.insert(application);
 
-        Deviceinformation deviceinformation = new Deviceinformation();
-        deviceinformation.setDeviceinformationid(application.getDeviceinformationid());
-        deviceinformation.preUpdate(tokenModel);
-        deviceinformation.setDevicestatus("BC011002");
-        deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
+        // 分割设备id
+        String[] deviceInformationIds = application.getDeviceinformationid().split(DEVICE_ID_DELIMITER);
+        // 更新设备状态
+        for (int i = 0; i < deviceInformationIds.length; i++) {
+            Deviceinformation deviceinformation = new Deviceinformation();
+            deviceinformation.setDeviceinformationid(deviceInformationIds[i]);
+            deviceinformation.preUpdate(tokenModel);
+            deviceinformation.setDevicestatus("BC011002");
+            deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
+        }
     }
 
     @Override
@@ -107,11 +115,12 @@ public class ApplicationServiceImpl implements ApplicationServices {
             List<Application> applicationList = applicationMapper.getAllReturnBack();
             applicationList.forEach(this::returnLogic);
         } else {    // 手动归还指定设备
-            Application application = new Application();
-            application.setDeviceinformationid(deviceinformationId);
-            List<Application> applicationList = applicationMapper.select(application).stream().filter(item -> !"1".equals(item.getStatus())).collect(Collectors.toList());
+            List<Application> applicationList = applicationMapper.getAllByDeviceInformationId(deviceinformationId)
+                    .stream()
+                    .filter(item -> !"1".equals(item.getStatus()))
+                    .collect(Collectors.toList());
             if (applicationList.size() > 0) {
-                application = applicationList.get(0);
+                Application application = applicationList.get(0);
                 returnLogic(application);
             }
         }
@@ -122,15 +131,19 @@ public class ApplicationServiceImpl implements ApplicationServices {
         application.setStatus("1");
         applicationMapper.updateByPrimaryKey(application);
 
+        // 分割设备id
+        String[] deviceInformationIds = application.getDeviceinformationid().split(DEVICE_ID_DELIMITER);
         // 重置设备状态
-        Deviceinformation deviceinfomation = deviceinformationMapper.selectByPrimaryKey(application.getDeviceinformationid());
-        if (deviceinfomation != null) {
-            if (deviceinfomation.getDevicename().equals("虚拟路桩")) {
-                deviceinfomation.setStatus("1");
-            } else {
-                deviceinfomation.setDevicestatus("BC011001");
+        for (int i = 0; i < deviceInformationIds.length; i++) {
+            Deviceinformation deviceinfomation = deviceinformationMapper.selectByPrimaryKey(deviceInformationIds[i]);
+            if (deviceinfomation != null) {
+                if (deviceinfomation.getDevicename().equals("虚拟路桩")) {
+                    deviceinfomation.setStatus("1");
+                } else {
+                    deviceinfomation.setDevicestatus("BC011001");
+                }
+                deviceinformationMapper.updateByPrimaryKey(deviceinfomation);
             }
-            deviceinformationMapper.updateByPrimaryKey(deviceinfomation);
         }
     }
 }

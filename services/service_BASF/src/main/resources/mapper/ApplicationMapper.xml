@@ -102,5 +102,11 @@ WHERE
         ifnull(`STATUS`,'0') = '0'
         and DATEDIFF(CURRENT_DATE (),returntime)>=0
     </select>
+
+    <select id="getAllByDeviceInformationId" resultType="com.nt.dao_BASF.Application">
+        SELECT * FROM application
+        WHERE
+            deviceinformationid like CONCAT('%', #{deviceinformationid, jdbcType=VARCHAR}, '%')
+    </select>
 </mapper>
 

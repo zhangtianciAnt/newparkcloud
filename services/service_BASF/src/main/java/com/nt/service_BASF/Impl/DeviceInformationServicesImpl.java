@@ -206,35 +206,41 @@ public class DeviceInformationServicesImpl implements DeviceInformationServices 
     @Override
     public void update(Deviceinformation deviceinformation, TokenModel tokenModel) throws Exception {
         deviceinformation.preUpdate(tokenModel);
-        deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
-        if ("BC004004".equals(deviceinformation.getDevicetype())) {
-            // 如果是设备是 摄像头 根据设备编号 先删除h5s conf中的信息
-            String token = deviceinformation.getDevrow();
-            cowBUtils.delH5sInformation(token);
-            // 再根据设备编号 创建h5s conf中的信息
-            String insertResult = insertH5sInfomation(deviceinformation);
-            // insertResult为空说明插入h5s失败，应该throw异常
-            if (StringUtils.isEmpty(insertResult)) {
+        // 处理设备id拼接情况
+        String[] deviceInformationIds = deviceinformation.getDeviceinformationid().split(ApplicationServiceImpl.DEVICE_ID_DELIMITER);
+        for (int i = 0; i < deviceInformationIds.length; i++) {
+            deviceinformation.setDeviceinformationid(deviceInformationIds[i]);
+            // 更新设备信息
+            deviceinformationMapper.updateByPrimaryKeySelective(deviceinformation);
+            if ("BC004004".equals(deviceinformation.getDevicetype())) {
+                // 如果是设备是 摄像头 根据设备编号 先删除h5s conf中的信息
+                String token = deviceinformation.getDevrow();
+                cowBUtils.delH5sInformation(token);
+                // 再根据设备编号 创建h5s conf中的信息
+                String insertResult = insertH5sInfomation(deviceinformation);
+                // insertResult为空说明插入h5s失败，应该throw异常
+                if (StringUtils.isEmpty(insertResult)) {
 
+                }
             }
-        }
-        // 如果设备是电子围栏
-        else if ("BC004005".equals(deviceinformation.getDevicetype())) {
-            // 根据摄像头id（subordinatesystem）找到 摄像头设备编号
-            Deviceinformation dev = new Deviceinformation();
-            dev.setDeviceinformationid(deviceinformation.getSubordinatesystem());
-            dev = deviceinformationMapper.selectOne(dev);
-            // 根据设备主键更新，电子围栏状态表信息
-            Electronicfencestatus electronicfencestatus = new Electronicfencestatus();
-            electronicfencestatus.setDeviceinformationid(deviceinformation.getDeviceinformationid());
-            electronicfencestatus.setCamerano(dev.getDeviceno());
-            // 围栏对应的摄像头id
-            electronicfencestatus.setCameraid(dev.getDeviceinformationid());
-            // 围栏是否报警 初始化 0
-            electronicfencestatus.setWarningstatus(0);
-            // 围栏是否屏蔽 初始化 0
-            electronicfencestatus.setShieldstatus(0);
-            electronicfencestatusMapper.updateByPrimaryKeySelective(electronicfencestatus);
+            // 如果设备是电子围栏
+            else if ("BC004005".equals(deviceinformation.getDevicetype())) {
+                // 根据摄像头id（subordinatesystem）找到 摄像头设备编号
+                Deviceinformation dev = new Deviceinformation();
+                dev.setDeviceinformationid(deviceinformation.getSubordinatesystem());
+                dev = deviceinformationMapper.selectOne(dev);
+                // 根据设备主键更新，电子围栏状态表信息
+                Electronicfencestatus electronicfencestatus = new Electronicfencestatus();
+                electronicfencestatus.setDeviceinformationid(deviceinformation.getDeviceinformationid());
+                electronicfencestatus.setCamerano(dev.getDeviceno());
+                // 围栏对应的摄像头id
+                electronicfencestatus.setCameraid(dev.getDeviceinformationid());
+                // 围栏是否报警 初始化 0
+                electronicfencestatus.setWarningstatus(0);
+                // 围栏是否屏蔽 初始化 0
+                electronicfencestatus.setShieldstatus(0);
+                electronicfencestatusMapper.updateByPrimaryKeySelective(electronicfencestatus);
+            }
         }
     }
 

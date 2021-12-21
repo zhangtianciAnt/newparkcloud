@@ -20,4 +20,7 @@ public interface ApplicationMapper extends MyMapper<Application> {
 
     // 系统服务，获取所有待归还数据
     List<Application> getAllReturnBack() throws Exception;
+
+    // 根据设备id模糊查询，获取申请列表
+    List<Application> getAllByDeviceInformationId(@Param("deviceinformationid") String deviceinformationid);
 }
