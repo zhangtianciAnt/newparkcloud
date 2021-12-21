@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
 import com.mysql.jdbc.StringUtils;
-import com.nt.dao_Pfans.PFANS1000.Businessplan;
-import com.nt.dao_Pfans.PFANS1000.PersonnelPlan;
-import com.nt.dao_Pfans.PFANS1000.ThemePlan;
-import com.nt.dao_Pfans.PFANS1000.ThemePlanDetail;
+import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.*;
 import com.nt.service_pfans.PFANS1000.BusinessplanService;
 import com.nt.service_pfans.PFANS1000.ThemePlanService;
@@ -21,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -359,7 +357,9 @@ public class ThemePlanServiceImpl implements ThemePlanService {
             ThemePlan ct = new ThemePlan();
             //add_qhr_20210707  增加themeinfor_id字段
             ct.setCenter_id(themePlanDetailVo.get(0).getCenter_id());
-            ct.setGroup_id(themePlanDetailVo.get(0).getGroup_id());
+            //del 20211221 删除条件，所有部门有效信息保存在center里 fr
+//            ct.setGroup_id(themePlanDetailVo.get(0).getGroup_id());
+            //del 20211221 删除条件，所有部门有效信息保存在center里 to
             ct.setYear(themePlanDetailVo.get(0).getYear());
             ct.setType(themePlanDetailVo.get(0).getType());
             if (StringUtils.isNullOrEmpty(themePlanDetailVo.get(0).getThemeplan_id())) {
