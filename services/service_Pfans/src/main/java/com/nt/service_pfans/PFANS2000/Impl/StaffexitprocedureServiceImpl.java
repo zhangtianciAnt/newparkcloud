@@ -318,6 +318,9 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
     @Override
     public void delete(Staffexitprocedure staffexitprocedure) throws Exception {
         staffexitprocedure.setType("1");
+        //  region  add  ml  211221  删除时状态改为1  from
+        staffexitprocedure.setStatus("1");
+        //  endregion  add  ml  211221  删除时状态改为1  to
         staffexitprocedureMapper.updateByPrimaryKeySelective(staffexitprocedure);
     }
 
