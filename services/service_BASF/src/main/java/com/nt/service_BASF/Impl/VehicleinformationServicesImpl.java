@@ -499,7 +499,7 @@ public class VehicleinformationServicesImpl implements VehicleinformationService
         securitydoortoken.setId("1");
         securitydoortoken.setToken(token);
         securitydoortoken.setModifyon(new Date());
-        securitydoortokenMapper.updateByPrimaryKey(securitydoortoken);
+        securitydoortokenMapper.updateByPrimaryKeySelective(securitydoortoken);
     }
 
     /**
