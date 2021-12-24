@@ -173,8 +173,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
             }
             int m = 1;
             for (int i = 1; i < list.size(); i++) {
-                List<Map<String, String>> lists = new ArrayList<>();
-                List<Map<String, String>> lists1 = new ArrayList<>();
+                List<Map<String, Object>> lists = new ArrayList<>();
+                List<Map<String, Object>> lists1 = new ArrayList<>();
                 List<Object> value = list.get(m);
                 m++;
                 if (value.size() > 1) {
@@ -202,7 +202,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                         if (radio.equals("1")) {
                             JSONArray jsonArray = JSONArray.parseArray(businessplanlist.get(0).getAssets_lodyear());
                             for (Object ob : jsonArray) {
-                                Map<String, String> map = new HashMap<>();
+                                Map<String, Object> map = new HashMap<>();
                                 money4 = getProperty(ob, "money4");
                                 money5 = getProperty(ob, "money5");
                                 money6 = getProperty(ob, "money6");
@@ -269,18 +269,18 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                                         money3s = money31.add(money311).setScale(scale, roundingMode);
                                     }
                                 }
-                                map.put("money4", money4s.toString());
-                                map.put("money5", money5s.toString());
-                                map.put("money6", money6s.toString());
-                                map.put("money7", money7s.toString());
-                                map.put("money8", money8s.toString());
-                                map.put("money9", money9s.toString());
-                                map.put("money10", money10s.toString());
-                                map.put("money11", money11s.toString());
-                                map.put("money12", money12s.toString());
-                                map.put("money1", money1s.toString());
-                                map.put("money2", money2s.toString());
-                                map.put("money3", money3s.toString());
+                                map.put("money4", money4s);
+                                map.put("money5", money5s);
+                                map.put("money6", money6s);
+                                map.put("money7", money7s);
+                                map.put("money8", money8s);
+                                map.put("money9", money9s);
+                                map.put("money10", money10s);
+                                map.put("money11", money11s);
+                                map.put("money12", money12s);
+                                map.put("money1", money1s);
+                                map.put("money2", money2s);
+                                map.put("money3", money3s);
                                 map.put("encoding", name);
                                 map.put("companyen", companyen);
                                 lists.add(map);
@@ -296,7 +296,7 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                         } else if (radio.equals("2")) {
                             JSONArray jsonArray1 = JSONArray.parseArray(businessplanlist.get(0).getEquipment_lodyear());
                             for (Object ob : jsonArray1) {
-                                Map<String, String> map = new HashMap<>();
+                                Map<String, Object> map = new HashMap<>();
                                 money4 = getProperty(ob, "money4");
                                 money5 = getProperty(ob, "money5");
                                 money6 = getProperty(ob, "money6");
@@ -363,18 +363,18 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                                         money3s = money31.add(money311).setScale(scale, roundingMode);
                                     }
                                 }
-                                map.put("money4", money4s.toString());
-                                map.put("money5", money5s.toString());
-                                map.put("money6", money6s.toString());
-                                map.put("money7", money7s.toString());
-                                map.put("money8", money8s.toString());
-                                map.put("money9", money9s.toString());
-                                map.put("money10", money10s.toString());
-                                map.put("money11", money11s.toString());
-                                map.put("money12", money12s.toString());
-                                map.put("money1", money1s.toString());
-                                map.put("money2", money2s.toString());
-                                map.put("money3", money3s.toString());
+                                map.put("money4", money4s);
+                                map.put("money5", money5s);
+                                map.put("money6", money6s);
+                                map.put("money7", money7s);
+                                map.put("money8", money8s);
+                                map.put("money9", money9s);
+                                map.put("money10", money10s);
+                                map.put("money11", money11s);
+                                map.put("money12", money12s);
+                                map.put("money1", money1s);
+                                map.put("money2", money2s);
+                                map.put("money3", money3s);
                                 map.put("encoding", name);
                                 map.put("companyen", companyen);
                                 lists1.add(map);
