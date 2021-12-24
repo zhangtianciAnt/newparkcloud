@@ -1203,7 +1203,10 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                         }
                     });
                 });
-                departmentalInsideMapper.insertDepInsAll(departmentalInsideListInsert);
+                if(departmentalInsideListInsert.size() > 0)
+                {
+                    departmentalInsideMapper.insertDepInsAll(departmentalInsideListInsert);
+                }
             }
             //更新数据
             if (departmentalInsideListUnpdate.size() > 0) {
