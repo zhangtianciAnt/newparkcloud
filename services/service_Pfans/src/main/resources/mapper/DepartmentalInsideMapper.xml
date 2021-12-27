@@ -318,7 +318,7 @@
             ATT.CONTRACTNUMBERCON,
             ATT.COMPLETIONDATE,
             ATT.CLAIMAMOUNT,
-            CAN.CURRENCYPOSITION
+            MON.EXCHANGERATE AS CURRENCYPOSITION
         FROM
             (SELECT
                  CONTRACTNUMBER,
@@ -332,8 +332,9 @@
                          SELECT CONTRACTNUMBER FROM DEPARTMENTALINSIDE
                          WHERE YEARS = #{years} AND DEPARTMENT = #{depart} GROUP BY CONTRACTNUMBER )
                AND COMPLETIONDATE >= DATE_FORMAT( CONCAT( #{yearmonth}, '-01' ), '%Y-%m-%d' )
-
-            ) ATT LEFT JOIN CONTRACTAPPLICATION CAN ON ATT.CONTRACTNUMBER = CAN.CONTRACTNUMBER
+            )
+                ATT LEFT JOIN CONTRACTAPPLICATION CAN ON ATT.CONTRACTNUMBER = CAN.CONTRACTNUMBER
+                    LEFT JOIN monthlyrate MON ON MON.MONTH = #{yearmonth} AND CAN.CURRENCYPOSITION  = MON.CURRENCY
         ORDER BY
             ATT.CONTRACTNUMBER
     </select>
@@ -344,7 +345,7 @@
             ATT.CONTRACTNUMBERCON,
             ATT.COMPLETIONDATE,
             ATT.CLAIMAMOUNT,
-            CAN.CURRENCYPOSITION
+            MON.EXCHANGERATE AS CURRENCYPOSITION
         FROM
             (SELECT
                  CONTRACTNUMBER,
@@ -357,27 +358,138 @@
                      CONTRACTNUMBER IN (
                      SELECT CONTRACTNUMBER FROM DEPARTMENTALINSIDE
                      WHERE YEARS = #{years} AND DEPARTMENT = #{depart} GROUP BY CONTRACTNUMBER )
-               AND COMPLETIONDATE &lt; DATE_FORMAT( CONCAT( #{yearmonth}, '-01' ), '%Y-%m-%d' )
-
-            ) ATT LEFT JOIN CONTRACTAPPLICATION CAN ON ATT.CONTRACTNUMBER = CAN.CONTRACTNUMBER
+               AND COMPLETIONDATE &lt; DATE_FORMAT( CONCAT( #{yearmonth}, '-01' ), '%Y-%m-%d' ))
+                ATT LEFT JOIN CONTRACTAPPLICATION CAN ON ATT.CONTRACTNUMBER = CAN.CONTRACTNUMBER
+                  LEFT JOIN monthlyrate MON ON MON.MONTH = #{yearmonth} AND CAN.CURRENCYPOSITION  = MON.CURRENCY
         ORDER BY
             ATT.CONTRACTNUMBER
     </select>
 
-    <select id="getComm" resultType="java.lang.String">
+    <select id="getComm" resultType="com.nt.dao_Pfans.PFANS1000.Vo.DepartMonthPeo">
         SELECT
-            ROUND( sum( ADJUST / my_WorkingDays ( DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y%m' ) ) ), 2 ) TIME_START
-        FROM
-            logpersonstatistics lg
-        WHERE
-            LOG_DATE = #{LOG_DATE}
-
-          AND PROJECT_ID = 'PP024001'
-
-          AND DEPARTMENT = #{depart}
+            (
+                SELECT
+                    ROUND( sum( ADJUST / my_WorkingDays ( DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y%m' ) ) ), 2 ) TIME_START
+                FROM
+                    logpersonstatistics lg
+                WHERE
+                    LOG_DATE = concat( CONVERT( #{LOG_DATE}, SIGNED) + 1, '-', '01' )
+                  AND PROJECT_ID = 'PP024001'
+                  AND DEPARTMENT = #{depart}
+            ) AS month01,
+            (
+                SELECT
+                    ROUND( sum( ADJUST / my_WorkingDays ( DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y%m' ) ) ), 2 ) TIME_START
+                FROM
+                    logpersonstatistics lg
+                WHERE
+                    LOG_DATE = concat( CONVERT( #{LOG_DATE}, SIGNED) + 1, '-', '02' )
+                  AND PROJECT_ID = 'PP024001'
+                  AND DEPARTMENT = #{depart}
+            ) AS month02,
+            (
+                SELECT
+                    ROUND( sum( ADJUST / my_WorkingDays ( DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y%m' ) ) ), 2 ) TIME_START
+                FROM
+                    logpersonstatistics lg
+                WHERE
+                    LOG_DATE = concat( CONVERT( #{LOG_DATE}, SIGNED) + 1, '-', '03' )
+                  AND PROJECT_ID = 'PP024001'
+                  AND DEPARTMENT = #{depart}
+            ) AS month03,
+            (
+                SELECT
+                    ROUND( sum( ADJUST / my_WorkingDays ( DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y%m' ) ) ), 2 ) TIME_START
+                FROM
+                    logpersonstatistics lg
+                WHERE
+                    LOG_DATE = concat( #{LOG_DATE}, '-', '04' )
+                  AND PROJECT_ID = 'PP024001'
+                  AND DEPARTMENT = #{depart}
+            ) AS month04,
+            (
+                SELECT
+                    ROUND( sum( ADJUST / my_WorkingDays ( DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y%m' ) ) ), 2 ) TIME_START
+                FROM
+                    logpersonstatistics lg
+                WHERE
+                    LOG_DATE = concat( #{LOG_DATE}, '-', '05' )
+                  AND PROJECT_ID = 'PP024001'
+                  AND DEPARTMENT = #{depart}
+            ) AS month05,
+            (
+                SELECT
+                    ROUND( sum( ADJUST / my_WorkingDays ( DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y%m' ) ) ), 2 ) TIME_START
+                FROM
+                    logpersonstatistics lg
+                WHERE
+                    LOG_DATE = concat( #{LOG_DATE}, '-', '06' )
+                  AND PROJECT_ID = 'PP024001'
+                  AND DEPARTMENT = #{depart}
+            ) AS month06,
+            (
+                SELECT
+                    ROUND( sum( ADJUST / my_WorkingDays ( DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y%m' ) ) ), 2 ) TIME_START
+                FROM
+                    logpersonstatistics lg
+                WHERE
+                    LOG_DATE = concat( #{LOG_DATE}, '-', '07' )
+                  AND PROJECT_ID = 'PP024001'
+                  AND DEPARTMENT = #{depart}
+            ) AS month07,
+            (
+                SELECT
+                    ROUND( sum( ADJUST / my_WorkingDays ( DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y%m' ) ) ), 2 ) TIME_START
+                FROM
+                    logpersonstatistics lg
+                WHERE
+                    LOG_DATE = concat( #{LOG_DATE}, '-', '08' )
+                  AND PROJECT_ID = 'PP024001'
+                  AND DEPARTMENT = #{depart}
+            ) AS month08,
+            (
+                SELECT
+                    ROUND( sum( ADJUST / my_WorkingDays ( DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y%m' ) ) ), 2 ) TIME_START
+                FROM
+                    logpersonstatistics lg
+                WHERE
+                    LOG_DATE = concat( #{LOG_DATE}, '-', '09' )
+                  AND PROJECT_ID = 'PP024001'
+                  AND DEPARTMENT = #{depart}
+            ) AS month09,
+            (
+                SELECT
+                    ROUND( sum( ADJUST / my_WorkingDays ( DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y%m' ) ) ), 2 ) TIME_START
+                FROM
+                    logpersonstatistics lg
+                WHERE
+                    LOG_DATE = concat( #{LOG_DATE}, '-', '10' )
+                  AND PROJECT_ID = 'PP024001'
+                  AND DEPARTMENT = #{depart}
+            ) AS month10,
+            (
+                SELECT
+                    ROUND( sum( ADJUST / my_WorkingDays ( DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y%m' ) ) ), 2 ) TIME_START
+                FROM
+                    logpersonstatistics lg
+                WHERE
+                    LOG_DATE = concat( #{LOG_DATE}, '-', '11' )
+                  AND PROJECT_ID = 'PP024001'
+                  AND DEPARTMENT = #{depart}
+            ) AS month11,
+            (
+                SELECT
+                    ROUND( sum( ADJUST / my_WorkingDays ( DATE_FORMAT( concat( LOG_DATE, '-01' ), '%Y%m' ) ) ), 2 ) TIME_START
+                FROM
+                    logpersonstatistics lg
+                WHERE
+                    LOG_DATE = concat( #{LOG_DATE}, '-', '12' )
+                  AND PROJECT_ID = 'PP024001'
+                  AND DEPARTMENT = #{depart}
+            ) AS month12
     </select>
 
-    <select id="getTotalPeo" parameterType="String" resultType="com.nt.dao_Pfans.PFANS1000.Vo.DepartMonthPeo">
+    <select id="getTotalPeo" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS1000.Vo.DepartMonthPeo">
         SELECT
             (SELECT count( 1 ) AS month01 FROM(
                                                   SELECT
@@ -385,7 +497,7 @@
                                                   FROM
                                                       attendance
                                                   WHERE
-                                                          years = #{years}
+                                                          years = CONVERT( #{years}, SIGNED) + 1
                                                           AND MONTHS = '01'
                                                           AND CENTER_ID = #{departmental}
                                                      OR GROUP_ID = #{departmental}
@@ -400,7 +512,7 @@
                                                      FROM
                                                          attendance
                                                      WHERE
-                                                             years = #{years}
+                                                             years = CONVERT( #{years}, SIGNED) + 1
                                                              AND MONTHS = '02'
                                                              AND CENTER_ID = #{departmental}
                                                         OR GROUP_ID = #{departmental}
@@ -416,7 +528,7 @@
                                                      FROM
                                                          attendance
                                                      WHERE
-                                                             years = #{years}
+                                                             years = CONVERT( #{years}, SIGNED) + 1
                                                              AND MONTHS = '03'
                                                              AND CENTER_ID = #{departmental}
                                                         OR GROUP_ID = #{departmental}

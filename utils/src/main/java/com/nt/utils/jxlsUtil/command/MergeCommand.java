@@ -2,10 +2,7 @@ package com.nt.utils.jxlsUtil.command;
 
 import com.nt.utils.jxlsUtil.JxlsUtil;
 import jxl.write.WriteException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.jxls.area.Area;
 import org.jxls.command.AbstractCommand;
@@ -17,6 +14,7 @@ import org.jxls.transform.Transformer;
 import org.jxls.transform.jexcel.JexcelTransformer;
 import org.jxls.transform.poi.PoiCellData;
 import org.jxls.transform.poi.PoiTransformer;
+
 
 /**
  * <p>合并单元格</p>
@@ -55,13 +53,12 @@ public class MergeCommand extends AbstractCommand{
 
     @Override
     public Size applyAt(CellRef cellRef, Context context) {
-        int rows = area.getSize().getHeight();
-        int cols = area.getSize().getWidth();
-        rows = Math.max(getVal(this.rows, context), rows);
-        cols = Math.max(getVal(this.cols, context), cols);
+        int rows = getVal(this.rows, context);
+        int cols = getVal(this.cols, context);
         rows = Math.max(getVal(this.minRows, context), rows);
         cols = Math.max(getVal(this.minCols, context), cols);
-        Size size = null;
+        rows = rows > 0 ? rows : area.getSize().getHeight();
+        cols = cols > 0 ? cols : area.getSize().getWidth();
         if(rows > 1 || cols > 1){
             Transformer transformer = this.getTransformer();
             if(transformer instanceof PoiTransformer){
@@ -71,7 +68,7 @@ public class MergeCommand extends AbstractCommand{
             }
         }
         area.applyAt(cellRef, context);
-        return area.getSize();
+        return new Size(cols, rows);
     }
 
     protected Size poiMerge(CellRef cellRef, Context context, PoiTransformer transformer, int rows, int cols){
@@ -86,7 +83,7 @@ public class MergeCommand extends AbstractCommand{
         //合并之后单元格样式会丢失，以下操作将合并后的单元格恢复成合并前第一个单元格的样式
         area.applyAt(cellRef, context);
         if(cellStyle == null){
-            PoiCellData cellData = (PoiCellData)transformer.getCellData(cellRef);
+            PoiCellData cellData = (PoiCellData)transformer.getCellData(area.getStartCellRef());
             if(cellData != null){
                 cellStyle = cellData.getCellStyle();
             }
@@ -120,7 +117,12 @@ public class MergeCommand extends AbstractCommand{
                 if (cell == null) {
                     cell = row.createCell(j);
                 }
-                cell.setCellStyle(cs);
+                if (cs == null){
+                    cell.getCellStyle().setAlignment(HorizontalAlignment.CENTER);
+                    cell.getCellStyle().setVerticalAlignment(VerticalAlignment.CENTER);
+                }else {
+                    cell.setCellStyle(cs);
+                }
             }
         }
     }

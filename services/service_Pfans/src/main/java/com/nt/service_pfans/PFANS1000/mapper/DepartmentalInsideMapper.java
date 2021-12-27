@@ -27,7 +27,7 @@ public interface DepartmentalInsideMapper extends MyMapper<DepartmentalInside> {
     List<ThemeContract> getContListAnt(@Param("years") String years, @Param("yearmonth") String yearmonth, @Param("depart") String depart);
 
     //共通工数
-    String getComm(@Param("depart") String depart,@Param("LOG_DATE") String LOG_DATE);
+    List<DepartMonthPeo> getComm(@Param("depart") String depart,@Param("LOG_DATE") String LOG_DATE);
 
     //当月本部门社内人员总数（取自考勤管理）
     List<DepartMonthPeo> getTotalPeo(@Param("years") String years, @Param("departmental") String depart);

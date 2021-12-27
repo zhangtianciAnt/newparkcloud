@@ -1,6 +1,7 @@
 package com.nt.dao_Pfans.PFANS1000.Vo;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ThemeContract {
+    //验收月
+    private String comyearmonth;
+    //该当合同投入社员工数
+    private String remark;
     //合同（合同号）
     private String contractnumber;
     //合同（合同号-第N回）

@@ -3,10 +3,7 @@ package com.nt.service_pfans.PFANS1000.Impl;
 import com.alibaba.fastjson.JSONObject;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.Dictionary;
-import com.nt.dao_Pfans.PFANS1000.Award;
-import com.nt.dao_Pfans.PFANS1000.DepartmentalInside;
-import com.nt.dao_Pfans.PFANS1000.DepartmentalinsiDetail;
-import com.nt.dao_Pfans.PFANS1000.StaffDetail;
+import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalInsideBaseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalInsideReturnVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.StaffWorkMonthInfoVo;
@@ -37,6 +34,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -1075,6 +1073,7 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
 //        try {
             //新建数据
             if (departmentalInsideListInsert.size() > 0 || departmentalInsideListUnpdate.size() > 0) {
+                List<Dictionary> typeOfList = dictionaryService.getForSelect("HT014");
                 List<DepartmentalInside> inupAllDeideList = new ArrayList<>();
                 inupAllDeideList.addAll(departmentalInsideListInsert);
                 inupAllDeideList.addAll(departmentalInsideListUnpdate);
@@ -1110,20 +1109,44 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                     depOutInsWork.setNumbers(inst.getNumbers());
                     depOutInsWork.setStaffrank("外注工数合计值");
                     List<DepartmentalInside> depOutWorkList = departmentalInsideMapper.select(depOutInsWork);
-                    Award awardDep = new Award();
-                    awardDep.setGroup_id(inst.getDepartment());
-                    awardDep.setContractnumber(inst.getContractnumber());
-                    List<Award> awardList = awardMapper.select(awardDep);
+                    //受托决裁改为受托决裁关联的委托决裁
+                    AtomicReference<Boolean> flagAward = new AtomicReference<>(false);
+                    List<Contractapplication> entrList = companyProjectsMapper
+                            .selectCont(inst.getContractnumber(),inst.getDepartment(),inst.getDepartment());
+                    if(entrList.size() > 0){
+                        entrList.forEach(ent -> {
+                            AtomicReference<Boolean> flag = new AtomicReference<>(false);
+                            typeOfList.forEach(item -> {
+                                if (item.getCode().equals(ent.getContracttype())) {
+                                    flag.set(true);
+                                }
+                            });
+                            if (flag.get()) {
+                                Award award = new Award();
+                                //委托合同号
+                                award.setContractnumber(ent.getContractnumber());
+                                award.setDistinguishbetween("1");
+                                Award find = awardMapper.selectOne(award);
+                                if (find != null && "4".equals(find.getStatus())) {
+                                    flagAward.set(true);
+                                }
+                            }
+                        });
+                    }
+//                    Award awardDep = new Award();
+//                    awardDep.setGroup_id(inst.getDepartment());
+//                    awardDep.setContractnumber(inst.getContractnumber());
+//                    List<Award> awardList = awardMapper.select(awardDep);
                     if(depOutWorkList.size() == 0){
                         depOutInsWork.setDepartmentalinside_id(UUID.randomUUID().toString());
                         depOutInsWork.preInsert(tokenModel);
-                        if(awardList.size() > 0){
+                        if(flagAward.get()){
                             this.setRange(depOutInsWork,monthlast,String.valueOf(outSum));
                         }
                         departmentalInsideMapper.insert(depOutInsWork);
                     }else{
                         depOutInsWork.preInsert(tokenModel);
-                        if(awardList.size() > 0) {
+                        if(flagAward.get()) {
                             this.setRange(depOutWorkList.get(0), monthlast, String.valueOf(outSum));
                         }
                         departmentalInsideMapper.updateByPrimaryKey(depOutWorkList.get(0));
@@ -1162,13 +1185,13 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                     if(depOutMoneyList.size() == 0){
                         depOutInsMoney.setDepartmentalinside_id(UUID.randomUUID().toString());
                         depOutInsWork.preInsert(tokenModel);
-                        if(awardList.size() > 0) {
+                        if(flagAward.get()) {
                             this.getMoneySum(pjList, monthlast, depOutInsMoney, outMoney);
                         }
                         departmentalInsideMapper.insert(depOutInsMoney);
                     }else{
                         depOutInsWork.preInsert(tokenModel);
-                        if(awardList.size() > 0) {
+                        if(flagAward.get()) {
                             this.getMoneySum(pjList, monthlast, depOutMoneyList.get(0), outMoney);
                         }
                         departmentalInsideMapper.updateByPrimaryKey(depOutMoneyList.get(0));

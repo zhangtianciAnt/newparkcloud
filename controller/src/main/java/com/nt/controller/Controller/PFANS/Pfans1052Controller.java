@@ -2,18 +2,24 @@ package com.nt.controller.Controller.PFANS;
 
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
+import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.Vo.DepartmentVo;
+import com.nt.dao_Pfans.PFANS1000.Award;
+import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartMonthPeo;
 import com.nt.dao_Pfans.PFANS1000.Vo.DepartmentalInsideBaseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ThemeContract;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
+import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.DepartmentAccountService;
 import com.nt.service_pfans.PFANS1000.DepartmentalInsideService;
+import com.nt.service_pfans.PFANS1000.mapper.AwardMapper;
 import com.nt.service_pfans.PFANS1000.mapper.DepartmentalInsideMapper;
+import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -26,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @RestController
@@ -37,6 +44,15 @@ public class Pfans1052Controller {
 
     @Autowired
     DepartmentalInsideMapper departmentalInsideMapper;
+
+    @Autowired
+    CompanyProjectsMapper companyProjectsMapper;
+
+    @Autowired
+    AwardMapper awardMapper;
+
+    @Autowired
+    DictionaryService dictionaryService;
 
     @Autowired
     private OrgTreeService orgtreeService;
@@ -63,9 +79,10 @@ public class Pfans1052Controller {
      *
      */
     @RequestMapping(value = "/downloadExcel", method = { RequestMethod.GET })
-    public void downloadPdf(String years,String depart, HttpServletRequest request, HttpServletResponse resp)  throws Exception {
+    public void downloadExcel(String years,String depart, HttpServletRequest request, HttpServletResponse resp)  throws Exception {
         List<ThemeContract> filterList = new ArrayList<>();
         List<ThemeContract> filterListAnt = new ArrayList<>();
+        List<ThemeContract> filteroutReList = new ArrayList<>();
         String yearmonth = "";
         Calendar calendar = Calendar.getInstance();
         //当前月份减1
@@ -111,8 +128,6 @@ public class Pfans1052Controller {
             }
         }
 
-
-
         List<ThemeContract> getContList = departmentalInsideMapper.getContList(years,yearmonth,depart);
         if(getContList.size() > 0){
             Map<String,List<ThemeContract>> groupConMap = getContList.stream()
@@ -127,31 +142,90 @@ public class Pfans1052Controller {
                     e.printStackTrace();
                 }
             });
+            if(filterList.size() > 0){
+                filterList.forEach(filAnt -> {
+                    List<Dictionary> typeOfList = null;
+                    try {
+                        typeOfList = dictionaryService.getForSelect("HT014");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    AtomicReference<Boolean> flagAward = new AtomicReference<>(false);
+                    List<Contractapplication> entrList = companyProjectsMapper
+                            .selectCont(filAnt.getContractnumber(),depart,depart);
+                    if(entrList.size() > 0){
+                        List<Dictionary> finalTypeOfList = typeOfList;
+                        entrList.forEach(ent -> {
+                            AtomicReference<Boolean> flag = new AtomicReference<>(false);
+                            finalTypeOfList.forEach(item -> {
+                                if (item.getCode().equals(ent.getContracttype())) {
+                                    flag.set(true);
+                                }
+                            });
+                            if (flag.get()) {
+                                Award award = new Award();
+                                //委托合同号
+                                award.setContractnumber(ent.getContractnumber());
+                                award.setDistinguishbetween("1");
+                                Award find = awardMapper.selectOne(award);
+                                if (find != null && "4".equals(find.getStatus())) {
+                                    flagAward.set(true);
+                                }
+                            }
+                        });
+                    }
+                    if(flagAward.get()){
+                        filteroutReList.add(filAnt);
+                    }
+                });
+            }
         }
 
-
-
         List<ThemeContract> inThemeList = new ArrayList<>();
-        List<ThemeContract> outThemeList = new ArrayList<>();
         if(filterList.size() > 0){
             String finalYears = years;
             String finalMonth = month1;
+            String finalYearmonth = yearmonth;
             filterList.forEach(fil -> {
                 String mant = "";
                 mant = refMap.get(fil.getContractnumber()) != null
                         ? refMap.get(fil.getContractnumber()) : firstMonth;
                 try {
-                    ThemeContract cttin = new ThemeContract();
+                    ThemeContract cttin = new ThemeContract("该当合同投入社员工数", finalYearmonth,"",
+                            "","","","","","",
+                            "","","","","","","","","","");
                     cttin = this.upInResult(fil, mant, finalMonth, finalYears, depart, true);
-                    inThemeList.add(cttin);
-                    ThemeContract cttout = new ThemeContract();
-                    cttout = this.upInResult(fil, mant, finalMonth, finalYears, depart, false);
-                    outThemeList.add(cttout);
+                    if(cttin != null){
+                        inThemeList.add(cttin);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
         }
+        List<ThemeContract> outThemeList = new ArrayList<>();
+        if(filteroutReList.size() > 0){
+            String finalYears = years;
+            String finalMonth = month1;
+            String finalYearmonth1 = yearmonth;
+            filteroutReList.forEach(fil -> {
+                String mant = "";
+                mant = refMap.get(fil.getContractnumber()) != null
+                        ? refMap.get(fil.getContractnumber()) : firstMonth;
+                try {
+                    ThemeContract cttout = new ThemeContract("该当合同投入社员工数", finalYearmonth1,"",
+                            "","","","","","",
+                            "","","","","","","","","","");
+                    cttout = this.upInResult(fil, mant, finalMonth, finalYears, depart, false);
+                    if(cttout != null){
+                        outThemeList.add(cttout);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
 
         //导出Excel结果集
         Map<String, Object> dataReslut = new HashMap<>();
@@ -162,18 +236,42 @@ public class Pfans1052Controller {
         //验收月
         dataReslut.put("yearmonth",yearmonth);
         //社内部门共通工数
-        dataReslut.put("comm",departmentalInsideMapper.getComm(depart,yearmonth));
+        int yeaa = 0;
+        int monthaa = calendar.get(Calendar.MONTH) + 1;
+        int dayaa = calendar.get(Calendar.DAY_OF_MONTH);
+        if(monthaa >= 1 && monthaa < 4) {
+            yeaa = calendar.get(Calendar.YEAR) - 1;
+        }
+        else if(monthaa == 4)
+        {
+            //时间大于4月10日的，属于新年度，小于10日，属于旧年度
+            if(dayaa >= 10)
+            {
+                yeaa = calendar.get(Calendar.YEAR);
+            }
+            else
+            {
+                yeaa = calendar.get(Calendar.YEAR) - 1;
+            }
+        }
+        else
+        {
+            yeaa = calendar.get(Calendar.YEAR);
+        }
+
+        List<DepartMonthPeo> admindepartPo = departmentalInsideMapper.getComm(depart,String.valueOf(yeaa));
+        dataReslut.put("comm",admindepartPo);
         //社内部门总工数
-        List<DepartMonthPeo> departMonthPeo = departmentalInsideMapper.getTotalPeo(years,orginfo.getCompanyname());
+        List<DepartMonthPeo> departMonthPeo = departmentalInsideMapper.getTotalPeo(String.valueOf(yeaa),orginfo.getCompanyname());
         dataReslut.put("totalpeo",departMonthPeo);
 
-//        //社内合同工数详细信息**
-//        dataReslut.put();
-//        //社外合同工数详细信息**
-//        dataReslut.put();
+        //社内合同工数详细信息**
+        dataReslut.put("inThemeList",inThemeList);
+        //社外合同工数详细信息**
+        dataReslut.put("outThemeList",outThemeList);
 
 
-        ExcelOutPutUtil.OutPut("theme别合同收支分析表", "chenbenjiezhuanbiao.xlsx", dataReslut, resp);
+        ExcelOutPutUtil.OutPut("theme别合同收支分析表", "tbhtshouzhifenxibiao.xlsx", dataReslut, resp);
     }
 
     ThemeContract filterCont(List<ThemeContract> listC) throws Exception {
@@ -205,11 +303,15 @@ public class Pfans1052Controller {
             getcon = departmentalInsideMapper.sumContractIn(upTheme.getContractnumber(),years,depart);
             if(getcon != null){
                 setActualInfo(upTheme, getcon, finmnn, mmnt);
+            }else{
+                upTheme = null;
             }
         }else{
             getcon = departmentalInsideMapper.sumContractOut(upTheme.getContractnumber(),years,depart);
             if(getcon != null) {
                 setActualInfo(upTheme, getcon, finmnn, mmnt);
+            }else{
+                upTheme = null;
             }
         }
         return upTheme;
@@ -218,196 +320,196 @@ public class Pfans1052Controller {
     private void setActualInfo(ThemeContract upTheme, ThemeContract getcon, int finmnn, int mmnt) {
         switch (finmnn) {
             case 4:
-                getcon.setActual04(getcon.getActual04());
+                upTheme.setActual04(getcon.getActual04());
                 break;
             case 5:
-                getcon.setActual04(getcon.getActual04());
-                getcon.setActual05(getcon.getActual05());
+                upTheme.setActual04(getcon.getActual04());
+                upTheme.setActual05(getcon.getActual05());
                 break;
             case 6:
-                getcon.setActual04(getcon.getActual04());
-                getcon.setActual05(getcon.getActual05());
-                getcon.setActual06(getcon.getActual06());
+                upTheme.setActual04(getcon.getActual04());
+                upTheme.setActual05(getcon.getActual05());
+                upTheme.setActual06(getcon.getActual06());
                 break;
             case 7:
-                getcon.setActual04(getcon.getActual04());
-                getcon.setActual05(getcon.getActual05());
-                getcon.setActual06(getcon.getActual06());
-                getcon.setActual07(getcon.getActual07());
+                upTheme.setActual04(getcon.getActual04());
+                upTheme.setActual05(getcon.getActual05());
+                upTheme.setActual06(getcon.getActual06());
+                upTheme.setActual07(getcon.getActual07());
                 break;
             case 8:
-                getcon.setActual04(getcon.getActual04());
-                getcon.setActual05(getcon.getActual05());
-                getcon.setActual07(getcon.getActual07());
-                getcon.setActual06(getcon.getActual06());
-                getcon.setActual08(getcon.getActual08());
+                upTheme.setActual04(getcon.getActual04());
+                upTheme.setActual05(getcon.getActual05());
+                upTheme.setActual07(getcon.getActual07());
+                upTheme.setActual06(getcon.getActual06());
+                upTheme.setActual08(getcon.getActual08());
                 break;
             case 9:
-                getcon.setActual04(getcon.getActual04());
-                getcon.setActual05(getcon.getActual05());
-                getcon.setActual06(getcon.getActual06());
-                getcon.setActual07(getcon.getActual07());
-                getcon.setActual08(getcon.getActual08());
-                getcon.setActual09(getcon.getActual09());
+                upTheme.setActual04(getcon.getActual04());
+                upTheme.setActual05(getcon.getActual05());
+                upTheme.setActual06(getcon.getActual06());
+                upTheme.setActual07(getcon.getActual07());
+                upTheme.setActual08(getcon.getActual08());
+                upTheme.setActual09(getcon.getActual09());
                 break;
             case 10:
-                getcon.setActual04(getcon.getActual04());
-                getcon.setActual05(getcon.getActual05());
-                getcon.setActual06(getcon.getActual06());
-                getcon.setActual07(getcon.getActual07());
-                getcon.setActual08(getcon.getActual08());
-                getcon.setActual09(getcon.getActual09());
-                getcon.setActual10(getcon.getActual10());
+                upTheme.setActual04(getcon.getActual04());
+                upTheme.setActual05(getcon.getActual05());
+                upTheme.setActual06(getcon.getActual06());
+                upTheme.setActual07(getcon.getActual07());
+                upTheme.setActual08(getcon.getActual08());
+                upTheme.setActual09(getcon.getActual09());
+                upTheme.setActual10(getcon.getActual10());
                 break;
             case 11:
-                getcon.setActual04(getcon.getActual04());
-                getcon.setActual05(getcon.getActual05());
-                getcon.setActual06(getcon.getActual06());
-                getcon.setActual07(getcon.getActual07());
-                getcon.setActual08(getcon.getActual08());
-                getcon.setActual09(getcon.getActual09());
-                getcon.setActual10(getcon.getActual10());
-                getcon.setActual11(getcon.getActual11());
+                upTheme.setActual04(getcon.getActual04());
+                upTheme.setActual05(getcon.getActual05());
+                upTheme.setActual06(getcon.getActual06());
+                upTheme.setActual07(getcon.getActual07());
+                upTheme.setActual08(getcon.getActual08());
+                upTheme.setActual09(getcon.getActual09());
+                upTheme.setActual10(getcon.getActual10());
+                upTheme.setActual11(getcon.getActual11());
                 break;
             case 12:
-                getcon.setActual04(getcon.getActual04());
-                getcon.setActual05(getcon.getActual05());
-                getcon.setActual06(getcon.getActual06());
-                getcon.setActual07(getcon.getActual07());
-                getcon.setActual08(getcon.getActual08());
-                getcon.setActual09(getcon.getActual09());
-                getcon.setActual10(getcon.getActual10());
-                getcon.setActual11(getcon.getActual11());
-                getcon.setActual12(getcon.getActual12());
+                upTheme.setActual04(getcon.getActual04());
+                upTheme.setActual05(getcon.getActual05());
+                upTheme.setActual06(getcon.getActual06());
+                upTheme.setActual07(getcon.getActual07());
+                upTheme.setActual08(getcon.getActual08());
+                upTheme.setActual09(getcon.getActual09());
+                upTheme.setActual10(getcon.getActual10());
+                upTheme.setActual11(getcon.getActual11());
+                upTheme.setActual12(getcon.getActual12());
                 break;
             case 1:
-                getcon.setActual04(getcon.getActual04());
-                getcon.setActual05(getcon.getActual05());
-                getcon.setActual06(getcon.getActual06());
-                getcon.setActual07(getcon.getActual07());
-                getcon.setActual08(getcon.getActual08());
-                getcon.setActual09(getcon.getActual09());
-                getcon.setActual10(getcon.getActual10());
-                getcon.setActual11(getcon.getActual11());
-                getcon.setActual12(getcon.getActual12());
-                getcon.setActual01(getcon.getActual01());
+                upTheme.setActual04(getcon.getActual04());
+                upTheme.setActual05(getcon.getActual05());
+                upTheme.setActual06(getcon.getActual06());
+                upTheme.setActual07(getcon.getActual07());
+                upTheme.setActual08(getcon.getActual08());
+                upTheme.setActual09(getcon.getActual09());
+                upTheme.setActual10(getcon.getActual10());
+                upTheme.setActual11(getcon.getActual11());
+                upTheme.setActual12(getcon.getActual12());
+                upTheme.setActual01(getcon.getActual01());
                 break;
             case 2:
-                getcon.setActual04(getcon.getActual04());
-                getcon.setActual05(getcon.getActual05());
-                getcon.setActual06(getcon.getActual06());
-                getcon.setActual07(getcon.getActual07());
-                getcon.setActual08(getcon.getActual08());
-                getcon.setActual09(getcon.getActual09());
-                getcon.setActual10(getcon.getActual10());
-                getcon.setActual11(getcon.getActual11());
-                getcon.setActual12(getcon.getActual12());
-                getcon.setActual01(getcon.getActual01());
-                getcon.setActual02(getcon.getActual02());
+                upTheme.setActual04(getcon.getActual04());
+                upTheme.setActual05(getcon.getActual05());
+                upTheme.setActual06(getcon.getActual06());
+                upTheme.setActual07(getcon.getActual07());
+                upTheme.setActual08(getcon.getActual08());
+                upTheme.setActual09(getcon.getActual09());
+                upTheme.setActual10(getcon.getActual10());
+                upTheme.setActual11(getcon.getActual11());
+                upTheme.setActual12(getcon.getActual12());
+                upTheme.setActual01(getcon.getActual01());
+                upTheme.setActual02(getcon.getActual02());
                 break;
             case 3:
-                getcon.setActual04(getcon.getActual04());
-                getcon.setActual05(getcon.getActual05());
-                getcon.setActual06(getcon.getActual06());
-                getcon.setActual07(getcon.getActual07());
-                getcon.setActual08(getcon.getActual08());
-                getcon.setActual09(getcon.getActual09());
-                getcon.setActual10(getcon.getActual10());
-                getcon.setActual11(getcon.getActual11());
-                getcon.setActual12(getcon.getActual12());
-                getcon.setActual01(getcon.getActual01());
-                getcon.setActual02(getcon.getActual02());
-                getcon.setActual03(getcon.getActual03());
+                upTheme.setActual04(getcon.getActual04());
+                upTheme.setActual05(getcon.getActual05());
+                upTheme.setActual06(getcon.getActual06());
+                upTheme.setActual07(getcon.getActual07());
+                upTheme.setActual08(getcon.getActual08());
+                upTheme.setActual09(getcon.getActual09());
+                upTheme.setActual10(getcon.getActual10());
+                upTheme.setActual11(getcon.getActual11());
+                upTheme.setActual12(getcon.getActual12());
+                upTheme.setActual01(getcon.getActual01());
+                upTheme.setActual02(getcon.getActual02());
+                upTheme.setActual03(getcon.getActual03());
                 break;
         }
         switch (mmnt) {
             case 5:
-                getcon.setActual04("0");
+                upTheme.setActual04("0");
                 break;
             case 6:
-                getcon.setActual04("0");
-                getcon.setActual05("0");
+                upTheme.setActual04("0");
+                upTheme.setActual05("0");
                 break;
             case 7:
-                getcon.setActual04("0");
-                getcon.setActual05("0");
-                getcon.setActual06("0");
+                upTheme.setActual04("0");
+                upTheme.setActual05("0");
+                upTheme.setActual06("0");
                 break;
             case 8:
-                getcon.setActual04("0");
-                getcon.setActual05("0");
-                getcon.setActual06("0");
-                getcon.setActual07("0");
+                upTheme.setActual04("0");
+                upTheme.setActual05("0");
+                upTheme.setActual06("0");
+                upTheme.setActual07("0");
                 break;
             case 9:
-                getcon.setActual04("0");
-                getcon.setActual05("0");
-                getcon.setActual06("0");
-                getcon.setActual07("0");
-                getcon.setActual08("0");
+                upTheme.setActual04("0");
+                upTheme.setActual05("0");
+                upTheme.setActual06("0");
+                upTheme.setActual07("0");
+                upTheme.setActual08("0");
                 break;
             case 10:
-                getcon.setActual04("0");
-                getcon.setActual05("0");
-                getcon.setActual06("0");
-                getcon.setActual07("0");
-                getcon.setActual08("0");
-                getcon.setActual09("0");
+                upTheme.setActual04("0");
+                upTheme.setActual05("0");
+                upTheme.setActual06("0");
+                upTheme.setActual07("0");
+                upTheme.setActual08("0");
+                upTheme.setActual09("0");
                 break;
             case 11:
-                getcon.setActual04("0");
-                getcon.setActual05("0");
-                getcon.setActual06("0");
-                getcon.setActual07("0");
-                getcon.setActual08("0");
-                getcon.setActual09("0");
-                getcon.setActual10("0");
+                upTheme.setActual04("0");
+                upTheme.setActual05("0");
+                upTheme.setActual06("0");
+                upTheme.setActual07("0");
+                upTheme.setActual08("0");
+                upTheme.setActual09("0");
+                upTheme.setActual10("0");
                 break;
             case 12:
-                getcon.setActual04("0");
-                getcon.setActual05("0");
-                getcon.setActual06("0");
-                getcon.setActual07("0");
-                getcon.setActual08("0");
-                getcon.setActual09("0");
-                getcon.setActual10("0");
-                getcon.setActual11("0");
+                upTheme.setActual04("0");
+                upTheme.setActual05("0");
+                upTheme.setActual06("0");
+                upTheme.setActual07("0");
+                upTheme.setActual08("0");
+                upTheme.setActual09("0");
+                upTheme.setActual10("0");
+                upTheme.setActual11("0");
                 break;
             case 1:
-                getcon.setActual04("0");
-                getcon.setActual05("0");
-                getcon.setActual06("0");
-                getcon.setActual07("0");
-                getcon.setActual08("0");
-                getcon.setActual09("0");
-                getcon.setActual10("0");
-                getcon.setActual11("0");
-                getcon.setActual12("0");
+                upTheme.setActual04("0");
+                upTheme.setActual05("0");
+                upTheme.setActual06("0");
+                upTheme.setActual07("0");
+                upTheme.setActual08("0");
+                upTheme.setActual09("0");
+                upTheme.setActual10("0");
+                upTheme.setActual11("0");
+                upTheme.setActual12("0");
                 break;
             case 2:
-                getcon.setActual04("0");
-                getcon.setActual05("0");
-                getcon.setActual06("0");
-                getcon.setActual07("0");
-                getcon.setActual08("0");
-                getcon.setActual09("0");
-                getcon.setActual10("0");
-                getcon.setActual11("0");
-                getcon.setActual12("0");
-                getcon.setActual01("0");
+                upTheme.setActual04("0");
+                upTheme.setActual05("0");
+                upTheme.setActual06("0");
+                upTheme.setActual07("0");
+                upTheme.setActual08("0");
+                upTheme.setActual09("0");
+                upTheme.setActual10("0");
+                upTheme.setActual11("0");
+                upTheme.setActual12("0");
+                upTheme.setActual01("0");
                 break;
             case 3:
-                getcon.setActual04("0");
-                getcon.setActual05("0");
-                getcon.setActual06("0");
-                getcon.setActual07("0");
-                getcon.setActual08("0");
-                getcon.setActual09("0");
-                getcon.setActual10("0");
-                getcon.setActual11("0");
-                getcon.setActual12("0");
-                getcon.setActual01("0");
-                getcon.setActual02("0");
+                upTheme.setActual04("0");
+                upTheme.setActual05("0");
+                upTheme.setActual06("0");
+                upTheme.setActual07("0");
+                upTheme.setActual08("0");
+                upTheme.setActual09("0");
+                upTheme.setActual10("0");
+                upTheme.setActual11("0");
+                upTheme.setActual12("0");
+                upTheme.setActual01("0");
+                upTheme.setActual02("0");
                 break;
         }
     }
