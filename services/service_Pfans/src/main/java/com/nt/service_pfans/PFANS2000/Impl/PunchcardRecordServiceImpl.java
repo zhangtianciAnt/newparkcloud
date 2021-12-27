@@ -4977,6 +4977,7 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
             if (customerInfo != null) {
                 pun.setUser_name(customerInfo.getUserinfo().getCustomername());
             }
+            punchcardrecordMapper.updateByPrimaryKey(pun);
         });
     }
     //临时接口 打卡记录历史数据 姓名补充 ztc 1125 to

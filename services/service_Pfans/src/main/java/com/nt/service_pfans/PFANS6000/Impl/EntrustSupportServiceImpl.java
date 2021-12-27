@@ -156,7 +156,7 @@ public class EntrustSupportServiceImpl implements EntrustSupportService {
                     wL = wL.stream().filter(item -> (item.getStatus().equals("4")) || item.getStatus().equals("0")).collect(Collectors.toList());
                     if(wL.size()>0)
                     {
-                        tempmonth = tempmonth + Integer.valueOf(years.trim().split("-")[1]) + "月,";
+                        tempmonth = tempmonth + Integer.valueOf(years.trim().split("-")[1]) + "月";
                         continue;
                     }
                 }
