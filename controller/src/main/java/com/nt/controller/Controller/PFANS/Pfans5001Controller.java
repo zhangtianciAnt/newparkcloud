@@ -484,7 +484,7 @@ public class Pfans5001Controller {
      * @参数：[
      * flag：0 项目开始时间小于2021-04-01，
      *       1 项目结束时间小于2021-04-01，且体制的结束时间大于2020-04-01；
-     * time：时间格式[YYYY-MM-DD];
+     * time：时间格式[yyyy-MM-DD];
      * ]
      * @返回值：List<CompanyProjectsReport>
      */
