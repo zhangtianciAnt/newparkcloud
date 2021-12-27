@@ -442,11 +442,11 @@ public class AssetsServiceImpl implements AssetsService {
                                 SimpleDateFormat sf1 = new SimpleDateFormat("dd/MM/yyyy");
                             }
                             SimpleDateFormat sf1 = new SimpleDateFormat("dd-MM-yyyy");
-                            //region scc del 启用日期导入格式为DD-MM-YYYY from
+                            //region scc del 启用日期导入格式为DD-MM-yyyy from
                             Date date2 = sf1.parse(date1);
                             assets.setInparams4(date2);
                             assets.setActivitiondate(date2);//111
-                            //endregion scc del 启用日期导入格式为DD-MM-YYYY to
+                            //endregion scc del 启用日期导入格式为DD-MM-yyyy to
                         }
                         //endregion scc upd 9/7 导入时间格式变更 to
                         //region scc add 9/7 启用日期必填 from

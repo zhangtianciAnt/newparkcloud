@@ -829,8 +829,11 @@ public class EvectionServiceImpl implements EvectionService {
 
     @Override
     public void updateEvectionVo(EvectionVo evectionVo, TokenModel tokenModel) throws Exception {
+        Evection evec = evectionMapper.selectByPrimaryKey(evectionVo.getEvection().getEvectionid());
         if(evectionVo.getEvection().getStatus().equals("4")){
-            this.writeOff(evectionVo,tokenModel);
+            if(!evec.getStatus().equals("4")){
+                this.writeOff(evectionVo,tokenModel);
+            }
         }
         Evection evection = new Evection();
         BeanUtils.copyProperties(evectionVo.getEvection(), evection);
