@@ -8,15 +8,19 @@ import cn.hutool.poi.excel.ExcelUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Auth.Vo.MembersVo;
-import com.nt.dao_Org.*;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Org.*;
 import com.nt.dao_Org.Vo.UserAccountVo;
 import com.nt.dao_Org.Vo.UserVo;
+import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.UserService;
-import com.nt.utils.*;
+import com.nt.utils.AuthConstants;
+import com.nt.utils.LogicalException;
+import com.nt.utils.MessageUtil;
+import com.nt.utils.MsgConstants;
 import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.JsTokenService;
@@ -39,7 +43,6 @@ import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
-import javax.naming.directory.BasicAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -474,7 +477,7 @@ public class UserServiceImpl implements UserService {
                 }
                 // region scc  add 21/8/13  医疗保险基数履历降序 from
                 List<CustomerInfo.Personal> medicalList = customerInfo.getUserinfo().getMedicalData();
-                if(medicalList != null && medicalList.size() > 0){
+                if (medicalList != null && medicalList.size() > 0) {
                     medicalList = medicalList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                 }
                 userInfo.setMedicalData(medicalList);
@@ -482,7 +485,7 @@ public class UserServiceImpl implements UserService {
 
                 // region scc  add 21/8/13  住房公积金基数履历降序 from
                 List<CustomerInfo.Personal> housingList = customerInfo.getUserinfo().getHouseData();
-                if(housingList != null && housingList.size() > 0){
+                if (housingList != null && housingList.size() > 0) {
                     housingList = housingList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                 }
                 userInfo.setHouseData(housingList);
@@ -490,7 +493,7 @@ public class UserServiceImpl implements UserService {
 
                 // region scc  add 21/8/13  养老保险基数履历降序 from
                 List<CustomerInfo.Personal> provideForAgedList = customerInfo.getUserinfo().getOldageData();
-                if(provideForAgedList != null && provideForAgedList.size() > 0){
+                if (provideForAgedList != null && provideForAgedList.size() > 0) {
                     provideForAgedList = provideForAgedList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                 }
                 userInfo.setOldageData(provideForAgedList);
@@ -498,7 +501,7 @@ public class UserServiceImpl implements UserService {
 
                 // region scc  add 21/8/13  工伤保险基数履历降序 from
                 List<CustomerInfo.Personal> InjuryList = customerInfo.getUserinfo().getGsData();
-                if(InjuryList != null && InjuryList.size() > 0){
+                if (InjuryList != null && InjuryList.size() > 0) {
                     InjuryList = InjuryList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                 }
                 userInfo.setGsData(InjuryList);
@@ -506,7 +509,7 @@ public class UserServiceImpl implements UserService {
 
                 // region scc  add 21/8/13  失业保险基数履历降序 from
                 List<CustomerInfo.Personal> unemploymentList = customerInfo.getUserinfo().getSyeData();
-                if(unemploymentList != null && unemploymentList.size() > 0){
+                if (unemploymentList != null && unemploymentList.size() > 0) {
                     unemploymentList = unemploymentList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                 }
                 userInfo.setSyeData(unemploymentList);
@@ -514,7 +517,7 @@ public class UserServiceImpl implements UserService {
 
                 // region scc  add 21/8/13  生育保险基数履历降序 from
                 List<CustomerInfo.Personal> fertilityList = customerInfo.getUserinfo().getSyuData();
-                if(fertilityList != null && fertilityList.size() > 0){
+                if (fertilityList != null && fertilityList.size() > 0) {
                     fertilityList = fertilityList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                 }
                 userInfo.setSyuData(fertilityList);
@@ -522,7 +525,7 @@ public class UserServiceImpl implements UserService {
 
                 // region scc  add 21/8/16  Rank履历降序 from
                 List<CustomerInfo.Personal> RankList = customerInfo.getUserinfo().getRankData();
-                if(RankList != null && RankList.size() > 0){
+                if (RankList != null && RankList.size() > 0) {
                     RankList = RankList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                 }
                 userInfo.setRankData(RankList);
@@ -530,7 +533,7 @@ public class UserServiceImpl implements UserService {
 
                 // region scc  add 21/8/16  职务履历降序 from
                 List<CustomerInfo.Personal> positionList = customerInfo.getUserinfo().getPostData();
-                if(positionList != null && positionList.size() > 0){
+                if (positionList != null && positionList.size() > 0) {
                     positionList = positionList.stream().sorted(Comparator.comparing(CustomerInfo.Personal::getDate).reversed()).collect(Collectors.toList());
                 }
                 userInfo.setPostData(positionList);
@@ -626,19 +629,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype, String virtual,TokenModel tokenModel) throws Exception {
+    public List<CustomerInfo> getAccountCustomer2(String orgid, String orgtype, String virtual, TokenModel tokenModel) throws Exception {
         Query query = new Query();
         if (StrUtil.isNotBlank(orgid)) {
             //update gbb 20210330 选择树根节点时显示总经理和副总经理 start
-            if(orgtype.equals("1") && !virtual.equals("")){
+            if (orgtype.equals("1") && !virtual.equals("")) {
                 //职务为总经理或副总经理+虚拟组织
-                query.addCriteria(Criteria.where("userinfo.post").in("PG021013","PG021017"));
-            }
-            else{
+                query.addCriteria(Criteria.where("userinfo.post").in("PG021013", "PG021017"));
+            } else {
                 //职务不为总经理或副总经理的数据
                 query.addCriteria(new Criteria().orOperator(Criteria.where("userinfo.centerid").is(orgid),
                         Criteria.where("userinfo.groupid").is(orgid), Criteria.where("userinfo.teamid").is(orgid))
-                        .andOperator(Criteria.where("userinfo.post").nin("PG021013","PG021017")));
+                        .andOperator(Criteria.where("userinfo.post").nin("PG021013", "PG021017")));
             }
             //update gbb 20210330 选择树根节点时显示总经理和副总经理 end
         }
@@ -805,6 +807,44 @@ public class UserServiceImpl implements UserService {
         userAccount.setStatus(status);
         mongoTemplate.save(userAccount);
     }
+
+    //  region  add  ml  211224  密码重置  from
+
+    /**
+     * @方法名：resetPassword
+     * @描述：密码重置
+     * @创建日期：2021/12/24
+     * @作者：MOLEI
+     * @参数：[userAccount]
+     * @返回值：void
+     */
+    @Override
+    public void resetPassword(UserAccount userAccount, TokenModel tokenModel) throws Exception {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("_id").is(userAccount.get_id()));
+        UserAccount userAccountInfo = mongoTemplate.findOne(query, UserAccount.class);
+        if (userAccountInfo != null) {
+            userAccountInfo.setPassword(userAccountInfo.getAccount());
+            userAccountInfo.setModifyby(tokenModel.getUserId());
+            userAccountInfo.setModifyon(new Date());
+            mongoTemplate.save(userAccountInfo);
+        }
+        Query queryInfo = new Query();
+        queryInfo.addCriteria(Criteria.where("userid").is(userAccount.get_id()));
+        CustomerInfo customerInfo = mongoTemplate.findOne(queryInfo, CustomerInfo.class);
+        if (customerInfo != null) {
+            //重置密码后给操作者发消息
+            ToDoNotice toDoNotice = new ToDoNotice();
+            toDoNotice.setTitle(customerInfo.getUserinfo().getCustomername() + "的密码已经重置成功，请及时通知！");
+            toDoNotice.setType("2");//消息
+            toDoNotice.setInitiator(tokenModel.getUserId());
+            toDoNotice.setUrl("/usersView");
+            toDoNotice.preInsert(tokenModel);
+            toDoNotice.setOwner(tokenModel.getUserId());
+            toDoNoticeService.save(toDoNotice);
+        }
+    }
+    //  endregion  add  ml  211224  密码重置  to
 
     /**
      * @方法名：setRoleToUser
@@ -1185,11 +1225,11 @@ public class UserServiceImpl implements UserService {
             if (orgTreeList.get(0).getOrgs().size() > 0) {
                 //副总经理
                 for (int z = 0; z < orgTreeList.get(0).getOrgs().size(); z++) {
-                    if(orgTreeList.get(0).getOrgs().get(z).getOrgs().size() > 0){
+                    if (orgTreeList.get(0).getOrgs().get(z).getOrgs().size() > 0) {
                         //center
                         for (int c = 0; c < orgTreeList.get(0).getOrgs().get(z).getOrgs().size(); c++) {
                             orgTreeCenterList.add(orgTreeList.get(0).getOrgs().get(z).getOrgs().get(c));
-                            if(orgTreeList.get(0).getOrgs().get(z).getOrgs().get(c).getOrgs().size() > 0){
+                            if (orgTreeList.get(0).getOrgs().get(z).getOrgs().get(c).getOrgs().size() > 0) {
                                 //group
                                 for (int g = 0; g < orgTreeList.get(0).getOrgs().get(z).getOrgs().get(c).getOrgs().size(); g++) {
                                     orgTreeGroupList.add(orgTreeList.get(0).getOrgs().get(z).getOrgs().get(c).getOrgs().get(g));
@@ -1275,7 +1315,7 @@ public class UserServiceImpl implements UserService {
                             throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 姓名 在人员表中已存在同音的员工，生成登录账户时会重复，请确认。");
                         }
                     }
-                }else{
+                } else {
                     throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "的登录账户不能为空，请确认。");
                 }
                 //center
@@ -1283,15 +1323,14 @@ public class UserServiceImpl implements UserService {
                 if (!org.springframework.util.StringUtils.isEmpty(item.get("センター"))) {
                     String cen = item.get("センター").toString();
                     //ztc 修改用户导入BUG 20210804 to
-                    if(cen.equals("废弃")){
+                    if (cen.equals("废弃")) {
                         userinfo.setCentername("废弃");
                         userinfo.setCenterid("废弃");
                         userinfo.setGroupname("废弃");
                         userinfo.setGroupid("废弃");
                         userinfo.setTeamname("废弃");
                         userinfo.setTeamid("废弃");
-                    }
-                    else{
+                    } else {
                         // update gbb 20210325 用户导入时获取组织架构改为查询一次 start
                         //List<OrgTree> orgTreeList = mongoTemplate.findAll(OrgTree.class);
                         // update gbb 20210325 用户导入时获取组织架构改为查询一次 end
@@ -1320,15 +1359,14 @@ public class UserServiceImpl implements UserService {
                         //region 2021人员信息变更-组织架构导入
                         List<OrgTree> orgTreeCenter = orgTreeCenterList.stream().filter(center -> (center.getTitle().equals(cen.trim()))
                                 || (center.getCompanyname().equals(cen.trim())) || (center.getCompanyshortname().equals(cen.trim()))).collect(Collectors.toList());
-                        if(orgTreeCenter.size() > 0){
+                        if (orgTreeCenter.size() > 0) {
                             userinfo.setCentername(orgTreeCenter.get(0).getCompanyname());
                             userinfo.setCenterid(orgTreeCenter.get(0).get_id());
                             userinfo.setGroupname(null);
                             userinfo.setGroupid(null);
                             userinfo.setTeamname(null);
                             userinfo.setTeamid(null);
-                        }
-                        else{
+                        } else {
                             //ztc 修改用户导入BUG 20210804 fr
                             throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 センター(" + item.get("センター").toString() + ")不存在！");
                             //ztc 修改用户导入BUG 20210804 to
@@ -1401,25 +1439,25 @@ public class UserServiceImpl implements UserService {
                     //region 2021人员信息变更-组织架构导入
                     List<OrgTree> orgTreeCenter = orgTreeCenterList.stream().filter(center -> (center.getTitle().equals(cen.trim()))
                             || (center.getCompanyname().equals(cen.trim())) || (center.getCompanyshortname().equals(cen.trim()))).collect(Collectors.toList());
-                    if(orgTreeCenter.size() > 0){
+                    if (orgTreeCenter.size() > 0) {
                         userinfo.setCentername(orgTreeCenter.get(0).getCompanyname());
                         userinfo.setCenterid(orgTreeCenter.get(0).get_id());
                     }
                     //ztc 修改用户导入BUG 20210804 fr
-                    else{
+                    else {
                         throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 センター(" + item.get("センター").toString() + ")不存在！");
                     }
                     //ztc 修改用户导入BUG 20210804 to
                     List<OrgTree> orgTreeGroup = orgTreeGroupList.stream().filter(center -> (center.getTitle().equals(grp.trim()))
                             || (center.getDepartmentname().equals(grp.trim()))).collect(Collectors.toList());
-                    if(orgTreeGroup.size() > 0){
+                    if (orgTreeGroup.size() > 0) {
                         userinfo.setGroupname(orgTreeGroup.get(0).getDepartmentname());
                         userinfo.setGroupid(orgTreeGroup.get(0).get_id());
                         userinfo.setTeamname(null);
                         userinfo.setTeamid(null);
                     }
                     //ztc 修改用户导入BUG 20210804 fr
-                    else{
+                    else {
                         throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 グループ(" + item.get("グループ").toString() + ")不存在，或不属于本组织！");
                     }
                     //ztc 修改用户导入BUG 20210804 to
@@ -1995,10 +2033,9 @@ public class UserServiceImpl implements UserService {
                 query.addCriteria(Criteria.where("account").is(ust.getAccount()));
                 query.addCriteria(Criteria.where("password").is(ust.getPassword()));
                 List<UserAccount> userAccountlist = mongoTemplate.find(query, UserAccount.class);
-                if(ust.getAccount() != null && ust.getAccount() != null && userAccountlist.size() > 0){
+                if (ust.getAccount() != null && ust.getAccount() != null && userAccountlist.size() > 0) {
                     customerInfo.setUserid(userAccountlist.get(0).get_id());
-                }
-                else{
+                } else {
                     customerInfo.setUserid(UUID.randomUUID().toString());//111
                 }
                 customerInfo.preInsert(tokenModel);
@@ -2104,15 +2141,14 @@ public class UserServiceImpl implements UserService {
                         //region 2021人员信息变更-组织架构导入
                         List<OrgTree> orgTreeCenter = orgTreeCenterList.stream().filter(center -> (center.getTitle().equals(cen.trim()))
                                 || (center.getCompanyname().equals(cen.trim())) || (center.getCompanyshortname().equals(cen.trim()))).collect(Collectors.toList());
-                        if(orgTreeCenter.size() > 0){
+                        if (orgTreeCenter.size() > 0) {
                             customerInfoList.get(0).getUserinfo().setCentername(orgTreeCenter.get(0).getCompanyname());
                             customerInfoList.get(0).getUserinfo().setCenterid(orgTreeCenter.get(0).get_id());
                             customerInfoList.get(0).getUserinfo().setGroupname(null);
                             customerInfoList.get(0).getUserinfo().setGroupid(null);
                             customerInfoList.get(0).getUserinfo().setTeamname(null);
                             customerInfoList.get(0).getUserinfo().setTeamid(null);
-                        }
-                        else{
+                        } else {
                             throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 センター(" + item.get("センター●").toString() + ")不存在！");
                         }
                         //endregion
@@ -2182,11 +2218,10 @@ public class UserServiceImpl implements UserService {
                         //region 2021人员信息变更-组织架构导入
                         List<OrgTree> orgTreeCenter = orgTreeCenterList.stream().filter(center -> (center.getTitle().equals(cen.trim()))
                                 || (center.getCompanyname().equals(cen.trim())) || (center.getCompanyshortname().equals(cen.trim()))).collect(Collectors.toList());
-                        if(orgTreeCenter.size() > 0){
+                        if (orgTreeCenter.size() > 0) {
                             customerInfoList.get(0).getUserinfo().setCentername(orgTreeCenter.get(0).getCompanyname());
                             customerInfoList.get(0).getUserinfo().setCenterid(orgTreeCenter.get(0).get_id());
-                        }
-                        else{
+                        } else {
                             //ztc 修改用户导入BUG 20210804 fr
                             throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 センター(" + item.get("センター●").toString() + ")不存在！");
                             //ztc 修改用户导入BUG 20210804 to
@@ -2194,13 +2229,12 @@ public class UserServiceImpl implements UserService {
 
                         List<OrgTree> orgTreeGroup = orgTreeGroupList.stream().filter(center -> (center.getTitle().equals(grp.trim()))
                                 || (center.getDepartmentname().equals(grp.trim()))).collect(Collectors.toList());
-                        if(orgTreeGroup.size() > 0){
+                        if (orgTreeGroup.size() > 0) {
                             customerInfoList.get(0).getUserinfo().setGroupname(orgTreeGroup.get(0).getDepartmentname());
                             customerInfoList.get(0).getUserinfo().setGroupid(orgTreeGroup.get(0).get_id());
                             customerInfoList.get(0).getUserinfo().setTeamname(null);
                             customerInfoList.get(0).getUserinfo().setTeamid(null);
-                        }
-                        else{
+                        } else {
                             //ztc 修改用户导入BUG 20210804 fr
                             throw new LogicalException("卡号（" + Convert.toStr(item.get("卡号")) + "）" + "对应的 グループ(" + item.get("グループ●").toString() + ")不存在，或不属于本组织！");
                             //ztc 修改用户导入BUG 20210804 to
@@ -2960,14 +2994,11 @@ public class UserServiceImpl implements UserService {
         //        return logslist;
         List<Log.Logs> logslists = new ArrayList<>();
         if (loglist.size() > 0) {
-            for(Log log : loglist)
-            {
+            for (Log log : loglist) {
                 logslist = log.getLogs();
                 if (logslist.size() > 0) {
-                    for(Log.Logs logs:logslist)
-                    {
-                        if(logs.getCreateby()!=null && logs.getCreateby().contains(userId))
-                        {
+                    for (Log.Logs logs : logslist) {
+                        if (logs.getCreateby() != null && logs.getCreateby().contains(userId)) {
                             logslists.add(logs);
                         }
                     }
@@ -3033,6 +3064,7 @@ public class UserServiceImpl implements UserService {
         }
         return customerInfoList;
     }
+
     //add-21/2/3-PSDCD_PFANS_20201124_XQ_033
     @Override
     public void checkpassword(UserAccountVo userAccountVo) throws Exception {

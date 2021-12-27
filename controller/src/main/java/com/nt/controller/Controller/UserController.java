@@ -4,12 +4,16 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Log;
+import com.nt.dao_Org.ToDoNotice;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.UserAccountVo;
 import com.nt.dao_Org.Vo.UserVo;
+import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.service_Org.LogService;
+import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.UserService;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
+import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
 import com.nt.utils.*;
 import com.nt.utils.dao.JsTokenModel;
 import com.nt.utils.dao.TokenModel;
@@ -64,6 +68,13 @@ public class UserController {
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
+
+    @Autowired
+    private ExpatriatesinforService expatriatesinforService;
+
+    @Autowired
+    private ToDoNoticeService toDoNoticeService;
+
 //    出向者 身份证 出生年月 不是必填项 ztc from
     private static final SimpleDateFormat sdfYMD = new SimpleDateFormat("yyyy/MM/dd");
 //    出向者 身份证 出生年月 不是必填项 ztc to
@@ -410,6 +421,39 @@ public class UserController {
             return ApiResult.success("0");
         }
     }
+
+    //  region  add  ml  211224  密码重置  from
+    @RequestMapping(value = "/resetPassword", method = {RequestMethod.POST})
+    public ApiResult resetPassword(@RequestBody UserAccount userAccount, HttpServletRequest request) throws Exception {
+        try {
+            TokenModel tokenModel = tokenService.getToken(request);
+            if (tokenModel.getUserId().equals("5e78b22c4e3b194874180f5f")) {
+                userService.resetPassword(userAccount, tokenModel);
+            } else {
+                Expatriatesinfor exinfo = new Expatriatesinfor();
+                exinfo.setAccount(userAccount.get_id());
+                List<Expatriatesinfor> expatriatesinforList = expatriatesinforService.getexpatriatesinfor(exinfo);
+                if(expatriatesinforList.size() > 0){
+                    ToDoNotice toDoNotice = new ToDoNotice();
+                    if(com.nt.utils.StringUtils.isBase64Encode(expatriatesinforList.get(0).getExpname())){
+                        toDoNotice.setTitle(cn.hutool.core.codec.Base64.decodeStr(expatriatesinforList.get(0).getExpname()) + "的密码已经重置成功，请及时通知！");
+                    }else{
+                        toDoNotice.setTitle(expatriatesinforList.get(0).getExpname() + "的密码已经重置成功，请及时通知！");
+                    }
+                    toDoNotice.setType("2");//消息
+                    toDoNotice.setInitiator(tokenModel.getUserId());
+                    toDoNotice.setUrl("/PFANS6004View");
+                    toDoNotice.preInsert(tokenModel);
+                    toDoNotice.setOwner(tokenModel.getUserId());
+                    toDoNoticeService.save(toDoNotice);
+                }
+            }
+            return ApiResult.success();
+        } catch (LogicalException e) {
+            return ApiResult.fail(e.getMessage());
+        }
+    }
+    //  endregion  add  ml  211224  密码重置  to
 
     //定时任务清除log
     @RequestMapping(value = "/remMgoLog", method = {RequestMethod.POST})

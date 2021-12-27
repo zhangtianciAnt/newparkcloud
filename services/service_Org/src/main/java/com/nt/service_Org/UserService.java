@@ -74,6 +74,10 @@ public interface UserService {
     // 给用户赋角色
     void setRoleToUser(UserAccount userAccount) throws Exception;
 
+    //  region  add  ml  211224  密码重置  from
+    void resetPassword(UserAccount userAccount, TokenModel tokenModel) throws Exception;
+    //  endregion  add  ml  211224  密码重置  to
+
     // 微信端用获取用户信息
     UserVo updUserInfo(CustomerInfo customerInfo) throws Exception;
 
