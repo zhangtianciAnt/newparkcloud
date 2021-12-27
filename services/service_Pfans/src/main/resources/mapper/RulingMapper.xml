@@ -45,9 +45,8 @@
                 AND VERSION = #{oldVersion}
             ) AS ur ON ur.RULING_ID = rua.RULING_ID
         set ACTUALRESIDUAL = ACTUALRESIDUAL - ur.RESULTA,
-          ,ACTUALCONSUMPTION = ACTUALCONSUMPTION + ur.RESULTA,
-          ,VERSION = VERSION + 1
-        ;
+          ACTUALCONSUMPTION = ACTUALCONSUMPTION + ur.RESULTA,
+          VERSION = VERSION + 1;
     </update>
 
     <update id="updateRulingInfoAnt" parameterType="com.nt.dao_Pfans.PFANS1000.Ruling">

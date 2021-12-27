@@ -261,7 +261,7 @@ public class OvertimeServiceImpl implements OvertimeService {
             replacerest.setCenter_id(overtime.getCenterid());
             replacerest.setGroup_id(overtime.getGroupid());
             replacerest.setTeam_id(overtime.getTeamid());
-            replacerest.setApplication_date(DateUtil.format(new Date(),"YYYY/MM/dd"));
+            replacerest.setApplication_date(DateUtil.format(new Date(),"yyyy/MM/dd"));
             replacerest.setType(strtype);
             replacerest.setDuration("8");
             replacerest.setRecognitionstate("0");

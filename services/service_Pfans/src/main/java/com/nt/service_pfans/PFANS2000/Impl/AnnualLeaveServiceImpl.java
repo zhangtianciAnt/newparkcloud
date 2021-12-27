@@ -532,7 +532,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
         annualLeave.setAnnualleave_id(annualleaveid);
         annualLeave.setUser_id(customer.getUserid());
         annualLeave.setOwner(customer.getUserid());
-//        annualLeave.setYears(DateUtil.format(new Date(),"YYYY"));
+//        annualLeave.setYears(DateUtil.format(new Date(),"yyyy"));
         Calendar calyears = Calendar.getInstance();
         //当前年度
         int year = 0;
@@ -3398,7 +3398,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 //                    attendance.setGroup_id(customerInfo.getUserinfo().getGroupname());
 //                    attendance.setTeam_id(customerInfo.getUserinfo().getTeamname());
 //
-//                    attendance.setYears(DateUtil.format(sfymd.parse(recordTime),"YYYY").toString());
+//                    attendance.setYears(DateUtil.format(sfymd.parse(recordTime),"yyyy").toString());
 //                    attendance.setMonths(DateUtil.format(sfymd.parse(recordTime),"MM").toString());
 //                    attendance.setAttendanceid(UUID.randomUUID().toString());
 //                    attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
@@ -3829,7 +3829,7 @@ public class AnnualLeaveServiceImpl implements AnnualLeaveService {
 //                attendance.setGroup_id(inforlist.get(0).getGroup_id());
 //                attendance.setUser_id(inforlist.get(0).getAccount());
 //                attendance.setDates(new Date());
-//                attendance.setYears(DateUtil.format(attendance.getDates(), "YYYY").toString());
+//                attendance.setYears(DateUtil.format(attendance.getDates(), "yyyy").toString());
 //                attendance.setMonths(DateUtil.format(attendance.getDates(), "MM").toString());
 //                attendance.setRecognitionstate(AuthConstants.RECOGNITION_FLAG_NO);
 //                attendance.preInsert(tokenModel);

@@ -82,7 +82,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         //add-ws-5/6-根据当前月份和当前月的上个月获取数据
         String userid = attendance.getUser_id();
         String accYear = "";
-        SimpleDateFormat format = new SimpleDateFormat("YYYY");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy");
         SimpleDateFormat sf1 = new SimpleDateFormat("MM");
         String strTemp = sf1.format(new Date());     //当前月
         String strYear = format.format(new Date());     //当前年

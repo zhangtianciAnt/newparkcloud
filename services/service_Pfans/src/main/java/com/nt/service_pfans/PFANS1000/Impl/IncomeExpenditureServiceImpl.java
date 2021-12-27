@@ -105,7 +105,7 @@ public class IncomeExpenditureServiceImpl implements IncomeExpenditureService {
         XSSFSheet sheet1 = work.getSheetAt(0);
         List<IncomeExpenditureVo> incomeexpenditurevolist = new ArrayList<>();
         SimpleDateFormat s = new SimpleDateFormat("MM");
-        SimpleDateFormat s1 = new SimpleDateFormat("YYYY");
+        SimpleDateFormat s1 = new SimpleDateFormat("yyyy");
         int year = Integer.valueOf(s.format(new Date())) >= 4 ? Integer.valueOf(s1.format(new Date())) + 1 : Integer.valueOf(s1.format(new Date()));
         if (radioy.equals("4")) {
             OrgTree orgs = orgTreeService.get(new OrgTree());
@@ -448,7 +448,7 @@ public class IncomeExpenditureServiceImpl implements IncomeExpenditureService {
     public List<IncomeExpenditureVo> getrodiodetailone(String radioy, String radiox) throws Exception {
         List<IncomeExpenditureVo> incomeexpenditurevolist = new ArrayList<>();
         SimpleDateFormat s = new SimpleDateFormat("MM");
-        SimpleDateFormat s1 = new SimpleDateFormat("YYYY");
+        SimpleDateFormat s1 = new SimpleDateFormat("yyyy");
         int scale = 2;//设置位数
         int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
         int year = Integer.valueOf(s.format(new Date())) >= 4 ? Integer.valueOf(s1.format(new Date())) + 1 : Integer.valueOf(s1.format(new Date()));
@@ -2941,7 +2941,7 @@ public class IncomeExpenditureServiceImpl implements IncomeExpenditureService {
     public List<IncomeExpenditureVo> getrodiodetailtwo(String radiox, String radioy) throws Exception {
         List<IncomeExpenditureVo> incomeexpenditurevolist = new ArrayList<>();
         SimpleDateFormat s = new SimpleDateFormat("MM");
-        SimpleDateFormat s1 = new SimpleDateFormat("YYYY");
+        SimpleDateFormat s1 = new SimpleDateFormat("yyyy");
         int scale = 2;//设置位数
         int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
         int year = Integer.valueOf(s.format(new Date())) >= 4 ? Integer.valueOf(s1.format(new Date())) + 1 : Integer.valueOf(s1.format(new Date()));
@@ -5048,7 +5048,7 @@ public class IncomeExpenditureServiceImpl implements IncomeExpenditureService {
     public List<IncomeExpenditureVo> getrodiodetailthree(String radiox, String radioy) throws Exception {
         List<IncomeExpenditureVo> incomeexpenditurevolist = new ArrayList<>();
         SimpleDateFormat s = new SimpleDateFormat("MM");
-        SimpleDateFormat s1 = new SimpleDateFormat("YYYY");
+        SimpleDateFormat s1 = new SimpleDateFormat("yyyy");
         int scale = 2;//设置位数
         int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
         int year = Integer.valueOf(s.format(new Date())) >= 4 ? Integer.valueOf(s1.format(new Date())) + 1 : Integer.valueOf(s1.format(new Date()));
@@ -7236,7 +7236,7 @@ public class IncomeExpenditureServiceImpl implements IncomeExpenditureService {
     @Scheduled(cron = "0 10 0 1 4 ?")
     public void getThemeDetatiList() throws Exception {
         SimpleDateFormat s = new SimpleDateFormat("MM");
-        SimpleDateFormat s1 = new SimpleDateFormat("YYYY");
+        SimpleDateFormat s1 = new SimpleDateFormat("yyyy");
         OrgTree orgs = orgTreeService.get(new OrgTree());
         for (OrgTree org : orgs.getOrgs()) {
             for (OrgTree org1 : org.getOrgs()) {
