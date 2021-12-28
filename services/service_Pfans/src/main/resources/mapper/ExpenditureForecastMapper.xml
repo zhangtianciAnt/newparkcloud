@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.ExpenditureForecastMapper">
+
+    <insert id="insertOrUpdateBatch" keyProperty="id">
+        insert into expenditure_forecast(id, themeinfor_id, class_ification, save_date, dept_id, annual,
+        hours_plan4, money_plan4, hours_forecast4, money_forecast4, hours_actual4, money_actual4,
+        hours_plan5, money_plan5, hours_forecast5, money_forecast5, hours_actual5, money_actual5,
+        hours_plan6, money_plan6, hours_forecast6, money_forecast6, hours_actual6, money_actual6,
+        hours_plan7, money_plan7, hours_forecast7, money_forecast7, hours_actual7, money_actual7,
+        hours_plan8, money_plan8, hours_forecast8, money_forecast8, hours_actual8, money_actual8,
+        hours_plan9, money_plan9, hours_forecast9, money_forecast9, hours_actual9, money_actual9,
+        hours_plan10, money_plan10, hours_forecast10, money_forecast10, hours_actual10, money_actual10,
+        hours_plan11, money_plan11, hours_forecast11, money_forecast11, hours_actual11, money_actual11,
+        hours_plan12, money_plan12, hours_forecast12, money_forecast12, hours_actual12, money_actual12,
+        hours_plan1, money_plan1, hours_forecast1, money_forecast1, hours_actual1, money_actual1,
+        hours_plan2, money_plan2, hours_forecast2, money_forecast2, hours_actual2, money_actual2,
+        hours_plan3, money_plan3, hours_forecast3, money_forecast3, hours_actual3, money_actual3,
+        CREATEBY, CREATEON, MODIFYBY, MODIFYON, OWNER, STATUS, TENANTID)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id}, #{entity.themeinforId}, #{entity.classIfication}, #{entity.saveDate}, #{entity.deptId}, #{entity.annual},
+             #{entity.hoursPlan4}, #{entity.moneyPlan4}, #{entity.hoursForecast4}, #{entity.moneyForecast4}, #{entity.hoursActual4}, #{entity.moneyActual4},
+             #{entity.hoursPlan5}, #{entity.moneyPlan5}, #{entity.hoursForecast5}, #{entity.moneyForecast5}, #{entity.hoursActual5}, #{entity.moneyActual5},
+             #{entity.hoursPlan6}, #{entity.moneyPlan6}, #{entity.hoursForecast6}, #{entity.moneyForecast6}, #{entity.hoursActual6}, #{entity.moneyActual6},
+             #{entity.hoursPlan7}, #{entity.moneyPlan7}, #{entity.hoursForecast7}, #{entity.moneyForecast7}, #{entity.hoursActual7}, #{entity.moneyActual7},
+             #{entity.hoursPlan8}, #{entity.moneyPlan8}, #{entity.hoursForecast8}, #{entity.moneyForecast8}, #{entity.hoursActual8}, #{entity.moneyActual8},
+             #{entity.hoursPlan9}, #{entity.moneyPlan9}, #{entity.hoursForecast9}, #{entity.moneyForecast9}, #{entity.hoursActual9}, #{entity.moneyActual9},
+             #{entity.hoursPlan10}, #{entity.moneyPlan10}, #{entity.hoursForecast10}, #{entity.moneyForecast10}, #{entity.hoursActual10}, #{entity.moneyActual10},
+             #{entity.hoursPlan11}, #{entity.moneyPlan11}, #{entity.hoursForecast11}, #{entity.moneyForecast11}, #{entity.hoursActual11}, #{entity.moneyActual11},
+             #{entity.hoursPlan12}, #{entity.moneyPlan12}, #{entity.hoursForecast12}, #{entity.moneyForecast12}, #{entity.hoursActual12}, #{entity.moneyActual12},
+             #{entity.hoursPlan1}, #{entity.moneyPlan1}, #{entity.hoursForecast1}, #{entity.moneyForecast1}, #{entity.hoursActual1}, #{entity.moneyActual1},
+             #{entity.hoursPlan2}, #{entity.moneyPlan2}, #{entity.hoursForecast2}, #{entity.moneyForecast2}, #{entity.hoursActual2}, #{entity.moneyActual2},
+             #{entity.hoursPlan3}, #{entity.moneyPlan3}, #{entity.hoursForecast3}, #{entity.moneyForecast3}, #{entity.hoursActual3}, #{entity.moneyActual3},
+             #{entity.createby}, #{entity.createon}, #{entity.modifyby}, #{entity.modifyon}, #{entity.owner}, #{entity.status}, #{entity.tenantid})
+        </foreach>
+        on duplicate key update
+        themeinfor_id = values(themeinfor_id),
+        class_ification = values(class_ification),
+        save_date = values(save_date),
+        dept_id = values(dept_id),
+        hours_plan4 = values(hours_plan4),
+        money_plan4 = values(money_plan4),
+        hours_forecast4 = values(hours_forecast4),
+        money_forecast4 = values(money_forecast4),
+        hours_actual4 = values(hours_actual4),
+        money_actual4 = values(money_actual4),
+        hours_plan5 = values(hours_plan5),
+        money_plan5 = values(money_plan5),
+        hours_forecast5 = values(hours_forecast5),
+        money_forecast5 = values(money_forecast5),
+        hours_actual5 = values(hours_actual5),
+        money_actual5 = values(money_actual5),
+        hours_plan6 = values(hours_plan6),
+        money_plan6 = values(money_plan6),
+        hours_forecast6 = values(hours_forecast6),
+        money_forecast6 = values(money_forecast6),
+        hours_actual6 = values(hours_actual6),
+        money_actual6 = values(money_actual6),
+        hours_plan7 = values(hours_plan7),
+        money_plan7 = values(money_plan7),
+        hours_forecast7 = values(hours_forecast7),
+        money_forecast7 = values(money_forecast7),
+        hours_actual7 = values(hours_actual7),
+        money_actual7 = values(money_actual7),
+        hours_plan8 = values(hours_plan8),
+        money_plan8 = values(money_plan8),
+        hours_forecast8 = values(hours_forecast8),
+        money_forecast8 = values(money_forecast8),
+        hours_actual8 = values(hours_actual8),
+        money_actual8 = values(money_actual8),
+        hours_plan9 = values(hours_plan9),
+        money_plan9 = values(money_plan9),
+        hours_forecast9 = values(hours_forecast9),
+        money_forecast9 = values(money_forecast9),
+        hours_actual9 = values(hours_actual9),
+        money_actual9 = values(money_actual9),
+        hours_plan10 = values(hours_plan10),
+        money_plan10 = values(money_plan10),
+        hours_forecast10 = values(hours_forecast10),
+        money_forecast10 = values(money_forecast10),
+        hours_actual10 = values(hours_actual10),
+        money_actual10 = values(money_actual10),
+        hours_plan11 = values(hours_plan11),
+        money_plan11 = values(money_plan11),
+        hours_forecast11 = values(hours_forecast11),
+        money_forecast11 = values(money_forecast11),
+        hours_actual11 = values(hours_actual11),
+        money_actual11 = values(money_actual11),
+        hours_plan12 = values(hours_plan12),
+        money_plan12 = values(money_plan12),
+        hours_forecast12 = values(hours_forecast12),
+        money_forecast12 = values(money_forecast12),
+        hours_actual12 = values(hours_actual12),
+        money_actual12 = values(money_actual12),
+        hours_plan1 = values(hours_plan1),
+        money_plan1 = values(money_plan1),
+        hours_forecast1 = values(hours_forecast1),
+        money_forecast1 = values(money_forecast1),
+        hours_actual1 = values(hours_actual1),
+        money_actual1 = values(money_actual1),
+        hours_plan2 = values(hours_plan2),
+        money_plan2 = values(money_plan2),
+        hours_forecast2 = values(hours_forecast2),
+        money_forecast2 = values(money_forecast2),
+        hours_actual2 = values(hours_actual2),
+        money_actual2 = values(money_actual2),
+        hours_plan3 = values(hours_plan3),
+        money_plan3 = values(money_plan3),
+        hours_forecast3 = values(hours_forecast3),
+        money_forecast3 = values(money_forecast3),
+        hours_actual3 = values(hours_actual3),
+        money_actual3 = values(money_actual3),
+        CREATEBY = values(CREATEBY),
+        CREATEON = values(CREATEON),
+        MODIFYBY = values(MODIFYBY),
+        MODIFYON = values(MODIFYON),
+        OWNER = values(OWNER),
+        STATUS = values(STATUS),
+        TENANTID = values(TENANTID)
+    </insert>
+
+    <select id="getThemeOutDepth" resultType="com.nt.dao_Pfans.PFANS1000.ExpenditureForecast">
+        SELECT theme.THEMEINFOR_ID  themeinforId,
+        theme.THEMENAME      themeName,
+        theme.TOOLSORGS      customerName
+        FROM themeinfor theme
+        LEFT JOIN themeplandetail detail
+        ON theme.THEMEINFOR_ID = detail.THEMEINFOR_ID
+        <if test="deptId != null and deptId != ''" >
+            AND detail.CENTER_ID = #{deptId}
+        </if>
+        <if test="year != null and year != ''" >
+            AND detail.YEAR = #{year}
+        </if>
+        <where>
+            detail.THEMEPLANDETAIL_ID IS NULL
+            <if test="year != null and year != ''" >
+                AND theme.YEAR = #{year}
+            </if>
+        </where>
+        GROUP BY theme.THEMEINFOR_ID
+    </select>
+
+    <select id="getTheme" resultType="com.nt.dao_Pfans.PFANS1000.ExpenditureForecast">
+        SELECT theme.THEMEINFOR_ID  themeinforId,
+        theme.THEMENAME      themeName,
+        theme.TOOLSORGS      customerName,
+        detail.TYPE type,
+        detail.CONTRACTTYPE contracttype,
+        detail.PERSONNEL4 hoursPlan4,
+        detail.AMOUNT4 moneyPlan4,
+        detail.PERSONNEL5 hoursPlan5,
+        detail.AMOUNT5 moneyPlan5,
+        detail.PERSONNEL6 hoursPlan6,
+        detail.AMOUNT6 moneyPlan6,
+        detail.PERSONNEL7 hoursPlan7,
+        detail.AMOUNT7 moneyPlan7,
+        detail.PERSONNEL8 hoursPlan8,
+        detail.AMOUNT8 moneyPlan8,
+        detail.PERSONNEL9 hoursPlan9,
+        detail.AMOUNT9 moneyPlan9,
+        detail.PERSONNEL10 hoursPlan10,
+        detail.AMOUNT10 moneyPlan10,
+        detail.PERSONNEL11 hoursPlan11,
+        detail.AMOUNT11 moneyPlan11,
+        detail.PERSONNEL12 hoursPlan12,
+        detail.AMOUNT12 moneyPlan12,
+        detail.PERSONNEL1 hoursPlan1,
+        detail.AMOUNT1 moneyPlan1,
+        detail.PERSONNEL2 hoursPlan2,
+        detail.AMOUNT2 moneyPlan2,
+        detail.PERSONNEL3 hoursPlan3,
+        detail.AMOUNT3 moneyPlan3
+        FROM themeinfor theme
+        INNER JOIN themeplandetail detail
+        ON theme.THEMEINFOR_ID = detail.THEMEINFOR_ID
+        <if test="deptId != null and deptId != ''" >
+            AND detail.CENTER_ID = #{deptId}
+        </if>
+        <if test="year != null and year != ''" >
+            AND detail.YEAR = #{year}
+        </if>
+        <where>
+            detail.THEMEPLANDETAIL_ID IS NOT NULL
+            <if test="year != null and year != ''" >
+                AND theme.YEAR = #{year}
+            </if>
+        </where>
+        GROUP BY theme.THEMEINFOR_ID,theme.THEMENAME,theme.TOOLSORGS,
+                 detail.TYPE,detail.CONTRACTTYPE,detail.PERSONNEL4,detail.AMOUNT4,
+                 PERSONNEL5,detail.AMOUNT5,PERSONNEL6,detail.AMOUNT6,PERSONNEL7,detail.AMOUNT7,
+                 PERSONNEL8,detail.AMOUNT8,PERSONNEL9,detail.AMOUNT9,PERSONNEL10,detail.AMOUNT10,
+                 PERSONNEL11,detail.AMOUNT11,PERSONNEL12,detail.AMOUNT12,PERSONNEL1,detail.AMOUNT1,
+                 PERSONNEL2,detail.AMOUNT2,PERSONNEL3,detail.AMOUNT3
+    </select>
+
+    <select id="selectOldRevenueForecastList" resultType="com.nt.dao_Pfans.PFANS1000.ExpenditureForecast">
+        SELECT exp.id         id,
+        exp.themeinfor_id themeinforId,
+        exp.class_ification classIfication,
+        theme.THEMENAME themeName,
+        theme.TOOLSORGS customerName,
+        exp.save_date saveDate,
+        exp.dept_id deptId,
+        exp.hours_plan4 hoursPlan4,
+        exp.money_plan4 moneyPlan4,
+        exp.hours_forecast4 hoursForecast4,
+        exp.money_forecast4 moneyForecast4,
+        exp.hours_actual4 hoursActual4,
+        exp.money_actual4 moneyActual4,
+        exp.hours_plan5 hoursPlan5,
+        exp.money_plan5 moneyPlan5,
+        exp.hours_forecast5 hoursForecast5,
+        exp.money_forecast5 moneyForecast5,
+        exp.hours_actual5 hoursActual5,
+        exp.money_actual5 moneyActual5,
+        exp.hours_plan6 hoursPlan6,
+        exp.money_plan6 moneyPlan6,
+        exp.hours_forecast6 hoursForecast6,
+        exp.money_forecast6 moneyForecast6,
+        exp.hours_actual6 hoursActual6,
+        exp.money_actual6 moneyActual6,
+        exp.hours_plan7 hoursPlan7,
+        exp.money_plan7 moneyPlan7,
+        exp.hours_forecast7 hoursForecast7,
+        exp.money_forecast7 moneyForecast7,
+        exp.hours_actual7 hoursActual7,
+        exp.money_actual7 moneyActual7,
+        exp.hours_plan8 hoursPlan8,
+        exp.money_plan8 moneyPlan8,
+        exp.hours_forecast8 hoursForecast8,
+        exp.money_forecast8 moneyForecast8,
+        exp.hours_actual8 hoursActual8,
+        exp.money_actual8 moneyActual8,
+        exp.hours_plan9 hoursPlan9,
+        exp.money_plan9 moneyPlan9,
+        exp.hours_forecast9 hoursForecast9,
+        exp.money_forecast9 moneyForecast9,
+        exp.hours_actual9 hoursActual9,
+        exp.money_actual9 moneyActual9,
+        exp.hours_plan10 hoursPlan10,
+        exp.money_plan10 moneyPlan10,
+        exp.hours_forecast10 hoursForecast10,
+        exp.money_forecast10 moneyForecast10,
+        exp.hours_actual10 hoursActual10,
+        exp.money_actual10 moneyActual10,
+        exp.hours_plan11 hoursPlan11,
+        exp.money_plan11 moneyPlan11,
+        exp.hours_forecast11 hoursForecast11,
+        exp.money_forecast11 moneyForecast11,
+        exp.hours_actual11 hoursActual11,
+        exp.money_actual11 moneyActual11,
+        exp.hours_plan12 hoursPlan12,
+        exp.money_plan12 moneyPlan12,
+        exp.hours_forecast12 hoursForecast12,
+        exp.money_forecast12 moneyForecast12,
+        exp.hours_actual12 hoursActual12,
+        exp.money_actual12 moneyActual12,
+        exp.hours_plan1 hoursPlan1,
+        exp.money_plan1 moneyPlan1,
+        exp.hours_forecast1 hoursForecast1,
+        exp.money_forecast1 moneyForecast1,
+        exp.hours_actual1 hoursActual1,
+        exp.money_actual1 moneyActual1,
+        exp.hours_plan2 hoursPlan2,
+        exp.money_plan2 moneyPlan2,
+        exp.hours_forecast2 hoursForecast2,
+        exp.money_forecast2 moneyForecast2,
+        exp.hours_actual2 hoursActual2,
+        exp.money_actual2 moneyActual2,
+        exp.hours_plan3 hoursPlan3,
+        exp.money_plan3 moneyPlan3,
+        exp.hours_forecast3 hoursForecast3,
+        exp.money_forecast3 moneyForecast3,
+        exp.hours_actual3 hoursActual3,
+        exp.money_actual3 moneyActual3,
+        exp.CREATEBY   createby,
+        exp.CREATEON   createon,
+        exp.MODIFYBY   modifyby,
+        exp.MODIFYON   modifyon,
+        exp.OWNER      owner,
+        exp.STATUS     status,
+        exp.TENANTID   tenantid
+        FROM expenditure_forecast exp
+        LEFT JOIN themeinfor theme
+        ON exp.themeinfor_id = theme.THEMEINFOR_ID
+        <where>
+            <if test="saveDate != null" >
+                AND DATE_FORMAT(exp.save_date, '%Y%M') = DATE_FORMAT(#{saveDate}, '%Y%M')
+            </if>
+            <if test="deptId != null and deptId != ''" >
+                AND exp.dept_id = #{deptId}
+            </if>
+            <if test="year != null and year != ''" >
+                AND exp.annual = #{year}
+            </if>
+            <if test="themeName != null and themeName != ''" >
+                AND theme.THEMENAME like CONCAT('%',#{themeName},'%')
+            </if>
+        </where>
+        order by theme.THEMENAME,exp.class_ification
+    </select>
+
+    <select id="getProjectsystem" parameterType="java.lang.String" resultType="java.util.HashMap">
+        SELECT IFNULL(ROUND(SUM(result.HOUR), 2),0) AS HOURS,
+        IFNULL(ROUND( SUM( result.MONEY ), 2 ),0) AS MONEY
+        FROM
+            (
+            SELECT
+            fri.HOUR,
+            CASE
+            WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '04' THEN
+            IFNULL( fri.HOUR, 0 ) * fee.month4
+            WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '05' THEN
+            IFNULL( fri.HOUR, 0 ) * fee.month5
+            WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '06' THEN
+            IFNULL( fri.HOUR, 0 ) * fee.month6
+            WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '07' THEN
+            IFNULL( fri.HOUR, 0 ) * fee.month7
+            WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '08' THEN
+            IFNULL( fri.HOUR, 0 ) * fee.month8
+            WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '09' THEN
+            IFNULL( fri.HOUR, 0 ) * fee.month9
+            WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '10' THEN
+            IFNULL( fri.HOUR, 0 ) * fee.month10
+            WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '11' THEN
+            IFNULL( fri.HOUR, 0 ) * fee.month11
+            WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '12' THEN
+            IFNULL( fri.HOUR, 0 ) * fee.month12
+            WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '01' THEN
+            IFNULL( fri.HOUR, 0 ) * fee.month1
+            WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '02' THEN
+            IFNULL( fri.HOUR, 0 ) * fee.month2 ELSE IFNULL( fri.HOUR, 0 ) * fee.month3
+            END MONEY -- fri.*,fee.*
+            FROM
+            (
+            SELECT
+            res.COMPANYPROJECTS_ID,
+            res.NAME,
+            res.RANK,
+            ROUND( l.DURATION / my_WorkingDays ( DATE_FORMAT( concat( #{logDate}, '-01' ), '%Y%m' ) ), 2 ) HOUR
+            FROM
+            (
+            SELECT
+            t.`NAME`,
+            t.RANK,
+            c.COMPANYPROJECTS_ID
+            FROM
+            companyprojects c
+            INNER JOIN `projectsystem` t ON t.COMPANYPROJECTS_ID = c.COMPANYPROJECTS_ID
+            <if test="deptId != null and deptId != ''">
+                AND ( c.CENTER_ID = #{deptId} OR c.GROUP_ID = #{deptId} )
+            </if>
+            INNER JOIN projectcontract p ON p.COMPANYPROJECTS_ID = c.COMPANYPROJECTS_ID
+            <if test="themeInforId != null and themeInforId != ''">
+                AND p.THEMEINFOR_ID = #{themeInforId}
+            </if>
+            WHERE 1 = 1
+            <if test="type != null and type != ''">
+                and t.TYPE = #{type}
+            </if>
+            GROUP BY
+            t.`NAME`,
+            t.RANK,
+            c.COMPANYPROJECTS_ID
+            ORDER BY
+            c.PROJECT_NAME,
+            t.RANK
+            ) res
+            LEFT JOIN logpersonstatistics l ON l.PROJECT_ID = res.COMPANYPROJECTS_ID
+            AND res.`NAME` = l.USER_ID
+            AND DATE_FORMAT( concat(l.LOG_DATE, '-01' ), '%Y-%m') = DATE_FORMAT( concat( #{logDate}, '-01' ), '%Y-%m')
+            ORDER BY
+            res.COMPANYPROJECTS_ID
+            ) fri
+            LEFT JOIN peoplewarefee fee ON fee.RANKS = fri.RANK
+            <if test="year != null and year != ''">
+                AND fee.`YEAR` = #{year}
+            </if>
+            <if test="deptId != null and deptId != ''">
+                AND fee.GROUP_ID = #{deptId}
+            </if>
+            ) result
+    </select>
+
+    <select id="forAttendance" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT my_WorkingDays(DATE_FORMAT(concat(#{logdate}, '-01'), '%Y%m'))
+    </select>
+
+    <select id="getPjExter" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT
+            CASE
+                WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '04' THEN
+                    ROUND(SUM(p.APRIL),2)
+                WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '05' THEN
+                    ROUND(SUM(p.MAY),2)
+                WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '06' THEN
+                    ROUND(SUM(p.JULY),2)
+                WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '07' THEN
+                    ROUND(SUM(p.JULY),2)
+                WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '08' THEN
+                    ROUND(SUM(p.APRIL),2)
+                WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '09' THEN
+                    ROUND(SUM(p.SEPTEMBER),2)
+                WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '10' THEN
+                    ROUND(SUM(p.`OWNER`),2)
+                WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '11' THEN
+                    ROUND(SUM(p.NOVEMBER),2)
+                WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '12' THEN
+                    ROUND(SUM(p.DIVIDE),2)
+                WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '01' THEN
+                    ROUND(SUM(p.JANUARY),2)
+                WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '02' THEN
+                    ROUND(SUM(p.FEBRUARY),2) ELSE ROUND(SUM(p.MARCH),2)
+                END MONEY
+        FROM pjexternalinjection p
+        <where>
+            <if test="year != null and year != ''">
+                AND p.YEARS = #{year}
+            </if>
+            <if test="deptId != null and deptId != ''">
+                AND p.GROUP_ID = #{deptId}
+            </if>
+            <if test="themeInforId != null and themeInforId != ''">
+                AND p.THEMEINFOR_ID = #{themeInforId}
+            </if>
+        </where>
+    </select>
+
+    <select id="outsideStructure" parameterType="java.lang.String" resultType="java.util.HashMap">
+        SELECT
+        ROUND( IFNULL(SUM( IFNULL( res.MONTHLYSCALE, 0 )),0), 2 ) AS HOURS,
+        ROUND( IFNULL(SUM( IFNULL( res.AMOUNTOF, 0 )),0), 2 ) AS MONEY
+        FROM
+        (
+        SELECT
+        t.ADMISSIONTIME,
+        t.EXITTIME,
+        t.MONTHLYSCALE,
+        t.AMOUNTOF,
+        c.COMPANYPROJECTS_ID,
+        p.THEMEINFOR_ID
+        FROM
+        companyprojects c
+        INNER JOIN `projectsystem` t ON t.COMPANYPROJECTS_ID = c.COMPANYPROJECTS_ID
+        AND DATE_FORMAT( concat( #{logDate}, '-01' ),'%Y-%m-%d') BETWEEN t.ADMISSIONTIME and t.EXITTIME
+        AND ( c.CENTER_ID = #{deptId} OR c.GROUP_ID = #{deptId} )
+        INNER JOIN projectcontract p ON p.COMPANYPROJECTS_ID = c.COMPANYPROJECTS_ID
+        AND p.THEMEINFOR_ID = #{themeInforId}
+        WHERE
+        t.TYPE = '2'
+        ) res
+    </select>
+
+    <update id="updateList" parameterType="java.util.List">
+        <foreach item="item" collection="list" index="index" >
+            UPDATE expenditure_forecast
+            SET
+            <if test="item.hoursActual4 != null and item.hoursActual4 != ''">
+                hours_actual4 = #{item.hoursActual4},
+            </if>
+            <if test="item.moneyActual4 != null and item.moneyActual4 != ''">
+                money_actual4 = #{item.moneyActual4},
+            </if>
+            <if test="item.hoursActual5 != null and item.hoursActual5 != ''">
+                hours_actual5 = #{item.hoursActual5},
+            </if>
+            <if test="item.moneyActual5 != null and item.moneyActual5 != ''">
+                money_actual5 = #{item.moneyActual5},
+            </if>
+            <if test="item.hoursActual6 != null and item.hoursActual6 != ''">
+                hours_actual6 = #{item.hoursActual6},
+            </if>
+            <if test="item.moneyActual6 != null and item.moneyActual6 != ''">
+                money_actual6 = #{item.moneyActual6},
+            </if>
+            <if test="item.hoursActual7 != null and item.hoursActual7 != ''">
+                hours_actual7 = #{item.hoursActual7},
+            </if>
+            <if test="item.moneyActual7 != null and item.moneyActual7 != ''">
+                money_actual7 = #{item.moneyActual7},
+            </if>
+            <if test="item.hoursActual8 != null and item.hoursActual8 != ''">
+                hours_actual8 = #{item.hoursActual8},
+            </if>
+            <if test="item.moneyActual8 != null and item.moneyActual8 != ''">
+                money_actual8 = #{item.moneyActual8},
+            </if>
+            <if test="item.hoursActual9 != null and item.hoursActual9 != ''">
+                hours_actual9 = #{item.hoursActual9},
+            </if>
+            <if test="item.moneyActual9 != null and item.moneyActual9 != ''">
+                money_actual9 = #{item.moneyActual9},
+            </if>
+            <if test="item.hoursActual10 != null and item.hoursActual10 != ''">
+            hours_actual10 = #{item.hoursActual10},
+            </if>
+            <if test="item.moneyActual10 != null and item.moneyActual10 != ''">
+                money_actual10 = #{item.moneyActual10},
+            </if>
+            <if test="item.hoursActual11 != null and item.hoursActual11 != ''">
+                hours_actual11 = #{item.hoursActual11},
+            </if>
+            <if test="item.moneyActual11 != null and item.moneyActual11 != ''">
+                money_actual11 = #{item.moneyActual11},
+            </if>
+            <if test="item.hoursActual12 != null and item.hoursActual12 != ''">
+                hours_actual12 = #{item.hoursActual12},
+            </if>
+            <if test="item.moneyActual12 != null and item.moneyActual12 != ''">
+                money_actual12 = #{item.moneyActual12},
+            </if>
+            <if test="item.hoursActual1 != null and item.hoursActual1 != ''">
+                hours_actual1 = #{item.hoursActual1},
+            </if>
+            <if test="item.moneyActual1 != null and item.moneyActual1 != ''">
+                money_actual1 = #{item.moneyActual1},
+            </if>
+            <if test="item.hoursActual2 != null and item.hoursActual2 != ''">
+                hours_actual2 = #{item.hoursActual2},
+            </if>
+            <if test="item.moneyActual2 != null and item.moneyActual2 != ''">
+                money_actual2 = #{item.moneyActual2},
+            </if>
+            <if test="item.hoursActual3 != null and item.hoursActual3 != ''">
+                hours_actual3 = #{item.hoursActual3},
+            </if>
+            <if test="item.moneyActual3 != null and item.moneyActual3 != ''">
+                money_actual3 = #{item.moneyActual3},
+            </if>
+            themeinfor_id = #{item.themeinforId}
+            WHERE id = #{item.id};
+        </foreach>
+    </update>
+
+    <select id="employeeWork" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS1000.ExpenditureForecast">
+        SELECT
+            ex.class_ification as classIfication
+            ,ROUND( IFNULL( SUM( ex.hours_plan4 ), 0 ), 2 ) as hoursPlan4
+             ,ROUND( IFNULL( SUM( ex.hours_plan5 ), 0 ), 2 ) as hoursPlan5
+             ,ROUND( IFNULL( SUM( ex.hours_plan6 ), 0 ), 2 ) as hoursPlan6
+             ,ROUND( IFNULL( SUM( ex.hours_plan7 ), 0 ), 2 ) as hoursPlan7
+             ,ROUND( IFNULL( SUM( ex.hours_plan8 ), 0 ), 2 ) as hoursPlan8
+             ,ROUND( IFNULL( SUM( ex.hours_plan9 ), 0 ), 2 ) as hoursPlan9
+             ,ROUND( IFNULL( SUM( ex.hours_plan10 ), 0 ), 2 ) as hoursPlan10
+             ,ROUND( IFNULL( SUM( ex.hours_plan11 ), 0 ), 2 ) as hoursPlan11
+             ,ROUND( IFNULL( SUM( ex.hours_plan12 ), 0 ), 2 ) as hoursPlan12
+             ,ROUND( IFNULL( SUM( ex.hours_plan1 ), 0 ), 2 ) as hoursPlan1
+             ,ROUND( IFNULL( SUM( ex.hours_plan2 ), 0 ), 2 ) as hoursPlan2
+             ,ROUND( IFNULL( SUM( ex.hours_plan3 ), 0 ), 2 ) as hoursPlan3
+        FROM
+            expenditure_forecast ex
+        <where>
+            <if test="year != null and year != ''">
+                and ex.annual = #{year}
+                AND ex.save_date LIKE concat(concat('%',#{year}),'-04%')
+            </if>
+            <if test="deptId != null and deptId != ''">
+                AND ex.dept_id = #{deptId}
+            </if>
+            <if test="classIfication != null and classIfication != ''">
+                AND ex.class_ification = #{classIfication}
+            </if>
+        </where>
+    </select>
+
+    <select id="employeesToClockIn" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS1000.ExpenditureForecast">
+        SELECT IFNULL((
+                          SELECT count(1) AS month04
+                          FROM (SELECT count(*)
+                                FROM attendance
+                                WHERE years = #{year2} AND MONTHS = '04' AND CENTER_ID = #{deptname}
+                                   OR GROUP_ID = #{deptname}
+                                GROUP BY USER_ID) AS month04
+                      ),
+                      0
+                   )        AS hoursActual4,
+               IFNULL((
+                          SELECT count(1) AS month05
+                          FROM (SELECT count(*)
+                                FROM attendance
+                                WHERE years = #{year2}
+                                    AND MONTHS = '05' AND CENTER_ID = #{deptname}
+                                   OR GROUP_ID = #{deptname}
+                                GROUP BY USER_ID) AS month05
+                      ),
+                      0
+                   )        AS hoursActual5,
+               IFNULL((
+                          SELECT count(1) AS month06
+                          FROM (SELECT count(*)
+                                FROM attendance
+                                WHERE years = #{year2}
+                                    AND MONTHS = '06' AND CENTER_ID = #{deptname}
+                                   OR GROUP_ID = #{deptname}
+                                GROUP BY USER_ID) AS month06
+                      ),
+                      0
+                   )        AS hoursActual6,
+               IFNULL((
+                          SELECT count(1) AS month07
+                          FROM (SELECT count(*)
+                                FROM attendance
+                                WHERE years = #{year2}
+                                    AND MONTHS = '07' AND CENTER_ID = #{deptname}
+                                   OR GROUP_ID = #{deptname}
+                                GROUP BY USER_ID) AS month07
+                      ), 0) AS hoursActual7,
+               IFNULL((
+                          SELECT count(1) AS month08
+                          FROM (SELECT count(*)
+                                FROM attendance
+                                WHERE years = #{year2}
+                                    AND MONTHS = '08' AND CENTER_ID = #{deptname}
+                                   OR GROUP_ID = #{deptname}
+                                GROUP BY USER_ID) AS month08
+                      ), 0) AS hoursActual8,
+               IFNULL((
+                          SELECT count(1) AS month09
+                          FROM (SELECT count(*)
+                                FROM attendance
+                                WHERE years = #{year2}
+                                    AND MONTHS = '09' AND CENTER_ID = #{deptname}
+                                   OR GROUP_ID = #{deptname}
+                                GROUP BY USER_ID) AS month09
+                      ), 0) AS hoursActual9,
+               IFNULL((
+                          SELECT count(1) AS month10
+                          FROM (SELECT count(*)
+                                FROM attendance
+                                WHERE years = #{year2}
+                                    AND MONTHS = '10' AND CENTER_ID = #{deptname}
+                                   OR GROUP_ID = #{deptname}
+                                GROUP BY USER_ID) AS month10
+                      ), 0) AS hoursActual10,
+               IFNULL((
+                          SELECT count(1) AS month11
+                          FROM (SELECT count(*)
+                                FROM attendance
+                                WHERE years = #{year2}
+                                    AND MONTHS = '11' AND CENTER_ID = #{deptname}
+                                   OR GROUP_ID = #{deptname}
+                                GROUP BY USER_ID) AS month11
+                      ), 0) AS hoursActual11,
+               IFNULL((
+                          SELECT count(1) AS month12
+                          FROM (SELECT count(*)
+                                FROM attendance
+                                WHERE years = #{year2}
+                                    AND MONTHS = '12' AND CENTER_ID = #{deptname}
+                                   OR GROUP_ID = #{deptname}
+                                GROUP BY USER_ID) AS month12
+                      ), 0) AS hoursActual12,
+               IFNULL((
+                          SELECT count(1) AS month01
+                          FROM (SELECT count(*)
+                                FROM attendance
+                                WHERE years = #{year1}
+                                    AND MONTHS = '01' AND CENTER_ID = #{deptname}
+                                   OR GROUP_ID = #{deptname}
+                                GROUP BY USER_ID) AS month01
+                      ), 0) AS hoursActual1,
+               IFNULL((
+                          SELECT count(1) AS month02
+                          FROM (SELECT count(*)
+                                FROM attendance
+                                WHERE years = #{year1}
+                                    AND MONTHS = '02' AND CENTER_ID = #{deptname}
+                                   OR GROUP_ID = #{deptname}
+                                GROUP BY USER_ID) AS month02
+                      ), 0) AS hoursActual2,
+               IFNULL((
+                          SELECT count(1) AS month03
+                          FROM (SELECT count(*)
+                                FROM attendance
+                                WHERE years = #{year1}
+                                    AND MONTHS = '03' AND CENTER_ID = #{deptname}
+                                   OR GROUP_ID = #{deptname}
+                                GROUP BY USER_ID) AS month03
+                      ), 0) AS hoursActual3
+    </select>
+
+</mapper>
+
