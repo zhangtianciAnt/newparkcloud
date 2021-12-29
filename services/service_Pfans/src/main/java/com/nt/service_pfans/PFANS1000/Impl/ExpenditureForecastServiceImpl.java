@@ -214,22 +214,23 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
         //月份
         int month = localDate.getMonthValue();
         if(month < 4){
-            year1 = year;//社员打卡为当年1，2，3月
-            year2 = year - 1;//和去年的4，5，6 ~ 12月
             year = year - 1;//当前年度
-        }else{
-            year1 = year + 1;//社员打卡为当年4，5，6 ~ 12月
-            year2 = year;//和明年1，2，3月
         }
         //实体属性：hoursPlan存放theme计划工数，hoursActual存放人员或构内人数
         ExpenditureForecast employee = expenditureForecastMapper.employeeWork(deptId, String.valueOf(year), "员工");//全年度员工对应theme工数
-        ExpenditureForecast expenditureForecast = expenditureForecastMapper.employeesToClockIn(companyid.get(deptId),String.valueOf(year1), String.valueOf(year2));//全年度对应社员人数
+        if(employee == null){
+            employee = new ExpenditureForecast();
+        }
+        ExpenditureForecast expenditureForecast = expenditureForecastMapper.employeesToClockIn(companyid.get(deptId),String.valueOf(year));//全年度对应社员人数
         String property_a = "hoursActual";
         for(int i = 1; i <= 12; i++){
             BeanUtils.setProperty(employee,property_a + i,new BigDecimal(BeanUtils.getProperty(expenditureForecast,property_a + i)).setScale(2,BigDecimal.ROUND_HALF_UP).toString());
         }
         res.add(employee);
         ExpenditureForecast withinStructure = expenditureForecastMapper.employeeWork(deptId, String.valueOf(year), "构内外注");//全年度构内对应theme工数
+        if(withinStructure == null){
+            withinStructure = new ExpenditureForecast();
+        }
         List<bpSum3Vo> list = companyStatisticsMapper.getbpsum(deptId, String.valueOf(year));//構内駐在人数状況：来自BP社统计
         for(int i = 1; i <= 12; i++){
             for (bpSum3Vo item : list) {
