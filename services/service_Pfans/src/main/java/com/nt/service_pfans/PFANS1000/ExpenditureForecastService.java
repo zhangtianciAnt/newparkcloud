@@ -22,4 +22,6 @@ public interface ExpenditureForecastService {
     //定时自动保存
     void saveAuto() throws Exception;
 
+    //页面初始发布时用于初始化数据，只在发布时执行一次
+    void temporaryAccess() throws Exception;
 }

@@ -285,4 +285,12 @@ public class AuthController {
         return ApiResult.success();
     }
     //临时接口 保存Theme别支出见通数据 to
+
+    //临时接口 Theme别支出见通,发布数据新生成 fr
+    @PostMapping(value = "/temporaryAccess")
+    public ApiResult temporaryAccess() throws Exception {
+        expenditureForecastService.temporaryAccess();
+        return ApiResult.success();
+    }
+    //临时接口 Theme别支出见通,发布数据新生成 to
 }

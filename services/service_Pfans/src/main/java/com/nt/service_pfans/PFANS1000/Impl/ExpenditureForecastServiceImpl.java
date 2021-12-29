@@ -571,7 +571,7 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
         int month1 = calendar.get(Calendar.MONTH) + 1;//上个月
         int year1 = calendar.get(Calendar.YEAR);//上个月份对应年
         if (month1 < 4) {
-            year1 = year - 1;//上月对应年度
+            year1 = year1 - 1;//上月对应年度
         }
         Date lastSaveDate = calendar.getTime();//上个月时间
         for (String item : companyid) {//循环部门
@@ -619,5 +619,39 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
             }
 
         }
+    }
+
+
+    @Override
+    public void temporaryAccess() throws Exception {
+        //获取上个月
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.MONTH, -1);
+        int month1 = calendar.get(Calendar.MONTH) + 1;//上个月
+        int year1 = calendar.get(Calendar.YEAR);//上个月份对应年
+        if (month1 < 4) {
+            year1 = year1 - 1;//上月对应年度
+        }
+        Date lastSaveDate = calendar.getTime();//上个月时间
+        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+        List<String> companyid = new ArrayList<>();//所有有效部门
+        for (DepartmentVo vo : allDepartment) {
+            companyid.add(vo.getDepartmentId());
+        }
+        List<ExpenditureForecast> record = new ArrayList<>();
+        for (String item : companyid) {
+            long startTime = System.currentTimeMillis();
+            record = this.Initialize(item, year1);//初始化数据
+            long endTime = System.currentTimeMillis();
+            System.out.println("当前程序耗时：" + (endTime - startTime) + "ms");
+            if (record != null && record.size() != 0) {
+                record.forEach(expenditureForecast -> {
+                    expenditureForecast.setSaveDate(lastSaveDate);
+                });
+                expenditureForecastMapper.insertOrUpdateBatch(record);
+            }
+        }
+        this.saveAuto();
     }
 }

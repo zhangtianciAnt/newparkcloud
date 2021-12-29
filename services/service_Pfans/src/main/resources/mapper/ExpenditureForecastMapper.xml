@@ -392,27 +392,27 @@
         SELECT
             CASE
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '04' THEN
-                    ROUND(SUM(p.APRIL),2)
+                ROUND(SUM(p.APRIL),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '05' THEN
-                    ROUND(SUM(p.MAY),2)
+                ROUND(SUM(p.MAY),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '06' THEN
-                    ROUND(SUM(p.JULY),2)
+                ROUND(SUM(p.JUNE),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '07' THEN
-                    ROUND(SUM(p.JULY),2)
+                ROUND(SUM(p.JULY),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '08' THEN
-                    ROUND(SUM(p.APRIL),2)
+                ROUND(SUM(p.AUGUST),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '09' THEN
-                    ROUND(SUM(p.SEPTEMBER),2)
+                ROUND(SUM(p.SEPTEMBER),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '10' THEN
-                    ROUND(SUM(p.`OWNER`),2)
+                ROUND(SUM(p.OCTOBER),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '11' THEN
-                    ROUND(SUM(p.NOVEMBER),2)
+                ROUND(SUM(p.NOVEMBER),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '12' THEN
-                    ROUND(SUM(p.DIVIDE),2)
+                ROUND(SUM(p.DECEMBER),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '01' THEN
-                    ROUND(SUM(p.JANUARY),2)
+                ROUND(SUM(p.JANUARY),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '02' THEN
-                    ROUND(SUM(p.FEBRUARY),2) ELSE ROUND(SUM(p.MARCH),2)
+                ROUND(SUM(p.FEBRUARY),2) ELSE ROUND(SUM(p.MARCH),2)
                 END MONEY
         FROM pjexternalinjection p
         <where>
