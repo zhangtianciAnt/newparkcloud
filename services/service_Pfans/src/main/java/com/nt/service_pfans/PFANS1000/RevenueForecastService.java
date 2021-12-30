@@ -30,7 +30,7 @@ public interface RevenueForecastService {
      * @param revenueForecast 收入预测
      * @return {@link List}<{@link RevenueForecast}>
      */
-    List<RevenueForecast> selectInfo(RevenueForecast revenueForecast) throws ParseException;
+    List<RevenueForecast> selectInfo(RevenueForecast revenueForecast) throws ParseException,Exception;
 
 
     /**
