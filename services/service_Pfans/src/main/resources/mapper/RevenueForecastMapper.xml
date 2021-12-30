@@ -53,15 +53,16 @@
     </resultMap>
 
     <insert id="insertOrUpdateBatch" keyProperty="id">
-        insert into revenue_forecast(id, themeinfor_id, save_date, dept_id, april_plan, april_forecast, april_actual, may_plan, may_forecast, may_actual, june_plan, june_forecast, june_actual, july_plan, july_forecast, july_actual, august_plan, august_forecast, august_actual, september_plan, september_forecast, september_actual, october_plan, october_forecast, october_actual, november_plan, november_forecast, november_actual, december_plan, december_forecast, december_actual, january_plan, january_forecast, january_actual, february_plan, february_forecast, february_actual, march_plan, march_forecast, march_actual, CREATEBY, CREATEON, MODIFYBY, MODIFYON, OWNER, STATUS, TENANTID)
+        insert into revenue_forecast(id, themeinfor_id, save_date, dept_id, annual, april_plan, april_forecast, april_actual, may_plan, may_forecast, may_actual, june_plan, june_forecast, june_actual, july_plan, july_forecast, july_actual, august_plan, august_forecast, august_actual, september_plan, september_forecast, september_actual, october_plan, october_forecast, october_actual, november_plan, november_forecast, november_actual, december_plan, december_forecast, december_actual, january_plan, january_forecast, january_actual, february_plan, february_forecast, february_actual, march_plan, march_forecast, march_actual, CREATEBY, CREATEON, MODIFYBY, MODIFYON, OWNER, STATUS, TENANTID)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.id}, #{entity.themeinforId}, #{entity.saveDate}, #{entity.deptId}, #{entity.aprilPlan}, #{entity.aprilForecast}, #{entity.aprilActual}, #{entity.mayPlan}, #{entity.mayForecast}, #{entity.mayActual}, #{entity.junePlan}, #{entity.juneForecast}, #{entity.juneActual}, #{entity.julyPlan}, #{entity.julyForecast}, #{entity.julyActual}, #{entity.augustPlan}, #{entity.augustForecast}, #{entity.augustActual}, #{entity.septemberPlan}, #{entity.septemberForecast}, #{entity.septemberActual}, #{entity.octoberPlan}, #{entity.octoberForecast}, #{entity.octoberActual}, #{entity.novemberPlan}, #{entity.novemberForecast}, #{entity.novemberActual}, #{entity.decemberPlan}, #{entity.decemberForecast}, #{entity.decemberActual}, #{entity.januaryPlan}, #{entity.januaryForecast}, #{entity.januaryActual}, #{entity.februaryPlan}, #{entity.februaryForecast}, #{entity.februaryActual}, #{entity.marchPlan}, #{entity.marchForecast}, #{entity.marchActual}, #{entity.createby}, #{entity.createon}, #{entity.modifyby}, #{entity.modifyon}, #{entity.owner}, #{entity.status}, #{entity.tenantid})
+            (#{entity.id}, #{entity.themeinforId}, #{entity.saveDate}, #{entity.deptId}, #{entity.annual}, #{entity.aprilPlan}, #{entity.aprilForecast}, #{entity.aprilActual}, #{entity.mayPlan}, #{entity.mayForecast}, #{entity.mayActual}, #{entity.junePlan}, #{entity.juneForecast}, #{entity.juneActual}, #{entity.julyPlan}, #{entity.julyForecast}, #{entity.julyActual}, #{entity.augustPlan}, #{entity.augustForecast}, #{entity.augustActual}, #{entity.septemberPlan}, #{entity.septemberForecast}, #{entity.septemberActual}, #{entity.octoberPlan}, #{entity.octoberForecast}, #{entity.octoberActual}, #{entity.novemberPlan}, #{entity.novemberForecast}, #{entity.novemberActual}, #{entity.decemberPlan}, #{entity.decemberForecast}, #{entity.decemberActual}, #{entity.januaryPlan}, #{entity.januaryForecast}, #{entity.januaryActual}, #{entity.februaryPlan}, #{entity.februaryForecast}, #{entity.februaryActual}, #{entity.marchPlan}, #{entity.marchForecast}, #{entity.marchActual}, #{entity.createby}, #{entity.createon}, #{entity.modifyby}, #{entity.modifyon}, #{entity.owner}, #{entity.status}, #{entity.tenantid})
         </foreach>
         on duplicate key update
         themeinfor_id = values(themeinfor_id),
         save_date = values(save_date),
         dept_id = values(dept_id),
+        annual = values(annual),
         april_plan = values(april_plan),
         april_forecast = values(april_forecast),
         april_actual = values(april_actual),
@@ -299,6 +300,9 @@
             <if test="deptId != null and deptId != ''" >
                 AND reve.dept_id = #{deptId}
             </if>
+            <if test="year != null and year != ''" >
+                AND reve.annual = #{year}
+            </if>
         </where>
     </select>
 
@@ -361,6 +365,9 @@
             </if>
             <if test="deptId != null and deptId != ''" >
                 AND reve.dept_id = #{deptId}
+            </if>
+            <if test="year != null and year != ''" >
+                AND reve.annual = #{year}
             </if>
         </where>
     </select>

@@ -61,6 +61,11 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
         LocalDate localDate = saveDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         //年份
         int year = localDate.getYear();
+        int month = localDate.getMonthValue();
+        int annual = year;
+        if (month < 4) {
+            annual = year - 1;
+        }
         //部门ID
         String deptId = revenueForecastInfo.getDeptId();
 
@@ -85,6 +90,7 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
                     revenueForecast.setId(UUID.randomUUID().toString());
                     revenueForecast.setSaveDate(saveDate);
                     revenueForecast.setDeptId(deptId);
+                    revenueForecast.setAnnual(String.valueOf(annual));
                 }else{
                     revenueForecast.preUpdate(tokenModel);
                 }

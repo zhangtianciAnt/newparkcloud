@@ -40,6 +40,10 @@ public class RevenueForecast extends BaseModel {
      */
     private String deptId;
     /**
+     * 年度
+     */
+    private String annual;
+    /**
      * 四月计划
      */
     private String aprilPlan;
