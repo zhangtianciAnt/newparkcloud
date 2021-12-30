@@ -392,27 +392,27 @@
         SELECT
             CASE
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '04' THEN
-                    ROUND(SUM(p.APRIL),2)
+                ROUND(SUM(p.APRIL),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '05' THEN
-                    ROUND(SUM(p.MAY),2)
+                ROUND(SUM(p.MAY),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '06' THEN
-                    ROUND(SUM(p.JULY),2)
+                ROUND(SUM(p.JUNE),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '07' THEN
-                    ROUND(SUM(p.JULY),2)
+                ROUND(SUM(p.JULY),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '08' THEN
-                    ROUND(SUM(p.APRIL),2)
+                ROUND(SUM(p.AUGUST),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '09' THEN
-                    ROUND(SUM(p.SEPTEMBER),2)
+                ROUND(SUM(p.SEPTEMBER),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '10' THEN
-                    ROUND(SUM(p.`OWNER`),2)
+                ROUND(SUM(p.OCTOBER),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '11' THEN
-                    ROUND(SUM(p.NOVEMBER),2)
+                ROUND(SUM(p.NOVEMBER),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '12' THEN
-                    ROUND(SUM(p.DIVIDE),2)
+                ROUND(SUM(p.DECEMBER),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '01' THEN
-                    ROUND(SUM(p.JANUARY),2)
+                ROUND(SUM(p.JANUARY),2)
                 WHEN DATE_FORMAT( concat( #{logDate}, '-01' ), '%m' ) = '02' THEN
-                    ROUND(SUM(p.FEBRUARY),2) ELSE ROUND(SUM(p.MARCH),2)
+                ROUND(SUM(p.FEBRUARY),2) ELSE ROUND(SUM(p.MARCH),2)
                 END MONEY
         FROM pjexternalinjection p
         <where>
@@ -563,6 +563,7 @@
                 AND ex.class_ification = #{classIfication}
             </if>
         </where>
+        GROUP BY ex.class_ification
     </select>
 
     <select id="employeesToClockIn" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS1000.ExpenditureForecast">
@@ -570,7 +571,7 @@
                           SELECT count(1) AS month04
                           FROM (SELECT count(*)
                                 FROM attendance
-                                WHERE years = #{year2} AND MONTHS = '04' AND CENTER_ID = #{deptname}
+                                WHERE years = #{year} AND MONTHS = '04' AND CENTER_ID = #{deptname}
                                    OR GROUP_ID = #{deptname}
                                 GROUP BY USER_ID) AS month04
                       ),
@@ -580,7 +581,7 @@
                           SELECT count(1) AS month05
                           FROM (SELECT count(*)
                                 FROM attendance
-                                WHERE years = #{year2}
+                                WHERE years = #{year}
                                     AND MONTHS = '05' AND CENTER_ID = #{deptname}
                                    OR GROUP_ID = #{deptname}
                                 GROUP BY USER_ID) AS month05
@@ -591,7 +592,7 @@
                           SELECT count(1) AS month06
                           FROM (SELECT count(*)
                                 FROM attendance
-                                WHERE years = #{year2}
+                                WHERE years = #{year}
                                     AND MONTHS = '06' AND CENTER_ID = #{deptname}
                                    OR GROUP_ID = #{deptname}
                                 GROUP BY USER_ID) AS month06
@@ -602,7 +603,7 @@
                           SELECT count(1) AS month07
                           FROM (SELECT count(*)
                                 FROM attendance
-                                WHERE years = #{year2}
+                                WHERE years = #{year}
                                     AND MONTHS = '07' AND CENTER_ID = #{deptname}
                                    OR GROUP_ID = #{deptname}
                                 GROUP BY USER_ID) AS month07
@@ -611,7 +612,7 @@
                           SELECT count(1) AS month08
                           FROM (SELECT count(*)
                                 FROM attendance
-                                WHERE years = #{year2}
+                                WHERE years = #{year}
                                     AND MONTHS = '08' AND CENTER_ID = #{deptname}
                                    OR GROUP_ID = #{deptname}
                                 GROUP BY USER_ID) AS month08
@@ -620,7 +621,7 @@
                           SELECT count(1) AS month09
                           FROM (SELECT count(*)
                                 FROM attendance
-                                WHERE years = #{year2}
+                                WHERE years = #{year}
                                     AND MONTHS = '09' AND CENTER_ID = #{deptname}
                                    OR GROUP_ID = #{deptname}
                                 GROUP BY USER_ID) AS month09
@@ -629,7 +630,7 @@
                           SELECT count(1) AS month10
                           FROM (SELECT count(*)
                                 FROM attendance
-                                WHERE years = #{year2}
+                                WHERE years = #{year}
                                     AND MONTHS = '10' AND CENTER_ID = #{deptname}
                                    OR GROUP_ID = #{deptname}
                                 GROUP BY USER_ID) AS month10
@@ -638,7 +639,7 @@
                           SELECT count(1) AS month11
                           FROM (SELECT count(*)
                                 FROM attendance
-                                WHERE years = #{year2}
+                                WHERE years = #{year}
                                     AND MONTHS = '11' AND CENTER_ID = #{deptname}
                                    OR GROUP_ID = #{deptname}
                                 GROUP BY USER_ID) AS month11
@@ -647,7 +648,7 @@
                           SELECT count(1) AS month12
                           FROM (SELECT count(*)
                                 FROM attendance
-                                WHERE years = #{year2}
+                                WHERE years = #{year}
                                     AND MONTHS = '12' AND CENTER_ID = #{deptname}
                                    OR GROUP_ID = #{deptname}
                                 GROUP BY USER_ID) AS month12
@@ -656,7 +657,7 @@
                           SELECT count(1) AS month01
                           FROM (SELECT count(*)
                                 FROM attendance
-                                WHERE years = #{year1}
+                                WHERE years = CONVERT( #{year}, SIGNED) + 1
                                     AND MONTHS = '01' AND CENTER_ID = #{deptname}
                                    OR GROUP_ID = #{deptname}
                                 GROUP BY USER_ID) AS month01
@@ -665,7 +666,7 @@
                           SELECT count(1) AS month02
                           FROM (SELECT count(*)
                                 FROM attendance
-                                WHERE years = #{year1}
+                                WHERE years = CONVERT( #{year}, SIGNED) + 1
                                     AND MONTHS = '02' AND CENTER_ID = #{deptname}
                                    OR GROUP_ID = #{deptname}
                                 GROUP BY USER_ID) AS month02
@@ -674,7 +675,7 @@
                           SELECT count(1) AS month03
                           FROM (SELECT count(*)
                                 FROM attendance
-                                WHERE years = #{year1}
+                                WHERE years = CONVERT( #{year}, SIGNED) + 1
                                     AND MONTHS = '03' AND CENTER_ID = #{deptname}
                                    OR GROUP_ID = #{deptname}
                                 GROUP BY USER_ID) AS month03

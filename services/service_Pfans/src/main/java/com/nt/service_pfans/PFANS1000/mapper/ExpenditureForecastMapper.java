@@ -16,7 +16,7 @@ public interface ExpenditureForecastMapper extends MyMapper<ExpenditureForecast>
     int insertOrUpdateBatch(@Param("entities") List<ExpenditureForecast> entities);
 
     //查询
-    List<ExpenditureForecast> selectOldRevenueForecastList(@Param("deptId") String deptId, @Param("year") String year, @Param("saveDate") Date saveDate, @Param("themeName") Date themeName);
+    List<ExpenditureForecast> selectOldRevenueForecastList(@Param("deptId") String deptId, @Param("year") String year, @Param("saveDate") Date saveDate, @Param("themeName") String themeName);
 
     //获取未关联theme
     List<ExpenditureForecast> getThemeOutDepth(@Param("deptId") String deptId,@Param("year") int year,@Param("saveDate") Date saveDate);
@@ -44,7 +44,7 @@ public interface ExpenditureForecastMapper extends MyMapper<ExpenditureForecast>
     ExpenditureForecast employeeWork(@Param("deptId") String deptId,@Param("year") String year,@Param("classIfication") String classIfication);
 
     //从打卡获取全年度社内人员人数
-    ExpenditureForecast employeesToClockIn(@Param("deptname") String deptname,@Param("year1") String year1,@Param("year2") String year2);
+    ExpenditureForecast employeesToClockIn(@Param("deptname") String deptname,@Param("year") String year);
 
 }
 
