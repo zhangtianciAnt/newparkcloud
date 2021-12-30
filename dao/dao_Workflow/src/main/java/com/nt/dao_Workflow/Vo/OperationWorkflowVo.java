@@ -37,5 +37,5 @@ public class OperationWorkflowVo implements Serializable {
 
 	private String tenantid;
 
-	private List<String> userlist;
+	private List<WorkflowNodeUserVo> userlist;
 }
