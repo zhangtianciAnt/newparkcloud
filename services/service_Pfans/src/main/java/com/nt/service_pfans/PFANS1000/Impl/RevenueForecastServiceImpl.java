@@ -1,8 +1,10 @@
 package com.nt.service_pfans.PFANS1000.Impl;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.DepartmentAccount;
 import com.nt.dao_Pfans.PFANS1000.RevenueForecast;
 import com.nt.dao_Pfans.PFANS1000.ThemeInfor;
 import com.nt.dao_Pfans.PFANS1000.Vo.RevenueForecastVo;
+import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.DepartmentAccountService;
 import com.nt.service_pfans.PFANS1000.RevenueForecastService;
 import com.nt.service_pfans.PFANS1000.mapper.DepartmentAccountMapper;
@@ -20,10 +22,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Theme别收入见通(RevenueForecast)表服务实现类
@@ -46,6 +45,9 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
 
     @Autowired
     private DepartmentAccountService departmentAccountService;
+
+    @Autowired
+    private OrgTreeService orgTreeService;
 
     /**
      * 保存信息
@@ -131,7 +133,13 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
     }
 
     @Override
-    public List<RevenueForecast> selectInfo(RevenueForecast revenueForecast) throws ParseException {
+    public List<RevenueForecast> selectInfo(RevenueForecast revenueForecast) throws ParseException,Exception {
+        //id--部门键值对
+        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+        HashMap<String,String> companyid = new HashMap<>();
+        for(DepartmentVo vo : allDepartment){
+            companyid.put(vo.getDepartmentId(),vo.getDepartmentname());
+        }
         List<RevenueForecast> listForReturn = new ArrayList<RevenueForecast>();
         //获取参数
         Date saveDate = revenueForecast.getSaveDate();
@@ -166,7 +174,13 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
                 listForReturn = revenueForecastMapper.selectRevenueForecastList(deptId,year,saveDate);
             }
         }
-
+        listForReturn.forEach(item -> {
+            if(companyid.get(item.getCustomerName()) != null){
+                item.setCustomerName(companyid.get(item.getCustomerName().trim()));//客户名
+            }else{
+                item.setCustomerName(item.getCustomerName());//客户名
+            }
+        });
         return listForReturn;
     }
 
