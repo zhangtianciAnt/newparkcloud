@@ -331,7 +331,7 @@
                      CONTRACTNUMBER IN (
                          SELECT CONTRACTNUMBER FROM DEPARTMENTALINSIDE
                          WHERE YEARS = #{years} AND DEPARTMENT = #{depart} GROUP BY CONTRACTNUMBER )
-               AND COMPLETIONDATE >= DATE_FORMAT( CONCAT( #{yearmonth}, '-01' ), '%Y-%m-%d' )
+               AND COMPLETIONDATE LIKE CONCAT('%',#{yearmonth},'%')
             )
                 ATT LEFT JOIN CONTRACTAPPLICATION CAN ON ATT.CONTRACTNUMBER = CAN.CONTRACTNUMBER
                     LEFT JOIN monthlyrate MON ON MON.MONTH = #{yearmonth} AND CAN.CURRENCYPOSITION  = MON.CURRENCY
