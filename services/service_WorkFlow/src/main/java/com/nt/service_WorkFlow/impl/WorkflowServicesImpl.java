@@ -714,7 +714,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     // 1：拒绝
     // 2：通过
     private OutOperationWorkflowVo cresteStep(String instanceId, TokenModel tokenModel, String dataId, String url, String workFlowurl,
-                                              String workflowname, List<String> userList) throws Exception {
+                                              String workflowname, List<WorkflowNodeUserVo> userList) throws Exception {
         OutOperationWorkflowVo outOperationWorkflowVo = new OutOperationWorkflowVo();
         Workflowinstance workflowinstance = workflowinstanceMapper.selectByPrimaryKey(instanceId);
         //禅#656 自动跳过重复审批人员 查询所有审批人 GBB 20201204 start
@@ -1284,15 +1284,24 @@ public class WorkflowServicesImpl implements WorkflowServices {
                         if (userList.size() == 0) {
                             throw new LogicalException("当前节点未指定审批人！");
                         }
+                        for (WorkflowNodeUserVo workflowNodeUserVo  : userList) {
 
-                        for (String user : userList) {
-
+                            if(!item.getNodeord().toString().equals(workflowNodeUserVo.getIndex()))
+                            {
+                                continue;
+                            }
+                            String user = workflowNodeUserVo.getUid();
                             // 创建节点
                             Workflowstep workflowstep = new Workflowstep();
-                            workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
                             workflowstep.setWorkflownodeinstanceid(item.getWorkflownodeinstanceid());
                             workflowstep.setName(item.getNodename());
                             workflowstep.setItemid(user);
+                            List<Workflowstep> workflowstepList = workflowstepMapper.select(workflowstep);
+                            if(workflowstepList.size()>0)
+                            {
+                                continue;
+                            }
+                            workflowstep.setWorkflowstepid(UUID.randomUUID().toString());
                             workflowstep.preInsert(tokenModel);
 
                             //通知节点
@@ -1355,6 +1364,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
                             continue;
                         }
+                        //add ccm 20211227 多部门决裁指定人第一层GM层没有，都是center层 fr
+                        List<WorkflowNodeUserVo> userListtemp  = userList.stream().filter(temp->(temp.getIndex().equals(item.getNodeord().toString()))).collect(Collectors.toList());
+                        if (userListtemp.size() == 0) {
+                            continue;
+                        }
+                        //add ccm 20211227 多部门决裁指定人第一层GM层没有，都是center层 to
                     }
 
                     outOperationWorkflowVo.setState("0");
