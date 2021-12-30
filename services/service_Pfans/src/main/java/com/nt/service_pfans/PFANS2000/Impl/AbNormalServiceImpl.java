@@ -61,8 +61,10 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Override
     public List<AbNormal> list(AbNormal abNormal) throws Exception {
         //ADD_FJL_0904  获取status不为0的数据 status = 0 删除
-        List<AbNormal> abL = abNormalMapper.select(abNormal);
-        abL = abL.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
+//        考勤异常申请添加筛选条件 ztc fr
+        List<AbNormal> abL = abNormalMapper.selectList(abNormal);
+        //abL = abL.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
+//        考勤异常申请添加筛选条件 ztc to
         return abL;
         //ADD_FJL_0904  获取status不为0的数据 status = 0 删除
     }

@@ -44,4 +44,7 @@ public interface AbNormalMapper extends MyMapper<AbNormal> {
     Double selectAttenSumSick(Attendance attendance);
     List<AbNormal> selectAttenSumSick1(Attendance attendance);
     List<AbNormal> selectAttenSumSick2(Attendance attendance);
+//    考勤异常申请添加筛选条件 ztc fr
+    List<AbNormal> selectList(AbNormal abNormal);
+//    考勤异常申请添加筛选条件 ztc to
 }
