@@ -1,4 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
+import cn.hutool.core.codec.Base64;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.DepartmentAccount;
 import com.nt.dao_Pfans.PFANS1000.RevenueForecast;
@@ -158,6 +160,22 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
         revenueForecast.setSaveDate(sdf.parse(sdf.format(revenueForecast.getSaveDate())));
         //判断是否为第一次填写
         List<RevenueForecast> revenueForecastlist = revenueForecastMapper.selectOldRevenueForecastList(deptId,year,saveDate);
+        //ccm 20211231 客户名有可能是社内组织，数据库中是ID，需要转换 fr
+        if (revenueForecastlist.size() > 0) {
+            OrgTree org = orgTreeService.get(new OrgTree());
+            for (RevenueForecast value : revenueForecastlist) {
+                OrgTree orginfo = orgTreeService.getOrgInfo(org, value.getCustomerName());
+
+                if(orginfo!=null )
+                {
+                    if(orginfo.getCompanyname()!=null && !orginfo.getCompanyname().equals(""))
+                    {
+                        value.setCustomerName(orginfo.getCompanyname());
+                    }
+                }
+            }
+        }
+        //ccm 20211231 客户名有可能是社内组织，数据库中是ID，需要转换 to
         //region scc del 转为定时 from
 //        if(revenueForecastlist.size() == 0){
 //            //从theme表里获取
