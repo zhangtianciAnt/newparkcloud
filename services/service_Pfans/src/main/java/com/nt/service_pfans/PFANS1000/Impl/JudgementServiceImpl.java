@@ -152,16 +152,18 @@ public class JudgementServiceImpl implements JudgementService {
         if(judgementVo.getJudgementdetail().size() > 0){
             for(Judgementdetail jud : judgementVo.getJudgementdetail()){
                 Judgementdetail jud_old = judgementdetailMapper.selectByPrimaryKey(jud.getJudgementdetail_id());
-                if(jud_old.getCareerplanM().equals("1") && !jud_old.getAmounttobegivenM().equals(jud.getAmounttobegivenM())){
-                    //金额不统一 旧：jud_old 新：jud
-                    BigDecimal diffMoney = new BigDecimal(jud.getAmounttobegivenM()).subtract(new BigDecimal(jud_old.getAmounttobegivenM()));
-                    if(jud.getCareerplanM().equals("0") || !jud_old.getRulingid().equals(jud.getRulingid())){
-                        businessplanService.cgTpReRulingInfo(jud_old.getRulingid(), jud_old.getAmounttobegivenM(), tokenModel);
-                        if(jud.getCareerplanM().equals("1")){
-                            businessplanService.upRulingInfo(jud.getRulingid(), jud.getAmounttobegivenM(), tokenModel);
+                if(jud_old != null){
+                    if(jud_old.getCareerplanM().equals("1") && !jud_old.getAmounttobegivenM().equals(jud.getAmounttobegivenM())){
+                        //金额不统一 旧：jud_old 新：jud
+                        BigDecimal diffMoney = new BigDecimal(jud.getAmounttobegivenM()).subtract(new BigDecimal(jud_old.getAmounttobegivenM()));
+                        if(jud.getCareerplanM().equals("0") || !jud_old.getRulingid().equals(jud.getRulingid())){
+                            businessplanService.cgTpReRulingInfo(jud_old.getRulingid(), jud_old.getAmounttobegivenM(), tokenModel);
+                            if(jud.getCareerplanM().equals("1")){
+                                businessplanService.upRulingInfo(jud.getRulingid(), jud.getAmounttobegivenM(), tokenModel);
+                            }
+                        }else {
+                            businessplanService.upRulingInfo(jud.getRulingid(), diffMoney.toString(), tokenModel);
                         }
-                    }else {
-                        businessplanService.upRulingInfo(jud.getRulingid(), diffMoney.toString(), tokenModel);
                     }
                 }
             }
