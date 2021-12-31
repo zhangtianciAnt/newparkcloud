@@ -35,4 +35,6 @@ public interface PersonScaleMapper extends MyMapper<PersonScale> {
     List<Projectsystem> getTypeTwo(@Param("contTime") String contTime);
 
     List<CompanyProjects> getProInfo();
+
+    List<PersonScale> selectByPrList(@Param("prList") List<String> prList);
 }
