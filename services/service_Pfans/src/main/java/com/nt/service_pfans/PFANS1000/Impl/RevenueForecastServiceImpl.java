@@ -13,6 +13,7 @@ import com.nt.service_pfans.PFANS1000.mapper.ThemeInforMapper;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -157,31 +158,33 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
         revenueForecast.setSaveDate(sdf.parse(sdf.format(revenueForecast.getSaveDate())));
         //判断是否为第一次填写
         List<RevenueForecast> revenueForecastlist = revenueForecastMapper.selectOldRevenueForecastList(deptId,year,saveDate);
-        if(revenueForecastlist.size() == 0){
-            //从theme表里获取
-            listForReturn = revenueForecastMapper.selectRevenueForecastListFirst(deptId,year,saveDate);
-        }else{
-            //从revenue表里获取
-            //判断查询月份是否为之前月份
-            LocalDate localNow = LocalDate.now();
-            int monthNow = localNow.getMonthValue();
-            int yearNow = localNow.getYear();
-            //获取之前的数据
-            if(year <= yearNow  && month <= monthNow){
-                listForReturn = revenueForecastlist;
-            }else{
-                //获取实际数据
-                listForReturn = revenueForecastMapper.selectRevenueForecastList(deptId,year,saveDate);
-            }
-        }
-        listForReturn.forEach(item -> {
-            if(companyid.get(item.getCustomerName()) != null){
-                item.setCustomerName(companyid.get(item.getCustomerName().trim()));//客户名
-            }else{
-                item.setCustomerName(item.getCustomerName());//客户名
-            }
-        });
-        return listForReturn;
+        //region scc del 转为定时 from
+//        if(revenueForecastlist.size() == 0){
+//            //从theme表里获取
+//            listForReturn = revenueForecastMapper.selectRevenueForecastListFirst(deptId,year,saveDate);
+//        }else{
+//            //从revenue表里获取
+//            //判断查询月份是否为之前月份
+//            LocalDate localNow = LocalDate.now();
+//            int monthNow = localNow.getMonthValue();
+//            int yearNow = localNow.getYear();
+//            //获取之前的数据
+//            if(year <= yearNow  && month <= monthNow){
+//                listForReturn = revenueForecastlist;
+//            }else{
+//                //获取实际数据
+//                listForReturn = revenueForecastMapper.selectRevenueForecastList(deptId,year,saveDate);
+//            }
+//        }
+//        listForReturn.forEach(item -> {
+//            if(companyid.get(item.getCustomerName()) != null){
+//                item.setCustomerName(companyid.get(item.getCustomerName().trim()));//客户名
+//            }else{
+//                item.setCustomerName(item.getCustomerName());//客户名
+//            }
+//        });
+        //endregion scc del 转为定时 from
+        return revenueForecastlist;
     }
 
 
@@ -204,5 +207,54 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
         listForReturn = revenueForecastMapper.getThemeOutDepth(deptId,year,saveDate);
 
         return listForReturn;
+    }
+
+    @Override
+    public void saveAuto() throws Exception{
+        TokenModel tokenModel = new TokenModel();
+        //id--部门键值对
+        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+        HashMap<String,String> company = new HashMap<>();
+        List<String> companyid = new ArrayList<>();//所有有效部门
+        for(DepartmentVo vo : allDepartment){
+            company.put(vo.getDepartmentId(),vo.getDepartmentname());
+            companyid.add(vo.getDepartmentId());
+        }
+        List<RevenueForecast> listForReturn = new ArrayList<RevenueForecast>();
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int month = cal.get(Calendar.MONTH) + 1;//当前月
+        int year = cal.get(Calendar.YEAR);//当前年
+        if (month < 4) {
+            year = year - 1;//当前年度
+        }
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        Date parse = sdf.parse(sdf.format(date));
+        for (String item : companyid) {
+            listForReturn = revenueForecastMapper.selectOldRevenueForecastList(item, year, date);
+            if (listForReturn != null && listForReturn.size() > 0) {
+                continue;
+            }else{
+                listForReturn = revenueForecastMapper.selectRevenueForecastListFirst(item,year,date);
+                for (RevenueForecast items : listForReturn) {
+                    items.setId(UUID.randomUUID().toString());
+                    items.setDeptId(item);
+                    items.setSaveDate(date);
+                    items.setAnnual(String.valueOf(year));
+                    items.preInsert();
+                    items.preUpdate(tokenModel);
+                    if (company.get(items.getCustomerName()) != null) {
+                        items.setCustomerName(company.get(items.getCustomerName().trim()));//客户名
+                    } else {
+                        items.setCustomerName(items.getCustomerName());//客户名
+                    }
+                }
+                if (listForReturn.size() > 0 && listForReturn != null) {
+                    revenueForecastMapper.insertOrUpdateBatch(listForReturn);
+                }
+            }
+        }
+
     }
 }

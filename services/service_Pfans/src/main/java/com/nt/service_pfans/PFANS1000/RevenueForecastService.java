@@ -40,4 +40,7 @@ public interface RevenueForecastService {
      */
     List<RevenueForecast> getThemeOutDepth(RevenueForecast revenueForecast);
 
+    //定时自动保存
+    void saveAuto() throws Exception;
+
 }

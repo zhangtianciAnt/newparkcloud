@@ -286,11 +286,9 @@
         LEFT JOIN themeinfor theme
         ON exp.themeinfor_id = theme.THEMEINFOR_ID
         <where>
+            exp.dept_id = #{deptId}
             <if test="saveDate != null" >
                 AND DATE_FORMAT(exp.save_date, '%Y%M') = DATE_FORMAT(#{saveDate}, '%Y%M')
-            </if>
-            <if test="deptId != null and deptId != ''" >
-                AND exp.dept_id = #{deptId}
             </if>
             <if test="year != null and year != ''" >
                 AND exp.annual = #{year}
@@ -529,6 +527,13 @@
             <if test="item.moneyActual3 != null and item.moneyActual3 != ''">
                 money_actual3 = #{item.moneyActual3},
             </if>
+            STATUS = #{item.status},
+            CREATEBY = #{item.createby},
+            CREATEON = #{item.createon},
+            MODIFYBY = #{item.modifyby},
+            MODIFYON = #{item.modifyon},
+            OWNER = #{item.owner},
+            TENANTID = #{item.tenantid},
             themeinfor_id = #{item.themeinforId}
             WHERE id = #{item.id};
         </foreach>
