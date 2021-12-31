@@ -5,10 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ThemeContract {
+public class ThemeContract implements Serializable {
     //验收月
     private String comyearmonth;
     //该当合同投入社员工数

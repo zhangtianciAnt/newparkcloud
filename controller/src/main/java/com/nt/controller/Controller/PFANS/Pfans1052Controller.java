@@ -142,43 +142,43 @@ public class Pfans1052Controller {
                     e.printStackTrace();
                 }
             });
-            if(filterList.size() > 0){
-                filterList.forEach(filAnt -> {
-                    List<Dictionary> typeOfList = null;
-                    try {
-                        typeOfList = dictionaryService.getForSelect("HT014");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    AtomicReference<Boolean> flagAward = new AtomicReference<>(false);
-                    List<Contractapplication> entrList = companyProjectsMapper
-                            .selectCont(filAnt.getContractnumber(),depart,depart);
-                    if(entrList.size() > 0){
-                        List<Dictionary> finalTypeOfList = typeOfList;
-                        entrList.forEach(ent -> {
-                            AtomicReference<Boolean> flag = new AtomicReference<>(false);
-                            finalTypeOfList.forEach(item -> {
-                                if (item.getCode().equals(ent.getContracttype())) {
-                                    flag.set(true);
-                                }
-                            });
-                            if (flag.get()) {
-                                Award award = new Award();
-                                //委托合同号
-                                award.setContractnumber(ent.getContractnumber());
-                                award.setDistinguishbetween("1");
-                                Award find = awardMapper.selectOne(award);
-                                if (find != null && "4".equals(find.getStatus())) {
-                                    flagAward.set(true);
-                                }
-                            }
-                        });
-                    }
-                    if(flagAward.get()){
-                        filteroutReList.add(filAnt);
-                    }
-                });
-            }
+//            if(filterList.size() > 0){
+//                filterList.forEach(filAnt -> {
+//                    List<Dictionary> typeOfList = null;
+//                    try {
+//                        typeOfList = dictionaryService.getForSelect("HT014");
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                    AtomicReference<Boolean> flagAward = new AtomicReference<>(false);
+//                    List<Contractapplication> entrList = companyProjectsMapper
+//                            .selectCont(filAnt.getContractnumber(),depart,depart);
+//                    if(entrList.size() > 0){
+//                        List<Dictionary> finalTypeOfList = typeOfList;
+//                        entrList.forEach(ent -> {
+//                            AtomicReference<Boolean> flag = new AtomicReference<>(false);
+//                            finalTypeOfList.forEach(item -> {
+//                                if (item.getCode().equals(ent.getContracttype())) {
+//                                    flag.set(true);
+//                                }
+//                            });
+//                            if (flag.get()) {
+//                                Award award = new Award();
+//                                //委托合同号
+//                                award.setContractnumber(ent.getContractnumber());
+//                                award.setDistinguishbetween("1");
+//                                Award find = awardMapper.selectOne(award);
+//                                if (find != null && "4".equals(find.getStatus())) {
+//                                    flagAward.set(true);
+//                                }
+//                            }
+//                        });
+//                    }
+//                    if(flagAward.get()){
+//                        filteroutReList.add(filAnt);
+//                    }
+//                });
+//            }
         }
 
         List<ThemeContract> inThemeList = new ArrayList<>();
@@ -187,6 +187,9 @@ public class Pfans1052Controller {
             String finalMonth = month1;
             String finalYearmonth = yearmonth;
             filterList.forEach(fil -> {
+                ThemeContract clonedInfo = new ThemeContract();
+                BeanUtils.copyProperties(fil, clonedInfo);
+                filteroutReList.add(clonedInfo);
                 String mant = "";
                 mant = refMap.get(fil.getContractnumber()) != null
                         ? refMap.get(fil.getContractnumber()) : firstMonth;

@@ -727,6 +727,6 @@
             CONTRACTNUMBER = #{conber}
           AND years = #{years}
           AND DEPARTMENT = #{departmental}
-          AND STAFFRANK = '外注工数合计值'
+          AND STAFFRANK = '外注费用合计值'
     </select>
 </mapper>

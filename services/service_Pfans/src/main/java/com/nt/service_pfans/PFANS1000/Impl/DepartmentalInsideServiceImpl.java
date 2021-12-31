@@ -1090,11 +1090,6 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                     BigDecimal outSum;
                     outSum = StringUtils.isNullOrEmpty(projectsystemMapper.getTypeOne(inst.getProject_id(), LOG_DATE)) ?
                             BigDecimal.ZERO : new BigDecimal(projectsystemMapper.getTypeOne(inst.getProject_id(), LOG_DATE));
-                    List<Projectsystem> getTypeTwoList = projectsystemMapper.getTypeTwo(inst.getProject_id());
-                    getTypeTwoList = this.checkIn(getTypeTwoList, LOG_DATE);
-                    outSum = outSum.add(getTypeTwoList.stream()
-                            .map(i -> new BigDecimal(i.getMonthlyscale())).reduce(BigDecimal.ZERO, BigDecimal::add))
-                            .setScale(2, BigDecimal.ROUND_HALF_UP);
                     depOutInsWork.setYears(String.valueOf(year));
                     depOutInsWork.setDepartment(inst.getDepartment());
                     depOutInsWork.setThemeinfor_id(inst.getThemeinfor_id());
@@ -1138,18 +1133,21 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
 //                    awardDep.setGroup_id(inst.getDepartment());
 //                    awardDep.setContractnumber(inst.getContractnumber());
 //                    List<Award> awardList = awardMapper.select(awardDep);
+                    if(flagAward.get()) {
+                        List<Projectsystem> getTypeTwoList = projectsystemMapper.getTypeTwo(inst.getProject_id());
+                        getTypeTwoList = this.checkIn(getTypeTwoList, LOG_DATE);
+                        outSum = outSum.add(getTypeTwoList.stream()
+                                .map(i -> new BigDecimal(i.getMonthlyscale())).reduce(BigDecimal.ZERO, BigDecimal::add))
+                                .setScale(2, BigDecimal.ROUND_HALF_UP);
+                    }
                     if(depOutWorkList.size() == 0){
                         depOutInsWork.setDepartmentalinside_id(UUID.randomUUID().toString());
                         depOutInsWork.preInsert(tokenModel);
-                        if(flagAward.get()){
-                            this.setRange(depOutInsWork,monthlast,String.valueOf(outSum));
-                        }
+                        this.setRange(depOutInsWork,monthlast,String.valueOf(outSum));
                         departmentalInsideMapper.insert(depOutInsWork);
                     }else{
                         depOutInsWork.preInsert(tokenModel);
-                        if(flagAward.get()) {
-                            this.setRange(depOutWorkList.get(0), monthlast, String.valueOf(outSum));
-                        }
+                        this.setRange(depOutWorkList.get(0), monthlast, String.valueOf(outSum));
                         departmentalInsideMapper.updateByPrimaryKey(depOutWorkList.get(0));
                     }
                     PjExternalInjection pjection = new PjExternalInjection();
@@ -1186,15 +1184,11 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
                     if(depOutMoneyList.size() == 0){
                         depOutInsMoney.setDepartmentalinside_id(UUID.randomUUID().toString());
                         depOutInsWork.preInsert(tokenModel);
-                        if(flagAward.get()) {
-                            this.getMoneySum(pjList, monthlast, depOutInsMoney, outMoney);
-                        }
+                        this.getMoneySum(pjList, monthlast, depOutInsMoney, outMoney);
                         departmentalInsideMapper.insert(depOutInsMoney);
                     }else{
                         depOutInsWork.preInsert(tokenModel);
-                        if(flagAward.get()) {
-                            this.getMoneySum(pjList, monthlast, depOutMoneyList.get(0), outMoney);
-                        }
+                        this.getMoneySum(pjList, monthlast, depOutMoneyList.get(0), outMoney);
                         departmentalInsideMapper.updateByPrimaryKey(depOutMoneyList.get(0));
                     }
                 }
