@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.RevenueForecastMapper">
+
+    <resultMap type="com.nt.dao_Pfans.PFANS1000.RevenueForecast" id="RevenueForecastMap">
+        <result property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="themeinforId" column="themeinfor_id" jdbcType="VARCHAR"/>
+        <result property="saveDate" column="save_date" jdbcType="TIMESTAMP"/>
+        <result property="deptId" column="dept_id" jdbcType="VARCHAR"/>
+        <result property="aprilPlan" column="april_plan" jdbcType="VARCHAR"/>
+        <result property="aprilForecast" column="april_forecast" jdbcType="VARCHAR"/>
+        <result property="aprilActual" column="april_actual" jdbcType="VARCHAR"/>
+        <result property="mayPlan" column="may_plan" jdbcType="VARCHAR"/>
+        <result property="mayForecast" column="may_forecast" jdbcType="VARCHAR"/>
+        <result property="mayActual" column="may_actual" jdbcType="VARCHAR"/>
+        <result property="junePlan" column="june_plan" jdbcType="VARCHAR"/>
+        <result property="juneForecast" column="june_forecast" jdbcType="VARCHAR"/>
+        <result property="juneActual" column="june_actual" jdbcType="VARCHAR"/>
+        <result property="julyPlan" column="july_plan" jdbcType="VARCHAR"/>
+        <result property="julyForecast" column="july_forecast" jdbcType="VARCHAR"/>
+        <result property="julyActual" column="july_actual" jdbcType="VARCHAR"/>
+        <result property="augustPlan" column="august_plan" jdbcType="VARCHAR"/>
+        <result property="augustForecast" column="august_forecast" jdbcType="VARCHAR"/>
+        <result property="augustActual" column="august_actual" jdbcType="VARCHAR"/>
+        <result property="septemberPlan" column="september_plan" jdbcType="VARCHAR"/>
+        <result property="septemberForecast" column="september_forecast" jdbcType="VARCHAR"/>
+        <result property="septemberActual" column="september_actual" jdbcType="VARCHAR"/>
+        <result property="octoberPlan" column="october_plan" jdbcType="VARCHAR"/>
+        <result property="octoberForecast" column="october_forecast" jdbcType="VARCHAR"/>
+        <result property="octoberActual" column="october_actual" jdbcType="VARCHAR"/>
+        <result property="novemberPlan" column="november_plan" jdbcType="VARCHAR"/>
+        <result property="novemberForecast" column="november_forecast" jdbcType="VARCHAR"/>
+        <result property="novemberActual" column="november_actual" jdbcType="VARCHAR"/>
+        <result property="decemberPlan" column="december_plan" jdbcType="VARCHAR"/>
+        <result property="decemberForecast" column="december_forecast" jdbcType="VARCHAR"/>
+        <result property="decemberActual" column="december_actual" jdbcType="VARCHAR"/>
+        <result property="januaryPlan" column="january_plan" jdbcType="VARCHAR"/>
+        <result property="januaryForecast" column="january_forecast" jdbcType="VARCHAR"/>
+        <result property="januaryActual" column="january_actual" jdbcType="VARCHAR"/>
+        <result property="februaryPlan" column="february_plan" jdbcType="VARCHAR"/>
+        <result property="februaryForecast" column="february_forecast" jdbcType="VARCHAR"/>
+        <result property="februaryActual" column="february_actual" jdbcType="VARCHAR"/>
+        <result property="marchPlan" column="march_plan" jdbcType="VARCHAR"/>
+        <result property="marchForecast" column="march_forecast" jdbcType="VARCHAR"/>
+        <result property="marchActual" column="march_actual" jdbcType="VARCHAR"/>
+        <result property="createby" column="CREATEBY" jdbcType="VARCHAR"/>
+        <result property="createon" column="CREATEON" jdbcType="TIMESTAMP"/>
+        <result property="modifyby" column="MODIFYBY" jdbcType="VARCHAR"/>
+        <result property="modifyon" column="MODIFYON" jdbcType="TIMESTAMP"/>
+        <result property="owner" column="OWNER" jdbcType="VARCHAR"/>
+        <result property="status" column="STATUS" jdbcType="VARCHAR"/>
+        <result property="tenantid" column="TENANTID" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id">
+        insert into revenue_forecast(id, themeinfor_id, save_date, dept_id, annual, april_plan, april_forecast, april_actual, may_plan, may_forecast, may_actual, june_plan, june_forecast, june_actual, july_plan, july_forecast, july_actual, august_plan, august_forecast, august_actual, september_plan, september_forecast, september_actual, october_plan, october_forecast, october_actual, november_plan, november_forecast, november_actual, december_plan, december_forecast, december_actual, january_plan, january_forecast, january_actual, february_plan, february_forecast, february_actual, march_plan, march_forecast, march_actual, CREATEBY, CREATEON, MODIFYBY, MODIFYON, OWNER, STATUS, TENANTID)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id}, #{entity.themeinforId}, #{entity.saveDate}, #{entity.deptId}, #{entity.annual}, #{entity.aprilPlan}, #{entity.aprilForecast}, #{entity.aprilActual}, #{entity.mayPlan}, #{entity.mayForecast}, #{entity.mayActual}, #{entity.junePlan}, #{entity.juneForecast}, #{entity.juneActual}, #{entity.julyPlan}, #{entity.julyForecast}, #{entity.julyActual}, #{entity.augustPlan}, #{entity.augustForecast}, #{entity.augustActual}, #{entity.septemberPlan}, #{entity.septemberForecast}, #{entity.septemberActual}, #{entity.octoberPlan}, #{entity.octoberForecast}, #{entity.octoberActual}, #{entity.novemberPlan}, #{entity.novemberForecast}, #{entity.novemberActual}, #{entity.decemberPlan}, #{entity.decemberForecast}, #{entity.decemberActual}, #{entity.januaryPlan}, #{entity.januaryForecast}, #{entity.januaryActual}, #{entity.februaryPlan}, #{entity.februaryForecast}, #{entity.februaryActual}, #{entity.marchPlan}, #{entity.marchForecast}, #{entity.marchActual}, #{entity.createby}, #{entity.createon}, #{entity.modifyby}, #{entity.modifyon}, #{entity.owner}, #{entity.status}, #{entity.tenantid})
+        </foreach>
+        on duplicate key update
+        themeinfor_id = values(themeinfor_id),
+        save_date = values(save_date),
+        dept_id = values(dept_id),
+        annual = values(annual),
+        april_plan = values(april_plan),
+        april_forecast = values(april_forecast),
+        april_actual = values(april_actual),
+        may_plan = values(may_plan),
+        may_forecast = values(may_forecast),
+        may_actual = values(may_actual),
+        june_plan = values(june_plan),
+        june_forecast = values(june_forecast),
+        june_actual = values(june_actual),
+        july_plan = values(july_plan),
+        july_forecast = values(july_forecast),
+        july_actual = values(july_actual),
+        august_plan = values(august_plan),
+        august_forecast = values(august_forecast),
+        august_actual = values(august_actual),
+        september_plan = values(september_plan),
+        september_forecast = values(september_forecast),
+        september_actual = values(september_actual),
+        october_plan = values(october_plan),
+        october_forecast = values(october_forecast),
+        october_actual = values(october_actual),
+        november_plan = values(november_plan),
+        november_forecast = values(november_forecast),
+        november_actual = values(november_actual),
+        december_plan = values(december_plan),
+        december_forecast = values(december_forecast),
+        december_actual = values(december_actual),
+        january_plan = values(january_plan),
+        january_forecast = values(january_forecast),
+        january_actual = values(january_actual),
+        february_plan = values(february_plan),
+        february_forecast = values(february_forecast),
+        february_actual = values(february_actual),
+        march_plan = values(march_plan),
+        march_forecast = values(march_forecast),
+        march_actual = values(march_actual),
+        CREATEBY = values(CREATEBY),
+        CREATEON = values(CREATEON),
+        MODIFYBY = values(MODIFYBY),
+        MODIFYON = values(MODIFYON),
+        OWNER = values(OWNER),
+        STATUS = values(STATUS),
+        TENANTID = values(TENANTID)
+    </insert>
+
+    <select id="getThemeOutDepth" resultType="com.nt.dao_Pfans.PFANS1000.RevenueForecast">
+        SELECT theme.THEMEINFOR_ID  themeinforId,
+        theme.THEMENAME      themeName,
+        theme.TOOLSORGS      customerName
+        FROM themeinfor theme
+        LEFT JOIN themeplandetail detail
+        ON theme.THEMEINFOR_ID = detail.THEMEINFOR_ID
+        <if test="deptId != null and deptId != ''" >
+            AND detail.CENTER_ID = #{deptId}
+        </if>
+        <if test="year != null and year != ''" >
+            AND detail.YEAR = #{year}
+        </if>
+        <where>
+            detail.THEMEPLANDETAIL_ID IS NULL
+            <if test="year != null and year != ''" >
+                AND theme.YEAR = #{year}
+            </if>
+        </where>
+        GROUP BY theme.THEMEINFOR_ID
+    </select>
+
+    <select id="selectRevenueForecastListFirst" resultType="com.nt.dao_Pfans.PFANS1000.RevenueForecast">
+        SELECT theme.THEMEINFOR_ID  themeinforId,
+        theme.THEMENAME      themeName,
+        theme.TOOLSORGS      customerName,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 4),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 4),0) aprilActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 5),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 5),0) mayActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 6),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 6),0) juneActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 7),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 7),0) julyActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 8),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 8),0) augustActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 9),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 9),0) septemberActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 10),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 10),0) octoberActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 11),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 11),0) novemberActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 12),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 12),0) decemberActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} + 1 AND temp.month = 1),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} + 1 AND unit.month = 1),0) januaryActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} + 1 AND temp.month = 2),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} + 1 AND unit.month = 2),0) februaryActual,
+        IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} + 1 AND temp.month = 3),0)
+        + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} + 1 AND unit.month = 3),0) marchActual,
+        SUM(detail.AMOUNT4)  aprilPlan,
+        SUM(detail.AMOUNT5)  mayPlan,
+        SUM(detail.AMOUNT6)  junePlan,
+        SUM(detail.AMOUNT7)  julyPlan,
+        SUM(detail.AMOUNT8)  augustPlan,
+        SUM(detail.AMOUNT9)  septemberPlan,
+        SUM(detail.AMOUNT10) octoberPlan,
+        SUM(detail.AMOUNT11) novemberPlan,
+        SUM(detail.AMOUNT12) decemberPlan,
+        SUM(detail.AMOUNT1)  januaryPlan,
+        SUM(detail.AMOUNT2)  februaryPlan,
+        SUM(detail.AMOUNT3)  marchPlan
+        FROM themeinfor theme
+        INNER JOIN themeplandetail detail
+        ON theme.THEMEINFOR_ID = detail.THEMEINFOR_ID
+        <where>
+            detail.CENTER_ID = #{deptId}
+            AND detail.YEAR = #{year}
+            AND detail.TYPE = '0'
+            AND detail.CONTRACTTYPE IN('PJ142001','PJ142002','PJ142003','PJ142004','PJ142005')
+        </where>
+        GROUP BY theme.THEMEINFOR_ID
+    </select>
+
+    <sql id="nomalContract">
+        SELECT SUM(count.CLAIMAMOUNT)                     amount,
+               conapp.THEMEINFOR_ID themeId,
+               DATE_FORMAT(count.DELIVERYDATE, '%Y') year,
+               DATE_FORMAT(count.DELIVERYDATE, '%c') month
+        FROM contractapplication conapp
+                 LEFT JOIN award award
+                           ON conapp.CONTRACTNUMBER = award.CONTRACTNUMBER
+                 LEFT JOIN contractnumbercount count
+        ON conapp.CONTRACTNUMBER = count.CONTRACTNUMBER
+        WHERE award.STATUS = '4'
+        AND conapp.GROUP_ID = #{deptId}
+        AND conapp.CONTRACTTYPE not in ('HT008002', 'HT008004', 'HT008006', 'HT008008')
+        GROUP BY conapp.THEMEINFOR_ID,DATE_FORMAT(count.DELIVERYDATE, '%Y'),DATE_FORMAT(count.DELIVERYDATE, '%c')
+    </sql>
+
+    <sql id="reunitContract">
+        SELECT SUM(reunite.DISTRIAMOUNT)                     amount,
+        conapp.THEMEINFOR_ID themeId,
+        DATE_FORMAT(reunite.DELIVERYDATE, '%Y') year,
+        DATE_FORMAT(reunite.DELIVERYDATE, '%c') month
+        FROM contractapplication conapp
+        LEFT JOIN award award
+        ON conapp.CONTRACTNUMBER = award.CONTRACTNUMBER
+        LEFT JOIN awardreunite reunite
+        ON conapp.CONTRACTNUMBER = reunite.CONTRACTNUMBER
+        WHERE award.STATUS = '4'
+        AND reunite.REALDEPARTMENT = #{deptId}
+        AND conapp.CONTRACTTYPE in ('HT008002', 'HT008004', 'HT008006', 'HT008008')
+        GROUP BY conapp.THEMEINFOR_ID,DATE_FORMAT(reunite.DELIVERYDATE, '%Y'),DATE_FORMAT(reunite.DELIVERYDATE, '%c')
+    </sql>
+
+    <sql id="getMaxSavedate">
+        SELECT DATE_FORMAT(MAX(save_date), '%Y%M') save_date
+        FROM revenue_forecast
+        <where>
+            <if test="saveDate != null" >
+                AND DATE_FORMAT(save_date, '%Y%M') &lt;= DATE_FORMAT(#{saveDate}, '%Y%M')
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectRevenueForecastList" resultType="com.nt.dao_Pfans.PFANS1000.RevenueForecast">
+        SELECT reve.id         id,
+               reve.themeinfor_id themeinforId,
+               theme.THEMENAME themeName,
+               theme.TOOLSORGS customerName,
+               reve.save_date saveDate,
+               reve.dept_id deptId,
+               reve.april_plan aprilPlan,
+               reve.april_forecast aprilForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 4),0) +
+               IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 4),0) aprilActual,
+               reve.may_plan mayPlan,
+               reve.may_forecast mayForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 5),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 5),0) mayActual,
+               reve.june_plan junePlan,
+               reve.june_forecast juneForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 6),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 6),0) juneActual,
+               reve.july_plan julyPlan,
+               reve.july_forecast julyForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 7),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 7),0) julyActual,
+               reve.august_plan augustPlan,
+               reve.august_forecast augustForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 8),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 8),0) augustActual,
+               reve.september_plan septemberPlan,
+               reve.september_forecast septemberForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 9),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 9),0) septemberActual,
+               reve.october_plan octoberPlan,
+               reve.october_forecast octoberForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 10),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 10),0) octoberActual,
+               reve.november_plan novemberPlan,
+               reve.november_forecast novemberForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 11),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 11),0) novemberActual,
+               reve.december_plan decemberPlan,
+               reve.december_forecast decemberForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} AND temp.month = 12),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} AND unit.month = 12),0) decemberActual,
+               reve.january_plan januaryPlan,
+               reve.january_forecast januaryForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} + 1 AND temp.month = 1),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} + 1 AND unit.month = 1),0) januaryActual,
+               reve.february_plan februaryPlan,
+               reve.february_forecast februaryForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} + 1 AND temp.month = 2),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} + 1 AND unit.month = 2),0) februaryActual,
+               reve.march_plan marchPlan,
+               reve.march_forecast marchForecast,
+               IFNULL((SELECT temp.amount FROM (<include refid="nomalContract"></include>) as temp where temp.themeId = theme.THEMEINFOR_ID AND temp.year = #{year} + 1 AND temp.month = 3),0)
+                + IFNULL((SELECT unit.amount FROM (<include refid="reunitContract"></include>) as unit where unit.themeId = theme.THEMEINFOR_ID AND unit.year = #{year} + 1 AND unit.month = 3),0) marchActual,
+               reve.CREATEBY   createby,
+               reve.CREATEON   createon,
+               reve.MODIFYBY   modifyby,
+               reve.MODIFYON   modifyon,
+               reve.OWNER      owner,
+               reve.STATUS     status,
+               reve.TENANTID   tenantid
+        FROM revenue_forecast reve
+        LEFT JOIN themeinfor theme
+        ON reve.themeinfor_id = theme.THEMEINFOR_ID
+        <where>
+            reve.dept_id = #{deptId}
+            and DATE_FORMAT(reve.save_date, '%Y%M') = (<include refid="getMaxSavedate"></include>)
+            <if test="year != null and year != ''" >
+                AND reve.annual = #{year}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOldRevenueForecastList" resultType="com.nt.dao_Pfans.PFANS1000.RevenueForecast">
+        SELECT reve.id         id,
+        reve.themeinfor_id themeinforId,
+        theme.THEMENAME themeName,
+        theme.TOOLSORGS customerName,
+        reve.save_date saveDate,
+        reve.dept_id deptId,
+        reve.april_plan aprilPlan,
+        reve.april_forecast aprilForecast,
+        reve.april_actual aprilActual,
+        reve.may_plan mayPlan,
+        reve.may_forecast mayForecast,
+        reve.may_actual mayActual,
+        reve.june_plan junePlan,
+        reve.june_forecast juneForecast,
+        reve.june_actual juneActual,
+        reve.july_plan julyPlan,
+        reve.july_forecast julyForecast,
+        reve.july_actual julyActual,
+        reve.august_plan augustPlan,
+        reve.august_forecast augustForecast,
+        reve.august_actual augustActual,
+        reve.september_plan septemberPlan,
+        reve.september_forecast septemberForecast,
+        reve.september_actual septemberActual,
+        reve.october_plan octoberPlan,
+        reve.october_forecast octoberForecast,
+        reve.october_actual octoberActual,
+        reve.november_plan novemberPlan,
+        reve.november_forecast novemberForecast,
+        reve.november_actual novemberActual,
+        reve.december_plan decemberPlan,
+        reve.december_forecast decemberForecast,
+        reve.december_actual decemberActual,
+        reve.january_plan januaryPlan,
+        reve.january_forecast januaryForecast,
+        reve.january_actual januaryActual,
+        reve.february_plan februaryPlan,
+        reve.february_forecast februaryForecast,
+        reve.february_actual februaryActual,
+        reve.march_plan marchPlan,
+        reve.march_forecast marchForecast,
+        reve.march_actual marchActual,
+        reve.CREATEBY   createby,
+        reve.CREATEON   createon,
+        reve.MODIFYBY   modifyby,
+        reve.MODIFYON   modifyon,
+        reve.OWNER      owner,
+        reve.STATUS     status,
+        reve.TENANTID   tenantid
+        FROM revenue_forecast reve
+        LEFT JOIN themeinfor theme
+        ON reve.themeinfor_id = theme.THEMEINFOR_ID
+        <where>
+            reve.dept_id = #{deptId}
+            <if test="saveDate != null" >
+                AND DATE_FORMAT(reve.save_date, '%Y%M') = DATE_FORMAT(#{saveDate}, '%Y%M')
+            </if>
+            <if test="year != null and year != ''" >
+                AND reve.annual = #{year}
+            </if>
+        </where>
+    </select>
+
+</mapper>
+

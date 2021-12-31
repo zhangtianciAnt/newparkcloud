@@ -64,6 +64,8 @@ public class PersonScaleServiceImpl implements PersonScaleService {
         String nowDate = ft.format(lastMonthDate.getTime());
         String nowY_Month = now_Date.substring(0,7);
         String nowYMonth = nowDate.substring(0,6);
+        String nowDay = nowDate.substring(8,10);
+        if(Integer.parseInt(nowDay) != Integer.parseInt(dictionaryL.get(0).getValue1()) + 1) return;
         List<PersonScale> getLogPerInfoList = personScaleMapper.getLogInfo(nowY_Month);
         BigDecimal workingHB = new BigDecimal(personScaleMapper.getWorktimeger(nowYMonth));
         Map<String, List<PersonScale>> groupByPeoples = getLogPerInfoList.stream().collect(Collectors.groupingBy(PersonScale::getReportpeople));
@@ -230,7 +232,10 @@ public class PersonScaleServiceImpl implements PersonScaleService {
         personScale.setReporters(personScaleMee.getUser_id());
         List<PersonScale> personScaleList = personScaleMapper.select(personScale);
         if(personScaleList.size() > 0){
-            personScaleList = this.getRecursion(personScaleList,personScaleList,yearMonth);
+            List<String> extstexts = personScaleList.stream().map(PersonScale::getPersonscale_id)
+                    .collect(Collectors.toList());
+            extstexts = extstexts.stream().distinct().collect(Collectors.toList());
+            personScaleList = personScaleMapper.selectByPrList(this.getRecursion(personScaleList,extstexts,yearMonth));
             personScaleList = personScaleList.stream().collect(
                     Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(
                             o -> o.getReportpeople() + ";" + o.getProject_id()))), ArrayList::new));
@@ -242,7 +247,12 @@ public class PersonScaleServiceImpl implements PersonScaleService {
         return personScaleVo;
     }
 
-    public List<PersonScale> getRecursion(List<PersonScale> perScaleS, List<PersonScale> personScaleList, String yearMonth) throws Exception {
+    /**
+     * perScaleS：下一步需要作为查询条件的List
+     * extstexts：已经查询出来的结果集，主键
+     *
+     * */
+    public List<String> getRecursion(List<PersonScale> perScaleS, List<String> extstexts, String yearMonth) throws Exception {
         List<ScaleComproject> comprojectList = this.getComprojectList(perScaleS,yearMonth);
         List<PersonScale> selectOthers = new ArrayList<>();
         comprojectList.forEach(comp -> {
@@ -250,15 +260,15 @@ public class PersonScaleServiceImpl implements PersonScaleService {
             personSe.setProject_id(comp.getProject_id());
             personSe.setReportpeople(comp.getReportpeople());
             List<PersonScale> scaleList = personScaleMapper.select(personSe);
-            if(scaleList.size() > 0){
-                personScaleList.add(scaleList.get(0));
+            if(scaleList.size() > 0 && !extstexts.contains(scaleList.get(0).getPersonscale_id())){
+                extstexts.add(scaleList.get(0).getPersonscale_id());
                 selectOthers.add(scaleList.get(0));
             }
         });
         if(selectOthers.size() > 0){
-            this.getRecursionOther(selectOthers,personScaleList, yearMonth);
+            this.getRecursionOther(selectOthers,extstexts, yearMonth);
         }
-        return personScaleList;
+        return extstexts;
     }
 
     public List<ScaleComproject> getComprojectList(List<PersonScale> getResults, String yearMonth) throws Exception {
@@ -269,7 +279,7 @@ public class PersonScaleServiceImpl implements PersonScaleService {
         return comprojectList;
     }
 
-    public void getRecursionOther(List<PersonScale> selectOthers, List<PersonScale> personScaleList, String yearMonth) throws Exception {
+    public void getRecursionOther(List<PersonScale> selectOthers, List<String> extstexts, String yearMonth) throws Exception {
         List<ScaleComproject> selectOtherList = this.getComprojectList(selectOthers, yearMonth);
         List<PersonScale> personScales = new ArrayList<>();
         if(selectOtherList.size() > 0){
@@ -278,12 +288,12 @@ public class PersonScaleServiceImpl implements PersonScaleService {
                 pss.setProject_id(sot.getProject_id());
                 pss.setReportpeople(sot.getReportpeople());
                 List<PersonScale> scaleList = personScaleMapper.select(pss);
-                if(scaleList.size() > 0){
+                if(scaleList.size() > 0 && !extstexts.contains(scaleList.get(0).getPersonscale_id())){
+                    extstexts.add(scaleList.get(0).getPersonscale_id());
                     personScales.add(scaleList.get(0));
-                    personScaleList.add(scaleList.get(0));
                 }
             });
-            this.getRecursion(personScales, personScaleList, yearMonth);
+            this.getRecursion(personScales, extstexts, yearMonth);
         }
     }
 
@@ -292,7 +302,10 @@ public class PersonScaleServiceImpl implements PersonScaleService {
         personScale.setReporters(user_id);
         List<PersonScale> personScaleList = personScaleMapper.select(personScale);
         if(personScaleList.size() > 0){
-            personScaleList = this.getRecursion(personScaleList,personScaleList,yearMonth);
+            List<String> extstexts = personScaleList.stream().map(PersonScale::getPersonscale_id)
+                    .collect(Collectors.toList());
+            extstexts = extstexts.stream().distinct().collect(Collectors.toList());
+            personScaleList = personScaleMapper.selectByPrList(this.getRecursion(personScaleList,extstexts,yearMonth));
             personScaleList = personScaleList.stream().collect(
                     Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(
                             o -> o.getReportpeople() + ";" + o.getProject_id()))), ArrayList::new));

@@ -60,8 +60,8 @@
         <if test="owners != null and owners.size() > 0 ">
             AND OWNER in
             <foreach item="item" index="index" collection="owners" open="(" separator="," close=")">
-                　　　　#{item}
-                　　</foreach>
+                #{item}
+            </foreach>
         </if>
     </select>
 

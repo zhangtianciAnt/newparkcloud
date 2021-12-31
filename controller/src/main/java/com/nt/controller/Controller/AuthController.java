@@ -9,6 +9,7 @@ import com.nt.service_Auth.AuthService;
 import com.nt.service_Auth.RoleService;
 import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS1000.DepartmentAccountService;
+import com.nt.service_pfans.PFANS1000.ExpenditureForecastService;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
@@ -73,6 +74,11 @@ public class AuthController {
 
     @Autowired
     private PunchcardRecordService punchcardRecordService;
+
+
+    @Autowired
+    private ExpenditureForecastService expenditureForecastService;
+
 
     /**
      * @方法名：getActionsAuth
@@ -271,4 +277,20 @@ public class AuthController {
         return ApiResult.success();
     }
     //临时接口 修改项目体制rank to
+
+    //临时接口 保存Theme别支出见通数据 fr
+    @PostMapping(value = "/saveAuto")
+    public ApiResult saveAuto() throws Exception {
+        expenditureForecastService.saveAuto();
+        return ApiResult.success();
+    }
+    //临时接口 保存Theme别支出见通数据 to
+
+    //临时接口 Theme别支出见通,发布数据新生成 fr
+    @PostMapping(value = "/temporaryAccess")
+    public ApiResult temporaryAccess() throws Exception {
+        expenditureForecastService.temporaryAccess();
+        return ApiResult.success();
+    }
+    //临时接口 Theme别支出见通,发布数据新生成 to
 }

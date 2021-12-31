@@ -28,5 +28,5 @@ public class StartWorkflowVo implements Serializable{
 
 	private String userId;
 
-	private List<String> userList;
+	private List<WorkflowNodeUserVo> userList;
 }
