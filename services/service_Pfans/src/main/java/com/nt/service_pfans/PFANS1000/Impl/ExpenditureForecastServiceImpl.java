@@ -495,9 +495,9 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
                                 Iterator<Map.Entry<String, String>> iterator = hourAndMonth.get(0).entrySet().iterator();
                                 while (iterator.hasNext()) {
                                     Map.Entry<String, String> res = iterator.next();
-                                    if ("MONEY".equals(res.getKey())) {
+                                    if ("HOURS".equals(res.getKey())) {
                                         BeanUtils.setProperty(upd, property_h + month1, res.getValue());//工数
-                                    } else if ("HOURS".equals(res.getKey())) {
+                                    } else if ("MONEY".equals(res.getKey())) {
                                         BeanUtils.setProperty(upd, property_m + month1, res.getValue());//金额
                                     }
                                 }
