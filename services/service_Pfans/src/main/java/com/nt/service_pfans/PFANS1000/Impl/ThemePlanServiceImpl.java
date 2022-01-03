@@ -504,17 +504,36 @@ public class ThemePlanServiceImpl implements ThemePlanService {
                 ctDetail.setOtherone(vo.getOtherone());
                 ctDetail.setOthertwo(vo.getOthertwo());
                 ctDetail.setOtherthree(vo.getOtherthree());
-                if (!StringUtils.isNullOrEmpty(ctDetail.getThemeplandetail_id())) {
-                    ctDetail.preInsert(tokenModel);
-                    ctDetail.setThemeplandetail_id(themeplandetailid);
-                    ctDetail.setThemeplan_id(themePlanid);
-                    themePlanDetailMapper.insert(ctDetail);
-                } else {
-                    ctDetail.preInsert(tokenModel);
-                    ctDetail.setThemeplandetail_id(themeplandetailid);
-                    ctDetail.setThemeplan_id(themePlanid);
-                    themePlanDetailMapper.insert(ctDetail);
+                //upd ccm 20211228 theme主表数据和子表数据权限一致修改，子表数据增加的数据权限 fr
+//                if (!StringUtils.isNullOrEmpty(ctDetail.getThemeplandetail_id())) {
+//                    ctDetail.preInsert(tokenModel);
+//                    ctDetail.setThemeplandetail_id(themeplandetailid);
+//                    ctDetail.setThemeplan_id(themePlanid);
+//                    themePlanDetailMapper.insert(ctDetail);
+//                } else {
+//                    ctDetail.preInsert(tokenModel);
+//                    ctDetail.setThemeplandetail_id(themeplandetailid);
+//                    ctDetail.setThemeplan_id(themePlanid);
+//                    themePlanDetailMapper.insert(ctDetail);
+//                }
+
+                ctDetail.preInsert(tokenModel);
+                ctDetail.setThemeplandetail_id(themeplandetailid);
+                ctDetail.setThemeplan_id(themePlanid);
+                if (!StringUtils.isNullOrEmpty(themePlanDetailVo.get(0).getThemeplan_id()))
+                {
+                    ThemePlan themePlan = themePlanMapper.selectByPrimaryKey(themePlanDetailVo.get(0).getThemeplan_id());
+                    if(themePlan!=null)
+                    {
+                        ctDetail.setCreateby(themePlan.getCreateby());
+                        ctDetail.setCreateon(new Date());
+                        ctDetail.setOwner(themePlan.getOwner());
+                        ctDetail.setThemeplandetail_id(themeplandetailid);
+                        ctDetail.setThemeplan_id(themePlanid);
+                    }
                 }
+                themePlanDetailMapper.insert(ctDetail);
+                //upd ccm 20211228 theme主表数据和子表数据权限一致修改，子表数据增加的数据权限 to
 
             }
             ct.setPlancount(String.valueOf(plancount));
