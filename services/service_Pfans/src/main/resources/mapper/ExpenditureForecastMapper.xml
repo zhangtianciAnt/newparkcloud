@@ -554,13 +554,15 @@
         <where>
             <if test="year != null and year != ''">
                 and ex.annual = #{year}
-                AND ex.save_date LIKE concat(concat('%',#{year}),'-04%')
             </if>
             <if test="deptId != null and deptId != ''">
                 AND ex.dept_id = #{deptId}
             </if>
             <if test="classIfication != null and classIfication != ''">
                 AND ex.class_ification = #{classIfication}
+            </if>
+            <if test="saveDate != null and saveDate != ''">
+                AND ex.save_date LIKE concat(concat('%',DATE_FORMAT( #{saveDate}, '%Y-%c')),'%')
             </if>
         </where>
         GROUP BY ex.class_ification

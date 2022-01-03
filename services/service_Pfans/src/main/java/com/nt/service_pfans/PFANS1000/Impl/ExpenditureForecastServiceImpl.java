@@ -216,8 +216,10 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
         if(month < 4){
             year = year - 1;//当前年度
         }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String formatSaveDate = sdf.format(saveDate);
         //实体属性：hoursPlan存放theme计划工数，hoursActual存放人员或构内人数
-        ExpenditureForecast employee = expenditureForecastMapper.employeeWork(deptId, String.valueOf(year), "员工");//全年度员工对应theme工数
+        ExpenditureForecast employee = expenditureForecastMapper.employeeWork(deptId, String.valueOf(year), "员工",formatSaveDate);//对应年度，保存年月员工对应theme工数
         if(employee == null){
             employee = new ExpenditureForecast();
         }
@@ -227,7 +229,7 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
             BeanUtils.setProperty(employee,property_a + i,new BigDecimal(BeanUtils.getProperty(expenditureForecast,property_a + i)).setScale(2,BigDecimal.ROUND_HALF_UP).toString());
         }
         res.add(employee);
-        ExpenditureForecast withinStructure = expenditureForecastMapper.employeeWork(deptId, String.valueOf(year), "构内外注");//全年度构内对应theme工数
+        ExpenditureForecast withinStructure = expenditureForecastMapper.employeeWork(deptId, String.valueOf(year), "构内外注",formatSaveDate);//对应年度，保存年月构内对应theme工数
         if(withinStructure == null){
             withinStructure = new ExpenditureForecast();
         }

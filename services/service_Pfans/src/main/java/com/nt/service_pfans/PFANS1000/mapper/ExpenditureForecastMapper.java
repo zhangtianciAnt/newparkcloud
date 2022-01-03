@@ -41,7 +41,7 @@ public interface ExpenditureForecastMapper extends MyMapper<ExpenditureForecast>
     void updateList(@Param("list") List<ExpenditureForecast> expenditureForecastList);
 
     //获取全年员工计划工数
-    ExpenditureForecast employeeWork(@Param("deptId") String deptId,@Param("year") String year,@Param("classIfication") String classIfication);
+    ExpenditureForecast employeeWork(@Param("deptId") String deptId,@Param("year") String year,@Param("classIfication") String classIfication, @Param("saveDate") String saveDate);
 
     //从打卡获取全年度社内人员人数
     ExpenditureForecast employeesToClockIn(@Param("deptname") String deptname,@Param("year") String year);
