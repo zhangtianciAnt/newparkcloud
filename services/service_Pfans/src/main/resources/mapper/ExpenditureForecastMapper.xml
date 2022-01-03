@@ -562,7 +562,7 @@
                 AND ex.class_ification = #{classIfication}
             </if>
             <if test="saveDate != null and saveDate != ''">
-                AND ex.save_date LIKE concat(concat('%',DATE_FORMAT( #{saveDate}, '%Y-%c')),'%')
+                AND ex.save_date LIKE concat(concat('%',DATE_FORMAT( #{saveDate}, '%Y-%m')),'%')
             </if>
         </where>
         GROUP BY ex.class_ification
