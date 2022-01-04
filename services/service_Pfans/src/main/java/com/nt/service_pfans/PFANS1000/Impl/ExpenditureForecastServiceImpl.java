@@ -10,6 +10,7 @@ import com.nt.dao_Pfans.PFANS6000.Vo.bpSum3Vo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.ExpenditureForecastService;
+import com.nt.service_pfans.PFANS1000.RevenueForecastService;
 import com.nt.service_pfans.PFANS1000.mapper.DepartmentAccountMapper;
 import com.nt.service_pfans.PFANS1000.mapper.DepartmentalInsideMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ExpenditureForecastMapper;
@@ -63,6 +64,9 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
 
     @Autowired
     private DictionaryService dictionaryService;
+
+    @Autowired
+    private RevenueForecastService revenueForecastService;
 
 
     @Override
@@ -423,6 +427,7 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
      * */
     @Scheduled(cron="0 0 2 * * ?")//每日凌晨2点
     public void actualUpdate() throws Exception {
+        TokenModel tokenModel = new TokenModel();
         List<ExpenditureForecast> updAct = new ArrayList<>();//要更新实际的所有记录
         //判断是否超过见通截至日
         List<Dictionary> pj160 = dictionaryService.getForSelect("PJ160");//见通截止日
@@ -490,9 +495,9 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
                                 Iterator<Map.Entry<String, String>> iterator = hourAndMonth.get(0).entrySet().iterator();
                                 while (iterator.hasNext()) {
                                     Map.Entry<String, String> res = iterator.next();
-                                    if ("MONEY".equals(res.getKey())) {
+                                    if ("HOURS".equals(res.getKey())) {
                                         BeanUtils.setProperty(upd, property_h + month1, res.getValue());//工数
-                                    } else if ("HOURS".equals(res.getKey())) {
+                                    } else if ("MONEY".equals(res.getKey())) {
                                         BeanUtils.setProperty(upd, property_m + month1, res.getValue());//金额
                                     }
                                 }
@@ -529,7 +534,7 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
                                 }
                             }
                         }
-//                    upd.preUpdate();//定时任务无法获取token
+                        upd.preUpdate(tokenModel);
                         updAct.add(upd);
                     }
                 }
@@ -543,6 +548,7 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
     @Scheduled(cron="0 0 3 * * ?")
     @Override
     public void saveAuto() throws Exception {
+        TokenModel tokenModel = new TokenModel();
         List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
         List<String> companyid = new ArrayList<>();//所有有效部门
         for (DepartmentVo vo : allDepartment) {
@@ -603,6 +609,8 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
                             items.setId(UUID.randomUUID().toString());//新月份数据，保证无主键
                             items.setAnnual(String.valueOf(year));
                             items.setSaveDate(nowDate);
+                            items.preInsert(tokenModel);
+                            items.setModifyon(null);
                         }
                         if (record1.size() > 0) {
                             expenditureForecastMapper.insertOrUpdateBatch(record1);
@@ -612,6 +620,8 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
                             items.setId(UUID.randomUUID().toString());//新月份数据，保证无主键
                             items.setAnnual(String.valueOf(year));
                             items.setSaveDate(nowDate);
+                            items.preInsert(tokenModel);
+                            items.setModifyon(null);
                         }
                         if (record1.size() > 0) {
                             expenditureForecastMapper.insertOrUpdateBatch(record1);
@@ -619,8 +629,8 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
                     }
                 }
             }
-
         }
+        revenueForecastService.saveAuto();//theme支出见通新月份保存数据
     }
 
 

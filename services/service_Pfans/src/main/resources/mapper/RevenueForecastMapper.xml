@@ -171,15 +171,13 @@
         SUM(detail.AMOUNT2)  februaryPlan,
         SUM(detail.AMOUNT3)  marchPlan
         FROM themeinfor theme
-        LEFT JOIN themeplandetail detail
+        INNER JOIN themeplandetail detail
         ON theme.THEMEINFOR_ID = detail.THEMEINFOR_ID
         <where>
-            <if test="deptId != null and deptId != ''" >
-                AND detail.CENTER_ID = #{deptId}
-            </if>
-            <if test="year != null and year != ''" >
-                AND detail.YEAR = #{year}
-            </if>
+            detail.CENTER_ID = #{deptId}
+            AND detail.YEAR = #{year}
+            AND detail.TYPE = '0'
+            AND detail.CONTRACTTYPE IN('PJ142001','PJ142002','PJ142003','PJ142004','PJ142005')
         </where>
         GROUP BY theme.THEMEINFOR_ID
     </select>
@@ -195,10 +193,8 @@
                  LEFT JOIN contractnumbercount count
         ON conapp.CONTRACTNUMBER = count.CONTRACTNUMBER
         WHERE award.STATUS = '4'
-        <if test="deptId != null and deptId != ''" >
-            AND conapp.GROUP_ID = #{deptId}
-        </if>
-          AND conapp.CONTRACTTYPE not in ('HT008002', 'HT008004', 'HT008006', 'HT008008')
+        AND conapp.GROUP_ID = #{deptId}
+        AND conapp.CONTRACTTYPE not in ('HT008002', 'HT008004', 'HT008006', 'HT008008')
         GROUP BY conapp.THEMEINFOR_ID,DATE_FORMAT(count.DELIVERYDATE, '%Y'),DATE_FORMAT(count.DELIVERYDATE, '%c')
     </sql>
 
@@ -213,9 +209,7 @@
         LEFT JOIN awardreunite reunite
         ON conapp.CONTRACTNUMBER = reunite.CONTRACTNUMBER
         WHERE award.STATUS = '4'
-        <if test="deptId != null and deptId != ''" >
-            AND reunite.REALDEPARTMENT = #{deptId}
-        </if>
+        AND reunite.REALDEPARTMENT = #{deptId}
         AND conapp.CONTRACTTYPE in ('HT008002', 'HT008004', 'HT008006', 'HT008008')
         GROUP BY conapp.THEMEINFOR_ID,DATE_FORMAT(reunite.DELIVERYDATE, '%Y'),DATE_FORMAT(reunite.DELIVERYDATE, '%c')
     </sql>
@@ -296,10 +290,8 @@
         LEFT JOIN themeinfor theme
         ON reve.themeinfor_id = theme.THEMEINFOR_ID
         <where>
-            DATE_FORMAT(reve.save_date, '%Y%M') = (<include refid="getMaxSavedate"></include>)
-            <if test="deptId != null and deptId != ''" >
-                AND reve.dept_id = #{deptId}
-            </if>
+            reve.dept_id = #{deptId}
+            and DATE_FORMAT(reve.save_date, '%Y%M') = (<include refid="getMaxSavedate"></include>)
             <if test="year != null and year != ''" >
                 AND reve.annual = #{year}
             </if>
@@ -360,11 +352,9 @@
         LEFT JOIN themeinfor theme
         ON reve.themeinfor_id = theme.THEMEINFOR_ID
         <where>
+            reve.dept_id = #{deptId}
             <if test="saveDate != null" >
                 AND DATE_FORMAT(reve.save_date, '%Y%M') = DATE_FORMAT(#{saveDate}, '%Y%M')
-            </if>
-            <if test="deptId != null and deptId != ''" >
-                AND reve.dept_id = #{deptId}
             </if>
             <if test="year != null and year != ''" >
                 AND reve.annual = #{year}

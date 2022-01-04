@@ -1,4 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
+import cn.hutool.core.codec.Base64;
+import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS1000.DepartmentAccount;
 import com.nt.dao_Pfans.PFANS1000.RevenueForecast;
@@ -13,6 +15,7 @@ import com.nt.service_pfans.PFANS1000.mapper.ThemeInforMapper;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,18 +77,20 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
         List<RevenueForecast> revenueForecastList = revenueForecastVo.getRevenueForecastList();
         if(revenueForecastList.size() > 0){
             for (RevenueForecast revenueForecast : revenueForecastList){
+                //region scc del 现无页面创建theme from
                 //有新添加的theme数据 进行创建
-                if(StringUtils.isEmpty(revenueForecast.getThemeinforId()) || revenueForecast.getThemeinforId().equals(revenueForecast.getThemeName())){
-                    ThemeInfor themeInfor = new ThemeInfor();
-                    themeInfor.preInsert(tokenModel);
-                    themeInfor.setThemeinfor_id(UUID.randomUUID().toString());
-                    themeInfor.setThemename(revenueForecast.getThemeName());
-                    themeInfor.setToolsorgs(revenueForecast.getCustomerName());
-                    themeInfor.setYear(String.valueOf(year));
-                    themeInforMapper.insert(themeInfor);
-
-                    revenueForecast.setThemeinforId(themeInfor.getThemeinfor_id());
-                }
+//                if(StringUtils.isEmpty(revenueForecast.getThemeinforId()) || revenueForecast.getThemeinforId().equals(revenueForecast.getThemeName())){
+//                    ThemeInfor themeInfor = new ThemeInfor();
+//                    themeInfor.preInsert(tokenModel);
+//                    themeInfor.setThemeinfor_id(UUID.randomUUID().toString());
+//                    themeInfor.setThemename(revenueForecast.getThemeName());
+//                    themeInfor.setToolsorgs(revenueForecast.getCustomerName());
+//                    themeInfor.setYear(String.valueOf(year));
+//                    themeInforMapper.insert(themeInfor);
+//
+//                    revenueForecast.setThemeinforId(themeInfor.getThemeinfor_id());
+                //endregion scc del 现无页面创建theme to
+//                }
 
                 if(StringUtils.isEmpty(revenueForecast.getId())){
                     revenueForecast.preInsert(tokenModel);
@@ -94,38 +99,41 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
                     revenueForecast.setDeptId(deptId);
                     revenueForecast.setAnnual(String.valueOf(annual));
                 }else{
+                    revenueForecast.setAnnual(String.valueOf(annual));
                     revenueForecast.preUpdate(tokenModel);
                 }
 
-                //theme别合同收支分析表更新
-                //先检索 判断是否有相关数据
-                DepartmentAccount departmentAccount = new DepartmentAccount();
-                departmentAccount.setTheme_id(revenueForecast.getThemeinforId());
-                departmentAccount.setDepartment(deptId);
-                departmentAccount.setYears(String.valueOf(year));
-
-                List<DepartmentAccount> departmentAccountlist =  departmentAccountMapper.select(departmentAccount);
-                //对已有数据实际值进行更新
-                if(departmentAccountlist.size() > 0){
-                    for (DepartmentAccount deaccount : departmentAccountlist){
-                        deaccount.setMoneyplan1(new BigDecimal(revenueForecast.getJanuaryForecast()));
-                        deaccount.setMoneyplan2(new BigDecimal(revenueForecast.getFebruaryForecast()));
-                        deaccount.setMoneyplan3(new BigDecimal(revenueForecast.getMarchForecast()));
-                        deaccount.setMoneyplan4(new BigDecimal(revenueForecast.getAprilForecast()));
-                        deaccount.setMoneyplan5(new BigDecimal(revenueForecast.getMayForecast()));
-                        deaccount.setMoneyplan6(new BigDecimal(revenueForecast.getJuneForecast()));
-                        deaccount.setMoneyplan7(new BigDecimal(revenueForecast.getJulyForecast()));
-                        deaccount.setMoneyplan8(new BigDecimal(revenueForecast.getAugustForecast()));
-                        deaccount.setMoneyplan9(new BigDecimal(revenueForecast.getSeptemberForecast()));
-                        deaccount.setMoneyplan10(new BigDecimal(revenueForecast.getOctoberForecast()));
-                        deaccount.setMoneyplan11(new BigDecimal(revenueForecast.getNovemberForecast()));
-                        deaccount.setMoneyplan12(new BigDecimal(revenueForecast.getDecemberForecast()));
-                        departmentAccountMapper.updateByPrimaryKeySelective(deaccount);
-                    }
-                }else{
-                    //调用DepartmentAccountService的insert()
-                    departmentAccountService.insert();
-                }
+                //region scc del 影响更新速度，暂时注调 from
+//                //theme别合同收支分析表更新
+//                //先检索 判断是否有相关数据
+//                DepartmentAccount departmentAccount = new DepartmentAccount();
+//                departmentAccount.setTheme_id(revenueForecast.getThemeinforId());
+//                departmentAccount.setDepartment(deptId);
+//                departmentAccount.setYears(String.valueOf(year));
+//
+//                List<DepartmentAccount> departmentAccountlist =  departmentAccountMapper.select(departmentAccount);
+//                //对已有数据实际值进行更新
+//                if(departmentAccountlist.size() > 0){
+//                    for (DepartmentAccount deaccount : departmentAccountlist){
+//                        deaccount.setMoneyplan1(new BigDecimal(revenueForecast.getJanuaryForecast()));
+//                        deaccount.setMoneyplan2(new BigDecimal(revenueForecast.getFebruaryForecast()));
+//                        deaccount.setMoneyplan3(new BigDecimal(revenueForecast.getMarchForecast()));
+//                        deaccount.setMoneyplan4(new BigDecimal(revenueForecast.getAprilForecast()));
+//                        deaccount.setMoneyplan5(new BigDecimal(revenueForecast.getMayForecast()));
+//                        deaccount.setMoneyplan6(new BigDecimal(revenueForecast.getJuneForecast()));
+//                        deaccount.setMoneyplan7(new BigDecimal(revenueForecast.getJulyForecast()));
+//                        deaccount.setMoneyplan8(new BigDecimal(revenueForecast.getAugustForecast()));
+//                        deaccount.setMoneyplan9(new BigDecimal(revenueForecast.getSeptemberForecast()));
+//                        deaccount.setMoneyplan10(new BigDecimal(revenueForecast.getOctoberForecast()));
+//                        deaccount.setMoneyplan11(new BigDecimal(revenueForecast.getNovemberForecast()));
+//                        deaccount.setMoneyplan12(new BigDecimal(revenueForecast.getDecemberForecast()));
+//                        departmentAccountMapper.updateByPrimaryKeySelective(deaccount);
+//                    }
+//                }else{
+//                    //调用DepartmentAccountService的insert()
+//                    departmentAccountService.insert();
+//                }
+                //endregion scc del 影响更新速度，暂时注调 to
             }
 
             revenueForecastMapper.insertOrUpdateBatch(revenueForecastList);
@@ -157,31 +165,49 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
         revenueForecast.setSaveDate(sdf.parse(sdf.format(revenueForecast.getSaveDate())));
         //判断是否为第一次填写
         List<RevenueForecast> revenueForecastlist = revenueForecastMapper.selectOldRevenueForecastList(deptId,year,saveDate);
-        if(revenueForecastlist.size() == 0){
-            //从theme表里获取
-            listForReturn = revenueForecastMapper.selectRevenueForecastListFirst(deptId,year,saveDate);
-        }else{
-            //从revenue表里获取
-            //判断查询月份是否为之前月份
-            LocalDate localNow = LocalDate.now();
-            int monthNow = localNow.getMonthValue();
-            int yearNow = localNow.getYear();
-            //获取之前的数据
-            if(year <= yearNow  && month <= monthNow){
-                listForReturn = revenueForecastlist;
-            }else{
-                //获取实际数据
-                listForReturn = revenueForecastMapper.selectRevenueForecastList(deptId,year,saveDate);
+        //ccm 20211231 客户名有可能是社内组织，数据库中是ID，需要转换 fr
+        if (revenueForecastlist.size() > 0) {
+            OrgTree org = orgTreeService.get(new OrgTree());
+            for (RevenueForecast value : revenueForecastlist) {
+                OrgTree orginfo = orgTreeService.getOrgInfo(org, value.getCustomerName());
+
+                if(orginfo!=null )
+                {
+                    if(orginfo.getCompanyname()!=null && !orginfo.getCompanyname().equals(""))
+                    {
+                        value.setCustomerName(orginfo.getCompanyname());
+                    }
+                }
             }
         }
-        listForReturn.forEach(item -> {
-            if(companyid.get(item.getCustomerName()) != null){
-                item.setCustomerName(companyid.get(item.getCustomerName().trim()));//客户名
-            }else{
-                item.setCustomerName(item.getCustomerName());//客户名
-            }
-        });
-        return listForReturn;
+        //ccm 20211231 客户名有可能是社内组织，数据库中是ID，需要转换 to
+        //region scc del 转为定时 from
+//        if(revenueForecastlist.size() == 0){
+//            //从theme表里获取
+//            listForReturn = revenueForecastMapper.selectRevenueForecastListFirst(deptId,year,saveDate);
+//        }else{
+//            //从revenue表里获取
+//            //判断查询月份是否为之前月份
+//            LocalDate localNow = LocalDate.now();
+//            int monthNow = localNow.getMonthValue();
+//            int yearNow = localNow.getYear();
+//            //获取之前的数据
+//            if(year <= yearNow  && month <= monthNow){
+//                listForReturn = revenueForecastlist;
+//            }else{
+//                //获取实际数据
+//                listForReturn = revenueForecastMapper.selectRevenueForecastList(deptId,year,saveDate);
+//            }
+//        }
+//        listForReturn.forEach(item -> {
+//            if(companyid.get(item.getCustomerName()) != null){
+//                item.setCustomerName(companyid.get(item.getCustomerName().trim()));//客户名
+//            }else{
+//                item.setCustomerName(item.getCustomerName());//客户名
+//            }
+//        });
+        //endregion scc del 转为定时 from
+        return revenueForecastlist;
     }
 
 
@@ -204,5 +230,54 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
         listForReturn = revenueForecastMapper.getThemeOutDepth(deptId,year,saveDate);
 
         return listForReturn;
+    }
+
+    @Override
+    public void saveAuto() throws Exception{
+        TokenModel tokenModel = new TokenModel();
+        //id--部门键值对
+        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
+        HashMap<String,String> company = new HashMap<>();
+        List<String> companyid = new ArrayList<>();//所有有效部门
+        for(DepartmentVo vo : allDepartment){
+            company.put(vo.getDepartmentId(),vo.getDepartmentname());
+            companyid.add(vo.getDepartmentId());
+        }
+        List<RevenueForecast> listForReturn = new ArrayList<RevenueForecast>();
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int month = cal.get(Calendar.MONTH) + 1;//当前月
+        int year = cal.get(Calendar.YEAR);//当前年
+        if (month < 4) {
+            year = year - 1;//当前年度
+        }
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//        Date parse = sdf.parse(sdf.format(date));
+        for (String item : companyid) {
+            listForReturn = revenueForecastMapper.selectOldRevenueForecastList(item, year, date);
+            if (listForReturn != null && listForReturn.size() > 0) {
+                continue;
+            }else{
+                listForReturn = revenueForecastMapper.selectRevenueForecastListFirst(item,year,date);
+                for (RevenueForecast items : listForReturn) {
+                    items.setId(UUID.randomUUID().toString());
+                    items.setDeptId(item);
+                    items.setSaveDate(date);
+                    items.setAnnual(String.valueOf(year));
+                    items.preInsert();
+                    items.preUpdate(tokenModel);
+                    if (company.get(items.getCustomerName()) != null) {
+                        items.setCustomerName(company.get(items.getCustomerName().trim()));//客户名
+                    } else {
+                        items.setCustomerName(items.getCustomerName());//客户名
+                    }
+                }
+                if (listForReturn.size() > 0 && listForReturn != null) {
+                    revenueForecastMapper.insertOrUpdateBatch(listForReturn);
+                }
+            }
+        }
+
     }
 }
