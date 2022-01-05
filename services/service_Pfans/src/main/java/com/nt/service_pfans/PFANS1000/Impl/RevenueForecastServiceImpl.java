@@ -17,6 +17,7 @@ import com.nt.utils.PageUtil;
 import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -66,6 +67,11 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
      */
     @Override
     public void saveInfo(RevenueForecastVo revenueForecastVo, TokenModel tokenModel) throws Exception{
+        Map<Integer,String> inMapOfMonth = new HashMap<>();//pj别外注费用统计月份映射值，方便使用
+        String[] monthList = {"january","february","march","april","may","june","july","august","september","october","november","december"};
+        for(int i = 0; i < monthList.length; i++){
+            inMapOfMonth.put(i + 1,monthList[i]);
+        }
         RevenueForecast revenueForecastInfo = revenueForecastVo.getRevenueForecast();
         //获取参数
         Date saveDate = revenueForecastInfo.getSaveDate();
@@ -81,6 +87,8 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
         String deptId = revenueForecastInfo.getDeptId();
 
         List<RevenueForecast> revenueForecastList = revenueForecastVo.getRevenueForecastList();
+        //由于实际是数据做成时产生，在页面显示预测见通组件时，传到后台实际为空，不能更改历史数据的实际
+        List<RevenueForecast> insert = new ArrayList<>();//选择未关联theme数据的新记录
         if(revenueForecastList.size() > 0){
             for (RevenueForecast revenueForecast : revenueForecastList){
                 //region scc del 现无页面创建theme from
@@ -104,9 +112,14 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
                     revenueForecast.setSaveDate(saveDate);
                     revenueForecast.setDeptId(deptId);
                     revenueForecast.setAnnual(String.valueOf(annual));
+                    for(int i = 1; i <= 12; i++){
+                        BeanUtils.setProperty(revenueForecast,inMapOfMonth.get(i) + "Actual",0);
+                    }
+                    insert.add(revenueForecast);
                 }else{
                     revenueForecast.setAnnual(String.valueOf(annual));
                     revenueForecast.preUpdate(tokenModel);
+                    revenueForecastMapper.updateByPrimaryKeySelective(revenueForecast);
                 }
 
                 //region scc del 影响更新速度，暂时注调 from
@@ -141,8 +154,9 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
 //                }
                 //endregion scc del 影响更新速度，暂时注调 to
             }
-
-            revenueForecastMapper.insertOrUpdateBatch(revenueForecastList);
+            if(insert.size() > 0 && insert != null){
+                revenueForecastMapper.insertOrUpdateBatch(insert);
+            }
         }
     }
 
