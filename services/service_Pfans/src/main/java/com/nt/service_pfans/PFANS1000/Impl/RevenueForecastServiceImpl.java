@@ -6,15 +6,21 @@ import com.nt.dao_Pfans.PFANS1000.DepartmentAccount;
 import com.nt.dao_Pfans.PFANS1000.RevenueForecast;
 import com.nt.dao_Pfans.PFANS1000.ThemeInfor;
 import com.nt.dao_Pfans.PFANS1000.Vo.RevenueForecastVo;
+import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.DepartmentAccountService;
 import com.nt.service_pfans.PFANS1000.RevenueForecastService;
 import com.nt.service_pfans.PFANS1000.mapper.DepartmentAccountMapper;
 import com.nt.service_pfans.PFANS1000.mapper.RevenueForecastMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ThemeInforMapper;
+import com.nt.utils.PageUtil;
 import com.nt.utils.StringUtils;
+import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -164,7 +170,7 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         revenueForecast.setSaveDate(sdf.parse(sdf.format(revenueForecast.getSaveDate())));
         //判断是否为第一次填写
-        List<RevenueForecast> revenueForecastlist = revenueForecastMapper.selectOldRevenueForecastList(deptId,year,saveDate);
+        List<RevenueForecast> revenueForecastlist = revenueForecastMapper.selectOldRevenueForecastList(deptId,year,saveDate,revenueForecast.getThemeName());
         //ccm 20211231 客户名有可能是社内组织，数据库中是ID，需要转换 fr
         if (revenueForecastlist.size() > 0) {
             OrgTree org = orgTreeService.get(new OrgTree());
@@ -212,7 +218,8 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
 
 
     @Override
-    public List<RevenueForecast> getThemeOutDepth(RevenueForecast revenueForecast){
+    public TableDataInfo getThemeOutDepth(RevenueForecast revenueForecast, int currentPage, int pageSize){
+        Pageable pageable = PageRequest.of(currentPage, pageSize);
         List<RevenueForecast> listForReturn = new ArrayList<RevenueForecast>();
         //获取参数
         Date saveDate = revenueForecast.getSaveDate();
@@ -228,8 +235,11 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
 
         //从theme表里获取
         listForReturn = revenueForecastMapper.getThemeOutDepth(deptId,year,saveDate);
-
-        return listForReturn;
+        Page<RevenueForecast> pageFromList = PageUtil.createPageFromList(listForReturn, pageable);
+        TableDataInfo taInfo = new TableDataInfo();
+        taInfo.setTotal(pageFromList.getTotalElements() > listForReturn.size() ? listForReturn.size() : pageFromList.getTotalElements());
+        taInfo.setResultList(pageFromList.getContent());
+        return taInfo;
     }
 
     @Override
@@ -255,7 +265,7 @@ public class RevenueForecastServiceImpl implements RevenueForecastService {
 //        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 //        Date parse = sdf.parse(sdf.format(date));
         for (String item : companyid) {
-            listForReturn = revenueForecastMapper.selectOldRevenueForecastList(item, year, date);
+            listForReturn = revenueForecastMapper.selectOldRevenueForecastList(item, year, date,null);
             if (listForReturn != null && listForReturn.size() > 0) {
                 continue;
             }else{

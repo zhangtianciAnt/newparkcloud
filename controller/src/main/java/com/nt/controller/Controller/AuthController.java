@@ -10,6 +10,7 @@ import com.nt.service_Auth.RoleService;
 import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS1000.DepartmentAccountService;
 import com.nt.service_pfans.PFANS1000.ExpenditureForecastService;
+import com.nt.service_pfans.PFANS1000.Impl.ExpenditureForecastServiceImpl;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
 import com.nt.service_pfans.PFANS5000.CompanyProjectsService;
@@ -78,6 +79,9 @@ public class AuthController {
 
     @Autowired
     private ExpenditureForecastService expenditureForecastService;
+
+    @Autowired
+    private ExpenditureForecastServiceImpl expenditureForecastServiceImpl;
 
 
     /**
@@ -281,7 +285,7 @@ public class AuthController {
     //临时接口 保存Theme别支出见通数据 fr
     @PostMapping(value = "/saveAuto")
     public ApiResult saveAuto() throws Exception {
-        expenditureForecastService.saveAuto();
+        expenditureForecastServiceImpl.saveAuto();
         return ApiResult.success();
     }
     //临时接口 保存Theme别支出见通数据 to

@@ -546,7 +546,6 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
     }
 
     @Scheduled(cron="0 0 3 * * ?")
-    @Override
     public void saveAuto() throws Exception {
         TokenModel tokenModel = new TokenModel();
         List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();

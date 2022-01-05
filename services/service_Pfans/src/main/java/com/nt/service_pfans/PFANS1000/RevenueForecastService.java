@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS1000;
 
 import com.nt.dao_Pfans.PFANS1000.RevenueForecast;
 import com.nt.dao_Pfans.PFANS1000.Vo.RevenueForecastVo;
+import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
 
 import java.text.ParseException;
@@ -36,9 +37,9 @@ public interface RevenueForecastService {
     /**
      * 获取剩余theme（部门条件筛选以外的theme）
      *
-     * @return {@link List}<{@link RevenueForecast}>
+     *
      */
-    List<RevenueForecast> getThemeOutDepth(RevenueForecast revenueForecast);
+    TableDataInfo getThemeOutDepth(RevenueForecast revenueForecast, int currentPage, int pageSize);
 
     //定时自动保存
     void saveAuto() throws Exception;
