@@ -427,9 +427,8 @@ public class UserController {
     public ApiResult resetPassword(@RequestBody UserAccount userAccount, HttpServletRequest request) throws Exception {
         try {
             TokenModel tokenModel = tokenService.getToken(request);
-            if (tokenModel.getUserId().equals("5e78b22c4e3b194874180f5f")) {
-                userService.resetPassword(userAccount, tokenModel);
-            } else {
+            userService.resetPassword(userAccount, tokenModel);
+            if (!tokenModel.getUserId().equals("5e78b22c4e3b194874180f5f")) {
                 Expatriatesinfor exinfo = new Expatriatesinfor();
                 exinfo.setAccount(userAccount.get_id());
                 List<Expatriatesinfor> expatriatesinforList = expatriatesinforService.getexpatriatesinfor(exinfo);
