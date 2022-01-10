@@ -536,9 +536,10 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         Staffexitprocedure getOldStaff = new Staffexitprocedure();
         getOldStaff.setStaffexitprocedure_id(staffexitprocedure.getStaffexitprocedure_id());
         List<Staffexitprocedure> staffList = staffexitprocedureMapper.select(getOldStaff);
+        //离职日变更待办修改 一次上司待办接收人错误bug ztc fr
         if(("2").equals(staffexitprocedure.getStatus()) && staffList.size() > 0
-                && staffexitprocedure.getHope_exit_date() != null
-                && staffexitprocedure.getHope_exit_date() != staffList.get(0).getHope_exit_date()){
+                && staffexitprocedure.getNewhope_exit_date() != null
+                && staffexitprocedure.getNewhope_exit_date() != staffList.get(0).getHope_exit_date()){
             staffexitprocedureMapper.upStaffproe(staffexitprocedure.getStaffexitprocedure_id());
             staffexitprocedureMapper.upTodoNo(staffexitprocedure.getStaffexitprocedure_id());
             //离职者
@@ -557,7 +558,12 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
             toDoNotice2.setDataid(staffexitprocedure.getStaffexitprocedure_id());
             toDoNotice2.setUrl("/PFANS2026View");
             toDoNotice2.preInsert(tokenModel);
-            toDoNotice2.setOwner(wfList.get(2).getUserId());
+            List<WorkflowLogDetailVo> wfListAnt = wfList.stream()
+                    .filter(wf -> ("一次上司").equals(wf.getNodename())).collect(Collectors.toList());
+            if(wfListAnt.size() > 0){
+                toDoNotice2.setOwner(wfListAnt.get(0).getUserId());
+            }
+            //离职日变更待办修改 一次上司待办接收人错误bug ztc to
             toDoNoticeService.save(toDoNotice2);
         }
         //离职日变更，删除原数据关联的退职者调书以及待办 ztc 1221 to

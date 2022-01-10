@@ -29,7 +29,7 @@ public class Pfans2016Controller {
 
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(@RequestBody AbNormal ab, HttpServletRequest request) throws Exception {
-        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+//        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 //        考勤异常申请添加筛选条件 ztc fr
 //        List<AbNormal> abnormallist = new ArrayList<>();
         TokenModel tokenModel = tokenService.getToken(request);
