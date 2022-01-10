@@ -17,6 +17,7 @@ import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -97,7 +98,7 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Override
     public void insert(AbNormal abNormal, TokenModel tokenModel) throws Exception {
         String strtus = abNormal.getStatus();
-
+        this.checkAttendance(abNormal, "insert");
         abNormal.preInsert(tokenModel);
         abNormal.setAbnormalid(UUID.randomUUID().toString());
         abNormalMapper.insert(abNormal);
@@ -161,6 +162,7 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Override
     public void upd(AbNormal abNormal, TokenModel tokenModel) throws Exception {
         abNormal.preUpdate(tokenModel);
+        this.checkAttendance(abNormal, "update");
         //add   被承认过的日期不可申请考勤异常  from
         if(abNormal.getStatus().equals("4")) {
             AbNormal ab = abNormalMapper.selectByPrimaryKey(abNormal.getAbnormalid());
@@ -872,5 +874,296 @@ public class AbNormalServiceImpl implements AbNormalService {
         return aList;
     }
     //add ccm 0806 查询申请人的剩余年休，
+
+    //region scc add 22/1/6 考勤异常申请check from
+    /**
+     * 参数type,“insert”对应新增，“update”对应修改
+     * */
+    private void checkAttendance(AbNormal abNormal,String type) throws Exception {
+        AbNormal abNormal1 = abNormalMapper.selectByPrimaryKey(abNormal.getAbnormalid());
+        //新增或者修改，2，一次审批结束4
+        if ("insert".equals(type) || "0".equals(abNormal1.getStatus()) || "2".equals(abNormal1.getStatus()) || ("4".equals(abNormal1.getStatus()) && abNormal.getReoccurrencedate() == null
+                && abNormal.getRefinisheddate() == null && StringUtils.isNullOrEmpty(abNormal.getRelengthtime()))) {
+            //产假护理（男）,一次申请不能超过连续20天
+            if("PR013013".equals(abNormal.getErrortype()) && Integer.parseInt(abNormal.getLengthtime()) > 160){//产假护理（男）
+                throw new LogicalException("产假护理（男），连续申请天数不允许超过20天，请重新选择日期。");
+            }
+            //産休（女），一次申请不能超过连续158天
+            if("PR013012".equals(abNormal.getErrortype()) && Integer.parseInt(abNormal.getLengthtime()) > 1264){//产假护理（男）
+                throw new LogicalException("産休（女），连续申请天数不允许超过158天，请重新选择日期。");
+            }
+            //结婚休假,一次申请不能超过连续10天，一年内有效
+            if("PR013011".equals(abNormal.getErrortype())){
+                if ("insert".equals(type)) {//新建
+                    //判断同一结婚是否多次申请
+                    AbNormal checkWidding = new AbNormal();
+                    checkWidding.setErrortype(abNormal.getErrortype());
+                    checkWidding.setWeddingdate(abNormal.getWeddingdate());
+                    checkWidding.setUser_id(abNormal.getUser_id());
+                    checkWidding.setCenterid(abNormal.getCenterid());
+                    checkWidding.setGroupid(abNormal.getGroupid());
+                    List<AbNormal> result = abNormalMapper.select(checkWidding);
+                    if(result != null && result.size() > 0){
+                        throw new LogicalException("同一结婚证明，不能重复申请 结婚休假");
+                    }
+                }
+                //不能连续超过10天
+                if (Integer.parseInt(abNormal.getLengthtime()) > 80) {//结婚休假
+                    throw new LogicalException("结婚休假，连续申请天数不允许超过10天，请重新选择日期。");
+                }
+                //在一年内有效
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(abNormal.getWeddingdate());//结婚日
+                cal.add(Calendar.YEAR, 1);//增加一年
+                Date afterOneYear = cal.getTime();//结婚一年
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date occurrence = df.parse(df.format(abNormal.getOccurrencedate()));//开始日期
+                Date finished = df.parse(df.format(abNormal.getFinisheddate()));//结束日期
+                Date wedding = df.parse(df.format(abNormal.getWeddingdate()));//结婚
+                Date afterOneYear1 = df.parse(df.format(afterOneYear));//结婚一年
+                long occurrenceDate = occurrence.getTime();
+                long finishedDate = finished.getTime();
+                long weddingDate = wedding.getTime();
+                long afterOneYearDate = afterOneYear1.getTime();
+                if(!((occurrenceDate >= weddingDate && occurrenceDate <= afterOneYearDate) && (finishedDate >= weddingDate && finishedDate <= afterOneYearDate))){
+                    throw new LogicalException("结婚休假，请在结婚日起一年内申请，请重新选择日期。");
+                }
+            }
+            //育儿假，子女在21-11-26之前未满3周岁，可申请，每月最多一天，每年最多10天，子女在21-11-26 ~ 21-12-31期间满三周岁，一年可申请一天
+            if ("PR013023".equals(abNormal.getErrortype())) {
+                if (Integer.parseInt(abNormal.getLengthtime()) > 8) {//一次申请大于1天，及超过每月最大申请1天
+                    throw new LogicalException("育儿假，当月申请天数已超过一天，请重新选择日期。");
+                } else {//此次申请为一天
+                    //判断以开始时间算，孩子是否满三周岁
+                    Calendar instance = Calendar.getInstance();
+                    instance.setTime(abNormal.getDateofbirth());//出生日期
+                    instance.add(Calendar.YEAR, 3);//增加3年
+                    Date threeYears = instance.getTime();//三周岁日期
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date threeYearsOfAge = df.parse(df.format(threeYears));//三周岁日期
+                    Date Occurrence = df.parse(df.format(abNormal.getOccurrencedate()));//开始日期
+                    long threeYearsOfAgeDate = threeYearsOfAge.getTime();//三周岁日期
+                    long OccurrenceDate = Occurrence.getTime();//开始日期
+                    String start = "2021-11-26 00:00:00";
+                    Date startDate = df.parse(start);//21-11-26
+                    String end = "2021-12-31 23:59:59";
+                    Date endDate = df.parse(end);//2021-12-31
+                    Date birth = df.parse(df.format(abNormal.getDateofbirth()));//出生日期
+                    if ((threeYearsOfAgeDate > OccurrenceDate) && (threeYearsOfAgeDate - OccurrenceDate > 0)) {//未满三周岁，且不包含满三周岁当天
+                        long regulationBegan = startDate.getTime();//21-11-26
+                        long regulationEnd = endDate.getTime();//21-12-31
+                        long birthDate = birth.getTime();//出生日期
+                        List<Map<String, String>> maps = abNormalMapper.queryCount(abNormal);//根据申请人，子女出生日期，一个月和申请日之前一年内的申请次数
+                        //子女在21-11-26之前未满3周岁，可申请，每月最多一天，每年最多10天
+                        if ((birthDate > regulationBegan) || (regulationBegan - threeYearsOfAgeDate > 0)) {//出生日期在11-26之后或三周岁时没到11-26
+                            if (maps != null && maps.size() > 0) {
+                                if (Integer.parseInt(String.valueOf(maps.get(0).get("years"))) >= 10) {
+                                    throw new LogicalException("育儿假，申请日之前一年内申请天数已超出10天，不可申请。");
+                                }
+                                if("insert".equals(type)){//新建
+                                    if (Integer.parseInt(String.valueOf(maps.get(0).get("months"))) >= 1) {
+                                        throw new LogicalException("育儿假，当月申请天数已超出1天，不可申请。");
+                                    }
+                                }else{//修改
+                                    List<AbNormal> abNormals = abNormalMapper.find(abNormal);
+                                    if(abNormals != null && abNormals.size() > 0){
+                                        throw new LogicalException("育儿假，当月申请天数已超出1天，不可申请。");
+                                    }
+                                }
+
+                            }
+                        }
+                        //子女在21-11-26 ~ 21-12-31期间满三周岁，一年可申请一次
+                        else {
+                            if ((regulationBegan - threeYearsOfAgeDate < 0) && (regulationEnd - threeYearsOfAgeDate > 0)) {
+                                if(maps != null && maps.size() > 0){
+                                    if(Integer.parseInt(String.valueOf(maps.get(0).get("years"))) >= 1){
+                                        throw new LogicalException("育儿假，申请日之前一年内申请天数已超出10天，不可申请。");
+                                    }
+                                }
+                            }
+                        }
+                    } else {//已满三周岁
+                        throw new LogicalException("育儿假，你的孩子在你申请的开始时间时已满三周岁，不可申请。");
+                    }
+                }
+            }
+            //父母照料假，需年满60周岁，只有独生子女可申请，申请日（申请开始时间）之前，可申请15天
+            if("PR013024".equals(abNormal.getErrortype())){
+                //一年只能申请15天
+                if (Integer.parseInt(abNormal.getLengthtime()) > 120) {//父母照料假
+                    throw new LogicalException("父母照料假，申请日之前一年内申请天数超过15天。");
+                }else{
+                    Query query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(abNormal.getUser_id()));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    //是否独生女子
+                    if (customerInfo.getUserinfo().getChildren() != null && customerInfo.getUserinfo().getChildren().equals("0")) {//0不是独生子女，1是独生子女
+                        throw new LogicalException("父母照料假，只允许独生子女申请。");
+                    } else {
+                        Calendar instance = Calendar.getInstance();
+                        instance.setTime(abNormal.getParentsdate());//父母出生日期
+                        instance.add(Calendar.YEAR, 60);//增加60年
+                        Date age = instance.getTime();//60周岁
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        Date ageDate = df.parse(df.format(age));//60周岁
+                        Date Occurrence = df.parse(df.format(abNormal.getOccurrencedate()));//开始日期
+                        long ageTime = ageDate.getTime();//60周岁
+                        long OccurrenceDate = Occurrence.getTime();//开始日期
+                        //父母是否年满60
+                        if (ageTime > OccurrenceDate) {
+                            throw new LogicalException("父母照料假，父母未满60周岁，不可申请。");
+                        }else{
+                            int days = abNormalMapper.queryDays(abNormal);
+                            if ("insert".equals(type)) {//新建
+                                if (days < 120 && (120 - days) - Integer.parseInt(abNormal.getLengthtime()) < 0) {//剩余天数不足：申请过，再次申请天数大于剩余天数
+                                    throw new LogicalException("父母照料假，剩余可申请天数不足，不可申请。");
+                                } else if (days >= 120){
+                                    throw new LogicalException("父母照料假，无剩余可申请天数，不可申请。");
+                                }
+                            }
+//                            else {//修改
+//                                if ((120 - days) - Integer.parseInt(abNormal.getLengthtime()) < 0) {//剩余天数不足
+//                                    throw new LogicalException("父母照料假，剩余可申请天数不足，不可申请。");
+//                                }
+//                            }
+                        }
+                    }
+                }
+            }
+        }
+        //一次审批结束后二次保存，二次审批发起，二次审批结束
+        else if (("4".equals(abNormal1.getStatus()) && abNormal.getReoccurrencedate() != null
+                && abNormal.getRefinisheddate() != null && !StringUtils.isNullOrEmpty(abNormal.getRelengthtime()))
+                || "5".equals(abNormal1.getStatus()) || "7".equals(abNormal1.getStatus())) {//二次更新
+            //产假护理（男）,一次申请不能超过连续20天
+            if("PR013013".equals(abNormal.getErrortype()) && Integer.parseInt(abNormal.getRelengthtime()) > 160){//产假护理（男）
+                throw new LogicalException("产假护理（男），连续申请天数不允许超过20天，请重新选择日期。");
+            }
+            //産休（女），一次申请不能超过连续158天
+            if("PR013012".equals(abNormal.getErrortype()) && Integer.parseInt(abNormal.getRelengthtime()) > 1264){//产假护理（男）
+                throw new LogicalException("産休（女），连续申请天数不允许超过158天，请重新选择日期。");
+            }
+            //结婚休假,一次申请不能超过连续10天，一年内有效
+            if("PR013011".equals(abNormal.getErrortype())){
+                //不能连续超过10天
+                if (Integer.parseInt(abNormal.getRelengthtime()) > 80) {//结婚休假
+                    throw new LogicalException("结婚休假，连续申请天数不允许超过10天，请重新选择日期。");
+                }
+                //在一年内有效
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(abNormal.getWeddingdate());//结婚日
+                cal.add(Calendar.YEAR, 1);//增加一年
+                Date afterOneYear = cal.getTime();//结婚一年
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date reOccurrence = df.parse(df.format(abNormal.getReoccurrencedate()));//实际开始日期
+                Date reFinished = df.parse(df.format(abNormal.getRefinisheddate()));//实际结束日期
+                Date wedding = df.parse(df.format(abNormal.getWeddingdate()));//结婚
+                Date afterOneYear1 = df.parse(df.format(afterOneYear));//结婚一年
+                long reOccurrenceDate = reOccurrence.getTime();
+                long reFinishedDate = reFinished.getTime();
+                long weddingDate = wedding.getTime();
+                long afterOneYearDate = afterOneYear1.getTime();
+                if(!((reOccurrenceDate >= weddingDate && reOccurrenceDate <= afterOneYearDate) && (reFinishedDate >= weddingDate && reFinishedDate <= afterOneYearDate))){
+                    throw new LogicalException("结婚休假，请在结婚日起一年内申请，请重新选择日期。");
+                }
+            }
+            //育儿假，子女在21-11-26之前未满3周岁，可申请，每月最多一天，每年最多10天，子女在21-11-26 ~ 21-12-31期间满三周岁，一年可申请一天
+            if ("PR013023".equals(abNormal.getErrortype())) {
+                if (Integer.parseInt(abNormal.getRelengthtime()) > 8) {//一次申请大于1天，及超过每月最大申请1天
+                    throw new LogicalException("育儿假，当月申请天数已超过一天，请重新选择日期。");
+                } else {//此次申请为一天
+                    //判断以开始时间算，孩子是否满三周岁
+                    Calendar instance = Calendar.getInstance();
+                    instance.setTime(abNormal.getDateofbirth());//出生日期
+                    instance.add(Calendar.YEAR, 3);//增加3年
+                    Date threeYears = instance.getTime();//三周岁日期
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date threeYearsOfAge = df.parse(df.format(threeYears));//三周岁日期
+                    Date reOccurrence = df.parse(df.format(abNormal.getReoccurrencedate()));//实际开始日期
+                    long threeYearsOfAgeDate = threeYearsOfAge.getTime();//三周岁日期
+                    long reOccurrenceDate = reOccurrence.getTime();//实际开始日期
+                    String start = "2021-11-26 00:00:00";
+                    Date startDate = df.parse(start);//21-11-26
+                    String end = "2021-12-31 23:59:59";
+                    Date endDate = df.parse(end);//2021-12-31
+                    Date birth = df.parse(df.format(abNormal.getDateofbirth()));//出生日期
+                    if ((threeYearsOfAgeDate > reOccurrenceDate) && (threeYearsOfAgeDate - reOccurrenceDate > 0)) {//未满三周岁，且不包含满三周岁当天
+                        long regulationBegan = startDate.getTime();//21-11-26
+                        long regulationEnd = endDate.getTime();//21-12-31
+                        long birthDate = birth.getTime();//出生日期
+//                    if("insert".equals(type)){
+                        List<Map<String, String>> maps = abNormalMapper.queryCount(abNormal);//根据申请人，子女出生日期，一个月和申请日之前一年内的申请次数
+                        //子女在21-11-26之前未满3周岁，可申请，每月最多一天，每年最多10天
+                        if ((birthDate > regulationBegan) || (regulationBegan - threeYearsOfAgeDate > 0)) {//出生日期在11-26之后或三周岁时没到11-26
+                            if (maps != null && maps.size() > 0) {
+                                if (Integer.parseInt(String.valueOf(maps.get(0).get("years"))) >= 10) {
+                                    throw new LogicalException("育儿假，申请日之前一年内申请天数已超出10天，不可申请。");
+                                }
+                                else{//修改
+                                    List<AbNormal> abNormals = abNormalMapper.find(abNormal);
+                                    if(abNormals != null && abNormals.size() > 0){
+                                        throw new LogicalException("育儿假，当月申请天数已超出1天，不可申请。");
+                                    }
+                                }
+
+                            }
+                        }
+                        //子女在21-11-26 ~ 21-12-31期间满三周岁，一年可申请一次
+                        else {
+                            if ((regulationBegan - threeYearsOfAgeDate < 0) && (regulationEnd - threeYearsOfAgeDate > 0)) {
+                                if(maps != null && maps.size() > 0){
+                                    if(Integer.parseInt(String.valueOf(maps.get(0).get("years"))) >= 1){
+                                        throw new LogicalException("育儿假，申请日之前一年内申请天数已超出10天，不可申请。");
+                                    }
+                                }
+                            }
+                        }
+//                    }
+                    } else {//已满三周岁
+                        throw new LogicalException("育儿假，你的孩子在你申请的开始时间时已满三周岁，不可申请。");
+                    }
+                }
+            }
+            //父母照料假，需年满60周岁，只有独生子女可申请，申请日（申请开始时间）之前，可申请15天
+            if("PR013024".equals(abNormal.getErrortype())){
+                //一年只能申请15天
+                if (Integer.parseInt(abNormal.getRelengthtime()) > 120) {//父母照料假
+                    throw new LogicalException("父母照料假，申请日之前一年内申请天数超过15天。");
+                }else{
+                    Query query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(abNormal.getUser_id()));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    //是否独生女子
+                    if (customerInfo.getUserinfo().getChildren() != null && customerInfo.getUserinfo().getChildren().equals("0")) {//0不是独生子女，1是独生子女
+                        throw new LogicalException("父母照料假，只允许独生子女申请。");
+                    } else {
+                        Calendar instance = Calendar.getInstance();
+                        instance.setTime(abNormal.getParentsdate());//父母出生日期
+                        instance.add(Calendar.YEAR, 60);//增加60年
+                        Date age = instance.getTime();//60周岁
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        Date ageDate = df.parse(df.format(age));//60周岁
+                        Date reOccurrence = df.parse(df.format(abNormal.getReoccurrencedate()));//开始日期
+                        long ageTime = ageDate.getTime();//60周岁
+                        long reOccurrenceDate = reOccurrence.getTime();//开始日期
+                        //父母是否年满60
+                        if (ageTime > reOccurrenceDate) {
+                            throw new LogicalException("父母照料假，父母未满60周岁，不可申请。");
+                        }else{
+                            int days = abNormalMapper.queryDays(abNormal);
+                                if ((120 - days) - Integer.parseInt(abNormal.getRelengthtime()) < 0) {//剩余天数不足
+                                    throw new LogicalException("父母照料假，剩余可申请天数不足，不可申请。");
+                                }
+                                else if (days >= 120){
+                                    throw new LogicalException("父母照料假，无剩余可申请天数，不可申请。");
+                                }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    //endregion scc add 22/1/6 考勤异常申请check to
 
 }
