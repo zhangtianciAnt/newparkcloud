@@ -403,6 +403,107 @@ and a.user_id = #{userid}
     </select>
 <!--    考勤异常申请添加筛选条件 ztc to-->
 
+    <select id="queryCount" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="java.util.HashMap">
+        SELECT sum(res.months) as months,sum(res.years) as years from
+        (select count(*) as months,0 as years from abnormal
+        WHERE 1 = 1
+        <if test="errortype != null and errortype != ''">
+            and ERROR_TYPE = #{errortype}
+        </if>
+        <if test="centerid != null and centerid != ''">
+            and CENTER_ID = #{centerid}
+        </if>
+        <if test="groupid != null and groupid != ''">
+            and GROUP_ID = #{groupid}
+        </if>
+        <if test="user_id != null and user_id != ''">
+            and USER_ID = #{user_id}
+        </if>
+        <if test="dateofbirth != null">
+            and DATEOFBIRTH = #{dateofbirth,jdbcType=DATE}
+        </if>
+        <if test="occurrencedate != null">
+            and DATE_FORMAT(OCCURRENCE_DATE, '%Y-%m') = DATE_FORMAT(#{occurrencedate}, '%Y-%m')
+        </if>
+        UNION all
+        select 0 as months,count(*) as years from abnormal
+        WHERE 1 = 1
+        <if test="errortype != null and errortype != ''">
+            and ERROR_TYPE = #{errortype}
+        </if>
+        <if test="centerid != null and centerid != ''">
+            and CENTER_ID = #{centerid}
+        </if>
+        <if test="groupid != null and groupid != ''">
+            and GROUP_ID = #{groupid}
+        </if>
+        <if test="user_id != null and user_id != ''">
+            and USER_ID = #{user_id}
+        </if>
+        <if test="dateofbirth != null">
+            and DATEOFBIRTH = #{dateofbirth,jdbcType=DATE}
+        </if>
+        <if test="occurrencedate != null">
+            and DATE_FORMAT(OCCURRENCE_DATE, '%Y') = DATE_FORMAT(#{occurrencedate}, '%Y')
+            and OCCURRENCE_DATE BETWEEN DATE_SUB(DATE_FORMAT(#{occurrencedate}, '%Y-%m-%d'),INTERVAL 1 YEAR)
+                                                         and DATE_FORMAT(#{occurrencedate}, '%Y-%m-%d')
+        </if>
+        ) res
 
+    </select>
+
+    <select id="find" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        select * from abnormal
+        WHERE 1 = 1
+        and ABNORMAL_ID != #{abnormalid}
+        <if test="errortype != null and errortype != ''">
+            and ERROR_TYPE = #{errortype}
+        </if>
+        <if test="centerid != null and centerid != ''">
+            and CENTER_ID = #{centerid}
+        </if>
+        <if test="groupid != null and groupid != ''">
+            and GROUP_ID = #{groupid}
+        </if>
+        <if test="user_id != null and user_id != ''">
+            and USER_ID = #{user_id}
+        </if>
+        <if test="dateofbirth != null">
+            and DATEOFBIRTH = #{dateofbirth,jdbcType=DATE}
+        </if>
+        <if test="occurrencedate != null and reoccurrencedate == null">
+            and DATE_FORMAT(OCCURRENCE_DATE, '%Y-%m') = DATE_FORMAT(#{occurrencedate}, '%Y-%m')
+        </if>
+        <if test="occurrencedate != null and reoccurrencedate != null">
+            and DATE_FORMAT(RE_OCCURRENCE_DATE, '%Y-%m') = DATE_FORMAT(#{reoccurrencedate}, '%Y-%m')
+        </if>
+    </select>
+
+    <select id="queryDays" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="java.lang.Integer">
+        select IFNULL(SUM(LENGTHTIME),0) as days from abnormal
+        WHERE 1 = 1
+        <if test="errortype != null and errortype != ''">
+            and ERROR_TYPE = #{errortype}
+        </if>
+        <if test="centerid != null and centerid != ''">
+            and CENTER_ID = #{centerid}
+        </if>
+        <if test="groupid != null and groupid != ''">
+            and GROUP_ID = #{groupid}
+        </if>
+        <if test="user_id != null and user_id != ''">
+            and USER_ID = #{user_id}
+        </if>
+        <if test="occurrencedate != null and reoccurrencedate == null">
+            and DATE_FORMAT(OCCURRENCE_DATE, '%Y') = DATE_FORMAT(#{occurrencedate}, '%Y')
+            and OCCURRENCE_DATE BETWEEN DATE_SUB(DATE_FORMAT(#{occurrencedate}, '%Y-%m-%d'),INTERVAL 1 YEAR)
+            and DATE_FORMAT(#{occurrencedate}, '%Y-%m-%d')
+        </if>
+        <if test="occurrencedate != null and reoccurrencedate != null">
+            and DATE_FORMAT(RE_OCCURRENCE_DATE, '%Y') = DATE_FORMAT(#{reoccurrencedate}, '%Y')
+            and RE_OCCURRENCE_DATE BETWEEN DATE_SUB(DATE_FORMAT(#{reoccurrencedate}, '%Y-%m-%d'),INTERVAL 1 YEAR)
+            and DATE_FORMAT(#{reoccurrencedate}, '%Y-%m-%d')
+        </if>
+    </select>
 </mapper>
 
