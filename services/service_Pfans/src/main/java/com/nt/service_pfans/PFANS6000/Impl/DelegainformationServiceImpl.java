@@ -13,6 +13,7 @@ import com.nt.dao_Pfans.PFANS6000.Vo.DelegainformationtaxVo;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
+import com.nt.service_pfans.PFANS5000.mapper.LogDeadlineMapper;
 import com.nt.service_pfans.PFANS6000.CompanyStatisticsService;
 import com.nt.service_pfans.PFANS6000.CoststatisticsService;
 import com.nt.service_pfans.PFANS6000.DeleginformationService;
@@ -57,6 +58,9 @@ public class DelegainformationServiceImpl implements DeleginformationService {
     @Autowired
     private DelegainformationtaxMapper delegainformationtaxMapper;
     //insert gbb 20210223 PSDCD_PFANS_20201117_XQ_011 外协委托信息添加【总额税金】和【税率】 end
+
+    @Autowired
+    private LogDeadlineMapper logDeadlineMapper;
 
 //    @Override
 ////    public List<DelegainformationVo> getDelegainformation() throws Exception {
@@ -301,9 +305,12 @@ public class DelegainformationServiceImpl implements DeleginformationService {
     @Scheduled(cron="0 0 3 * * ?")
     public void saveDelegaTask()throws Exception {
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
-        List<Dictionary> dictionaryL = dictionaryService.getForSelect("BP027");
+        //   region  update  ml  220107  日志填写截止日修改  from
+//        List<Dictionary> dictionaryL = dictionaryService.getForSelect("BP027");
+        String dictionaryL = logDeadlineMapper.getLogDeadline(2);
         TokenModel tokenModel = new TokenModel();
-        if(dictionaryL.size()>0)
+//        if(dictionaryL.size()>0)
+        if (!StringUtils.isNullOrEmpty(dictionaryL))
         {
             String ymd = sfymd.format(new Date());
             String y = ymd.substring(0,4);
@@ -315,7 +322,9 @@ public class DelegainformationServiceImpl implements DeleginformationService {
                 y = String.valueOf(Integer.valueOf(y) - 1);
             }
 
-            if(Integer.valueOf(dd) == Integer.valueOf(dictionaryL.get(0).getValue1()) + 1)
+//            if(Integer.valueOf(dd) == Integer.valueOf(dictionaryL.get(0).getValue1()) + 1)
+            if(Integer.valueOf(dd) == Integer.valueOf(dictionaryL) + 1)
+            //   endregion  update  ml  220107  日志填写截止日修改日  to
             {
                 List<DelegainformationVo> delvoList = new ArrayList<DelegainformationVo>();
                 List<Delegainformation> delList = new ArrayList<Delegainformation>();

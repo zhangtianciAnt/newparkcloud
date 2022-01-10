@@ -16,6 +16,7 @@ import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS5000.LogPersonStatisticsService;
+import com.nt.service_pfans.PFANS5000.mapper.LogDeadlineMapper;
 import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
 import com.nt.service_pfans.PFANS5000.mapper.LogPersonStatisticsMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
@@ -76,6 +77,9 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private LogDeadlineMapper logDeadlineMapper;
 
     @Override
     public List<LogPersonStatistics> getLogDataList(LogPersonStatistics logPersonStatistics,String dateOf) throws Exception {
@@ -302,9 +306,12 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
     //region scc add 9/14 定时任务，根据日志更新数据 from
     @Scheduled(cron="0 0 1 * * ?")//每日凌晨1点
     public void saveLogPersonStatistics() throws Exception{
-        List<Dictionary> diclist = dictionaryService.getForSelect("BP027");
-        List<Dictionary> log = diclist.stream().filter(item -> (item.getCode().equals("BP027001"))).collect(Collectors.toList());
-        int deadline = Integer.valueOf(log.get(0).getValue1());
+        //   region  update  ml  220107  日志填写截止日修改  from
+//        List<Dictionary> diclist = dictionaryService.getForSelect("BP027");
+//        List<Dictionary> log = diclist.stream().filter(item -> (item.getCode().equals("BP027001"))).collect(Collectors.toList());
+//        int deadline = Integer.valueOf(log.get(0).getValue1());
+        int deadline = Integer.valueOf(logDeadlineMapper.getLogDeadline(2));
+        //   endregion  update  ml  220107  日志填写截止日修改  to
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar currentDate = Calendar.getInstance();
         //当前天数

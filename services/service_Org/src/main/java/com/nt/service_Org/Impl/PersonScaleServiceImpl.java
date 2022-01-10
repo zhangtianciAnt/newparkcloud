@@ -13,6 +13,7 @@ import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.PersonScaleService;
 import com.nt.service_Org.mapper.ExpartinforMapper;
+import com.nt.service_Org.mapper.LogDeadlineOrgMapper;
 import com.nt.service_Org.mapper.PersonScaleMapper;
 import com.nt.service_Org.mapper.PersonScaleMeeMapper;
 import com.nt.utils.BigDecimalUtils;
@@ -52,9 +53,15 @@ public class PersonScaleServiceImpl implements PersonScaleService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private LogDeadlineOrgMapper logDeadlineOrgMapper;
+
+
     @Scheduled(cron = "0 10 1 * * ?")
     public void calMonthScaleInfo() throws Exception {
-        List<Dictionary> dictionaryL = dictionaryService.getForSelect("BP027");
+        //   region  update  ml  220107  日志填写截止日修改日  from
+//        List<Dictionary> dictionaryL = dictionaryService.getForSelect("BP027");
+        //   endregion  update  ml  220107  日志填写截止日修改日  to
         TokenModel tokenModel = new TokenModel();
         SimpleDateFormat f_t = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat ft = new SimpleDateFormat("yyyyMM");
@@ -64,8 +71,11 @@ public class PersonScaleServiceImpl implements PersonScaleService {
         String nowDate = ft.format(lastMonthDate.getTime());
         String nowY_Month = now_Date.substring(0,7);
         String nowYMonth = nowDate.substring(0,6);
-        String nowDay = nowDate.substring(8,10);
-        if(Integer.parseInt(nowDay) != Integer.parseInt(dictionaryL.get(0).getValue1()) + 1) return;
+        int nowDay = lastMonthDate.get(Calendar.DATE);
+        //   region  update  ml  220107  日志填写截止日修改日  from
+//        if(Integer.parseInt(nowDay) != Integer.parseInt(dictionaryL.get(0).getValue1()) + 1) return;
+        if(nowDay != Integer.parseInt(logDeadlineOrgMapper.getLogDeadline(2)) + 1) return;
+        //   endregion  update  ml  220107  日志填写截止日修改日  to
         List<PersonScale> getLogPerInfoList = personScaleMapper.getLogInfo(nowY_Month);
         BigDecimal workingHB = new BigDecimal(personScaleMapper.getWorktimeger(nowYMonth));
         Map<String, List<PersonScale>> groupByPeoples = getLogPerInfoList.stream().collect(Collectors.groupingBy(PersonScale::getReportpeople));
