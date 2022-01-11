@@ -359,6 +359,9 @@
             <if test="year != null and year != ''" >
                 AND reve.annual = #{year}
             </if>
+            <if test="themeName != null and themeName != ''" >
+                AND theme.THEMENAME like CONCAT('%',#{themeName},'%')
+            </if>
         </where>
     </select>
 
