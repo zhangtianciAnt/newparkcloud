@@ -10,6 +10,7 @@ import org.apache.ibatis.annotations.Select;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 
 public interface AbNormalMapper extends MyMapper<AbNormal> {
@@ -44,4 +45,14 @@ public interface AbNormalMapper extends MyMapper<AbNormal> {
     Double selectAttenSumSick(Attendance attendance);
     List<AbNormal> selectAttenSumSick1(Attendance attendance);
     List<AbNormal> selectAttenSumSick2(Attendance attendance);
+
+    //region add scc 根据开始时间或实际开始时间判断一个月或一年的育儿假申请次数 from
+    Double selectAttenSumParent(AbNormal abNormal);
+    List<AbNormal> selectAttenSumParent1(AbNormal abNormal);
+    List<AbNormal> selectAttenSumParent2(AbNormal abNormal);
+    Double selectAttenSumParenting(AbNormal abNormal);
+    List<AbNormal> selectAttenSumParenting1(AbNormal abNormal);
+    List<AbNormal> selectAttenSumParenting2(AbNormal abNormal);
+    //endregion add scc 根据开始时间或实际开始时间判断一个月或一年的育儿假申请次数 to
+
 }

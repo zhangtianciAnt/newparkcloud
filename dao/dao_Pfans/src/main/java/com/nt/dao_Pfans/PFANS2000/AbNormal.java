@@ -193,4 +193,34 @@ public class AbNormal extends BaseModel {
     private String restdiff;
     //add_fjl_05/26 --添加代休剩余
 
+    /**
+     * 结婚日期（婚假）
+     * */
+    @Column(name = "WEDDINGDATE")
+    private Date weddingdate;
+
+    /**
+     * 子女出生日期（育儿假）
+     * */
+    @Column(name = "DATEOFBIRTH")
+    private Date dateofbirth;
+
+    /**
+     * 父母出生日期（父母照料假）
+     * */
+    @Column(name = "PARENTSDATE")
+    private Date parentsdate;
+
+    /**
+     * 父母住院开始日期（父母照料假）
+     * */
+    @Column(name = "SUCHCONFINEMENT")
+    private Date suchconfinement;
+
+    /**
+     * 父母照料假和育兒假  msg
+     */
+    @Column(name = "PARENTMSG")
+    private String parentmsg;
+
 }

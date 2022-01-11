@@ -16,6 +16,7 @@ import com.nt.service_pfans.PFANS1000.mapper.DepartmentalInsideMapper;
 import com.nt.service_pfans.PFANS1000.mapper.ExpenditureForecastMapper;
 import com.nt.service_pfans.PFANS1000.mapper.PersonnelplanMapper;
 import com.nt.service_pfans.PFANS4000.mapper.PeoplewareFeeMapper;
+import com.nt.service_pfans.PFANS5000.mapper.LogDeadlineMapper;
 import com.nt.service_pfans.PFANS5000.mapper.LogPersonStatisticsMapper;
 import com.nt.service_pfans.PFANS6000.mapper.CompanyStatisticsMapper;
 import com.nt.utils.dao.TokenModel;
@@ -67,6 +68,9 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
 
     @Autowired
     private RevenueForecastService revenueForecastService;
+
+    @Autowired
+    private LogDeadlineMapper logDeadlineMapper;
 
 
     @Override
@@ -431,9 +435,12 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
         List<ExpenditureForecast> updAct = new ArrayList<>();//要更新实际的所有记录
         //判断是否超过见通截至日
         List<Dictionary> pj160 = dictionaryService.getForSelect("PJ160");//见通截止日
-        List<Dictionary> bP027 = dictionaryService.getForSelect("BP027");//日志填写截止日
+        //   region  update  ml  220107  日志填写截止日修改  from
+//        List<Dictionary> bP027 = dictionaryService.getForSelect("BP027");//日志填写截止日
         String endDate = pj160.get(0).getValue1();
-        String logDate = bP027.get(0).getValue1();
+        String logDate = logDeadlineMapper.getLogDeadline(2);
+//        String logDate = bP027.get(0).getValue1();
+        //   endregion  update  ml  220107  日志填写截止日修改  to
         Date now = new Date();
         Calendar cal = Calendar.getInstance();
         cal.setTime(now);
@@ -546,7 +553,6 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
     }
 
     @Scheduled(cron="0 0 3 * * ?")
-    @Override
     public void saveAuto() throws Exception {
         TokenModel tokenModel = new TokenModel();
         List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
@@ -556,9 +562,12 @@ public class ExpenditureForecastServiceImpl implements ExpenditureForecastServic
         }
         //判断是否超过见通截至日
         List<Dictionary> pj160 = dictionaryService.getForSelect("PJ160");//见通截止日
-        List<Dictionary> bP027 = dictionaryService.getForSelect("BP027");//日志填写截止日
+        //   region  update  ml  220107  日志填写截止日修改  from
+//        List<Dictionary> bP027 = dictionaryService.getForSelect("BP027");//日志填写截止日
         String endDate = pj160.get(0).getValue1();
-        String logDate = bP027.get(0).getValue1();
+        String logDate = logDeadlineMapper.getLogDeadline(2);
+//        String logDate = bP027.get(0).getValue1();
+        //   endregion  update  ml  220107  日志填写截止日修改  to
         Date now = new Date();
         Calendar cal = Calendar.getInstance();
         cal.setTime(now);

@@ -1,5 +1,7 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
+import com.mysql.jdbc.StringUtils;
+import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
 import com.nt.dao_Pfans.PFANS2000.Attendance;
 import com.nt.dao_Pfans.PFANS2000.Overtime;
@@ -15,21 +17,12 @@ import com.nt.service_pfans.PFANS2000.mapper.AttendanceMapper;
 import com.nt.service_pfans.PFANS2000.mapper.OvertimeMapper;
 import com.nt.service_pfans.PFANS2000.mapper.PunchcardRecordMapper;
 import com.nt.utils.dao.TokenModel;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.xssf.streaming.SXSSFCell;
-import org.apache.poi.xssf.streaming.SXSSFRow;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -213,7 +206,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         //add ccm 20210721 离职考勤一键驳回预计考勤按照实际打卡重新计算 fr
         //离职月初日
         SimpleDateFormat sfymd = new SimpleDateFormat("yyyy-MM-dd");
-        String regdate = attendance.getYears()+"-"+attendance.getMonths()+"-01";
+        String regdate = attendance.getYears() + "-" + attendance.getMonths() + "-01";
         Calendar calstart = Calendar.getInstance();
         calstart.setTime(sfymd.parse(regdate));
         //离职月末日
@@ -223,9 +216,8 @@ public class AttendanceServiceImpl implements AttendanceService {
         int maxCurrentMonthDay = calend.getActualMaximum(Calendar.DAY_OF_MONTH);
         calend.set(Calendar.DAY_OF_MONTH, maxCurrentMonthDay);
 
-        for(Calendar item = calstart;item.compareTo(calend) <= 0;item.add(Calendar.DAY_OF_MONTH,1))
-        {
-            punchcardRecordService.methodAttendance_b(item,attendance.getUser_id());
+        for (Calendar item = calstart; item.compareTo(calend) <= 0; item.add(Calendar.DAY_OF_MONTH, 1)) {
+            punchcardRecordService.methodAttendance_b(item, attendance.getUser_id());
         }
         //add ccm 20210721 离职考勤一键驳回预计考勤按照实际打卡重新计算 to
 
@@ -343,9 +335,9 @@ public class AttendanceServiceImpl implements AttendanceService {
     }
     //add ccm 0812 考情管理查看当天的异常申请数据
 
-//    //考勤导出 1125 ztc fr
-    public void exportReported(String year, String month, HttpServletRequest request, HttpServletResponse resp) throws Exception {
-        List<AttendanceReport> attendanceReports = attendanceMapper.getAttInfo(year,month);
+    //    //考勤导出 1125 ztc fr
+    public void exportReported(String status, String year, String month, HttpServletRequest request, HttpServletResponse resp) throws Exception {
+        List<AttendanceReport> attendanceReports = attendanceMapper.getAttInfo(year, month);
         XSSFWorkbook attract = new XSSFWorkbook();//内存中创建Excle
         XSSFCellStyle cellStyleAll = attract.createCellStyle();
         cellStyleAll.setTopBorderColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
@@ -359,10 +351,11 @@ public class AttendanceServiceImpl implements AttendanceService {
         cellStyleFir.setRightBorderColor(HSSFColor.HSSFColorPredefined.BLACK.getIndex());
         cellStyleFir.setFillForegroundColor(HSSFColor.HSSFColorPredefined.GREY_25_PERCENT.getIndex());
 
+        //  region  update  ml  220105  考勤导出   from
         XSSFSheet sheet = attract.createSheet(year + "-" + month + "月考勤");
-        sheet.createFreezePane(0,1,0,1);//冻结首行
+        sheet.createFreezePane(0, 1, 0, 1);//冻结首行
         XSSFRow row = sheet.createRow(0);//创建行
-        for(int k = 0; k < 18; k++){
+        for (int k = 0; k < 18; k++) {
             XSSFCell cell = row.createCell(k);
             switch (k) {
                 case 0: cell.setCellValue("人名"); cell.setCellStyle(cellStyleFir); break;
@@ -385,40 +378,102 @@ public class AttendanceServiceImpl implements AttendanceService {
                 case 17: cell.setCellValue("妇女节"); cell.setCellStyle(cellStyleFir); break;
             }
         }
+
+        List<AttendanceReport> onattReports = new ArrayList<>();
+        List<AttendanceReport> outattReports = new ArrayList<>();
         if (attendanceReports != null && attendanceReports.size() > 0) {
             for (int i = 0; i < attendanceReports.size(); i++) {
-                XSSFRow rowDetail = sheet.createRow(i + 1);
-                AttendanceReport att = attendanceReports.get(i);
-                for(int j = 0; j < 18; j++) {
-                    XSSFCell cellDetail = rowDetail.createCell(j);
-                    switch (j){
-                        case 0: cellDetail.setCellValue(att.getUser_id()); cellDetail.setCellStyle(cellStyleAll); break; // 人名
-                        case 1: cellDetail.setCellValue(att.getDates()); cellDetail.setCellStyle(cellStyleAll); break; // 日期
-                        case 2: cellDetail.setCellValue(att.getCompassionateleave()); cellDetail.setCellStyle(cellStyleAll); break; // 事假
-                        case 3: cellDetail.setCellValue(att.getTcompassionateleave()); cellDetail.setCellStyle(cellStyleAll); break; // 试用事假
-                        case 4: cellDetail.setCellValue(att.getNursingleave()); cellDetail.setCellStyle(cellStyleAll); break; // 产休/护理假
-                        case 5: cellDetail.setCellValue(att.getAbsenteeism()); cellDetail.setCellStyle(cellStyleAll); break; // 欠勤
-                        case 6: cellDetail.setCellValue(att.getTabsenteeism()); cellDetail.setCellStyle(cellStyleAll); break; // 试用欠勤
-                        case 7: cellDetail.setCellValue(att.getShortsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 短病假
-                        case 8: cellDetail.setCellValue(att.getTshortsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 试用短病假
-                        case 9: cellDetail.setCellValue(att.getLongsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 长病假
-                        case 10: cellDetail.setCellValue(att.getTlongsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 试用长病假
-                        case 11: cellDetail.setCellValue(att.getOrdinaryindustry()); cellDetail.setCellStyle(cellStyleAll); break; // 平日
-                        case 12: cellDetail.setCellValue(att.getWeekendindustry()); cellDetail.setCellStyle(cellStyleAll); break; // 休日
-                        case 13: cellDetail.setCellValue(att.getStatutoryresidue()); cellDetail.setCellStyle(cellStyleAll); break; // 祝日
-                        case 14: cellDetail.setCellValue(att.getSpecialday()); cellDetail.setCellStyle(cellStyleAll); break; // 特别休日
-                        case 15: cellDetail.setCellValue(att.getAnnualrestday()); cellDetail.setCellStyle(cellStyleAll); break; // 一齐年休
-                        case 16: cellDetail.setCellValue(att.getYouthday()); cellDetail.setCellStyle(cellStyleAll); break; // 青年节
-                        case 17: cellDetail.setCellValue(att.getWomensday()); cellDetail.setCellStyle(cellStyleAll); break; // 妇女节
+                Query queryInfo = new Query();
+                queryInfo.addCriteria(Criteria.where("userid").is(attendanceReports.get(i).getUser_id()));
+                CustomerInfo customerInfo = mongoTemplate.findOne(queryInfo, CustomerInfo.class);
+                if (customerInfo != null) {
+                    if (!StringUtils.isNullOrEmpty(customerInfo.getUserinfo().getResignation_date())) {
+                        String months = customerInfo.getUserinfo().getResignation_date().substring(5, 7);
+                        if (months.equals(month)) {
+                            //离职
+                            outattReports.add(attendanceReports.get(i));
+                        } else {
+                            //在职
+                            onattReports.add(attendanceReports.get(i));
+                        }
+                    } else {
+                        //在职
+                        onattReports.add(attendanceReports.get(i));
                     }
                 }
             }
         }
+        //在职
+        if ("1".equals(status)) {
+            if (onattReports != null && onattReports.size() > 0) {
+                for (int i = 0; i < onattReports.size(); i++) {
+                    XSSFRow rowDetail = sheet.createRow(i + 1);
+                    AttendanceReport att = onattReports.get(i);
+                    for (int j = 0; j < 18; j++) {
+                        XSSFCell cellDetail = rowDetail.createCell(j);
+                        switch (j) {
+                            case 0: cellDetail.setCellValue(att.getUser_name()); cellDetail.setCellStyle(cellStyleAll); break; // 人名
+                            case 1: cellDetail.setCellValue(att.getDates()); cellDetail.setCellStyle(cellStyleAll); break; // 日期
+                            case 2: cellDetail.setCellValue("0".equals(att.getCompassionateleave()) ? null : att.getCompassionateleave()); cellDetail.setCellStyle(cellStyleAll); break; // 事假
+                            case 3: cellDetail.setCellValue("0".equals(att.getTcompassionateleave()) ? null : att.getTcompassionateleave()); cellDetail.setCellStyle(cellStyleAll); break; // 试用事假
+                            case 4: cellDetail.setCellValue("0".equals(att.getNursingleave()) ? null : att.getNursingleave()); cellDetail.setCellStyle(cellStyleAll); break; // 产休/护理假
+                            case 5: cellDetail.setCellValue("0".equals(att.getAbsenteeism()) ? null : att.getAbsenteeism()); cellDetail.setCellStyle(cellStyleAll); break; // 欠勤
+                            case 6: cellDetail.setCellValue("0".equals(att.getTabsenteeism()) ? null : att.getTabsenteeism()); cellDetail.setCellStyle(cellStyleAll); break; // 试用欠勤
+                            case 7: cellDetail.setCellValue("0".equals(att.getShortsickleave()) ? null : att.getShortsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 短病假
+                            case 8: cellDetail.setCellValue("0".equals(att.getTshortsickleave()) ? null : att.getTshortsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 试用短病假
+                            case 9: cellDetail.setCellValue("0".equals(att.getLongsickleave()) ? null : att.getLongsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 长病假
+                            case 10: cellDetail.setCellValue("0".equals(att.getTlongsickleave()) ? null : att.getTlongsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 试用长病假
+                            case 11: cellDetail.setCellValue("0".equals(att.getOrdinaryindustry()) ? null : att.getOrdinaryindustry()); cellDetail.setCellStyle(cellStyleAll); break; // 平日
+                            case 12: cellDetail.setCellValue("0".equals(att.getWeekendindustry()) ? null : att.getWeekendindustry()); cellDetail.setCellStyle(cellStyleAll); break; // 休日
+                            case 13: cellDetail.setCellValue("0".equals(att.getStatutoryresidue()) ? null : att.getStatutoryresidue()); cellDetail.setCellStyle(cellStyleAll); break; // 祝日
+                            case 14: cellDetail.setCellValue("0".equals(att.getSpecialday()) ? null : att.getSpecialday()); cellDetail.setCellStyle(cellStyleAll); break; // 特别休日
+                            case 15: cellDetail.setCellValue("0".equals(att.getAnnualrestday()) ? null : att.getAnnualrestday()); cellDetail.setCellStyle(cellStyleAll); break; // 一齐年休
+                            case 16: cellDetail.setCellValue("0".equals(att.getYouthday()) ? null : att.getYouthday()); cellDetail.setCellStyle(cellStyleAll); break; // 青年节
+                            case 17: cellDetail.setCellValue("0".equals(att.getWomensday()) ? null : att.getWomensday()); cellDetail.setCellStyle(cellStyleAll); break; // 妇女节
+                        }
+                    }
+                }
+            }
+        }
+        //离职
+        if ("2".equals(status)) {
+            if (outattReports != null && outattReports.size() > 0) {
+                for (int i = 0; i < outattReports.size(); i++) {
+                    XSSFRow rowDetail = sheet.createRow(i + 1);
+                    AttendanceReport att = outattReports.get(i);
+                    for (int j = 0; j < 18; j++) {
+                        XSSFCell cellDetail = rowDetail.createCell(j);
+                        switch (j) {
+                            case 0: cellDetail.setCellValue(att.getUser_name()); cellDetail.setCellStyle(cellStyleAll); break; // 人名
+                            case 1: cellDetail.setCellValue(att.getDates()); cellDetail.setCellStyle(cellStyleAll); break; // 日期
+                            case 2: cellDetail.setCellValue("0".equals(att.getCompassionateleave()) ? null : att.getCompassionateleave()); cellDetail.setCellStyle(cellStyleAll); break; // 事假
+                            case 3: cellDetail.setCellValue("0".equals(att.getTcompassionateleave()) ? null : att.getTcompassionateleave()); cellDetail.setCellStyle(cellStyleAll); break; // 试用事假
+                            case 4: cellDetail.setCellValue("0".equals(att.getNursingleave()) ? null : att.getNursingleave()); cellDetail.setCellStyle(cellStyleAll); break; // 产休/护理假
+                            case 5: cellDetail.setCellValue("0".equals(att.getAbsenteeism()) ? null : att.getAbsenteeism()); cellDetail.setCellStyle(cellStyleAll); break; // 欠勤
+                            case 6: cellDetail.setCellValue("0".equals(att.getTabsenteeism()) ? null : att.getTabsenteeism()); cellDetail.setCellStyle(cellStyleAll); break; // 试用欠勤
+                            case 7: cellDetail.setCellValue("0".equals(att.getShortsickleave()) ? null : att.getShortsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 短病假
+                            case 8: cellDetail.setCellValue("0".equals(att.getTshortsickleave()) ? null : att.getTshortsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 试用短病假
+                            case 9: cellDetail.setCellValue("0".equals(att.getLongsickleave()) ? null : att.getLongsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 长病假
+                            case 10: cellDetail.setCellValue("0".equals(att.getTlongsickleave()) ? null : att.getTlongsickleave()); cellDetail.setCellStyle(cellStyleAll); break; // 试用长病假
+                            case 11: cellDetail.setCellValue("0".equals(att.getOrdinaryindustry()) ? null : att.getOrdinaryindustry()); cellDetail.setCellStyle(cellStyleAll); break; // 平日
+                            case 12: cellDetail.setCellValue("0".equals(att.getWeekendindustry()) ? null : att.getWeekendindustry()); cellDetail.setCellStyle(cellStyleAll); break; // 休日
+                            case 13: cellDetail.setCellValue("0".equals(att.getStatutoryresidue()) ? null : att.getStatutoryresidue()); cellDetail.setCellStyle(cellStyleAll); break; // 祝日
+                            case 14: cellDetail.setCellValue("0".equals(att.getSpecialday()) ? null : att.getSpecialday()); cellDetail.setCellStyle(cellStyleAll); break; // 特别休日
+                            case 15: cellDetail.setCellValue("0".equals(att.getAnnualrestday()) ? null : att.getAnnualrestday()); cellDetail.setCellStyle(cellStyleAll); break; // 一齐年休
+                            case 16: cellDetail.setCellValue("0".equals(att.getYouthday()) ? null : att.getYouthday()); cellDetail.setCellStyle(cellStyleAll); break; // 青年节
+                            case 17: cellDetail.setCellValue("0".equals(att.getWomensday()) ? null : att.getWomensday()); cellDetail.setCellStyle(cellStyleAll); break; // 妇女节
+                        }
+                    }
+                }
+            }
+        }
+
+        //  endregion  update  ml  220105  考勤导出   to
         OutputStream os = resp.getOutputStream();// 取得输出流
         String fileName = year + month + "月考勤信息";
         resp.setContentType("application/x-download");//下面三行是关键代码，处理乱码问题
         resp.setCharacterEncoding("utf-8");
-        resp.setHeader("Content-Disposition", "attachment;filename="+new String(fileName.getBytes("gbk"), "iso8859-1")+".xls");
+        resp.setHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes("gbk"), "iso8859-1") + ".xls");
         attract.write(os);
         attract.close();
     }

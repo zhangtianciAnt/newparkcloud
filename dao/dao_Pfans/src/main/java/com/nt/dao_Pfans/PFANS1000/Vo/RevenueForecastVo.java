@@ -14,4 +14,6 @@ import java.util.List;
 public class RevenueForecastVo {
     private RevenueForecast revenueForecast;
     private List<RevenueForecast> revenueForecastList;
+    private int currentPage;
+    private int pageSize;
 }

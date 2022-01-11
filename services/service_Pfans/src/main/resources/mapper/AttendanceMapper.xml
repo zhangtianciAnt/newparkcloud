@@ -62,6 +62,8 @@ GROUP BY
         compassionateleave,
         annualrest,
         daixiu,
+        parenting,
+        parentalcare,
         nursingleave,
         welfare,
         absenteeism,
@@ -143,6 +145,8 @@ GROUP BY
             ,a.compassionateleave as compassionateleave
             ,a.annualrest       as annualrest
             ,a.daixiu           as daixiu
+            ,a.parenting        as parenting
+            ,a.parentalcare     as parentalcare
             ,a.nursingleave     as nursingleave
             ,a.welfare          as welfare
             ,a.absenteeism      as absenteeism
@@ -181,6 +185,8 @@ GROUP BY
             ,ar.compassionateleave as compassionateleave
             ,ar.annualrest       as annualrest
             ,ar.daixiu           as daixiu
+            ,ar.parenting         as parenting
+            ,ar.parentalcare      as parentalcare
             ,ar.nursingleave     as nursingleave
             ,ar.welfare          as welfare
             ,ar.absenteeism      as absenteeism
@@ -204,30 +210,33 @@ GROUP BY
         where USER_ID=#{user_id} and MONTHS=#{months} and YEARS=#{years}
     </select>
 
+      <!--region  update  ml  220105  ????   from-->
     <select id="getAttInfo" resultType="com.nt.dao_Pfans.PFANS2000.Vo.AttendanceReport">
         SELECT
-            aee.user_id,
+            aee.USER_ID,
+            aee.user_name,
             concat(aee.years, "-", aee.MONTHS) as dates,
-            sum( aee.compassionateleave ) AS compassionateleave,
-            sum( aee.TCOMPASSIONATELEAVE ) AS TCOMPASSIONATELEAVE,
-            sum( aee.nursingleave ) AS nursingleave,
-            sum( aee.absenteeism ) AS absenteeism,
-            sum( aee.TABSENTEEISM ) AS TABSENTEEISM,
-            sum( aee.shortsickleave ) AS shortsickleave,
-            sum( aee.TSHORTSICKLEAVE ) AS TSHORTSICKLEAVE,
-            sum( aee.longsickleave ) AS longsickleave,
-            sum( aee.TLONGSICKLEAVE ) AS TLONGSICKLEAVE,
-            sum( aee.ordinaryindustry ) AS ordinaryindustry,
-            sum( aee.weekendindustry ) AS weekendindustry,
-            sum( aee.statutoryresidue ) AS statutoryresidue,
-            sum( aee.specialday ) AS specialday,
-            sum( aee.annualrestday ) AS annualrestday,
-            sum( aee.youthday ) AS youthday,
-            sum( aee.womensday ) AS womensday
+            sum( IFNULL(aee.compassionateleave ,0)) AS compassionateleave,
+            sum( IFNULL(aee.TCOMPASSIONATELEAVE ,0)) AS TCOMPASSIONATELEAVE,
+            sum( IFNULL(aee.nursingleave ,0)) AS nursingleave,
+            sum( IFNULL(aee.absenteeism ,0)) AS absenteeism,
+            sum( IFNULL(aee.TABSENTEEISM ,0)) AS TABSENTEEISM,
+            sum( IFNULL(aee.shortsickleave ,0)) AS shortsickleave,
+            sum( IFNULL(aee.TSHORTSICKLEAVE ,0)) AS TSHORTSICKLEAVE,
+            sum( IFNULL(aee.longsickleave ,0)) AS longsickleave,
+            sum( IFNULL(aee.TLONGSICKLEAVE ,0)) AS TLONGSICKLEAVE,
+            sum( IFNULL(aee.ordinaryindustry ,0)) AS ordinaryindustry,
+            sum( IFNULL(aee.weekendindustry ,0)) AS weekendindustry,
+            sum( IFNULL(aee.statutoryresidue ,0)) AS statutoryresidue,
+            sum( IFNULL(aee.specialday ,0)) AS specialday,
+            sum( IFNULL(aee.annualrestday ,0)) AS annualrestday,
+            sum( IFNULL(aee.youthday ,0)) AS youthday,
+            sum( IFNULL(aee.womensday ,0)) AS womensday
         FROM
             (
                 SELECT
-                    RUSLT.USER_NAME AS USER_ID,
+                    RUSLT.USER_NAME AS USER_NAME,
+                    RUSLT.USER_ID,
                     ATT.years,
                     ATT.MONTHS,
                     ATT.compassionateleave,
@@ -254,9 +263,10 @@ GROUP BY
                   AND YEARS = #{year}
             ) aee
         GROUP BY
-            user_id
+            aee.user_id
         ORDER BY
-            user_id
+            aee.user_id
     </select>
+      <!--endregion  update  ml  220105  ????   to-->
 
 </mapper>

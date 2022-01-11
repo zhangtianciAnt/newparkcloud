@@ -27,7 +27,7 @@ public interface RevenueForecastMapper extends MyMapper<RevenueForecast> {
 
     List<RevenueForecast> selectRevenueForecastListFirst(@Param("deptId") String deptId,@Param("year") int year,@Param("saveDate") Date saveDate);
 
-    List<RevenueForecast> selectOldRevenueForecastList(@Param("deptId") String deptId,@Param("year") int year,@Param("saveDate") Date saveDate);
+    List<RevenueForecast> selectOldRevenueForecastList(@Param("deptId") String deptId,@Param("year") int year,@Param("saveDate") Date saveDate, @Param("themeName") String themeName);
 
     List<RevenueForecast> selectRevenueForecastList(@Param("deptId") String deptId,@Param("year") int year,@Param("saveDate") Date saveDate);
 

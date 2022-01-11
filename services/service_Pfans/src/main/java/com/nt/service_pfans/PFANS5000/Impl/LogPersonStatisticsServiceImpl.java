@@ -6,19 +6,30 @@ import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.UserAccount;
+import com.nt.dao_Org.Vo.DepartmentVo;
 import com.nt.dao_Pfans.PFANS5000.LogManagement;
 import com.nt.dao_Pfans.PFANS5000.LogPersonStatistics;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogPersonReturnVo;
+import com.nt.dao_Pfans.PFANS6000.Customerinfor;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS5000.LogPersonStatisticsService;
+import com.nt.service_pfans.PFANS5000.mapper.LogDeadlineMapper;
 import com.nt.service_pfans.PFANS5000.mapper.LogManagementMapper;
 import com.nt.service_pfans.PFANS5000.mapper.LogPersonStatisticsMapper;
 import com.nt.service_pfans.PFANS6000.mapper.ExpatriatesinforMapper;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
+import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
+import com.nt.utils.services.TokenService;
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -30,6 +41,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -59,6 +74,12 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
 
     @Autowired
     private ExpatriatesinforMapper expatriatesinforMapper;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private LogDeadlineMapper logDeadlineMapper;
 
     @Override
     public List<LogPersonStatistics> getLogDataList(LogPersonStatistics logPersonStatistics,String dateOf) throws Exception {
@@ -197,7 +218,7 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
                 personReturnVo.setGroupname(m.getValue().get(0).getDepartment());
                 personReturnVo.setCompany(m.getValue().get(0).getCompany());
                 personReturnVo.setProject("—");
-                personReturnVo.setAdjust(null);
+//                personReturnVo.setAdjust(null);//scc del
                 BigDecimal total = BigDecimal.ZERO;
                 BigDecimal adtotal = BigDecimal.ZERO;
                 for (LogPersonStatistics logs : m.getValue()) {
@@ -224,6 +245,7 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
                 BigDecimal percentageOf = ratio.multiply(new BigDecimal("100")).setScale(2,BigDecimal.ROUND_HALF_UP);
                 personReturnVo.setRatio(percentageOf.toString() + "%");
                 personReturnVo.setLogpersonstatistics(m.getValue());
+                personReturnVo.setAdjust(adtotal.toString());//scc add
                 logPersonReturnVos.add(personReturnVo);
             }
             //region scc add 按照公司排序 from
@@ -284,9 +306,12 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
     //region scc add 9/14 定时任务，根据日志更新数据 from
     @Scheduled(cron="0 0 1 * * ?")//每日凌晨1点
     public void saveLogPersonStatistics() throws Exception{
-        List<Dictionary> diclist = dictionaryService.getForSelect("BP027");
-        List<Dictionary> log = diclist.stream().filter(item -> (item.getCode().equals("BP027001"))).collect(Collectors.toList());
-        int deadline = Integer.valueOf(log.get(0).getValue1());
+        //   region  update  ml  220107  日志填写截止日修改  from
+//        List<Dictionary> diclist = dictionaryService.getForSelect("BP027");
+//        List<Dictionary> log = diclist.stream().filter(item -> (item.getCode().equals("BP027001"))).collect(Collectors.toList());
+//        int deadline = Integer.valueOf(log.get(0).getValue1());
+        int deadline = Integer.valueOf(logDeadlineMapper.getLogDeadline(2));
+        //   endregion  update  ml  220107  日志填写截止日修改  to
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Calendar currentDate = Calendar.getInstance();
         //当前天数
@@ -322,7 +347,14 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
                     }else{
                         item.setCompany("PSDCD");
                     }
-                    item.setProject_name(item.getProject_name().trim().split("_").length == 2 ? item.getProject_name().trim().split("_")[1] : item.getProject_name().trim().split("_")[0]);
+                    //region scc upd 21/12/6 变更获取项目名 from
+                    if(item.getProject_name().contains("_")){
+                        item.setProject_name(item.getProject_name().substring(item.getProject_name().indexOf("_") + 1));
+                    }else{
+                        item.setProject_name(item.getProject_name());
+                    }
+//                    item.setProject_name(item.getProject_name().trim().split("_").length == 2 ? item.getProject_name().trim().split("_")[1] : item.getProject_name().trim().split("_")[0]);
+                    //endregion scc upd 21/12/6 变更获取项目名 to
                     item.setAdjust(item.getDuration());
                     logPersonStatisticsMapper.insert(item);
                 });
@@ -334,66 +366,96 @@ public  class LogPersonStatisticsServiceImpl implements LogPersonStatisticsServi
     }
     //endregion scc add 9/14 定时任务，根据日志更新数据 to
 
-    // region 积木
-//    @Override
-//    public Object getTableinfoReport(String month) throws Exception {
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//        Date revelation = sdf.parse(month);
-//        Calendar cal = Calendar.getInstance();
-//        cal.setTime(revelation);
-//        //当前月第一天
-//        cal.add(Calendar.MONTH,0);
-//        cal.set(Calendar.DAY_OF_MONTH,1);
-//        String firstDayOfThisMonth = sdf.format(cal.getTime());
-//        //当前月最后一天
-//        cal.setTime(revelation);
-//        cal.add(Calendar.MONTH,1);
-//        cal.set(Calendar.DAY_OF_MONTH,0);
-//        String lastDayOfThisMonth = sdf.format(cal.getTime());
-//        List<LogPersonStatistics> logPersonList = this.getLogDataList(firstDayOfThisMonth, lastDayOfThisMonth);
-//        int workDaysExceptWeekend = this.getWorkDaysExceptWeekend(sdf.parse(firstDayOfThisMonth), sdf.parse(lastDayOfThisMonth));
-//        ArrayList<LogPersonStatistics> legoSet = new ArrayList<>();
-//        //部门键值对
-//        List<DepartmentVo> allDepartment = orgTreeService.getAllDepartment();
-//        HashMap<String, String> companyid = new HashMap<>();
-//        for (DepartmentVo vo : allDepartment) {
-//            companyid.put(vo.getDepartmentId(),vo.getDepartmentname());
-//        }
-//        //部门键值对
-//        if(logPersonList.size() > 0) {
-//            Map<String,List<LogPersonStatistics>> lptList =  logPersonList.stream().collect(Collectors.groupingBy(LogPersonStatistics :: getUser_id, HashMap::new,Collectors.toList()));
-//            for (Map.Entry<String, List<LogPersonStatistics>> m : lptList.entrySet()) {
-//                LogPersonReturnVo personReturnVo = new LogPersonReturnVo();
-//                LogPersonStatistics legoSetenty = new LogPersonStatistics();
-//                Query query = new Query();
-//                query.addCriteria(Criteria.where("userid").is(m.getKey()));
-//                CustomerInfo managers = mongoTemplate.findOne(query, CustomerInfo.class);
-//                legoSetenty.setUser_id(managers.getUserinfo().getCustomername());//名字
-//                legoSetenty.setDepartment(companyid.get(m.getValue().get(0).getDepartment()));//部门
-//                legoSetenty.setCompany(m.getValue().get(0).getCompany());//公司
-//                BigDecimal total = BigDecimal.ZERO;
-//                for (LogPersonStatistics logs : m.getValue()) {
-//                    total = total.add(StringUtils.isNullOrEmpty(logs.getDuration()) ? BigDecimal.ZERO : new BigDecimal(logs.getAdjust()));
-//                }
-//                legoSetenty.setDuration(total.toString());
-//                BigDecimal ratio = total.divide(new BigDecimal(workDaysExceptWeekend * 8),4,BigDecimal.ROUND_HALF_UP);
-//                BigDecimal percentageOf = ratio.multiply(new BigDecimal("100")).setScale(2,BigDecimal.ROUND_HALF_UP);
-//                legoSetenty.setRatios(percentageOf.toString());
-//                legoSetenty.setProject_name("—");
-//                personReturnVo.setAdjust("—");
-//                legoSet.add(legoSetenty);
-//                m.getValue().forEach(item ->{
-//                    item.setUser_id(null);
-//                    item.setDepartment(null);
-//                    item.setCompany(null);
-//                    item.setRatios(null);
-//                    legoSet.add(item);
-//                });
-//            }
-//        }
-//        return JSONObject.toJSON(legoSet);
-//    }
-    //endregion
+    // region scc add 日志人别导出 from
+    @Override
+    public void downloadExcel(String month,HttpServletRequest request, HttpServletResponse resp) throws Exception {
+        InputStream in = null;
+        List<LogPersonStatistics> logPersonList = new ArrayList<>();
+        TokenModel tokenModel = tokenService.getToken(request);
+        LogPersonStatistics owners = new LogPersonStatistics();
+        owners.setOwners(tokenModel.getOwnerList());
+        List<LogPersonReturnVo> logPerson = this.getLogPerson(owners, month, tokenModel);//获取导出信息，数据同画面初始请求
+        //集合判空
+        try {
+            //表格操作
+            in = getClass().getClassLoader().getResourceAsStream("jxls_templates/rizhirenbietongji.xlsx");
+            XSSFWorkbook workbook = new XSSFWorkbook(in);
+            this.getReport(workbook.getSheetAt(0), logPerson,workbook);//数据写入excel
+            OutputStream os = resp.getOutputStream();// 取得输出流
+            String fileName = "日志人别统计";
+            resp.setContentType("application/vnd.ms-excel;charset=utf-8");
+            resp.setHeader("Content-Disposition", "attachment;filename="
+                    + new String((fileName + ".xlsx").getBytes(), "iso-8859-1"));
+            workbook.write(os);
+            workbook.close();
+        } catch (Exception e) {
+            throw new LogicalException(e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
+    }
+
+    private void getReport(XSSFSheet sheet1, List<LogPersonReturnVo> logPerson,XSSFWorkbook workbook) throws LogicalException {
+        XSSFCellStyle style = workbook.createCellStyle();//创建单元格样式
+        style.setAlignment(HorizontalAlignment.CENTER);//水平居中
+        style.setVerticalAlignment(VerticalAlignment.CENTER);//垂直居中
+        //部门键值对
+        List<DepartmentVo> allDepartment = null;
+        try {
+            allDepartment = orgTreeService.getAllDepartment();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        HashMap<String, String> companyid = new HashMap<>();
+        for (DepartmentVo vo : allDepartment) {
+            companyid.put(vo.getDepartmentId(), vo.getDepartmentname());
+        }
+        //部门键值对
+        if (logPerson != null && logPerson.size() > 0) {
+            int i = 1;
+            int rowfirst = 0;//输出每人信息开始行
+            int rowlast = 0;//输出每人信息结束行
+            for (LogPersonReturnVo item : logPerson) {
+                XSSFRow row = sheet1.createRow(i);
+                rowfirst = i;
+                for (int j = 0; j < 7; j++) {
+                    XSSFCell cell = row.createCell(j);
+                    switch (j) {
+                        case 0:cell.setCellValue(item.getUsername());cell.setCellStyle(style); break;
+                        case 1:cell.setCellValue(companyid.get(item.getGroupname()));cell.setCellStyle(style); break;
+                        case 2:cell.setCellValue(item.getCompany());cell.setCellStyle(style);break;
+                        case 3:cell.setCellValue(item.getRatio());cell.setCellStyle(style); break;
+                        case 4:cell.setCellValue(item.getProject());cell.setCellStyle(style); break;
+                        case 5:cell.setCellValue(item.getGeneral());cell.setCellStyle(style); break;
+                        case 6:cell.setCellValue(item.getAdjust());cell.setCellStyle(style);break;
+                    }
+                }
+                i++;
+                for (LogPersonStatistics items : item.getLogpersonstatistics()) {
+                    XSSFRow row1 = sheet1.createRow(i);
+                    for (int j = 0; j < 7; j++) {
+                        XSSFCell cell = row1.createCell(j);
+                        switch (j) {
+                            case 0:cell.setCellValue("");cell.setCellStyle(style);break;
+                            case 1:cell.setCellValue("");cell.setCellStyle(style);break;
+                            case 2:cell.setCellValue("");cell.setCellStyle(style);break;
+                            case 3:cell.setCellValue("");cell.setCellStyle(style);break;
+                            case 4:cell.setCellValue(items.getProject_name());cell.setCellStyle(style);break;
+                            case 5:cell.setCellValue(items.getDuration());cell.setCellStyle(style);break;
+                            case 6:cell.setCellValue(items.getAdjust());cell.setCellStyle(style);break;
+                        }
+                    }
+                    rowlast = i;
+                    i++;
+                }
+                sheet1.addMergedRegion(new CellRangeAddress(rowfirst,rowlast,0,0));//姓名合并
+                sheet1.addMergedRegion(new CellRangeAddress(rowfirst,rowlast,1,1));//部门合并
+                sheet1.addMergedRegion(new CellRangeAddress(rowfirst,rowlast,2,2));//公司合并
+                sheet1.addMergedRegion(new CellRangeAddress(rowfirst,rowlast,3,3));//比率合并
+            }
+        }
+    }
+    // endregion scc add 日志人别导出 to
 
 
 }

@@ -4,6 +4,7 @@ import com.nt.dao_Pfans.PFANS1000.RevenueForecast;
 import com.nt.dao_Pfans.PFANS1000.Vo.RevenueForecastVo;
 import com.nt.service_pfans.PFANS1000.RevenueForecastService;
 import com.nt.utils.ApiResult;
+import com.nt.utils.dao.TableDataInfo;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,11 +71,12 @@ public class Pfans1053Controller {
      * @throws Exception 异常
      */
     @RequestMapping(value = "/getThemeOutDepth",method={RequestMethod.POST})
-    public ApiResult getThemeOutDepth(@RequestBody RevenueForecast revenueForecast, HttpServletRequest request) throws Exception {
+    public ApiResult getThemeOutDepth(@RequestBody RevenueForecastVo revenueForecastVo, HttpServletRequest request) throws Exception {
 
         TokenModel tokenModel = tokenService.getToken(request);
-        List<RevenueForecast> revenueForecastList =  revenueForecastService.getThemeOutDepth(revenueForecast);
-        return ApiResult.success(revenueForecastList);
+
+        TableDataInfo themeOutDepth = revenueForecastService.getThemeOutDepth(revenueForecastVo.getRevenueForecast(), revenueForecastVo.getCurrentPage(), revenueForecastVo.getPageSize());
+        return ApiResult.success(themeOutDepth);
     }
 
 }

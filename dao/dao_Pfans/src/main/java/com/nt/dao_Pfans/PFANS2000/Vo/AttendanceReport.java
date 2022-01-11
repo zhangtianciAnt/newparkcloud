@@ -14,9 +14,37 @@ import java.util.Date;
 public class AttendanceReport {
 
     /**
-     * 姓名
+     * id
      */
     private String user_id;
+    /**
+     * 姓名
+     */
+    private String user_name;
+    /**
+     * Centr
+     */
+    private String center_id;
+    /**
+     * Group
+     */
+    private String group_id;
+    /**
+     * 正常
+     */
+    private String normal;
+    /**
+     * 年休
+     */
+    private String annualrest;
+    /**
+     * 代休
+     */
+    private String daixiu;
+    /**
+     * 其他福利休假
+     */
+    private String welfare;
     /**
      * 日付
      */
@@ -89,4 +117,17 @@ public class AttendanceReport {
      * 试用无故旷工
      */
     private String tabsenteeism;
+
+    /**
+     * 育儿假
+     */
+    @Column(name = "PARENTING")
+    private String parenting;
+
+    /**
+     * 父母照料假
+     */
+    @Column(name = "PARENTALCARE")
+    private String parentalcare;
+
 }

@@ -1,62 +1,53 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
-import com.mongodb.client.result.UpdateResult;
-import com.nt.dao_Auth.Role;
 import com.nt.dao_Auth.Vo.MembersVo;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.OrgTree;
 import com.nt.dao_Org.ToDoNotice;
-import com.nt.dao_Pfans.PFANS1000.Vo.OrgTreeVo;
-import com.nt.dao_Workflow.*;
 import com.nt.dao_Pfans.PFANS1000.*;
-import com.nt.dao_Pfans.PFANS3000.*;
-import com.nt.dao_Pfans.PFANS4000.*;
-import com.nt.dao_Pfans.PFANS6000.*;
+import com.nt.dao_Pfans.PFANS1000.Vo.OrgTreeVo;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.StaffexitprocedureVo;
+import com.nt.dao_Pfans.PFANS3000.*;
+import com.nt.dao_Pfans.PFANS4000.Seal;
 import com.nt.dao_Pfans.PFANS5000.*;
-import com.nt.dao_Pfans.PFANS5000.Prosystem;
+import com.nt.dao_Pfans.PFANS6000.*;
 import com.nt.dao_Pfans.PFANS8000.InformationDelivery;
 import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
-import com.nt.dao_Workflow.Workflowinstance;
+import com.nt.dao_Workflow.Workflownode;
 import com.nt.dao_Workflow.Workflownodeinstance;
+import com.nt.service_Auth.RoleService;
 import com.nt.service_Org.OrgTreeService;
+import com.nt.service_Org.ToDoNoticeService;
 import com.nt.service_Org.mapper.TodoNoticeMapper;
 import com.nt.service_WorkFlow.WorkflowServices;
 import com.nt.service_WorkFlow.mapper.WorkflownodeMapper;
 import com.nt.service_WorkFlow.mapper.WorkflownodeinstanceMapper;
 import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
+import com.nt.service_pfans.PFANS2000.StaffexitprocedureService;
 import com.nt.service_pfans.PFANS2000.mapper.*;
 import com.nt.service_pfans.PFANS3000.mapper.*;
-import com.nt.service_pfans.PFANS4000.mapper.*;
-import com.nt.service_pfans.PFANS6000.mapper.*;
-import com.nt.service_pfans.PFANS2000.StaffexitprocedureService;
+import com.nt.service_pfans.PFANS4000.mapper.SealMapper;
 import com.nt.service_pfans.PFANS5000.mapper.*;
+import com.nt.service_pfans.PFANS6000.mapper.*;
 import com.nt.service_pfans.PFANS8000.mapper.InformationDeliveryMapper;
 import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.AuthConstants;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
+import com.nt.utils.StringUtils;
 import com.nt.utils.dao.TokenModel;
-import com.nt.service_Auth.RoleService;
-import com.nt.service_Org.ToDoNoticeService;
 import com.nt.utils.services.TokenService;
-import com.nt.utils.sign;
-import lombok.Builder;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -541,6 +532,42 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         if (staffexitprocedure.getStatus().equals("4")) {
             staffexitprocedure.setNewhope_exit_date(staffexitprocedure.getHope_exit_date());
         }
+        //离职日变更，删除原数据关联的退职者调书以及待办 ztc 1221 fr
+        Staffexitprocedure getOldStaff = new Staffexitprocedure();
+        getOldStaff.setStaffexitprocedure_id(staffexitprocedure.getStaffexitprocedure_id());
+        List<Staffexitprocedure> staffList = staffexitprocedureMapper.select(getOldStaff);
+        //离职日变更待办修改 一次上司待办接收人错误bug ztc fr
+        if(("2").equals(staffexitprocedure.getStatus()) && staffList.size() > 0
+                && staffexitprocedure.getNewhope_exit_date() != null
+                && staffexitprocedure.getNewhope_exit_date() != staffList.get(0).getHope_exit_date()
+                && ("4").equals(staffList.get(0).getStatus())){
+            staffexitprocedureMapper.upStaffproe(staffexitprocedure.getStaffexitprocedure_id());
+            staffexitprocedureMapper.upTodoNo(staffexitprocedure.getStaffexitprocedure_id());
+            //离职者
+            ToDoNotice toDoNotice = new ToDoNotice();
+            toDoNotice.setTitle("离职日变更后，调书需重新创建，请时刻关注离职申请，申请结束后及时联系一次上司创建调书。");
+            toDoNotice.setInitiator(staffexitprocedure.getUser_id());
+            toDoNotice.setDataid(staffexitprocedure.getStaffexitprocedure_id());
+            toDoNotice.setUrl("/PFANS2026View");
+            toDoNotice.preInsert(tokenModel);
+            toDoNotice.setOwner(staffexitprocedure.getUser_id());
+            toDoNoticeService.save(toDoNotice);
+            //离职者的一次上司
+            ToDoNotice toDoNotice2 = new ToDoNotice();
+            toDoNotice2.setTitle("由于离职人员离职日变更，调书需要重新创建，请时刻关注可创建离职调书的待办，及时处理数据。");
+            toDoNotice2.setInitiator(staffexitprocedure.getUser_id());
+            toDoNotice2.setDataid(staffexitprocedure.getStaffexitprocedure_id());
+            toDoNotice2.setUrl("/PFANS2026View");
+            toDoNotice2.preInsert(tokenModel);
+            List<WorkflowLogDetailVo> wfListAnt = wfList.stream()
+                    .filter(wf -> ("一次上司").equals(wf.getNodename())).collect(Collectors.toList());
+            if(wfListAnt.size() > 0){
+                toDoNotice2.setOwner(wfListAnt.get(0).getUserId());
+            }
+            //离职日变更待办修改 一次上司待办接收人错误bug ztc to
+            toDoNoticeService.save(toDoNotice2);
+        }
+        //离职日变更，删除原数据关联的退职者调书以及待办 ztc 1221 to
         staffexitprocedure.preUpdate(tokenModel);
         staffexitprocedureMapper.updateByPrimaryKey(staffexitprocedure);
         String staffexitprocedureid = staffexitprocedure.getStaffexitprocedure_id();
