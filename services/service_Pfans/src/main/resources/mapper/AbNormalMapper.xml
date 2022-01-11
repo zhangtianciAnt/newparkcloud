@@ -496,12 +496,10 @@ and a.user_id = #{userid}
             and USER_ID = #{user_id}
         </if>
         <if test="occurrencedate != null and reoccurrencedate == null">
-            and DATE_FORMAT(OCCURRENCE_DATE, '%Y') = DATE_FORMAT(#{occurrencedate}, '%Y')
             and OCCURRENCE_DATE BETWEEN DATE_SUB(DATE_FORMAT(#{occurrencedate}, '%Y-%m-%d'),INTERVAL 1 YEAR)
             and DATE_FORMAT(#{occurrencedate}, '%Y-%m-%d')
         </if>
         <if test="occurrencedate != null and reoccurrencedate != null">
-            and DATE_FORMAT(RE_OCCURRENCE_DATE, '%Y') = DATE_FORMAT(#{reoccurrencedate}, '%Y')
             and RE_OCCURRENCE_DATE BETWEEN DATE_SUB(DATE_FORMAT(#{reoccurrencedate}, '%Y-%m-%d'),INTERVAL 1 YEAR)
             and DATE_FORMAT(#{reoccurrencedate}, '%Y-%m-%d')
         </if>
