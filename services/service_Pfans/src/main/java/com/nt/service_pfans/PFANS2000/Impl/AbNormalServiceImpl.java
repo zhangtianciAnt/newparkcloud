@@ -906,6 +906,14 @@ public class AbNormalServiceImpl implements AbNormalService {
                     checkWidding.setCenterid(abNormal.getCenterid());
                     checkWidding.setGroupid(abNormal.getGroupid());
                     List<AbNormal> result = abNormalMapper.select(checkWidding);
+                    //判断数据状态是否为有效，非逻辑删除
+                    Iterator<AbNormal> its = result.iterator();
+                    while(its.hasNext()){
+                        AbNormal next = its.next();
+                        if("1".equals(next.getStatus())){
+                            its.remove();
+                        }
+                    }
                     if (result != null && result.size() > 0) {
                         throw new LogicalException("同一结婚证明，不能重复申请 结婚休假");
                     }

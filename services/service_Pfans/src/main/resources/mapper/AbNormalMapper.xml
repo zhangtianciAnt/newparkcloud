@@ -424,7 +424,7 @@ and a.user_id = #{userid}
         </if>
         UNION all
         select 0 as months,count(*) as years from abnormal
-        WHERE 1 = 1
+        WHERE 1 = 1 and status != '1'
         <if test="errortype != null and errortype != ''">
             and ERROR_TYPE = #{errortype}
         </if>
