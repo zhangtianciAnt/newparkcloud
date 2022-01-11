@@ -406,7 +406,7 @@ and a.user_id = #{userid}
     <select id="queryCount" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="java.util.HashMap">
         SELECT sum(res.months) as months,sum(res.years) as years from
         (select count(*) as months,0 as years from abnormal
-        WHERE 1 = 1
+        WHERE 1 = 1 and status != '1'
         <if test="errortype != null and errortype != ''">
             and ERROR_TYPE = #{errortype}
         </if>
@@ -418,9 +418,6 @@ and a.user_id = #{userid}
         </if>
         <if test="user_id != null and user_id != ''">
             and USER_ID = #{user_id}
-        </if>
-        <if test="dateofbirth != null">
-            and DATEOFBIRTH = #{dateofbirth,jdbcType=DATE}
         </if>
         <if test="occurrencedate != null">
             and DATE_FORMAT(OCCURRENCE_DATE, '%Y-%m') = DATE_FORMAT(#{occurrencedate}, '%Y-%m')
@@ -440,9 +437,6 @@ and a.user_id = #{userid}
         <if test="user_id != null and user_id != ''">
             and USER_ID = #{user_id}
         </if>
-        <if test="dateofbirth != null">
-            and DATEOFBIRTH = #{dateofbirth,jdbcType=DATE}
-        </if>
         <if test="occurrencedate != null">
             and DATE_FORMAT(OCCURRENCE_DATE, '%Y') = DATE_FORMAT(#{occurrencedate}, '%Y')
             and OCCURRENCE_DATE BETWEEN DATE_SUB(DATE_FORMAT(#{occurrencedate}, '%Y-%m-%d'),INTERVAL 1 YEAR)
@@ -454,7 +448,7 @@ and a.user_id = #{userid}
 
     <select id="find" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
         select * from abnormal
-        WHERE 1 = 1
+        WHERE 1 = 1 and status != '1'
         and ABNORMAL_ID != #{abnormalid}
         <if test="errortype != null and errortype != ''">
             and ERROR_TYPE = #{errortype}
@@ -468,9 +462,6 @@ and a.user_id = #{userid}
         <if test="user_id != null and user_id != ''">
             and USER_ID = #{user_id}
         </if>
-        <if test="dateofbirth != null">
-            and DATEOFBIRTH = #{dateofbirth,jdbcType=DATE}
-        </if>
         <if test="occurrencedate != null and reoccurrencedate == null">
             and DATE_FORMAT(OCCURRENCE_DATE, '%Y-%m') = DATE_FORMAT(#{occurrencedate}, '%Y-%m')
         </if>
@@ -480,8 +471,18 @@ and a.user_id = #{userid}
     </select>
 
     <select id="queryDays" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="java.lang.Integer">
-        select IFNULL(SUM(LENGTHTIME),0) as days from abnormal
-        WHERE 1 = 1
+        select
+        case
+            when #{occurrencedate,jdbcType=DATE} is not null and #{reoccurrencedate,jdbcType=DATE} is null
+                then IFNULL(SUM(LENGTHTIME),0)
+            when #{occurrencedate,jdbcType=DATE} is not null and #{reoccurrencedate,jdbcType=DATE} is not null
+                then IFNULL(SUM(RE_LENGTHTIME),0)
+            else 0
+        end days from abnormal
+        WHERE 1 = 1 and status != '1'
+        <if test="abnormalid != null and abnormalid != ''">
+            and ABNORMAL_ID != #{abnormalid}
+        </if>
         <if test="errortype != null and errortype != ''">
             and ERROR_TYPE = #{errortype}
         </if>
