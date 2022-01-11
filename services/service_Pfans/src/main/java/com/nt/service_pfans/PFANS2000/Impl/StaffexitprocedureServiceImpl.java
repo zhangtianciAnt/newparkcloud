@@ -539,7 +539,8 @@ public class StaffexitprocedureServiceImpl implements StaffexitprocedureService 
         //离职日变更待办修改 一次上司待办接收人错误bug ztc fr
         if(("2").equals(staffexitprocedure.getStatus()) && staffList.size() > 0
                 && staffexitprocedure.getNewhope_exit_date() != null
-                && staffexitprocedure.getNewhope_exit_date() != staffList.get(0).getHope_exit_date()){
+                && staffexitprocedure.getNewhope_exit_date() != staffList.get(0).getHope_exit_date()
+                && ("4").equals(staffList.get(0).getStatus())){
             staffexitprocedureMapper.upStaffproe(staffexitprocedure.getStaffexitprocedure_id());
             staffexitprocedureMapper.upTodoNo(staffexitprocedure.getStaffexitprocedure_id());
             //离职者
