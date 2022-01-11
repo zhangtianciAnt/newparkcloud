@@ -403,105 +403,175 @@ and a.user_id = #{userid}
     </select>
 <!--    考勤异常申请添加筛选条件 ztc to-->
 
-    <select id="queryCount" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="java.util.HashMap">
-        SELECT sum(res.months) as months,sum(res.years) as years from
-        (select count(*) as months,0 as years from abnormal
-        WHERE 1 = 1 and status != '1'
-        <if test="errortype != null and errortype != ''">
-            and ERROR_TYPE = #{errortype}
-        </if>
-        <if test="centerid != null and centerid != ''">
-            and CENTER_ID = #{centerid}
-        </if>
-        <if test="groupid != null and groupid != ''">
-            and GROUP_ID = #{groupid}
-        </if>
-        <if test="user_id != null and user_id != ''">
-            and USER_ID = #{user_id}
-        </if>
-        <if test="occurrencedate != null">
-            and DATE_FORMAT(OCCURRENCE_DATE, '%Y-%m') = DATE_FORMAT(#{occurrencedate}, '%Y-%m')
-        </if>
-        UNION all
-        select 0 as months,count(*) as years from abnormal
-        WHERE 1 = 1 and status != '1'
-        <if test="errortype != null and errortype != ''">
-            and ERROR_TYPE = #{errortype}
-        </if>
-        <if test="centerid != null and centerid != ''">
-            and CENTER_ID = #{centerid}
-        </if>
-        <if test="groupid != null and groupid != ''">
-            and GROUP_ID = #{groupid}
-        </if>
-        <if test="user_id != null and user_id != ''">
-            and USER_ID = #{user_id}
-        </if>
-        <if test="occurrencedate != null">
-            and DATE_FORMAT(OCCURRENCE_DATE, '%Y') = DATE_FORMAT(#{occurrencedate}, '%Y')
-            and OCCURRENCE_DATE BETWEEN DATE_SUB(DATE_FORMAT(#{occurrencedate}, '%Y-%m-%d'),INTERVAL 1 YEAR)
-                                                         and DATE_FORMAT(#{occurrencedate}, '%Y-%m-%d')
-        </if>
-        ) res
-
-    </select>
-
-    <select id="find" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
-        select * from abnormal
-        WHERE 1 = 1 and status != '1'
-        and ABNORMAL_ID != #{abnormalid}
-        <if test="errortype != null and errortype != ''">
-            and ERROR_TYPE = #{errortype}
-        </if>
-        <if test="centerid != null and centerid != ''">
-            and CENTER_ID = #{centerid}
-        </if>
-        <if test="groupid != null and groupid != ''">
-            and GROUP_ID = #{groupid}
-        </if>
-        <if test="user_id != null and user_id != ''">
-            and USER_ID = #{user_id}
-        </if>
-        <if test="occurrencedate != null and reoccurrencedate == null">
-            and DATE_FORMAT(OCCURRENCE_DATE, '%Y-%m') = DATE_FORMAT(#{occurrencedate}, '%Y-%m')
-        </if>
-        <if test="occurrencedate != null and reoccurrencedate != null">
-            and DATE_FORMAT(RE_OCCURRENCE_DATE, '%Y-%m') = DATE_FORMAT(#{reoccurrencedate}, '%Y-%m')
-        </if>
-    </select>
-
-    <select id="queryDays" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="java.lang.Integer">
+    <select id="selectAttenSumParent" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="java.lang.Double">
         select
-        case
-            when #{occurrencedate,jdbcType=DATE} is not null and #{reoccurrencedate,jdbcType=DATE} is null
-                then IFNULL(SUM(LENGTHTIME),0)
-            when #{occurrencedate,jdbcType=DATE} is not null and #{reoccurrencedate,jdbcType=DATE} is not null
-                then IFNULL(SUM(RE_LENGTHTIME),0)
-            else 0
-        end days from abnormal
-        WHERE 1 = 1 and status != '1'
-        <if test="abnormalid != null and abnormalid != ''">
-            and ABNORMAL_ID != #{abnormalid}
-        </if>
+        sum(
+        case when a.STATUS = 7
+        then
+        case when (a.RE_OCCURRENCE_DATE >= DATE_FORMAT(DATE_SUB(#{occurrencedate,jdbcType=DATE},INTERVAL 1 YEAR),'%Y-%m-%d') and a.RE_FINISHED_DATE &lt;= DATE_FORMAT(#{occurrencedate,jdbcType=DATE},'%Y-%m-%d'))
+        then CONVERT(a.RE_LENGTHTIME,DECIMAL(10,1))
+        else 0
+        end
+        else
+        case when (a.OCCURRENCE_DATE >= DATE_FORMAT(DATE_SUB(#{occurrencedate,jdbcType=DATE},INTERVAL 1 YEAR),'%Y-%m-%d') and a.FINISHED_DATE &lt;= DATE_FORMAT(#{occurrencedate,jdbcType=DATE},'%Y-%m-%d'))
+        then CONVERT(a.LENGTHTIME,DECIMAL(10,1))
+        else 0
+        end
+        END) as Hours
+        from abnormal a
+        where 1=1
         <if test="errortype != null and errortype != ''">
             and ERROR_TYPE = #{errortype}
         </if>
-        <if test="centerid != null and centerid != ''">
-            and CENTER_ID = #{centerid}
+        and user_id = #{user_id}
+        and status >=4
+    </select>
+
+    <select id="selectAttenSumParent1" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        select
+            status as status,
+            OCCURRENCE_DATE as occurrencedate,
+            FINISHED_DATE as finisheddate,
+            RE_OCCURRENCE_DATE as reoccurrencedate,
+            RE_FINISHED_DATE as refinisheddate,
+            case when a.STATUS = 7
+            then
+            case when (a.RE_OCCURRENCE_DATE &lt; DATE_FORMAT(DATE_SUB(#{occurrencedate,jdbcType=DATE},INTERVAL 1 YEAR),'%Y-%m-%d') and a.RE_FINISHED_DATE > DATE_FORMAT(DATE_SUB(#{occurrencedate,jdbcType=DATE},INTERVAL 1 YEAR),'%Y-%m-%d'))
+            then CONVERT(a.RE_LENGTHTIME,DECIMAL(10,1))
+            else 0
+            end
+            else
+            0
+            end as RELENGTHTIME,
+            case when a.STATUS = 4 or 	a.STATUS = 5 or a.STATUS = 6
+            then
+            case when (a.OCCURRENCE_DATE &lt; DATE_FORMAT(DATE_SUB(#{occurrencedate,jdbcType=DATE},INTERVAL 1 YEAR),'%Y-%m-%d') and a.FINISHED_DATE > DATE_FORMAT(DATE_SUB(#{occurrencedate,jdbcType=DATE},INTERVAL 1 YEAR),'%Y-%m-%d'))
+            then CONVERT(a.LENGTHTIME,DECIMAL(10,1))
+            else 0
+            end
+            else 0
+            END as LENGTHTIME
+        from abNormal a
+        where status >=4 and user_id = #{user_id}
+        <if test="errortype != null and errortype != ''">
+            and ERROR_TYPE = #{errortype}
         </if>
-        <if test="groupid != null and groupid != ''">
-            and GROUP_ID = #{groupid}
+    </select>
+
+    <select id="selectAttenSumParent2" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        select
+            status as status,
+            OCCURRENCE_DATE as occurrencedate,
+            FINISHED_DATE as finisheddate,
+            RE_OCCURRENCE_DATE as reoccurrencedate,
+            RE_FINISHED_DATE as refinisheddate,
+            case when a.STATUS = 7
+            then
+            case when (a.RE_OCCURRENCE_DATE &lt; DATE_FORMAT(#{occurrencedate,jdbcType=DATE},'%Y-%m-%d') and a.RE_FINISHED_DATE > DATE_FORMAT(#{occurrencedate,jdbcType=DATE},'%Y-%m-%d'))
+            then CONVERT(a.RE_LENGTHTIME,DECIMAL(10,1))
+            else 0
+            end
+            else
+            0
+            end as RELENGTHTIME,
+            case when a.STATUS = 4 or 	a.STATUS = 5 or a.STATUS = 6
+            then
+            case when (a.OCCURRENCE_DATE &lt; DATE_FORMAT(#{occurrencedate,jdbcType=DATE},'%Y-%m-%d') and a.FINISHED_DATE > DATE_FORMAT(#{occurrencedate,jdbcType=DATE},'%Y-%m-%d'))
+            then CONVERT(a.LENGTHTIME,DECIMAL(10,1))
+            else 0
+            end
+            else 0
+            END as LENGTHTIME
+        from abNormal a
+        where status >=4 and user_id = #{user_id}
+        <if test="errortype != null and errortype != ''">
+            and ERROR_TYPE = #{errortype}
         </if>
-        <if test="user_id != null and user_id != ''">
-            and USER_ID = #{user_id}
+    </select>
+
+    <select id="selectAttenSumParenting" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="java.lang.Double">
+        select
+        sum(
+        case when a.STATUS = 7
+        then
+        case when (a.RE_OCCURRENCE_DATE >= DATE_FORMAT(DATE_SUB(#{occurrencedate,jdbcType=DATE},INTERVAL 1 MONTH ),'%Y-%m-%d') and a.RE_FINISHED_DATE &lt;= DATE_FORMAT(#{occurrencedate,jdbcType=DATE},'%Y-%m-%d'))
+        then CONVERT(a.RE_LENGTHTIME,DECIMAL(10,1))
+        else 0
+        end
+        else
+        case when (a.OCCURRENCE_DATE >= DATE_FORMAT(DATE_SUB(#{occurrencedate,jdbcType=DATE},INTERVAL 1 MONTH),'%Y-%m-%d') and a.FINISHED_DATE &lt;= DATE_FORMAT(#{occurrencedate,jdbcType=DATE},'%Y-%m-%d'))
+        then CONVERT(a.LENGTHTIME,DECIMAL(10,1))
+        else 0
+        end
+        END) as Hours
+        from abnormal a
+        where 1=1
+        <if test="errortype != null and errortype != ''">
+            and ERROR_TYPE = #{errortype}
         </if>
-        <if test="occurrencedate != null and reoccurrencedate == null">
-            and OCCURRENCE_DATE BETWEEN DATE_SUB(DATE_FORMAT(#{occurrencedate}, '%Y-%m-%d'),INTERVAL 1 YEAR)
-            and DATE_FORMAT(#{occurrencedate}, '%Y-%m-%d')
+        and user_id = #{user_id}
+        and status >=4
+    </select>
+
+    <select id="selectAttenSumParenting1" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        select
+        status as status,
+        OCCURRENCE_DATE as occurrencedate,
+        FINISHED_DATE as finisheddate,
+        RE_OCCURRENCE_DATE as reoccurrencedate,
+        RE_FINISHED_DATE as refinisheddate,
+        case when a.STATUS = 7
+        then
+        case when (a.RE_OCCURRENCE_DATE &lt; DATE_FORMAT(DATE_SUB(#{occurrencedate,jdbcType=DATE},INTERVAL 1 MONTH),'%Y-%m-%d') and a.RE_FINISHED_DATE > DATE_FORMAT(DATE_SUB(#{occurrencedate,jdbcType=DATE},INTERVAL 1 MONTH),'%Y-%m-%d'))
+        then CONVERT(a.RE_LENGTHTIME,DECIMAL(10,1))
+        else 0
+        end
+        else
+        0
+        end as RELENGTHTIME,
+        case when a.STATUS = 4 or 	a.STATUS = 5 or a.STATUS = 6
+        then
+        case when (a.OCCURRENCE_DATE &lt; DATE_FORMAT(DATE_SUB(#{occurrencedate,jdbcType=DATE},INTERVAL 1 MONTH),'%Y-%m-%d') and a.FINISHED_DATE > DATE_FORMAT(DATE_SUB(#{occurrencedate,jdbcType=DATE},INTERVAL 1 MONTH),'%Y-%m-%d'))
+        then CONVERT(a.LENGTHTIME,DECIMAL(10,1))
+        else 0
+        end
+        else 0
+        END as LENGTHTIME
+        from abNormal a
+        where status >=4 and user_id = #{user_id}
+        <if test="errortype != null and errortype != ''">
+            and ERROR_TYPE = #{errortype}
         </if>
-        <if test="occurrencedate != null and reoccurrencedate != null">
-            and RE_OCCURRENCE_DATE BETWEEN DATE_SUB(DATE_FORMAT(#{reoccurrencedate}, '%Y-%m-%d'),INTERVAL 1 YEAR)
-            and DATE_FORMAT(#{reoccurrencedate}, '%Y-%m-%d')
+    </select>
+
+    <select id="selectAttenSumParenting2" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        select
+        status as status,
+        OCCURRENCE_DATE as occurrencedate,
+        FINISHED_DATE as finisheddate,
+        RE_OCCURRENCE_DATE as reoccurrencedate,
+        RE_FINISHED_DATE as refinisheddate,
+        case when a.STATUS = 7
+        then
+        case when (a.RE_OCCURRENCE_DATE &lt; DATE_FORMAT(#{occurrencedate,jdbcType=DATE},'%Y-%m-%d') and a.RE_FINISHED_DATE > DATE_FORMAT(#{occurrencedate,jdbcType=DATE},'%Y-%m-%d'))
+        then CONVERT(a.RE_LENGTHTIME,DECIMAL(10,1))
+        else 0
+        end
+        else
+        0
+        end as RELENGTHTIME,
+        case when a.STATUS = 4 or 	a.STATUS = 5 or a.STATUS = 6
+        then
+        case when (a.OCCURRENCE_DATE &lt; DATE_FORMAT(#{occurrencedate,jdbcType=DATE},'%Y-%m-%d') and a.FINISHED_DATE > DATE_FORMAT(#{occurrencedate,jdbcType=DATE},'%Y-%m-%d'))
+        then CONVERT(a.LENGTHTIME,DECIMAL(10,1))
+        else 0
+        end
+        else 0
+        END as LENGTHTIME
+        from abNormal a
+        where status >=4 and user_id = #{user_id}
+        <if test="errortype != null and errortype != ''">
+            and ERROR_TYPE = #{errortype}
         </if>
     </select>
 </mapper>

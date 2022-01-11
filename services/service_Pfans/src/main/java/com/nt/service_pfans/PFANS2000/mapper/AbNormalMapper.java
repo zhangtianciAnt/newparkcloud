@@ -50,14 +50,12 @@ public interface AbNormalMapper extends MyMapper<AbNormal> {
 //    考勤异常申请添加筛选条件 ztc to
 
     //region add scc 根据开始时间或实际开始时间判断一个月或一年的育儿假申请次数 from
-    List<Map<String,String>> queryCount(AbNormal abNormal);
+    Double selectAttenSumParent(AbNormal abNormal);
+    List<AbNormal> selectAttenSumParent1(AbNormal abNormal);
+    List<AbNormal> selectAttenSumParent2(AbNormal abNormal);
+    Double selectAttenSumParenting(AbNormal abNormal);
+    List<AbNormal> selectAttenSumParenting1(AbNormal abNormal);
+    List<AbNormal> selectAttenSumParenting2(AbNormal abNormal);
     //endregion add scc 根据开始时间或实际开始时间判断一个月或一年的育儿假申请次数 to
 
-    //region add scc 育儿假，根据主键判断当月是否申请其他育儿假 from
-    List<AbNormal> find(AbNormal abNormal);
-    //endregion add scc 根据主键判断当月是否申请其他育儿假 to
-
-    //region scc add 判断父母照料假天数 from
-    int queryDays(AbNormal abNormal);
-    //region scc add 判断父母照料假天数 to
 }

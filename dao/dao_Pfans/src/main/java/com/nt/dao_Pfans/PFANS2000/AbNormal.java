@@ -217,4 +217,10 @@ public class AbNormal extends BaseModel {
     @Column(name = "SUCHCONFINEMENT")
     private Date suchconfinement;
 
+    /**
+     * 父母照料假和育兒假  msg
+     */
+    @Column(name = "PARENTMSG")
+    private String parentmsg;
+
 }
