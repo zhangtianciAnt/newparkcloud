@@ -6,16 +6,15 @@ import com.nt.dao_Pfans.PFANS5000.Vo.LogPersonReturnVo;
 import com.nt.service_pfans.PFANS5000.Impl.LogPersonStatisticsServiceImpl;
 import com.nt.service_pfans.PFANS5000.LogPersonStatisticsService;
 import com.nt.service_pfans.PFANS5000.mapper.LogPersonStatisticsMapper;
-import com.nt.utils.ApiResult;
-import com.nt.utils.MessageUtil;
-import com.nt.utils.MsgConstants;
-import com.nt.utils.RequestUtils;
+import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -68,14 +67,16 @@ public class Pfans5016Controller {
     }
     //region scc add 9/24 定时任务获取日志人别数据 to
 
-
-//    /**
-//     * 积木报表
-//     * 部门项目别年度统计
-//     * 21/9/14 scc
-//     * */
-//    @GetMapping("/getTableinfoReport")
-//    public ApiResult getTableinfoReport(@RequestParam String month, HttpServletRequest request) throws Exception {
-//        return ApiResult.success("getTableinfoReport",logpersonstatisticsservice.getTableinfoReport(month));
-//    }
+    /**
+     *  日志人别导出
+     *  scc add 21/12/2
+     */
+    @RequestMapping(value = "/downloadExcel", method = { RequestMethod.GET},produces = "text/html;charset=UTF-8")
+    public void downloadExcel(@RequestParam String month, HttpServletRequest request, HttpServletResponse resp) {
+        try {
+            logpersonstatisticsservice.downloadExcel(month,request,resp);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
