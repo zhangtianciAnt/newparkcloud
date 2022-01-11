@@ -62,6 +62,8 @@ GROUP BY
         compassionateleave,
         annualrest,
         daixiu,
+        parenting,
+        parentalcare,
         nursingleave,
         welfare,
         absenteeism,
@@ -143,6 +145,8 @@ GROUP BY
             ,a.compassionateleave as compassionateleave
             ,a.annualrest       as annualrest
             ,a.daixiu           as daixiu
+            ,a.parenting        as parenting
+            ,a.parentalcare     as parentalcare
             ,a.nursingleave     as nursingleave
             ,a.welfare          as welfare
             ,a.absenteeism      as absenteeism
@@ -181,6 +185,8 @@ GROUP BY
             ,ar.compassionateleave as compassionateleave
             ,ar.annualrest       as annualrest
             ,ar.daixiu           as daixiu
+            ,ar.parenting         as parenting
+            ,ar.parentalcare      as parentalcare
             ,ar.nursingleave     as nursingleave
             ,ar.welfare          as welfare
             ,ar.absenteeism      as absenteeism
@@ -221,6 +227,8 @@ GROUP BY
             sum( IFNULL(aee.womensday,0) ) AS womensday,
             sum( IFNULL(aee.ANNUALREST,0) ) AS ANNUALREST,
             sum( IFNULL(aee.DAIXIU,0) ) AS DAIXIU,
+            sum( IFNULL(aee.PARENTING,0) ) AS PARENTING,
+            sum( IFNULL(aee.PARENTALCARE,0) ) AS PARENTALCARE,
             sum( IFNULL(aee.WELFARE,0) ) AS WELFARE,
             sum( IFNULL(aee.shortsickleave,0) ) AS shortsickleave,
             sum( IFNULL(aee.longsickleave,0) ) AS longsickleave,
@@ -248,6 +256,8 @@ GROUP BY
                     ATT.youthday,
                     ATT.womensday,
                     ATT.ANNUALREST,
+                    ATT.PARENTING,
+                    ATT.PARENTALCARE,
                     ATT.DAIXIU,
                     ATT.WELFARE,
                     ATT.shortsickleave,

@@ -244,4 +244,19 @@ public class Attendance extends BaseModel {
      */
     @Column(name = "OUTGOINGHOURS")
     private String outgoinghours;
+
+    //add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+    /**
+     * 育儿假
+     */
+    @Column(name = "PARENTING")
+    private String parenting;
+
+    /**
+     * 父母照料假
+     */
+    @Column(name = "PARENTALCARE")
+    private String parentalcare;
+
+    //add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
 }
