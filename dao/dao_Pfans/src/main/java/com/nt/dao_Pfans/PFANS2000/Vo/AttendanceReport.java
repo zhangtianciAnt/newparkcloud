@@ -117,4 +117,17 @@ public class AttendanceReport {
      * 试用无故旷工
      */
     private String tabsenteeism;
+
+    /**
+     * 育儿假
+     */
+    @Column(name = "PARENTING")
+    private String parenting;
+
+    /**
+     * 父母照料假
+     */
+    @Column(name = "PARENTALCARE")
+    private String parentalcare;
+
 }

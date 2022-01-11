@@ -355,7 +355,7 @@ public class AttendanceServiceImpl implements AttendanceService {
         XSSFSheet sheet = attract.createSheet(year + "-" + month + "月考勤");
         sheet.createFreezePane(0, 1, 0, 1);//冻结首行
         XSSFRow row = sheet.createRow(0);//创建行
-        for (int k = 0; k < 19; k++) {
+        for (int k = 0; k < 21; k++) {
             XSSFCell cell = row.createCell(k);
             switch (k) {
                 case 0: cell.setCellValue("人名");cell.setCellStyle(cellStyleFir);break;
@@ -371,12 +371,14 @@ public class AttendanceServiceImpl implements AttendanceService {
                 case 10: cell.setCellValue("妇女节");cell.setCellStyle(cellStyleFir);break;
                 case 11: cell.setCellValue("年休");cell.setCellStyle(cellStyleFir);break;
                 case 12: cell.setCellValue("代休");cell.setCellStyle(cellStyleFir);break;
-                case 13: cell.setCellValue("其他福利休假");cell.setCellStyle(cellStyleFir);break;
-                case 14: cell.setCellValue("短病假");cell.setCellStyle(cellStyleFir);break;
-                case 15: cell.setCellValue("长病假");cell.setCellStyle(cellStyleFir);break;
-                case 16: cell.setCellValue("事假");cell.setCellStyle(cellStyleFir);break;
-                case 17: cell.setCellValue("产休/护理假");cell.setCellStyle(cellStyleFir);break;
-                case 18: cell.setCellValue("欠勤");cell.setCellStyle(cellStyleFir);break;
+                case 13:cell.setCellValue("育儿假");cell.setCellStyle(cellStyleFir);break;
+                case 14:cell.setCellValue("父母照料假");cell.setCellStyle(cellStyleFir);break;
+                case 15: cell.setCellValue("其他福利休假");cell.setCellStyle(cellStyleFir);break;
+                case 16:cell.setCellValue("短病假");cell.setCellStyle(cellStyleFir);break;
+                case 17:cell.setCellValue("长病假");cell.setCellStyle(cellStyleFir);break;
+                case 18:cell.setCellValue("事假");cell.setCellStyle(cellStyleFir);break;
+                case 19:cell.setCellValue("产休/护理假");cell.setCellStyle(cellStyleFir);break;
+                case 20:cell.setCellValue("欠勤");cell.setCellStyle(cellStyleFir);break;
             }
         }
 
@@ -410,7 +412,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                 for (int i = 0; i < onattReports.size(); i++) {
                     XSSFRow rowDetail = sheet.createRow(i + 1);
                     AttendanceReport att = onattReports.get(i);
-                    for (int j = 0; j < 19; j++) {
+                    for (int j = 0; j < 21; j++) {
                         XSSFCell cellDetail = rowDetail.createCell(j);
                         switch (j) {
                             case 0: cellDetail.setCellValue(att.getUser_name());cellDetail.setCellStyle(cellStyleAll);break; // 人名
@@ -426,12 +428,14 @@ public class AttendanceServiceImpl implements AttendanceService {
                             case 10: cellDetail.setCellValue("0".equals(att.getWomensday()) ? null : att.getWomensday());cellDetail.setCellStyle(cellStyleAll);break; // 妇女节
                             case 11: cellDetail.setCellValue("0".equals(att.getAnnualrest()) ? null : att.getAnnualrest());cellDetail.setCellStyle(cellStyleAll);break; // 年休
                             case 12: cellDetail.setCellValue("0".equals(att.getDaixiu()) ? null : att.getDaixiu());cellDetail.setCellStyle(cellStyleAll);break; // 代休
-                            case 13: cellDetail.setCellValue("0".equals(att.getWelfare()) ? null : att.getWelfare());cellDetail.setCellStyle(cellStyleAll);break; // 其他福利休假
-                            case 14: cellDetail.setCellValue("0".equals(att.getShortsickleave()) ? "0".equals(att.getTshortsickleave()) ? null : att.getTshortsickleave() : att.getShortsickleave());cellDetail.setCellStyle(cellStyleAll);break; // 短病假
-                            case 15: cellDetail.setCellValue("0".equals(att.getLongsickleave()) ? "0".equals(att.getTlongsickleave()) ? null : att.getTlongsickleave() : att.getLongsickleave());cellDetail.setCellStyle(cellStyleAll);break; // 长病假
-                            case 16: cellDetail.setCellValue("0".equals(att.getCompassionateleave()) ? "0".equals(att.getTcompassionateleave()) ? null : att.getTcompassionateleave() : att.getCompassionateleave());cellDetail.setCellStyle(cellStyleAll);break; // 事假
-                            case 17: cellDetail.setCellValue("0".equals(att.getNursingleave()) ? null : att.getNursingleave());cellDetail.setCellStyle(cellStyleAll);break; // 产休/护理假
-                            case 18: cellDetail.setCellValue("0".equals(att.getAbsenteeism()) ? "0".equals(att.getTabsenteeism()) ? null : att.getTabsenteeism() : att.getAbsenteeism());cellDetail.setCellStyle(cellStyleAll);break; // 欠勤
+                            case 13:cellDetail.setCellValue("0".equals(att.getParenting()) ? null : att.getParenting());cellDetail.setCellStyle(cellStyleAll);break; // 育儿假
+                            case 14:cellDetail.setCellValue("0".equals(att.getParentalcare()) ? null : att.getParentalcare());cellDetail.setCellStyle(cellStyleAll);break; // 照料父母假
+                            case 15:cellDetail.setCellValue("0".equals(att.getWelfare()) ? null : att.getWelfare());cellDetail.setCellStyle(cellStyleAll);break; // 其他福利休假
+                            case 16:cellDetail.setCellValue("0".equals(att.getShortsickleave()) ? "0".equals(att.getTshortsickleave()) ? null : att.getTshortsickleave() : att.getShortsickleave());cellDetail.setCellStyle(cellStyleAll);break; // 短病假
+                            case 17:cellDetail.setCellValue("0".equals(att.getLongsickleave()) ? "0".equals(att.getTlongsickleave()) ? null : att.getTlongsickleave() : att.getLongsickleave());cellDetail.setCellStyle(cellStyleAll);break; // 长病假
+                            case 18:cellDetail.setCellValue("0".equals(att.getCompassionateleave()) ? "0".equals(att.getTcompassionateleave()) ? null : att.getTcompassionateleave() : att.getCompassionateleave());cellDetail.setCellStyle(cellStyleAll);break; // 事假
+                            case 19:cellDetail.setCellValue("0".equals(att.getNursingleave()) ? null : att.getNursingleave());cellDetail.setCellStyle(cellStyleAll);break; // 产休/护理假
+                            case 20:cellDetail.setCellValue("0".equals(att.getAbsenteeism()) ? "0".equals(att.getTabsenteeism()) ? null : att.getTabsenteeism() : att.getAbsenteeism());cellDetail.setCellStyle(cellStyleAll);break; // 欠勤
                         }
                     }
                 }
@@ -443,7 +447,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                 for (int i = 0; i < outattReports.size(); i++) {
                     XSSFRow rowDetail = sheet.createRow(i + 1);
                     AttendanceReport att = outattReports.get(i);
-                    for (int j = 0; j < 19; j++) {
+                    for (int j = 0; j < 21; j++) {
                         XSSFCell cellDetail = rowDetail.createCell(j);
                         switch (j) {
                             case 0: cellDetail.setCellValue(att.getUser_name());cellDetail.setCellStyle(cellStyleAll);break; // 人名
@@ -459,12 +463,14 @@ public class AttendanceServiceImpl implements AttendanceService {
                             case 10: cellDetail.setCellValue("0".equals(att.getWomensday()) ? null : att.getWomensday());cellDetail.setCellStyle(cellStyleAll);break; // 妇女节
                             case 11: cellDetail.setCellValue("0".equals(att.getAnnualrest()) ? null : att.getAnnualrest());cellDetail.setCellStyle(cellStyleAll);break; // 年休
                             case 12: cellDetail.setCellValue("0".equals(att.getDaixiu()) ? null : att.getDaixiu());cellDetail.setCellStyle(cellStyleAll);break; // 代休
-                            case 13: cellDetail.setCellValue("0".equals(att.getWelfare()) ? null : att.getWelfare());cellDetail.setCellStyle(cellStyleAll);break; // 其他福利休假
-                            case 14: cellDetail.setCellValue("0".equals(att.getShortsickleave()) ? "0".equals(att.getTshortsickleave()) ? null : att.getTshortsickleave() : att.getShortsickleave());cellDetail.setCellStyle(cellStyleAll);break; // 短病假
-                            case 15: cellDetail.setCellValue("0".equals(att.getLongsickleave()) ? "0".equals(att.getTlongsickleave()) ? null : att.getTlongsickleave() : att.getLongsickleave());cellDetail.setCellStyle(cellStyleAll);break; // 长病假
-                            case 16: cellDetail.setCellValue("0".equals(att.getCompassionateleave()) ? "0".equals(att.getTcompassionateleave()) ? null : att.getTcompassionateleave() : att.getCompassionateleave());cellDetail.setCellStyle(cellStyleAll);break; // 事假
-                            case 17: cellDetail.setCellValue("0".equals(att.getNursingleave()) ? null : att.getNursingleave());cellDetail.setCellStyle(cellStyleAll);break; // 产休/护理假
-                            case 18: cellDetail.setCellValue("0".equals(att.getAbsenteeism()) ? "0".equals(att.getTabsenteeism()) ? null : att.getTabsenteeism() : att.getAbsenteeism());cellDetail.setCellStyle(cellStyleAll);break; // 欠勤
+                            case 13:cellDetail.setCellValue("0".equals(att.getParenting()) ? null : att.getParenting());cellDetail.setCellStyle(cellStyleAll);break; // 育儿假
+                            case 14:cellDetail.setCellValue("0".equals(att.getParentalcare()) ? null : att.getParentalcare());cellDetail.setCellStyle(cellStyleAll);break; // 照料父母假
+                            case 15:cellDetail.setCellValue("0".equals(att.getWelfare()) ? null : att.getWelfare());cellDetail.setCellStyle(cellStyleAll);break; // 其他福利休假
+                            case 16:cellDetail.setCellValue("0".equals(att.getShortsickleave()) ? "0".equals(att.getTshortsickleave()) ? null : att.getTshortsickleave() : att.getShortsickleave());cellDetail.setCellStyle(cellStyleAll);break; // 短病假
+                            case 17:cellDetail.setCellValue("0".equals(att.getLongsickleave()) ? "0".equals(att.getTlongsickleave()) ? null : att.getTlongsickleave() : att.getLongsickleave());cellDetail.setCellStyle(cellStyleAll);break; // 长病假
+                            case 18:cellDetail.setCellValue("0".equals(att.getCompassionateleave()) ? "0".equals(att.getTcompassionateleave()) ? null : att.getTcompassionateleave() : att.getCompassionateleave());cellDetail.setCellStyle(cellStyleAll);break; // 事假
+                            case 19:cellDetail.setCellValue("0".equals(att.getNursingleave()) ? null : att.getNursingleave());cellDetail.setCellStyle(cellStyleAll);break; // 产休/护理假
+                            case 20:cellDetail.setCellValue("0".equals(att.getAbsenteeism()) ? "0".equals(att.getTabsenteeism()) ? null : att.getTabsenteeism() : att.getAbsenteeism());cellDetail.setCellStyle(cellStyleAll);break; // 欠勤
                         }
                     }
                 }
