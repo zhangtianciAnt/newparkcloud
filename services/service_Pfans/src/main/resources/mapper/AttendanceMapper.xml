@@ -62,6 +62,8 @@ GROUP BY
         compassionateleave,
         annualrest,
         daixiu,
+        parenting,
+        parentalcare,
         nursingleave,
         welfare,
         absenteeism,
@@ -143,6 +145,8 @@ GROUP BY
             ,a.compassionateleave as compassionateleave
             ,a.annualrest       as annualrest
             ,a.daixiu           as daixiu
+            ,a.parenting        as parenting
+            ,a.parentalcare     as parentalcare
             ,a.nursingleave     as nursingleave
             ,a.welfare          as welfare
             ,a.absenteeism      as absenteeism
@@ -181,6 +185,8 @@ GROUP BY
             ,ar.compassionateleave as compassionateleave
             ,ar.annualrest       as annualrest
             ,ar.daixiu           as daixiu
+            ,ar.parenting         as parenting
+            ,ar.parentalcare      as parentalcare
             ,ar.nursingleave     as nursingleave
             ,ar.welfare          as welfare
             ,ar.absenteeism      as absenteeism

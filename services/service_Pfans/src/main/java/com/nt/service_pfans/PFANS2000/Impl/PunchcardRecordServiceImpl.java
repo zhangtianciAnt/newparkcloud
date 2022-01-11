@@ -832,8 +832,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             attendSumSick.setUser_id(ad.getUser_id());
 
                             //ccm add 1020 短病假变长病假
+                            //当天之前一年内，开始时间和结束时间都在一年范围内的病假之和
                             Double sumSick0 = 0d;
+                            //当天之前一年内，开始时间小于一年内的开始时间，结束时间大于一年内的开始时间
                             Double sumSick1 = 0d;
+                            //当天之前一年内，开始时间小于一年内的结束时间，结束时间大于一年内的结束时间
                             Double sumSick2 = 0d;
                             sumSick0 = abNormalMapper.selectAttenSumSick(attendSumSick);
                             if(sumSick0 == null )
@@ -1300,6 +1303,26 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                         ad.setWelfare(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
                                                     }
 //                                                }
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                            } else if (ab.getErrortype().equals("PR013023")) { //育儿假
+                                                if (ad.getParenting() != null && !ad.getParenting().isEmpty()) {
+                                                    if (Double.valueOf(ad.getParenting()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                        strlengthtime = df.format(Double.valueOf(workinghours));
+                                                    } else {
+                                                        strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getParenting())));
+                                                    }
+                                                }
+                                                ad.setParenting(strlengthtime);
+                                            } else if (ab.getErrortype().equals("PR013024")) { //父母照料假
+                                                if (ad.getParentalcare() != null && !ad.getParentalcare().isEmpty()) {
+                                                    if (Double.valueOf(ad.getParentalcare()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                        strlengthtime = df.format(Double.valueOf(workinghours));
+                                                    } else {
+                                                        strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getParentalcare())));
+                                                    }
+                                                }
+                                                ad.setParentalcare(strlengthtime);
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                             } else if (ab.getErrortype().equals("PR013022")) {//加餐，哺乳假
 //                                                if (ab.getStatus().equals("7")) {
                                                     if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
@@ -1320,6 +1343,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setNormal(ad.getNormal() == null ? "0" : ad.getNormal());
                                     ad.setAnnualrest(ad.getAnnualrest() == null ? "0" : ad.getAnnualrest());
                                     ad.setDaixiu(ad.getDaixiu() == null ? "0" : ad.getDaixiu());
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                    ad.setParenting(ad.getParenting() == null ? "0" : ad.getParenting());
+                                    ad.setParentalcare(ad.getParentalcare() == null ? "0" : ad.getParentalcare());
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                     ad.setCompassionateleave(ad.getCompassionateleave() == null ? "0" : ad.getCompassionateleave());
                                     ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : (Double.valueOf(ad.getShortsickleave())<0 ? "0" : ad.getShortsickleave()));
                                     ad.setLongsickleave(ad.getLongsickleave() == null ? "0" : ad.getLongsickleave());
@@ -1330,6 +1357,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     //申请假期的时间
                                     String leavetime = df.format(Double.valueOf(ad.getShortsickleave())
                                             + Double.valueOf(ad.getLongsickleave()) + Double.valueOf(ad.getCompassionateleave()) + Double.valueOf(ad.getAnnualrest())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                            + Double.valueOf(ad.getParenting()) + Double.valueOf(ad.getParentalcare())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                             + Double.valueOf(ad.getDaixiu()) + Double.valueOf(ad.getNursingleave()) + Double.valueOf(ad.getWelfare()));
                                     //青年节，妇女节换代休
                                     if (workinghours.equals("4")) {
@@ -1672,6 +1702,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if ((i > 0 && j == 0) || (j > 0 && i == 0)) {
 
                                                 leavetime = String.valueOf(Double.valueOf(ad.getShortsickleave()) + Double.valueOf(ad.getLongsickleave())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                                        + Double.valueOf(ad.getParenting()) + Double.valueOf(ad.getParentalcare())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                                         + Double.valueOf(ad.getCompassionateleave()) + Double.valueOf(ad.getDaixiu()) + Double.valueOf(ad.getAnnualrest()) + Double.valueOf(ad.getNursingleave()) + Double.valueOf(ad.getWelfare()));
                                                 if (Double.valueOf(leavetime) >= 8) {
                                                     ad.setNormal("0");
@@ -1885,6 +1918,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setNormal(ad.getNormal() == null ? null : (Double.valueOf(ad.getNormal()) <= 0 ? null : df.format(Double.valueOf(ad.getNormal()))));
                                     ad.setAnnualrest(Double.valueOf(ad.getAnnualrest()) <= 0 ? null : df.format(Double.valueOf(ad.getAnnualrest())));
                                     ad.setDaixiu(Double.valueOf(ad.getDaixiu()) <= 0 ? null : df.format(Double.valueOf(ad.getDaixiu())));
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                    ad.setParenting(Double.valueOf(ad.getParenting()) <= 0 ? null : df.format(Double.valueOf(ad.getParenting())));
+                                    ad.setParentalcare(Double.valueOf(ad.getParentalcare()) <= 0 ? null : df.format(Double.valueOf(ad.getParentalcare())));
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                     ad.setCompassionateleave(Double.valueOf(ad.getCompassionateleave()) <= 0 ? null : df.format(Double.valueOf(ad.getCompassionateleave())));
                                     ad.setShortsickleave(Double.valueOf(ad.getShortsickleave()) <= 0 ? null : df.format(Double.valueOf(ad.getShortsickleave())));
                                     ad.setLongsickleave(Double.valueOf(ad.getLongsickleave()) <= 0 ? null : df.format(Double.valueOf(ad.getLongsickleave())));
@@ -1924,6 +1961,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setCompassionateleave(null);
                                         ad.setAnnualrest(null);
                                         ad.setDaixiu(null);
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                        ad.setParenting(null);
+                                        ad.setParentalcare(null);
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                         ad.setNursingleave(null);
                                         ad.setWelfare(null);
                                         ad.setTshortsickleave(null);
@@ -2332,6 +2373,26 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ad.setWelfare(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
                                                 }
 //                                            }
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                        } else if (ab.getErrortype().equals("PR013023")) { //育儿假
+                                            if (ad.getParenting() != null && !ad.getParenting().isEmpty()) {
+                                                if (Double.valueOf(ad.getParenting()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                    strlengthtime = df.format(Double.valueOf(workinghours));
+                                                } else {
+                                                    strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getParenting())));
+                                                }
+                                            }
+                                            ad.setParenting(strlengthtime);
+                                        } else if (ab.getErrortype().equals("PR013024")) { //父母照料假
+                                            if (ad.getParentalcare() != null && !ad.getParentalcare().isEmpty()) {
+                                                if (Double.valueOf(ad.getParentalcare()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                    strlengthtime = df.format(Double.valueOf(workinghours));
+                                                } else {
+                                                    strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getParentalcare())));
+                                                }
+                                            }
+                                            ad.setParentalcare(strlengthtime);
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                         } else if (ab.getErrortype().equals("PR013022")) {//加餐，哺乳假
 //                                            if (ab.getStatus().equals("7")) {
                                                 if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
@@ -2351,6 +2412,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 ad.setNormal(ad.getNormal() == null ? "0" : ad.getNormal());
                                 ad.setAnnualrest(ad.getAnnualrest() == null ? "0" : ad.getAnnualrest());
                                 ad.setDaixiu(ad.getDaixiu() == null ? "0" : ad.getDaixiu());
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                ad.setParenting(ad.getParenting() == null ? "0" : ad.getParenting());
+                                ad.setParentalcare(ad.getParentalcare() == null ? "0" : ad.getParentalcare());
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                 ad.setCompassionateleave(ad.getCompassionateleave() == null ? "0" : ad.getCompassionateleave());
                                 ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : (Double.valueOf(ad.getShortsickleave())<0 ? "0" : ad.getShortsickleave()));
                                 ad.setLongsickleave(ad.getLongsickleave() == null ? "0" : ad.getLongsickleave());
@@ -2358,10 +2423,16 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 ad.setWelfare(ad.getWelfare() == null ? "0" : ad.getWelfare());
                                 ad.setAbsenteeism(df.format(Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(ad.getShortsickleave())
                                         - Double.valueOf(ad.getLongsickleave()) - Double.valueOf(ad.getCompassionateleave()) - Double.valueOf(ad.getAnnualrest())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                        - Double.valueOf(ad.getParenting()) - Double.valueOf(ad.getParentalcare())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                         - Double.valueOf(ad.getDaixiu()) - Double.valueOf(ad.getNursingleave()) - Double.valueOf(ad.getWelfare()) - Double.valueOf(nomal)));
 
                                 String leave = df.format(Double.valueOf(ad.getShortsickleave())
                                         + Double.valueOf(ad.getLongsickleave()) + Double.valueOf(ad.getCompassionateleave()) + Double.valueOf(ad.getAnnualrest())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                        + Double.valueOf(ad.getParenting()) + Double.valueOf(ad.getParentalcare())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                         + Double.valueOf(ad.getDaixiu()) + Double.valueOf(ad.getNursingleave()) + Double.valueOf(ad.getWelfare()));
 
                                 //当前日期
@@ -2460,6 +2531,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 ad.setNormal(ad.getNormal() == null ? null : (Double.valueOf(ad.getNormal()) <= 0 ? null : df.format(Double.valueOf(ad.getNormal()))));
                                 ad.setAnnualrest(Double.valueOf(ad.getAnnualrest()) <= 0 ? null : df.format(Double.valueOf(ad.getAnnualrest())));
                                 ad.setDaixiu(Double.valueOf(ad.getDaixiu()) <= 0 ? null : df.format(Double.valueOf(ad.getDaixiu())));
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                ad.setParenting(Double.valueOf(ad.getParenting()) <= 0 ? null : df.format(Double.valueOf(ad.getParenting())));
+                                ad.setParentalcare(Double.valueOf(ad.getParentalcare()) <= 0 ? null : df.format(Double.valueOf(ad.getParentalcare())));
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                 ad.setCompassionateleave(Double.valueOf(ad.getCompassionateleave()) <= 0 ? null : df.format(Double.valueOf(ad.getCompassionateleave())));
                                 ad.setShortsickleave(Double.valueOf(ad.getShortsickleave()) <= 0 ? null : df.format(Double.valueOf(ad.getShortsickleave())));
                                 ad.setLongsickleave(Double.valueOf(ad.getLongsickleave()) <= 0 ? null : df.format(Double.valueOf(ad.getLongsickleave())));
@@ -2497,6 +2572,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setCompassionateleave(null);
                                     ad.setAnnualrest(null);
                                     ad.setDaixiu(null);
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                    ad.setParenting(null);
+                                    ad.setParentalcare(null);
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                     ad.setNursingleave(null);
                                     ad.setWelfare(null);
                                     ad.setTshortsickleave(null);
@@ -2760,8 +2839,11 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                             attendSumSick.setUser_id(ad.getUser_id());
 
                             //ccm add 1020 短病假变长病假
+                            //当天之前一年内，开始时间和结束时间都在一年范围内的病假之和
                             Double sumSick0 = 0d;
+                            //当天之前一年内，开始时间小于一年内的开始时间，结束时间大于一年内的开始时间
                             Double sumSick1 = 0d;
+                            //当天之前一年内，开始时间小于一年内的结束时间，结束时间大于一年内的结束时间
                             Double sumSick2 = 0d;
                             sumSick0 = abNormalMapper.selectAttenSumSick(attendSumSick);
                             if(sumSick0 == null )
@@ -3228,6 +3310,26 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                     ad.setWelfare(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
                                                 }
 //                                                }
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                            } else if (ab.getErrortype().equals("PR013023")) { //育儿假
+                                                if (ad.getParenting() != null && !ad.getParenting().isEmpty()) {
+                                                    if (Double.valueOf(ad.getParenting()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                        strlengthtime = df.format(Double.valueOf(workinghours));
+                                                    } else {
+                                                        strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getParenting())));
+                                                    }
+                                                }
+                                                ad.setParenting(strlengthtime);
+                                            } else if (ab.getErrortype().equals("PR013024")) { //父母照料假
+                                                if (ad.getParentalcare() != null && !ad.getParentalcare().isEmpty()) {
+                                                    if (Double.valueOf(ad.getParentalcare()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                        strlengthtime = df.format(Double.valueOf(workinghours));
+                                                    } else {
+                                                        strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getParentalcare())));
+                                                    }
+                                                }
+                                                ad.setParentalcare(strlengthtime);
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                             } else if (ab.getErrortype().equals("PR013022")) {//加餐，哺乳假
 //                                                if (ab.getStatus().equals("7")) {
                                                 if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
@@ -3248,6 +3350,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setNormal(ad.getNormal() == null ? "0" : ad.getNormal());
                                     ad.setAnnualrest(ad.getAnnualrest() == null ? "0" : ad.getAnnualrest());
                                     ad.setDaixiu(ad.getDaixiu() == null ? "0" : ad.getDaixiu());
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                    ad.setParenting(ad.getParenting() == null ? "0" : ad.getParenting());
+                                    ad.setParentalcare(ad.getParentalcare() == null ? "0" : ad.getParentalcare());
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                     ad.setCompassionateleave(ad.getCompassionateleave() == null ? "0" : ad.getCompassionateleave());
                                     ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : (Double.valueOf(ad.getShortsickleave())<0 ? "0" : ad.getShortsickleave()));
                                     ad.setLongsickleave(ad.getLongsickleave() == null ? "0" : ad.getLongsickleave());
@@ -3258,6 +3364,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     //申请假期的时间
                                     String leavetime = df.format(Double.valueOf(ad.getShortsickleave())
                                             + Double.valueOf(ad.getLongsickleave()) + Double.valueOf(ad.getCompassionateleave()) + Double.valueOf(ad.getAnnualrest())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                            + Double.valueOf(ad.getParenting()) + Double.valueOf(ad.getParentalcare())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                             + Double.valueOf(ad.getDaixiu()) + Double.valueOf(ad.getNursingleave()) + Double.valueOf(ad.getWelfare()));
                                     //青年节，妇女节换代休
                                     if (workinghours.equals("4")) {
@@ -3603,6 +3712,9 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                             if ((j > 0 && i == 0) || (i > 0 && j == 0)) {
 
                                                 leavetime = String.valueOf(Double.valueOf(ad.getShortsickleave()) + Double.valueOf(ad.getLongsickleave())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                                        + Double.valueOf(ad.getParenting()) + Double.valueOf(ad.getParentalcare())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                                         + Double.valueOf(ad.getCompassionateleave()) + Double.valueOf(ad.getDaixiu()) + Double.valueOf(ad.getAnnualrest()) + Double.valueOf(ad.getNursingleave()) + Double.valueOf(ad.getWelfare()));
                                                 if (Double.valueOf(leavetime) >= 8) {
                                                     ad.setNormal("0");
@@ -3817,6 +3929,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setNormal(ad.getNormal() == null ? null : (Double.valueOf(ad.getNormal()) <= 0 ? null : df.format(Double.valueOf(ad.getNormal()))));
                                     ad.setAnnualrest(Double.valueOf(ad.getAnnualrest()) <= 0 ? null : df.format(Double.valueOf(ad.getAnnualrest())));
                                     ad.setDaixiu(Double.valueOf(ad.getDaixiu()) <= 0 ? null : df.format(Double.valueOf(ad.getDaixiu())));
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                    ad.setParenting(Double.valueOf(ad.getParenting()) <= 0 ? null : df.format(Double.valueOf(ad.getParenting())));
+                                    ad.setParentalcare(Double.valueOf(ad.getParentalcare()) <= 0 ? null : df.format(Double.valueOf(ad.getParentalcare())));
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                     ad.setCompassionateleave(Double.valueOf(ad.getCompassionateleave()) <= 0 ? null : df.format(Double.valueOf(ad.getCompassionateleave())));
                                     ad.setShortsickleave(Double.valueOf(ad.getShortsickleave()) <= 0 ? null : df.format(Double.valueOf(ad.getShortsickleave())));
                                     ad.setLongsickleave(Double.valueOf(ad.getLongsickleave()) <= 0 ? null : df.format(Double.valueOf(ad.getLongsickleave())));
@@ -3856,6 +3972,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                         ad.setCompassionateleave(null);
                                         ad.setAnnualrest(null);
                                         ad.setDaixiu(null);
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                        ad.setParenting(null);
+                                        ad.setParentalcare(null);
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                         ad.setNursingleave(null);
                                         ad.setWelfare(null);
                                         ad.setTshortsickleave(null);
@@ -4196,6 +4316,26 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                                 ad.setWelfare(df.format(Math.floor(Double.valueOf(strlengthtime) / Double.valueOf(lateearlyleave)) * Double.valueOf(lateearlyleave) + Double.valueOf(lateearlyleave)));
                                             }
 //                                            }
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                        } else if (ab.getErrortype().equals("PR013023")) { //育儿假
+                                            if (ad.getParenting() != null && !ad.getParenting().isEmpty()) {
+                                                if (Double.valueOf(ad.getParenting()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                    strlengthtime = df.format(Double.valueOf(workinghours));
+                                                } else {
+                                                    strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getParenting())));
+                                                }
+                                            }
+                                            ad.setParenting(strlengthtime);
+                                        } else if (ab.getErrortype().equals("PR013024")) { //父母照料假
+                                            if (ad.getParentalcare() != null && !ad.getParentalcare().isEmpty()) {
+                                                if (Double.valueOf(ad.getParentalcare()) + Double.valueOf(strlengthtime) >= Double.valueOf(workinghours)) {
+                                                    strlengthtime = df.format(Double.valueOf(workinghours));
+                                                } else {
+                                                    strlengthtime = String.valueOf(df.format(Double.valueOf(strlengthtime) + Double.valueOf(ad.getParentalcare())));
+                                                }
+                                            }
+                                            ad.setParentalcare(strlengthtime);
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                         } else if (ab.getErrortype().equals("PR013022")) {//加餐，哺乳假
 //                                            if (ab.getStatus().equals("7")) {
                                             if (ad.getWelfare() != null && !ad.getWelfare().isEmpty()) {
@@ -4215,6 +4355,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 ad.setNormal(ad.getNormal() == null ? "0" : ad.getNormal());
                                 ad.setAnnualrest(ad.getAnnualrest() == null ? "0" : ad.getAnnualrest());
                                 ad.setDaixiu(ad.getDaixiu() == null ? "0" : ad.getDaixiu());
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                ad.setParenting(ad.getParenting() == null ? "0" : ad.getParenting());
+                                ad.setParentalcare(ad.getParentalcare() == null ? "0" : ad.getParentalcare());
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                 ad.setCompassionateleave(ad.getCompassionateleave() == null ? "0" : ad.getCompassionateleave());
                                 ad.setShortsickleave(ad.getShortsickleave() == null ? "0" : (Double.valueOf(ad.getShortsickleave())<0 ? "0" : ad.getShortsickleave()));
                                 ad.setLongsickleave(ad.getLongsickleave() == null ? "0" : ad.getLongsickleave());
@@ -4222,10 +4366,16 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 ad.setWelfare(ad.getWelfare() == null ? "0" : ad.getWelfare());
                                 ad.setAbsenteeism(df.format(Double.valueOf(ad.getAbsenteeism()) - Double.valueOf(ad.getShortsickleave())
                                         - Double.valueOf(ad.getLongsickleave()) - Double.valueOf(ad.getCompassionateleave()) - Double.valueOf(ad.getAnnualrest())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                        - Double.valueOf(ad.getParenting()) - Double.valueOf(ad.getParentalcare())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                         - Double.valueOf(ad.getDaixiu()) - Double.valueOf(ad.getNursingleave()) - Double.valueOf(ad.getWelfare()) - Double.valueOf(nomal)));
 
                                 String leave = df.format(Double.valueOf(ad.getShortsickleave())
                                         + Double.valueOf(ad.getLongsickleave()) + Double.valueOf(ad.getCompassionateleave()) + Double.valueOf(ad.getAnnualrest())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                        + Double.valueOf(ad.getParenting()) + Double.valueOf(ad.getParentalcare())
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                         + Double.valueOf(ad.getDaixiu()) + Double.valueOf(ad.getNursingleave()) + Double.valueOf(ad.getWelfare()));
 
                                 //当前日期
@@ -4295,6 +4445,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                 ad.setNormal(ad.getNormal() == null ? null : (Double.valueOf(ad.getNormal()) <= 0 ? null : df.format(Double.valueOf(ad.getNormal()))));
                                 ad.setAnnualrest(Double.valueOf(ad.getAnnualrest()) <= 0 ? null : df.format(Double.valueOf(ad.getAnnualrest())));
                                 ad.setDaixiu(Double.valueOf(ad.getDaixiu()) <= 0 ? null : df.format(Double.valueOf(ad.getDaixiu())));
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                ad.setParenting(Double.valueOf(ad.getParenting()) <= 0 ? null : df.format(Double.valueOf(ad.getParenting())));
+                                ad.setParentalcare(Double.valueOf(ad.getParentalcare()) <= 0 ? null : df.format(Double.valueOf(ad.getParentalcare())));
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                 ad.setCompassionateleave(Double.valueOf(ad.getCompassionateleave()) <= 0 ? null : df.format(Double.valueOf(ad.getCompassionateleave())));
                                 ad.setShortsickleave(Double.valueOf(ad.getShortsickleave()) <= 0 ? null : df.format(Double.valueOf(ad.getShortsickleave())));
                                 ad.setLongsickleave(Double.valueOf(ad.getLongsickleave()) <= 0 ? null : df.format(Double.valueOf(ad.getLongsickleave())));
@@ -4332,6 +4486,10 @@ public class PunchcardRecordServiceImpl implements PunchcardRecordService {
                                     ad.setCompassionateleave(null);
                                     ad.setAnnualrest(null);
                                     ad.setDaixiu(null);
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 fr
+                                    ad.setParenting(null);
+                                    ad.setParentalcare(null);
+//add ccm 20220107 考勤管理显示增加育儿假和父母照料假 to
                                     ad.setNursingleave(null);
                                     ad.setWelfare(null);
                                     ad.setTshortsickleave(null);
