@@ -44,6 +44,6 @@ public interface AttendanceService {
     List<AbNormal> getabnormalByuseridandDate(Attendance attendance) throws Exception;
     //add ccm 0812 考情管理查看当天的异常申请数据
     //考勤导出 1125 ztc fr
-    void exportReported(String year, String month, HttpServletRequest request, HttpServletResponse resp) throws Exception;
+    void exportReported(String status, String year, String month, HttpServletRequest request, HttpServletResponse resp) throws Exception;
     //考勤导出 1125 ztc to
 }

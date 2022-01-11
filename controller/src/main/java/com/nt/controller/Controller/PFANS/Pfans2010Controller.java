@@ -136,8 +136,8 @@ public class Pfans2010Controller {
 
     //考勤导出 1125 ztc fr
     @RequestMapping(value = "/exportReported", method = {RequestMethod.POST})
-    public void export(@RequestParam String year,String month, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        attendanceService.exportReported(year,month,request,response);
+    public void export(@RequestParam String status, String year,String month, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        attendanceService.exportReported(status,year,month,request,response);
     }
     //考勤导出 1125 ztc to
 }
