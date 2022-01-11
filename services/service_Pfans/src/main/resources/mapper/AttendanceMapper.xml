@@ -215,60 +215,46 @@ GROUP BY
         SELECT
             aee.USER_ID,
             aee.user_name,
-            aee.CENTER_ID,
-            aee.GROUP_ID,
             concat(aee.years, "-", aee.MONTHS) as dates,
-            sum( IFNULL(aee.NORMAL,0) ) AS NORMAL,
-            sum( IFNULL(aee.ORDINARYINDUSTRY,0) ) AS ORDINARYINDUSTRY,
-            sum( IFNULL(aee.WEEKENDINDUSTRY,0) ) AS WEEKENDINDUSTRY,
-            sum( IFNULL(aee.STATUTORYRESIDUE,0) ) AS STATUTORYRESIDUE,
-            sum( IFNULL(aee.SPECIALDAY,0) ) AS SPECIALDAY,
-            sum( IFNULL(aee.youthday,0) ) AS youthday,
-            sum( IFNULL(aee.womensday,0) ) AS womensday,
-            sum( IFNULL(aee.ANNUALREST,0) ) AS ANNUALREST,
-            sum( IFNULL(aee.DAIXIU,0) ) AS DAIXIU,
-            sum( IFNULL(aee.PARENTING,0) ) AS PARENTING,
-            sum( IFNULL(aee.PARENTALCARE,0) ) AS PARENTALCARE,
-            sum( IFNULL(aee.WELFARE,0) ) AS WELFARE,
-            sum( IFNULL(aee.shortsickleave,0) ) AS shortsickleave,
-            sum( IFNULL(aee.longsickleave,0) ) AS longsickleave,
-            sum( IFNULL(aee.COMPASSIONATELEAVE,0) ) AS COMPASSIONATELEAVE,
-            sum( IFNULL(aee.tshortsickleave,0) ) AS tshortsickleave,
-            sum( IFNULL(aee.tlongsickleave,0) ) AS tlongsickleave,
-            sum( IFNULL(aee.TCOMPASSIONATELEAVE,0) ) AS TCOMPASSIONATELEAVE,
-            sum( IFNULL(aee.nursingleave,0) ) AS nursingleave,
-            sum( IFNULL(aee.absenteeism,0) ) AS absenteeism,
-            sum( IFNULL(aee.tabsenteeism,0) ) AS tabsenteeism
+            sum( IFNULL(aee.compassionateleave ,0)) AS compassionateleave,
+            sum( IFNULL(aee.TCOMPASSIONATELEAVE ,0)) AS TCOMPASSIONATELEAVE,
+            sum( IFNULL(aee.nursingleave ,0)) AS nursingleave,
+            sum( IFNULL(aee.absenteeism ,0)) AS absenteeism,
+            sum( IFNULL(aee.TABSENTEEISM ,0)) AS TABSENTEEISM,
+            sum( IFNULL(aee.shortsickleave ,0)) AS shortsickleave,
+            sum( IFNULL(aee.TSHORTSICKLEAVE ,0)) AS TSHORTSICKLEAVE,
+            sum( IFNULL(aee.longsickleave ,0)) AS longsickleave,
+            sum( IFNULL(aee.TLONGSICKLEAVE ,0)) AS TLONGSICKLEAVE,
+            sum( IFNULL(aee.ordinaryindustry ,0)) AS ordinaryindustry,
+            sum( IFNULL(aee.weekendindustry ,0)) AS weekendindustry,
+            sum( IFNULL(aee.statutoryresidue ,0)) AS statutoryresidue,
+            sum( IFNULL(aee.specialday ,0)) AS specialday,
+            sum( IFNULL(aee.annualrestday ,0)) AS annualrestday,
+            sum( IFNULL(aee.youthday ,0)) AS youthday,
+            sum( IFNULL(aee.womensday ,0)) AS womensday
         FROM
             (
                 SELECT
                     RUSLT.USER_NAME AS USER_NAME,
                     RUSLT.USER_ID,
-                    ATT.CENTER_ID,
-                    ATT.GROUP_ID,
                     ATT.years,
                     ATT.MONTHS,
-                    ATT.NORMAL,
-                    ATT.ORDINARYINDUSTRY,
-                    ATT.WEEKENDINDUSTRY,
-                    ATT.STATUTORYRESIDUE,
-                    ATT.SPECIALDAY,
-                    ATT.youthday,
-                    ATT.womensday,
-                    ATT.ANNUALREST,
-                    ATT.PARENTING,
-                    ATT.PARENTALCARE,
-                    ATT.DAIXIU,
-                    ATT.WELFARE,
-                    ATT.shortsickleave,
-                    ATT.longsickleave,
-                    ATT.COMPASSIONATELEAVE,
-                    ATT.TSHORTSICKLEAVE,
-                    ATT.TLONGSICKLEAVE,
+                    ATT.compassionateleave,
                     ATT.TCOMPASSIONATELEAVE,
                     ATT.nursingleave,
                     ATT.absenteeism,
-                    ATT.TABSENTEEISM
+                    ATT.TABSENTEEISM,
+                    ATT.shortsickleave,
+                    ATT.TSHORTSICKLEAVE,
+                    ATT.longsickleave,
+                    ATT.TLONGSICKLEAVE,
+                    ATT.ordinaryindustry,
+                    ATT.weekendindustry,
+                    ATT.statutoryresidue,
+                    ATT.specialday,
+                    ATT.annualrestday,
+                    ATT.youthday,
+                    ATT.womensday
                 FROM
                     attendance ATT
                         INNER JOIN ( SELECT PUN.USER_ID, PUN.USER_NAME FROM PUNCHCARDRECORD PUN GROUP BY PUN.USER_ID, PUN.USER_NAME ) RUSLT ON ATT.USER_ID = RUSLT.USER_ID
@@ -277,7 +263,7 @@ GROUP BY
                   AND YEARS = #{year}
             ) aee
         GROUP BY
-            aee.user_id, aee.USER_NAME, aee.CENTER_ID, aee.GROUP_ID
+            aee.user_id
         ORDER BY
             aee.user_id
     </select>
