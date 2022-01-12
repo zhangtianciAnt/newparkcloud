@@ -140,7 +140,9 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
 
     @Override
     public List<CompanyProjects> list(CompanyProjects companyProjects) throws Exception {
-        return companyprojectsMapper.select(companyProjects);
+//        PJ起案 现场管理添加筛选条件 ztc fr
+        return companyprojectsMapper.selectList(companyProjects);
+//        PJ起案 现场管理添加筛选条件 ztc to
     }
 
     @Override
@@ -1353,9 +1355,13 @@ public class CompanyProjectsServiceImpl implements CompanyProjectsService {
     }
 
     @Override
-    public List<CompanyProjectsVo2> getSiteList3(CompanyProjects companyProjects) throws Exception {
-        List<CompanyProjectsVo2> rst = companyprojectsMapper.getList5(companyProjects.getOwners());
-        List<CompanyProjectsVo2> rst2 = companyprojectsMapper.getListPL4(companyProjects.getOwner());
+//    PJ起案 现场管理添加筛选条件 ztc fr
+    public List<CompanyProjectsVo2> getSiteList3(CompanyProjectsVo2 companyProjects) throws Exception {
+//        List<CompanyProjectsVo2> rst = companyprojectsMapper.getList5(companyProjects.getOwners());
+//        List<CompanyProjectsVo2> rst2 = companyprojectsMapper.getListPL4(companyProjects.getOwner());
+        List<CompanyProjectsVo2> rst = companyprojectsMapper.getList5(companyProjects);
+        List<CompanyProjectsVo2> rst2 = companyprojectsMapper.getListPL4(companyProjects);
+//        PJ起案 现场管理添加筛选条件 ztc to
         for(CompanyProjectsVo2 item:rst2){
             if(rst.stream().filter(item2 -> item2.getCompanyprojects_id().equals(item.getCompanyprojects_id())).count() == 0){
                 rst.add(item);

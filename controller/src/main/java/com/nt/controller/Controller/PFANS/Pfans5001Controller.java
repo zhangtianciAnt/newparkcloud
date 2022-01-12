@@ -12,6 +12,7 @@ import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS5000.StageInformation;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsReportCheckVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
+import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.dao_Pfans.PFANS6000.Customerinfor;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
@@ -385,11 +386,12 @@ public class Pfans5001Controller {
         companyProjects.setOwner(tokenModel.getUserId());
         return ApiResult.success(companyProjectsService.getSiteList2(companyProjects));
     }
-
-    @RequestMapping(value="/getSiteList4", method={RequestMethod.GET})
-    public ApiResult getSiteList4(HttpServletRequest request) throws Exception {
+//    PJ起案 现场管理添加筛选条件 ztc fr
+    @RequestMapping(value = "/getSiteList4", method = { RequestMethod.POST })
+    public ApiResult getSiteList4(@RequestBody CompanyProjectsVo2 companyProjects, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        CompanyProjects companyProjects = new CompanyProjects();
+//        CompanyProjects companyProjects = new CompanyProjects();
+//        PJ起案 现场管理添加筛选条件 ztc to
         companyProjects.setOwners(tokenModel.getOwnerList());
         companyProjects.setOwner(tokenModel.getUserId());
         return ApiResult.success(companyProjectsService.getSiteList3(companyProjects));

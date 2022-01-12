@@ -1,6 +1,7 @@
 package com.nt.dao_Pfans.PFANS5000.Vo;
 
 import com.nt.utils.Encryption.Encryption;
+import com.nt.utils.dao.BaseModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,9 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompanyProjectsVo2 {
+//PJ起案 现场管理添加筛选条件 ztc fr
+public class CompanyProjectsVo2 extends BaseModel {
+//    PJ起案 现场管理添加筛选条件 ztc to
     /**
      * 项目名称
      */

@@ -60,8 +60,8 @@
         order by c.`CREATEON` desc
 
     </select>
-
-    <select id="getList5" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
+<!--    PJ?? ?????????? ztc fr-->
+    <select id="getList5" parameterType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
         select
         c.`COMPANYPROJECTS_ID`,
         c.`PROJECT_NAME` as PROJECT_NAME,
@@ -123,9 +123,27 @@
                 #{item}
             </foreach>
         </if>
+        <if test="group_id != null and group_id != ''">
+            AND (c.CENTER_ID = #{group_id} or c.GROUP_ID = #{group_id} or c.TEAM_ID = #{group_id})
+        </if>
+        <if test="numbers != null and numbers != ''">
+            AND c.NUMBERS LIKE CONCAT('%',#{numbers},'%')
+        </if>
+        <if test="project_name != null and project_name != ''">
+            AND
+            (PROJECT_NAME LIKE CONCAT( '%', ( SELECT to_base64 ( #{project_name} ) ), '%' )
+            OR PROJECT_NAME LIKE CONCAT('%',#{project_name},'%'))
+        </if>
+        <if test="projecttype != null and projecttype != ''">
+            AND PROJECTTYPE = #{projecttype}
+        </if>
+        <if test="contractno != null and contractno != ''">
+            AND pp.contractno LIKE CONCAT('%',#{contractno},'%')
+        </if>
         order by c.`CREATEON` desc
 
     </select>
+<!--    PJ?? ?????????? ztc to-->
 
     <select id="getList4" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
         select
@@ -228,7 +246,9 @@ GROUP BY
         where (c.`STATUS` = '4' or c.`STATUS` = '5' or c.`STATUS` = '6')
 
     </select>
-    <select id="getListPL4" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
+
+<!--    PJ?? ?????????? ztc fr-->
+    <select id="getListPL4" parameterType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
         select
             c.`COMPANYPROJECTS_ID`,
             c.`PROJECT_NAME`   as PROJECT_NAME,
@@ -273,7 +293,9 @@ GROUP BY
         select projectsystem.COMPANYPROJECTS_ID from projectsystem
         where
         UPPER(POSITION) = 'PL'
-        and name = #{user}
+        <if test="owner != null and owner != ''">
+            and name = #{owner}
+        </if>
         and REPLACE(EXITTIME,'-','')  >= DATE_FORMAT(SYSDATE(),'%Y%m%d')
         GROUP BY projectsystem.COMPANYPROJECTS_ID)
         )
@@ -323,11 +345,15 @@ GROUP BY
            *
            from
            Projectsystem
-           where
+           where 1=1
+        <if test="owner != null and owner != ''">
+            and
            Projectsystem
            .
            name =
-           #{user})
+           #{owner}
+        </if>
+            )
            Projectsystem
            on
            Projectsystem
@@ -336,9 +362,27 @@ GROUP BY
            c
            .
            companyprojects_id
+        <if test="group_id != null and group_id != ''">
+            AND (c.CENTER_ID = #{group_id} or c.GROUP_ID = #{group_id} or c.TEAM_ID = #{group_id})
+        </if>
+        <if test="numbers != null and numbers != ''">
+            AND c.NUMBERS LIKE CONCAT('%',#{numbers},'%')
+        </if>
+        <if test="project_name != null and project_name != ''">
+            AND
+            (PROJECT_NAME LIKE CONCAT( '%', ( SELECT to_base64 ( #{project_name} ) ), '%' )
+            OR PROJECT_NAME LIKE CONCAT('%',#{project_name},'%'))
+        </if>
+        <if test="projecttype != null and projecttype != ''">
+            AND PROJECTTYPE = #{projecttype}
+        </if>
+        <if test="contractno != null and contractno != ''">
+            AND pp.contractno LIKE CONCAT('%',#{contractno},'%')
+        </if>
         where (c.`STATUS` = '4' or c.`STATUS` = '5' or c.`STATUS` = '6' or c.`STATUS` = '8')
 
     </select>
+<!--    PJ?? ?????????? ztc to-->
 
     <select id="getList2" resultType="com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2">
         select
@@ -714,4 +758,36 @@ GROUP BY
           AND (GROUP_ID = #{centerId}
             OR GROUP_ID = #{groupId})
     </select>
+
+<!--    PJ?? ?????????? ztc fr-->
+    <select id="selectList" parameterType="com.nt.dao_Pfans.PFANS5000.CompanyProjects" resultType="com.nt.dao_Pfans.PFANS5000.CompanyProjects">
+        SELECT
+            *
+        FROM
+            companyProjects
+        WHERE
+            STATUS != '1'
+            <if test="numbers != null and numbers != ''">
+                AND NUMBERS LIKE CONCAT('%',#{numbers},'%')
+            </if>
+            <if test="project_name != null and project_name != ''">
+                AND PROJECT_NAME LIKE CONCAT('%',#{project_name},'%')
+            </if>
+            <if test="projecttype != null and projecttype != ''">
+                AND PROJECTTYPE = #{projecttype}
+            </if>
+            <if test="leaderid != null and leaderid != ''">
+                AND LEADERID = #{leaderid}
+            </if>
+            <if test="startdate != null and enddate != null">
+                AND STARTDATE &lt;= DATE_FORMAT(#{enddate},'%Y-%m-%d') AND ENDDATE &gt;= DATE_FORMAT(#{startdate},'%Y-%m-%d')
+            </if>
+            <if test="owners != null and owners.size() > 0 ">
+                AND OWNER in
+                <foreach item="item" index="index" collection="owners" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+    </select>
+<!--    PJ?? ?????????? ztc to-->
 </mapper>
