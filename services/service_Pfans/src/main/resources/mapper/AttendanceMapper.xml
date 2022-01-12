@@ -263,7 +263,8 @@ GROUP BY
                   AND YEARS = #{year}
             ) aee
         GROUP BY
-            aee.user_id
+            aee.user_id,
+            aee.user_name
         ORDER BY
             aee.user_id
     </select>
