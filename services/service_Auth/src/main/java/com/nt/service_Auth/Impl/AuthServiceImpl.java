@@ -10,6 +10,7 @@ import com.nt.dao_Org.UserAccount;
 import com.nt.service_Auth.AuthService;
 import com.nt.utils.dao.JsTokenModel;
 import org.apache.commons.collections.ArrayStack;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
@@ -18,7 +19,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,8 +51,17 @@ public class AuthServiceImpl implements AuthService {
             }
             tokenModel.setRoleIds(roleIds);
         }
-
-
+        //解决事业计划张强看不到龚得芬数据bug ztc fr
+        List<CustomerInfo> oterlist = new ArrayList<CustomerInfo>();
+        List<String> initList = new ArrayList<String>();
+        Query getOtherOrg = new Query();
+        getOtherOrg.addCriteria(Criteria.where("userinfo.otherorgs").ne(initList).exists(true));
+        oterlist = mongoTemplate.find(getOtherOrg, CustomerInfo.class);
+        Map<String,List<String>> orgUseridMap = new HashMap<>();
+        oterlist.forEach(otro -> {
+            extracted(orgUseridMap, otro);
+        });
+        //解决事业计划张强看不到龚得芬数据bug ztc to
         //根据条件检索数据
         Query newquery = new Query();
         newquery.addCriteria(Criteria.where("_id").in(tokenModel.getRoleIds()));
@@ -108,16 +120,31 @@ public class AuthServiceImpl implements AuthService {
                     Query cusqueryteamid = new Query();
                     cusqueryteamid.addCriteria(Criteria.where("userinfo.teamid").is(teamid));
                     cuslist = mongoTemplate.find(cusqueryteamid, CustomerInfo.class);
+                    //解决事业计划张强看不到龚得芬数据bug ztc fr
+                    if(orgUseridMap.size() > 0 && orgUseridMap.get(teamid) != null){
+                        resultTeam.addAll(orgUseridMap.get(teamid));
+                    }
+                    //解决事业计划张强看不到龚得芬数据bug ztc to
                 }
                 else if(!StringUtils.isNullOrEmpty(groupid)){
                     Query cusquerygroupid = new Query();
                     cusquerygroupid.addCriteria(Criteria.where("userinfo.groupid").is(groupid));
                     cuslist = mongoTemplate.find(cusquerygroupid, CustomerInfo.class);
+                    //解决事业计划张强看不到龚得芬数据bug ztc fr
+                    if(orgUseridMap.size() > 0 && orgUseridMap.get(groupid) != null){
+                        resultTeam.addAll(orgUseridMap.get(groupid));
+                    }
+                    //解决事业计划张强看不到龚得芬数据bug ztc to
                 }
                 else if(!StringUtils.isNullOrEmpty(centerid)){
                     Query cusquerycenterid = new Query();
                     cusquerycenterid.addCriteria(Criteria.where("userinfo.centerid").is(centerid));
                     cuslist = mongoTemplate.find(cusquerycenterid, CustomerInfo.class);
+                    //解决事业计划张强看不到龚得芬数据bug ztc fr
+                    if(orgUseridMap.size() > 0 && orgUseridMap.get(centerid) != null){
+                        resultTeam.addAll(orgUseridMap.get(centerid));
+                    }
+                    //解决事业计划张强看不到龚得芬数据bug ztc to
                 }
 
                 if(cuslist.size() > 0){
@@ -132,16 +159,31 @@ public class AuthServiceImpl implements AuthService {
                             Query cusqueryteamid = new Query();
                             cusqueryteamid.addCriteria(Criteria.where("userinfo.teamid").is(itemO.getTeamid()));
                             cuslist = mongoTemplate.find(cusqueryteamid, CustomerInfo.class);
+                            //解决事业计划张强看不到龚得芬数据bug ztc fr
+                            if(orgUseridMap.size() > 0 && orgUseridMap.get(itemO.getTeamid()) != null){
+                                resultTeam.addAll(orgUseridMap.get(itemO.getTeamid()));
+                            }
+                            //解决事业计划张强看不到龚得芬数据bug ztc to
                         }
                         else if(!StringUtils.isNullOrEmpty(itemO.getGroupid())){
                             Query cusquerygroupid = new Query();
                             cusquerygroupid.addCriteria(Criteria.where("userinfo.groupid").is(itemO.getGroupid()));
                             cuslist = mongoTemplate.find(cusquerygroupid, CustomerInfo.class);
+                            //解决事业计划张强看不到龚得芬数据bug ztc fr
+                            if(orgUseridMap.size() > 0 && orgUseridMap.get(itemO.getGroupid()) != null){
+                                resultTeam.addAll(orgUseridMap.get(itemO.getGroupid()));
+                            }
+                            //解决事业计划张强看不到龚得芬数据bug ztc to
                         }
                         else if(!StringUtils.isNullOrEmpty(itemO.getCenterid())){
                             Query cusquerycenterid = new Query();
                             cusquerycenterid.addCriteria(Criteria.where("userinfo.centerid").is(itemO.getCenterid()));
                             cuslist = mongoTemplate.find(cusquerycenterid, CustomerInfo.class);
+                            //解决事业计划张强看不到龚得芬数据bug ztc fr
+                            if(orgUseridMap.size() > 0 && orgUseridMap.get(itemO.getCenterid()) != null){
+                                resultTeam.addAll(orgUseridMap.get(itemO.getCenterid()));
+                            }
+                            //解决事业计划张强看不到龚得芬数据bug ztc to
                         }
 
                         if(cuslist.size() > 0){
@@ -169,7 +211,11 @@ public class AuthServiceImpl implements AuthService {
                     Query cusquerygroupid = new Query();
                     cusquerygroupid.addCriteria(Criteria.where("userinfo.groupid").is(groupid));
                     cuslist = mongoTemplate.find(cusquerygroupid, CustomerInfo.class);
-
+                    //解决事业计划张强看不到龚得芬数据bug ztc fr
+                    if(orgUseridMap.size() > 0 && orgUseridMap.get(groupid) != null){
+                        resultTeam.addAll(orgUseridMap.get(groupid));
+                    }
+                    //解决事业计划张强看不到龚得芬数据bug ztc to
                     if(cuslist.size() > 0){
                         for(CustomerInfo cusinfo : cuslist){
                             resultTeam.add(cusinfo.getUserid());
@@ -184,7 +230,11 @@ public class AuthServiceImpl implements AuthService {
                             Query cusquerygroupid = new Query();
                             cusquerygroupid.addCriteria(Criteria.where("userinfo.groupid").is(itemO.getGroupid()));
                             cuslist = mongoTemplate.find(cusquerygroupid, CustomerInfo.class);
-
+                            //解决事业计划张强看不到龚得芬数据bug ztc fr
+                            if(orgUseridMap.size() > 0 && orgUseridMap.get(itemO.getGroupid()) != null){
+                                resultTeam.addAll(orgUseridMap.get(itemO.getGroupid()));
+                            }
+                            //解决事业计划张强看不到龚得芬数据bug ztc to
                             if(cuslist.size() > 0){
                                 for(CustomerInfo cusinfo : cuslist){
                                     resultTeam.add(cusinfo.getUserid());
@@ -195,7 +245,8 @@ public class AuthServiceImpl implements AuthService {
                 }
 
                 result = resultTeam;
-            }else if(flg.equals("3")){
+            }
+            else if(flg.equals("3")){
                 //根据人员查询所在组织的所有人人
                 Query cusquery = new Query();
                 cusquery.addCriteria(Criteria.where("userid").is(tokenModel.getUserId()));
@@ -210,6 +261,11 @@ public class AuthServiceImpl implements AuthService {
                     Query cusquerycenterid = new Query();
                     cusquerycenterid.addCriteria(Criteria.where("userinfo.centerid").is(centerid));
                     cuslist = mongoTemplate.find(cusquerycenterid, CustomerInfo.class);
+                    //解决事业计划张强看不到龚得芬数据bug ztc fr
+                    if(orgUseridMap.size() > 0 && orgUseridMap.get(centerid) != null){
+                        resultTeam.addAll(orgUseridMap.get(centerid));
+                    }
+                    //解决事业计划张强看不到龚得芬数据bug ztc to
                 }
 
 
@@ -225,7 +281,11 @@ public class AuthServiceImpl implements AuthService {
                             Query cusquerycenterid = new Query();
                             cusquerycenterid.addCriteria(Criteria.where("userinfo.centerid").is(itemO.getCenterid()));
                             cuslist = mongoTemplate.find(cusquerycenterid, CustomerInfo.class);
-
+                            //解决事业计划张强看不到龚得芬数据bug ztc fr
+                            if(orgUseridMap.size() > 0 && orgUseridMap.get(itemO.getCenterid()) != null){
+                                resultTeam.addAll(orgUseridMap.get(itemO.getCenterid()));
+                            }
+                            //解决事业计划张强看不到龚得芬数据bug ztc to
                             if(cuslist.size() > 0){
                                 for(CustomerInfo cusinfo : cuslist){
                                     resultTeam.add(cusinfo.getUserid());
@@ -240,12 +300,55 @@ public class AuthServiceImpl implements AuthService {
             else{
                 result.add(tokenModel.getUserId());
             }
+            //解决事业计划张强看不到龚得芬数据bug ztc fr
+            result = result.stream().distinct().collect(Collectors.toList());
+            //解决事业计划张强看不到龚得芬数据bug ztc to
             return result;
         }
         result = result.stream().distinct().collect(Collectors.toList());
         result.add("XXXXX");
         return result;
     }
+
+    //解决事业计划张强看不到龚得芬数据bug ztc fr
+    private void extracted(Map<String, List<String>> orgUseridMap, CustomerInfo otro) {
+        otro.getUserinfo().getOtherorgs().forEach(orgList -> {
+            if(!StringUtils.isNullOrEmpty(orgList.getCenterid())){
+                List<String> newUsList = new ArrayList<>();
+                newUsList.add(otro.getUserid());
+                if(orgUseridMap.get(orgList.getCenterid()) != null){
+                    List<String> cenList = orgUseridMap.get(orgList.getCenterid());
+                    cenList.addAll(newUsList);
+                    orgUseridMap.put(orgList.getCenterid(),cenList);
+                }else{
+                    orgUseridMap.put(orgList.getCenterid(),newUsList);
+                }
+            }
+            if(!StringUtils.isNullOrEmpty(orgList.getGroupid())){
+                List<String> newUsList = new ArrayList<>();
+                newUsList.add(otro.getUserid());
+                if(orgUseridMap.get(orgList.getGroupid()) != null){
+                    List<String> cenList = orgUseridMap.get(orgList.getGroupid());
+                    cenList.addAll(newUsList);
+                    orgUseridMap.put(orgList.getGroupid(),cenList);
+                }else{
+                    orgUseridMap.put(orgList.getGroupid(),newUsList);
+                }
+            }
+            if(!StringUtils.isNullOrEmpty(orgList.getTeamid())){
+                List<String> newUsList = new ArrayList<>();
+                newUsList.add(otro.getUserid());
+                if(orgUseridMap.get(orgList.getTeamid()) != null){
+                    List<String> cenList = orgUseridMap.get(orgList.getTeamid());
+                    cenList.addAll(newUsList);
+                    orgUseridMap.put(orgList.getTeamid(),cenList);
+                }else{
+                    orgUseridMap.put(orgList.getTeamid(),newUsList);
+                }
+            }
+        });
+    }
+    //解决事业计划张强看不到龚得芬数据bug ztc to
 
     //获取新建按钮权限
     @Override
