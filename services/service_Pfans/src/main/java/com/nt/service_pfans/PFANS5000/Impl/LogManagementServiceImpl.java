@@ -625,6 +625,12 @@ public class LogManagementServiceImpl implements LogManagementService {
             throw new LogicalException(e.getMessage());
         }
     }
+    //region zjz add 22/1/12 日志管理添加检索条件 from
+    @Override
+    public List<LogManagement> conditionsForRetrieval(LogManagement logmanagement) throws Exception {
 
+        return logmanagementmapper.conditionsForRetrieval(logmanagement);
+    }
+    //region zjz add 22/1/12 日志管理添加检索条件 to
 }
 

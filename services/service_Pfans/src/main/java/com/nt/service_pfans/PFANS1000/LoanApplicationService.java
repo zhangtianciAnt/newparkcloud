@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000;
 
+import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.LoanApplication;
 import com.nt.dao_Pfans.PFANS1000.PublicExpense;
 import com.nt.utils.dao.TokenModel;
@@ -28,4 +29,8 @@ public interface LoanApplicationService {
     //add ccm 0728  精算时关联多个暂借款
 
     Map<String, String> getworkfolwPurchaseData(LoanApplication loanapplication) throws Exception;
+
+    //region   add  ml  220112  检索  from
+    List<LoanApplication> getLoanapplicationSearch(LoanApplication loanapplication) throws Exception;
+    //endregion   add  ml  220112  检索  to
 }

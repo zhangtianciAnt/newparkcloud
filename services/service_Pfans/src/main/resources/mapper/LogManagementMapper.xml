@@ -419,4 +419,24 @@ union
             OR cj.status = '5'
             OR cj.status = '6'
     </select>
+
+    <!-- region zjz add 22/1/12 日志管理添加检索条件 from -->
+    <select id="conditionsForRetrieval" parameterType="com.nt.dao_Pfans.PFANS5000.LogManagement" resultType="com.nt.dao_Pfans.PFANS5000.LogManagement">
+    SELECT
+    *
+    from logmanagement
+    <where>
+        <if test="log_date != null">
+            AND DATE_FORMAT(LOG_DATE,'%Y-%m') = DATE_FORMAT(#{log_date},'%Y-%m')
+            AND DATE_FORMAT(LOG_DATE,'%Y-%m-%d') = DATE_FORMAT(#{log_date},'%Y-%m-%d')
+        </if>
+        <if test="group_id != null and group_id != ''">
+            AND GROUP_ID = #{group_id}
+        </if>
+        <if test="createby != null and createby != ''">
+            AND CREATEBY = #{createby}
+        </if>
+    </where>
+    </select>
+    <!-- region zjz add 22/1/12 日志管理添加检索条件 to -->
 </mapper>

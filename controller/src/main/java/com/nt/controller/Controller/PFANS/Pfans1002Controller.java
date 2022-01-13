@@ -1,6 +1,7 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.Business;
+import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessVo;
 import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
 import com.nt.service_pfans.PFANS1000.BusinessService;
@@ -133,5 +134,14 @@ public class Pfans1002Controller {
         return ApiResult.success();
 
     }
+
+    //region   add  ml  220112  检索  from
+    @RequestMapping(value = "/getBusinessSearch", method = {RequestMethod.POST})
+    public ApiResult list(HttpServletRequest request,@RequestBody Business business) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        business.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(businessService.getBusinessSearch(business));
+    }
+    //endregion   add  ml  220112  检索  to
 
 }

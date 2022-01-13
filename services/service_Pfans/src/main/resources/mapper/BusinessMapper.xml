@@ -4,5 +4,35 @@
     <select id="getBuse" resultType="com.nt.dao_Pfans.PFANS1000.Business">
         select * from business where `STATUS` = '4' and CREATEON>DATE_SUB(CURDATE(), INTERVAL 3 MONTH) ORDER BY CREATEON DESC
     </select>
+
+    <select id="getBusinessSearch" parameterType="com.nt.dao_Pfans.PFANS1000.Business" resultType="com.nt.dao_Pfans.PFANS1000.Business">
+        SELECT
+        *
+        FROM
+        business
+        <where>
+            <if test="businesstype != null and businesstype != ''">
+                and businesstype = #{businesstype}
+            </if>
+            <if test="region != null and region != ''">
+                and region = #{region}
+            </if>
+            <if test="city != null and city != ''">
+                and city = #{city}
+            </if>
+            <if test="business_number != null and business_number != ''">
+                and business_number like CONCAT('%',#{business_number},'%')
+            </if>
+            <if test="user_id != null and user_id != ''">
+                and user_id = #{user_id}
+            </if>
+            <if test="center_id != null and center_id != ''">
+                and center_id = #{center_id}
+            </if>
+            <if test="group_id != null and group_id != ''">
+                and group_id = #{group_id}
+            </if>
+        </where>
+    </select>
 </mapper>
 

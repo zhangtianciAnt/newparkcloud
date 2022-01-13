@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.Vo.PurchaseApplyVo;
 import com.nt.dao_Pfans.PFANS1000.PurchaseApply;
 import com.nt.service_pfans.PFANS1000.PurchaseApplyService;
@@ -97,4 +98,13 @@ public class Pfans1005Controller {
         return ApiResult.success();
 
     }
+
+    //region   add  ml  220112  检索  from
+    @RequestMapping(value = "/getpurchaseApplySearch", method = {RequestMethod.POST})
+    public ApiResult list(HttpServletRequest request,@RequestBody PurchaseApply purchaseApply) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        purchaseApply.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(purchaseApplyService.getpurchaseApplySearch(purchaseApply));
+    }
+    //endregion   add  ml  220112  检索  to
 }
