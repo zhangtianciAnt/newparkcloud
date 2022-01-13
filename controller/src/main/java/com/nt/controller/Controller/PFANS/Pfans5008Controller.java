@@ -294,6 +294,24 @@ public class Pfans5008Controller {
         return ApiResult.success(logmanagementService.sumlogdate(conditon));
     }
 //add-ws-01/05-优化接口
+
+
+    //region zjz add 22/1/12 日志管理添加检索条件 from
+    @RequestMapping(value = "/getDataList3", method = {RequestMethod.POST})
+    public ApiResult getDataList3(@RequestBody LogManagement conditon, HttpServletRequest request) throws Exception {
+        if (conditon == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        LogManagement logmanagement = new LogManagement();
+        logmanagement.setGroup_id(conditon.getGroup_id());
+        logmanagement.setCreateby(conditon.getCreateby());
+        logmanagement.setLog_date(conditon.getLog_date());
+        List<LogManagement> list = logmanagementService.conditionsForRetrieval(logmanagement);
+//        list = list.stream().filter(item -> item.getCreateby().equals(conditon.getCreateby())).collect(Collectors.toList());
+        return ApiResult.success(list);
+    }
+    //endregion zjz add 22/1/12 日志管理添加检索条件 to
 }
 
 

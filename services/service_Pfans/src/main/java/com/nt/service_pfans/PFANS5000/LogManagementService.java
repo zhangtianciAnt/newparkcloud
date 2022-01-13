@@ -64,4 +64,8 @@ public interface LogManagementService {
     String downloadUserModel() throws LogicalException;
 
     void delete (LogManagement logmanagement) throws Exception;
+
+    //region zjz add 22/1/12 日志管理添加检索条件 from
+    public List<LogManagement> conditionsForRetrieval(LogManagement logManagement)throws Exception;
+    //region zjz add 22/1/12 日志管理添加检索条件 to
 }
