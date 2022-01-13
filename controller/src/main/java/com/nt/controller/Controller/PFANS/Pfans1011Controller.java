@@ -1,5 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
+import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.Offshore;
 import com.nt.service_pfans.PFANS1000.OffshoreService;
 import com.nt.utils.ApiResult;
@@ -62,4 +63,13 @@ public class Pfans1011Controller {
         offshoreService.insert(offshore,tokenModel);
         return ApiResult.success();
     }
+
+    //region   add  ml  220112  检索  from
+    @RequestMapping(value = "/getOffshoreSearch", method = {RequestMethod.POST})
+    public ApiResult list(HttpServletRequest request,@RequestBody Offshore offshore) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        offshore.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(offshoreService.getOffshoreSearch(offshore));
+    }
+    //endregion   add  ml  220112  检索  to
 }

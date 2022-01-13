@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.OffshoreMapper">
+
+       <select id="getOffshoreSearch" parameterType="com.nt.dao_Pfans.PFANS1000.Offshore" resultType="com.nt.dao_Pfans.PFANS1000.Offshore">
+              SELECT
+              *
+              FROM
+              offshore
+              <where>
+                     <if test="user_id != null and user_id != ''">
+                            and user_id = #{user_id}
+                     </if>
+                     <if test="center_id != null and center_id != ''">
+                            and center_id = #{center_id}
+                     </if>
+                     <if test="group_id != null and group_id != ''">
+                            and group_id = #{group_id}
+                     </if>
+              </where>
+       </select>
+
+</mapper>
+

@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.Offshore;
 import com.nt.service_pfans.PFANS1000.OffshoreService;
 import com.nt.service_pfans.PFANS1000.mapper.OffshoreMapper;
@@ -40,4 +41,11 @@ public class OffshoreServiceImpl implements OffshoreService {
         offshore.setOffshore_id(UUID.randomUUID().toString());
         offshoreMapper.insert(offshore);
     }
+
+    //region   add  ml  220112  检索  from
+    @Override
+    public List<Offshore> getOffshoreSearch(Offshore offshore) throws Exception {
+        return offshoreMapper.getOffshoreSearch(offshore);
+    }
+    //endregion   add  ml  220112  检索  to
 }

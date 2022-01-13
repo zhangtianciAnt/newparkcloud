@@ -4,5 +4,27 @@
     <select id="selectCommunication"  resultType="com.nt.dao_Pfans.PFANS1000.Communication">
 select * from communication where `STATUS` = '4' ORDER BY CREATEON DESC
     </select>
+
+    <select id="getCommunicationSearch" parameterType="com.nt.dao_Pfans.PFANS1000.Communication" resultType="com.nt.dao_Pfans.PFANS1000.Communication">
+        SELECT
+        *
+        FROM
+        communication
+        <where>
+            <if test="numbercation != null and numbercation != ''">
+                and numbercation like CONCAT('%',#{numbercation},'%')
+            </if>
+            <if test="user_id != null and user_id != ''">
+                and user_id = #{user_id}
+            </if>
+            <if test="center_id != null and center_id != ''">
+                and center_id = #{center_id}
+            </if>
+            <if test="group_id != null and group_id != ''">
+                and group_id = #{group_id}
+            </if>
+        </where>
+    </select>
+
 </mapper>
 

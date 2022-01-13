@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS1000;
 
 
 import com.nt.dao_Pfans.PFANS1000.Business;
+import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessVo;
 import com.nt.utils.dao.TokenModel;
 
@@ -33,5 +34,9 @@ public interface BusinessService {
     //region scc add 10/28 境内外决裁逻辑删除 from
     void busdelete(Business business, TokenModel tokenModel) throws Exception;
     //endregion scc add 10/28 境内外决裁逻辑删除 to
+
+    //region   add  ml  220112  检索  from
+    List<Business> getBusinessSearch(Business business) throws Exception;
+    //endregion   add  ml  220112  检索  to
 
 }

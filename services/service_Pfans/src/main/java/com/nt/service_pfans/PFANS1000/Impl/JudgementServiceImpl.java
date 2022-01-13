@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
+import com.nt.dao_Assets.Assets;
 import com.nt.dao_Pfans.PFANS1000.Business;
 import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.Judgementdetail;
@@ -420,5 +421,12 @@ public class JudgementServiceImpl implements JudgementService {
         }
     }
     //endregion scc add 10/28 其他业务决裁逻辑删除 to
+
+    //region   add  ml  220112  检索  from
+    @Override
+    public List<Judgement> getJudgementSearch(Judgement judgement) throws Exception {
+        return judgementMapper.getJudgementSearch(judgement);
+    }
+    //endregion   add  ml  220112  检索  to
 
 }

@@ -650,4 +650,11 @@ public class LoanApplicationServiceImpl implements LoanApplicationService {
         return getpurchaseMap;
     }
 
+    //region   add  ml  220112  检索  from
+    @Override
+    public List<LoanApplication> getLoanapplicationSearch(LoanApplication loanapplication) throws Exception {
+        return loanapplicationMapper.getLoanapplicationSearch(loanapplication);
+    }
+    //endregion   add  ml  220112  检索  to
+
 }

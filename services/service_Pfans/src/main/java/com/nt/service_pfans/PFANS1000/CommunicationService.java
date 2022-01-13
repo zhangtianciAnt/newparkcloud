@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS1000;
 
 import com.nt.dao_Pfans.PFANS1000.Communication;
+import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -22,5 +23,9 @@ public interface CommunicationService {
     //region scc add 10/28 交际费事前决裁逻辑删除 from
     void comdelete(Communication communication, TokenModel tokenModel) throws Exception;
     //endregion scc add 10/28 交际费事前决裁逻辑删除 to
+
+    //region   add  ml  220112  检索  from
+    List<Communication> getCommunicationSearch(Communication communication) throws Exception;
+    //endregion   add  ml  220112  检索  to
 
 }
