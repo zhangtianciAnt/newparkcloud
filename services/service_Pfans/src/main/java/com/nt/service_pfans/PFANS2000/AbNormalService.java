@@ -49,4 +49,8 @@ public interface AbNormalService {
     //region scc add 22/1/12 根据页面输入状态，返回check提示 from
     AbNormal getParentmsg(AbNormal abNormal) throws Exception;
     //endregion scc add 22/1/12 根据页面输入状态，返回check提示 to
+
+    //region scc add 22/1/14 考勤异常申请显示履历 from
+    List<AbNormal> lookingFor(AbNormal abNormal) throws Exception;
+    //endregion scc add 22/1/14 考勤异常申请显示履历 to
 }

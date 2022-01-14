@@ -574,5 +574,167 @@ and a.user_id = #{userid}
             and ERROR_TYPE = #{errortype}
         </if>
     </select>
+
+    <!--查询一年内的数据，育儿假和父母照料假-->
+    <select id="lookingFor" parameterType="java.lang.String" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        select
+        ABNORMAL_ID as abnormalid,
+        USER_ID as user_id,
+        APPLICATION_DATE as applicationdate,
+        ERROR_TYPE as errortype,
+        OCCURRENCE_DATE as occurrencedate,
+        FINISHED_DATE as finisheddate,
+        LENGTHTIME as lengthtime,
+        RE_LENGTHTIME as relengthtime,
+        RE_OCCURRENCE_DATE as reoccurrencedate,
+        RE_FINISHED_DATE as refinisheddate,
+        STATUS as status
+        from abnormal a
+        where a.STATUS in ('0','2','3','4')
+        and DATE_FORMAT(a.OCCURRENCE_DATE, '%Y-%m-%d') &lt; DATE_FORMAT(DATE_SUB( #{occurrencedate},INTERVAL 1 YEAR),'%Y-%m-%d')
+        and DATE_FORMAT(a.FINISHED_DATE,'%Y-%m-%d') > DATE_FORMAT(DATE_SUB( #{occurrencedate},INTERVAL 1 YEAR ),'%Y-%m-%d')
+        and a.user_id = #{user_id}
+        and a.ERROR_TYPE = #{errortype}
+
+        UNION
+        SELECT
+        ABNORMAL_ID as abnormalid,
+        USER_ID as user_id,
+        APPLICATION_DATE as applicationdate,
+        ERROR_TYPE as errortype,
+        OCCURRENCE_DATE as occurrencedate,
+        FINISHED_DATE as finisheddate,
+        LENGTHTIME as lengthtime,
+        RE_LENGTHTIME as relengthtime,
+        RE_OCCURRENCE_DATE as reoccurrencedate,
+        RE_FINISHED_DATE as refinisheddate,
+        STATUS as status
+        from abnormal a
+        where a.STATUS in ('5','6','7')
+        and DATE_FORMAT(a.RE_OCCURRENCE_DATE,'%Y-%m-%d') &lt; DATE_FORMAT(DATE_SUB( #{occurrencedate},INTERVAL 1 YEAR),'%Y-%m-%d')
+        and DATE_FORMAT(a.RE_FINISHED_DATE,'%Y-%m-%d') > DATE_FORMAT(DATE_SUB( #{occurrencedate},INTERVAL 1 YEAR),'%Y-%m-%d')
+        and a.USER_ID = #{user_id}
+        and a.ERROR_TYPE = #{errortype}
+
+        UNION
+        select
+        ABNORMAL_ID as abnormalid,
+        USER_ID as user_id,
+        APPLICATION_DATE as applicationdate,
+        ERROR_TYPE as errortype,
+        OCCURRENCE_DATE as occurrencedate,
+        FINISHED_DATE as finisheddate,
+        LENGTHTIME as lengthtime,
+        RE_LENGTHTIME as relengthtime,
+        RE_OCCURRENCE_DATE as reoccurrencedate,
+        RE_FINISHED_DATE as refinisheddate,
+        STATUS as status
+        from abnormal a
+        where a.STATUS in ('0','2','3','4')
+        and DATE_FORMAT(a.OCCURRENCE_DATE, '%Y-%m-%d') &lt; DATE_FORMAT( #{occurrencedate},'%Y-%m-%d')
+        and DATE_FORMAT(a.FINISHED_DATE,'%Y-%m-%d') > DATE_FORMAT( #{occurrencedate},'%Y-%m-%d')
+        and a.USER_ID = #{user_id}
+        and a.ERROR_TYPE = #{errortype}
+
+        UNION
+        SELECT
+        ABNORMAL_ID as abnormalid,
+        USER_ID as user_id,
+        APPLICATION_DATE as applicationdate,
+        ERROR_TYPE as errortype,
+        OCCURRENCE_DATE as occurrencedate,
+        FINISHED_DATE as finisheddate,
+        LENGTHTIME as lengthtime,
+        RE_LENGTHTIME as relengthtime,
+        RE_OCCURRENCE_DATE as reoccurrencedate,
+        RE_FINISHED_DATE as refinisheddate,
+        STATUS as status
+        from abnormal a
+        where a.STATUS in ('5','6','7')
+        and DATE_FORMAT(a.RE_OCCURRENCE_DATE, '%Y-%m-%d') &lt; DATE_FORMAT( #{occurrencedate},'%Y-%m-%d')
+        and DATE_FORMAT(a.RE_FINISHED_DATE,'%Y-%m-%d') > DATE_FORMAT( #{occurrencedate},'%Y-%m-%d')
+        and a.USER_ID = #{user_id}
+        and a.ERROR_TYPE = #{errortype}
+
+        UNION
+        select
+        ABNORMAL_ID as abnormalid,
+        USER_ID as user_id,
+        APPLICATION_DATE as applicationdate,
+        ERROR_TYPE as errortype,
+        OCCURRENCE_DATE as occurrencedate,
+        FINISHED_DATE as finisheddate,
+        LENGTHTIME as lengthtime,
+        RE_LENGTHTIME as relengthtime,
+        RE_OCCURRENCE_DATE as reoccurrencedate,
+        RE_FINISHED_DATE as refinisheddate,
+        STATUS as status
+        from abnormal a
+        where a.STATUS in ('0','2','3','4')
+        and (DATE_FORMAT(a.OCCURRENCE_DATE, '%Y-%m-%d') >= DATE_FORMAT(DATE_SUB( #{occurrencedate},INTERVAL 1 YEAR),'%Y-%m-%d')
+            and DATE_FORMAT(a.FINISHED_DATE,'%Y-%m-%d') &lt;= DATE_FORMAT( #{occurrencedate},'%Y-%m-%d'))
+        and a.USER_ID = #{user_id}
+        and a.ERROR_TYPE = #{errortype}
+
+        UNION
+        select
+        ABNORMAL_ID as abnormalid,
+        USER_ID as user_id,
+        APPLICATION_DATE as applicationdate,
+        ERROR_TYPE as errortype,
+        OCCURRENCE_DATE as occurrencedate,
+        FINISHED_DATE as finisheddate,
+        LENGTHTIME as lengthtime,
+        RE_LENGTHTIME as relengthtime,
+        RE_OCCURRENCE_DATE as reoccurrencedate,
+        RE_FINISHED_DATE as refinisheddate,
+        STATUS as status
+        from abnormal a
+        where a.STATUS in ('5','6','7')
+        and (DATE_FORMAT(a.RE_OCCURRENCE_DATE, '%Y-%m-%d') >= DATE_FORMAT(DATE_SUB( #{occurrencedate},INTERVAL 1 YEAR),'%Y-%m-%d')
+            and DATE_FORMAT(a.RE_FINISHED_DATE,'%Y-%m-%d') &lt;= DATE_FORMAT( #{occurrencedate},'%Y-%m-%d'))
+        and a.USER_ID = #{user_id}
+        and a.ERROR_TYPE = #{errortype}
+
+        UNION
+        select
+        ABNORMAL_ID as abnormalid,
+        USER_ID as user_id,
+        APPLICATION_DATE as applicationdate,
+        ERROR_TYPE as errortype,
+        OCCURRENCE_DATE as occurrencedate,
+        FINISHED_DATE as finisheddate,
+        LENGTHTIME as lengthtime,
+        RE_LENGTHTIME as relengthtime,
+        RE_OCCURRENCE_DATE as reoccurrencedate,
+        RE_FINISHED_DATE as refinisheddate,
+        STATUS as status
+        from abnormal a
+        where a.STATUS in ('0','2','3','4')
+        and DATE_FORMAT(a.OCCURRENCE_DATE, '%Y-%m-%d') &lt; DATE_FORMAT(DATE_SUB( #{occurrencedate},INTERVAL 1 YEAR ),'%Y-%m-%d')
+        and DATE_FORMAT(a.FINISHED_DATE,'%Y-%m-%d') > DATE_FORMAT( #{occurrencedate},'%Y-%m-%d')
+        and a.USER_ID = #{user_id}
+        and a.ERROR_TYPE = #{errortype}
+
+        UNION
+        select
+        ABNORMAL_ID as abnormalid,
+        USER_ID as user_id,
+        APPLICATION_DATE as applicationdate,
+        ERROR_TYPE as errortype,
+        OCCURRENCE_DATE as occurrencedate,
+        FINISHED_DATE as finisheddate,
+        LENGTHTIME as lengthtime,
+        RE_LENGTHTIME as relengthtime,
+        RE_OCCURRENCE_DATE as reoccurrencedate,
+        RE_FINISHED_DATE as refinisheddate,
+        STATUS as status
+        from abnormal a
+        where a.STATUS in ('5','6','7')
+        and DATE_FORMAT(a.RE_OCCURRENCE_DATE, '%Y-%m-%d') &lt; DATE_FORMAT(DATE_SUB( #{occurrencedate},INTERVAL 1 YEAR),'%Y-%m-%d')
+        and DATE_FORMAT(a.RE_FINISHED_DATE,'%Y-%m-%d') > DATE_FORMAT( #{occurrencedate},'%Y-%m-%d')
+        and a.USER_ID = #{user_id}
+        and a.ERROR_TYPE = #{errortype}
+    </select>
 </mapper>
 
