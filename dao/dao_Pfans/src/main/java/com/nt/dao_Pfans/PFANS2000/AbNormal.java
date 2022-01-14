@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 @Data
@@ -222,5 +223,17 @@ public class AbNormal extends BaseModel {
      */
     @Column(name = "PARENTMSG")
     private String parentmsg;
+
+    /**
+     * 住院父母名字（父母照料假）
+     */
+    @Column(name = "PARENTSNAME")
+    private String parentsname;
+
+    /**
+     * 年累计天数
+     */
+    @Transient
+    private String cumulative;
 
 }

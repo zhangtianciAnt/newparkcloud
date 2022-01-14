@@ -1,14 +1,11 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
-import ch.qos.logback.core.joran.spi.ElementSelector;
 import cn.hutool.core.convert.Convert;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.restViewVo;
-import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
@@ -17,7 +14,6 @@ import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -27,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.util.StringUtil;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -875,6 +870,536 @@ public class AbNormalServiceImpl implements AbNormalService {
     }
     //add ccm 0806 查询申请人的剩余年休，
 
+    /**
+     * 22/1/12 scc add
+     * 根据页面输入状态，返回check提示,不中断程序
+     * */
+    @Override
+    public AbNormal getParentmsg(AbNormal abNormal) throws Exception {
+        String msg = "";
+        //页面对开始时间和结束时间进行操作
+        if (abNormal.getOccurrencedate() != null && abNormal.getFinisheddate() != null) {
+            //育儿假，子女在21-11-26之前未满3周岁，可申请，每月最多一天，每年最多10天，子女在21-11-26 ~ 21-12-31期间满三周岁，一年可申请一天
+            if ("PR013023".equals(abNormal.getErrortype()) && abNormal.getDateofbirth() != null) {
+                if (Integer.parseInt(abNormal.getLengthtime()) > 80) {//育儿假
+                    msg = "系统提醒：" + "育儿假，一次申请天数已超出10天,请重新选择日期。";
+                    abNormal.setParentmsg(msg);
+                } else {
+                    //此次申请为一天
+                    //判断以开始时间算，孩子是否满三周岁
+                    Calendar instance = Calendar.getInstance();
+                    instance.setTime(abNormal.getDateofbirth());//出生日期
+                    instance.add(Calendar.YEAR, 3);//增加3年
+                    Date threeYears = instance.getTime();//三周岁日期
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date threeYearsOfAge = df.parse(df.format(threeYears));//三周岁日期
+                    Date Occurrence = df.parse(df.format(abNormal.getOccurrencedate()));//开始日期
+                    long threeYearsOfAgeDate = threeYearsOfAge.getTime();//三周岁日期
+                    long OccurrenceDate = Occurrence.getTime();//开始日期
+                    String start = "2021-11-26 00:00:00";
+                    Date startDate = df.parse(start);//21-11-26
+                    String end = "2021-12-31 23:59:59";
+                    Date endDate = df.parse(end);//2021-12-31
+                    Date birth = df.parse(df.format(abNormal.getDateofbirth()));//出生日期
+                    long regulationBegan = startDate.getTime();//21-11-26
+                    long regulationEnd = endDate.getTime();//21-12-31
+                    long birthDate = birth.getTime();//出生日期
+                    if ((threeYearsOfAgeDate > regulationBegan) && (threeYearsOfAgeDate - regulationBegan > 0)) {//在2021年11月26日之前未满3周岁
+                        //获取现在的申请时长
+                        int nows = Integer.parseInt(abNormal.getLengthtime());
+                        AbNormal ab = new AbNormal();
+                        ab.setOccurrencedate(abNormal.getOccurrencedate());
+                        ab.setUser_id(abNormal.getUser_id());
+                        ab.setErrortype("PR013023");
+
+                        //ccm add 1020 一年之内育儿假之和
+                        //当天之前一年内，开始时间和结束时间都在一年范围内的育儿假之和
+                        Double sumParent0 = 0d;
+                        //当天之前一年内，开始时间小于一年内的开始时间，结束时间大于一年内的开始时间
+                        Double sumParent1 = 0d;
+                        //当天之前一年内，开始时间小于一年内的结束时间，结束时间大于一年内的结束时间
+                        Double sumParent2 = 0d;
+                        sumParent0 = abNormalMapper.selectAttenSumParent(ab);
+                        if (sumParent0 == null) {
+                            sumParent0 = 0d;
+                        }
+                        Calendar start1 = Calendar.getInstance();
+                        start1.setTime(Convert.toDate(abNormal.getOccurrencedate()));
+                        long startL = start1.getTimeInMillis();
+                        Calendar end1 = Calendar.getInstance();
+                        end1.setTime(Convert.toDate(abNormal.getOccurrencedate()));
+                        end1.add(Calendar.YEAR, -1);
+                        long endL = end1.getTimeInMillis();
+                        List<AbNormal> a1List = abNormalMapper.selectAttenSumParent1(ab);
+                        for (AbNormal a1 : a1List) {
+                            Calendar endabnomal = Calendar.getInstance();
+                            if (a1.getStatus().equals("7")) {
+                                if (!a1.getRelengthtime().equals("0")) {
+                                    endabnomal.setTime(Convert.toDate(a1.getRefinisheddate()));
+                                    long endabnomalL = endabnomal.getTimeInMillis();
+                                    sumParent1 = sumParent1 + ((double) (endabnomalL - endL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            } else {
+                                if (!a1.getLengthtime().equals("0")) {
+                                    endabnomal.setTime(Convert.toDate(a1.getFinisheddate()));
+                                    long endabnomalL = endabnomal.getTimeInMillis();
+                                    sumParent1 = sumParent1 + ((double) (endabnomalL - endL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            }
+                        }
+                        List<AbNormal> a2List = abNormalMapper.selectAttenSumParent2(ab);
+                        for (AbNormal a2 : a2List) {
+                            Calendar startabnomal = Calendar.getInstance();
+                            if (a2.getStatus().equals("7")) {
+                                if (!a2.getRelengthtime().equals("0")) {
+                                    startabnomal.setTime(Convert.toDate(a2.getReoccurrencedate()));
+                                    long startabnomalL = startabnomal.getTimeInMillis();
+                                    sumParent2 = sumParent2 + ((double) (startL - startabnomalL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            } else {
+                                if (!a2.getLengthtime().equals("0")) {
+                                    startabnomal.setTime(Convert.toDate(a2.getOccurrencedate()));
+                                    long startabnomalL = startabnomal.getTimeInMillis();
+                                    sumParent2 = sumParent2 + ((double) (startL - startabnomalL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            }
+                        }
+                        Double sumParent = sumParent0 + sumParent1 + sumParent2;
+                        abNormal.setCumulative(String.valueOf(sumParent));
+//                        if (sumParent + nows >= 80) {
+////                            msg = "系统提醒：" + "育儿假，申请日之前一年内申请天数已超出10天（已审批通过，包含本次申请天数）。"+ "\n" + "本次申请天数" + nows/8;
+//                            msg = "系统提醒：" + "育儿假，申请日之前一年内可以申请10天." + "\n" + "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一年内已审批通过申请天数" + (sumParent/8) + "天。" + "\n" + "&emsp;&emsp;&emsp;&emsp;&emsp;本次申请天数" + nows/8 + "天。";
+//                        }
+
+                        //当天之前一月内，开始时间和结束时间都在一月范围内的育儿假之和
+                        Double sumParenting0 = 0d;
+                        //当天之前一月内，开始时间小于一月内的开始时间，结束时间大于一月内的开始时间
+                        Double sumParentting1 = 0d;
+                        //当天之前一月内，开始时间小于一月内的结束时间，结束时间大于一月内的结束时间
+                        Double sumParentting2 = 0d;
+                        sumParenting0 = abNormalMapper.selectAttenSumParenting(ab);
+                        if (sumParenting0 == null) {
+                            sumParenting0 = 0d;
+                        }
+                        Calendar start2 = Calendar.getInstance();
+                        start1.setTime(Convert.toDate(abNormal.getOccurrencedate()));
+                        long startLM = start1.getTimeInMillis();
+                        Calendar end2 = Calendar.getInstance();
+                        end1.setTime(Convert.toDate(abNormal.getOccurrencedate()));
+                        end1.add(Calendar.YEAR, -1);
+                        long endLM = end1.getTimeInMillis();
+                        List<AbNormal> a1ListM = abNormalMapper.selectAttenSumParenting1(ab);
+                        for (AbNormal a1 : a1ListM) {
+                            Calendar endabnomal = Calendar.getInstance();
+                            if (a1.getStatus().equals("7")) {
+                                if (!a1.getRelengthtime().equals("0")) {
+                                    endabnomal.setTime(Convert.toDate(a1.getRefinisheddate()));
+                                    long endabnomalL = endabnomal.getTimeInMillis();
+                                    sumParentting1 = sumParentting1 + ((double) (endabnomalL - endL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            } else {
+                                if (!a1.getLengthtime().equals("0")) {
+                                    endabnomal.setTime(Convert.toDate(a1.getFinisheddate()));
+                                    long endabnomalL = endabnomal.getTimeInMillis();
+                                    sumParentting1 = sumParentting1 + ((double) (endabnomalL - endL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            }
+                        }
+                        List<AbNormal> a2ListM = abNormalMapper.selectAttenSumParenting2(ab);
+                        for (AbNormal a2 : a2ListM) {
+                            Calendar startabnomal = Calendar.getInstance();
+                            if (a2.getStatus().equals("7")) {
+                                if (!a2.getRelengthtime().equals("0")) {
+                                    startabnomal.setTime(Convert.toDate(a2.getReoccurrencedate()));
+                                    long startabnomalL = startabnomal.getTimeInMillis();
+                                    sumParentting2 = sumParentting2 + ((double) (startL - startabnomalL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            } else {
+                                if (!a2.getLengthtime().equals("0")) {
+                                    startabnomal.setTime(Convert.toDate(a2.getOccurrencedate()));
+                                    long startabnomalL = startabnomal.getTimeInMillis();
+                                    sumParentting2 = sumParentting2 + ((double) (startL - startabnomalL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            }
+                        }
+                        Double sumParenting = sumParenting0 + sumParentting1 + sumParentting2;
+//                        if (sumParenting + nows >= 8) {
+//                            msg = "系统提醒：" + "育儿假，申请日之前一月内可以申请1天." + "\n" + "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一月内已审批通过申请天数" + (sumParenting/8) + "天。"+ "\n" + "&emsp;&emsp;&emsp;&emsp;&emsp;本次申请天数" + nows/8 + "天。";
+//                        }
+                        if (sumParenting + nows >= 8) {
+                            msg = "系统提醒：" + "育儿假，申请日之前一月内可以申请1天,申请日之前一年内可以申请10天." + "\n" +
+                                    "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一月内已审批通过申请天数" + (sumParenting / 8) + "天,一年内已审批通过申请天数" + (sumParent / 8) + "天。" + "\n" +
+                                    "&emsp;&emsp;&emsp;&emsp;&emsp;本次申请天数" + nows / 8 + "天。";
+                        }
+                    } else {//已满三周岁
+                        msg = "系统提醒：" + "育儿假，你的孩子在你申请的开始时间时已满三周岁。";
+                    }
+                    abNormal.setParentmsg(msg);
+                }
+            }
+            //父母照料假，需年满60周岁，只有独生子女可申请，申请日（申请开始时间）之前，可申请15天
+            if ("PR013024".equals(abNormal.getErrortype()) && abNormal.getParentsdate() != null) {
+                //一年只能申请15天
+                if (Integer.parseInt(abNormal.getLengthtime()) > 120) {//父母照料假
+                    msg = "系统提醒：" + "父母照料假，一次申请天数超过15天。";
+                } else {
+                    //获取现在的申请时长
+                    int nows = Integer.parseInt(abNormal.getLengthtime());
+                    Query query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(abNormal.getUser_id()));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    //是否独生女子
+                    if (customerInfo.getUserinfo().getChildren() != null && customerInfo.getUserinfo().getChildren().equals("0")) {//0不是独生子女，1是独生子女
+                        msg = "系统提醒：" + "父母照料假，只允许独生子女申请。";
+                    } else {
+                        Calendar instance = Calendar.getInstance();
+                        instance.setTime(abNormal.getParentsdate());//父母出生日期
+                        instance.add(Calendar.YEAR, 60);//增加60年
+                        Date age = instance.getTime();//60周岁
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        Date ageDate = df.parse(df.format(age));//60周岁
+                        Date Occurrence = df.parse(df.format(abNormal.getOccurrencedate()));//开始日期
+                        long ageTime = ageDate.getTime();//60周岁
+                        long OccurrenceDate = Occurrence.getTime();//开始日期
+                        //父母是否年满60
+                        if (ageTime > OccurrenceDate) {
+                            msg = "系统提醒：" + "父母照料假，父母未满60周岁。";
+                        } else {
+                            AbNormal ab = new AbNormal();
+                            ab.setOccurrencedate(abNormal.getOccurrencedate());
+                            ab.setUser_id(abNormal.getUser_id());
+                            ab.setErrortype("PR013024");
+
+                            //ccm add 1020 一年之内父母照料假之和
+                            //当天之前一年内，开始时间和结束时间都在一年范围内的父母照料假之和
+                            Double sumParent0 = 0d;
+                            //当天之前一年内，开始时间小于一年内的开始时间，结束时间大于一年内的开始时间
+                            Double sumParent1 = 0d;
+                            //当天之前一年内，开始时间小于一年内的结束时间，结束时间大于一年内的结束时间
+                            Double sumParent2 = 0d;
+                            sumParent0 = abNormalMapper.selectAttenSumParent(ab);
+                            if (sumParent0 == null) {
+                                sumParent0 = 0d;
+                            }
+                            Calendar start1 = Calendar.getInstance();
+                            start1.setTime(Convert.toDate(abNormal.getOccurrencedate()));
+                            long startL = start1.getTimeInMillis();
+                            Calendar end1 = Calendar.getInstance();
+                            end1.setTime(Convert.toDate(abNormal.getOccurrencedate()));
+                            end1.add(Calendar.YEAR, -1);
+                            long endL = end1.getTimeInMillis();
+                            List<AbNormal> a1List = abNormalMapper.selectAttenSumParent1(ab);
+                            for (AbNormal a1 : a1List) {
+                                Calendar endabnomal = Calendar.getInstance();
+                                if (a1.getStatus().equals("7")) {
+                                    if (!a1.getRelengthtime().equals("0")) {
+                                        endabnomal.setTime(Convert.toDate(a1.getRefinisheddate()));
+                                        long endabnomalL = endabnomal.getTimeInMillis();
+                                        sumParent1 = sumParent1 + ((double) (endabnomalL - endL) / (1000 * 3600 * 24) * 8) + 8;
+                                    }
+                                } else {
+                                    if (!a1.getLengthtime().equals("0")) {
+                                        endabnomal.setTime(Convert.toDate(a1.getFinisheddate()));
+                                        long endabnomalL = endabnomal.getTimeInMillis();
+                                        sumParent1 = sumParent1 + ((double) (endabnomalL - endL) / (1000 * 3600 * 24) * 8) + 8;
+                                    }
+                                }
+                            }
+                            List<AbNormal> a2List = abNormalMapper.selectAttenSumParent2(ab);
+                            for (AbNormal a2 : a2List) {
+                                Calendar startabnomal = Calendar.getInstance();
+                                if (a2.getStatus().equals("7")) {
+                                    if (!a2.getRelengthtime().equals("0")) {
+                                        startabnomal.setTime(Convert.toDate(a2.getReoccurrencedate()));
+                                        long startabnomalL = startabnomal.getTimeInMillis();
+                                        sumParent2 = sumParent2 + ((double) (startL - startabnomalL) / (1000 * 3600 * 24) * 8) + 8;
+                                    }
+                                } else {
+                                    if (!a2.getLengthtime().equals("0")) {
+                                        startabnomal.setTime(Convert.toDate(a2.getOccurrencedate()));
+                                        long startabnomalL = startabnomal.getTimeInMillis();
+                                        sumParent2 = sumParent2 + ((double) (startL - startabnomalL) / (1000 * 3600 * 24) * 8) + 8;
+                                    }
+                                }
+                            }
+                            Double sumParent = sumParent0 + sumParent1 + sumParent2;
+                            abNormal.setCumulative(String.valueOf(sumParent));
+                            if (sumParent + nows >= 120) {
+                                msg = "系统提醒：" + "父母照料假，申请日之前一年内可以申请15天.。" + "\n" +
+                                        "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一年内已审批通过申请天数" + (sumParent / 8) + "天。" + "\n" +
+                                        "&emsp;&emsp;&emsp;&emsp;&emsp;本次申请天数" + nows / 8 + "天。";
+                            }
+                        }
+                    }
+                }
+                abNormal.setParentmsg(msg);
+            }
+            System.out.println("-------------------1------------------");
+            System.out.println(abNormal.getParentmsg());
+            return abNormal;
+        }
+        //页面对实际开始时间和实际结束时间进行操作
+        if (abNormal.getOccurrencedate() != null && abNormal.getFinisheddate() != null && abNormal.getReoccurrencedate() != null && abNormal.getRefinisheddate() != null) {
+            //育儿假，子女在21-11-26之前未满3周岁，可申请，每月最多一天，每年最多10天，子女在21-11-26 ~ 21-12-31期间满三周岁，一年可申请一天
+            if ("PR013023".equals(abNormal.getErrortype()) && abNormal.getDateofbirth() != null) {
+                if (Integer.parseInt(abNormal.getRelengthtime()) > 80) {//育儿假
+                    msg = "系统提醒：" + "育儿假，一次申请天数已超出10天。";
+                    abNormal.setParentmsg(msg);
+                } else {
+                    //此次申请为一天
+                    //判断以开始时间算，孩子是否满三周岁
+                    Calendar instance = Calendar.getInstance();
+                    instance.setTime(abNormal.getDateofbirth());//出生日期
+                    instance.add(Calendar.YEAR, 3);//增加3年
+                    Date threeYears = instance.getTime();//三周岁日期
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date threeYearsOfAge = df.parse(df.format(threeYears));//三周岁日期
+                    Date ReOccurrence = df.parse(df.format(abNormal.getReoccurrencedate()));//开始日期
+                    long threeYearsOfAgeDate = threeYearsOfAge.getTime();//三周岁日期
+                    long ReOccurrenceDate = ReOccurrence.getTime();//开始日期
+                    String start = "2021-11-26 00:00:00";
+                    Date startDate = df.parse(start);//21-11-26
+                    String end = "2021-12-31 23:59:59";
+                    Date endDate = df.parse(end);//2021-12-31
+                    Date birth = df.parse(df.format(abNormal.getDateofbirth()));//出生日期
+                    long regulationBegan = startDate.getTime();//21-11-26
+                    long regulationEnd = endDate.getTime();//21-12-31
+                    long birthDate = birth.getTime();//出生日期
+                    if ((threeYearsOfAgeDate > regulationBegan) && (threeYearsOfAgeDate - regulationBegan > 0)) {//在2021年11月26日之前未满3周岁
+                        //获取现在的申请时长
+                        int nows = Integer.parseInt(abNormal.getRelengthtime());
+                        AbNormal ab = new AbNormal();
+                        ab.setOccurrencedate(abNormal.getReoccurrencedate());
+                        ab.setUser_id(abNormal.getUser_id());
+                        ab.setErrortype("PR013023");
+
+                        //ccm add 1020 一年之内育儿假之和
+                        //当天之前一年内，开始时间和结束时间都在一年范围内的育儿假之和
+                        Double sumParent0 = 0d;
+                        //当天之前一年内，开始时间小于一年内的开始时间，结束时间大于一年内的开始时间
+                        Double sumParent1 = 0d;
+                        //当天之前一年内，开始时间小于一年内的结束时间，结束时间大于一年内的结束时间
+                        Double sumParent2 = 0d;
+                        sumParent0 = abNormalMapper.selectAttenSumParent(ab);
+                        if (sumParent0 == null) {
+                            sumParent0 = 0d;
+                        }
+                        Calendar start1 = Calendar.getInstance();
+                        start1.setTime(Convert.toDate(abNormal.getOccurrencedate()));
+                        long startL = start1.getTimeInMillis();
+                        Calendar end1 = Calendar.getInstance();
+                        end1.setTime(Convert.toDate(abNormal.getOccurrencedate()));
+                        end1.add(Calendar.YEAR, -1);
+                        long endL = end1.getTimeInMillis();
+                        List<AbNormal> a1List = abNormalMapper.selectAttenSumParent1(ab);
+                        for (AbNormal a1 : a1List) {
+                            Calendar endabnomal = Calendar.getInstance();
+                            if (a1.getStatus().equals("7")) {
+                                if (!a1.getRelengthtime().equals("0")) {
+                                    endabnomal.setTime(Convert.toDate(a1.getRefinisheddate()));
+                                    long endabnomalL = endabnomal.getTimeInMillis();
+                                    sumParent1 = sumParent1 + ((double) (endabnomalL - endL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            } else {
+                                if (!a1.getLengthtime().equals("0")) {
+                                    endabnomal.setTime(Convert.toDate(a1.getFinisheddate()));
+                                    long endabnomalL = endabnomal.getTimeInMillis();
+                                    sumParent1 = sumParent1 + ((double) (endabnomalL - endL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            }
+                        }
+                        List<AbNormal> a2List = abNormalMapper.selectAttenSumParent2(ab);
+                        for (AbNormal a2 : a2List) {
+                            Calendar startabnomal = Calendar.getInstance();
+                            if (a2.getStatus().equals("7")) {
+                                if (!a2.getRelengthtime().equals("0")) {
+                                    startabnomal.setTime(Convert.toDate(a2.getReoccurrencedate()));
+                                    long startabnomalL = startabnomal.getTimeInMillis();
+                                    sumParent2 = sumParent2 + ((double) (startL - startabnomalL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            } else {
+                                if (!a2.getLengthtime().equals("0")) {
+                                    startabnomal.setTime(Convert.toDate(a2.getOccurrencedate()));
+                                    long startabnomalL = startabnomal.getTimeInMillis();
+                                    sumParent2 = sumParent2 + ((double) (startL - startabnomalL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            }
+                        }
+                        Double sumParent = sumParent0 + sumParent1 + sumParent2;
+                        abNormal.setCumulative(String.valueOf(sumParent));
+//                        if (sumParent + nows >= 80) {
+//                            msg = "系统提醒：" + "育儿假，申请日之前一年内申请天数已超出10天（已审批通过，包含本次申请天数）。"+ "\n" + "本次申请天数" + nows/8;
+//                        }
+
+                        //当天之前一月内，开始时间和结束时间都在一月范围内的育儿假之和
+                        Double sumParenting0 = 0d;
+                        //当天之前一月内，开始时间小于一月内的开始时间，结束时间大于一月内的开始时间
+                        Double sumParentting1 = 0d;
+                        //当天之前一月内，开始时间小于一月内的结束时间，结束时间大于一月内的结束时间
+                        Double sumParentting2 = 0d;
+                        sumParenting0 = abNormalMapper.selectAttenSumParenting(ab);
+                        if (sumParenting0 == null) {
+                            sumParenting0 = 0d;
+                        }
+                        Calendar start2 = Calendar.getInstance();
+                        start1.setTime(Convert.toDate(abNormal.getOccurrencedate()));
+                        long startLM = start1.getTimeInMillis();
+                        Calendar end2 = Calendar.getInstance();
+                        end1.setTime(Convert.toDate(abNormal.getOccurrencedate()));
+                        end1.add(Calendar.YEAR, -1);
+                        long endLM = end1.getTimeInMillis();
+                        List<AbNormal> a1ListM = abNormalMapper.selectAttenSumParenting1(ab);
+                        for (AbNormal a1 : a1ListM) {
+                            Calendar endabnomal = Calendar.getInstance();
+                            if (a1.getStatus().equals("7")) {
+                                if (!a1.getRelengthtime().equals("0")) {
+                                    endabnomal.setTime(Convert.toDate(a1.getRefinisheddate()));
+                                    long endabnomalL = endabnomal.getTimeInMillis();
+                                    sumParentting1 = sumParentting1 + ((double) (endabnomalL - endL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            } else {
+                                if (!a1.getLengthtime().equals("0")) {
+                                    endabnomal.setTime(Convert.toDate(a1.getFinisheddate()));
+                                    long endabnomalL = endabnomal.getTimeInMillis();
+                                    sumParentting1 = sumParentting1 + ((double) (endabnomalL - endL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            }
+                        }
+                        List<AbNormal> a2ListM = abNormalMapper.selectAttenSumParenting2(ab);
+                        for (AbNormal a2 : a2ListM) {
+                            Calendar startabnomal = Calendar.getInstance();
+                            if (a2.getStatus().equals("7")) {
+                                if (!a2.getRelengthtime().equals("0")) {
+                                    startabnomal.setTime(Convert.toDate(a2.getReoccurrencedate()));
+                                    long startabnomalL = startabnomal.getTimeInMillis();
+                                    sumParentting2 = sumParentting2 + ((double) (startL - startabnomalL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            } else {
+                                if (!a2.getLengthtime().equals("0")) {
+                                    startabnomal.setTime(Convert.toDate(a2.getOccurrencedate()));
+                                    long startabnomalL = startabnomal.getTimeInMillis();
+                                    sumParentting2 = sumParentting2 + ((double) (startL - startabnomalL) / (1000 * 3600 * 24) * 8) + 8;
+                                }
+                            }
+                        }
+                        Double sumParenting = sumParenting0 + sumParentting1 + sumParentting2;
+                        msg = "系统提醒：" + "育儿假，申请日之前一月内可以申请1天,申请日之前一年内可以申请10天." + "\n" +
+                                "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一月内已审批通过申请天数" + (sumParenting / 8) + "天,一年内已审批通过申请天数" + (sumParent / 8) + "天。" + "\n" +
+                                "&emsp;&emsp;&emsp;&emsp;&emsp;本次申请天数" + nows / 8 + "天。";
+
+                    } else {//已满三周岁
+                        msg = "系统提醒：" + "育儿假，你的孩子在你申请的开始时间时已满三周岁。";
+                    }
+                    abNormal.setParentmsg(msg);
+                }
+            }
+            //父母照料假，需年满60周岁，只有独生子女可申请，申请日（申请开始时间）之前，可申请15天
+            if ("PR013024".equals(abNormal.getErrortype()) && abNormal.getParentsdate() != null) {
+                //一年只能申请15天
+                if (Integer.parseInt(abNormal.getRelengthtime()) > 120) {//父母照料假
+                    msg = "系统提醒：" + "父母照料假，一次申请天数超过15天。";
+                } else {
+                    //获取现在的申请时长
+                    int nows = Integer.parseInt(abNormal.getRelengthtime());
+                    Query query = new Query();
+                    query.addCriteria(Criteria.where("userid").is(abNormal.getUser_id()));
+                    CustomerInfo customerInfo = mongoTemplate.findOne(query, CustomerInfo.class);
+                    //是否独生女子
+                    if (customerInfo.getUserinfo().getChildren() != null && customerInfo.getUserinfo().getChildren().equals("0")) {//0不是独生子女，1是独生子女
+                        msg = "系统提醒：" + "父母照料假，只允许独生子女申请。";
+                    } else {
+                        Calendar instance = Calendar.getInstance();
+                        instance.setTime(abNormal.getParentsdate());//父母出生日期
+                        instance.add(Calendar.YEAR, 60);//增加60年
+                        Date age = instance.getTime();//60周岁
+                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        Date ageDate = df.parse(df.format(age));//60周岁
+                        Date reOccurrence = df.parse(df.format(abNormal.getReoccurrencedate()));//开始日期
+                        long ageTime = ageDate.getTime();//60周岁
+                        long reOccurrenceDate = reOccurrence.getTime();//开始日期
+                        //父母是否年满60
+                        if (ageTime > reOccurrenceDate) {
+                            msg = "系统提醒：" + "父母照料假，父母未满60周岁。";
+                        } else {
+                            AbNormal ab = new AbNormal();
+                            ab.setOccurrencedate(abNormal.getReoccurrencedate());
+                            ab.setUser_id(abNormal.getUser_id());
+                            ab.setErrortype("PR013024");
+
+                            //ccm add 1020 一年之内父母照料假之和
+                            //当天之前一年内，开始时间和结束时间都在一年范围内的父母照料假之和
+                            Double sumParent0 = 0d;
+                            //当天之前一年内，开始时间小于一年内的开始时间，结束时间大于一年内的开始时间
+                            Double sumParent1 = 0d;
+                            //当天之前一年内，开始时间小于一年内的结束时间，结束时间大于一年内的结束时间
+                            Double sumParent2 = 0d;
+                            sumParent0 = abNormalMapper.selectAttenSumParent(ab);
+                            if (sumParent0 == null) {
+                                sumParent0 = 0d;
+                            }
+                            Calendar start1 = Calendar.getInstance();
+                            start1.setTime(Convert.toDate(abNormal.getOccurrencedate()));
+                            long startL = start1.getTimeInMillis();
+                            Calendar end1 = Calendar.getInstance();
+                            end1.setTime(Convert.toDate(abNormal.getOccurrencedate()));
+                            end1.add(Calendar.YEAR, -1);
+                            long endL = end1.getTimeInMillis();
+                            List<AbNormal> a1List = abNormalMapper.selectAttenSumParent1(ab);
+                            for (AbNormal a1 : a1List) {
+                                Calendar endabnomal = Calendar.getInstance();
+                                if (a1.getStatus().equals("7")) {
+                                    if (!a1.getRelengthtime().equals("0")) {
+                                        endabnomal.setTime(Convert.toDate(a1.getRefinisheddate()));
+                                        long endabnomalL = endabnomal.getTimeInMillis();
+                                        sumParent1 = sumParent1 + ((double) (endabnomalL - endL) / (1000 * 3600 * 24) * 8) + 8;
+                                    }
+                                } else {
+                                    if (!a1.getLengthtime().equals("0")) {
+                                        endabnomal.setTime(Convert.toDate(a1.getFinisheddate()));
+                                        long endabnomalL = endabnomal.getTimeInMillis();
+                                        sumParent1 = sumParent1 + ((double) (endabnomalL - endL) / (1000 * 3600 * 24) * 8) + 8;
+                                    }
+                                }
+                            }
+                            List<AbNormal> a2List = abNormalMapper.selectAttenSumParent2(ab);
+                            for (AbNormal a2 : a2List) {
+                                Calendar startabnomal = Calendar.getInstance();
+                                if (a2.getStatus().equals("7")) {
+                                    if (!a2.getRelengthtime().equals("0")) {
+                                        startabnomal.setTime(Convert.toDate(a2.getReoccurrencedate()));
+                                        long startabnomalL = startabnomal.getTimeInMillis();
+                                        sumParent2 = sumParent2 + ((double) (startL - startabnomalL) / (1000 * 3600 * 24) * 8) + 8;
+                                    }
+                                } else {
+                                    if (!a2.getLengthtime().equals("0")) {
+                                        startabnomal.setTime(Convert.toDate(a2.getOccurrencedate()));
+                                        long startabnomalL = startabnomal.getTimeInMillis();
+                                        sumParent2 = sumParent2 + ((double) (startL - startabnomalL) / (1000 * 3600 * 24) * 8) + 8;
+                                    }
+                                }
+                            }
+                            Double sumParent = sumParent0 + sumParent1 + sumParent2;
+                            abNormal.setCumulative(String.valueOf(sumParent));
+                            if (sumParent + nows >= 120) {
+                                msg = "系统提醒：" + "父母照料假，申请日之前一年内可以申请15天.。" + "\n" +
+                                        "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一年内已审批通过申请天数" + (sumParent / 8) + "天。" + "\n" +
+                                        "&emsp;&emsp;&emsp;&emsp;&emsp;本次申请天数" + nows / 8 + "天。";
+                            }
+                        }
+                    }
+                }
+                abNormal.setParentmsg(msg);
+            }
+            System.out.println("-------------------2------------------");
+            System.out.println(abNormal.getParentmsg());
+            return abNormal;
+        }
+        System.out.println("-------------------3------------------");
+        System.out.println(abNormal.getParentmsg());
+        return abNormal;
+    }
+
+
     //region scc add 22/1/6 考勤异常申请check from
     /**
      * 参数type,“insert”对应新增，“update”对应修改
@@ -951,6 +1476,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                 long regulationEnd = endDate.getTime();//21-12-31
                 long birthDate = birth.getTime();//出生日期
                 if ((threeYearsOfAgeDate > regulationBegan) && (threeYearsOfAgeDate - regulationBegan > 0)) {//在2021年11月26日之前未满3周岁
+                    int nows = Integer.parseInt(abNormal.getRelengthtime());//此次申请天数
                     AbNormal ab = new AbNormal();
                     ab.setOccurrencedate(abNormal.getOccurrencedate());
                     ab.setUser_id(abNormal.getUser_id());
@@ -1023,7 +1549,10 @@ public class AbNormalServiceImpl implements AbNormalService {
                     }
                     Double sumParent = sumParent0 + sumParent1 + sumParent2;
                     if(sumParent >= 80){
-                        msg = msg + "\r\n"+"育儿假，申请日之前一年内申请天数已超出10天。";
+//                        msg = msg + "育儿假，申请日之前一年内申请天数已超出10天（已审批通过）。";
+                        msg = msg + "育儿假，申请日之前一年内申请天数已超出10天." + "\n" +
+                                "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一年内已审批通过申请天数" + (sumParent/8) + "天。" + "\n" +
+                                "&emsp;&emsp;&emsp;&emsp;&emsp;本次申请天数" + nows/8 + "天。";
                     }
 
                     //当天之前一月内，开始时间和结束时间都在一月范围内的育儿假之和
@@ -1092,7 +1621,10 @@ public class AbNormalServiceImpl implements AbNormalService {
                     }
                     Double sumParenting = sumParenting0 + sumParentting1 + sumParentting2;
                     if(sumParenting >= 8){
-                        msg = msg + "\r\n" + "育儿假，申请日之前一月内申请天数已超出1天。";
+//                        msg = msg + "育儿假，申请日之前一月内申请天数已超出1天（已审批通过）。";
+                        msg = msg + "育儿假，申请日之前一月内申请天数已超出1天." + "\n" +
+                                "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一个月内已审批通过申请天数" + (sumParenting/8) + "天。" + "\n" +
+                                "&emsp;&emsp;&emsp;&emsp;&emsp;本次申请天数" + nows/8 + "天。";
                     }
                 }
                 else {//已满三周岁
@@ -1103,7 +1635,7 @@ public class AbNormalServiceImpl implements AbNormalService {
             if("PR013024".equals(abNormal.getErrortype())){
                 //一年只能申请15天
                 if (Integer.parseInt(abNormal.getLengthtime()) > 120) {//父母照料假
-                    throw new LogicalException("父母照料假，申请日之前一年内申请天数超过15天。");
+                    throw new LogicalException("父母照料假，一年内申请天数已经超过15天，不能继续申请和提出。");
                 }else{
                     Query query = new Query();
                     query.addCriteria(Criteria.where("userid").is(abNormal.getUser_id()));
@@ -1112,6 +1644,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                     if (customerInfo.getUserinfo().getChildren() != null && customerInfo.getUserinfo().getChildren().equals("0")) {//0不是独生子女，1是独生子女
                         throw new LogicalException("父母照料假，只允许独生子女申请。");
                     } else {
+                        int nows = Integer.parseInt(abNormal.getRelengthtime());//此次申请天数
                         Calendar instance = Calendar.getInstance();
                         instance.setTime(abNormal.getParentsdate());//父母出生日期
                         instance.add(Calendar.YEAR, 60);//增加60年
@@ -1197,7 +1730,10 @@ public class AbNormalServiceImpl implements AbNormalService {
                             }
                             Double sumParent = sumParent0 + sumParent1 + sumParent2;
                             if(sumParent >= 120){
-                                msg = msg + "\r\n"+"父母照料假，申请日之前一年内申请天数已超出15天。";
+//                                msg = msg + "父母照料假，申请日之前一年内申请天数已超出15天（已审批通过）。";
+                                msg = msg + "父母照料假，申请日之前一年内申请天数已超出15天。"+ "\n" +
+                                        "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一年内已审批通过申请天数" + (sumParent/8) + "天。" + "\n" +
+                                        "&emsp;&emsp;&emsp;&emsp;&emsp;本次申请天数" + nows/8 + "天。";
                             }
                         }
                     }
@@ -1264,6 +1800,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                     long regulationEnd = endDate.getTime();//21-12-31
                     long birthDate = birth.getTime();//出生日期
                     if ((threeYearsOfAgeDate > regulationBegan) && (threeYearsOfAgeDate - regulationBegan > 0)) {//在2021年11月26日之前未满3周岁
+                        int nows = Integer.parseInt(abNormal.getRelengthtime());//此次实际申请天数
                         AbNormal ab = new AbNormal();
                         ab.setOccurrencedate(abNormal.getReoccurrencedate());
                         ab.setUser_id(abNormal.getUser_id());
@@ -1336,7 +1873,10 @@ public class AbNormalServiceImpl implements AbNormalService {
                         }
                         Double sumParent = sumParent0 + sumParent1 + sumParent2;
                         if(sumParent >= 80){
-                            msg = msg + "\r\n"+"育儿假，申请日之前一年内申请天数已超出10天。";
+//                            msg = msg + "育儿假，申请日之前一年内申请天数已超出10天（已审批通过）。";
+                            msg = msg + "育儿假，申请日之前一年内申请天数已超出10天." + "\n" +
+                                    "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一年内已审批通过申请天数" + (sumParent/8) + "天。" + "\n" +
+                                    "&emsp;&emsp;&emsp;&emsp;&emsp;本次申请天数" + nows/8 + "天。";
                         }
 
                         //当天之前一月内，开始时间和结束时间都在一月范围内的育儿假之和
@@ -1405,7 +1945,10 @@ public class AbNormalServiceImpl implements AbNormalService {
                         }
                         Double sumParenting = sumParenting0 + sumParentting1 + sumParentting2;
                         if(sumParenting >= 8){
-                            msg = msg + "\r\n" + "育儿假，申请日之前一月内申请天数已超出1天。";
+//                            msg = msg + "育儿假，申请日之前一月内申请天数已超出1天（已审批通过）。";
+                            msg = msg + "育儿假，申请日之前一月内申请天数已超出1天." + "\n" +
+                                    "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一个月内已审批通过申请天数" + (sumParenting/8) + "天。" + "\n" +
+                                    "&emsp;&emsp;&emsp;&emsp;&emsp;本次申请天数" + nows/8 + "天。";
                         }
                     }
                     else {//已满三周岁
@@ -1416,7 +1959,7 @@ public class AbNormalServiceImpl implements AbNormalService {
             if("PR013024".equals(abNormal.getErrortype())){
                 //一年只能申请15天
                 if (Integer.parseInt(abNormal.getRelengthtime()) > 120) {//父母照料假
-                    throw new LogicalException("父母照料假，申请日之前一年内申请天数超过15天。");
+                    throw new LogicalException("父母照料假，一年内申请天数已经超过15天，不能继续申请和提出。");
                 }else{
                     Query query = new Query();
                     query.addCriteria(Criteria.where("userid").is(abNormal.getUser_id()));
@@ -1425,6 +1968,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                     if (customerInfo.getUserinfo().getChildren() != null && customerInfo.getUserinfo().getChildren().equals("0")) {//0不是独生子女，1是独生子女
                         throw new LogicalException("父母照料假，只允许独生子女申请。");
                     } else {
+                        int nows = Integer.parseInt(abNormal.getRelengthtime());//此次实际申请天数
                         Calendar instance = Calendar.getInstance();
                         instance.setTime(abNormal.getParentsdate());//父母出生日期
                         instance.add(Calendar.YEAR, 60);//增加60年
@@ -1510,7 +2054,10 @@ public class AbNormalServiceImpl implements AbNormalService {
                             }
                             Double sumParent = sumParent0 + sumParent1 + sumParent2;
                             if(sumParent >= 120){
-                                msg = msg + "\r\n"+"父母照料假，申请日之前一年内申请天数已超出15天。";
+//                                msg = msg + "父母照料假，申请日之前一年内申请天数已超出15天（已审批通过）。";
+                                msg = msg + "父母照料假，申请日之前一年内申请天数已超出15天。"+ "\n" +
+                                        "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一年内已审批通过申请天数" + (sumParent/8) + "天。" + "\n" +
+                                        "&emsp;&emsp;&emsp;&emsp;&emsp;本次申请天数" + nows/8 + "天。";
                             }
                         }
                     }
