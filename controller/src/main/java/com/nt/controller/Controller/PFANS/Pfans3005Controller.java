@@ -138,4 +138,13 @@ public class Pfans3005Controller {
 
     }
 
+    //region   add  ml  220112  检索  from
+    @RequestMapping(value = "/getPurchaseSearch", method = {RequestMethod.POST})
+    public ApiResult list(HttpServletRequest request,@RequestBody Purchase purchase) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        purchase.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(purchaseService.getPurchaseSearch(purchase));
+    }
+    //endregion   add  ml  220112  检索  to
+
 }
