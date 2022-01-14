@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 @Data
@@ -90,4 +91,9 @@ public class LogManagement extends BaseModel {
     @Column(name = "CONFIRMSTATUS")
     private String confirmstatus;
 
+    /**
+     * 日志年月
+     */
+    @Transient
+    private String month;//日志年月
 }
