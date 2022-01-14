@@ -430,7 +430,7 @@ union
         <if test="log_date != null">
             AND DATE_FORMAT(LOG_DATE,'%Y-%m-%d') = DATE_FORMAT(#{log_date},'%Y-%m-%d')
         </if>
-        <if test="month != null">
+        <if test="month != null and month != ''">
             AND DATE_FORMAT(LOG_DATE,'%Y-%m') = #{month}
         </if>
         <if test="group_id != null and group_id != ''">

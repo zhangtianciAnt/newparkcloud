@@ -60,7 +60,7 @@ public interface LogManagementMapper extends MyMapper<LogManagement> {
     List<DepartLogalVo> getLogInfo(@Param("project_id") String project_id, @Param("logdate") String nowDate);
 
     //region zjz add 22/1/12 日志管理添加检索条件 from
-    List<LogManagement> conditionsForRetrieval(LogManagement logmanagement);
+    List<LogManagement> conditionsForRetrieval(LogManagement conditon);
     //region zjz add 22/1/12 日志管理添加检索条件 to
 
 }

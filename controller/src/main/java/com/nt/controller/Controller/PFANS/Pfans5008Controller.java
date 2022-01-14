@@ -297,18 +297,18 @@ public class Pfans5008Controller {
 
 
     //region zjz add 22/1/12 日志管理添加检索条件 from
-    @RequestMapping(value = "/getDataList3", method = {RequestMethod.POST})
-    public ApiResult getDataList3(@RequestBody LogManagement conditon, HttpServletRequest request) throws Exception {
+    @RequestMapping(value = "/getEligibleDataList", method = {RequestMethod.POST})
+    public ApiResult getEligibleDataList(@RequestBody LogManagement conditon, HttpServletRequest request) throws Exception {
         if (conditon == null) {
             return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
         }
         TokenModel tokenModel = tokenService.getToken(request);
-        LogManagement logmanagement = new LogManagement();
-        logmanagement.setGroup_id(conditon.getGroup_id());
-        logmanagement.setCreateby(conditon.getCreateby());
-        logmanagement.setLog_date(conditon.getLog_date());
-        logmanagement.setMonth(conditon.getMonth());
-        List<LogManagement> list = logmanagementService.conditionsForRetrieval(logmanagement);
+//        LogManagement logmanagement = new LogManagement();
+//        logmanagement.setGroup_id(conditon.getGroup_id());
+//        logmanagement.setCreateby(conditon.getCreateby());
+//        logmanagement.setLog_date(conditon.getLog_date());
+//        logmanagement.setMonth(conditon.getMonth());
+        List<LogManagement> list = logmanagementService.conditionsForRetrieval(conditon);
 //        list = list.stream().filter(item -> item.getCreateby().equals(conditon.getCreateby())).collect(Collectors.toList());
         return ApiResult.success(list);
     }
