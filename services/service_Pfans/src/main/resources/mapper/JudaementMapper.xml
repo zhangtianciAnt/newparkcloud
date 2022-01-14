@@ -50,7 +50,7 @@ select JUDGEMENT_ID as judgementid,
               *
               FROM
               judgement
-              <where>
+              where status != 1
                      <if test="equipment != null and equipment != ''">
                             and equipment = #{equipment}
                      </if>
@@ -74,7 +74,6 @@ select JUDGEMENT_ID as judgementid,
                                    #{item}
                             </foreach>
                      </if>
-              </where>
        </select>
 
 </mapper>

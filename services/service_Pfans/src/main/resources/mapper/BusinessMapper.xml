@@ -10,7 +10,7 @@
         *
         FROM
         business
-        <where>
+        where status != 1
             <if test="businesstype != null and businesstype != ''">
                 and businesstype = #{businesstype}
             </if>
@@ -40,7 +40,6 @@
                     #{item}
                 </foreach>
             </if>
-        </where>
     </select>
 </mapper>
 

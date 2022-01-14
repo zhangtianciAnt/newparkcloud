@@ -10,7 +10,7 @@ select * from purchaseapply where `STATUS` = '4' ORDER BY CREATEON DESC
 		*
 		FROM
 		purchaseapply
-		<where>
+		where status != 1
 			<if test="purchasenumbers != null and purchasenumbers != ''">
 				and purchasenumbers like CONCAT('%',#{purchasenumbers},'%')
 			</if>
@@ -31,6 +31,5 @@ select * from purchaseapply where `STATUS` = '4' ORDER BY CREATEON DESC
 					#{item}
 				</foreach>
 			</if>
-		</where>
 	</select>
 </mapper>

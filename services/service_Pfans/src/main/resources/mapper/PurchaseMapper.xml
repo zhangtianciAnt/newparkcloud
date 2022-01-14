@@ -7,7 +7,7 @@
               *
               FROM
               purchase
-              <where>
+              where status != 1
                      <if test="purnumbers != null and purnumbers != ''">
                             and purnumbers like CONCAT('%',#{purnumbers},'%')
                      </if>
@@ -37,7 +37,6 @@
                                    #{item}
                             </foreach>
                      </if>
-              </where>
        </select>
 
 </mapper>
