@@ -307,6 +307,7 @@ public class Pfans5008Controller {
         logmanagement.setGroup_id(conditon.getGroup_id());
         logmanagement.setCreateby(conditon.getCreateby());
         logmanagement.setLog_date(conditon.getLog_date());
+        logmanagement.setMonth(conditon.getMonth());
         List<LogManagement> list = logmanagementService.conditionsForRetrieval(logmanagement);
 //        list = list.stream().filter(item -> item.getCreateby().equals(conditon.getCreateby())).collect(Collectors.toList());
         return ApiResult.success(list);

@@ -426,9 +426,12 @@ union
     *
     from logmanagement
     <where>
+        STATUS != '1'
         <if test="log_date != null">
-            AND DATE_FORMAT(LOG_DATE,'%Y-%m') = DATE_FORMAT(#{log_date},'%Y-%m')
             AND DATE_FORMAT(LOG_DATE,'%Y-%m-%d') = DATE_FORMAT(#{log_date},'%Y-%m-%d')
+        </if>
+        <if test="month != null">
+            AND DATE_FORMAT(LOG_DATE,'%Y-%m') = #{month}
         </if>
         <if test="group_id != null and group_id != ''">
             AND GROUP_ID = #{group_id}

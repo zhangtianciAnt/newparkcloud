@@ -28,4 +28,8 @@ public interface PurchaseService {
     //region scc add 10/28 购买决裁决裁逻辑删除 from
     void purchdelete(Purchase purchase, TokenModel tokenModel) throws Exception;
     //endregion scc add 10/28 购买决裁决裁逻辑删除 to
+
+    //region   add  ml  220112  检索  from
+    List<Purchase> getPurchaseSearch(Purchase purchase) throws Exception;
+    //endregion   add  ml  220112  检索  to
 }

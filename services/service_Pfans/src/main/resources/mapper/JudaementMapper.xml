@@ -50,7 +50,7 @@ select JUDGEMENT_ID as judgementid,
               *
               FROM
               judgement
-              <where>
+              where status != 1
                      <if test="equipment != null and equipment != ''">
                             and equipment = #{equipment}
                      </if>
@@ -66,7 +66,14 @@ select JUDGEMENT_ID as judgementid,
                      <if test="group_id != null and group_id != ''">
                             and group_id = #{group_id}
                      </if>
-              </where>
+                     <if test="owners != null and owners.size() > 0 ">
+                            and
+                            owner in
+                            <foreach item="item" index="index" collection="owners"
+                                     open="(" separator="," close=")">
+                                   #{item}
+                            </foreach>
+                     </if>
        </select>
 
 </mapper>

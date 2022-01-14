@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.OffshoreMapper">
+<mapper namespace="com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper">
 
-       <select id="getOffshoreSearch" parameterType="com.nt.dao_Pfans.PFANS1000.Offshore" resultType="com.nt.dao_Pfans.PFANS1000.Offshore">
+       <select id="getPurchaseSearch" parameterType="com.nt.dao_Pfans.PFANS3000.Purchase" resultType="com.nt.dao_Pfans.PFANS3000.Purchase">
               SELECT
               *
               FROM
-              offshore
+              purchase
               where status != 1
+                     <if test="purnumbers != null and purnumbers != ''">
+                            and purnumbers like CONCAT('%',#{purnumbers},'%')
+                     </if>
                      <if test="user_id != null and user_id != ''">
                             and user_id = #{user_id}
                      </if>
@@ -16,6 +19,15 @@
                      </if>
                      <if test="group_id != null and group_id != ''">
                             and group_id = #{group_id}
+                     </if>
+                     <if test="controller != null and controller != ''">
+                            and controller = #{controller}
+                     </if>
+                     <if test="username != null and username != ''">
+                            and username = #{username}
+                     </if>
+                     <if test="application_date != null">
+                            and application_date = DATE_FORMAT(#{application_date},'%Y-%m-%d')
                      </if>
                      <if test="owners != null and owners.size() > 0 ">
                             and

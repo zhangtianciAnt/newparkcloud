@@ -1,21 +1,18 @@
 package com.nt.controller.Controller.PFANS;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
-import com.nt.dao_Pfans.PFANS2000.Attendance;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @RestController
 @RequestMapping("/abNormal")
@@ -211,4 +208,14 @@ public class Pfans2016Controller {
         return ApiResult.success(abNormalService.getremainingByuserid(userid));
     }
     //add ccm 0806 查询申请人的剩余年休
+
+    //region scc add 22/1/12 根据页面输入状态，返回check提示 from
+    @RequestMapping(value = "/getParentmsg", method = {RequestMethod.POST})
+    public ApiResult getParentmsg(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
+        if (abNormal == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(abNormalService.getParentmsg(abNormal));
+    }
+    //endregion scc add 22/1/12 根据页面输入状态，返回check提示 to
 }

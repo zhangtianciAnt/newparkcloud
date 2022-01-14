@@ -15,7 +15,7 @@
         *
         FROM
         loanapplication
-        <where>
+        where status != 1
             <if test="processingstatus != null and processingstatus != ''">
                 and processingstatus = #{processingstatus}
             </if>
@@ -31,7 +31,14 @@
             <if test="group_id != null and group_id != ''">
                 and group_id = #{group_id}
             </if>
-        </where>
+            <if test="owners != null and owners.size() > 0 ">
+                and
+                owner in
+                <foreach item="item" index="index" collection="owners"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
     </select>
 </mapper>
 

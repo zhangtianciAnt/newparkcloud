@@ -10,7 +10,7 @@ select * from communication where `STATUS` = '4' ORDER BY CREATEON DESC
         *
         FROM
         communication
-        <where>
+        where status != 1
             <if test="numbercation != null and numbercation != ''">
                 and numbercation like CONCAT('%',#{numbercation},'%')
             </if>
@@ -23,7 +23,14 @@ select * from communication where `STATUS` = '4' ORDER BY CREATEON DESC
             <if test="group_id != null and group_id != ''">
                 and group_id = #{group_id}
             </if>
-        </where>
+            <if test="owners != null and owners.size() > 0 ">
+                and
+                owner in
+                <foreach item="item" index="index" collection="owners"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
     </select>
 
 </mapper>
