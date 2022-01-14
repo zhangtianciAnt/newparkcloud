@@ -50,7 +50,7 @@ select JUDGEMENT_ID as judgementid,
               *
               FROM
               judgement
-              where status != 1
+              where status != '1'
                      <if test="equipment != null and equipment != ''">
                             and equipment = #{equipment}
                      </if>

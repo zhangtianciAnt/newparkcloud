@@ -7,7 +7,7 @@
               *
               FROM
               purchase
-              where status != 1
+              where status != '1'
                      <if test="purnumbers != null and purnumbers != ''">
                             and purnumbers like CONCAT('%',#{purnumbers},'%')
                      </if>

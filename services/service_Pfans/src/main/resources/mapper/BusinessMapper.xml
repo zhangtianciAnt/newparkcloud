@@ -10,7 +10,7 @@
         *
         FROM
         business
-        where status != 1
+        where status != '1'
             <if test="businesstype != null and businesstype != ''">
                 and businesstype = #{businesstype}
             </if>

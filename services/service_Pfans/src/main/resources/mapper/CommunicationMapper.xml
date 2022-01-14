@@ -10,7 +10,7 @@ select * from communication where `STATUS` = '4' ORDER BY CREATEON DESC
         *
         FROM
         communication
-        where status != 1
+        where status != '1'
             <if test="numbercation != null and numbercation != ''">
                 and numbercation like CONCAT('%',#{numbercation},'%')
             </if>

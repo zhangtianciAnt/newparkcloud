@@ -7,7 +7,7 @@
               *
               FROM
               offshore
-              where status != 1
+              where status != '1'
                      <if test="user_id != null and user_id != ''">
                             and user_id = #{user_id}
                      </if>
