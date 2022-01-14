@@ -1405,6 +1405,9 @@ public class DepartmentalInsideServiceImpl implements DepartmentalInsideService 
 //                value.sort(Comparator.comparing(DepartmentalInside::getClaimamount)
 //                        .thenComparing(DepartmentalInside::getProject_id).thenComparing(DepartmentalInside::getStaffrank));
                 for(DepartmentalInside getXj : unValue){
+                    if(("外注费用合计值").equals(getXj.getStaffrank()) || ("外注工数合计值").equals(getXj.getStaffrank())){
+                        break;
+                    }
                     planXj04 = planXj04.add(StringUtils.isNullOrEmpty(getXj.getStaffcustplan04()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustplan04()));
                     acalXj04 = acalXj04.add(StringUtils.isNullOrEmpty(getXj.getStaffcustactual04()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustactual04()));
                     planXj05 = planXj05.add(StringUtils.isNullOrEmpty(getXj.getStaffcustplan05()) ? BigDecimal.ZERO : new BigDecimal(getXj.getStaffcustplan05()));

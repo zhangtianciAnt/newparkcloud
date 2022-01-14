@@ -129,7 +129,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     public ContractapplicationVo get(Contractapplication contractapplication) {
         ContractapplicationVo vo = new ContractapplicationVo();
         //契约番号申请
-        List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
+//添加筛选条件 ztc fr
+        List<Contractapplication> coList = contractapplicationMapper.selectList(contractapplication);
+//        添加筛选条件 ztc to
         // add gbb 210909 受託契約列表添加【项目编号】 start
         //查询合同关联的所有项目编号
         List<Contractapplication> pjCodeList = contractapplicationMapper.getPjCode();

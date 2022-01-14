@@ -35,10 +35,11 @@ public class Pfans1032Controller {
     @Autowired
     private DictionaryService dictionaryService;
 
-    @RequestMapping(value = "/get", method = {RequestMethod.GET})
-    public ApiResult get(HttpServletRequest request)throws Exception{
+//    添加筛选条件 ztc fr
+    @RequestMapping(value = "/get", method = {RequestMethod.POST})
+    public ApiResult get(@RequestBody Petition petition, HttpServletRequest request)throws Exception{
+//        添加筛选条件 ztc to
         TokenModel tokenModel=tokenService.getToken(request);
-        Petition petition=new Petition();
         petition.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(petitionService.get(petition));
     }

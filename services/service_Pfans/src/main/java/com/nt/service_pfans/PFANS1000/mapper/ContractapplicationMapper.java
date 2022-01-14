@@ -3,6 +3,7 @@ package com.nt.service_pfans.PFANS1000.mapper;
 import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -40,4 +41,8 @@ public interface ContractapplicationMapper extends MyMapper<Contractapplication>
     public void updateProjectcontractById(@Param("PtList") List<String> PtList);
     //获取所有合同关联的项目编号
     public List<Contractapplication> getPjCode();
+
+//    添加筛选条件 ztc fr
+    List<Contractapplication> selectList(Contractapplication contractapplication);
+//    添加筛选条件 ztc to
 }
