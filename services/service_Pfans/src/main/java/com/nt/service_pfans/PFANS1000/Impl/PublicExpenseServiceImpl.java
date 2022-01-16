@@ -153,9 +153,11 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
             DecimalFormat df = new DecimalFormat("#0.00");
             int scale = 2;//设置位数
             int roundingMode = 4;//表示四舍五入，可以选择其他舍值方式，例如去尾，等等.
-            BigDecimal bd = new BigDecimal(rmb);
+//            解决PDF打印报错BUG ztc fr
+            BigDecimal bd = new BigDecimal(com.mysql.jdbc.StringUtils.isNullOrEmpty(rmb) ? "0" : rmb);
             bd = bd.setScale(scale, roundingMode);
-            BigDecimal bd1 = new BigDecimal(foreigncurrency);
+            BigDecimal bd1 = new BigDecimal(com.mysql.jdbc.StringUtils.isNullOrEmpty(foreigncurrency) ? "0" : foreigncurrency);
+//            解决PDF打印报错BUG ztc to
             bd1 = bd1.setScale(scale, roundingMode);
             //resign  upd scc   2021/7/23  公共费用精算书在打印时采购费明细中交通费不显示 from
             if (purlist.size() == 0  && (accountcode.equals("PJ119004") || accountcode.equals("PJ132004"))) {
