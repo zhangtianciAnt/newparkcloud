@@ -1554,10 +1554,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                     }
                     Double sumParent = sumParent0 + sumParent1 + sumParent2;
                     if(sumParent >= 80){
-//                        msg = msg + "育儿假，申请日之前一年内申请天数已超出10天（已审批通过）。";
-                        msg = msg + "育儿假，申请日之前一年内申请天数已超出10天." + "\n" +
-                                "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一年内已审批通过申请天数" + (sumParent/8) + "天。" + "\n" +
-                                "&emsp;&emsp;&emsp;&emsp;&emsp;本次申请天数" + nows/8 + "天。";
+                        msg = msg + "育儿假，申请日之前一年内申请天数已超出10天（已审批通过）。";
                     }
 
                     //当天之前一月内，开始时间和结束时间都在一月范围内的育儿假之和
@@ -1627,9 +1624,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                     Double sumParenting = sumParenting0 + sumParentting1 + sumParentting2;
                     if(sumParenting >= 8){
 //                        msg = msg + "育儿假，申请日之前一月内申请天数已超出1天（已审批通过）。";
-                        msg = msg + "育儿假，申请日之前一月内申请天数已超出1天." + "\n" +
-                                "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一个月内已审批通过申请天数" + (sumParenting/8) + "天。" + "\n" +
-                                "&emsp;&emsp;&emsp;&emsp;&emsp;本次申请天数" + nows/8 + "天。";
+                        msg = msg +  "\n" + "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一个月内申请天数已超出1天（已审批通过）";
                     }
                 }
                 else {//已满三周岁
@@ -1735,10 +1730,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                             }
                             Double sumParent = sumParent0 + sumParent1 + sumParent2;
                             if(sumParent >= 120){
-//                                msg = msg + "父母照料假，申请日之前一年内申请天数已超出15天（已审批通过）。";
-                                msg = msg + "父母照料假，申请日之前一年内申请天数已超出15天。"+ "\n" +
-                                        "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一年内已审批通过申请天数" + (sumParent/8) + "天。" + "\n" +
-                                        "&emsp;&emsp;&emsp;&emsp;&emsp;本次申请天数" + nows/8 + "天。";
+                                msg = msg + "父母照料假，申请日之前一年内申请天数已超出15天（已审批通过）。";
                             }
                         }
                     }
