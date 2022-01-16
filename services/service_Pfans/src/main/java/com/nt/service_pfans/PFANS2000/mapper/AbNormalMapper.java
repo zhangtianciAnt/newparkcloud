@@ -55,4 +55,8 @@ public interface AbNormalMapper extends MyMapper<AbNormal> {
     List<AbNormal> selectAttenSumParenting2(AbNormal abNormal);
     //endregion add scc 根据开始时间或实际开始时间判断一个月或一年的育儿假申请次数 to
 
+    //region scc add 查询一年前的数据，育儿假和父母照料假 from
+    List<AbNormal> lookingFor(@Param("user_id") String user_id, @Param("errortype") String errortype, @Param("occurrencedate") String occurrencedate);
+    //endregion scc add 查询一年前的数据，育儿假和父母照料假 to
+
 }

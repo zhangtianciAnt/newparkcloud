@@ -209,4 +209,25 @@ public class Pfans2016Controller {
         return ApiResult.success(abNormalService.getremainingByuserid(userid));
     }
     //add ccm 0806 查询申请人的剩余年休
+
+    //region scc add 22/1/12 根据页面输入状态，返回check提示 from
+    @RequestMapping(value = "/getParentmsg", method = {RequestMethod.POST})
+    public ApiResult getParentmsg(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
+        if (abNormal == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        return ApiResult.success(abNormalService.getParentmsg(abNormal));
+    }
+    //endregion scc add 22/1/12 根据页面输入状态，返回check提示 to
+
+    //region scc add 22/1/14 考勤异常申请显示履历 from
+    @RequestMapping(value = "/lookingFor", method = {RequestMethod.POST})
+    public ApiResult lookingFor(@RequestBody AbNormal abNormal, HttpServletRequest request) throws Exception {
+        if (abNormal == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        return ApiResult.success(abNormalService.lookingFor(abNormal));
+    }
+    //endregion scc add 22/1/14 考勤异常申请显示履历 to
 }
