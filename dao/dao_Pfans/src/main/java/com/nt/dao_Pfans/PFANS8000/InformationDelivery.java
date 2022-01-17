@@ -24,6 +24,9 @@ public class InformationDelivery extends BaseModel {
     @Column(name = "TITLE")
     private String title;
 
+    @Column(name = "FILETYPE")
+    private String filetype;
+
     @Column(name = "ADDRESS")
     private String address;
 
