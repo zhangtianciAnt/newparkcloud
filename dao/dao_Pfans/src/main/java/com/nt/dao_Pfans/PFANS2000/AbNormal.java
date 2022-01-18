@@ -231,6 +231,12 @@ public class AbNormal extends BaseModel {
     private String parentsname;
 
     /**
+     * 婴儿数量（哺乳假）
+     */
+    @Column(name = "BABYNUMBER")
+    private String babynumber;
+
+    /**
      * 年累计天数
      */
     @Transient
