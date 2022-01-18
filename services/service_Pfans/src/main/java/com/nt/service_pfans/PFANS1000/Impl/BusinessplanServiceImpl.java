@@ -6,6 +6,7 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.TypeReference;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.OrgTree;
@@ -82,6 +83,8 @@ public class BusinessplanServiceImpl implements BusinessplanService {
     private PeoplewareFeeMapper peoplewareFeeMapper;
     @Autowired
     private RulingMapper rulingMapper;
+    @Autowired
+    private DictionaryMapper dictionaryMapper;
 
     DecimalFormat df = new DecimalFormat("#0.00");
     //@Autowired
@@ -1397,8 +1400,24 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         sheet.addMergedRegion(new CellRangeAddress(52,52,0,1));//税引後利益
         sheet.addMergedRegion(new CellRangeAddress(53,53,0,1));//営業利益率
         sheet.addMergedRegion(new CellRangeAddress(54,54,0,1));//界限利益率
+
+        exporttongxin(reportBusinessVos.get(0).getCenter_id(),reportBusinessVos.get(0).getYear(),businessPlan);
+
+        String departmentEn = "";
+        List<DepartmentVo> departmentVoList = new ArrayList<>();
+        departmentVoList = orgTreeService.getAllDepartment();
+        if(departmentVoList.size()>0)
+        {
+            departmentVoList = departmentVoList.stream().filter(item->(item.getDepartmentId().equals(reportBusinessVos.get(0).getCenter_id()))).collect(Collectors.toList());
+            if(departmentVoList.size()>0)
+            {
+                departmentEn = departmentVoList.get(0).getDepartmentEn();
+            }
+        }
+
+
         OutputStream os = resp.getOutputStream();// 取得输出流
-        String fileName = "事业计划PL";
+        String fileName = "事业计划_" + departmentEn;
         resp.setContentType("application/vnd.ms-excel;charset=utf-8");
         resp.setHeader("Content-Disposition", "attachment;filename="
                 + new String((fileName + ".xlsx").getBytes(), "iso-8859-1"));
@@ -1406,6 +1425,147 @@ public class BusinessplanServiceImpl implements BusinessplanService {
         businessPlan.close();
     }
     //endregion scc add 事业计划PL导出 to
+
+    //region ccm add 事业计划通信费导出 from
+    public void exporttongxin(String centerId,String years,XSSFWorkbook businessPlan) throws Exception{
+        List<Businessplan> businessplanList = new ArrayList<>();
+        Businessplan businessplan = new Businessplan();
+        businessplan.setCenter_id(centerId);
+        businessplan.setYear(years);
+        businessplanList = businessplanMapper.select(businessplan);
+        if(businessplanList.size()>0)
+        {
+            JSONArray tableO1List = JSON.parseArray(businessplanList.get(0).getTableO1());
+            List<BusinessTableOBase> businessTableO1Base = JSONArray.parseObject(tableO1List.toJSONString(), new TypeReference<List<BusinessTableOBase>>() {});
+            XSSFCellStyle cellStyle = businessPlan.createCellStyle();
+            cellStyle.setAlignment(HorizontalAlignment.CENTER);//水平居中
+            XSSFCellStyle cellStyle1 = businessPlan.createCellStyle();
+            cellStyle1.setVerticalAlignment(VerticalAlignment.CENTER);//垂直居中
+            XSSFSheet sheet = businessPlan.createSheet("事业计划通信费");
+            for(int i = 0; i < 3 ; i++){
+                XSSFRow row = sheet.createRow(i);//创建行
+                for(int j = 0; j < 31; j++){
+                    XSSFCell cell = row.createCell(j);//创建列
+                    if(j == 0){
+                        sheet.setColumnWidth(j,1000);//第一列宽
+                    }
+                    if(j == 1){
+                        sheet.setColumnWidth(j,4000);//第二列宽
+                    }
+                    if(j == 2){
+                        sheet.setColumnWidth(j,4000);//第三列宽
+                    }
+                    if(i == 0){
+                        switch (j) {//表头第一行
+                            case 0 : cell.setCellValue("序号"); cell.setCellStyle(cellStyle); cell.setCellStyle(cellStyle1); break;
+                            case 1 : cell.setCellValue("中项目"); cell.setCellStyle(cellStyle); cell.setCellStyle(cellStyle1); break;
+                            case 2 : cell.setCellValue("小项目"); cell.setCellStyle(cellStyle); cell.setCellStyle(cellStyle1); break;
+                            case 3 : cell.setCellValue("单价(元)"); cell.setCellStyle(cellStyle); cell.setCellStyle(cellStyle1); break;
+                            case 4 : cell.setCellValue("分类"); cell.setCellStyle(cellStyle); cell.setCellStyle(cellStyle1); break;
+                            case 5 : cell.setCellValue("上期"); cell.setCellStyle(cellStyle); cell.setCellStyle(cellStyle1); break;
+                            case 17 : cell.setCellValue("下期"); cell.setCellStyle(cellStyle); cell.setCellStyle(cellStyle1); break;
+                            case 29 : cell.setCellValue("年间"); cell.setCellStyle(cellStyle); cell.setCellStyle(cellStyle1); break;
+                        }
+                    }
+                    if(i == 1){
+                        switch (j) {//表头月份行
+                            case 5 : cell.setCellValue("4月"); cell.setCellStyle(cellStyle); break;
+                            case 7 : cell.setCellValue("5月"); cell.setCellStyle(cellStyle); break;
+                            case 9 : cell.setCellValue("6月"); cell.setCellStyle(cellStyle); break;
+                            case 11 : cell.setCellValue("7月"); cell.setCellStyle(cellStyle); break;
+                            case 13 : cell.setCellValue("8月"); cell.setCellStyle(cellStyle); break;
+                            case 15 : cell.setCellValue("9月"); cell.setCellStyle(cellStyle); break;
+                            case 17 : cell.setCellValue("10月"); cell.setCellStyle(cellStyle); break;
+                            case 19 : cell.setCellValue("11月"); cell.setCellStyle(cellStyle); break;
+                            case 21 : cell.setCellValue("12月"); cell.setCellStyle(cellStyle); break;
+                            case 23 : cell.setCellValue("1月"); cell.setCellStyle(cellStyle); break;
+                            case 25 : cell.setCellValue("2月"); cell.setCellStyle(cellStyle); break;
+                            case 27 : cell.setCellValue("3月"); cell.setCellStyle(cellStyle); break;
+                        }
+                    }
+                    if(i == 2){//表头計画，实际行
+                        int count = j + 5;
+                        if(j >=5)
+                        {
+                            if(count%2 == 0){
+                                cell.setCellValue("工数"); cell.setCellStyle(cellStyle);
+                            }else{
+                                cell.setCellValue("金额"); cell.setCellStyle(cellStyle);
+                            }
+                        }
+                    }
+                }
+                if(i == 0){//表头 上，下期列合并
+                    sheet.addMergedRegion(new CellRangeAddress(0,0,5,16));
+                    sheet.addMergedRegion(new CellRangeAddress(0,0,17,28));
+                    sheet.addMergedRegion(new CellRangeAddress(0,0,29,30));
+                }
+                if(i == 1){//表头月份列合并
+                    for(int k = 5; k < 29; k+=2){
+                        sheet.addMergedRegion(new CellRangeAddress(1,1,k,k+1));
+                    }
+                }
+            }
+            sheet.addMergedRegion(new CellRangeAddress(0,2,0,0));//表头空白行合并
+            sheet.addMergedRegion(new CellRangeAddress(0,2,1,1));//表头内容行合并
+            sheet.addMergedRegion(new CellRangeAddress(0,2,2,2));//表头内容行合并
+            sheet.addMergedRegion(new CellRangeAddress(0,2,3,3));//表头内容行合并
+            sheet.addMergedRegion(new CellRangeAddress(0,2,4,4));//表头内容行合并
+            for(int i = 0; i < businessTableO1Base.size(); i++){
+                XSSFRow row = sheet.createRow(i+3);//创建行
+                for(int j = 0; j < 31; j++){
+                    XSSFCell cell = row.createCell(j);//创建列
+                    switch (j) {
+                        case 0 : cell.setCellValue(String.valueOf(i + 1)); cell.setCellStyle(cellStyle); break;
+                        case 1 : cell.setCellValue(businessTableO1Base.get(i).get("programme").toString()); cell.setCellStyle(cellStyle); break;
+                        case 2 :
+                            Dictionary dictionary2 = dictionaryMapper.getDictionaryOne(businessTableO1Base.get(i).get("sprogramme").toString());
+                            if(dictionary2!=null)
+                            {
+                                cell.setCellValue(dictionary2.getValue1()); cell.setCellStyle(cellStyle);
+                            }
+                            break;
+                        case 3 : cell.setCellValue(businessTableO1Base.get(i).get("price").toString()); cell.setCellStyle(cellStyle); break;
+                        case 4 :
+                            Dictionary dictionary3 = dictionaryMapper.getDictionaryOne(businessTableO1Base.get(i).get("type").toString());
+                            if(dictionary3!=null)
+                            {
+                                cell.setCellValue(dictionary3.getValue1()); cell.setCellStyle(cellStyle);
+                            }
+                            break;
+                        case 5 : cell.setCellValue(businessTableO1Base.get(i).get("number4").toString()); cell.setCellStyle(cellStyle); break;
+                        case 6 : cell.setCellValue((businessTableO1Base.get(i).get("money4") != null && businessTableO1Base.get(i).get("money4").equals("NaN")) ? null : businessTableO1Base.get(i).get("money4").toString()); cell.setCellStyle(cellStyle); break;
+                        case 7 : cell.setCellValue(businessTableO1Base.get(i).get("number5").toString()); cell.setCellStyle(cellStyle); break;
+                        case 8 : cell.setCellValue((businessTableO1Base.get(i).get("money5") != null && businessTableO1Base.get(i).get("money5").equals("NaN")) ? null : businessTableO1Base.get(i).get("money5").toString()); cell.setCellStyle(cellStyle); break;
+                        case 9 : cell.setCellValue(businessTableO1Base.get(i).get("number6").toString()); cell.setCellStyle(cellStyle); break;
+                        case 10: cell.setCellValue((businessTableO1Base.get(i).get("money6") != null && businessTableO1Base.get(i).get("money6").equals("NaN")) ? null : businessTableO1Base.get(i).get("money6").toString()); cell.setCellStyle(cellStyle); break;
+                        case 11: cell.setCellValue(businessTableO1Base.get(i).get("number7").toString()); cell.setCellStyle(cellStyle); break;
+                        case 12: cell.setCellValue((businessTableO1Base.get(i).get("money7") != null && businessTableO1Base.get(i).get("money7").equals("NaN")) ? null : businessTableO1Base.get(i).get("money7").toString()); cell.setCellStyle(cellStyle); break;
+                        case 13 : cell.setCellValue(businessTableO1Base.get(i).get("number8").toString()); cell.setCellStyle(cellStyle); break;
+                        case 14 : cell.setCellValue((businessTableO1Base.get(i).get("money8") != null && businessTableO1Base.get(i).get("money8").equals("NaN")) ? null : businessTableO1Base.get(i).get("money8").toString()); cell.setCellStyle(cellStyle); break;
+                        case 15 : cell.setCellValue(businessTableO1Base.get(i).get("number9").toString()); cell.setCellStyle(cellStyle); break;
+                        case 16 : cell.setCellValue((businessTableO1Base.get(i).get("money9") != null && businessTableO1Base.get(i).get("money9").equals("NaN")) ? null : businessTableO1Base.get(i).get("money9").toString()); cell.setCellStyle(cellStyle); break;
+                        case 17 : cell.setCellValue(businessTableO1Base.get(i).get("number10").toString()); cell.setCellStyle(cellStyle); break;
+                        case 18 : cell.setCellValue((businessTableO1Base.get(i).get("money10") != null && businessTableO1Base.get(i).get("money10").equals("NaN")) ? null : businessTableO1Base.get(i).get("money10").toString()); cell.setCellStyle(cellStyle); break;
+                        case 19 : cell.setCellValue(businessTableO1Base.get(i).get("number11").toString()); cell.setCellStyle(cellStyle); break;
+                        case 20 : cell.setCellValue((businessTableO1Base.get(i).get("money11") != null && businessTableO1Base.get(i).get("money11").equals("NaN")) ? null : businessTableO1Base.get(i).get("money11").toString()); cell.setCellStyle(cellStyle); break;
+                        case 21 : cell.setCellValue(businessTableO1Base.get(i).get("number12").toString()); cell.setCellStyle(cellStyle); break;
+                        case 22 : cell.setCellValue((businessTableO1Base.get(i).get("money12") != null && businessTableO1Base.get(i).get("money12").equals("NaN")) ? null : businessTableO1Base.get(i).get("money12").toString()); cell.setCellStyle(cellStyle); break;
+                        case 23 : cell.setCellValue(businessTableO1Base.get(i).get("number1").toString()); cell.setCellStyle(cellStyle); break;
+                        case 24 : cell.setCellValue((businessTableO1Base.get(i).get("money1") != null && businessTableO1Base.get(i).get("money1").equals("NaN")) ? null : businessTableO1Base.get(i).get("money1").toString()); cell.setCellStyle(cellStyle); break;
+                        case 25 : cell.setCellValue(businessTableO1Base.get(i).get("number2").toString()); cell.setCellStyle(cellStyle); break;
+                        case 26 : cell.setCellValue((businessTableO1Base.get(i).get("money2") != null && businessTableO1Base.get(i).get("money2").equals("NaN")) ? null : businessTableO1Base.get(i).get("money2").toString()); cell.setCellStyle(cellStyle); break;
+                        case 27 : cell.setCellValue(businessTableO1Base.get(i).get("number3").toString()); cell.setCellStyle(cellStyle); break;
+                        case 28 : cell.setCellValue((businessTableO1Base.get(i).get("money3") != null && businessTableO1Base.get(i).get("money3").equals("NaN")) ? null : businessTableO1Base.get(i).get("money3").toString()); cell.setCellStyle(cellStyle); break;
+                        case 29 : cell.setCellValue((businessTableO1Base.get(i).get("numbertotal") != null && businessTableO1Base.get(i).get("numbertotal").equals("NaN")) ? null : businessTableO1Base.get(i).get("numbertotal").toString()); cell.setCellStyle(cellStyle); break;
+                        case 30 : cell.setCellValue((businessTableO1Base.get(i).get("moneytotal") != null && businessTableO1Base.get(i).get("moneytotal").equals("NaN")) ? null : businessTableO1Base.get(i).get("moneytotal").toString()); cell.setCellStyle(cellStyle); break;
+                    }
+                }
+            }
+        }
+    }
+    //endregion ccm add 事业计划通信费导出 to
+
 
     //region scc add 保存部分PL from
     @Override
