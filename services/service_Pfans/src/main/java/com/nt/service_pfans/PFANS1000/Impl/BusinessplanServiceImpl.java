@@ -1517,48 +1517,48 @@ public class BusinessplanServiceImpl implements BusinessplanService {
                     XSSFCell cell = row.createCell(j);//创建列
                     switch (j) {
                         case 0 : cell.setCellValue(String.valueOf(i + 1)); cell.setCellStyle(cellStyle); break;
-                        case 1 : cell.setCellValue(businessTableO1Base.get(i).get("programme").toString()); cell.setCellStyle(cellStyle); break;
+                        case 1 : cell.setCellValue(businessTableO1Base.get(i).containsKey("programme") && businessTableO1Base.get(i).get("programme")!= null ? businessTableO1Base.get(i).get("programme").toString() : null); cell.setCellStyle(cellStyle); break;
                         case 2 :
-                            Dictionary dictionary2 = dictionaryMapper.getDictionaryOne(businessTableO1Base.get(i).get("sprogramme").toString());
+                            Dictionary dictionary2 = dictionaryMapper.getDictionaryOne(businessTableO1Base.get(i).containsKey("sprogramme") && businessTableO1Base.get(i).get("sprogramme")!= null ? businessTableO1Base.get(i).get("sprogramme").toString() : null);
                             if(dictionary2!=null)
                             {
                                 cell.setCellValue(dictionary2.getValue1()); cell.setCellStyle(cellStyle);
                             }
                             break;
-                        case 3 : cell.setCellValue(businessTableO1Base.get(i).get("price").toString()); cell.setCellStyle(cellStyle); break;
+                        case 3 : cell.setCellValue(businessTableO1Base.get(i).containsKey("price") && businessTableO1Base.get(i).get("price")!= null ? businessTableO1Base.get(i).get("price").toString() : null); cell.setCellStyle(cellStyle); break;
                         case 4 :
-                            Dictionary dictionary3 = dictionaryMapper.getDictionaryOne(businessTableO1Base.get(i).get("type").toString());
+                            Dictionary dictionary3 = dictionaryMapper.getDictionaryOne(businessTableO1Base.get(i).containsKey("type") && businessTableO1Base.get(i).get("type")!= null ? businessTableO1Base.get(i).get("type").toString() : null);
                             if(dictionary3!=null)
                             {
                                 cell.setCellValue(dictionary3.getValue1()); cell.setCellStyle(cellStyle);
                             }
                             break;
-                        case 5 : cell.setCellValue(businessTableO1Base.get(i).get("number4").toString()); cell.setCellStyle(cellStyle); break;
-                        case 6 : cell.setCellValue((businessTableO1Base.get(i).get("money4") != null && businessTableO1Base.get(i).get("money4").equals("NaN")) ? null : businessTableO1Base.get(i).get("money4").toString()); cell.setCellStyle(cellStyle); break;
-                        case 7 : cell.setCellValue(businessTableO1Base.get(i).get("number5").toString()); cell.setCellStyle(cellStyle); break;
-                        case 8 : cell.setCellValue((businessTableO1Base.get(i).get("money5") != null && businessTableO1Base.get(i).get("money5").equals("NaN")) ? null : businessTableO1Base.get(i).get("money5").toString()); cell.setCellStyle(cellStyle); break;
-                        case 9 : cell.setCellValue(businessTableO1Base.get(i).get("number6").toString()); cell.setCellStyle(cellStyle); break;
-                        case 10: cell.setCellValue((businessTableO1Base.get(i).get("money6") != null && businessTableO1Base.get(i).get("money6").equals("NaN")) ? null : businessTableO1Base.get(i).get("money6").toString()); cell.setCellStyle(cellStyle); break;
-                        case 11: cell.setCellValue(businessTableO1Base.get(i).get("number7").toString()); cell.setCellStyle(cellStyle); break;
-                        case 12: cell.setCellValue((businessTableO1Base.get(i).get("money7") != null && businessTableO1Base.get(i).get("money7").equals("NaN")) ? null : businessTableO1Base.get(i).get("money7").toString()); cell.setCellStyle(cellStyle); break;
-                        case 13 : cell.setCellValue(businessTableO1Base.get(i).get("number8").toString()); cell.setCellStyle(cellStyle); break;
-                        case 14 : cell.setCellValue((businessTableO1Base.get(i).get("money8") != null && businessTableO1Base.get(i).get("money8").equals("NaN")) ? null : businessTableO1Base.get(i).get("money8").toString()); cell.setCellStyle(cellStyle); break;
-                        case 15 : cell.setCellValue(businessTableO1Base.get(i).get("number9").toString()); cell.setCellStyle(cellStyle); break;
-                        case 16 : cell.setCellValue((businessTableO1Base.get(i).get("money9") != null && businessTableO1Base.get(i).get("money9").equals("NaN")) ? null : businessTableO1Base.get(i).get("money9").toString()); cell.setCellStyle(cellStyle); break;
-                        case 17 : cell.setCellValue(businessTableO1Base.get(i).get("number10").toString()); cell.setCellStyle(cellStyle); break;
-                        case 18 : cell.setCellValue((businessTableO1Base.get(i).get("money10") != null && businessTableO1Base.get(i).get("money10").equals("NaN")) ? null : businessTableO1Base.get(i).get("money10").toString()); cell.setCellStyle(cellStyle); break;
-                        case 19 : cell.setCellValue(businessTableO1Base.get(i).get("number11").toString()); cell.setCellStyle(cellStyle); break;
-                        case 20 : cell.setCellValue((businessTableO1Base.get(i).get("money11") != null && businessTableO1Base.get(i).get("money11").equals("NaN")) ? null : businessTableO1Base.get(i).get("money11").toString()); cell.setCellStyle(cellStyle); break;
-                        case 21 : cell.setCellValue(businessTableO1Base.get(i).get("number12").toString()); cell.setCellStyle(cellStyle); break;
-                        case 22 : cell.setCellValue((businessTableO1Base.get(i).get("money12") != null && businessTableO1Base.get(i).get("money12").equals("NaN")) ? null : businessTableO1Base.get(i).get("money12").toString()); cell.setCellStyle(cellStyle); break;
-                        case 23 : cell.setCellValue(businessTableO1Base.get(i).get("number1").toString()); cell.setCellStyle(cellStyle); break;
-                        case 24 : cell.setCellValue((businessTableO1Base.get(i).get("money1") != null && businessTableO1Base.get(i).get("money1").equals("NaN")) ? null : businessTableO1Base.get(i).get("money1").toString()); cell.setCellStyle(cellStyle); break;
-                        case 25 : cell.setCellValue(businessTableO1Base.get(i).get("number2").toString()); cell.setCellStyle(cellStyle); break;
-                        case 26 : cell.setCellValue((businessTableO1Base.get(i).get("money2") != null && businessTableO1Base.get(i).get("money2").equals("NaN")) ? null : businessTableO1Base.get(i).get("money2").toString()); cell.setCellStyle(cellStyle); break;
-                        case 27 : cell.setCellValue(businessTableO1Base.get(i).get("number3").toString()); cell.setCellStyle(cellStyle); break;
-                        case 28 : cell.setCellValue((businessTableO1Base.get(i).get("money3") != null && businessTableO1Base.get(i).get("money3").equals("NaN")) ? null : businessTableO1Base.get(i).get("money3").toString()); cell.setCellStyle(cellStyle); break;
-                        case 29 : cell.setCellValue((businessTableO1Base.get(i).get("numbertotal") != null && businessTableO1Base.get(i).get("numbertotal").equals("NaN")) ? null : businessTableO1Base.get(i).get("numbertotal").toString()); cell.setCellStyle(cellStyle); break;
-                        case 30 : cell.setCellValue((businessTableO1Base.get(i).get("moneytotal") != null && businessTableO1Base.get(i).get("moneytotal").equals("NaN")) ? null : businessTableO1Base.get(i).get("moneytotal").toString()); cell.setCellStyle(cellStyle); break;
+                        case 5 : cell.setCellValue(businessTableO1Base.get(i).containsKey("number4") && businessTableO1Base.get(i).get("number4")!= null ? businessTableO1Base.get(i).get("number4").toString() : null); cell.setCellStyle(cellStyle); break;
+                        case 6 : cell.setCellValue((businessTableO1Base.get(i).containsKey("money4") && businessTableO1Base.get(i).get("money4") != null && !businessTableO1Base.get(i).get("money4").equals("NaN")) ? businessTableO1Base.get(i).get("money4").toString():null); cell.setCellStyle(cellStyle); break;
+                        case 7 : cell.setCellValue(businessTableO1Base.get(i).containsKey("number5") && businessTableO1Base.get(i).get("number5")!= null ? businessTableO1Base.get(i).get("number5").toString() : null); cell.setCellStyle(cellStyle); break;
+                        case 8 : cell.setCellValue((businessTableO1Base.get(i).containsKey("money5") && businessTableO1Base.get(i).get("money5") != null && !businessTableO1Base.get(i).get("money5").equals("NaN")) ? businessTableO1Base.get(i).get("money5").toString():null); cell.setCellStyle(cellStyle); break;
+                        case 9 : cell.setCellValue(businessTableO1Base.get(i).containsKey("number6") && businessTableO1Base.get(i).get("number6")!= null ? businessTableO1Base.get(i).get("number6").toString() : null); cell.setCellStyle(cellStyle); break;
+                        case 10: cell.setCellValue((businessTableO1Base.get(i).containsKey("money6") && businessTableO1Base.get(i).get("money6") != null && !businessTableO1Base.get(i).get("money6").equals("NaN")) ? businessTableO1Base.get(i).get("money6").toString():null); cell.setCellStyle(cellStyle); break;
+                        case 11: cell.setCellValue(businessTableO1Base.get(i).containsKey("number7") && businessTableO1Base.get(i).get("number7")!= null ? businessTableO1Base.get(i).get("number7").toString() : null); cell.setCellStyle(cellStyle); break;
+                        case 12: cell.setCellValue((businessTableO1Base.get(i).containsKey("money7") && businessTableO1Base.get(i).get("money7") != null && !businessTableO1Base.get(i).get("money7").equals("NaN")) ? businessTableO1Base.get(i).get("money7").toString():null); cell.setCellStyle(cellStyle); break;
+                        case 13 : cell.setCellValue(businessTableO1Base.get(i).containsKey("number8") && businessTableO1Base.get(i).get("number8")!= null ? businessTableO1Base.get(i).get("number8").toString() : null); cell.setCellStyle(cellStyle); break;
+                        case 14 : cell.setCellValue((businessTableO1Base.get(i).containsKey("money8") && businessTableO1Base.get(i).get("money8") != null && !businessTableO1Base.get(i).get("money8").equals("NaN")) ? businessTableO1Base.get(i).get("money8").toString():null); cell.setCellStyle(cellStyle); break;
+                        case 15 : cell.setCellValue(businessTableO1Base.get(i).containsKey("number9") && businessTableO1Base.get(i).get("number9")!= null ? businessTableO1Base.get(i).get("number9").toString() : null); cell.setCellStyle(cellStyle); break;
+                        case 16 : cell.setCellValue((businessTableO1Base.get(i).containsKey("money9") && businessTableO1Base.get(i).get("money9") != null && !businessTableO1Base.get(i).get("money9").equals("NaN")) ? businessTableO1Base.get(i).get("money9").toString():null); cell.setCellStyle(cellStyle); break;
+                        case 17 : cell.setCellValue(businessTableO1Base.get(i).containsKey("number10") && businessTableO1Base.get(i).get("number10")!= null ? businessTableO1Base.get(i).get("number10").toString() : null); cell.setCellStyle(cellStyle); break;
+                        case 18 : cell.setCellValue((businessTableO1Base.get(i).containsKey("money10") && businessTableO1Base.get(i).get("money10") != null && !businessTableO1Base.get(i).get("money10").equals("NaN")) ? businessTableO1Base.get(i).get("money10").toString():null); cell.setCellStyle(cellStyle); break;
+                        case 19 : cell.setCellValue(businessTableO1Base.get(i).containsKey("number11") && businessTableO1Base.get(i).get("number11")!= null ? businessTableO1Base.get(i).get("number11").toString() : null); cell.setCellStyle(cellStyle); break;
+                        case 20 : cell.setCellValue((businessTableO1Base.get(i).containsKey("money11") && businessTableO1Base.get(i).get("money11") != null && !businessTableO1Base.get(i).get("money11").equals("NaN")) ? businessTableO1Base.get(i).get("money11").toString():null); cell.setCellStyle(cellStyle); break;
+                        case 21 : cell.setCellValue(businessTableO1Base.get(i).containsKey("number12") && businessTableO1Base.get(i).get("number12")!= null ? businessTableO1Base.get(i).get("number12").toString() : null); cell.setCellStyle(cellStyle); break;
+                        case 22 : cell.setCellValue((businessTableO1Base.get(i).containsKey("money12") && businessTableO1Base.get(i).get("money12") != null && !businessTableO1Base.get(i).get("money12").equals("NaN")) ? businessTableO1Base.get(i).get("money12").toString():null); cell.setCellStyle(cellStyle); break;
+                        case 23 : cell.setCellValue(businessTableO1Base.get(i).containsKey("number1") && businessTableO1Base.get(i).get("number1")!= null ? businessTableO1Base.get(i).get("number1").toString() : null); cell.setCellStyle(cellStyle); break;
+                        case 24 : cell.setCellValue((businessTableO1Base.get(i).containsKey("money1") && businessTableO1Base.get(i).get("money1") != null && !businessTableO1Base.get(i).get("money1").equals("NaN")) ? businessTableO1Base.get(i).get("money1").toString():null); cell.setCellStyle(cellStyle); break;
+                        case 25 : cell.setCellValue(businessTableO1Base.get(i).containsKey("number2") && businessTableO1Base.get(i).get("number2")!= null ? businessTableO1Base.get(i).get("number2").toString() : null); cell.setCellStyle(cellStyle); break;
+                        case 26 : cell.setCellValue((businessTableO1Base.get(i).containsKey("money2") && businessTableO1Base.get(i).get("money2") != null && !businessTableO1Base.get(i).get("money2").equals("NaN")) ? businessTableO1Base.get(i).get("money2").toString():null); cell.setCellStyle(cellStyle); break;
+                        case 27 : cell.setCellValue(businessTableO1Base.get(i).containsKey("number3") && businessTableO1Base.get(i).get("number3")!= null ? businessTableO1Base.get(i).get("number3").toString() : null); cell.setCellStyle(cellStyle); break;
+                        case 28 : cell.setCellValue((businessTableO1Base.get(i).containsKey("money3") && businessTableO1Base.get(i).get("money3") != null && !businessTableO1Base.get(i).get("money3").equals("NaN")) ? businessTableO1Base.get(i).get("money3").toString():null); cell.setCellStyle(cellStyle); break;
+                        case 29 : cell.setCellValue((businessTableO1Base.get(i).containsKey("numbertotal") && businessTableO1Base.get(i).get("numbertotal") != null && !businessTableO1Base.get(i).get("numbertotal").equals("NaN")) ? businessTableO1Base.get(i).get("numbertotal").toString():null); cell.setCellStyle(cellStyle); break;
+                        case 30 : cell.setCellValue((businessTableO1Base.get(i).containsKey("moneytotal") && businessTableO1Base.get(i).get("moneytotal") != null && !businessTableO1Base.get(i).get("moneytotal").equals("NaN")) ? businessTableO1Base.get(i).get("moneytotal").toString():null); cell.setCellStyle(cellStyle); break;
                     }
                 }
             }
