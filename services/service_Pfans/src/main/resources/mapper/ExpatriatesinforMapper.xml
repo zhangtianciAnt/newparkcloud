@@ -13,7 +13,7 @@
             and suppliername like CONCAT('%',#{suppliername},'%')
         </if>
         <if test="expname != null and expname != ''">
-            and expname like CONCAT('%',#{expname},'%')
+            and from_base64(expname) like CONCAT('%',#{expname},'%')
         </if>
         <if test="group_id != null and group_id != ''">
             and group_id = #{group_id}
