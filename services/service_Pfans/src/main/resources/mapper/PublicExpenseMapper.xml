@@ -66,10 +66,10 @@
             and user_id = #{user_id}
         </if>
         <if test="centerid != null and centerid != ''">
-            and centerid = #{centerid}
+            and center_id = #{centerid}
         </if>
         <if test="groupid != null and groupid != ''">
-            and groupid = #{groupid}
+            and group_id = #{groupid}
         </if>
         <if test="processingstatus != null and processingstatus != ''">
             and processingstatus = #{processingstatus}

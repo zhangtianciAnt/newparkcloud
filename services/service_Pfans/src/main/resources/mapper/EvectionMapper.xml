@@ -22,10 +22,10 @@
             and userid = #{userid}
         </if>
         <if test="centerid != null and centerid != ''">
-            and centerid = #{centerid}
+            and center_id = #{centerid}
         </if>
         <if test="groupid != null and groupid != ''">
-            and groupid = #{groupid}
+            and group_id = #{groupid}
         </if>
         <if test="type != null and type != ''">
             and type = #{type}
