@@ -254,8 +254,10 @@ public class ThemePlanServiceImpl implements ThemePlanService {
         personnelplan.setYears(year);
         List<PersonnelPlan> getPerResultList = personnelplanMapper.select(personnelplan);
         if(getPerResultList.size() > 0){
-            int[] inCompany = new int[12]; //本社员工  4~12~3月
-            int[] outCompany = new int[12]; //社外员工  4~12~3月
+//            解决受托委托theme，操作异常 ztc fr
+            double[] inCompany = new double[12]; //本社员工  4~12~3月
+            double[] outCompany = new double[12]; //社外员工  4~12~3月
+//            解决受托委托theme，操作异常 ztc to
             List<PersonnelPlan> inPersonnelPlan = getPerResultList.stream().filter(ins -> 0 == ins.getType()).collect(Collectors.toList());
             String[] getMoneyavg = inPersonnelPlan.get(0).getMoneyavg().split(",");
             resultMap.put("Moneyavg",getMoneyavg);
@@ -264,27 +266,37 @@ public class ThemePlanServiceImpl implements ThemePlanService {
             if(inPersonnelPlan.size() > 0){
                 if(inPersonnelPlan.get(0).getEmployed() != null){
                     inEmp = JSON.parseArray(inPersonnelPlan.get(0).getEmployed());
-                    Arrays.fill(inCompany, inEmp.size());
+//                    解决受托委托theme，操作异常 ztc fr
+                    Arrays.fill(inCompany, Double.valueOf(inEmp.size()));
+//                    解决受托委托theme，操作异常 ztc to
                 }
                 if(inPersonnelPlan.get(0).getNewentry() != null){
                     inEmpNew = JSON.parseArray(inPersonnelPlan.get(0).getNewentry());
                     List<BusinessInNewBase> businessInNewBaseList = JSONArray.parseObject(inEmpNew.toJSONString(), new TypeReference<List<BusinessInNewBase>>() {});
-                    int[] innewCompany = new int[12]; //本社员工  4~12~3月
-                    businessInNewBaseList.forEach (newPer -> {
+//                    解决受托委托theme，操作异常 ztc fr
+                    double[] innewCompany = new double[12]; //本社员工  4~12~3月
+                    for (BusinessInNewBase newPer : businessInNewBaseList) {
+//                        解决受托委托theme，操作异常 ztc to
                         int yearAnt = Integer.parseInt(newPer.getString("entermouth").substring(0, 4));
                         int monthAnt = Integer.parseInt(newPer.getString("entermouth").substring(5, 7));
-                        if(String.valueOf(yearAnt).equals(getPerResultList.get(0).getYears())){
+//                        解决受托委托theme，操作异常 ztc fr
+                        if (String.valueOf(yearAnt).equals(getPerResultList.get(0).getYears())) {
+//                            解决受托委托theme，操作异常 ztc to
                             if (monthAnt >= 4) {
+//                                解决受托委托theme，操作异常 ztc fr
+                                innewCompany[monthAnt - 4] = innewCompany[monthAnt - 4] + 1;
+                            } else {
+                                innewCompany[monthAnt + 8] = innewCompany[monthAnt + 8] + 1;
+                            }
+                        } else if (String.valueOf(yearAnt - 1).equals(getPerResultList.get(0).getYears())) {
+//                            解决受托委托theme，操作异常 ztc to
                             innewCompany[monthAnt - 4] = innewCompany[monthAnt - 4] + 1;
-                        } else {
-                            innewCompany[monthAnt + 8] = innewCompany[monthAnt + 8] + 1;
                         }
-                        }else if(String.valueOf(yearAnt - 1).equals(getPerResultList.get(0).getYears())){
-                            innewCompany[monthAnt - 4] = innewCompany[monthAnt - 4] + 1;
-                        }
-                    });
-                    int inAnt = 0;
-                    int[] insideResult = new int[12];
+                    }
+//                    解决受托委托theme，操作异常 ztc fr
+                    double inAnt = 0d;
+                    double[] insideResult = new double[12];
+//                    解决受托委托theme，操作异常 ztc to
                     for (int ins = 0; ins < innewCompany.length; ins++) {
                         inAnt = innewCompany[ins] + inAnt;
                         insideResult[ins] = inAnt;
@@ -293,7 +305,9 @@ public class ThemePlanServiceImpl implements ThemePlanService {
                         inCompany[i] = inCompany[i] + insideResult[i];
                     }
                 }
-                resultMap.put("inCompany",intArrToStringArr(inCompany));
+//                解决受托委托theme，操作异常 ztc fr
+                resultMap.put("inCompany",doubleArrToStringArr(inCompany));
+//                解决受托委托theme，操作异常 ztc to
             }
             JSONArray outEmp = new JSONArray();
             JSONArray outEmpNew = new JSONArray();
@@ -302,45 +316,53 @@ public class ThemePlanServiceImpl implements ThemePlanService {
                 if(outPersonnelPlan.get(0).getEmployed() != null){
                     outEmp = JSON.parseArray("[" + outPersonnelPlan.get(0).getEmployed() + "]");
                     List<BusinessOutBase> businessOutBase = JSONArray.parseObject(outEmp.toJSONString(), new TypeReference<List<BusinessOutBase>>() {});
-                    outCompany[0] = Integer.parseInt(businessOutBase.get(0).getString("april"));
-                    outCompany[1] = Integer.parseInt(businessOutBase.get(0).getString("may"));
-                    outCompany[2] = Integer.parseInt(businessOutBase.get(0).getString("june"));
-                    outCompany[3] = Integer.parseInt(businessOutBase.get(0).getString("july"));
-                    outCompany[4] = Integer.parseInt(businessOutBase.get(0).getString("august"));
-                    outCompany[5] = Integer.parseInt(businessOutBase.get(0).getString("september"));
-                    outCompany[6] = Integer.parseInt(businessOutBase.get(0).getString("october"));
-                    outCompany[7] = Integer.parseInt(businessOutBase.get(0).getString("november"));
-                    outCompany[8] = Integer.parseInt(businessOutBase.get(0).getString("december"));
-                    outCompany[9] = Integer.parseInt(businessOutBase.get(0).getString("january"));
-                    outCompany[10] = Integer.parseInt(businessOutBase.get(0).getString("february"));
-                    outCompany[11] = Integer.parseInt(businessOutBase.get(0).getString("march"));
+//                    解决受托委托theme，操作异常 ztc fr
+                    outCompany[0] = Double.parseDouble(businessOutBase.get(0).getString("april"));
+                    outCompany[1] = Double.parseDouble(businessOutBase.get(0).getString("may"));
+                    outCompany[2] = Double.parseDouble(businessOutBase.get(0).getString("june"));
+                    outCompany[3] = Double.parseDouble(businessOutBase.get(0).getString("july"));
+                    outCompany[4] = Double.parseDouble(businessOutBase.get(0).getString("august"));
+                    outCompany[5] = Double.parseDouble(businessOutBase.get(0).getString("september"));
+                    outCompany[6] = Double.parseDouble(businessOutBase.get(0).getString("october"));
+                    outCompany[7] = Double.parseDouble(businessOutBase.get(0).getString("november"));
+                    outCompany[8] = Double.parseDouble(businessOutBase.get(0).getString("december"));
+                    outCompany[9] = Double.parseDouble(businessOutBase.get(0).getString("january"));
+                    outCompany[10] = Double.parseDouble(businessOutBase.get(0).getString("february"));
+                    outCompany[11] = Double.parseDouble(businessOutBase.get(0).getString("march"));
+//                    解决受托委托theme，操作异常 ztc to
                 }
                 if(outPersonnelPlan.get(0).getNewentry() != null){
                     outEmpNew = JSON.parseArray("[" + outPersonnelPlan.get(0).getNewentry() + "]");
                     List<BusinessOutBase> businessOutNewBase = JSONArray.parseObject(outEmpNew.toJSONString(), new TypeReference<List<BusinessOutBase>>() {});
-                    outCompany[0] += Integer.parseInt(businessOutNewBase.get(0).getString("april"));
-                    outCompany[1] += Integer.parseInt(businessOutNewBase.get(0).getString("may"));
-                    outCompany[2] += Integer.parseInt(businessOutNewBase.get(0).getString("june"));
-                    outCompany[3] += Integer.parseInt(businessOutNewBase.get(0).getString("july"));
-                    outCompany[4] += Integer.parseInt(businessOutNewBase.get(0).getString("august"));
-                    outCompany[5] += Integer.parseInt(businessOutNewBase.get(0).getString("september"));
-                    outCompany[6] += Integer.parseInt(businessOutNewBase.get(0).getString("october"));
-                    outCompany[7] += Integer.parseInt(businessOutNewBase.get(0).getString("november"));
-                    outCompany[8] += Integer.parseInt(businessOutNewBase.get(0).getString("december"));
-                    outCompany[9] += Integer.parseInt(businessOutNewBase.get(0).getString("january"));
-                    outCompany[10] += Integer.parseInt(businessOutNewBase.get(0).getString("february"));
-                    outCompany[11] += Integer.parseInt(businessOutNewBase.get(0).getString("march"));
+//                    解决受托委托theme，操作异常 ztc fr
+                    outCompany[0] += Double.parseDouble(businessOutNewBase.get(0).getString("april"));
+                    outCompany[1] += Double.parseDouble(businessOutNewBase.get(0).getString("may"));
+                    outCompany[2] += Double.parseDouble(businessOutNewBase.get(0).getString("june"));
+                    outCompany[3] += Double.parseDouble(businessOutNewBase.get(0).getString("july"));
+                    outCompany[4] += Double.parseDouble(businessOutNewBase.get(0).getString("august"));
+                    outCompany[5] += Double.parseDouble(businessOutNewBase.get(0).getString("september"));
+                    outCompany[6] += Double.parseDouble(businessOutNewBase.get(0).getString("october"));
+                    outCompany[7] += Double.parseDouble(businessOutNewBase.get(0).getString("november"));
+                    outCompany[8] += Double.parseDouble(businessOutNewBase.get(0).getString("december"));
+                    outCompany[9] += Double.parseDouble(businessOutNewBase.get(0).getString("january"));
+                    outCompany[10] += Double.parseDouble(businessOutNewBase.get(0).getString("february"));
+                    outCompany[11] += Double.parseDouble(businessOutNewBase.get(0).getString("march"));
+//                    解决受托委托theme，操作异常 ztc to
                 }
-                resultMap.put("outCompany",intArrToStringArr(outCompany));
+//                解决受托委托theme，操作异常 ztc fr
+                resultMap.put("outCompany",doubleArrToStringArr(outCompany));
+//                解决受托委托theme，操作异常 ztc to
             }
         }
         return resultMap;
     }
 
-    public static String[] intArrToStringArr(int[] intArr) {
-        String[] strArr = new String[intArr.length];
-        for (int i = 0; i < intArr.length; i++) {
-            strArr[i] = intArr[i] + "";
+//    解决受托委托theme，操作异常 ztc fr
+    public static String[] doubleArrToStringArr(double[] douArr) {
+        String[] strArr = new String[douArr.length];
+        for (int i = 0; i < douArr.length; i++) {
+            strArr[i] = douArr[i] + "";
+//            解决受托委托theme，操作异常 ztc to
         }
         return strArr;
     }
