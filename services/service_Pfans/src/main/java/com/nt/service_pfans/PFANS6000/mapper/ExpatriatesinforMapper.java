@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS6000.mapper;
 
+import com.nt.dao_Pfans.PFANS1000.Evection;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
@@ -19,4 +20,10 @@ public interface ExpatriatesinforMapper extends MyMapper<Expatriatesinfor> {
     @Select(" SELECT * FROM expatriatesinfor WHERE NUMBER != '00000'")
     List<Expatriatesinfor> getOutList();
     //    dialog优化分页 ztc to
+
+    //region   add  ml  220112  检索  from
+    List<Expatriatesinfor> getSearch(Expatriatesinfor expatriatesinfor);
+    //endregion   add  ml  220112  检索  to
+
+
 }

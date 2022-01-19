@@ -4,6 +4,7 @@ import com.nt.dao_Pfans.PFANS1000.PublicExpense;
 import com.nt.dao_Pfans.PFANS1000.TotalCost;
 import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TotalCostVo;
+import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.utils.dao.TokenModel;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,5 +28,9 @@ public interface PublicExpenseService {
     PublicExpenseVo selectById(String publicexpenseid) throws Exception;
 
     Map<String, String> getworkfolwPurchaseData(PublicExpense publicExpense) throws Exception;
+
+    //region   add  ml  220112  检索  from
+    List<PublicExpense> getSearch(PublicExpense publicExpense) throws Exception;
+    //endregion   add  ml  220112  检索  to
 
 }

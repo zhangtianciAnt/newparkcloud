@@ -1,6 +1,7 @@
 package com.nt.service_pfans.PFANS1000;
 
 import com.nt.dao_Pfans.PFANS1000.Evection;
+import com.nt.dao_Pfans.PFANS1000.PublicExpense;
 import com.nt.dao_Pfans.PFANS1000.TravelCost;
 import com.nt.dao_Pfans.PFANS1000.Vo.EvectionVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TravelCostVo;
@@ -21,5 +22,9 @@ public interface EvectionService {
     void insertEvectionVo(EvectionVo evectionvo, TokenModel tokenModel)throws Exception;
 
     void updateEvectionVo(EvectionVo evectionvo, TokenModel tokenModel)throws Exception;
+
+    //region   add  ml  220112  检索  from
+    List<Evection> getSearch(Evection evection) throws Exception;
+    //endregion   add  ml  220112  检索  to
 
 }

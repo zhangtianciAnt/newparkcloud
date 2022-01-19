@@ -6,6 +6,7 @@ import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TotalCostVo;
+import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
 import com.nt.dao_Workflow.Workflowinstance;
@@ -865,5 +866,14 @@ public class Pfans1012Controller {
         return ApiResult.success(publicExpenseService.getworkfolwPurchaseData(publicExpense));
     }
     //采购业务数据流程查看详情
+
+    //region   add  ml  220112  检索  from
+    @RequestMapping(value = "/getSearch", method = {RequestMethod.POST})
+    public ApiResult getSearch(HttpServletRequest request,@RequestBody PublicExpense publicExpense) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        publicExpense.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(publicExpenseService.getSearch(publicExpense));
+    }
+    //endregion   add  ml  220112  检索  to
 
 }

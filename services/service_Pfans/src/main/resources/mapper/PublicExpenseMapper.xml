@@ -53,5 +53,35 @@
         publicexpense.jzmonth
     </select>
 
+    <select id="getSearch" parameterType="com.nt.dao_Pfans.PFANS1000.PublicExpense" resultType="com.nt.dao_Pfans.PFANS1000.PublicExpense">
+        SELECT
+        *
+        FROM
+        publicexpense
+        where status != '1'
+        <if test="invoiceno != null and invoiceno != ''">
+            and invoiceno like CONCAT('%',#{invoiceno},'%')
+        </if>
+        <if test="user_id != null and user_id != ''">
+            and user_id = #{user_id}
+        </if>
+        <if test="centerid != null and centerid != ''">
+            and centerid = #{centerid}
+        </if>
+        <if test="groupid != null and groupid != ''">
+            and groupid = #{groupid}
+        </if>
+        <if test="processingstatus != null and processingstatus != ''">
+            and processingstatus = #{processingstatus}
+        </if>
+        <if test="owners != null and owners.size() > 0 ">
+            and
+            owner in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
 
 </mapper>

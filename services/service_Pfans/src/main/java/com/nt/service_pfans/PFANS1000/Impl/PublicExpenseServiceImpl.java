@@ -1593,4 +1593,12 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
         }
         return getpurchaseMap;
     }
+
+    //region   add  ml  220112  检索  from
+    @Override
+    public List<PublicExpense> getSearch(PublicExpense publicExpense) throws Exception {
+        return publicExpenseMapper.getSearch(publicExpense);
+    }
+    //endregion   add  ml  220112  检索  to
+
 }
