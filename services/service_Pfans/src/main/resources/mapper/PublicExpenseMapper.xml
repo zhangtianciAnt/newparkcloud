@@ -55,7 +55,7 @@
 
     <select id="getSearch" parameterType="com.nt.dao_Pfans.PFANS1000.PublicExpense" resultType="com.nt.dao_Pfans.PFANS1000.PublicExpense">
         SELECT
-        *
+        *,center_id centerid,group_id groupid
         FROM
         publicexpense
         where status != '1'

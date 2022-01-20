@@ -11,7 +11,7 @@
 
     <select id="getSearch" parameterType="com.nt.dao_Pfans.PFANS1000.Evection" resultType="com.nt.dao_Pfans.PFANS1000.Evection">
         SELECT
-        *
+        *,center_id centerid,user_id userid,group_id groupid
         FROM
         evection
         where status != '1'
@@ -19,7 +19,7 @@
             and invoiceno like CONCAT('%',#{invoiceno},'%')
         </if>
         <if test="userid != null and userid != ''">
-            and userid = #{userid}
+            and user_id = #{userid}
         </if>
         <if test="centerid != null and centerid != ''">
             and center_id = #{centerid}
