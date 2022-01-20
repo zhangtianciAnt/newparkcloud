@@ -231,6 +231,11 @@ public class AbNormal extends BaseModel {
     private String parentsname;
 
     /**
+     * 本人是否是独生子女（父母照料假）1为是2为否
+     */
+    @Column(name = "ONLYCHILD")
+    private String onlychild;
+    /**
      * 年累计天数
      */
     @Transient
