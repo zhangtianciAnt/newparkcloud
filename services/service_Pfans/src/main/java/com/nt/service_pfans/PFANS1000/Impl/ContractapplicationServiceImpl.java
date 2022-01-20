@@ -10,6 +10,7 @@ import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ReportContractEnVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
+import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
 import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
@@ -27,8 +28,7 @@ import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
 import com.nt.service_pfans.PFANS4000.mapper.SealMapper;
-import com.nt.service_pfans.PFANS5000.mapper.ProjectContractMapper;
-import com.nt.service_pfans.PFANS5000.mapper.ProjectsystemMapper;
+import com.nt.service_pfans.PFANS5000.mapper.*;
 import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
 import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.service_pfans.PFANS8000.mapper.MonthlyRateMapper;
@@ -47,6 +47,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.util.StringUtil;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -60,7 +61,8 @@ import static com.nt.utils.MongoObject.CustmizeQuery;
 public class ContractapplicationServiceImpl implements ContractapplicationService {
     @Autowired
     private SupplierinforMapper supplierinforMapper;
-
+    @Autowired
+    private CompanyProjectsMapper companyprojectsMapper;
     @Autowired
     private PurchaseMapper purchaseMapper;
     @Autowired
@@ -118,6 +120,7 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     @Autowired
     private ProjectsystemMapper projectsystemMapper;
 
+
     //add-ws-7/22-禅道341任务
     @Override
     public List<Individual> getindividual(Individual individual) throws Exception {
@@ -125,6 +128,50 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     }
     //add-ws-7/22-禅道341任务
 
+    //  add  ml  211130  个别合同分页  from
+    @Override
+    public List<Individual> getindividualPage(Individual individual) throws Exception {
+        Contractapplication contractapplication = new Contractapplication();
+        contractapplication.setType("0");
+        List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
+        // add gbb 210909 受託契約列表添加【项目编号】 start
+        //查询合同关联的所有项目编号
+        List<Contractapplication> pjCodeList = contractapplicationMapper.getPjCode();
+        List<Map<String, String>> checkdata = new ArrayList<>();
+        for (Contractapplication con : coList) {
+            List<Contractapplication> newpjCodeList = pjCodeList.stream().filter(str -> (str.getContractnumber().equals(con.getContractnumber()))).collect(Collectors.toList());
+            if (newpjCodeList.size() > 0) {
+                //项目编号
+                String strProjectnumber = newpjCodeList.get(0).getProjectnumber();
+                con.setProjectnumber(strProjectnumber.substring(0, strProjectnumber.length() - 1));
+            }
+            if ("1".equals(con.getState()) || "有效".equals(con.getState())) {
+                Map<String, String> map = new HashMap<>();
+                map.put("contractnumber", con.getContractnumber());
+                checkdata.add(map);
+            }
+        }
+        List<Individual> individualList = individualmapper.select(individual);
+        List<Individual> indivList = new ArrayList<>();
+        for (Map<String, String> data : checkdata) {
+            for (Individual indiv : individualList) {
+                if (data.get("contractnumber").equals(indiv.getContractnumber())) {
+                    indivList.add(indiv);
+                }
+            }
+        }
+        List<Individual> indivLists = new ArrayList<>();
+        for (Individual individ : individualList) {
+            for (Individual indivi : indivList) {
+                if (indivi.getContractnumber().equals(individ.getContractnumber())) {
+                    indivLists.add(individ);
+                }
+            }
+        }
+        return indivLists;
+    }
+
+    //  add  ml  211130  个别合同分页  to
     @Override
     public ContractapplicationVo get(Contractapplication contractapplication) {
         ContractapplicationVo vo = new ContractapplicationVo();

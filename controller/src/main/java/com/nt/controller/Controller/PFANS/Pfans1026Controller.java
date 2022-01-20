@@ -57,6 +57,15 @@ public class Pfans1026Controller {
         return ApiResult.success(contractapplicationService.getindividual(individual));
     }
 
+    //  add  ml  211130  个别合同分页  from
+    @RequestMapping(value = "/getindividualPage", method = {RequestMethod.POST})
+    public ApiResult getindividualPage(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        Individual individual = new Individual();
+        individual.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(contractapplicationService.getindividualPage(individual));
+    }
+    //  add  ml  211130  个别合同分页  to
     @RequestMapping(value = "/generatesta", method = {RequestMethod.GET})
     public void generateJxls(String individual_id, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Map<String, Object> data = new HashMap<>();

@@ -11,6 +11,10 @@ public interface QuotationService {
 
     List<Quotation> get(Quotation quotation) throws Exception;
 
+    //  add  ml  211130  报价单分页  from
+    List<Quotation> getQuotation(Quotation quotation) throws Exception;
+    //  add  ml  211130  报价单分页  to
+
     public QuotationVo selectById(String quotationid) throws Exception;
 
     void update(QuotationVo quotationVo, TokenModel tokenModel) throws Exception;

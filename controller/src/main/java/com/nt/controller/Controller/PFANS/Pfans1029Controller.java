@@ -121,6 +121,16 @@ public class Pfans1029Controller {
 
     }
 
+    //  add  ml  211130  分页  from
+    @RequestMapping(value="/getPage",method = {RequestMethod.GET})
+    public ApiResult getPage(HttpServletRequest request)throws  Exception{
+        TokenModel tokenModel = tokenService.getToken(request);
+        Contract contract = new Contract();
+        contract.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(contractService.getPage(contract));
+    }
+    //  add  ml  211130  分页  to
+
     @RequestMapping(value = "/one",method={RequestMethod.POST})
     public ApiResult one(@RequestBody Contract contract, HttpServletRequest request) throws Exception {
         if (contract == null) {
