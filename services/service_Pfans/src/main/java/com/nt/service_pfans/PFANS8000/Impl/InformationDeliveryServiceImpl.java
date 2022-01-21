@@ -29,7 +29,9 @@ public class InformationDeliveryServiceImpl implements InformationDeliveryServic
 
 
     public List<InformationDelivery> getListType(InformationDelivery informationDelivery) throws Exception {
-        return informationDeliveryMapper.select(informationDelivery);
+//        return informationDeliveryMapper.select(informationDelivery);
+        //查询信息发布，而不是总经理博客
+        return informationDeliveryMapper.getListType();
     }
 
 

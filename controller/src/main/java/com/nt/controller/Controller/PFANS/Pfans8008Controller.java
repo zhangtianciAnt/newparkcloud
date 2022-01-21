@@ -2,6 +2,7 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS8000.InformationDelivery;
 import com.nt.service_pfans.PFANS8000.InformationDeliveryService;
+import com.nt.service_pfans.PFANS8000.mapper.InformationDeliveryMapper;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -22,6 +23,8 @@ public class Pfans8008Controller {
     private InformationDeliveryService informationService;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private InformationDeliveryMapper informationDeliveryMapper;
 
     @RequestMapping(value = "/get", method = {RequestMethod.GET})
     public ApiResult getInformation(HttpServletRequest request) throws Exception {
@@ -38,9 +41,6 @@ public class Pfans8008Controller {
         informationDelivery.setAvailablestate("0");
         return ApiResult.success(informationService.getListType(informationDelivery));
     }
-
-
-
 
 
     @RequestMapping(value = "/getone", method = {RequestMethod.GET})
@@ -71,6 +71,35 @@ public class Pfans8008Controller {
         TokenModel tokenModel = tokenService.getToken(request);
         informationService.updateInformation(informationDelivery, tokenModel);
         return ApiResult.success();
+    }
+
+    /**
+     * 主页博客查看更多获取数据
+     * @param request 请求
+     * @return {@link ApiResult}
+     * @throws Exception 异常
+     */
+    @RequestMapping(value = "/getListByManager", method = {RequestMethod.GET})
+    public ApiResult getListByManager(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        InformationDelivery informationDelivery=new InformationDelivery();
+        informationDelivery.setAvailablestate("0");
+        informationDelivery.setFiletype("RS004004");
+        return ApiResult.success(informationDeliveryMapper.select(informationDelivery));
+    }
+
+    /**
+     * 总经理博客一览
+     * @param request 请求
+     * @return {@link ApiResult}
+     * @throws Exception 异常
+     */
+    @RequestMapping(value = "/getByManager", method = {RequestMethod.GET})
+    public ApiResult getByManager(HttpServletRequest request) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        InformationDelivery informationDelivery=new InformationDelivery();
+        informationDelivery.setFiletype("RS004004");
+        return ApiResult.success(informationDeliveryMapper.select(informationDelivery));
     }
 
 }

@@ -14,8 +14,16 @@
 			<!--)-->
 		<!--</if>-->
 		and status != 1
+		and IFNULL(filetype,'') != 'RS004004'
 		order by createon desc
 	</select>
 
+	<select id="getListType" resultType="com.nt.dao_Pfans.PFANS8000.InformationDelivery">
+		select * from information
+		where
+		 	status != '1'
+			and availablestate = '0'
+			and IFNULL(filetype,'') != 'RS004004'
+	</select>
 
 </mapper>

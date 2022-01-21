@@ -8,4 +8,7 @@ import java.util.List;
 
 public interface InformationDeliveryMapper extends MyMapper<InformationDelivery> {
       List<InformationDelivery> getInformation(@Param("owners") List<String> owners);
+
+      //获取有效状态的数据，信息发布
+      List<InformationDelivery> getListType();
 }
