@@ -15,7 +15,7 @@
                 and businesstype = #{businesstype}
             </if>
             <if test="region != null and region != ''">
-                and region = #{region}
+                and (region like CONCAT('%',#{region},'%')) or (city like CONCAT('%',#{region},'%'))
             </if>
             <if test="city != null and city != ''">
                 and city = #{city}

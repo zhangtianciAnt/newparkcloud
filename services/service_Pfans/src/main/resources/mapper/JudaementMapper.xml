@@ -47,7 +47,7 @@ select JUDGEMENT_ID as judgementid,
 
        <select id="getJudgementSearch" parameterType="com.nt.dao_Pfans.PFANS1000.Judgement" resultType="com.nt.dao_Pfans.PFANS1000.Judgement">
               SELECT
-              *
+              *,judgement_id judgementid
               FROM
               judgement
               where status != '1'

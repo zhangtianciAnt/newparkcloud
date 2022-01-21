@@ -26,9 +26,6 @@
                      <if test="username != null and username != ''">
                             and username = #{username}
                      </if>
-                     <if test="application_date != null">
-                            and application_date = DATE_FORMAT(#{application_date},'%Y-%m-%d')
-                     </if>
                      <if test="owners != null and owners.size() > 0 ">
                             and
                             owner in
