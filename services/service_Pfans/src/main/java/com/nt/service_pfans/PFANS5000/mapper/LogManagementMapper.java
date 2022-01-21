@@ -59,4 +59,8 @@ public interface LogManagementMapper extends MyMapper<LogManagement> {
     @Select("select cast(sum(TIME_START)/my_WorkingDays(DATE_FORMAT(LOG_DATE, '%Y%m')) AS decimal(6,2)) workrate, CREATEBY as USERID from logmanagement where DATE_FORMAT( LOG_DATE, '%Y-%m' ) = #{logdate} and project_id = #{project_id} GROUP BY CREATEBY")
     List<DepartLogalVo> getLogInfo(@Param("project_id") String project_id, @Param("logdate") String nowDate);
 
+    //region zjz add 22/1/12 日志管理添加检索条件 from
+    List<LogManagement> conditionsForRetrieval(LogManagement conditon);
+    //region zjz add 22/1/12 日志管理添加检索条件 to
+
 }

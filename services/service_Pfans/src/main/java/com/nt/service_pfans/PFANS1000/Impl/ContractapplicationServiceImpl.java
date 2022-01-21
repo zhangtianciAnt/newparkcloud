@@ -131,7 +131,9 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
     public ContractapplicationVo get(Contractapplication contractapplication) {
         ContractapplicationVo vo = new ContractapplicationVo();
         //契约番号申请
-        List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
+//添加筛选条件 ztc fr
+        List<Contractapplication> coList = contractapplicationMapper.selectList(contractapplication);
+//        添加筛选条件 ztc to
         // add gbb 210909 受託契約列表添加【项目编号】 start
         //查询合同关联的所有项目编号
         List<Contractapplication> pjCodeList = contractapplicationMapper.getPjCode();
@@ -716,7 +718,18 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
                     arte.setAwardreunite_id(UUID.randomUUID().toString());
                     arte.setClaimtype(compound.getClaimtype());
                     OrgTree orginfo = orgtreeService.getOrgInfo(newOrgInfo, compound.getGroup_id());
-                    arte.setDepartment(orginfo.getCompanyname());
+                    if(orginfo != null){
+                        arte.setDepartment(orginfo.getCompanyname());
+                        //复合合同决裁书增加 有效部门字段 1122ztc fr
+                        if(orginfo.getEffective()){
+                            arte.setRealdepartment(orginfo.get_id());
+                        }else{
+                            if(("2").equals(orginfo.getType())){
+                                arte.setRealdepartment(orginfo.getParent_id());
+                            }
+                        }
+                        //复合合同决裁书增加 有效部门字段 1122ztc to
+                    }
                     arte.setDistriamount(compound.getContractrequestamount());
                     awardReuniteMapper.insert(arte);
                 }

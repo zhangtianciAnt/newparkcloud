@@ -1,14 +1,11 @@
 package com.nt.service_pfans.PFANS2000.Impl;
 
-import ch.qos.logback.core.joran.spi.ElementSelector;
 import cn.hutool.core.convert.Convert;
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Pfans.PFANS2000.*;
 import com.nt.dao_Pfans.PFANS2000.Vo.restViewVo;
-import com.nt.dao_Pfans.PFANS8000.WorkingDay;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
 import com.nt.service_pfans.PFANS2000.AnnualLeaveService;
 import com.nt.service_pfans.PFANS2000.PunchcardRecordService;
@@ -17,7 +14,6 @@ import com.nt.service_pfans.PFANS8000.mapper.WorkingDayMapper;
 import com.nt.utils.AuthConstants;
 import com.nt.utils.LogicalException;
 import com.nt.utils.dao.TokenModel;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -27,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.util.StringUtil;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -62,8 +57,10 @@ public class AbNormalServiceImpl implements AbNormalService {
     @Override
     public List<AbNormal> list(AbNormal abNormal) throws Exception {
         //ADD_FJL_0904  获取status不为0的数据 status = 0 删除
-        List<AbNormal> abL = abNormalMapper.select(abNormal);
-        abL = abL.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
+//        考勤异常申请添加筛选条件 ztc fr
+        List<AbNormal> abL = abNormalMapper.selectList(abNormal);
+        //abL = abL.stream().filter(item -> (!item.getStatus().equals("1"))).collect(Collectors.toList());
+//        考勤异常申请添加筛选条件 ztc to
         return abL;
         //ADD_FJL_0904  获取status不为0的数据 status = 0 删除
     }

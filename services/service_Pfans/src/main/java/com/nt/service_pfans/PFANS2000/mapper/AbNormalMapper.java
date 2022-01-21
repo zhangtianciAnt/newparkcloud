@@ -8,9 +8,7 @@ import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 
 public interface AbNormalMapper extends MyMapper<AbNormal> {
@@ -45,6 +43,9 @@ public interface AbNormalMapper extends MyMapper<AbNormal> {
     Double selectAttenSumSick(Attendance attendance);
     List<AbNormal> selectAttenSumSick1(Attendance attendance);
     List<AbNormal> selectAttenSumSick2(Attendance attendance);
+//    考勤异常申请添加筛选条件 ztc fr
+    List<AbNormal> selectList(AbNormal abNormal);
+//    考勤异常申请添加筛选条件 ztc to
 
     //region add scc 根据开始时间或实际开始时间判断一个月或一年的育儿假申请次数 from
     Double selectAttenSumParent(AbNormal abNormal);

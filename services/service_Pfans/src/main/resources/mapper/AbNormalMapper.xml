@@ -334,6 +334,74 @@ and a.user_id = #{userid}
         where status >=4 and user_id = #{user_id}
         and ERROR_TYPE='PR013009'
     </select>
+<!--    考勤异常申请添加筛选条件 ztc fr-->
+    <select id="selectList" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="com.nt.dao_Pfans.PFANS2000.AbNormal">
+        SELECT
+            ABNORMAL_ID AS abnormalid,
+            CENTER_ID AS centerid,
+            GROUP_ID AS groupid,
+            TEAM_ID AS teamid,
+            USER_ID AS user_id,
+            APPLICATION_DATE AS applicationdate,
+            ERROR_TYPE AS errortype,
+            OCCURRENCE_DATE AS occurrencedate,
+            FINISHED_DATE AS finisheddate,
+            PERIOD_START AS periodstart,
+            PERIOD_END AS periodend,
+            LENGTHTIME AS lengthtime,
+            CAUSE AS cause,
+            hospital AS hospital,
+            edate AS edate,
+            relation AS relation,
+            enclosureexplain AS enclosureexplain,
+            UPLOADFILE AS uploadfile,
+            RECOGNITIONSTATE AS recognitionstate,
+            RESTDATE AS restdate,
+            RE_OCCURRENCE_DATE AS reoccurrencedate,
+            RE_FINISHED_DATE AS refinisheddate,
+            RE_PERIOD_START AS reperiodstart,
+            RE_PERIOD_END AS reperiodend,
+            RE_LENGTHTIME AS relengthtime,
+            VACATIONTYPE AS vacationtype,
+            REVACATIONTYPE AS revacationtype,
+            WORKTIME AS worktime,
+            RESTDIFF AS restdiff,
+            CREATEBY,
+            CREATEON,
+            MODIFYBY,
+            UPLOADFILE,
+            RECOGNITIONSTATE,
+            MODIFYON,
+            TENANTID,
+            OWNER,
+            STATUS
+        FROM
+            abnormal
+        WHERE
+                STATUS != '1'
+            <if test="occurrencedate != null and finisheddate != null">
+                AND OCCURRENCE_DATE &lt;= DATE_FORMAT(#{finisheddate},'%Y-%m-%d') AND FINISHED_DATE &gt;= DATE_FORMAT(#{occurrencedate},'%Y-%m-%d')
+            </if>
+            <if test="user_id != null and user_id != ''">
+                AND USER_ID = #{user_id}
+            </if>
+            <if test="centerid != null and centerid != ''">
+                AND CENTER_ID = #{centerid}
+            </if>
+            <if test="groupid != null and groupid != ''">
+                AND GROUP_ID = #{groupid}
+            </if>
+            <if test="errortype != null and errortype != ''">
+                AND ERROR_TYPE = #{errortype}
+            </if>
+            <if test="owners != null and owners.size() > 0 ">
+                AND OWNER in
+                <foreach item="item" index="index" collection="owners" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+    </select>
+<!--    考勤异常申请添加筛选条件 ztc to-->
 
     <select id="selectAttenSumParent" parameterType="com.nt.dao_Pfans.PFANS2000.AbNormal" resultType="java.lang.Double">
         select

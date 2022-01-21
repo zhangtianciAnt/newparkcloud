@@ -1,10 +1,18 @@
 package com.nt.controller.Controller.PFANS;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
+import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
+import com.nt.dao_Pfans.PFANS2000.Vo.PersonalCostExpVo;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
+import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS5000.StageInformation;
+import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsReportCheckVo;
 import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo;
+import com.nt.dao_Pfans.PFANS5000.Vo.CompanyProjectsVo2;
 import com.nt.dao_Pfans.PFANS5000.Vo.LogmanagementStatusVo;
 import com.nt.dao_Pfans.PFANS6000.Customerinfor;
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
@@ -23,6 +31,18 @@ import com.nt.utils.MsgConstants;
 import com.nt.utils.RequestUtils;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
+import jxl.Sheet;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFCell;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Isolation;
@@ -32,9 +52,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.*;
 import java.sql.Array;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 @RequestMapping("/companyprojects")
@@ -365,11 +386,12 @@ public class Pfans5001Controller {
         companyProjects.setOwner(tokenModel.getUserId());
         return ApiResult.success(companyProjectsService.getSiteList2(companyProjects));
     }
-
-    @RequestMapping(value="/getSiteList4", method={RequestMethod.GET})
-    public ApiResult getSiteList4(HttpServletRequest request) throws Exception {
+//    PJ起案 现场管理添加筛选条件 ztc fr
+    @RequestMapping(value = "/getSiteList4", method = { RequestMethod.POST })
+    public ApiResult getSiteList4(@RequestBody CompanyProjectsVo2 companyProjects, HttpServletRequest request) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
-        CompanyProjects companyProjects = new CompanyProjects();
+//        CompanyProjects companyProjects = new CompanyProjects();
+//        PJ起案 现场管理添加筛选条件 ztc to
         companyProjects.setOwners(tokenModel.getOwnerList());
         companyProjects.setOwner(tokenModel.getUserId());
         return ApiResult.success(companyProjectsService.getSiteList3(companyProjects));

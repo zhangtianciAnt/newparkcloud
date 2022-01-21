@@ -28,8 +28,9 @@ public class PetitionServiceImpl implements PetitionService {
 
     @Override
     public List<Petition> get(Petition petition) throws Exception {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        List<Petition> petitionlist = petitionMapper.select(petition);
+//        添加筛选条件 ztc fr
+        List<Petition> petitionlist = petitionMapper.selectList(petition);
+//        添加筛选条件 ztc to
         if (petitionlist.size() > 0) {
             petitionlist = petitionlist.stream().sorted(Comparator.comparing(Petition::getCreateon).reversed()).collect(Collectors.toList());
         }
