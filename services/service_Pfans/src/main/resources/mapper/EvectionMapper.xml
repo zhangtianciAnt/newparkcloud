@@ -11,7 +11,7 @@
 
     <select id="getSearch" parameterType="com.nt.dao_Pfans.PFANS1000.Evection" resultType="com.nt.dao_Pfans.PFANS1000.Evection">
         SELECT
-        *,center_id centerid,user_id userid,group_id groupid
+        *,center_id centerid,user_id userid,group_id groupid,evection_id evectionid,team_id teamid
         FROM
         evection
         where status != '1'

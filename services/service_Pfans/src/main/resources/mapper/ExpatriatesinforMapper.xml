@@ -18,17 +18,20 @@
         <if test="group_id != null and group_id != ''">
             and group_id = #{group_id}
         </if>
+        <if test="operationform != null and operationform != ''">
+            and operationform = #{operationform}
+        </if>
         <if test="number != null and number != ''">
             and number like CONCAT('%',#{number},'%')
         </if>
         <if test="admissiontime != null">
-            and admissiontime = DATE_FORMAT(#{admissiontime},'%Y-%m-%d')
+            and admissiontime like  CONCAT( '%', ( DATE_FORMAT(#{admissiontime},'%Y-%m') ), '%' )
         </if>
         <if test="interviewdep != null and interviewdep != ''">
             and interviewdep = #{interviewdep}
         </if>
-        <if test="interview_date != null">
-            and interview_date = DATE_FORMAT(#{interview_date},'%Y-%m-%d')
+        <if test="whetherentry != null and whetherentry != ''">
+            and whetherentry = #{whetherentry}
         </if>
         <if test="owners != null and owners.size() > 0 ">
             and
