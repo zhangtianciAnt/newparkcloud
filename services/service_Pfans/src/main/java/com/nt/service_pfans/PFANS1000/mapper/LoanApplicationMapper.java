@@ -9,4 +9,8 @@ public interface LoanApplicationMapper  extends MyMapper<LoanApplication> {
     List<LoanApplication> getLoapp();
 
     Integer getLoappCount(String createon);
+
+    //region   add  ml  220112  检索  from
+    List<LoanApplication> getLoanapplicationSearch(LoanApplication loanapplication);
+    //endregion   add  ml  220112  检索  to
 }

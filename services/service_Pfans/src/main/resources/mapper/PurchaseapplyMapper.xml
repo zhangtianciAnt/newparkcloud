@@ -4,4 +4,32 @@
 	<select id="selectPurchaseApply" resultType="com.nt.dao_Pfans.PFANS1000.PurchaseApply">
 select * from purchaseapply where `STATUS` = '4' ORDER BY CREATEON DESC
 	</select>
+
+	<select id="getpurchaseApplySearch" parameterType="com.nt.dao_Pfans.PFANS1000.PurchaseApply" resultType="com.nt.dao_Pfans.PFANS1000.PurchaseApply">
+		SELECT
+		*
+		FROM
+		purchaseapply
+		where status != '1'
+			<if test="purchasenumbers != null and purchasenumbers != ''">
+				and purchasenumbers like CONCAT('%',#{purchasenumbers},'%')
+			</if>
+			<if test="user_id != null and user_id != ''">
+				and user_id = #{user_id}
+			</if>
+			<if test="center_id != null and center_id != ''">
+				and center_id = #{center_id}
+			</if>
+			<if test="group_id != null and group_id != ''">
+				and group_id = #{group_id}
+			</if>
+			<if test="owners != null and owners.size() > 0 ">
+				and
+				owner in
+				<foreach item="item" index="index" collection="owners"
+						 open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+	</select>
 </mapper>

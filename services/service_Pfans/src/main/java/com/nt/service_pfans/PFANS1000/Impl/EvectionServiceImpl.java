@@ -1151,4 +1151,11 @@ public class EvectionServiceImpl implements EvectionService {
         }
     }
 
+    //region   add  ml  220112  检索  from
+    @Override
+    public List<Evection> getSearch(Evection evection) throws Exception {
+        return evectionMapper.getSearch(evection);
+    }
+    //endregion   add  ml  220112  检索  to
+
 }

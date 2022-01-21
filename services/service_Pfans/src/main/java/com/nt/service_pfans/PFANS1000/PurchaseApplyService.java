@@ -24,4 +24,8 @@ public interface PurchaseApplyService {
     //region scc add 10/28 千元以下费用决裁逻辑删除 from
     void purdelete(PurchaseApply purchaseApply,TokenModel tokenModel) throws Exception;
     //endregion scc add 10/28 千元以下费用决裁逻辑删除 to
+
+    //region   add  ml  220112  检索  from
+    List<PurchaseApply> getpurchaseApplySearch(PurchaseApply purchaseApply) throws Exception;
+    //endregion   add  ml  220112  检索  to
 }

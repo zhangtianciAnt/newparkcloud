@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface PurchaseApplyMapper extends MyMapper<PurchaseApply> {
     List<PurchaseApply> selectPurchaseApply();
+
+    //region   add  ml  220112  检索  from
+    List<PurchaseApply> getpurchaseApplySearch(PurchaseApply purchaseApply);
+    //endregion   add  ml  220112  检索  to
 }

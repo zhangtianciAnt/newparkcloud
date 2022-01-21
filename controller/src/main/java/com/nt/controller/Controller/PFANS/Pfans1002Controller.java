@@ -134,4 +134,13 @@ public class Pfans1002Controller {
 
     }
 
+    //region   add  ml  220112  检索  from
+    @RequestMapping(value = "/getBusinessSearch", method = {RequestMethod.POST})
+    public ApiResult list(HttpServletRequest request,@RequestBody Business business) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        business.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(businessService.getBusinessSearch(business));
+    }
+    //endregion   add  ml  220112  检索  to
+
 }

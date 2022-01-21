@@ -32,4 +32,9 @@ public interface ExpatriatesinforService {
     void crAccount(List<Expatriatesinfor> expatriatesinfor, TokenModel tokenModel ) throws Exception;
 
     void crAccount2(List<Expatriatesinfor> expatriatesinfor, TokenModel tokenModel ) throws Exception;
+
+    //region   add  ml  220112  检索  from
+    List<Expatriatesinfor> getSearch(Expatriatesinfor expatriatesinfor) throws Exception;
+    //endregion   add  ml  220112  检索  to
+
 }

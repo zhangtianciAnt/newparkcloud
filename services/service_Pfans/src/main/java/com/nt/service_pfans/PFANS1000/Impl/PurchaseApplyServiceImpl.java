@@ -183,4 +183,11 @@ public class PurchaseApplyServiceImpl implements PurchaseApplyService {
             businessplanService.upRulingInfo(purchaseApply.getRulingid(), purchaseApply.getSummoney(), tokenModel);
         }
     }
+
+    //region   add  ml  220112  检索  from
+    @Override
+    public List<PurchaseApply> getpurchaseApplySearch(PurchaseApply purchaseApply) throws Exception {
+        return purchaseApplyMapper.getpurchaseApplySearch(purchaseApply);
+    }
+    //endregion   add  ml  220112  检索  to
 }

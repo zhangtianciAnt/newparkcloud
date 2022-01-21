@@ -19,4 +19,10 @@ public interface ExpatriatesinforMapper extends MyMapper<Expatriatesinfor> {
     @Select(" SELECT * FROM expatriatesinfor WHERE NUMBER != '00000'")
     List<Expatriatesinfor> getOutList();
     //    dialog优化分页 ztc to
+
+    //region   add  ml  220112  检索  from
+    List<Expatriatesinfor> getSearch(Expatriatesinfor expatriatesinfor);
+    //endregion   add  ml  220112  检索  to
+
+
 }

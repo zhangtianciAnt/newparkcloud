@@ -149,4 +149,14 @@ public class Pfans6004Controller {
             return ApiResult.fail("操作失败！");
         }
     }
+
+    //region   add  ml  220112  检索  from
+    @RequestMapping(value = "/getSearch", method = {RequestMethod.POST})
+    public ApiResult getSearch(HttpServletRequest request,@RequestBody Expatriatesinfor expatriatesinfor) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        expatriatesinfor.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(expatriatesinforService.getSearch(expatriatesinfor));
+    }
+    //endregion   add  ml  220112  检索  to
+
 }

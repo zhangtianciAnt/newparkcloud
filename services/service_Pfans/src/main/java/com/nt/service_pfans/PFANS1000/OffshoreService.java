@@ -14,4 +14,8 @@ public interface OffshoreService {
     public void insert(Offshore offshore, TokenModel tokenModel)throws  Exception;
 
     public void updateOffshore(Offshore offshore, TokenModel tokenModel)throws  Exception;
+
+    //region   add  ml  220112  检索  from
+    List<Offshore> getOffshoreSearch(Offshore offshore) throws Exception;
+    //endregion   add  ml  220112  检索  to
 }

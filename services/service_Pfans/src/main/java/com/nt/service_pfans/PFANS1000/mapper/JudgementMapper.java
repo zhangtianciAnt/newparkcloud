@@ -13,4 +13,8 @@ public interface JudgementMapper extends MyMapper<Judgement>{
 
     @Select("select judgnumbers,money,status,judgement_id AS judgementid from judgement where JUDGNUMBERS like  CONCAT('%',#{judgnumbers},'%')")
     List<Judgement> judgementAnt(@Param("judgnumbers") String judgnumbers);
+
+    //region   add  ml  220112  检索  from
+    List<Judgement> getJudgementSearch(Judgement judgement);
+    //endregion   add  ml  220112  检索  to
 }
