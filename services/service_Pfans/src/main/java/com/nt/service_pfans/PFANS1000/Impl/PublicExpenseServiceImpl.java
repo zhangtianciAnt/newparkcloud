@@ -1503,19 +1503,21 @@ public class PublicExpenseServiceImpl implements PublicExpenseService {
                         Award award = new Award();
                         award.setAward_id(aware);
                         List<Award> awardList = awardMapper.select(award);
-                        if(awardList.size() > 0){
-                            String awrStr[] = awardList.get(0).getStatuspublic().split(",");
-                            Contractnumbercount contnub = new Contractnumbercount();
-                            contnub.setContractnumber(awardList.get(0).getContractnumber());
-                            List<Contractnumbercount> cnbList = contractnumbercountMapper.select(contnub);
-                            if(awrStr.length == cnbList.size()){
-                                AwardDetail awardDetail = new AwardDetail();
-                                awardDetail.setAward_id(aware);
-                                List<AwardDetail> awardDetails = awardDetailMapper.select(awardDetail);
-                                if(awardDetails.size() > 0){
-                                    for(AwardDetail aDetail : awardDetails){
-                                        if(!com.mysql.jdbc.StringUtils.isNullOrEmpty(aDetail.getRulingid())){
-                                            businessplanService.cgTpReRulingInfo(aDetail.getRulingid(),aDetail.getAwardmoney(),tokenModel);
+                        if(awardList.size() > 0) {
+                            if(awardList.get(0).getStatuspublic() != null){
+                                String awrStr[] = awardList.get(0).getStatuspublic().split(",");
+                                Contractnumbercount contnub = new Contractnumbercount();
+                                contnub.setContractnumber(awardList.get(0).getContractnumber());
+                                List<Contractnumbercount> cnbList = contractnumbercountMapper.select(contnub);
+                                if (awrStr.length == cnbList.size()) {
+                                    AwardDetail awardDetail = new AwardDetail();
+                                    awardDetail.setAward_id(aware);
+                                    List<AwardDetail> awardDetails = awardDetailMapper.select(awardDetail);
+                                    if (awardDetails.size() > 0) {
+                                        for (AwardDetail aDetail : awardDetails) {
+                                            if (!com.mysql.jdbc.StringUtils.isNullOrEmpty(aDetail.getRulingid())) {
+                                                businessplanService.cgTpReRulingInfo(aDetail.getRulingid(), aDetail.getAwardmoney(), tokenModel);
+                                            }
                                         }
                                     }
                                 }
