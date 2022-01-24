@@ -439,7 +439,13 @@ union
         <if test='inOrout == "0" and createby != null and createby != ""'>
             AND CREATEBY = #{createby}
         </if>
-        <if test='inOrout == "1" and createByList.size() > 0'>
+        <if test='inOrout == "0"'>
+            AND TENANTID is NULL
+        </if>
+        <if test='inOrout == "1"'>
+            AND TENANTID is not NULL
+        </if>
+        <if test='inOrout == "1" and createByList != null and createByList.size() > 0'>
             AND CREATEBY in
             <foreach item="item" index="index" collection="createByList" open="(" separator="," close=")">
                 #{item}
