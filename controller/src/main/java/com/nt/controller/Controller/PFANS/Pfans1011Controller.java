@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/offshore")
@@ -68,7 +71,9 @@ public class Pfans1011Controller {
     public ApiResult list(HttpServletRequest request,@RequestBody Offshore offshore) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         offshore.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(offshoreService.getOffshoreSearch(offshore));
+        List<Offshore> resultList = offshoreService.getOffshoreSearch(offshore)
+            .stream().sorted(Comparator.comparing(Offshore::getCreateon).reversed()).collect(Collectors.toList());
+        return ApiResult.success(resultList);
     }
     //endregion   add  ml  220112  检索  to
 }

@@ -1,6 +1,5 @@
 package com.nt.controller.Controller.PFANS;
 
-import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Napalm;
 import com.nt.service_Org.DictionaryService;
@@ -19,10 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/napalm")
@@ -41,7 +38,9 @@ public class pfans1031Controller {
     public ApiResult get(@RequestBody Napalm napalm, HttpServletRequest request)throws  Exception{
         TokenModel tokenModel = tokenService.getToken(request);
         napalm.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(napalmService.get(napalm));
+        List<Napalm> resultList = napalmService.get(napalm)
+                .stream().sorted(Comparator.comparing(Napalm::getCreateon).reversed()).collect(Collectors.toList());
+        return ApiResult.success(resultList);
     }
 //    添加筛选条件 ztc to
 

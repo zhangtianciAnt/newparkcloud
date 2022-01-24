@@ -1,8 +1,6 @@
 package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS6000.Expatriatesinfor;
-import com.nt.dao_Pfans.PFANS6000.ExpatriatesinforDetail;
-import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
 import com.nt.service_pfans.PFANS6000.ExpatriatesinforService;
 import com.nt.service_pfans.PFANS6000.SupplierinforService;
 import com.nt.utils.*;
@@ -13,9 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/expatriatesinfor")
@@ -155,7 +155,9 @@ public class Pfans6004Controller {
     public ApiResult getSearch(HttpServletRequest request,@RequestBody Expatriatesinfor expatriatesinfor) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         expatriatesinfor.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(expatriatesinforService.getSearch(expatriatesinfor));
+        List<Expatriatesinfor> resultList = expatriatesinforService.getSearch(expatriatesinfor)
+                .stream().sorted(Comparator.comparing(Expatriatesinfor::getCreateon).reversed()).collect(Collectors.toList());
+        return ApiResult.success(resultList);
     }
     //endregion   add  ml  220112  检索  to
 
