@@ -723,4 +723,14 @@ public class Pfans1013Controller {
         }
         return ApiResult.success(evectionList);
     }
+
+    //region   add  ml  220112  检索  from
+    @RequestMapping(value = "/getSearch", method = {RequestMethod.POST})
+    public ApiResult getSearch(HttpServletRequest request,@RequestBody Evection evection) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        evection.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(evectionService.getSearch(evection));
+    }
+    //endregion   add  ml  220112  检索  to
+
 }

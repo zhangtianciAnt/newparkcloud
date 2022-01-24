@@ -1,21 +1,18 @@
 package com.nt.controller.Controller.PFANS;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.StrUtil;
 import com.nt.dao_Pfans.PFANS2000.AbNormal;
-import com.nt.dao_Pfans.PFANS2000.Attendance;
 import com.nt.service_pfans.PFANS2000.AbNormalService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @RestController
 @RequestMapping("/abNormal")
@@ -29,50 +26,52 @@ public class Pfans2016Controller {
 
     @RequestMapping(value = "/list", method = {RequestMethod.POST})
     public ApiResult list(@RequestBody AbNormal ab, HttpServletRequest request) throws Exception {
-        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
-        List<AbNormal> abnormallist = new ArrayList<>();
+//        SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+//        考勤异常申请添加筛选条件 ztc fr
+//        List<AbNormal> abnormallist = new ArrayList<>();
         TokenModel tokenModel = tokenService.getToken(request);
-        AbNormal abNormal = new AbNormal();
-        abNormal.setOwners(tokenModel.getOwnerList());
-        List<AbNormal> AbNormalList = abNormalService.list(abNormal);
+//        AbNormal abNormal = new AbNormal();
+        ab.setOwners(tokenModel.getOwnerList());
+        List<AbNormal> abnormallist = abNormalService.list(ab);
         //add-ws-9/29-禅道任务547
-        for (AbNormal list : AbNormalList) {
-            if (Integer.valueOf(list.getStatus()) > 4) {
-                list.setOccurrencedate(list.getReoccurrencedate());
-                list.setFinisheddate(list.getRefinisheddate());
-            }
-            //数开<=条结 && 数结>=条开
-            //1.数开<=条开  && 数结<=条结
-            //2.数开<=条开  && 数结>=条结
-            //3.数开>=条开  && 数结>=条结
-            //4.数开>=条开  && 数结<=条结
-            if(Integer.valueOf(sf.format(list.getOccurrencedate())) <= Integer.valueOf(sf.format(ab.getFinisheddate())) && Integer.valueOf(sf.format(list.getFinisheddate())) >= Integer.valueOf(sf.format(ab.getOccurrencedate())))
-            {
-                if(Integer.valueOf(sf.format(list.getOccurrencedate())) <= Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate())))
-                {
-                    abnormallist.add(list);
-                }
-                else if(Integer.valueOf(sf.format(list.getOccurrencedate())) <= Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) >= Integer.valueOf(sf.format(ab.getFinisheddate())))
-                {
-                    abnormallist.add(list);
-                }
-                else if(Integer.valueOf(sf.format(list.getOccurrencedate())) >= Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) >= Integer.valueOf(sf.format(ab.getFinisheddate())))
-                {
-                    abnormallist.add(list);
-                }
-                else if(Integer.valueOf(sf.format(list.getOccurrencedate())) >= Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate())))
-                {
-                    abnormallist.add(list);
-                }
-            }
-//            if (Integer.valueOf(sf.format(ab.getOccurrencedate())) <= Integer.valueOf(sf.format(list.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate()))) {
-//                abnormallist.add(list);
-//            } else if (Integer.valueOf(sf.format(ab.getOccurrencedate())) <= Integer.valueOf(sf.format(list.getOccurrencedate())) && Integer.valueOf(sf.format(ab.getFinisheddate())) > Integer.valueOf(sf.format(list.getOccurrencedate())) && Integer.valueOf(sf.format(ab.getFinisheddate())) <= Integer.valueOf(sf.format(list.getFinisheddate()))) {
-//                abnormallist.add(list);
-//            } else if (Integer.valueOf(sf.format(list.getOccurrencedate())) > Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate())) && Integer.valueOf(sf.format(list.getFinisheddate())) > Integer.valueOf(sf.format(ab.getOccurrencedate()))) {
-//                abnormallist.add(list);
+//        for (AbNormal list : AbNormalList) {
+//            if (Integer.valueOf(list.getStatus()) > 4) {
+//                list.setOccurrencedate(list.getReoccurrencedate());
+//                list.setFinisheddate(list.getRefinisheddate());
 //            }
-        }
+//            //数开<=条结 && 数结>=条开
+//            //1.数开<=条开  && 数结<=条结
+//            //2.数开<=条开  && 数结>=条结
+//            //3.数开>=条开  && 数结>=条结
+//            //4.数开>=条开  && 数结<=条结
+//            if(Integer.valueOf(sf.format(list.getOccurrencedate())) <= Integer.valueOf(sf.format(ab.getFinisheddate())) && Integer.valueOf(sf.format(list.getFinisheddate())) >= Integer.valueOf(sf.format(ab.getOccurrencedate())))
+//            {
+//                if(Integer.valueOf(sf.format(list.getOccurrencedate())) <= Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate())))
+//                {
+//                    abnormallist.add(list);
+//                }
+//                else if(Integer.valueOf(sf.format(list.getOccurrencedate())) <= Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) >= Integer.valueOf(sf.format(ab.getFinisheddate())))
+//                {
+//                    abnormallist.add(list);
+//                }
+//                else if(Integer.valueOf(sf.format(list.getOccurrencedate())) >= Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) >= Integer.valueOf(sf.format(ab.getFinisheddate())))
+//                {
+//                    abnormallist.add(list);
+//                }
+//                else if(Integer.valueOf(sf.format(list.getOccurrencedate())) >= Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate())))
+//                {
+//                    abnormallist.add(list);
+//                }
+//            }
+////            if (Integer.valueOf(sf.format(ab.getOccurrencedate())) <= Integer.valueOf(sf.format(list.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate()))) {
+////                abnormallist.add(list);
+////            } else if (Integer.valueOf(sf.format(ab.getOccurrencedate())) <= Integer.valueOf(sf.format(list.getOccurrencedate())) && Integer.valueOf(sf.format(ab.getFinisheddate())) > Integer.valueOf(sf.format(list.getOccurrencedate())) && Integer.valueOf(sf.format(ab.getFinisheddate())) <= Integer.valueOf(sf.format(list.getFinisheddate()))) {
+////                abnormallist.add(list);
+////            } else if (Integer.valueOf(sf.format(list.getOccurrencedate())) > Integer.valueOf(sf.format(ab.getOccurrencedate())) && Integer.valueOf(sf.format(list.getFinisheddate())) <= Integer.valueOf(sf.format(ab.getFinisheddate())) && Integer.valueOf(sf.format(list.getFinisheddate())) > Integer.valueOf(sf.format(ab.getOccurrencedate()))) {
+////                abnormallist.add(list);
+////            }
+//        }
+//        考勤异常申请添加筛选条件 ztc to
 
         //add-ws-9/29-禅道任务547
         //add-gbb-6/28-禅道166 添加申请日期筛选

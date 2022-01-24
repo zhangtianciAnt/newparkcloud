@@ -115,4 +115,13 @@ public class Pfans1004Controller {
 
     }
 
+    //region   add  ml  220112  检索  from
+    @RequestMapping(value = "/getJudgementSearch", method = {RequestMethod.POST})
+    public ApiResult list(HttpServletRequest request,@RequestBody Judgement judgement) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        judgement.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(judgementService.getJudgementSearch(judgement));
+    }
+    //endregion   add  ml  220112  检索  to
+
 }

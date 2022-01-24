@@ -9,5 +9,36 @@
         where DATE_FORMAT(CREATEON,'%Y-%m-%d') = #{createon}
         group by DATE_FORMAT(CREATEON,'%Y-%m-%d')
     </select>
+
+    <select id="getLoanapplicationSearch" parameterType="com.nt.dao_Pfans.PFANS1000.LoanApplication" resultType="com.nt.dao_Pfans.PFANS1000.LoanApplication">
+        SELECT
+        *
+        FROM
+        loanapplication
+        where status != '1'
+            <if test="processingstatus != null and processingstatus != ''">
+                and processingstatus = #{processingstatus}
+            </if>
+            <if test="loanapno != null and loanapno != ''">
+                and loanapno like CONCAT('%',#{loanapno},'%')
+            </if>
+            <if test="user_id != null and user_id != ''">
+                and user_id = #{user_id}
+            </if>
+            <if test="center_id != null and center_id != ''">
+                and center_id = #{center_id}
+            </if>
+            <if test="group_id != null and group_id != ''">
+                and group_id = #{group_id}
+            </if>
+            <if test="owners != null and owners.size() > 0 ">
+                and
+                owner in
+                <foreach item="item" index="index" collection="owners"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+    </select>
 </mapper>
 

@@ -28,7 +28,9 @@ public class NapalmServiceImpl implements NapalmService {
 
     @Override
     public List<Napalm> get(Napalm napalm) throws Exception {
-        List<Napalm> napalmlist = napalmMapper.select(napalm);
+//        添加筛选条件 ztc fr
+        List<Napalm> napalmlist = napalmMapper.selectList(napalm);
+//        添加筛选条件 ztc to
         if (napalmlist.size() > 0) {
             napalmlist = napalmlist.stream().sorted(Comparator.comparing(Napalm::getCreateon).reversed()).collect(Collectors.toList());
         }

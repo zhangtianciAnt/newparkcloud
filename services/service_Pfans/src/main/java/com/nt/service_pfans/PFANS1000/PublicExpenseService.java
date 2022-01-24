@@ -28,4 +28,8 @@ public interface PublicExpenseService {
 
     Map<String, String> getworkfolwPurchaseData(PublicExpense publicExpense) throws Exception;
 
+    //region   add  ml  220112  检索  from
+    List<PublicExpense> getSearch(PublicExpense publicExpense) throws Exception;
+    //endregion   add  ml  220112  检索  to
+
 }

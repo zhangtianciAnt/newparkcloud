@@ -421,4 +421,11 @@ public class JudgementServiceImpl implements JudgementService {
     }
     //endregion scc add 10/28 其他业务决裁逻辑删除 to
 
+    //region   add  ml  220112  检索  from
+    @Override
+    public List<Judgement> getJudgementSearch(Judgement judgement) throws Exception {
+        return judgementMapper.getJudgementSearch(judgement);
+    }
+    //endregion   add  ml  220112  检索  to
+
 }

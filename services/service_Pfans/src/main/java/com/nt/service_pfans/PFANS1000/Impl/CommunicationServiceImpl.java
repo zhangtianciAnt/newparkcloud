@@ -124,4 +124,11 @@ public class CommunicationServiceImpl implements CommunicationService {
     }
     //endregion scc add 10/28 交际费事前决裁逻辑删除 to
 
+    //region   add  ml  220112  检索  from
+    @Override
+    public List<Communication> getCommunicationSearch(Communication communication) throws Exception {
+        return communicationMapper.getCommunicationSearch(communication);
+    }
+    //endregion   add  ml  220112  检索  to
+
 }

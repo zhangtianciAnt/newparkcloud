@@ -23,4 +23,8 @@ public interface CommunicationService {
     void comdelete(Communication communication, TokenModel tokenModel) throws Exception;
     //endregion scc add 10/28 交际费事前决裁逻辑删除 to
 
+    //region   add  ml  220112  检索  from
+    List<Communication> getCommunicationSearch(Communication communication) throws Exception;
+    //endregion   add  ml  220112  检索  to
+
 }

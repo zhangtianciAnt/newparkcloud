@@ -675,4 +675,12 @@ public class BusinessServiceImpl implements BusinessService {
         }
     }
     //endregion scc add 10/28 境内外决裁逻辑删除 to
+
+    //region   add  ml  220112  检索  from
+    @Override
+    public List<Business> getBusinessSearch(Business business) throws Exception {
+        return businessMapper.getBusinessSearch(business);
+    }
+    //endregion   add  ml  220112  检索  to
+
 }

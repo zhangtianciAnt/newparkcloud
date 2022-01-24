@@ -93,6 +93,15 @@ public class Pfans1010Controller {
 
     }
 
+    //region   add  ml  220112  检索  from
+    @RequestMapping(value = "/getCommunicationSearch", method = {RequestMethod.POST})
+    public ApiResult getCommunicationSearch(HttpServletRequest request,@RequestBody Communication communication) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        communication.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(communicationService.getCommunicationSearch(communication));
+    }
+    //endregion   add  ml  220112  检索  to
+
 
 
 

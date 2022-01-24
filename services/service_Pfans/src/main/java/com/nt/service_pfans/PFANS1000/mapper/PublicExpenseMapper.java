@@ -24,4 +24,8 @@ public interface PublicExpenseMapper extends MyMapper<PublicExpense> {
     // add 210909 gbb BP社统计添加外注费用字段 start
     List<PublicExpense> getPublicexpenseRmb(@Param("years") String years,@Param("groupid") String groupid);
     // add 210909 gbb BP社统计添加外注费用字段 end
+
+    //region   add  ml  220112  检索  from
+    List<PublicExpense> getSearch(PublicExpense publicExpense);
+    //endregion   add  ml  220112  检索  to
 }

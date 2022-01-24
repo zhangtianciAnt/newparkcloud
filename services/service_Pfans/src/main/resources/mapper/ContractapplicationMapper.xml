@@ -99,4 +99,39 @@
         GROUP BY
             pro.CONTRACT,pro.NUMBERS
     </select>
+
+<!--    ?????? ztc fr-->
+    <select id="selectList" parameterType="com.nt.dao_Pfans.PFANS1000.Contractapplication" resultType="com.nt.dao_Pfans.PFANS1000.Contractapplication">
+        SELECT
+        *
+        FROM
+        contractapplication
+        WHERE
+        STATUS != '1'
+        <if test="contractnumber != null and contractnumber != ''">
+            AND CONTRACTNUMBER LIKE CONCAT('%',#{contractnumber},'%')
+        </if>
+        <if test="user_id != null and user_id != ''">
+            AND USER_ID = #{user_id}
+        </if>
+        <if test="group_id != null and group_id != ''">
+            AND GROUP_ID = #{group_id}
+        </if>
+        <if test="contracttype != null and contracttype != ''">
+            AND CONTRACTTYPE = #{contracttype}
+        </if>
+        <if test="custochinese != null and custochinese != ''">
+            AND CUSTOCHINESE LIKE CONCAT('%',#{custochinese},'%')
+        </if>
+        <if test="type != null and type != ''">
+            AND TYPE = #{type}
+        </if>
+        <if test="owners != null and owners.size() > 0 ">
+            AND OWNER in
+            <foreach item="item" index="index" collection="owners" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+<!--    ?????? ztc to-->
 </mapper>

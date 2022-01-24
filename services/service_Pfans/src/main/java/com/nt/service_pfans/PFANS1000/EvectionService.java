@@ -22,4 +22,8 @@ public interface EvectionService {
 
     void updateEvectionVo(EvectionVo evectionvo, TokenModel tokenModel)throws Exception;
 
+    //region   add  ml  220112  检索  from
+    List<Evection> getSearch(Evection evection) throws Exception;
+    //endregion   add  ml  220112  检索  to
+
 }

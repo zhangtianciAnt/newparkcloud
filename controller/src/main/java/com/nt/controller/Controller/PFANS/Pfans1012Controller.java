@@ -866,4 +866,13 @@ public class Pfans1012Controller {
     }
     //采购业务数据流程查看详情
 
+    //region   add  ml  220112  检索  from
+    @RequestMapping(value = "/getSearch", method = {RequestMethod.POST})
+    public ApiResult getSearch(HttpServletRequest request,@RequestBody PublicExpense publicExpense) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        publicExpense.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(publicExpenseService.getSearch(publicExpense));
+    }
+    //endregion   add  ml  220112  检索  to
+
 }

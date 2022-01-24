@@ -8,4 +8,42 @@
         group by REIMBURSEMENTDATE
     </select>
     <!--    upd-lyt-21/4/6-PSDCD_PFANS_20210318_BUG_035-编号问题横展开-end-->
+
+    <select id="getSearch" parameterType="com.nt.dao_Pfans.PFANS1000.Evection" resultType="com.nt.dao_Pfans.PFANS1000.Evection">
+        SELECT
+        *,center_id centerid,user_id userid,group_id groupid,evection_id evectionid,team_id teamid
+        FROM
+        evection
+        where status != '1'
+        <if test="invoiceno != null and invoiceno != ''">
+            and invoiceno like CONCAT('%',#{invoiceno},'%')
+        </if>
+        <if test="userid != null and userid != ''">
+            and user_id = #{userid}
+        </if>
+        <if test="centerid != null and centerid != ''">
+            and center_id = #{centerid}
+        </if>
+        <if test="groupid != null and groupid != ''">
+            and group_id = #{groupid}
+        </if>
+        <if test="type != null and type != ''">
+            and type = #{type}
+        </if>
+        <if test="startdate != null">
+            and startdate = DATE_FORMAT(#{startdate},'%Y-%m-%d')
+        </if>
+        <if test="enddate != null">
+            and enddate = DATE_FORMAT(#{enddate},'%Y-%m-%d')
+        </if>
+        <if test="owners != null and owners.size() > 0 ">
+            and
+            owner in
+            <foreach item="item" index="index" collection="owners"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
 </mapper>

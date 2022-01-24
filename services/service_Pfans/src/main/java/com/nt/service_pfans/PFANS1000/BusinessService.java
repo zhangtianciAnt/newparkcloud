@@ -34,4 +34,8 @@ public interface BusinessService {
     void busdelete(Business business, TokenModel tokenModel) throws Exception;
     //endregion scc add 10/28 境内外决裁逻辑删除 to
 
+    //region   add  ml  220112  检索  from
+    List<Business> getBusinessSearch(Business business) throws Exception;
+    //endregion   add  ml  220112  检索  to
+
 }

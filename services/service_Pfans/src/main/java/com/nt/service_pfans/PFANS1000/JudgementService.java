@@ -28,4 +28,8 @@ public interface JudgementService {
     void juddelete(Judgement judgement, TokenModel tokenModel) throws Exception;
     //endregion scc add 10/28 其他业务决裁逻辑删除 to
 
+    //region   add  ml  220112  检索  from
+    List<Judgement> getJudgementSearch(Judgement judgement) throws Exception;
+    //endregion   add  ml  220112  检索  to
+
 }

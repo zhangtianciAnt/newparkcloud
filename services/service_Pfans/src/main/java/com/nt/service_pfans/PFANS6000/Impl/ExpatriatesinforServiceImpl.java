@@ -1734,6 +1734,14 @@ public class ExpatriatesinforServiceImpl implements ExpatriatesinforService {
             throw new LogicalException(e.getMessage());
         }
     }
+
+    //region   add  ml  220112  检索  from
+    @Override
+    public List<Expatriatesinfor> getSearch(Expatriatesinfor expatriatesinfor) throws Exception {
+        return expatriatesinforMapper.getSearch(expatriatesinfor);
+    }
+    //endregion   add  ml  220112  检索  to
+
 }
 
 

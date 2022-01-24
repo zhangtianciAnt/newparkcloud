@@ -36,14 +36,14 @@ public class pfans1031Controller {
     @Autowired
     private DictionaryService dictionaryService;
 
-    @RequestMapping(value="/get",method = {RequestMethod.GET})
-    public ApiResult get(HttpServletRequest request)throws  Exception{
+//    添加筛选条件 ztc fr
+    @RequestMapping(value="/get",method = {RequestMethod.POST})
+    public ApiResult get(@RequestBody Napalm napalm, HttpServletRequest request)throws  Exception{
         TokenModel tokenModel = tokenService.getToken(request);
-        Napalm napalm = new Napalm();
         napalm.setOwners(tokenModel.getOwnerList());
         return ApiResult.success(napalmService.get(napalm));
-
     }
+//    添加筛选条件 ztc to
 
     @RequestMapping(value = "/one",method={RequestMethod.POST})
     public ApiResult one(@RequestBody Napalm napalm, HttpServletRequest request) throws Exception {

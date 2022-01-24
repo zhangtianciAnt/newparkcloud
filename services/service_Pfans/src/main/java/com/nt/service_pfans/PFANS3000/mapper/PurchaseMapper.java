@@ -10,4 +10,8 @@ import java.util.List;
 public interface PurchaseMapper  extends MyMapper<Purchase> {
     @Select("select * from Purchase")
     List<Purchase> getPurchaseEnd();
+
+    //region   add  ml  220112  检索  from
+    List<Purchase> getPurchaseSearch(Purchase purchase);
+    //endregion   add  ml  220112  检索  to
 }

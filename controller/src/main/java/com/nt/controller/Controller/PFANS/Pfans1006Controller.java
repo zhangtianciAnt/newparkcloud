@@ -297,4 +297,13 @@ public class Pfans1006Controller {
         return ApiResult.success(loanapplicationService.getpublice(loanapplication.getLoanapplication_id()));
     }
     //add_fjl_0929  添加公共费用中暂借款查询 end
+
+    //region   add  ml  220112  检索  from
+    @RequestMapping(value = "/getLoanapplicationSearch", method = {RequestMethod.POST})
+    public ApiResult getLoanapplicationSearch(HttpServletRequest request,@RequestBody LoanApplication loanapplication) throws Exception {
+        TokenModel tokenModel = tokenService.getToken(request);
+        loanapplication.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(loanapplicationService.getLoanapplicationSearch(loanapplication));
+    }
+    //endregion   add  ml  220112  检索  to
 }
