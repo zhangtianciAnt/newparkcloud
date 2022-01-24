@@ -7,7 +7,7 @@
 
     <select id="getBusinessSearch" parameterType="com.nt.dao_Pfans.PFANS1000.Business" resultType="com.nt.dao_Pfans.PFANS1000.Business">
         SELECT
-        *
+        *, application_date applicationdate
         FROM
         business
         where status != '1'
