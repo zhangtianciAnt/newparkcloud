@@ -1,5 +1,6 @@
 package com.nt.service_pfans.PFANS5000.Impl;
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Auth.Role;
 import com.nt.dao_Org.OrgTree;
@@ -628,7 +629,10 @@ public class LogManagementServiceImpl implements LogManagementService {
     //region zjz add 22/1/12 日志管理添加检索条件 from
     @Override
     public List<LogManagement> conditionsForRetrieval(LogManagement logmanagement) throws Exception {
-
+        if(("1").equals(logmanagement.getInOrout()) && !StringUtils.isNullOrEmpty(logmanagement.getCreateby())){
+            List<String> exList = expatriatesinforMapper.getIdByName(Base64.encode(logmanagement.getCreateby()));
+            logmanagement.setCreateByList(exList);
+        }
         return logmanagementmapper.conditionsForRetrieval(logmanagement);
     }
     //region zjz add 22/1/12 日志管理添加检索条件 to

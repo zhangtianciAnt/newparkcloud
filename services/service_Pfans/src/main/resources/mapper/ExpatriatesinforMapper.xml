@@ -43,5 +43,12 @@
         </if>
     </select>
 
+    <select id="getIdByName" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT
+               account
+        FROM expatriatesinfor
+        WHERE EXPNAME LIKE CONCAT('%',#{exname},'%')
+        AND STATUS != '1'
+    </select>
 </mapper>
 

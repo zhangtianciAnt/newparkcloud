@@ -25,5 +25,5 @@ public interface ExpatriatesinforMapper extends MyMapper<Expatriatesinfor> {
     List<Expatriatesinfor> getSearch(Expatriatesinfor expatriatesinfor);
     //endregion   add  ml  220112  检索  to
 
-
+    List<String> getIdByName(@Param("exname") String exname);
 }

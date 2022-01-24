@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -95,5 +96,14 @@ public class LogManagement extends BaseModel {
      * 日志年月
      */
     @Transient
-    private String month;//日志年月
+    private String month;
+
+    /**
+     * 日志年月
+     */
+    @Transient
+    private String inOrout;
+
+    @Transient
+    private List<String> createByList;
 }
