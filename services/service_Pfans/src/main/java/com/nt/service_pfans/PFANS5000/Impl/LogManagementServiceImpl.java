@@ -629,9 +629,12 @@ public class LogManagementServiceImpl implements LogManagementService {
     //region zjz add 22/1/12 日志管理添加检索条件 from
     @Override
     public List<LogManagement> conditionsForRetrieval(LogManagement logmanagement) throws Exception {
+        List<LogManagement> getResult = new ArrayList<>();
         if(("1").equals(logmanagement.getInOrout()) && !StringUtils.isNullOrEmpty(logmanagement.getCreateby())){
             List<String> exList = expatriatesinforMapper.getIdByName(Base64.encode(logmanagement.getCreateby()));
-            logmanagement.setCreateByList(exList);
+            if(exList.size() == 0) {
+                return getResult;
+            }
         }
         return logmanagementmapper.conditionsForRetrieval(logmanagement);
     }
