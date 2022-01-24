@@ -7,7 +7,7 @@
 
     <select id="getBusinessSearch" parameterType="com.nt.dao_Pfans.PFANS1000.Business" resultType="com.nt.dao_Pfans.PFANS1000.Business">
         SELECT
-        *
+        *, application_date applicationdate
         FROM
         business
         where status != '1'
@@ -15,7 +15,7 @@
                 and businesstype = #{businesstype}
             </if>
             <if test="region != null and region != ''">
-                and (region like CONCAT('%',#{region},'%')) or (city like CONCAT('%',#{region},'%'))
+                and ((region like CONCAT('%',#{region},'%')) or (city like CONCAT('%',#{region},'%')))
             </if>
             <if test="city != null and city != ''">
                 and city = #{city}
