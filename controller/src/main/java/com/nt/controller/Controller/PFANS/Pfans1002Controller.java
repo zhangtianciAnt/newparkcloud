@@ -2,11 +2,10 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.Business;
 import com.nt.dao_Pfans.PFANS1000.Vo.BusinessVo;
-import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
 import com.nt.service_pfans.PFANS1000.BusinessService;
 import com.nt.service_pfans.PFANS1000.OffshoreService;
-import com.nt.service_pfans.PFANS3000.TicketsService;
 import com.nt.service_pfans.PFANS3000.JapanCondominiumService;
+import com.nt.service_pfans.PFANS3000.TicketsService;
 import com.nt.utils.ApiResult;
 import com.nt.utils.MessageUtil;
 import com.nt.utils.MsgConstants;
@@ -17,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/business")
@@ -139,7 +141,9 @@ public class Pfans1002Controller {
     public ApiResult list(HttpServletRequest request,@RequestBody Business business) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         business.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(businessService.getBusinessSearch(business));
+        List<Business> resultList = businessService.getBusinessSearch(business)
+                .stream().sorted(Comparator.comparing(Business::getCreateon).reversed()).collect(Collectors.toList());
+        return ApiResult.success(resultList);
     }
     //endregion   add  ml  220112  检索  to
 

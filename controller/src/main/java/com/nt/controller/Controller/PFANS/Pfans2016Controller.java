@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/abNormal")
@@ -32,7 +34,8 @@ public class Pfans2016Controller {
         TokenModel tokenModel = tokenService.getToken(request);
 //        AbNormal abNormal = new AbNormal();
         ab.setOwners(tokenModel.getOwnerList());
-        List<AbNormal> abnormallist = abNormalService.list(ab);
+        List<AbNormal> abnormallist = abNormalService.list(ab)
+                .stream().sorted(Comparator.comparing(AbNormal::getCreateon).reversed()).collect(Collectors.toList());;
         //add-ws-9/29-禅道任务547
 //        for (AbNormal list : AbNormalList) {
 //            if (Integer.valueOf(list.getStatus()) > 4) {

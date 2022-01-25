@@ -18,10 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/petition")
@@ -41,7 +39,9 @@ public class Pfans1032Controller {
 //        添加筛选条件 ztc to
         TokenModel tokenModel=tokenService.getToken(request);
         petition.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(petitionService.get(petition));
+        List<Petition> resultList = petitionService.get(petition)
+                .stream().sorted(Comparator.comparing(Petition::getCreateon).reversed()).collect(Collectors.toList());
+        return ApiResult.success(resultList);
     }
 
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
