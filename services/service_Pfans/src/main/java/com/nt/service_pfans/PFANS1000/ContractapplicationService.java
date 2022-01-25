@@ -62,4 +62,7 @@ public interface ContractapplicationService {
 
     //根据合同号查合同区间 scc
     List<String> getContranumber(String contra , TokenModel tokenModel) throws Exception;
+
+    List<Contractapplication> getCotSearch(Contractapplication contractapplication) throws Exception;
+
 }

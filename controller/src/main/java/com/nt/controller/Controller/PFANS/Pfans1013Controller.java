@@ -1,6 +1,5 @@
 package com.nt.controller.Controller.PFANS;
 
-import cn.hutool.core.io.FileUtil;
 import com.mysql.jdbc.StringUtils;
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
@@ -18,7 +17,6 @@ import com.nt.service_pfans.PFANS1000.EvectionService;
 import com.nt.service_pfans.PFANS1000.LoanApplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.BusinessMapper;
 import com.nt.service_pfans.PFANS1000.mapper.EvectionMapper;
-import com.nt.service_pfans.PFANS1000.mapper.PublicExpenseMapper;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
@@ -26,7 +24,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -729,7 +730,9 @@ public class Pfans1013Controller {
     public ApiResult getSearch(HttpServletRequest request,@RequestBody Evection evection) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         evection.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(evectionService.getSearch(evection));
+        List<Evection> resultList = evectionService.getSearch(evection)
+                .stream().sorted(Comparator.comparing(Evection::getCreateon).reversed()).collect(Collectors.toList());
+        return ApiResult.success(resultList);
     }
     //endregion   add  ml  220112  检索  to
 

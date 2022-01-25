@@ -1,7 +1,6 @@
 package com.nt.service_pfans.PFANS1000.mapper;
 
 import com.nt.dao_Pfans.PFANS1000.PublicExpense;
-import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.utils.MyMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

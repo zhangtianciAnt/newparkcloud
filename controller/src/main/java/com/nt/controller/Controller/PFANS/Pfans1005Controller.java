@@ -1,6 +1,5 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.Vo.PurchaseApplyVo;
 import com.nt.dao_Pfans.PFANS1000.PurchaseApply;
 import com.nt.service_pfans.PFANS1000.PurchaseApplyService;

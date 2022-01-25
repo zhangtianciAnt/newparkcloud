@@ -1,6 +1,5 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
-import com.nt.dao_Assets.Assets;
 import com.nt.dao_Pfans.PFANS1000.Business;
 import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.Judgementdetail;

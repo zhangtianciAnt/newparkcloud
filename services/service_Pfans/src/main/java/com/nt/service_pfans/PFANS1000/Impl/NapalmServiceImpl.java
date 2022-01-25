@@ -1,11 +1,9 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
-import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.dao_Pfans.PFANS1000.Napalm;
-import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
+import com.nt.dao_Pfans.PFANS1000.Vo.NapalmVo;
 import com.nt.service_pfans.PFANS1000.NapalmService;
 import com.nt.service_pfans.PFANS1000.mapper.NapalmMapper;
-import com.nt.service_pfans.PFANS2000.Impl.WagesServiceImpl;
 import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
 import com.nt.utils.dao.TokenModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +26,7 @@ public class NapalmServiceImpl implements NapalmService {
 
     @Override
     public List<Napalm> get(Napalm napalm) throws Exception {
-//        添加筛选条件 ztc fr
-        List<Napalm> napalmlist = napalmMapper.selectList(napalm);
-//        添加筛选条件 ztc to
+        List<Napalm> napalmlist = napalmMapper.select(napalm);
         if (napalmlist.size() > 0) {
             napalmlist = napalmlist.stream().sorted(Comparator.comparing(Napalm::getCreateon).reversed()).collect(Collectors.toList());
         }
@@ -63,6 +59,13 @@ public class NapalmServiceImpl implements NapalmService {
     public void update(Napalm napalm, TokenModel tokenModel) throws Exception {
         napalm.preUpdate(tokenModel);
         napalmMapper.updateByPrimaryKey(napalm);
+    }
+
+    @Override
+    public List<Napalm> getNapSearch(NapalmVo napalmVo) {
+        List<Napalm> resultList = napalmMapper.selectList(napalmVo)
+                .stream().sorted(Comparator.comparing(Napalm::getCreateon).reversed()).collect(Collectors.toList());
+        return resultList;
     }
 
 

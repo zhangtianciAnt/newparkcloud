@@ -1,16 +1,13 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.OrgTree;
-import com.nt.dao_Org.UserAccount;
-import com.nt.dao_Pfans.PFANS1000.*;
+import com.nt.dao_Pfans.PFANS1000.Award;
+import com.nt.dao_Pfans.PFANS1000.Contractapplication;
 import com.nt.dao_Pfans.PFANS1000.Contractnumbercount;
+import com.nt.dao_Pfans.PFANS1000.Individual;
 import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
-import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
-import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Pfans.PFANS6000.Supplierinfor;
-import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
 import com.nt.service_Org.OrgTreeService;
 import com.nt.service_pfans.PFANS1000.ContractapplicationService;
 import com.nt.service_pfans.PFANS1000.mapper.IndividualMapper;
@@ -21,15 +18,12 @@ import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
 import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 @RequestMapping("/contractapplication")
@@ -273,5 +267,15 @@ public class Pfans1026Controller {
         contractapplication1.setDeployment(orginfo.getCompanyname());
         contractapplicationService.dataCarryover(contractapplication1,tokenModel);
         return ApiResult.success();
+    }
+
+    @RequestMapping(value = "/getCotSearch", method = {RequestMethod.POST})
+    public ApiResult getCotSearch(@RequestBody Contractapplication contractapplication, HttpServletRequest request) throws Exception {
+        if (contractapplication == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        contractapplication.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(contractapplicationService.getCotSearch(contractapplication));
     }
 }

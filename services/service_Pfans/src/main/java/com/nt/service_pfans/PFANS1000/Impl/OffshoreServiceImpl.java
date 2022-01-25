@@ -1,6 +1,5 @@
 package com.nt.service_pfans.PFANS1000.Impl;
 
-import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.Offshore;
 import com.nt.service_pfans.PFANS1000.OffshoreService;
 import com.nt.service_pfans.PFANS1000.mapper.OffshoreMapper;

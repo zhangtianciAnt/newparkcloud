@@ -1,16 +1,12 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Org.Dictionary;
-import com.nt.dao_Pfans.PFANS2000.Staffexitprocedure;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Pfans.PFANS3000.Vo.PurchaseVo;
-import com.nt.dao_Pfans.PFANS6000.CoststatisticsVo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.utils.*;
 import com.nt.utils.dao.TokenModel;
 import com.nt.utils.services.TokenService;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.OutputStream;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/purchase")
@@ -143,7 +139,9 @@ public class Pfans3005Controller {
     public ApiResult list(HttpServletRequest request,@RequestBody Purchase purchase) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         purchase.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(purchaseService.getPurchaseSearch(purchase));
+        List<Purchase> resultList = purchaseService.getPurchaseSearch(purchase)
+                .stream().sorted(Comparator.comparing(Purchase::getCreateon).reversed()).collect(Collectors.toList());
+        return ApiResult.success(resultList);
     }
     //endregion   add  ml  220112  检索  to
 

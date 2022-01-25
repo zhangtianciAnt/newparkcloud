@@ -2,6 +2,7 @@ package com.nt.service_pfans.PFANS1000;
 
 
 import com.nt.dao_Pfans.PFANS1000.Petition;
+import com.nt.dao_Pfans.PFANS1000.Vo.PetitionVo;
 import com.nt.utils.dao.TokenModel;
 
 import java.util.List;
@@ -13,5 +14,7 @@ public interface PetitionService {
      Petition one(String petition_id) throws Exception;
 
      void update(Petition petition,TokenModel tokenModel) throws Exception;
+
+    List<Petition> getPetSearch(PetitionVo petitionVo) throws Exception;
 
 }

@@ -14,7 +14,6 @@ import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Org.Vo.DepartmentVo;
-import com.nt.dao_Pfans.PFANS1000.Evection;
 import com.nt.dao_Pfans.PFANS6000.*;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.OrgTreeService;

@@ -33,4 +33,6 @@ public interface AwardService {
       List<AwardDetail> getAwardEntr(List<String> awardIdList) throws Exception;
       //region scc add 21/8/20 受托合同，详情，部门下拉框数据源 to
 
+      List<Award> getEntSearch(Award award) throws Exception;
+
 }

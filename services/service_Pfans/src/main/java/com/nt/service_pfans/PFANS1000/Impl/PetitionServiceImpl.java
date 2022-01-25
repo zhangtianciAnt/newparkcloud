@@ -2,6 +2,8 @@ package com.nt.service_pfans.PFANS1000.Impl;
 
 import com.nt.dao_Pfans.PFANS1000.Napalm;
 import com.nt.dao_Pfans.PFANS1000.Petition;
+import com.nt.dao_Pfans.PFANS1000.Vo.NapalmVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.PetitionVo;
 import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.service_pfans.PFANS1000.PetitionService;
 import com.nt.service_pfans.PFANS1000.mapper.PetitionMapper;
@@ -28,9 +30,7 @@ public class PetitionServiceImpl implements PetitionService {
 
     @Override
     public List<Petition> get(Petition petition) throws Exception {
-//        添加筛选条件 ztc fr
-        List<Petition> petitionlist = petitionMapper.selectList(petition);
-//        添加筛选条件 ztc to
+        List<Petition> petitionlist = petitionMapper.select(petition);
         if (petitionlist.size() > 0) {
             petitionlist = petitionlist.stream().sorted(Comparator.comparing(Petition::getCreateon).reversed()).collect(Collectors.toList());
         }
@@ -64,6 +64,13 @@ public class PetitionServiceImpl implements PetitionService {
         petition.preUpdate(tokenModel);
         petitionMapper.updateByPrimaryKeySelective(petition);
 
+    }
+
+    @Override
+    public List<Petition> getPetSearch(PetitionVo petitionVo) {
+        List<Petition> resultList = petitionMapper.selectList(petitionVo)
+                .stream().sorted(Comparator.comparing(Petition::getCreateon).reversed()).collect(Collectors.toList());
+        return resultList;
     }
 
 }

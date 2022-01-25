@@ -874,6 +874,14 @@ public class Pfans1025Controller {
     }
     //PSDCD_PFANS_20210723_XQ_086 委托决裁报销明细自动带出 ztc to
 
-
+    @RequestMapping(value = "/getEntSearch", method = {RequestMethod.POST})
+    public ApiResult getEntSearch(@RequestBody Award award, HttpServletRequest request) throws Exception {
+        if (award == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        award.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(awardService.getEntSearch(award));
+    }
 
 }

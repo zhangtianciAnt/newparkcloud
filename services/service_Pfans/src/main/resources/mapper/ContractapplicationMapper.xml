@@ -103,9 +103,23 @@
 <!--    ?????? ztc fr-->
     <select id="selectList" parameterType="com.nt.dao_Pfans.PFANS1000.Contractapplication" resultType="com.nt.dao_Pfans.PFANS1000.Contractapplication">
         SELECT
-        *
+            cn.*,
+            cp.NUMBERS as getprojectnumber
         FROM
-        contractapplication
+        contractapplication cn
+            LEFT JOIN (
+                SELECT
+                    CONTRACT,
+                    GROUP_CONCAT( DISTINCT NUMBERS SEPARATOR ',' ) NUMBERS
+                FROM
+                    projectcontract p,
+                    CompanyProjects c
+                WHERE
+                    p.COMPANYPROJECTS_ID = c.COMPANYPROJECTS_ID
+                AND CONTRACT != ''
+                GROUP BY
+                    CONTRACT
+            ) cp ON cp.CONTRACT = cn.CONTRACTNUMBER
         WHERE
         STATUS != '1'
         <if test="contractnumber != null and contractnumber != ''">

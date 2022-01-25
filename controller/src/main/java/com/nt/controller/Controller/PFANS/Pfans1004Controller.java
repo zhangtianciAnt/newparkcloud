@@ -1,6 +1,5 @@
 package com.nt.controller.Controller.PFANS;
 
-import com.nt.dao_Assets.Assets;
 import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.Vo.JudgementVo;
 import com.nt.service_pfans.PFANS1000.JudgementService;

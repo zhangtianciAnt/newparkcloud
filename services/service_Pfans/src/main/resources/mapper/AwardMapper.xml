@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.nt.service_pfans.PFANS1000.mapper.AwardMapper">
+    <select id="selectList" parameterType="com.nt.dao_Pfans.PFANS1000.Award" resultType="com.nt.dao_Pfans.PFANS1000.Award">
+        SELECT
+            *
+        FROM
+            award
+        WHERE
+            STATUS != '1'
+        <if test="contractnumber != null and contractnumber != ''">
+            AND CONTRACTNUMBER LIKE CONCAT('%',#{contractnumber},'%')
+        </if>
+        <if test="group_id != null and group_id != ''">
+            AND GROUP_ID = #{group_id}
+        </if>
+        <if test="contracttype != null and contracttype != ''">
+            AND CONTRACTTYPE = #{contracttype}
+        </if>
+        <if test="custochinese != null and custochinese != ''">
+            AND CUSTOCHINESE LIKE CONCAT('%',#{custochinese},'%')
+        </if>
+        <if test="maketype != null and maketype != ''">
+            AND MAKETYPE = #{maketype}
+        </if>
+        <if test="owners != null and owners.size() > 0 ">
+            AND OWNER in
+            <foreach item="item" index="index" collection="owners" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+</mapper>
+

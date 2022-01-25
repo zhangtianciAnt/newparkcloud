@@ -2,6 +2,8 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Org.Dictionary;
 import com.nt.dao_Pfans.PFANS1000.Petition;
+import com.nt.dao_Pfans.PFANS1000.Vo.NapalmVo;
+import com.nt.dao_Pfans.PFANS1000.Vo.PetitionVo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.PetitionService;
 import com.nt.utils.*;
@@ -18,10 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/petition")
@@ -41,7 +41,9 @@ public class Pfans1032Controller {
 //        添加筛选条件 ztc to
         TokenModel tokenModel=tokenService.getToken(request);
         petition.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(petitionService.get(petition));
+        List<Petition> resultList = petitionService.get(petition)
+                .stream().sorted(Comparator.comparing(Petition::getCreateon).reversed()).collect(Collectors.toList());
+        return ApiResult.success(resultList);
     }
 
     @RequestMapping(value = "/one", method = {RequestMethod.POST})
@@ -159,4 +161,16 @@ public class Pfans1032Controller {
             }
         }
     }
+
+    @RequestMapping(value = "/getPetSearch", method = {RequestMethod.POST})
+    public ApiResult getPetSearch(@RequestBody PetitionVo petitionVo, HttpServletRequest request) throws Exception {
+        if (petitionVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        petitionVo.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(petitionService.getPetSearch(petitionVo));
+    }
+
+
 }

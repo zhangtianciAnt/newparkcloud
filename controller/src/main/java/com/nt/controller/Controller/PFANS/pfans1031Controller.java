@@ -1,8 +1,9 @@
 package com.nt.controller.Controller.PFANS;
 
-import cn.hutool.core.date.DateUtil;
 import com.nt.dao_Org.Dictionary;
+import com.nt.dao_Pfans.PFANS1000.Award;
 import com.nt.dao_Pfans.PFANS1000.Napalm;
+import com.nt.dao_Pfans.PFANS1000.Vo.NapalmVo;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_pfans.PFANS1000.NapalmService;
 import com.nt.utils.*;
@@ -19,10 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/napalm")
@@ -41,7 +40,9 @@ public class pfans1031Controller {
     public ApiResult get(@RequestBody Napalm napalm, HttpServletRequest request)throws  Exception{
         TokenModel tokenModel = tokenService.getToken(request);
         napalm.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(napalmService.get(napalm));
+        List<Napalm> resultList = napalmService.get(napalm)
+                .stream().sorted(Comparator.comparing(Napalm::getCreateon).reversed()).collect(Collectors.toList());
+        return ApiResult.success(resultList);
     }
 //    添加筛选条件 ztc to
 
@@ -165,5 +166,15 @@ public class pfans1031Controller {
             ExcelOutPutUtil.OutPut(na.getClaimnumber().toUpperCase() + "_納品書(日本受託‐技術開発-US$)", "napinshu_us.xlsx", data, response);
         }
 //        }
+    }
+
+    @RequestMapping(value = "/getNapSearch", method = {RequestMethod.POST})
+    public ApiResult getNapSearch(@RequestBody NapalmVo napalmVo, HttpServletRequest request) throws Exception {
+        if (napalmVo == null) {
+            return ApiResult.fail(MessageUtil.getMessage(MsgConstants.ERROR_03, RequestUtils.CurrentLocale(request)));
+        }
+        TokenModel tokenModel = tokenService.getToken(request);
+        napalmVo.setOwners(tokenModel.getOwnerList());
+        return ApiResult.success(napalmService.getNapSearch(napalmVo));
     }
 }

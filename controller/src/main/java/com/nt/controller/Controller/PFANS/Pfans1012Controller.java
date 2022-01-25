@@ -6,10 +6,8 @@ import com.nt.dao_Org.UserAccount;
 import com.nt.dao_Pfans.PFANS1000.*;
 import com.nt.dao_Pfans.PFANS1000.Vo.PublicExpenseVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.TotalCostVo;
-import com.nt.dao_Pfans.PFANS3000.Purchase;
 import com.nt.dao_Workflow.Vo.StartWorkflowVo;
 import com.nt.dao_Workflow.Vo.WorkflowLogDetailVo;
-import com.nt.dao_Workflow.Workflowinstance;
 import com.nt.service_Org.DictionaryService;
 import com.nt.service_Org.UserService;
 import com.nt.service_WorkFlow.WorkflowServices;
@@ -872,7 +870,9 @@ public class Pfans1012Controller {
     public ApiResult getSearch(HttpServletRequest request,@RequestBody PublicExpense publicExpense) throws Exception {
         TokenModel tokenModel = tokenService.getToken(request);
         publicExpense.setOwners(tokenModel.getOwnerList());
-        return ApiResult.success(publicExpenseService.getSearch(publicExpense));
+        List<PublicExpense> resultList = publicExpenseService.getSearch(publicExpense)
+                .stream().sorted(Comparator.comparing(PublicExpense::getCreateon).reversed()).collect(Collectors.toList());
+        return ApiResult.success(resultList);
     }
     //endregion   add  ml  220112  检索  to
 

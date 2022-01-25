@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.Date;
 
 @Data
@@ -256,4 +257,8 @@ public class Contractapplication extends BaseModel {
     @Column(name = "PROJECTNUMBER")
     private String projectnumber;
     // add gbb 210910 项目编号 end
+
+    @Transient
+    private String getprojectnumber;
+
 }

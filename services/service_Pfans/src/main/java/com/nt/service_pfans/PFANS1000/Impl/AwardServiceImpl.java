@@ -717,4 +717,11 @@ public class AwardServiceImpl implements AwardService {
     }
     //endregion scc add 委托决裁在流程结束时，更新请负委托一览 to
 
+    @Override
+    public List<Award> getEntSearch(Award award) {
+        List<Award> resultList = awardMapper.selectList(award)
+                .stream().sorted(Comparator.comparing(Award::getCreateon).reversed()).collect(Collectors.toList());
+        return resultList;
+    }
+
 }

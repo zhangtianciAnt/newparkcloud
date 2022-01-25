@@ -52,10 +52,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
-import java.sql.Array;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/companyprojects")
@@ -394,6 +394,8 @@ public class Pfans5001Controller {
 //        PJ起案 现场管理添加筛选条件 ztc to
         companyProjects.setOwners(tokenModel.getOwnerList());
         companyProjects.setOwner(tokenModel.getUserId());
+//        List<CompanyProjectsVo2> resultList = companyProjectsService.getSiteList3(companyProjects)
+//                .stream().sorted(Comparator.comparing(CompanyProjectsVo2::getCreateon).reversed()).collect(Collectors.toList());
         return ApiResult.success(companyProjectsService.getSiteList3(companyProjects));
     }
 

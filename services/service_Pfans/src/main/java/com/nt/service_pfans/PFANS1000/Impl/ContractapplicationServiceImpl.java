@@ -10,7 +10,6 @@ import com.nt.dao_Pfans.PFANS1000.Vo.ContractapplicationVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ExistVo;
 import com.nt.dao_Pfans.PFANS1000.Vo.ReportContractEnVo;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
-import com.nt.dao_Pfans.PFANS5000.CompanyProjects;
 import com.nt.dao_Pfans.PFANS5000.ProjectContract;
 import com.nt.dao_Pfans.PFANS5000.Projectsystem;
 import com.nt.dao_Pfans.PFANS6000.Coststatisticsdetail;
@@ -28,7 +27,9 @@ import com.nt.service_pfans.PFANS1000.mapper.*;
 import com.nt.service_pfans.PFANS3000.PurchaseService;
 import com.nt.service_pfans.PFANS3000.mapper.PurchaseMapper;
 import com.nt.service_pfans.PFANS4000.mapper.SealMapper;
-import com.nt.service_pfans.PFANS5000.mapper.*;
+import com.nt.service_pfans.PFANS5000.mapper.CompanyProjectsMapper;
+import com.nt.service_pfans.PFANS5000.mapper.ProjectContractMapper;
+import com.nt.service_pfans.PFANS5000.mapper.ProjectsystemMapper;
 import com.nt.service_pfans.PFANS6000.mapper.CoststatisticsdetailMapper;
 import com.nt.service_pfans.PFANS6000.mapper.SupplierinforMapper;
 import com.nt.service_pfans.PFANS8000.mapper.MonthlyRateMapper;
@@ -47,7 +48,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tk.mybatis.mapper.util.StringUtil;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -170,15 +170,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
         }
         return indivLists;
     }
-
     //  add  ml  211130  个别合同分页  to
+
     @Override
     public ContractapplicationVo get(Contractapplication contractapplication) {
         ContractapplicationVo vo = new ContractapplicationVo();
         //契约番号申请
-//添加筛选条件 ztc fr
-        List<Contractapplication> coList = contractapplicationMapper.selectList(contractapplication);
-//        添加筛选条件 ztc to
+        List<Contractapplication> coList = contractapplicationMapper.select(contractapplication);
         // add gbb 210909 受託契約列表添加【项目编号】 start
         //查询合同关联的所有项目编号
         List<Contractapplication> pjCodeList = contractapplicationMapper.getPjCode();
@@ -2237,5 +2235,13 @@ public class ContractapplicationServiceImpl implements ContractapplicationServic
 
         }
         return org;
+    }
+
+
+    @Override
+    public List<Contractapplication> getCotSearch(Contractapplication contractapplication) {
+        List<Contractapplication> resultList = contractapplicationMapper.selectList(contractapplication)
+                .stream().sorted(Comparator.comparing(Contractapplication::getCreateon).reversed()).collect(Collectors.toList());
+        return resultList;
     }
 }

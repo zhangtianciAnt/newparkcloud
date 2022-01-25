@@ -2,7 +2,6 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Pfans.PFANS1000.Communication;
 
-import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.PurchaseApply;
 import com.nt.service_pfans.PFANS1000.CommunicationService;
 import com.nt.utils.ApiResult;

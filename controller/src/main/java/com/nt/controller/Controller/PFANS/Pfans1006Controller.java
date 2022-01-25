@@ -2,7 +2,6 @@ package com.nt.controller.Controller.PFANS;
 
 import com.nt.dao_Org.CustomerInfo;
 import com.nt.dao_Org.Dictionary;
-import com.nt.dao_Pfans.PFANS1000.Judgement;
 import com.nt.dao_Pfans.PFANS1000.LoanApplication;
 import com.nt.dao_Pfans.PFANS1000.PurchaseApply;
 import com.nt.dao_Pfans.PFANS3000.Purchase;
