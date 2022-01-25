@@ -1582,7 +1582,11 @@ public class AbNormalServiceImpl implements AbNormalService {
                     Double sumParenting = sumParenting0 + sumParentting1 + sumParentting2;
                     if (sumParenting >= 8) {
 //                        msg = msg + "育儿假，申请日之前一月内申请天数已超出1天（已审批通过）。";
-                        msg = msg + "\n" + "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一个月内申请天数已超出1天（已审批通过）";
+                        if (msg.length() > 5) {
+                            msg = msg + "\n" + "&emsp;&emsp;&emsp;&emsp;&emsp;申请日当月申请天数已超出1天（已审批通过）";
+                        } else {
+                            msg = "系统提醒：" + "育儿假，申请日当月申请天数已超出1天（已审批通过）。";
+                        }
                     }
                 } else {//已满三周岁
                     throw new LogicalException("育儿假，你的孩子在你申请的开始时间时已满三周岁，不可申请。");
