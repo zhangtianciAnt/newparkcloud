@@ -30,11 +30,8 @@
         <if test="type != null and type != ''">
             and type = #{type}
         </if>
-        <if test="startdate != null">
-            and startdate = DATE_FORMAT(#{startdate},'%Y-%m-%d')
-        </if>
-        <if test="enddate != null">
-            and enddate = DATE_FORMAT(#{enddate},'%Y-%m-%d')
+        <if test="startdate != null and enddate != null">
+            and startdate &lt;= DATE_FORMAT(#{enddate},'%Y-%m-%d') AND enddate &gt;= DATE_FORMAT(#{startdate},'%Y-%m-%d')
         </if>
         <if test="owners != null and owners.size() > 0 ">
             and

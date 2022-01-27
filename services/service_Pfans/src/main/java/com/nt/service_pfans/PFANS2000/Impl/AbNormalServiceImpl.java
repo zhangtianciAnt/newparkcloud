@@ -882,7 +882,7 @@ public class AbNormalServiceImpl implements AbNormalService {
             //育儿假，子女在21-11-26之前未满3周岁，可申请，每月最多一天，每年最多10天，子女在21-11-26 ~ 21-12-31期间满三周岁，一年可申请一天
             if ("PR013023".equals(abNormal.getErrortype()) && abNormal.getDateofbirth() != null) {
                 if (Integer.parseInt(abNormal.getLengthtime()) > 80) {//育儿假
-                    msg = "系统提醒：" + "育儿假，一次申请天数已超出10天,请重新选择日期。";
+                    msg = "系统提醒：" + "育儿假，本次申请天数超出10天,请重新选择日期。";
                     abNormal.setParentmsg(msg);
                 } else {
                     //此次申请为一天
@@ -967,7 +967,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                         Double sumParent = sumParent0 + sumParent1 + sumParent2;
                         abNormal.setCumulative(String.valueOf(sumParent / 8));
                         if (sumParent >= 80) {
-                            msg = "系统提醒：" + "育儿假，申请日之前一年内申请天数已超出10天（已审批通过）。";
+                            msg = "系统提醒：" + "育儿假，申请日之前一年内申请天数已 大于或等于10天（已审批通过）。";
                         }
 
                         //当天之前一月内，开始时间和结束时间都在一月范围内的育儿假之和
@@ -1024,9 +1024,9 @@ public class AbNormalServiceImpl implements AbNormalService {
                         Double sumParenting = sumParenting0 + sumParentting1 + sumParentting2;
                         if (sumParenting >= 8) {
                             if (msg.length() > 0) {
-                                msg = msg + "\n" + "&emsp;&emsp;&emsp;&emsp;&emsp;申请日当月申请天数已超出1天（已审批通过）";
+                                msg = msg + "\n" + "&emsp;&emsp;&emsp;&emsp;&emsp;申请日当月申请天数已 大于或等于1天（已审批通过）";
                             } else {
-                                msg = "系统提醒：" + "育儿假，申请日当月申请天数已超出1天（已审批通过）。";
+                                msg = "系统提醒：" + "育儿假，申请日当月申请天数已 大于或等于1天（已审批通过）。";
                             }
                         }
                     } else {//已满三周岁
@@ -1039,7 +1039,7 @@ public class AbNormalServiceImpl implements AbNormalService {
             if ("PR013024".equals(abNormal.getErrortype()) && abNormal.getParentsdate() != null) {
                 //一年只能申请15天
                 if (Integer.parseInt(abNormal.getLengthtime()) > 120) {//父母照料假
-                    msg = "系统提醒：" + "父母照料假，一次申请天数超过15天。";
+                    msg = "系统提醒：" + "父母照料假，本次申请天数超出15天,请重新选择日期。";
                 } else {
                     //获取现在的申请时长
                     int nows = Integer.parseInt(abNormal.getLengthtime());
@@ -1116,7 +1116,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                         Double sumParent = sumParent0 + sumParent1 + sumParent2;
                         abNormal.setCumulative(String.valueOf(sumParent / 8));
                         if (sumParent >= 120) {
-                            msg = "系统提醒：" + "父母照料假，申请日之前一年内申请天数已超出15天（已审批通过）";
+                            msg = "系统提醒：" + "父母照料假，申请日之前一年内申请天数已 大于或等于15天（已审批通过）";
                         }
                     }
                 }
@@ -1129,7 +1129,7 @@ public class AbNormalServiceImpl implements AbNormalService {
             //育儿假，子女在21-11-26之前未满3周岁，可申请，每月最多一天，每年最多10天，子女在21-11-26 ~ 21-12-31期间满三周岁，一年可申请一天
             if ("PR013023".equals(abNormal.getErrortype()) && abNormal.getDateofbirth() != null) {
                 if (Integer.parseInt(abNormal.getRelengthtime()) > 80) {//育儿假
-                    msg = "系统提醒：" + "育儿假，一次申请天数已超出10天。";
+                    msg = "系统提醒：" + "育儿假，本次申请天数超出10天,请重新选择日期。";
                     abNormal.setParentmsg(msg);
                 } else {
                     //此次申请为一天
@@ -1214,7 +1214,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                         Double sumParent = sumParent0 + sumParent1 + sumParent2;
                         abNormal.setCumulative(String.valueOf(sumParent / 8));
                         if (sumParent >= 80) {
-                            msg = "系统提醒：" + "育儿假，申请日之前一年内申请天数已超出10天（已审批通过）。";
+                            msg = "系统提醒：" + "育儿假，申请日之前一年内申请天数已 大于或等于10天（已审批通过）。";
                         }
 
                         //当天之前一月内，开始时间和结束时间都在一月范围内的育儿假之和
@@ -1271,9 +1271,9 @@ public class AbNormalServiceImpl implements AbNormalService {
                         Double sumParenting = sumParenting0 + sumParentting1 + sumParentting2;
                         if (sumParenting >= 8) {
                             if (msg.length() > 0) {
-                                msg = msg + "\n" + "&emsp;&emsp;&emsp;&emsp;&emsp;申请日当月申请天数已超出1天（已审批通过）";
+                                msg = msg + "\n" + "&emsp;&emsp;&emsp;&emsp;&emsp;申请日当月申请天数已 大于或等于1天（已审批通过）";
                             } else {
-                                msg = "系统提醒：" + "育儿假，申请日当月申请天数已超出1天（已审批通过）。";
+                                msg = "系统提醒：" + "育儿假，申请日当月申请天数已 大于或等于1天（已审批通过）。";
                             }
                         }
 
@@ -1287,7 +1287,7 @@ public class AbNormalServiceImpl implements AbNormalService {
             if ("PR013024".equals(abNormal.getErrortype()) && abNormal.getParentsdate() != null) {
                 //一年只能申请15天
                 if (Integer.parseInt(abNormal.getRelengthtime()) > 120) {//父母照料假
-                    msg = "系统提醒：" + "父母照料假，一次申请天数超过15天。";
+                    msg = "系统提醒：" + "父母照料假，本次申请天数超出15天,请重新选择日期。";
                 } else {
                     //获取现在的申请时长
                     int nows = Integer.parseInt(abNormal.getRelengthtime());
@@ -1364,7 +1364,7 @@ public class AbNormalServiceImpl implements AbNormalService {
                         Double sumParent = sumParent0 + sumParent1 + sumParent2;
                         abNormal.setCumulative(String.valueOf(sumParent / 8));
                         if (sumParent >= 120) {
-                            msg = "系统提醒：" + "父母照料假，申请日之前一年内申请天数已超出15天（已审批通过）";
+                            msg = "系统提醒：" + "父母照料假，申请日之前一年内申请天数已 大于或等于15天（已审批通过）";
                         }
                     }
                 }
@@ -1582,7 +1582,11 @@ public class AbNormalServiceImpl implements AbNormalService {
                     Double sumParenting = sumParenting0 + sumParentting1 + sumParentting2;
                     if (sumParenting >= 8) {
 //                        msg = msg + "育儿假，申请日之前一月内申请天数已超出1天（已审批通过）。";
-                        msg = msg + "\n" + "&emsp;&emsp;&emsp;&emsp;&emsp;申请日之前一个月内申请天数已超出1天（已审批通过）";
+                        if (msg.length() > 5) {
+                            msg = msg + "\n" + "&emsp;&emsp;&emsp;&emsp;&emsp;申请日当月申请天数已超出1天（已审批通过）";
+                        } else {
+                            msg = "系统提醒：" + "育儿假，申请日当月申请天数已超出1天（已审批通过）。";
+                        }
                     }
                 } else {//已满三周岁
                     throw new LogicalException("育儿假，你的孩子在你申请的开始时间时已满三周岁，不可申请。");
