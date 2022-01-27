@@ -56,6 +56,10 @@ public class OrgTree extends BaseModel {
      */
     private String user;
     /**
+     * 组织层级：0，1，2，3
+     */
+    private String level;
+    /**
      * 节点名称	TITLE
      */
     private String title;
