@@ -344,6 +344,20 @@ and a.user_id = #{userid}
             USER_ID AS user_id,
             APPLICATION_DATE AS applicationdate,
             ERROR_TYPE AS errortype,
+            CASE
+            WHEN STATUS > 4 THEN
+                RE_OCCURRENCE_DATE
+            ELSE
+                OCCURRENCE_DATE
+            END
+                occurrencedate,
+            CASE
+            WHEN STATUS > 4 THEN
+                RE_FINISHED_DATE
+            ELSE
+                FINISHED_DATE
+            END
+                finisheddate,
             OCCURRENCE_DATE AS occurrencedate,
             FINISHED_DATE AS finisheddate,
             PERIOD_START AS periodstart,
@@ -380,7 +394,12 @@ and a.user_id = #{userid}
         WHERE
                 STATUS != '1'
             <if test="occurrencedate != null and finisheddate != null">
-                AND OCCURRENCE_DATE &lt;= DATE_FORMAT(#{finisheddate},'%Y-%m-%d') AND FINISHED_DATE &gt;= DATE_FORMAT(#{occurrencedate},'%Y-%m-%d')
+                AND CASE
+                WHEN STATUS > 4 THEN
+                    RE_OCCURRENCE_DATE &lt;= DATE_FORMAT(#{finisheddate},'%Y-%m-%d') AND RE_FINISHED_DATE &gt;= DATE_FORMAT(#{occurrencedate},'%Y-%m-%d')
+                ELSE
+                    OCCURRENCE_DATE &lt;= DATE_FORMAT(#{finisheddate},'%Y-%m-%d') AND FINISHED_DATE &gt;= DATE_FORMAT(#{occurrencedate},'%Y-%m-%d')
+                END
             </if>
             <if test="user_id != null and user_id != ''">
                 AND USER_ID = #{user_id}
