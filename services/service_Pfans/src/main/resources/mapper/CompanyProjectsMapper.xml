@@ -91,6 +91,7 @@
         c.FIELD as FIELD,
         c.OWNER as OWNER,
         c.GROUP_ID as group_id,
+        c.CREATEON as CREATEON,
         pp.contractno as contractno
         from `companyprojects` c
         left outer join (select * from stageinformation where (COMPANYPROJECTS_ID,estimatedstarttime,PHASE,rowindex) in
@@ -771,7 +772,9 @@ GROUP BY
                 AND NUMBERS LIKE CONCAT('%',#{numbers},'%')
             </if>
             <if test="project_name != null and project_name != ''">
-                AND PROJECT_NAME LIKE CONCAT('%',#{project_name},'%')
+                AND
+                (PROJECT_NAME LIKE CONCAT( '%', ( SELECT to_base64 ( #{project_name} ) ), '%' )
+                OR PROJECT_NAME LIKE CONCAT('%',#{project_name},'%'))
             </if>
             <if test="projecttype != null and projecttype != ''">
                 AND PROJECTTYPE = #{projecttype}
